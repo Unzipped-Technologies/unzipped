@@ -1,0 +1,146 @@
+
+.S-Nav-Container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    justify-items: center;
+    padding-top: 0px;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61);  
+}
+
+.right-S-nav {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    justify-items: center;
+    margin-top: 20px;
+}
+
+.purple-logo-nav {
+    position: relative;
+    max-width: 200px;
+    bottom: 10px;
+}
+
+.partner-S {
+    position: relative;
+    
+    border-radius: 22px;
+    bottom: 8px;
+    // padding: auto;
+    height: 35px;
+    // width: 150px;
+    margin-right: 20px;
+    margin-top: 12px;
+}
+
+.partner-S:hover {
+    background-color: #77777779;
+
+}
+
+.driver-text-S {
+    position: relative;
+    font-size: 14px;
+    font-weight: 400 !important;
+    line-height: 1vw !important;
+    text-align: center;
+    padding: 12px !important;
+    top: 5px;
+    cursor: default;
+}
+
+.icon-sn {
+    top: 1px;
+}
+
+#icon-left-sn {
+    position: relative;
+    right: 3px;
+}
+
+
+///schedule-nav
+
+.ms-container {
+    position: relative;
+    top: 0px;
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr 1fr;
+    justify-items: center;
+    border: 1px darkgray solid;
+    border-radius: 32px;
+    height: 50px;
+    width: 450px;
+    background-color: white;
+}
+
+.ms-container-2 {
+    position: relative;
+    top: 0px;
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr 1fr;
+    justify-items: center;
+    border: 1px darkgray solid;
+    border-radius: 32px;
+    height: 50px;
+    width: 450px;
+}
+
+.ms-button-color {
+    background-color: #26a69a;
+    border: none;
+    border-radius: 50%;
+    position: relative;
+    height: 32px;
+    width: 32px;
+    top: 8px;
+    left: 8px;
+    color: #fff;
+}
+
+.icon-services-ms {
+    position: relative;
+    top: 3px;
+    right: 1px;
+    font-size: 10px;
+}
+
+#div-3 {
+    margin-left: 295px;
+    min-height: 20px;
+    margin-top: 14px;
+}
+#div-4 {
+    margin-left: 165px;
+    min-height: 20px;
+    margin-top: 14px;
+}
+
+.ms-text{
+    position: relative;
+    bottom: 1px;
+    left: 18px;
+}
+
+#ms-time {
+    margin-left: 30px;
+}
+
+#ms-service {
+    margin-left: 15px;
+}
+
+// .ms-text:hover {
+//     background-color: darkgray;
+//     border-radius: 32px;
+// }
+@media (max-width: 1400px) {
+    .driver-text-S {
+        padding: 8px !important;
+    }
+    
+}
+@media (max-width: 656px) {
+    .ms-container-2 {
+        width: 250px;
+    }
+}

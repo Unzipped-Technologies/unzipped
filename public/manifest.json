@@ -1,0 +1,21 @@
+{
+    "name": "Vohnt",
+    "short_name": "Vohnt",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color": "#9c64cc",
+    "orientation": "portrait-primary",
+    "icons": [
+      {
+        "src": "/img/cursive-logo-V.png",
+        "type": "image/png",
+        "sizes": "1438x1438"
+      },
+      {
+        "src": "/img/favicon.ico",
+        "type": "image/ico",
+        "sizes": "1438x1438"
+      }
+    ]
+  }

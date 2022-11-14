@@ -1,0 +1,139 @@
+.dark-logo {
+    color: #000;
+    // font-weight: 400;
+    // font-size: 1.1rem;
+}
+
+.image-container-crop {
+    max-width: 350px;
+    max-height: 230px;
+    overflow: hidden;
+}
+
+.sec-two-img-one {
+    max-width: 360px;
+    position: relative;
+    bottom: 1vh;
+}
+
+.box-one-section-one {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: left;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.step-one-title {
+    color: #000;
+}
+
+.blog-text-title {
+    text-align: left;
+    max-width: 20vw;
+    padding-top: 5vh;
+    font-size: 2rem;
+}
+
+.blog-text {
+    font-size: 16px;
+    color: #000;
+}
+
+.blog-button {
+    position: relative;
+    font-size: 16px;
+    color: #000;
+    text-decoration: underline;
+    top: 1vh;
+}
+
+.blog-button:hover {
+    color: rgb(19, 16, 16);
+    cursor: pointer;
+}
+
+.btn-two {
+    margin: 0;
+    position: relative;
+    bottom: 25px;
+    border-radius: .4rem;
+    background-color: black;
+    // padding: 20px 20px;
+    color: white;
+
+}
+
+.faqs-header {
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.faqs-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+}
+
+.faqs-title {
+    font-size: calc((1.1 - 1) * 1.2vw + 1rem);
+    font-weight: 700;
+}
+
+.faqs-text {
+    font-size: calc((1.13 - 1) * 1.2vw + 1rem);
+    font-weight: 300;
+    color: #000;
+}
+
+.faqs-item {
+    padding-bottom: 1vh;
+}
+
+#move-down {
+    padding-top: 2.5vh;
+}
+
+@media (max-width: 665px) {
+    .faqs-header {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 537px) {
+    .faqs-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+}
+
+@media (max-width: 369px) {
+    #move-down {
+        position: relative;
+        bottom: -140px;
+        height: 350px;
+        
+        // z-index: 100000;
+    }
+}
+
+@media (max-width: 320px) {
+    #move-down {
+        position: relative;
+        bottom: -200px;
+        height: 350px;
+
+        // z-index: 100000;
+    }
+}
+
+@media (max-width: 299px) {
+    #move-down {
+        position: relative;
+        bottom: -210px;
+        height: 350px;
+
+        // z-index: 100000;
+    }
+}

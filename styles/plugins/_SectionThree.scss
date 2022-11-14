@@ -1,0 +1,242 @@
+.section-three-container {
+    position: relative;
+    top: 1000px;
+    z-index: 1019;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    background-color: #ebeaeb;
+    padding: 35px 40px;
+    // border: black solid 1px;
+}
+
+.three-title-sec {
+    font-size: calc((2.5 - 1) * 1.2vw + 1rem);
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+}
+
+.three-box-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+}
+
+.content-three-container {
+    max-width: 20vw;
+    padding: 10px 25px;
+}
+
+.content-three-title {
+    line-height: 1.3888;
+    font-size: 1.1vw;
+    font-family: Poppins;
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+    text-align: center;
+}
+
+.content-three-content {
+    text-align: center;
+    max-width: 14vw;
+    font-size: 0.85vw;
+    font-family: Poppins;
+    font-weight: 300;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+
+}
+.learn-more-home {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    margin-top: 20px;
+}
+
+.testimonial-home {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    margin-top: 60px;
+}
+
+@media (max-width: 1536px) {
+    .section-three-container {
+        top: 800px;
+    }
+    .three-title-sec {
+        font-size: 36px;
+        font-weight: 500;
+    }
+    .content-three-content {
+        max-width: 20vw;
+        font-size: 16px;
+    }
+    .content-three-title {
+        max-width: 20vw;
+        line-height: 1.3888;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1521px) {
+    .content-three-content {
+        max-width: 27vw;
+    }
+    .content-three-title {
+        max-width: 27vw;
+    }
+    .three-box-content {
+        width: 70vw;
+    }
+    .content-three-container {
+        max-width: 25vw;
+    }
+
+}
+
+@media (max-width: 1295px) {
+    .content-three-container {
+        max-width: 30vw;
+    }
+    .content-three-content {
+        max-width: 30vw;
+    }
+    .content-three-title {
+        max-width: 30vw;
+    }
+    .three-box-content {
+        width: 90vw;
+    }
+}
+
+@media (max-width: 1271px) {
+    .section-three-container {
+        top: 700px;
+    }
+}
+
+@media (max-width: 1003px) {
+    .content-three-container {
+        max-width: 25vw;
+        padding: 0;
+    }
+    .three-title-sec {
+        max-width: 50vw;
+    }
+    .content-three-content {
+        max-width: 25vw;
+        padding: 0;
+    }
+    .content-three-title {
+        max-width: 25vw;
+        padding: 0;
+    }
+    .three-box-content {
+        width: 90vw;
+        padding: 0;
+    }
+}
+
+@media (max-width: 879px) {
+    .section-three-container {
+        top: 700px;
+    }
+}
+
+@media (max-width: 735px) {
+    .section-three-container {
+        top: 550px;
+    }
+    .content-three-container {
+        max-width: 32vw;
+        padding: 0;
+    }
+    .three-title-sec {
+        max-width: 50vw;
+    }
+    .content-three-content {
+        max-width: 32vw;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    .content-three-title {
+        max-width: 32vw;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+}
+
+@media (max-width: 571px) {
+    .section-three-container {
+        top: 460px;
+    }
+    .three-box-content {
+        grid-template-columns: 1fr;
+    }
+    .content-three-container {
+        max-width: 60vw;
+        padding: 0;
+    }
+    .three-title-sec {
+        max-width: 50vw;
+    }
+    .content-three-content {
+        max-width: 60vw;
+        padding: 20px;
+        padding-top: 0px;
+    }
+    .content-three-title {
+        max-width: 60vw;
+        padding-top: 10px;
+    }
+    .testimonial-home {
+        margin-top: 0px;
+    }
+    
+}
+
+@media (max-width: 421px) {
+    .section-three-container {
+        top: 400px;
+        padding: 0;
+    }
+    .content-three-container {
+        max-width: 85vw;
+        padding: 0;
+    }
+    .three-title-sec {
+        max-width: 85vw;
+    }
+    .content-three-content {
+        max-width: 85vw;
+        padding: 20px;
+        padding-top: 0px;
+    }
+    .content-three-title {
+        max-width: 85vw;
+        padding-top: 10px;
+    }
+}
+
+@media (max-width: 414px) {
+    .section-three-container {
+        top: 330px;
+        padding: 0;
+    }
+}
+
+
+@media (max-width: 360px) {
+    .section-three-container {
+        top: 310px;
+        padding: 0;
+    }
+}

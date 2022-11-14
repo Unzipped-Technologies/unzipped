@@ -1,0 +1,323 @@
+.main-dashboard {
+    background-color: hsla(230, 10%, 46%, 0.227);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.admin-panel {
+    height: 100vw;
+    position: fixed;
+    width: 250px;
+    background-color: #2b313df8;
+    box-shadow: 0 4px 7px 0 rgba(0,0,0,.2);
+    color: #fff;
+    // display: grid;
+    // grid-template-columns: 1fr;
+    // justify-items: center;
+}
+
+.dasboard-title {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    max-width: 70px;
+    height: 100px;
+    justify-items: center;
+    align-items: center;
+    margin-left: 30px;
+    margin-right: 150px;
+}
+
+.side-logo {
+    max-width: 167px;
+}
+
+.menu-items {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+}
+
+.item-outer-container {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    position: relative;
+    left: -20px;
+}
+
+.item-outer-container-2 {
+    background-color: #0288d1;
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    position: relative;
+    left: -20px;
+    border-radius: 32px;
+}
+
+.item-outer-container:hover {
+    background-color: #020202c0;
+    border-radius: 32px;
+    position: relative;
+    left: -20px;
+}
+
+.item-container {
+    text-align: left;
+    width: 60%;
+    position: relative;
+    left: 20px;
+}
+
+.dashboard-title {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+}
+
+#title-one {
+    width: 70%;
+    font-weight: 500;
+}
+
+.right-dashboard {
+    width: calc(100vw - 250px);
+    margin-left: 250px;
+    border: 1px darkgray solid;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+    height: 64px;
+}
+
+.top-bar {
+    display: grid;
+    grid-template-columns: 7fr 1fr;
+    background-color: #fff;
+    width: 100%;
+}
+
+.text-search {
+    display: grid;
+    grid-template-columns: 1fr 30fr;
+    justify-items: left;
+}
+
+.search-bar {
+    width: 70vw;
+    border: 1px darkgray solid;
+    height: 80%;
+    border-radius: 6px;
+    margin-left: 2vw;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+#move-search {
+    position: relative;
+    top: 15px;
+    left: 10px;
+}
+
+.searchbox-input {
+    height: 150px;
+    position: relative;
+    top: 3px;
+    outline: none;
+}
+
+.searchbox-input:focus {
+    outline: none;
+    border: none;
+}
+
+.top-bar-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 20px;
+    position: relative;
+    right: -30px;
+    width: 100px;
+}
+
+.menu-box-dashboard {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid darkgray;
+    z-index: 2000;
+    width: 260px;
+    right: 0px;
+    top: 40px;
+    border-radius: 8px;
+}
+
+.calendar-styling {
+    height: 500px;
+    width: 100%;
+}
+
+//calendar model
+
+.update-order-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    background-color: #111;
+    color: #fff;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+    padding: 6px 10px;
+}
+
+@media (max-width: 1334px) {
+    .search-bar {
+         width: 60vw;
+    }
+    .text-search {
+        grid-template-columns: 2fr 30fr;
+        justify-items: left;
+    }
+    .searchbox-input,
+    .searchbox-input:focus {
+        top: 0px;
+        padding-bottom: 3px;
+        border: none;
+        border-bottom: none !important;
+        outline: none !important;
+
+    }
+    .top-bar-menu {
+       right: -10px; 
+    }
+}
+
+
+
+@import 'react-big-calendar/lib/sass/styles';
+
+@media (min-width: 807px) {
+    // #mobile-calendar {
+    //     display: none;
+    // }
+}
+
+@media (max-width: 855px) {
+    #mobile-modal-c {
+        width: 100vw
+    }
+    .admin-panel {
+        display: none;
+    }
+    .right-dashboard {
+        width: 100vw;
+        margin-left: 0px;
+        border: 1px darkgray solid;
+        height: 64px;
+    }
+    
+}
+
+@media (max-width: 807px) {
+    #calendar-card {
+        width: 100vw
+    }
+}
+
+@media (max-height: 776px) {
+    .main-dashboard {
+        overflow: visible;
+        overflow-x: hidden;
+        height: 1000px;
+    }
+
+    .dashboard-card {
+        margin: 30px;
+        margin-left: 5px;
+    }
+    @media (max-width: 824px) {
+        .main-dashboard {
+            height: 800px;
+        }
+    }
+}
+
+@media (max-width: 646px) {
+    .main-dashboard {
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        background-color: #fff;
+    }
+    .top-bar {
+        position: relative;
+        box-shadow: none;
+        margin-bottom: 0px;
+        grid-template-columns: 7fr 2fr;
+        border: none;
+    }
+    .text-search {
+        grid-template-columns: 2fr 20fr;
+        justify-items: left;
+    }
+    .top-bar-menu {
+        right: -20px; 
+     }
+     .right-dashboard {
+         border: none;
+     }
+}
+
+@media (max-width: 550px) {
+    .top-bar-menu {
+        right: -5px; 
+     }
+}
+
+@media (max-width: 482px) {
+    .top-bar-menu {
+        right: 0px; 
+     }
+}
+
+@media (max-width: 458px) {
+    .top-bar-menu {
+        right: -20px; 
+     }
+    .top-bar {
+        grid-template-columns: 7fr 3fr;
+        margin-bottom: 0px;
+        box-shadow: none;
+    }
+    .title-admin-mobile {
+        width: 200px;
+        font-size: 22px;
+        margin: 0px;
+    }
+    .text-search {
+        grid-template-columns: 2fr 14fr;
+    }
+    #mobile-admin-scroll,
+    #mobile-admin-scroll-1,
+    #mobile-admin-scroll-2 {
+        height: 300px !important;
+    }
+    .card-admin-1 {
+        height: 400px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .top-bar-menu {
+        right: -20px; 
+        width: 70px;
+     }
+}
+
+@media (max-width: 280px) {
+    .top-bar-menu {
+        right: -15px; 
+        width: 65px;
+     }
+    #customer-first-row {
+        left: 0px;
+    }
+}

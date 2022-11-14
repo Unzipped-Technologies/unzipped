@@ -1,0 +1,269 @@
+.section-four-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    z-index: 1121;
+    
+}
+
+.video-container {
+    z-index: 1122;
+    width: 50%;
+    height: auto;
+    padding: 15px 10px;
+    padding-top: 0px;
+    position: relative;
+    top: -80px;
+    bottom: 20px;
+    padding-bottom: 0px;
+    // border: solid black 1px;
+}
+
+.react-player {
+    z-index: 1125;
+    width: 100%;
+    height: auto;
+    padding-bottom: 0;
+}
+
+.content-below-four {
+    display: grid;
+    position: relative;
+    bottom: 200px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+}
+
+.call-to-action {
+    color: #9c64cc;
+}
+
+.call-to-action-alt {
+    color: #9c64cc;
+    font-style: italic;
+    font-size: 17px;
+    position: relative;
+    left: 4px;
+}
+
+.text-four {
+    font-size: calc(1.15 * 1rem);
+    font-weight: 400;
+    max-width: 54vw;
+    padding-top: 25px;
+}
+
+@media (max-width: 1280px) {
+    .video-container {
+        width: 650px;
+    }
+    .content-below-four {
+        display: grid;
+        position: relative;
+        bottom: 160px;
+    }
+    .text-four {
+        font-size: 18px;
+        font-weight: 400;
+        max-width: 70vw;
+        padding-top: 25px;
+    }
+}
+
+@media (max-width: 1083px) {
+    .video-container {
+        top: -40px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .content-below-four {
+        padding-top: 40px;
+    }
+
+}
+
+@media (max-width: 1043px) {
+    .content-below-four {
+        bottom: 110px;
+        padding-top: 30px;
+    }
+    .text-four {
+        font-size: 18px;
+        font-weight: 400;
+        max-width: 80vw;
+        padding-top: 20px;
+    }
+}
+
+@media (max-width: 877px) {
+    .video-container {
+        width: 550px;
+    }
+}
+
+@media (max-width: 777px) {
+    .content-below-four {
+        bottom: 80px;
+    }
+    .content-four-title {
+        font-size: 30px;
+    }
+    .call-to-action {
+        font-size: 24px;
+    }
+    .text-four {
+        max-width: 85vw;
+    }
+}
+
+@media (max-width: 735px) {
+    .video-container {
+        width: 550px;
+    }
+}
+
+@media (max-width: 654px) {
+    .video-container {
+        top: -20px;
+    }
+}
+
+@media (max-width: 637px) {
+    .content-below-four {
+        bottom: 40px;
+    }
+    .content-four-title {
+        font-size: 30px;
+    }
+    .call-to-action {
+        font-size: 24px;
+    }
+    .text-four {
+        max-width: 85vw;
+    }
+}
+
+@media (max-width: 581px) {
+    .video-container {
+        width: 450px;
+    }
+    .content-below-four {
+        bottom: 65px;
+    }
+    .content-four-title {
+        font-size: 26px;
+    }
+    .call-to-action {
+        font-size: 20px;
+    }
+    .text-four {
+        max-width: 85vw;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 573px) {
+    .video-container {
+        width: 450px;
+    }
+}
+@media (max-width: 542px) {
+
+    .video-container {
+        width: 450px;
+    }
+}
+
+@media (max-width: 522px) {
+    .video-container {
+        width: 400px;
+    }
+}
+
+@media (max-width: 483px) {
+    .content-below-four {
+        bottom: 45px;
+    }
+    .content-four-title {
+        font-size: 22px;
+    }
+    .call-to-action {
+        font-size: 18px;
+    }
+    .text-four {
+        max-width: 85vw;
+        font-size: 14px;
+    }
+    .video-container {
+        top: -40px;
+    }
+}
+
+@media (max-width: 439px) {
+    .video-container {
+        width: 350px;
+    }
+}
+
+@media (max-width: 414px) {
+    .video-container {
+        width: 350px;
+    }
+    .content-below-four {
+        bottom: 45px;
+    }
+    .content-four-title {
+        font-size: 19px;
+    }
+    .call-to-action {
+        font-size: 16px;
+    }
+    .text-four {
+        max-width: 85vw;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 375px) {
+    .video-container {
+        width: 300px;
+    }
+}
+
+@media (max-width: 365px) {
+    .video-container {
+        top: -20px;
+    }
+}
+
+@media (max-width: 363px) {
+    .video-container {
+        width: 300px;
+    }
+    .content-below-four {
+        bottom: 45px;
+    }
+    .content-four-title {
+        font-size: 16px;
+    }
+    .call-to-action {
+        font-size: 14px;
+    }
+    .text-four {
+        max-width: 85vw;
+        font-size: 12px;
+        padding-top: 0px;
+    }
+}
+
+@media (max-width: 320px) {
+    .video-container {
+        width: 270px;
+    }
+}

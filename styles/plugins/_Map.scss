@@ -1,0 +1,870 @@
+.maps-page {
+    overflow: hidden;
+    height: 100vh;
+} 
+
+.map-container,
+.map-container-2 {
+    width: 70vw;
+    float: right;
+    margin-top: 5px;
+}
+
+.selector-small{
+    position: relative;
+    top: 50px;
+}
+
+.subtext {
+    cursor: pointer;
+}
+
+.map-container-fullscreen {
+    width: 100vw;
+    margin-top: 5px;
+}
+
+.description-display {
+    float: left;
+    max-width: 30vw;
+    max-height: 80vh;
+}
+
+.description-display-close {
+    float: left;
+    max-width: 0vw;
+    max-height: 80vh;
+}
+
+.maps-list-container {
+    z-index: 500;
+}
+
+.header-maps-title {
+    margin-left: 20px;
+    padding-bottom: 10px;
+    overflow: hidden;
+}
+
+.garage-item {
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+    width: 29vw;
+    height: 140px;
+    margin-bottom: 1px;
+    border-top: lightgray solid 1px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+
+}
+
+.garage-item-1 {
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+    width: 29vw;
+    height: 45px;
+    margin-bottom: 1px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    cursor: default;
+}
+
+#overlay {
+    position: fixed; /* Sit on top of the page content */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: #fff;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.4); /* Black background with opacity */
+    z-index: 2000; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    pointer-events: none
+  }
+
+.select-custom-location {
+    padding-left: 0px;
+    color: #fff;//#0645AD;
+    background-color: #9c64cc;
+    border: none;
+    margin-bottom: 10px;
+    width: 200px;
+    height: 40px;
+    margin-left: 15px;
+}
+.select-custom-location:focus {
+    background-color: #9c64cc;
+}
+.select-custom-location:hover {
+    color: #002258;
+}
+
+.garage-item:hover {
+    background-color: lightgray;
+    // box-sizing: none;
+}
+
+.garage-item-2 {
+    background-color: lightgray;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+    width: 43vw;
+    height: 140px;
+    margin-bottom: 1px;
+    border-top: lightgray solid 1px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+}
+
+.garage-title {
+    position: relative;
+    font-size: 20px;
+    font-weight: 400;
+    // opacity: 0.99;
+    margin-left: 20px;
+    top: 5px;
+}
+
+.garage-type {
+    position: relative;
+    margin-left: 30px;
+    bottom: 15px;
+    font-weight: 300;
+    font-size: 15px;
+}
+
+.garage-address {
+    position: relative;
+    margin-left: 30px;
+    bottom: 20px;
+}
+
+.garage-buttons {
+    float: right;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+}
+
+.simple-Bar {
+    max-height: 79.2vh;
+    width: 29vw;
+}
+#icon-add,
+#icon-send {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    top: 60px;
+    right: 20px;
+    color: #4253ee;
+    // right: 30px;
+}
+
+.info-maps {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    justify-items: center;
+}
+
+#icon-send {
+    color: #4253ee;
+}
+.material-icon-send {
+    color: #4253ee;
+    position: relative;
+    left: 14px;
+    top: 12px;
+}
+
+.title-info-w {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.text-button {
+    position: relative;
+    bottom: 45px;
+    font-weight: 300;
+    color: #000;
+    font-size: 12px;
+}
+
+.custom-location-modal {
+    position: absolute;
+    margin-left: 0vw;
+    width: 550px;
+    background-color: #fff;
+    // box-shadow: shadows[5];
+    padding: 30px 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.address-info-w {
+    margin-left: 10px;
+    position: relative;
+    bottom: 10px;
+}
+
+#icon-send-info {
+    position: relative;
+    margin-top: 20px;
+    left: 8px;
+    margin-bottom: 0;
+}
+
+.close-button {
+    position: absolute;
+    left: 31vw;
+    top: 220px;
+}
+
+.open-button {
+    position: absolute;
+    left: 1vw;
+    top: 220px;
+}
+
+.arrow-btn {
+    background-color: rgba(255, 255, 255, 0.925);
+    border-radius: 8px;
+    border: none;
+    width: 80%;
+    outline: none;
+}
+
+.arrow-btn:focus {
+    background-color: rgba(255, 255, 255, 0.925);
+}
+
+.lr-arrow {
+    position: relative;
+    right: 4px;
+    top: 3px;
+}
+
+.small-map {
+    position: absolute;
+    z-index: 20000;
+    width: 100vw;
+    background-color: #fff;
+    bottom: 0px;
+    height: 75vh;
+}
+.paper-map-too-far {
+    position: absolute;
+    margin-left: 0vw;
+    width: 550px;
+    // height: 450;
+    background-color: #fff;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+    padding: 30px 60px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+@media (max-width: 1600px) {
+    .garage-title {
+        font-size: 19px;
+    }
+    .garage-type {
+        font-size: 14px;
+        padding-top: 5px;
+    }
+    .garage-address {
+        font-size: 15px;
+    }
+    .address-info-w {
+        font-size: 14px;
+    }
+    .title-info-w {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1600px) {
+    #icon-add,
+    #icon-send {
+        top: 80px;
+    }
+}
+
+@media (max-width: 1600px) {
+    #icon-send {
+        display: none;
+    }
+    #icon-add {
+        left: 10px;
+    }
+    .garage-item {
+        grid-template-columns: 6fr 1fr;
+    }
+    .info-maps {
+        display: grid;
+        grid-template-columns: 4fr 1fr;
+        justify-items: center;
+    }
+    #icon-send-info {
+        left: 4px;
+    }
+}
+
+@media (max-width: 1443px) {
+    .pickup-m {
+        display: none;
+    }
+}
+
+@media (max-width: 1197px) {
+    .garage-title {
+        font-size: 17px;
+    }
+    .garage-type {
+        font-size: 13px;
+        padding-top: 5px;
+    }
+    .garage-address {
+        font-size: 14px;
+    }
+    .address-info-w {
+        font-size: 12px;
+    }
+    .title-info-w {
+        font-size: 16px;
+    }
+    #icon-send-info {
+        left: 0px;
+    }
+}
+
+@media (max-width: 1081px) {
+    .map-container,
+    .map-container-2 {
+        width: 60vw;
+    }
+    .description-display {
+        max-width: 40vw;
+        width: 40vw;
+    }
+    .simple-Bar {
+        width: 39.8vw;
+    }
+    .close-button {
+        position: absolute;
+        left: 41vw;
+        top: 220px;
+    }
+    .garage-item {
+        width: 39.2vw;
+    }
+}
+
+@media (max-width: 955px) {
+    .driver-text-S {
+        display: none;
+    }
+    .purple-logo-nav {
+        width: 140px;
+    }
+    .selector-small{
+        top: 20px;
+    }
+    .close-button {
+        top: 195px;
+    }
+    .open-button {
+        top: 195px;
+    }
+}
+
+@media (max-width: 850px) {
+    .button-right-Sn {
+        position: relative;
+        right: 20px;
+    }
+    .custom-location-modal {
+        top: 50%;
+        left: 30%;
+        transform: translate(-30%, -50%);
+    }
+}
+
+@media (max-width: 800px) {
+    .garage-title {
+        position: relative;
+        font-size: 15px;
+        top: 14px;
+    }
+    .garage-type {
+        font-size: 12px;
+        padding-top: 8px;
+        bottom: 8px;
+    }
+    .garage-address {
+        font-size: 13px;
+        bottom: 8px;
+    }
+    #icon-add {
+        left: 5px;
+    }
+}
+
+@media (max-width: 727px) {
+    .map-container,
+    .map-container-2 {
+        width: 55vw;
+    }
+    .description-display {
+        max-width: 45vw;
+        width: 45vw;
+    }
+    .simple-Bar {
+        width: 44.8vw;
+    }
+    .close-button {
+        position: absolute;
+        left: 46vw;
+    }
+    .garage-item {
+        width: 44.2vw;
+    }
+    .paper-map-too-far {
+        top: 50%;
+        left: 20%;
+        transform: translate(-20%, -50%);
+    }
+    .custom-location-modal {
+        top: 50%;
+        left: 20%;
+        transform: translate(-20%, -50%);
+    }
+}
+
+@media (min-width: 681px) {
+    .selector-small-mobile {
+        display: none;
+    }
+}
+
+@media (max-width: 681px) {
+    .maps-page {
+        overflow: visible;
+    }
+    .selector-small {
+        display: none;
+    }
+    .S-Nav-Container {
+        grid-template-columns: 1fr 1fr;
+    }
+    .selector-small-mobile {
+        position: relative;
+        bottom: 25px;
+        left: 16.5vw;
+        z-index: 9999;
+    }
+    .purple-logo-nav {
+        position: relative;
+        right: 140px;
+    }
+    .paper-map-too-far {
+        top: 50%;
+        left: 0%;
+        transform: translate(-0%, -50%);
+    }
+}
+
+@media (max-width: 631px) {
+    .garage-address {
+        overflow: hidden;
+        max-width: 30vw;
+        max-height: 20px;
+        margin-left: 20px;
+    }
+    .garage-title {
+        margin-left: 10px;
+    }
+    .garage-type {
+        margin-left: 20px;
+    }
+    .custom-location-modal {
+        top: 50%;
+        left: 0%;
+        transform: translate(-0%, -50%);
+    }
+}
+
+@media (max-width: 615px) {
+    .selector-small-mobile {
+        left: 15vw;
+    }
+    .button-right-Sn {
+        bottom: 12px;
+    }
+}
+
+@media (min-width: 600px) {
+    .nxt-mp {
+        display: none;
+    }
+}
+@media (max-width: 600px) {
+    .selector-small-mobile {
+        left: 13.2vw;
+    }
+    .title-info-w {
+        font-size: 14px;
+    }
+    .address-info-w {
+        font-size: 11px;
+        margin-left: 0px;
+    }
+    .cnt-mp {
+        display: none;
+    }
+    .material-icon-send {
+        left: 4px;
+    }
+    .custom-location-modal {
+        position: absolute;
+        margin-left: 0vw;
+        width: 350px;
+        background-color: #fff;
+        // box-shadow: shadows[5];
+        padding: 10px 30px;
+        top: 50%;
+        left: 40%;
+        transform: translate(-45%, -50%);
+    }
+    .location-modal-title {
+        font-size: 22px;
+    }
+    
+}
+
+@media (max-width: 570px) {
+    .selector-small-mobile {
+        left: 12vw;
+    }
+    .paper-map-too-far {
+        width: 450px;
+        padding: 20px 10px;
+        top: 50%;
+        left: 10%;
+        transform: translate(-10%, -50%);
+    }
+    .paper-map-too-far {  
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+@media (max-width: 531px) {
+    .selector-small-mobile {
+        left: 8vw;
+    }
+    .maps-page {
+        overflow: hidden;
+        height: 97vh;
+    }
+
+}
+
+@media (min-width: 521px) {
+    .select-custom-location-mobile {
+        display: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .selector-small-mobile {
+        left: 6vw;
+    }
+
+    .map-container {
+        position: absolute;
+        visibility: hidden;
+    }
+    .paper-map-too-far {
+        position: absolute;
+        width: 80%;
+        padding-right: 5px;
+        padding-left: 5px;   
+        top: 50%;
+        left: 20%;
+        transform: translate(-20%, -50%);
+    }
+    .map-container-2 {
+        position: absolute;
+        width: 100%;
+        height: 60%;
+        bottom: 0px;
+        z-index: 2000;
+    }
+    .select-custom-location {
+        display: none;
+    }
+    .select-custom-location-mobile {
+        margin-left: 20px;
+        color: #fff;
+        margin-bottom: 10px;
+        background-color: #9c64cc;
+        border: none;
+        width: 190px;
+    }
+    .description-display {
+        max-width: 100vw;
+        width: 100vw;
+    }
+    .simple-Bar {
+        width: 99.8vw;
+    }
+    .close-button {
+        display: none;
+    }
+    .garage-item {
+        width: 99.2vw;
+    }
+    .garage-title {
+        position: relative;
+        font-size: 20px;
+        top: 8px;
+        margin-left: 20px;
+    }
+    .garage-type {
+        font-size: 15px;
+        padding-top: 8px;
+        bottom: 14px;
+        margin-left: 30px;
+    }
+    .garage-address {
+        font-size: 13px;
+        bottom: 18px;
+        max-width: 50vw;
+        margin-left: 30px;
+    }
+    #icon-add {
+        position: relative;
+        left: -50px;
+    }
+    #icon-send {
+        display: grid;
+        right: 40px;
+    }
+    .button-right-Sn {
+        right: 5rem;
+    }
+    .S-Nav-Container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+@media (max-width: 491px) {
+    .selector-small-mobile {
+        left: 3vw;
+    }
+}
+
+@media (max-width: 471px) {
+    .selector-small-mobile {
+        left: 2vw;
+    }
+    .button-right-Sn {
+        right: 6rem;
+    }
+}
+@media (max-width: 461px) {
+    .selector-small-mobile {
+        left: 1vw;
+    }
+    .button-right-Sn {
+        right: 6rem;
+    }
+}
+
+@media (min-width: 456px) {
+    .mobile-location {
+        display: none;
+    }
+}
+
+@media (max-width: 455px) {
+    .selector-small-mobile {
+        display: none;
+    }
+    .S-Nav-Container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        // max-width: 40vw;
+        justify-items: center;
+    }
+    .button-right-Sn {
+        right: 0rem;
+    }
+    .purple-logo-nav {
+        right: 20px;
+        top: 3px;
+    }
+    .mobile-location {
+        font-size: 18px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 414px) {
+    .garage-title {
+        line-height: 22px;
+    }
+    .garage-address {
+        bottom: 22px;
+    }
+    .custom-location-modal {  
+        top: 50%;
+        left: 45%;
+        transform: translate(-45%, -50%);
+    }
+    .paper-map-too-far {  
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+
+@media (max-width: 390px) {
+    .button-right-Sn {
+        right: 1rem;
+        top: 5px;
+    }
+}
+
+@media (max-width: 360px) {
+    .purple-logo-nav {
+        right: 15px;
+        top: 5px;
+    }
+    #icon-add {
+        position: relative;
+        left: -30px;
+    }
+    #icon-send {
+        display: grid;
+        right: 20px;
+    }
+    .garage-title {
+        position: relative;
+        font-size: 18px;
+        top: 8px;
+        margin-left: 20px;
+    }
+    .garage-type {
+        font-size: 13px;
+        padding-top: 8px;
+        bottom: 14px;
+        margin-left: 30px;
+    }
+    .garage-address {
+        font-size: 13px;
+        bottom: 18px;
+        max-width: 50vw;
+        margin-left: 30px;
+    }
+    .custom-location-modal {
+        width: 280px;
+    }
+    .popup-text {
+        font-size: 14px;
+        line-height: 18px;
+    }
+    .map-container-2 {
+        height: 59%;
+    }
+}
+
+@media (max-width: 320px) {
+    .custom-location-modal {  
+        top: 50%;
+        left: 45%;
+        transform: translate(-45%, -50%);
+    }
+    .map-container-2 {
+        height: 53%;
+    }
+}
+
+@media (max-width: 290px) {
+    .purple-logo-nav {
+        right: 0px;
+    }
+}
+
+@media (max-height: 1117px) {
+    .simple-Bar {
+        height: 80vh;
+    }
+}
+
+@media (max-height: 1094px) {
+    .simple-Bar {
+        height: 77vh;
+    }
+}
+
+@media (max-height: 1042px) {
+    .simple-Bar {
+        height: 74vh;
+    }
+}
+
+@media (max-height: 1003px) {
+    .simple-Bar {
+        height: 70vh;
+    }
+}
+
+@media (max-height: 976px) {
+    .simple-Bar {
+        height: 70vh;
+    }
+}
+
+@media (max-height: 875px) {
+    .simple-Bar {
+        height: 65vh;
+    }
+}
+
+@media (max-height: 800px) {
+    .simple-Bar {
+        height: 65vh;
+    }
+}
+
+@media (max-height: 743px) {
+    .simple-Bar {
+        height: 60vh;
+    }
+}
+
+@media (max-height: 644px) {
+    .simple-Bar {
+        height: 57vh;
+    }
+}
+
+@media (max-height: 551px) {
+    .simple-Bar {
+        height: 50vh;
+    }
+}
+
+@media (max-height: 526px) {
+    .simple-Bar {
+        height: 46vh;
+    }
+}

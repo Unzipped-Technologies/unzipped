@@ -1,0 +1,805 @@
+.dashboard-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.dashboard-card {
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    margin-top: 50px;
+    width: 900px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+}
+
+.center-content-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.card-title {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    width: 130%;
+}
+
+.first-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    margin: 0px 10px;
+    // justify-items: center;
+}
+
+.first-row-a {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    width: 100%;
+    margin: 0px 10px;
+    // justify-items: center;
+}
+
+.email-customer {
+    margin-right: 25px;
+    width: 180px;
+}
+
+#email-title-customer {
+    position: relative;
+    left: -10px;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.user-rows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px darkgray solid;
+    padding-right: 20px;
+}
+
+.user-rows-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    border-top: 1px darkgray solid;
+    padding-right: 20px;
+}
+
+.description-customer {
+    text-align: left;
+    width: 220px;
+}
+
+.promo-role {
+    position: relative;
+    left: -25px;
+}
+
+.column-two-customer {
+    justify-items: right;
+    text-align: left;
+}
+
+#move-text-customer {
+    text-align: left;
+    width: 55%;
+}
+
+.row-box-customer {
+    width: 99%;
+    // overflow: hidden;
+}
+
+#move-text-type {
+    width: 40%;
+}
+.simple-Bar-5 {
+    overflow-x: hidden;
+}
+.filter-btn {
+    color: rgb(60, 66, 87);
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: 4px;
+    padding-right: 8px;
+    padding-left: 8px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-right: 1vw;
+    position: relative;
+    right: 10px;
+    background-color: transparent;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 2px 0px -1px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+}
+
+.customer-btn {
+    background-color: #5267cf;
+    color: white;
+    font-weight: 600;
+    border-radius: 4px;
+    padding-right: 8px;
+    padding-left: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-left: 1vw;
+    position: relative;
+    right: 20px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 2px 0px -1px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+}
+
+#more-btn,
+#total-more-btn {
+    background-color: #fff;
+    color: #000;
+    box-shadow: none;
+    position: relative;
+}
+
+.left-box {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+.more-box {
+    position: absolute;
+    border: 1px solid #000;
+    background-color: #fff;
+    top: 35px;
+    width: 100px;
+    background-color: #fff;
+    z-index: 1000;
+    left: 0px;
+    text-align: left;
+}
+
+.more-box-1 {
+    position: absolute;
+    border: 1px solid #000;
+    background-color: #fff;
+    top: 35px;
+    background-color: #fff;
+    width: 120px;
+    z-index: 1000;
+    left: 0px;
+    text-align: left;
+}
+.email-customer-check {
+    width: 240px;
+}
+.menu-items-customer {
+    width: 100%;
+    height: 30px;
+    padding-left: 6px;
+
+    margin: 5px 0px;
+    display: grid;
+    align-items: center;
+}
+
+.menu-items-customer:hover {
+    background-color: rgba(0, 0, 0, 0.219);
+}
+
+.del-add-text {
+    position: relative;
+    top: -8px;
+}
+
+.form-row-1-customer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+}
+
+.form-row-1-map {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.add-form-field {
+    width: 100%;
+    height: 40px;
+    border: 1px solid darkgray;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.add-form-field-garage {
+    width: 95%;
+    height: 40px;
+    border: 1px solid darkgray;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+
+}
+
+.user-role-select {
+    width: 100%;
+    border: 1px solid darkgray;
+    border-radius: 8px;
+    height: 40px;
+}
+
+#password-customer {
+    margin-bottom: 10px;
+}
+
+.bottom-buttons-customer {
+    margin-top: 20px;
+    float: right;
+}
+
+#see-more {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 100%;
+}
+
+#see-more-1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 100%;
+}
+
+.see-more-customer {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    padding: 10px;
+}
+
+.see-more-customer:focus {
+    background-color: transparent;
+}
+
+#name-garage-1 {
+    width: 230px;
+}
+
+#address-garage-1 {
+    width: 280px;
+    text-align: left;
+}
+
+@media (max-width: 1154px) {
+    .dashboard-card {
+        margin-top: 40px;
+        width: 740px;
+    }
+    #move-text-customer {
+        text-align: left;
+        width: 130px;
+    }
+    .promo-mobile {
+        width: 150px !important;
+    }
+    .mobile-promo-code {
+        position: relative;
+        left: -60px;
+    }
+    .discountamt {
+        position: relative;
+        left: -90px;
+    }
+    #customer-col-3 {
+        position: relative;
+        text-align: center;
+        width: 100px;
+        left: -80px;
+    }
+    #customer-col-2 {
+        position: relative;
+        left: -100px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .dashboard-card {
+        margin-top: 40px;
+        width: 600px;
+    }
+    #move-text-type {
+        position: relative;
+        left: -30px;
+    }
+    .button-mobile-mover {
+        position: relative;
+        left: -30px;
+    }
+    
+    .description-customer {
+        text-align: left;
+        width: 200px;
+    }
+    .email-customer {
+        margin-right: 25px;
+        width: 160px;
+    }
+    .service-order-mobile {
+        display: none;
+    }
+    .promo-mobile {
+        width: 150px !important;
+    }
+    #promo-left-box {
+        margin-right: 0px !important;
+    }
+    #promo-title {
+        width: 100% !important;
+    }
+    .discountamt {
+        position: relative;
+        left: -100px !important;
+    }
+    .promo-role {
+        left: -40px;
+    }
+    .dashboard-card {
+        overflow-x: hidden;
+    }
+    .description-mobile {
+        display: none;
+    }
+    .fix-title-dash {
+        position: relative;
+        left: -80px;
+    }
+}
+
+@media (max-width: 848px) {
+    .card-title {
+        width: 100%;
+    }
+    .mobile-dashboard-title {
+        position: relative;
+        left: -40px;
+    }
+    #customer-dash {
+        left: -30px;
+        font-size: 30px;
+    }
+    .fix-title-dash {
+        position: relative;
+        left: -60px;
+    }
+}
+
+@media (max-width: 646px) {
+    .dashboard-card {
+        height: 100vh;
+        width: 100vw;
+        margin: 0px;
+    }
+    .dashboard-main {
+        background-color: #fff;
+    }
+    .promo-role {
+        display: none;
+    }
+    .dashboard-card {
+        overflow-x: visible;
+    }
+    #left-first-customer {
+        width: 300px;
+    } 
+}
+
+@media (max-width: 600px) {
+    .email-customer-check {
+        width: 210px;
+    }
+    .description-mobile {
+        display: none;
+    }
+    #customer-col-2 {
+        position: relative;
+        text-align: center;
+        left: -70px;
+    }
+    .mobile-promo-code {
+        position: relative;
+        left: 0px;
+    }
+}
+
+@media (max-width: 591px) {
+    #name-garage-1 {
+        width: 190px !important;
+    }
+    #garage-row-one {
+        grid-template-columns: 1fr 2fr;
+        width: 100vw;
+    }
+    .fix-title-dash {
+        position: relative;
+        left: -40px;
+    }
+}
+
+@media (max-width: 550px) {
+    .dashboard-card {
+        height: 94vh;
+    }
+    .card-title {
+        height: 150px;
+    }
+    .button-mobile-mover {
+        position: relative;
+        left: 0px;
+        width: 300px;
+    }
+    .customer-btn {
+        margin-left: 10px;
+    }
+    .filter-btn {
+        margin-right: 10px;
+    }
+    #name-garage-1 {
+        width: 170px !important;
+    }
+    .mobile-promo-code {
+        width: 80px;
+    }
+    #second-row {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    .discountamt {
+        position: relative;
+        left: -50px !important;
+    }
+    #customer-col-2 {
+        position: relative;
+        text-align: center;
+        left: -140px;
+    }
+    .customer-mobile-created {
+        position: relative;
+        left: -50px;
+    }
+}
+
+@media (max-width: 540px) {
+    #customer-dash {
+        left: -20px;
+    }
+}
+
+@media (max-width: 528px) {
+    .description-mobile {
+        display: none;
+    }
+    #left-first-customer {
+        grid-template-columns: 1fr;
+    }
+    .email-customer-check {
+        width: 190px;
+    }
+    #customer-col-2 {
+        position: relative;
+        text-align: center;
+        left: -70px;
+    }
+    #customer-col-3 {
+        position: relative;
+        text-align: center;
+        width: 100px;
+        left: -30px;
+    }
+    #name-garage-1 {
+        width: 150px !important;
+    }
+    .fix-title-dash {
+        position: relative;
+        left: -20px;
+    }
+    // #customer-first-row {
+    //     grid-template-columns: 2fr 3fr;
+    // }
+}
+
+@media (max-width: 506px) {
+    .promo-left-box {
+        width: 100px !important;
+    }
+    .promo-width-mobile {
+        width: 110px;
+    }
+}
+
+@media (max-width: 503px) {
+    #name-garage-1 {
+        width: 170px !important;
+    }
+    #address-garage-1 {
+        width: 150px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .promo-role {
+        display: none;
+    }
+    #second-row {
+        grid-template-columns: 3fr 1fr;
+        text-align: left;
+    }
+    #header-row-promo {
+        grid-template-columns: 3fr 2fr;
+    }
+    #header-row-promo-1 {
+        grid-template-columns: 4fr 2fr;
+    }
+    .mobile-dashboard-title {
+        left: -10px;
+    }
+    .button-mobile-mover {
+        left: 20px;
+    }
+    #customer-dash {
+        left: -10px;
+    }
+    .column-two-customer {
+        grid-template-columns: 1fr 1fr !important;
+    }
+    #slide-shift-customer {
+        position: relative;
+        left: -80px;
+    }
+}
+
+@media (max-width: 462px) {
+    #customer-dash {
+        left: 0px;
+    }
+}
+
+@media (max-width: 458px) {
+    .customer-mobile-created {
+        display: none;
+    }
+    .customer-mobile-created-1 {
+        display: none;
+    }
+    #customer-col-2 {
+        position: relative;
+        text-align: center;
+        left: 10px;
+    }
+    #customer-col-3 {
+        position: relative;
+        text-align: center;
+        width: 100px;
+        left: 110px;
+    }
+    .email-customer {
+        margin-right: 0px;
+        width: 150px;
+    }
+}
+
+@media (max-width: 444px) {
+    #promo-left-box {
+        width: 150px;
+    }
+
+    .promo-mobile {
+        width: 110px;
+    }
+}
+
+@media (max-width: 436px) {
+    .filter-btn {
+        display: none;
+    }
+    #customer-dash {
+        left: 10px;
+    }
+    .button-mobile-mover {
+        left: 80px;
+    }
+}
+
+@media (max-width: 432px) {
+    .mobile-dashboard-title {
+        left: 0px;
+    }
+}
+
+@media (max-width: 420px) {
+    .button-mobile-mover {
+        left: 65px;
+    }
+    #total-more-btn {
+        position: relative;
+        left: -30px;
+    }
+
+}
+
+@media (max-width: 406px) {
+    .button-mobile-mover {
+        left: 55px;
+    }
+    #name-garage-1 {
+        width: 140px !important;
+        align-items: center;
+    }
+    #address-garage-1 {
+        width: 140px !important;
+    }
+    .email-customer {
+        margin-right: 0px;
+        width: 130px;
+    }
+    .promo-mobile {
+        display: none;
+    }
+    .fix-title-dash {
+        position: relative;
+        left: 0px;
+    }
+}
+
+@media (max-width: 388px) {
+    .card-title {
+        grid-template-columns: 1fr;
+    }
+    .mobile-dashboard-title {
+        width: 90vw;
+        margin: 0px;
+        margin-top: 5px;
+    }
+    .button-mobile-mover {
+        width: 90vw;
+        left: 20px;
+        justify-items: right;
+    }
+    .customer-btn,
+    .filter-btn {
+        float: right;
+    }
+    .filter-btn {
+        display: block;
+    }
+    #customer-dash {
+        left: -10px;
+    }
+    .button-mobile-mover {
+        left: 0px;
+    }
+    #customer-col-3 {
+        left: 0px;
+    }
+    .order-date-mobile {
+        display: none;
+    }
+    .column-two-customer {
+        grid-template-columns: 1fr !important;
+    }
+    #customer-col-2 {
+        left: -40px;
+    }
+    #total-more-btn {
+        position: relative;
+        left: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    #customer-col-2 {
+        left: -50px;
+    }
+}
+
+@media (max-width: 359px) {
+    #name-garage-1 {
+        width: 120px !important;
+        align-items: center;
+        font-size: 13px;
+    }
+    #address-garage-1 {
+        width: 130px !important;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 346px) {
+    .button-mobile-mover {
+        left: 20px;
+    }
+    #customer-col-2 {
+        left: 30px;
+    }
+    .simple-Bar-5 {
+        overflow-x: hidden;
+    }
+    // #customer-dash {
+    //     left: -40px;
+    // }
+}
+@media (max-width: 328px) {
+    .filter-btn {
+        display: none;
+    }
+    .first-row {
+        margin-left: 10px;
+        position: relative;
+        left: -10px;
+    }
+    .title-box-promo {
+        position: relative;
+        left: 0px !important;
+    }
+    #customer-dash {
+        left: -10px;
+    }
+}
+
+@media (max-width: 317px) {
+    // .button-mobile-mover {
+    //     left: -30px;
+    // }
+    #customer-dash {
+        left: 0px;
+    }
+    #name-garage-1 {
+        width: 110px !important;
+        align-items: center;
+        font-size: 12px;
+    }
+    #address-garage-1 {
+        width: 120px !important;
+        font-size: 12px;
+    }
+
+}
+
+@media (max-width: 300px) {
+    #header-row-promo,
+    #header-row-promo-1 {
+        grid-template-columns: 5fr 2fr;
+        max-width: 100vw;
+    }
+    .left-row-1 {
+        width: 195px;
+    }
+    .column-two-customer {
+        margin-left: 0px !important;
+        position: relative;
+        left: -20px;
+    }
+    .discountamt {
+        position: relative;
+        left: -23px !important;
+    }
+    #address-garage-1 {
+        position: relative;
+        left: -20px;
+    }
+    .order-total-mobile {
+        position: relative;
+        left: 30px;
+    }
+    .mobile-promo-code {
+        position: relative;
+        width: 80px;
+        float: right;
+        text-align: right;
+        left: -30px;
+    }
+}

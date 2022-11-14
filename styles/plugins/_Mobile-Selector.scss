@@ -1,0 +1,155 @@
+.mobile-container {
+    position: absolute;
+    z-index: 500;
+    background-color: white;
+    border-radius: 32px;
+    height: 41px;
+    left: 20vw;
+    width: 60vw;
+    margin: auto;
+    // width: 50%;
+    justify-content: center;
+    
+}
+.mobile-container-hidden {
+    position: absolute;
+    z-index: 500;
+    background-color: white;
+    border-radius: 32px;
+    height: 41px;
+    left: 20vw;
+    width: 60vw;
+    margin: auto;
+    // width: 50%;
+    justify-content: center;
+    visibility: hidden;
+}
+
+.icon-services-m {
+    position: relative;
+    top: 8px;
+    left: 8px;
+}
+
+.location-input-m {
+    position: relative;
+    left: 45px;
+    bottom: 22px;
+    border: none !important;
+    transition: none;
+    box-shadow: none;
+    border-bottom: none !important;
+}
+
+.services-input {
+    border: none !important;
+    padding-top: 11px;
+    font-size: 15px;
+    opacity: .8;
+    color: #000;
+}
+
+@media (max-width: 606px) {
+    .mobile-container {
+        top: 120px;
+    }
+    .mobile-container-hidden {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 542px) {
+    .mobile-container {
+        top: 90px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-container {
+        top: 95px;
+    }
+    .mobile-container-hidden {
+        bottom: 720px;
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 414px) {
+    .mobile-container {
+        width: 70vw;
+        left: 15vw;
+        top: 100px;
+    }
+    .mobile-container-hidden {
+        width: 70vw;
+        left: 15vw;
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 411px) {
+    .mobile-container {
+        top: 100px;
+    }
+    .mobile-container-hidden {
+        bottom: 500px;
+        visibility: hidden;
+    }
+    @media (min-height: 800px){
+        .mobile-container {
+            top: 100px;
+        }
+        .mobile-container-hidden {
+            visibility: hidden;
+        }
+    }
+}
+
+
+@media (max-width: 375px) {
+    .mobile-container {
+        top: 100px;
+    }
+    .mobile-container-hidden {
+        visibility: hidden;
+    }
+    @media (min-height: 800px) {
+        .mobile-container {
+            top: 100px;
+        }
+        .mobile-container-hidden {
+            visibility: hidden;
+        }
+    }
+}
+
+
+@media (max-width: 360px) {
+    .mobile-container {
+        top: 100px;
+    }
+    .mobile-container-hidden {
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 320px) {
+    .mobile-container {
+        width: 74vw;
+        left: 12vw;
+        top: 100px;
+        overflow: hidden;
+    }
+}
+@media (max-width: 280px) {
+    .mobile-container {
+        width: 98vw;
+        left: 1vw;
+        top: 100px;
+    }
+    .mobile-container-hidden {
+        width: 98vw;
+        left: 1vw;
+        overflow: hidden;
+    }
+}

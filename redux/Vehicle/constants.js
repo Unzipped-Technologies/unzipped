@@ -1,0 +1,8 @@
+export const VEHICLE_MAKE = "VEHICLE_MAKE";
+export const VEHICLE_MODEL = "VEHICLE_MODEL";
+export const VEHICLE_LOADING = "VEHICLE_LOADING";
+export const MAKE_LOADING = "MAKE_LOADING";
+export const MODEL_LOADING = "MODEL_LOADING";
+export const VEHICLE_ERROR = "VEHICLE_ERROR";
+export const VEHICLE_SPACE = "VEHICLE_SPACE";
+export const CLEAR_VEHICLE = "CLEAR_VEHICLE";

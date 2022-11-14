@@ -1,0 +1,102 @@
+.container-six {
+    background-color: #66615c;
+    min-width: 100%;
+    z-index: 1222;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    color: white;
+}
+
+.content-six {
+    padding: 20px 0px;
+    padding-bottom: 40px;
+}
+
+.six-title {
+    font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+    line-height: 1.8em;
+}
+
+.six-content {
+    font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+    line-height: 1.8em;
+    margin-bottom: 25px;
+}
+
+.email-signup-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+
+}
+
+.input-boxes {
+    border: 1px solid rgba(0,0,0,.12);
+    background: #fff;
+    padding: 1.4rem 2rem !important;
+    line-height: 1.2rem !important;
+    font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+}
+
+.input-boxes, 
+.input-button {
+    margin: 5px;
+}
+
+.input-button {
+    position: relative;
+    top: 1px;
+    background-color: white;
+    color: #000;
+    height: 60px;
+    width: 120px;
+    border-radius: 10%;
+    font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    letter-spacing: 0em;
+    text-transform: none;
+    border-color: #fff;
+}
+
+.six-fine-print {
+    font-size: calc((.8 - 1) * 1.2vw + 1rem) !important;
+    opacity: .8;
+    margin: 1rem 0;
+    padding-bottom: 60px;
+    font-family: "proxima-nova","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0em;
+    text-transform: none;
+    line-height: 1.8em;
+}
+
+@media (max-width: 571px) {
+    .form-mobile {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    
+    }
+}

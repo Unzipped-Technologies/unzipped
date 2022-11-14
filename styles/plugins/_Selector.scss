@@ -1,0 +1,811 @@
+.selector-container {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: 1fr;
+    background-color: transparent;
+    z-index: 5 !important;
+    position: relative;
+    min-width: 100%;
+    min-height: 100%;
+    bottom: 1.4vw;
+    margin-right: auto;
+    margin-left: auto;
+    // background-color: #000;
+}
+
+.text-notif {
+    position: relative;
+    top: -10px;
+}
+
+.selector-borders {
+    position: absolute;
+    max-width: 725px;
+    border: 1px solid black;
+    border-radius: 32px;
+    overflow: hidden;
+    width: 725px;
+    // max-width: 850px;
+    height: 60px;
+    background-color: white;
+    z-index: 502;
+
+}
+
+.label-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: 660px;
+}
+
+
+.move-align {
+    float: left;
+    // border: black 1px solid;
+}
+
+.move-align-right {
+    float: right;
+    // border: black 1px solid;
+}
+
+.move-align-input {
+    position: relative;
+    left: 15px;
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    margin: 0;
+    // justify-items: center;
+}
+
+.input-two {
+    right: 10px;
+}
+
+.services-label {
+    position: relative;
+    top: 8px;
+    max-width: 90px;
+    font-size: 12px;
+    font-weight: 500;
+    color: black;
+
+}
+
+.input-three {
+    left: 35px;
+}
+
+.services-input {
+    position: relative;
+    bottom: 10px;
+    max-width: 180px;
+
+    // border: black 1px solid;
+}
+.time-input {
+    position: relative;
+    bottom: 10px;
+    max-width: 200px;
+    // border: black 1px solid;
+}
+.location-input {
+    position: relative;
+    bottom: 10px;
+    max-width: 190px;
+    // border: black 1px solid;
+}
+
+.button-services {
+    position: absolute;
+    top: 4px;
+    // bottom: 3.67vw;
+    right: 8px;
+    background-color: #26a69a;
+    border: none;
+    color: #fff;
+    // right: 10px;
+    z-index: 200;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.button-services:hover {
+    background-color: #16a395e0;
+}
+
+.divider{
+    // margin-right: -15px;
+    position: absolute;
+    width: 1px;
+    background-color: lightgray;
+}
+#divider {
+    margin-left: 214px;
+    margin-top: 15px;
+    min-height: 30px;
+}
+
+#divider-two{
+    margin-left: 448px;
+    margin-top: 15px;
+    min-height: 30px;
+}
+
+.icon-services {
+    position: relative;
+    justify-items: center;
+    font-size: 26px;
+    top: 2px;
+    right: 0px;
+}
+
+.verticleLine {
+    height: '100%';
+    width: 1px;
+    background-color: '#909090';
+    border-right: black 1px solid;
+}
+
+
+///Location popup
+
+.set-location-pop {
+    overflow: hidden;
+    z-index: 1120;
+    position: relative;
+    background-color: white;
+    border-radius: 22px;
+    height: 110px;
+    width: 270px;
+    top: 75px;
+    left: 220px;
+}
+
+.set-pop-container {
+    width: 270px;
+    // border: solid black 1px;
+    top: 23px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    padding: 20px 0;
+}
+
+.set-pop-container:hover {
+    background-color: rgba(211, 211, 211, 0.719);
+}
+
+.logo-left-popup {
+    padding-left: 20px;
+}
+
+#button-mover,
+#button-map {
+    background-color: #9c64cc !important;
+}
+
+.text-location-popup {
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+.time-pick-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.inner-pick-c {
+    width: 460px;
+    height: 100%;
+    border: 1px solid darkgray;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    height: 300px;
+    position: relative;
+    bottom: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.date-display {
+    display: grid;
+    padding-top: 10px;
+    // padding-right: 10%;
+    // padding-left: 10%;
+    width: 451px;
+    height: 60px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    // border-bottom: 1px solid darkgray;
+    // background-color: #9c64cc;
+    justify-items: center;
+    position: relative;
+}
+
+.date-container {
+    background-color: white;
+    // border: 1px solid rgba(94, 94, 94, 0.274);
+    border: 2px #7952b3 solid;//#9c64cc
+    color: #7952b3;
+    border-radius: 32px;
+    width: 60px;
+    margin-right: 2px;
+    margin-left: 2px;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+}
+
+.date-container-one {
+    font-family: poppins;
+    background-color: #7952b3;//rgba(56, 56, 56, 0.192);
+    border: 2px solid #9c64cc;//rgba(0, 0, 0, 0.925);
+    color: rgba(248, 246, 248, 0.986);
+    border-radius: 32px;
+    width: 60px;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+}
+
+.bubble-date {
+    padding: 0px 0px;
+    margin: 2px 0px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.bubble-month {
+    position: relative;
+    bottom: 13px;
+    font-weight: 500;
+    padding: 0px 0px;
+    margin: 2px 0px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.list-times {
+    width: 450px;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.list-container-t {
+    width: 450px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    height: 230px;
+    overflow: hidden;
+}
+
+.simple-Bar-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 450px;
+    // height: 100px;
+}
+
+.simple-Bar-4 {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 99%;
+    // height: 100px;
+}
+
+.list-item-time {
+    border-top: 1px lightgray solid;
+    border-bottom: 1px lightgray solid;
+    height: 70px;
+    width: 440px;
+    display: grid;
+    grid-template-columns: 1fr;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+}
+
+.list-item-time-title {
+    border-top: 1px lightgray solid;
+    border-bottom: 1px lightgray solid;
+    height: 40px;
+    width: 440px;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    box-shadow: 0px 10px 10px -15px rgba(17, 17, 17, 0.61); 
+}
+
+.list-item-time:hover {
+    background-color: lightgray;
+}
+
+.date-time {
+    margin-left: 10%;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.time-t {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    cursor: default;
+}
+
+.time-title {
+    margin-top: 0px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.selected-t {
+    background-color: lightgray;
+}
+
+///Schedule popup
+
+.date-toggle-shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 30px 0;
+    overflow: hidden;
+}
+
+.set-time-pop {
+    overflow: hidden;
+    z-index: 1120;
+    position: absolute;
+    background-color: white;
+    border-radius: 22px;
+    height: 400px;
+    width: 755px;
+    top: 75px;
+}
+
+.date-pop-toggle {
+    display: grid;
+    width: 155px;
+    height: 35px;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    background-color: lightgray;
+    border-radius: 22px;
+    font-weight: 400;
+}
+
+.toggle-text-c {
+    position: relative;
+    left: 6px;
+    top: 7px;
+    padding: 3px 7px;
+    border-radius: 32px;
+}
+
+.toggle-text-t {
+    position: relative;
+    left: 2px;
+    top: 7px;
+    padding: 3px 9px;
+    border-radius: 32px;
+}
+
+.toggled-text-c {
+    position: relative;
+    left: 6px;
+    top: 7px;
+    padding: 3px 7px;
+    border-radius: 32px;
+    background-color: white;
+}
+
+.toggled-text-t {
+    position: relative;
+    top: 7px;
+    left: 2px;
+    padding: 3px 9px;
+    border-radius: 32px;
+    background-color: white;
+}
+
+.toggle-text-c:hover,
+.toggle-text-t:hover {
+    background-color: white;
+}
+
+.react-calendar {
+    border: 0 !important;
+}
+
+.two-calendars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    position: relative;
+    bottom: 50px;
+}
+
+.calendar-view {
+    border: none;
+    outline: none;
+    width: 90%;
+    height: 100%;
+}
+.react-calendar__tile:disabled {
+    border-radius: 0px !important;
+}
+
+.calendar-tile {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+.change-month {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    width: 100%;
+}
+
+.arrow-c {
+    border: none;
+    background-color: transparent;
+    outline: none;
+}
+
+#arrow-c-l {
+    position: relative;
+    right: 130px;
+    bottom: 10px;
+    z-index: 9990;
+}
+
+#arrow-c-r {
+    position: relative;
+    left: 130px;
+    bottom: 10px;
+    z-index: 9990;
+}
+
+.set-service-pop {
+    overflow: hidden;
+    z-index: 1120;
+    position: absolute;
+    background-color: white;
+    border-radius: 22px;
+    height: 450px;
+    width: 755px;
+    top: 75px;
+    border: 1px darkgray solid;
+}
+
+@media (min-width: 2560px) {
+    .selector-container {
+        bottom: -5px;
+    }
+}
+
+@media (max-width: 1850px) {
+    // .input-three {
+    //     margin-left: 1vw;
+    // }
+}
+
+@media (max-width: 1800px) {
+    .selector-container {
+        bottom: 37px;
+    }
+    // .services-label {
+    //     top: 0.45vw;
+    // }
+    
+    // .services-input {
+    //     bottom: 0.7vw;
+    // }
+    // .time-input {
+    //     bottom: 0.7vw;
+    // }
+    // .location-input {
+    //     bottom: 0.7vw;
+    // }
+
+}
+
+@media (max-width: 1700px) {
+    .selector-container {
+        bottom: 33px;
+    }
+//     .divider,
+//     .divider-two {
+//         bottom: 1.55vw;
+//     }
+//    .label-container {
+//        position: relative;
+//        bottom: 0.3vw;
+//        left: 0.2vw;
+//    } 
+}
+
+@media (max-width: 1600px) {
+    .selector-container {
+        bottom: 25px;
+    }
+    // .services-input {
+    //     bottom: 0.8vw;
+    // }
+    // .time-input {
+    //     bottom: 0.8vw;
+    // }
+    // .location-input {
+    //     bottom: 0.8vw;
+    // }
+}
+
+@media (max-width: 1514px) {
+    // .divider,
+    // .divider-two {
+    //     bottom: 2.1vw;
+    // }
+    // .services-input {
+    //     bottom: 1vw;
+    // }
+    // .time-input {
+    //     bottom: 1vw;
+    // }
+    // .location-input {
+    //     bottom: 1vw;
+    // }
+}
+
+@media (max-width: 1450px) {
+    .selector-container {
+        bottom: 6px;
+    }
+}
+
+@media (max-width: 1300px) {
+    .selector-container {
+        bottom: 4px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .selector-container {
+        bottom: 12px;
+    }
+    .right-menu-nav {
+        bottom: 12px;
+    }
+}
+
+@media (max-width: 1006px) {
+    .selector-container {
+        top: 28px;
+    }
+}
+
+@media (max-width: 744px) {
+    .site-scheduler {
+        display: none;
+    }
+    .center-m {
+        width: 100vw;
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+}
+@media (min-width: 744px) {
+    .mobile-scheduler {
+        display: none;
+    }
+}
+
+@media (max-width: 743px) {
+    .two-calendars {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        position: relative;
+        bottom: 50px;
+    } 
+    .calendar-2 {
+        display: none;
+    }
+    .change-month {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+        z-index: 1000;
+        color: #000;
+        width: 30%;
+        left: 125px;
+    }
+}
+
+@media (max-width: 500px) {
+    .inner-pick-c {
+        width: 390px;
+    }
+    .list-item-time {
+        width: 390px;
+    }
+}
+
+@media (max-width: 415px) {
+    .vohnt-product-offerings-cal {
+        margin-top: 20px;
+    }
+    .inner-pick-c {
+        width: 95vw;
+    }
+    .list-item-time {
+        height: 70px;
+        width: 95vw;
+    }
+    .date-container {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        position: relative;
+        left: 0px;
+    }
+    .date-display {
+        display: grid;
+        padding-top: 10px;
+        margin-right: 0%;
+        margin-left: 0%;
+        padding-right: 0%;
+        padding-left: 0%;
+        width: 95vw;
+        height: 60px;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        justify-items: center;
+        position: relative;
+        left: -30px;
+    }
+    .date-container-one {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        position: relative;
+        left: 0px;
+    }
+    .bubble-date {
+        font-size: 18px;
+        position: relative;
+        top: 4px;
+        right: 0px;
+    } 
+    .bubble-month {
+        bottom: 4px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .set-pop-container-time {
+        position: relative;
+        top: -10px;
+        z-index: 90000;
+    }
+    .vohnt-product-offerings-cal {
+        margin-top: 30px;
+    }
+    .date-display {
+        left: -48px;
+    }
+    .date-container,
+    .date-container-one {
+        position: relative;
+        left: 0px;
+    }
+}
+
+@media (max-width: 360px) {
+    .two-calendars {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        position: relative;
+        bottom: 50px;
+    } 
+    .react-calendar {
+        width: 270px !important;
+        height: 50%;
+    }
+    .calendar-tile {
+        height: 35px;
+        width: 30px;
+    }   
+    .change-month {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+        z-index: 1000;
+        color: #000;
+        width: 10%;
+        left: 125px;
+    }
+    #arrow-c-l {
+        position: relative;
+        right: 130px;
+        bottom: 10px;
+        z-index: 9990;
+    }
+    
+    #arrow-c-r {
+        position: relative;
+        left: 90px;
+        bottom: 10px;
+        z-index: 9990;
+    }
+    .date-display {
+        left: -55px;
+    }
+}
+
+@media (max-width: 320px) {
+    .set-pop-container-time {
+        position: relative;
+        top: -10px;
+        z-index: 90000;
+    }
+    .vohnt-product-offerings-cal {
+        margin-top: 10px;
+    }
+    .date-display {
+        left: -134px;
+    }
+    .date-container,
+    .date-container-one {
+        width: 57px;
+        height: 42px;
+        border-radius: 32px;
+        position: relative;
+        left: 0px;
+    }
+}
+
+@media (max-width: 300px) {
+
+    .vohnt-product-offerings-cal {
+        margin-top: 20px;
+    }
+    .date-display {
+        left: -90px;
+        max-width: 240px;
+        overflow: hidden;
+    }
+    .date-container,
+    .date-container-one {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        position: relative;
+        left: -51px;
+
+    }
+}
+
+///services

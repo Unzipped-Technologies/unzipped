@@ -1,0 +1,12 @@
+.see-order-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+@media (max-width: 647px) {
+    .see-order-form {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}

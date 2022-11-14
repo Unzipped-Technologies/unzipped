@@ -1,0 +1,107 @@
+.section-five-container {
+    z-index: 1222;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    background-color: #ebeaeb;
+    padding: 40px;
+    text-align: center;
+}
+
+.container-sec-five {
+    position: relative;
+    bottom: 30px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+#learn-button {
+    position: relative;
+    top: 0px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.slogan-sec-five {
+    line-height: 10vh;
+    
+}
+
+.book-button {
+    background-color: #000;
+    color: white;
+    font-weight: 400;
+    font-style: normal;
+    text-transform: none;
+    font-size: 1.3vw;
+    text-align: center;
+    border-radius: .4rem;
+    width: 10vw;
+    height: 3vw;
+    margin-top: 20px;
+}
+
+@media (max-width: 1639px) {
+    #learn-button {
+        top: -10px;
+    }
+}
+
+@media (max-width: 1045px) {
+    #learn-button {
+        top: -20px;
+    }
+}
+
+@media (max-width: 703px) {
+    .slogan-sec-five {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 587px) {
+    .slogan-sec-five {
+        font-size: 38px;
+    }
+}
+
+@media (max-width: 569px) {
+    .slogan-sec-five {
+        padding-top: 0;
+        line-height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .slogan-sec-five {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 439px) {
+    .slogan-sec-five {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 387px) {
+    .slogan-sec-five {
+        font-size: 27px;
+        line-height: 50px;
+    }
+
+}
+
+@media (max-width: 360px) {
+    .slogan-sec-five {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 333px) {
+    .slogan-sec-five {
+        font-size: 22px;
+    }
+}

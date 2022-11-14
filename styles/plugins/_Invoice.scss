@@ -1,0 +1,491 @@
+
+
+.invoice-content {
+    width: 80vw;
+    overflow: hidden auto;
+}
+
+.invoice-whole {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    max-width: 100%;
+}
+
+#make-an-order {
+    margin-top: 50px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.invoice-box {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 65vw;
+    border: 1px darkgray solid;
+    margin-top: 40px;
+}
+
+#services-invoice {
+    position: relative;
+    left: 200px;
+}
+
+.invoice-title {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    position: relative;
+    width: 100%;
+    background-color: #f5f5f5;
+    box-shadow: 0px 10px 10px -15px darkgray; 
+    border-bottom: 1px darkgray solid;
+    padding: 0 5%;
+}
+
+.invoice-text {
+    margin: 0px;
+    padding: 0px;
+    line-height: 28px;
+}
+
+.user-i-container {
+    width: 100%;
+    padding-left: 5%;
+    padding-right: 5%;
+    border-bottom: 1px darkgray solid;
+}
+
+.view-invoice-button {
+    color: blue;
+    position: absolute;
+    right: 4%;    
+    top: 10px;
+}
+
+.titles-invoice {
+    font-weight: 600;
+    line-height: 22px;
+    padding: 0px;
+    margin: 0px;
+    padding-top: 10px;
+}
+
+.sub-invoice {
+    line-height: 16px;
+    padding: 0px;
+    margin: 0px;
+    padding-bottom: 10px;
+}
+
+.sub-invoice-2 {
+    line-height: 16px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.sub-invoice-3 {
+    line-height: 16px;
+    padding: 0px;
+    margin: 0px;
+    padding-bottom: 20px;
+}
+
+.invoice-user {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 85%;
+    align-items: center;
+    justify-items: left;
+}
+
+.phone-invoice {
+    position: relative;
+    left: 60px;
+}
+
+.invoice-btn {
+    outline: none;
+    border: none;
+    background-color: transparent;
+    color: #1428a0;
+    font-weight: 600;
+}
+.invoice-btn:hover,
+.invoice-btn:focus {
+    color: #060c30d0;
+    background-color: transparent;
+}
+
+.invoice-order {
+    width: 100%;
+    background-color: #f5f5f5;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 20px;
+    padding-right: 10%;
+    padding-left: 5%;
+    padding-bottom: 20px;
+    box-shadow: 0px 10px 10px -15px darkgray; 
+}
+
+.product-image {
+    max-width: 140px;
+}
+
+.invoice-left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}
+
+.invoice-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: right;
+    margin-top: 50px;
+}
+
+.track-return-button {
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+    top: -0px;    
+    max-height: 150px;
+}
+
+.tracker-btn {
+    width: 230px;
+    height: 50px;
+    border-radius: 32px;
+    outline: transparent;
+    border: 1px solid darkgray;
+    background-color: white;
+}
+
+#cost-invoice {
+    color: #1428a0;
+    font-weight: 500;
+    padding: 0px;
+    margin: 0px;
+    padding-top: 15px;
+}
+
+.product-subtext {
+    color: #363636d3;
+    font-weight: 600;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.right-product-img-container {
+    position: relative;
+    left: -50px;
+    top: 20px;
+}
+
+.invoice-left-box {
+    position: relative;
+    left: -50px;
+}
+
+.left-status {
+    color: #1428a0;
+    font-weight: 600;
+    margin: 0;
+}
+
+@media (max-width: 1700px) {
+    .invoice-user {
+        width: 100%;
+    }
+    #services-invoice {
+        position: relative;
+        left: 130px;
+    }
+}
+
+@media (max-width: 1600px) {
+    .invoice-user {
+        width: 100%;
+    }
+    #services-invoice {
+        position: relative;
+        left: 100px;
+    }
+}
+
+@media (max-width: 1411px) {
+    .invoice-box {
+        width: 75vw;
+    }
+    #services-invoice {
+        position: relative;
+        left: 40px;
+    }
+}
+
+@media (max-width: 1195px) {
+    .product-image {
+        position: relative;
+        left: -20px;
+    }
+    .right-product-img-container {
+        left: -10px;
+    }
+    .invoice-right {
+        position: relative;
+        right: -30px;
+    }
+}
+
+@media (max-width: 1039px) {
+    .invoice-box {
+        width: 80vw;
+    }
+    .invoice-right {
+        position: relative;
+        right: -40px;
+    }
+    .tracker-btn {
+        width: 180px;
+    }
+    .invoice-left-box {
+        left: -30px;
+    }
+}
+
+@media (max-width: 833px) {
+    .invoice-box {
+        width: 90vw;
+    }
+    .invoice-content {
+        width: 90vw;
+        overflow: hidden auto;
+    }
+}
+
+@media (max-width: 833px) {
+    .invoice-content {
+        width: 95vw;
+        overflow: hidden auto;
+    }
+    .invoice-box {
+        width: 95vw;
+    }
+    #services-invoice {
+        position: relative;
+        left: 10px;
+    }
+
+}
+@media (min-width: 732px) {
+    #mobile-name {
+        display: none;
+    }
+}
+@media (max-width: 731px) {
+    .invoice-user {
+        grid-template-columns: 1fr;
+    }
+    .invoice-pickup-l {
+        margin-top: 10px;
+    }
+    .phone-invoice {
+        left: 0px;
+    }
+    #email-invoice {
+        margin-bottom: 10px;
+    }
+    .invoice-order {
+        grid-template-columns: 1fr;
+        justify-items: left;
+    }
+    .invoice-right {
+        grid-template-columns: 1fr;
+        width: 100%;
+        justify-items: center;
+    }
+    .invoice-left {
+        grid-template-columns: 1fr;
+        justify-items: left;
+    }
+    .left-product-img-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 340px;
+        margin-top: 10px;
+    }
+    .status-mobile {
+        display: none;
+    }
+    #desk-name {
+        display: none;
+    }
+    #mobile-name {
+        font-size: 20px;
+    }
+    .invoice-right,
+    .invoice-left-box {
+        text-align: center;
+    }
+    .tracker-btn {
+        width: 90vw;
+        position: relative;
+        left: -20px;
+        margin-bottom: 10px;
+    }
+    .invoice-left-box {
+        position: relative;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        width: 100%;
+    }
+    .invoice-right {
+        position: relative;
+        right: 0px;
+        display: grid;
+        justify-items: center;
+        width: 100%;
+        margin-top: 30px;
+    }
+    .left-status {
+        position: relative;
+        left: 10px;
+        margin-bottom: 20px;
+    }
+    .invoice-text {
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    #services-invoice {
+        margin-top: 0px;
+        padding-top: 0px;
+    }
+    .invoice-whole {
+        margin-top: 0px;
+        padding-top: 0px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 545px) {
+    .tracker-btn {
+        left: -14px;
+    }
+    #services-invoice {
+        position: relative;
+        left: 0px;
+    }
+}
+
+@media (max-width: 522px) {
+    .invoice-right {
+        margin-top: 10px;
+    }
+    #services-invoice {
+        position: relative;
+        left: 0px;
+    }
+}
+
+@media (max-width: 458px) {
+    .tracker-btn {
+        left: -10px;
+    }
+}
+
+@media (max-width: 398px) {
+    .tracker-btn {
+        left: -15px;
+    }
+}
+
+@media (max-width: 375px) {
+    .invoice-title {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .invoice-btn {
+        position: relative;
+        top: 80px;
+        left: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .tracker-btn {
+        left: -20px;
+    }
+    .invoice-title {
+        grid-template-columns: 1fr 1fr 1fr;
+        width: 96vw;
+        padding-left: 5px;
+    }
+    .invoice-btn {
+        position: relative;
+        top: 80px;
+        left: 10px;
+    }
+}
+@media (max-width: 356px) {
+    .tracker-btn {
+        left: -25px;
+    }
+}
+
+@media (max-width: 344px) {
+    .tracker-btn {
+        margin-left: 0px;
+        left: -30px;
+        margin-bottom: 5px;
+        // width: 95vw;
+    }
+    .left-status {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 332px) {
+    .track-return-button {
+        justify-items: center;
+    }
+    .tracker-btn {
+        margin-left: 0px;
+        left: -35px;
+        margin-bottom: 5px;
+        // width: 95vw;
+    }
+    .left-status {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 332px) {
+    .tracker-btn {
+        left: -40px;
+    }
+}
+
+@media (max-width: 280px) {
+    .left-status {
+        left: 18px;
+    }
+    .tracker-btn {
+        left: -11px;
+    }
+    .left-product-img-container {
+        width: 260px;
+    }
+    .invoice-title {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .invoice-btn {
+        position: relative;
+        top: 90px;
+        left: 10px;
+    }
+}

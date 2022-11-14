@@ -1,0 +1,44 @@
+#next-button {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    border-radius: 0px;
+    width: 80px;
+    height: 40px;
+    z-index: 40000;
+}
+
+#prev-button {
+    position: absolute;
+    bottom: 40px;
+    right: 150px;
+    border-radius: 0px;
+    width: 80px;
+    height: 40px;
+    z-index: 400000;
+}
+
+#select-user {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding-left: 20px;
+}
+
+#select-user:hover {
+    background-color: lightgray;
+}
+
+.index-rows {
+    border-top: lightgray 1px solid;
+}
+
+.index-rows-1 {
+    border-top: lightgray 1px solid;
+    background-color: lightgray;
+}
+
+.hotel-service-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+}

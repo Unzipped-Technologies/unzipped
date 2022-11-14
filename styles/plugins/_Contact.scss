@@ -1,0 +1,236 @@
+.contact-outer-container {
+    width: 100vw;
+    display: grid;
+    justify-items: center;
+}
+
+.split-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    width: 1200px;
+    margin-top: 80px;
+}
+
+.contact-title {
+    font-weight: 500;
+}
+
+.contact-left {
+    padding: 0px 20px;
+}
+
+.text-size-contact {
+    font-size: 18px;
+    width: 90%;
+}
+
+.contact-img-container {
+    margin-top: 80px;
+    overflow: hidden;
+    height: 500px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.contact-img {
+    width: 100vw;
+    position: relative;
+    top: -350px;
+}
+
+#contact-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 100vw;
+}
+
+.image-title {
+    position: relative;
+    top: 160px;
+    color: #fff;
+    z-index: 1000;
+    font-weight: 600;
+}
+
+@media (max-width: 1172px) {
+    .split-content {
+        grid-template-columns: 1fr;
+        margin-top: 10px;
+        width: 900px;
+    }
+    .contact-right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+        position: relative;
+        left: -50px;
+    }
+    .left-contact-text {
+        position: relative;
+        top: 50px;
+    }
+}
+
+@media (max-width: 866px) {
+    .image-title {
+        top: 100px;
+    }
+    .contact-img {
+        top: -220px;
+    }
+    .contact-img-container {
+        height: 340px;
+    }
+    .contact-right {
+        width: 650px;
+    }
+}
+
+@media (max-width: 814px) {
+    .contact-left {
+        max-width: 600px;
+        position: relative;
+        left: -100px;
+    }
+}
+
+@media (max-width: 756px) {
+    .split-content {
+        justify-items: left;
+    } 
+    .contact-left {
+        left: 0px;
+    }
+    .contact-right {
+        left: 0px;
+    }
+    .image-title {
+        font-size: 38px;
+    }
+    .contact-img-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 660px) {
+    .contact-right {
+        grid-template-columns: 1fr;
+    }
+    .left-contact-text {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: left;
+        width: 70%;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 590px) {
+    .contact-right {
+        justify-items: left;
+        margin-left: 10px;
+    }
+}
+
+@media (min-width: 543px) {
+    .mobile-map-contact {
+        display: none;
+    }
+}
+
+@media (max-width: 542px) {
+    .desk-map-contact {
+        display: none;
+    }
+    .mobile-map-contact {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        width: 100vw;
+    }
+    .contact-img {
+        top: -180px;
+    }
+    .contact-img-container {
+        height: 250px;
+        margin-top: 20px;
+    }
+    .image-title {
+        top: 50px
+    }
+    .contact-title {
+        font-size: 22px;
+    }
+    .text-size-contact {
+        font-size: 16px;
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 484px) {
+    .image-title {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 458px) {
+    .contact-title {
+        font-size: 19px;
+    }
+    .text-size-contact {
+        font-size: 14px;
+        max-width: 90vw;
+    }
+}
+
+@media (max-width: 384px) {
+    .image-title {
+        font-size: 24px;
+    }
+    .contact-img-container {
+        height: 250px;
+        margin-top: 20px;
+    }
+    .image-title {
+        top: 30px
+    }
+    .contact-img {
+        top: -120px;
+    }
+}
+
+@media (max-width: 354px) {
+    .left-contact-text {
+        width: 50%;
+    }
+    .contact-title {
+        font-size: 16px;
+    }
+    .text-size-contact {
+        font-size: 14px;
+        max-width: 85vw;
+    }
+    .mobile-map-contact {
+        width: 100vw;
+        padding: 0px;
+        margin-left: -10px;
+    }
+}
+
+@media (max-width: 296px) {
+    .image-title {
+        font-size: 20px;
+    }
+    .contact-img {
+        top: -90px;
+    }
+}
+
+@media (max-width: 280px) {
+    .left-contact-text {
+        width: 40%;
+    }
+}

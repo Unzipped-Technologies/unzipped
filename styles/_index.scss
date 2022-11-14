@@ -1,0 +1,37 @@
+/* animated heart feature */
+.heart {
+    color: #EB5E28;
+    animation: heathing 1s ease infinite; 
+    text-decoration: none;
+}
+  
+  @keyframes heathing {
+    0% {
+      transform: scale(0.75); }
+    20% {
+      transform: scale(1); }
+    40% {
+      transform: scale(0.75); }
+    60% {
+      transform: scale(1); }
+    80% {
+      transform: scale(0.75); }
+    100% {
+      transform: scale(0.75); } }
+
+/* Button styling */
+.btn-round {
+    border-radius: 30px; }
+
+.btn-just-icon {
+    border-radius: 50px;
+    height: 40px;
+    width: 40px;
+    min-width: 40px;
+    padding: 8px; }
+    .btn-just-icon.btn-sm {
+        padding: 4px !important; }
+    .btn-just-icon i {
+        font-size: 16px;
+        padding: 2px 0px; }
+

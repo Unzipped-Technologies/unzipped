@@ -1,0 +1,75 @@
+.tabs-container {
+    width: 100%;
+    display: grid;
+    justify-items: left;
+    margin-top: 15px;
+}
+
+.admin-tabs {
+    display: grid;
+    width: 50%;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    justify-items: center;
+    cursor: default;
+}
+
+.tab-selected {
+    border-top: solid 1px lightgray;
+    border-left: solid 1px lightgray;
+    border-right: solid 1px lightgray;
+    border-bottom: solid white 3px;
+    position: relative;
+    top: 2px;
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    z-index: 10;
+}
+
+.tab-not-selected {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    position: relative;
+    top: 2px;
+}
+
+.garage-admin-container {
+    display: grid;
+    justify-items: center;
+}
+
+.line-admin {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px lightgray solid;
+    position: relative;
+    width: 95%;
+    z-index: 9;
+}
+
+.admin-subtext {
+    text-align: center;
+}
+
+.status-box {
+    position: absolute;
+    background-color: white;
+    border: 1px lightgray solid;
+    width: 150px;
+    display: grid;
+    justify-items: center;
+    text-align: left;
+}
+
+.status-line {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    cursor: default;
+}
+
+.status-line:hover {
+    background-color: lightgray;
+
+}

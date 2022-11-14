@@ -1,0 +1,920 @@
+///css for other car image
+// .background-div-head {
+//     position: absolute;
+//     width: 100vw;
+//     background-color: #000;
+//     display: grid;
+//     grid-template-columns: 1fr;
+//     padding-top: 0;
+//     margin-top: 0;
+// }
+
+// .header-pic {
+//     justify-items: center;
+//     margin: auto;
+//     padding: 60px 50px;
+//     padding-bottom: 100px;
+//     padding-top: 40px;;
+//     max-width: 97vw;
+// }
+
+.background-div-head {
+    position: absolute;
+    min-width: 100vw;
+    background-color: #000;
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-top: 0;
+    margin-top: 0;
+    z-index: 1;
+    top: 115px;
+}
+
+.header-pic {
+    justify-items: center;
+    margin: auto;
+    padding: 60px 50px;
+    padding-bottom: 100px;
+    padding-top: 5vw;
+    height: auto;
+    width: 95vw;
+}
+.header-pic-mobile {
+    position: relative;
+    justify-items: center;
+    margin: auto;
+    padding: 60px 0px;
+    height: auto;
+    width: 100vw;
+    padding-top: 100px;
+    top: 20px;
+    // left: 60px;
+    padding-bottom: 120px;
+    background-color: #000;
+}
+
+.vohnt-slogan {
+    position: absolute;
+    z-index: 2000;
+    color: #fff;
+    top: 450px;
+    left: 18vw;
+    font-size: 60px;
+}
+
+.enjoy {
+    font-style: italic;
+}
+
+.text-container-c {
+    position: absolute;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100vw;
+    justify-items: center;
+    top: 210px;
+    max-height: 55px;
+    z-index: 999;
+    color: black;
+    background-color: #ebeaeb;
+}
+
+.below-header {
+    position: relative;
+    color: #000;
+    font-weight: 200;
+    text-align: center;
+    font-size: 17px;
+    max-width: 85vw;
+    bottom: 13px;
+}
+
+@media (max-width: 2560px) {
+    .vohnt-slogan {
+        top: 720px;
+        left: 10vw;
+    }
+    .text-container-c {
+        top: 995px;
+        max-height: 115px;
+    }
+    
+    .below-header {
+        font-size: 26px;
+        max-width: 105vw;
+        bottom: 2px;
+    }
+    .header-pic {
+        padding-bottom: 20px;
+    }
+}
+
+@media (max-width: 1920px) {
+    .vohnt-slogan {
+        top: 520px;
+        left: 10vw;
+    }
+    .text-container-c {
+        top: 735px;
+        max-height: 115px;
+    }
+    
+    .below-header {
+        font-size: 24px;
+        max-width: 85vw;
+        bottom: 2px;
+    }
+    .header-pic {
+        padding-bottom: 20px;
+    }
+}
+
+
+@media (max-width: 1800px) {
+    .text-container-c {
+        top: 675px;
+        max-height: 115px;
+    }
+}
+
+@media (max-width: 1725px) {
+    .vohnt-slogan {
+        top: 400px;
+    }
+}
+
+@media (max-width: 1736px) {
+    .text-container-c {
+        top: 590px;
+        max-height: 65px;
+    }
+    
+    .below-header {
+        font-size: 22px;
+        max-width: 85vw;
+        bottom: 6px;
+    }
+}
+@media (max-width: 1680px) {
+    .text-container-c {
+        top: 640px;
+        max-height: 75px;
+    }
+    
+    .below-header {
+        bottom: 2px;
+    }
+}
+@media (max-width: 1640px) {
+    .text-container-c {
+        top: 610px;
+    }
+}
+@media (max-width: 1600px) {
+    .text-container-c {
+        top: 610px;
+    }
+}
+@media (max-width: 1573px) {
+    .text-container-c {
+        top: 600px;
+    }
+}
+@media (max-width: 1573px) {
+    .text-container-c {
+        top: 590px;
+    }
+}
+@media (max-width: 1530px) {
+    .text-container-c {
+        top: 580px;
+    }
+}
+@media (max-width: 1513px) {
+    .vohnt-slogan {
+        top: 350px;
+    }
+}
+@media (max-width: 1505px) {
+    .text-container-c {
+        top: 570px;
+    }
+}
+@media (max-width: 1480px) {
+    .text-container-c {
+        top: 560px;
+    }
+}
+@media (max-width: 1455px) {
+    .text-container-c {
+        top: 550px;
+    }
+}
+
+@media (max-width: 1450px) {
+    .header-pic {
+        padding: 60px 5px;
+        padding-top: 6.5vw;
+        padding-bottom: 20px;
+    }
+    .text-container-c {
+        top: 590px;
+        max-height: 65px;
+    }
+    
+    .below-header {
+        font-size: 22px;
+        max-width: 85vw;
+        bottom: 8px;
+    }
+}
+
+@media (max-width: 1395px) {
+    .text-container-c {
+        top: 550px;
+    }
+}
+
+@media (max-width: 1366px) {
+    .text-container-c {
+        top: 575px;
+        max-height: 65px;
+    }
+    
+    .below-header {
+        font-size: 20px;
+        max-width: 85vw;
+        bottom: 4px;
+    }
+    .text-container-c {
+        top: 540px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .text-container-c {
+        top: 530px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .text-container-c {
+        top: 520px;
+    }
+}
+
+@media (max-width: 1231px) {
+    .text-container-c {
+        top: 510px;
+    }
+}
+
+@media (max-width: 1228px) {
+    .vohnt-slogan {
+        top: 300px;
+    }
+}
+
+
+@media (max-width: 1205px) {
+    .text-container-c {
+        top: 500px;
+    }
+}
+
+@media (max-width: 1180px) {
+    .text-container-c {
+        top: 490px;
+    }
+}
+
+@media (max-width: 1160px) {
+    .text-container-c {
+        top: 475px;
+    }
+}
+
+@media (max-width: 1127px) {
+    .header-pic {
+        padding: 80px 0px;
+        padding-bottom: 40px;
+        width: 100vw;
+    }
+    .text-container-c {
+        top: 505px;
+    }
+}
+
+@media (max-width: 1115px) {
+    .text-container-c {
+        top: 490px;
+    }
+    .vohnt-slogan {
+        font-size: 50px;
+    }
+}
+@media (max-width: 1081px) {
+    .text-container-c {
+        top: 470px;
+
+    }
+}
+
+@media (max-width: 1024px) {
+    .header-pic-mobile {
+        padding-bottom: 50px;
+    }
+    .text-container-c {
+        top: 465px;
+        max-height: 95px;
+    }
+    
+    .below-header {
+        font-size: 26px;
+        max-width: 80vw;
+        bottom: 15px;
+    }
+}
+
+@media (max-width: 1013px) {
+    .text-container-c {
+        top: 450px;
+
+    }
+}
+
+@media (min-width: 1006px) {
+    .header-pic-mobile {
+        display: none;
+    }
+}
+
+@media (max-width: 1006px) {
+    .header-pic {
+        display: none;
+    }
+    .vohnt-slogan {
+        top: 380px;
+        left: 10vw;
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 1004px) {
+    .text-container-c {
+        top: 570px;
+
+    }
+}
+
+@media (max-width: 917px) {
+    .text-container-c {
+        top: 560px;
+
+    }
+}
+
+@media (max-width: 901px) {
+    .text-container-c {
+        top: 540px;
+
+    }
+}
+
+@media (max-width: 873px) {
+    .text-container-c {
+        top: 530px;
+
+    }
+}
+@media (max-width: 844px) {
+    .text-container-c {
+        top: 515px;
+    }
+    .vohnt-slogan {
+        font-size: 44px;
+    }
+}
+@media (max-width: 800px) {
+    .text-container-c {
+        top: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-pic-mobile {
+        padding-bottom: 60px;
+    }
+    .text-container-c {
+        top: 490px;
+        max-height: 70px;
+    }
+    
+    .below-header {
+        font-size: 19px;
+        max-width: 80vw;
+        bottom: 11px;
+    }
+    .vohnt-slogan {
+        top: 330px;
+        left: 4vw;
+    }
+}
+
+@media (max-width: 744px) {
+    .header-pic-mobile {
+        padding: 70px 0;
+        padding-bottom: 70px;
+    }
+    .vohnt-slogan {
+        top: 300px;
+        font-size: 40px;
+    }
+    .text-container-c {
+        top: 455px;
+    }
+}
+
+@media (max-width: 720px) {
+    .text-container-c {
+        top: 445px;
+    }
+}
+
+@media (max-width: 705px) {
+    .text-container-c {
+        top: 420px;
+    }
+}
+
+@media (max-width: 670px) {
+    .text-container-c {
+        top: 400px;
+    }
+    .vohnt-slogan {
+        top: 260px;
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 647px) {
+    .vohnt-slogan {
+        top: 260px;
+    }
+}
+
+@media (max-width: 647px) {
+    .vohnt-slogan {
+        top: 220px;
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 670px) {
+    .text-container-c {
+        top: 370px;
+    }
+    .header-pic-mobile {
+        padding-bottom: 10px;
+    }
+}
+
+@media (max-width: 606px) {
+    .vohnt-slogan {
+        top: 180px;
+        font-size: 32px;
+    }
+    .background-div-head {
+        max-height: 350px;
+    }
+    .header-pic-mobile {
+        padding: 5px 0;
+        bottom: 20px;
+        z-index: 300;
+    }
+    .text-container-c {
+        top: 295px;
+        max-height: 65px;
+    }
+    
+    .below-header {
+        font-size: 17px;
+        max-width: 80vw;
+        bottom: 8px;
+    }
+}
+
+@media (min-width: 543px){
+    .header-pic-mobile-2 {
+        display: none;
+    }
+}
+
+@media (max-width: 543px) {
+    .background-div-head {
+        bottom: 230px;
+        max-height: 229px;
+    }
+    .header-pic-mobile {
+        position: absolute;
+        padding: 0px 0;
+        padding-bottom: 0px;
+        margin-bottom: 0;
+        bottom: 20px;
+        z-index: 300;
+    }
+    .header-pic-mobile {
+        display: none;
+    }
+    .header-pic-mobile-2 {
+        position: relative;
+        bottom: 12px;
+        justify-items: center;
+        margin: auto;
+        padding: 0px 0px;
+        height: auto;
+        width: 100vw;
+        z-index: 999;
+        background-color: #000;
+        // left: 60px;
+        // padding-bottom: 100px;
+    }
+    .vohnt-slogan {
+        top: 100px;
+        font-size: 30px;
+    }
+    .text-container-c {
+        top: 210px;
+        max-height: 55px;
+    }
+    .below-header {
+        font-size: 17px;
+        max-width: 85vw;
+        bottom: 13px;
+    }
+}
+@media (max-width: 533px) {
+    .background-div-head {
+        max-height: 208px;
+    }
+    .text-container-c {
+        top: 200px;
+    }
+    .header-pic-mobile {
+        padding-top: 10px;
+    }
+}
+@media (max-width: 525px) {
+    .background-div-head {
+        max-height: 208px;
+    }
+    .text-container-c {
+        top: 200px;
+    }
+}
+@media (max-width: 519px) {
+    .background-div-head {
+        max-height: 206px;
+    }
+    .text-container-c {
+        top: 195px;
+    }
+}
+@media (max-width: 507px) {
+    .background-div-head {
+        max-height: 204px;
+    }
+    .text-container-c {
+        top: 190px;
+    }
+}
+
+@media (max-width: 500px) {
+    .background-div-head {
+        bottom: 230px;
+        max-height: 211px;
+    }
+    .vohnt-slogan {
+        top: 80px;
+        font-size: 27px;
+        left: 30px;
+    }
+    .text-container-c {
+        top: 190px;
+        max-height: 55px;
+    }
+    .below-header {
+        font-size: 17px;
+        max-width: 87vw;
+        bottom: 13px;
+    }
+}
+@media (max-width: 480px) {
+    .background-div-head {
+        max-height: 210px;
+    }
+    .header-pic-mobile {
+        padding-bottom: 0px;
+    }
+    .vohnt-slogan {
+        top: 80px;
+        font-size: 26px;
+    }
+    .text-container-c {
+        top: 180px;
+        max-height: 55px;
+    }
+    .below-header {
+        font-size: 15px;
+        max-width: 85vw;
+        bottom: 10px;
+    }
+}
+@media (max-width: 489px) {
+    .background-div-head {
+        max-height: 202px;
+    }
+    .text-container-c {
+        top: 185px;
+    }
+}
+
+@media (max-width: 481px) {
+    .background-div-head {
+        max-height: 202px;
+    }
+    .text-container-c {
+        top: 180px;
+    }
+}
+
+@media (max-width: 463px) {
+    .background-div-head {
+        max-height: 199px;
+    }
+}
+
+@media (max-width: 451px) {
+    .background-div-head {
+        max-height: 190px;
+    }
+    .vohnt-slogan {
+        top: 80px;
+        font-size: 25px;
+    }
+    .text-container-c {
+        top: 170px;
+        max-height: 55px;
+    }
+    .header-pic-mobile {
+        padding-top: 20px;
+        background-color: #000;
+    }
+}
+@media (max-width: 441px) {
+    .vohnt-slogan {
+        top: 85px;
+        left: 8vw;
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 433px) {
+    .background-div-head {
+        max-height: 190px;
+    }
+    .text-container-c {
+        top: 160px;
+    }
+    .vohnt-slogan {
+        top: 80px;
+        left: 8vw;
+        font-size: 23px;
+    }
+}
+@media (max-width: 430px) {
+    .background-div-head {
+        max-height: 187px;
+    }
+}
+@media (max-width: 419px) {
+    .background-div-head {
+        max-height: 184px;
+    }
+    .text-container-c {
+        top: 160px;
+    }
+}
+@media (max-width: 414px) {
+    .background-div-head {
+        bottom: 230px;
+        max-height: 178px;
+    }
+    .header-pic-mobile {
+        position: absolute;
+        padding: 0px 0;
+        padding-bottom: 0px;
+        margin-bottom: 0;
+        bottom: 20px;
+        z-index: 300;
+    }
+    .vohnt-slogan {
+        top: 70px;
+        left: 20px;
+        font-size: 22px;
+    }
+    .text-container-c {
+        top: 155px;
+        max-height: 55px;
+    }
+    
+    .below-header {
+        position: relative;
+        color: #000;
+        font-weight: 200;
+        text-align: center;
+        font-size: 14px;
+        max-width: 85vw;
+        bottom: 10px;
+    }
+}
+@media (max-width: 410px) {
+    .background-div-head {
+        max-height: 170px;
+    }
+    .text-container-c {
+        top: 150px;
+    }
+}
+@media (max-width: 391px) {
+    .background-div-head {
+        max-height: 165px;
+    }
+    .text-container-c {
+        top: 150px;
+    }
+}
+@media (max-width: 380px) {
+    .background-div-head {
+        max-height: 160px;
+    }
+    .text-container-c {
+        top: 140px;
+    }
+    .vohnt-slogan {
+        top: 55px;
+        font-size: 22px;
+    }
+    .below-header {
+        font-size: 13px;
+        bottom: 6px;
+    }
+}
+
+@media (max-width: 375px) {
+    .background-div-head {
+        bottom: 230px;
+        max-height: 163px;
+    }
+    .vohnt-slogan {
+        top: 55px;
+        font-size: 21px;
+    }
+    .text-container-c {
+        top: 140px;
+        max-height: 45px;
+    }
+    
+    .below-header {
+        font-size: 13px;
+        max-width: 85vw;
+        bottom: 10px;
+    }
+}
+
+@media (max-width: 372px) {
+    .background-div-head {
+        max-height: 155px;
+    }
+    .text-container-c {
+        top: 140px;
+    }
+}
+
+@media (max-width: 365px) {
+    .background-div-head {
+        max-height: 157px;
+    }
+}
+
+@media (max-width: 360px) {
+    .vohnt-slogan {
+        top: 60px;
+        left: 8vw;
+        font-size: 19px;
+    }
+    .background-div-head {
+        bottom: 230px;
+        max-height: 156px;
+    }
+    .header-pic-mobile {
+        position: absolute;
+        padding: 10px 0;
+        bottom: 20px;
+        z-index: 300;
+    }
+    .text-container-c {
+        top: 135px;
+        max-height: 55px;
+    }
+    
+    .below-header {
+        font-size: 13px;
+        max-width: 90vw;
+        bottom: 5px;
+    }
+}
+@media (max-width: 355px) {
+    .background-div-head {
+        max-height: 150px;
+    }
+    .text-container-c {
+        top: 130px;
+    }
+}
+@media (max-width: 343px) {
+    .text-container-c {
+        top: 130px;
+    }
+    .background-div-head {
+        bottom: 230px;
+        max-height: 150px;
+    }
+}
+@media (max-width: 355px) {
+    .background-div-head {
+        max-height: 140px;
+    }
+    .text-container-c {
+        top: 125px;
+    }
+}
+@media (max-width: 321px) {
+    .vohnt-slogan {
+        top: 45px;
+        left: 6vw;
+        font-size: 18px;
+    }
+    .background-div-head {
+        bottom: 230px;
+        max-height: 140px;
+    }
+    .text-container-c {
+        top: 122px;
+        max-height: 45px;
+    }
+    
+    .below-header {
+        font-size: 12px;
+        max-width: 90vw;
+        bottom: 7px;
+    }
+}
+@media (max-width: 315px) {
+    .background-div-head {
+        max-height: 130px;
+    }
+    .text-container-c {
+        top: 110px;
+    }
+}
+@media (max-width: 290px) {
+    .background-div-head {
+        max-height: 125px;
+    }
+    .text-container-c {
+        top: 110px;
+    }
+}
+@media (max-width: 280px) {
+    .vohnt-slogan {
+        top: 35px;
+        left: 6vw;
+        font-size: 17px;
+    }
+    .background-div-head {
+        bottom: 230px;
+        max-height: 123px;
+    }
+    .text-container-c {
+        top: 102px;
+        max-height: 40px;
+        min-width: 100vw;
+    }
+    
+    .below-header {
+        font-size: 11px;
+        max-width: 95vw;
+        bottom: 7px;
+    }
+}

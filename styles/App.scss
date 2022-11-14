@@ -1,0 +1,78 @@
+// pages styling
+///742px maintain desktop view
+// @import './plugins/Variables';
+@import './mixins';
+@import "./plugins/App";
+@import "./plugins/Navbars";
+@import "./plugins/Header";
+@import "./plugins/Footer";
+@import "./index";
+@import "./fonts";
+@import "./materialize";
+
+//Components
+@import "./plugins/Selector";
+@import "./plugins/Mobile-Selector";
+@import "./plugins/ScheduleNav";
+@import "./plugins/Map";
+@import "./plugins/Services";
+@import "./plugins/FaqCard";
+@import "./plugins/Register";
+@import "./plugins/Cart";
+@import "./plugins/Invoice";
+@import "./plugins/BlogHeader";
+@import "./plugins/Partners";
+@import "./plugins/Contact";
+@import "./plugins/Contactus";
+
+//dashboard
+@import "./plugins/Dashboard";
+@import "./plugins/Customers";
+@import "./plugins/Orders";
+@import "./plugins/Modals";
+@import "./plugins/Admin";
+// @import "./plugins/Carousel";
+// @import "./plugins/Responsive";
+// @import "./plugins/Examples";
+// @import "./plugins/Cards";
+// @import "./plugins/Card-profile";
+// @import "./plugins/Card-testimonials";
+// @import "./plugins/Images";
+// @import "./plugins/Media";
+// // @import "./plugins/typography";
+// @import "./plugins/headers";
+
+///3rd party scss
+// Vendors variables override and path
+// @import "./plugins/Variables";
+// @import "base/path";
+
+/*
+|--------------------------------------------------------------------------
+| Vendor packages
+|--------------------------------------------------------------------------
+*/
+
+
+// @import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+//Presentation (Home Page)
+@import "./plugins/Selector";
+@import "./plugins/SectionOne";
+@import "./plugins/SectionTwo";
+@import "./plugins/SectionThree";
+@import "./plugins/SectionFour";
+@import "./plugins/SectionFive";
+@import "./plugins/SectionSix";
+
+//Views
+@import "./plugins/Safety";
+@import "./plugins/Wash";
+@import "./plugins/HowItWorks";
+@import "./plugins/faqs";
+@import "./plugins/Blog";
+@import "./plugins/OurStory";
+@import "./plugins/Testimonials";
+@import "./plugins/Scheduler";
+
+//video styling

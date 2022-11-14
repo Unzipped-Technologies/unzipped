@@ -1,0 +1,57 @@
+// .main-app {
+//     display: grid;
+//     grid-template-rows: 1fr 1fr;
+// }
+.root {
+    min-width: 100vw;
+    overflow: hidden;
+}
+body {
+    overflow-x: hidden;
+    width: 100vw;
+}
+.all-in {
+    padding-bottom: 0px;
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    font-family: Poppins;
+    width: 100vw;
+    overflow: hidden;
+    height: 100%;
+}
+
+.all-in-one {
+    overflow: hidden;
+    height: 100vh;
+}
+
+
+.center-page-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    overflow: hidden;
+    // padding-bottom: 3vh;
+}
+
+#paragraph-left {
+    text-align: left;
+}
+
+
+///loading
+
+.vohnt-load-box {
+    width: 250px;
+    height: 250px;
+    border-radius: 24px;
+    background-color: #771fc3;
+    color: #fff;
+    font-size: 22px;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    border: 1px solid rgba(48, 48, 48, 0.884);
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+}
