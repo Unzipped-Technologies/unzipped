@@ -2,14 +2,14 @@
   "name": "vohnt",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "7.24.0"
+  },
   "scripts": {
     "dev": "nodemon server/index.js",
     "build": "next build",
     "start": "cross-env NODE_ENV=production node server/index.js",
     "server": "next build && NODE_ENV=production node server/index.js"
-  },
-  "engines": {
-    "node": "7.24.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
