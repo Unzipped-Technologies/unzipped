@@ -7,12 +7,12 @@ const ReactIcon = () => {
         <path d="M32.3129 22.4765C33.4286 22.4728 34.5203 22.8004 35.4497 23.4176C36.3791 24.0348 37.1045 24.9139 37.534 25.9436C37.9634 26.9733 38.0777 28.1073 37.8623 29.202C37.6468 30.2967 37.1114 31.3029 36.3238 32.0931C35.5361 32.8833 34.5317 33.422 33.4377 33.641C32.3438 33.86 31.2094 33.7495 30.1783 33.3233C29.1471 32.8972 28.2657 32.1747 27.6454 31.2473C27.0252 30.3199 26.6941 29.2293 26.6941 28.1136C26.6926 27.3744 26.8367 26.6422 27.1183 25.9588C27.3999 25.2753 27.8134 24.6541 28.3352 24.1306C28.8571 23.607 29.4769 23.1915 30.1594 22.9077C30.842 22.6239 31.5737 22.4773 32.3129 22.4765Z" fill="url(#paint1_linear_503_5)"/>
         <defs>
         <linearGradient id="paint0_linear_503_5" x1="47.0177" y1="54.161" x2="5.11554" y2="2.63689" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#C1292A"/>
-        <stop offset="1" stopColor="#D0631A"/>
+        <stop stopColor="#ce0228"/>
+        <stop offset="1" stopColor="#8b0020"/>
         </linearGradient>
         <linearGradient id="paint1_linear_503_5" x1="34.9655" y1="33.3592" x2="26.4017" y2="23.97" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#C1292A"/>
-        <stop offset="1" stopColor="#D0631A"/>
+        <stop stopColor="#ce0228"/>
+        <stop offset="1" stopColor="#8b0020"/>
         </linearGradient>
         </defs>
         </svg>
