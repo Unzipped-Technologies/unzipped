@@ -19,18 +19,47 @@ const LandingPage = () => {
         width: 100%;
     `;
 
+    const Content = style.div`
+        display: flex;
+        justify-content: center;
+        flex-flow: row;
+    `;
+
+    const Text = style.p`
+        font-size: 18px;
+        max-width: 900px;
+    `;
+
+    const Input = style.input``;
+
+    const Button = style.button``;
+
+    const SignUp = style.div``;
 
     return (
         <React.Fragment>
             <Head>
             <link rel="preconnect" href="https://fonts.gstatic.com" />
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
-            <title>Car Wash &amp; Detail | Unzipped</title>
-            <meta name="Car Wash &amp; Detail | Unzipped" content="Experience the next generation of car care. We offer valet car wash, interior, and exterior car detailing. Done on your car's time, not yours. Book, drop, enjoy."/>
+            <title>Newsletter | Unzipped</title>
+            <meta name="Newsletter | Unzipped" content="Experience the next generation of car care. We offer valet car wash, interior, and exterior car detailing. Done on your car's time, not yours. Book, drop, enjoy."/>
             </Head>
             <Container>
                 <LandingHeader />
             </Container>
+            <Content>
+                <SignUp>
+                    <Input />
+                    <Button>Sign up</Button>
+                </SignUp>
+                <Text>Hey!<br/>
+
+                    Thanks for checking us out. We are The Unzipped Newsletter bringing you the latest in business, tech, science, and health in an easy-to-read email every Sunday. Our mission is to provide you with knowledge and information that will make your life better every day and give you interesting topics to discuss with your friends! Each week's issue will be unique and relevant to you.
+                    <br/><br/>
+                    Enjoy<br/>
+                    -Jason
+                </Text>
+            </Content>
         </React.Fragment>
     )
 }

@@ -8,8 +8,7 @@ const useStyles = makeStyles((theme) => ({
       '& > * + *': {
         marginTop: theme.spacing(2),
       },
-      position: 'relative',
-      top: '-50px'
+      marginTop: '10px'
     },
   }));
 
@@ -19,7 +18,8 @@ const Loading = () => {
     return (
         <div style={{width: '100vw', height: '100vh', position: 'fixed', zIndex: '100000', display: 'grid', justifyItems: 'center', top: '35%'}}>
             <div className="vohnt-load-box">
-            <p>Design.Develop.<span style={{fontStyle: 'italic'}}>enjoy</span></p>
+            <img src="img/U.png" style={{ height: '140px', paddingTop: '10px' }}/>
+            <p style={{ margin: '15px' }}>Design.Develop.<span style={{fontStyle: 'italic'}}>enjoy</span></p>
             <div className={classes.root}>
             <LinearProgress />
             </div>
