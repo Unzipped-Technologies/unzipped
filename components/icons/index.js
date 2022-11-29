@@ -14,6 +14,7 @@ import UIUXIcon from './uiux'
 import AWSIcon from './aws'
 import ReactNativeIcon from './reactNative'
 import SkillPodImage from './skillpod-homepage'
+import DownIcon from './down'
 
 export {
     ClearFitLogo,
@@ -22,6 +23,7 @@ export {
     MailIcon,
     PhoneIcon,
     FacebookIcon,
+    DownIcon,
     LinkedInIcon,
     InstagramIcon,
     TwitterIcon,
