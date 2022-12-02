@@ -54,9 +54,40 @@ const listDepartments = async ({filter, take, skip}) => {
     } 
 }
 
+const updateDepartment = async (data) => {
+    return await department.findByIdAndUpdate(data.listId, {$set:{...data}});
+}
+
+const deleteDepartment = async (id) => {
+    await department.findByIdAndDelete(id);
+    await businessAssociatesItems.deleteMany({listId: id})
+}
+
+const addBusinessAssociateToDepartment = async (data, listId) => {
+    try {
+        const updateDepartment = await department.findById(listId)
+        const ids = []
+        for (const item of data.items) {
+            const id = await businessAssociatesItems.create({
+                ...item
+            });
+            ids.push(id.id)
+        }
+        updateDepartment.businessAssociatesItems.push(...ids.map(item => mongoose.Types.ObjectId(item.id)))
+        updateDepartment.save()
+        return updateDepartment;
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
+    }
+}
+
+
 module.exports = {
     createDepartments,
     addDepartmentItemToList,
     listDepartments,
-    getDepartmentById
+    getDepartmentById,
+    updateDepartment,
+    deleteDepartment,
+    addBusinessAssociateToDepartment
 }

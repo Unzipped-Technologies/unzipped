@@ -2,12 +2,17 @@ const list = require('../../models/List');
 const listItems = require('../../models/ListItems');
 const mongoose = require('mongoose');
 
-const bulkCreateLists = async (data) => {
-    list.bulkWrite(data);
-}
-
 const createLists = async (data) => {
     return await list.create(data);
+}
+
+const updateLists = async (data) => {
+    return await list.findByIdAndUpdate(data.listId, {$set:{...data}});
+}
+
+const deleteLists = async (id) => {
+    await list.findByIdAndDelete(id);
+    await listItems.deleteMany({listId: id})
 }
 
 const addListItemToList = async (data, listId) => {
@@ -30,7 +35,7 @@ const addListItemToList = async (data, listId) => {
 
 const getListById = async (id) => {
     try {
-        return await list.findOne({userId: id})
+        return await list.findById(id)
             .populate({
                 path: 'listItems', 
                 model: 'listItemss'
@@ -44,7 +49,7 @@ const getListById = async (id) => {
 // list lists
 const listLists = async ({filter, take, skip}) => {
     try {
-        const list = await lists.find({...filter})
+        const lists = await list.find({...filter})
             .skip( skip )
             .limit( take )
             .populate({
@@ -52,16 +57,17 @@ const listLists = async ({filter, take, skip}) => {
                 model: 'listItems'
             })
             .exec()
-        return list;
+        return lists;
     } catch (e) {
         throw Error(`Could not find list, error: ${e}`);
     } 
 }
 
 module.exports = {
-    bulkCreateLists,
     createLists,
     addListItemToList,
     listLists,
-    getListById
+    getListById,
+    updateLists,
+    deleteLists,
 }

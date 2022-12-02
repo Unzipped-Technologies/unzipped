@@ -8,6 +8,8 @@ const likeHistorySchema = new Schema({
   likeType: { type: Number, default: 0 },
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
+  freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
+  user: { type: Schema.Types.ObjectId, ref: 'users' },
 }, {
   timestamps: true
 });

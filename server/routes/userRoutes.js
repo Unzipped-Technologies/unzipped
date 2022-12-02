@@ -18,9 +18,8 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllU
 router.post('/freelancer/list', requireLogin, permissionCheckHelper.hasPermission('listFreelancers'), async (req, res) => {
     try {
       const { filter, take = 25, skip = 0 } = req.body;
-      console.log('here')
       const listUsers = await userHelper.listFreelancers({ filter, take, skip })
-      if(!listUsers) throw Error('user does not exist')
+      if(!listUsers) throw Error('could not find freelancers')
       res.json(listUsers)
     } catch (e) {
       res.status(400).json({msg: e.message})
@@ -31,7 +30,7 @@ router.get('/freelancer/:id', requireLogin, permissionCheckHelper.hasPermission(
     try {
       const id = req.params.id;
       const User = await userHelper.getFreelancerById(id)
-      if(!User) throw Error('user does not exist')
+      if(!User) throw Error('freelancer does not exist')
       res.json(User)
     } catch (e) {
       res.status(400).json({msg: e.message})

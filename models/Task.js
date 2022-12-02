@@ -13,6 +13,8 @@ const taskSchema = new Schema({
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   Status: { type: Number, default: 0 },
+  tag: { type: Schema.Types.ObjectId, ref: 'tags' },
+  department: { type: Schema.Types.ObjectId, ref: 'department' },
 }, {
   timestamps: true
 });

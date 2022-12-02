@@ -20,11 +20,9 @@ const hasPermission = permissions => async (req, _, next) => {
             userPermissions.includes(permission)
         )
         )
-        console.log('///here')
         if (isAllowed) {
         return next()
         }
-        console.log('///heresd', isAllowed)
         return next(new UnauthorizedError({ message: 'Permission denied' }))
     } catch (e) {
         return _.status(400).json({message: 'user does not exist', errror: e})

@@ -35,8 +35,14 @@ const userSchema = new Schema({
   AddressState:  { type: String, default: '' },
   AddressZip:  { type: String, default: '' },
   freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
-  lists: { type: Schema.Types.ObjectId, ref: 'lists' },
+  lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
   freelancerSkills: { type: Schema.Types.Mixed, refs: 'freelancerSkills'},
+  business: { type: Schema.Types.Mixed, refs: 'businesses'},
+  // these refer times the user liked freelancers or businesses
+  likeTotal: { type: Number, default: 0 },
+  dislikeTotal: { type: Number, default: 0 },
+  likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+  dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
 }, {
   timestamps: true
 });

@@ -39,6 +39,16 @@ const businessSchema = new Schema({
   customMarkdown: String,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
+  user: { type: Schema.Types.ObjectId, ref: 'users' },
+  tags: { type: Schema.Types.Mixed, refs: 'tags'},
+  tasks: { type: Schema.Types.Mixed, ref: 'tasks' },
+  audience: { type: Schema.Types.ObjectId, ref: 'businessAudience' },
+  invoices: { type: Schema.Types.Mixed, ref: 'invoices' },
+  // refer to other users likes of this business
+  likeTotal: { type: Number, default: 0 },
+  dislikeTotal: { type: Number, default: 0 },
+  likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+  dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
 }, {
   timestamps: true
 });
