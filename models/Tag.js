@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const tagSchema = new Schema({
-  taskId: Number,
-  businessId: Number,
+  taskId: String,
+  businessId: String,
   tagName: String,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},

@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
-  userId: Number,
-  businessId: Number,
-  departmentId: Number,
+  userId: String,
+  businessId: String,
+  departmentId: String,
   taskName: String,
   storyPoints: { type: Number, default: 1 },
   assigneeId: { type: Number, default: 0 },

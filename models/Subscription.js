@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const subscriptionSchema = new Schema({
-  userId: Number,
+  userId: String,
   stripeId: String,
   plan: { type: Number, default: 0 },
   isBusiness: {type: Boolean, default: false},

@@ -4,8 +4,11 @@ const { Schema } = mongoose;
 const listSchema = new Schema({
   name: String,
   icon: { type: String, default: '' }, // TODO update to be the default icon
-  userId: Number,
-  isActive: { type: Boolean, default: false }
+  userId: String,
+  isActive: { type: Boolean, default: false },
+  user: { type: Schema.Types.ObjectId, ref: 'users' },
+  freelancer: { type: Schema.Types.ObjectId, ref: 'freelancers' },
+  listItems: { type: Schema.Types.Mixed, refs: 'listItems'},
 }, {
   timestamps: true
 });

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const freelancerSchema = new Schema({
-  userId: Number,
+  userId: String,
   rate: Number,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
@@ -11,6 +11,9 @@ const freelancerSchema = new Schema({
   isPreferedFreelancer: { type: Boolean, default: false },
   isAcceptEquity: { type: Boolean, default: false },
   category: { type: String, default: '' },
+  user: { type: Schema.Types.ObjectId, ref: 'users' },
+  freelancerSkills: { type: Schema.Types.ObjectId, refs: 'freelancerSkills'},
+  lists: { type: Schema.Types.ObjectId, ref: 'lists' },
 }, {
   timestamps: true
 });

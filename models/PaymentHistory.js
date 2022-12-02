@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const paymentHistorySchema = new Schema({
-  userId: Number,
-  subscriptionId: Number,
+  userId: String,
+  subscriptionId: String,
   ipAddress: String,
   isPaymentSuccessful: { type: Boolean, default: false },
   isPaymentDeclined: { type: Boolean, default: false },

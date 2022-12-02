@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const businessSchema = new Schema({
-  userId: Number,
+  userId: String,
   name: String,
   budget: Number,
   totalSpent: { type: Number, default: 0 },

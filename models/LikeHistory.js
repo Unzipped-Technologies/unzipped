@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const likeHistorySchema = new Schema({
-  businessId: Number,
-  profileId: Number,
-  userId: Number,
+  businessId: String,
+  profileId: String,
+  userId: String,
   likeType: { type: Number, default: 0 },
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},

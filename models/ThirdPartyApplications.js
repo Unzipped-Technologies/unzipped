@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const thirdPartyApplicationSchema = new Schema({
-  userId: Number,
+  userId: String,
   githubId: String,
   stripeId: String,
   googleId: String,

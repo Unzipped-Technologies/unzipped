@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const questionSchema = new Schema({
-  businessId: Number,
-  userId: Number,
+  businessId: String,
+  userId: String,
   question: String,
   answer: String,
   isActive: {type: Boolean, default: true},

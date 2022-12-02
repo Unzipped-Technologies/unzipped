@@ -16,7 +16,7 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 mongoose.Promise = global.Promise;
-mongoose.connect(keys.mongoURI, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(keys.mongoURI, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
 app
     .prepare()

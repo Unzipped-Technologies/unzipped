@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const taxDataTableSchema = new Schema({
-  userId: Number,
+  userId: String,
   ein: String,
   ssn: string,
   isBusiness: {type: Boolean, default: false},

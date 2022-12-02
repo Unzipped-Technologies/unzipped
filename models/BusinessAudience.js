@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const businessAudienceSchema = new Schema({
-  businessId: Number,
-  userId: Number,
+  businessId: String,
+  userId: String,
   name: String,
   link: String,
   isEmailList: {type: Boolean, default: false},

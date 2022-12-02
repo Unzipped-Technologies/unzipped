@@ -3,8 +3,8 @@ const { Schema } = mongoose;
 
 const departmentSchema = new Schema({
   name: String,
-  userId: Number,
-  businessId: Number,
+  userId: String,
+  businessId: String,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   isSubDepartment: {type: Boolean, default: false},

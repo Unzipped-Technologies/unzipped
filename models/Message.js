@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const messageSchema = new Schema({
-  userSentId: Number,
-  userReceivedId: Number,
+  userSentId: String,
+  userReceivedId: String,
   message: { type: String, default: '' },
   attachment: String,
   otherUserProfilePic: String,

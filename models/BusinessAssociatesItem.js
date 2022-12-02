@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const businessAssociatesItemSchema = new Schema({
-  userId: Number,
-  businessId: Number,
-  profileId: Number,
+  userId: String,
+  businessId: String,
+  profileId: String,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   currentRate: Number,

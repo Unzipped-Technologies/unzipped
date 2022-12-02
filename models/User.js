@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  role: String,
+  role: Number,
   email: {
     type: String,
     require: true,
@@ -17,6 +17,7 @@ const userSchema = new Schema({
   },
   isEmailVerified: {type: Boolean, default: false},
   googleId: String,
+  isGithubConnected: { type: Boolean, default: false },
   isAdmin: { type: Boolean, default: false },
   isUserSubscribed: { type: Boolean, default: false },
   isIdentityVerified: { type: Boolean, default: false },
@@ -33,6 +34,9 @@ const userSchema = new Schema({
   AddressCity:  { type: String, default: '' },
   AddressState:  { type: String, default: '' },
   AddressZip:  { type: String, default: '' },
+  freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
+  lists: { type: Schema.Types.ObjectId, ref: 'lists' },
+  freelancerSkills: { type: Schema.Types.Mixed, refs: 'freelancerSkills'},
 }, {
   timestamps: true
 });

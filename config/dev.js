@@ -7,8 +7,10 @@ module.exports = {
       '734491624672-s2heuq6gdse7sg0akrci792qbtlqg8q1.apps.googleusercontent.com',
     googleClientSecret: 'PWqvQELK1MVVIDLY_7WBy8HT',
     //database
-    mongoURI: `mongodb+srv://DeveloperAccount:7CELAMCzusr89y@cluster1.szxtq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
-
+    mongoURI: 'mongodb+srv://jason123:Myfirst1@contactkeeper.n6tza.mongodb.net/?retryWrites=true&w=majority',
+    // 'mongodb+srv://jason123:Welcome75$#31@contactkeeper.n6tza.mongodb.net/?retryWrites=true&w=majority',
+    // `mongodb+srv://DeveloperAccount:7CELAMCzusr89y@cluster1.szxtq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+               
     cookieKey: '1Xxp382GgnXxYz49528',
     //payment
     stripePublishableKey:

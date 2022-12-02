@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const taskStatusSchema = new Schema({
-  userId: Number,
-  businessId: Number,
-  departmentId: Number,
+  userId: String,
+  businessId: String,
+  departmentId: String,
   StatusName: String,
   isToDo: {type: Boolean, default: true},
   isInProgress: {type: Boolean, default: true},
