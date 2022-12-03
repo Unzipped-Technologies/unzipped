@@ -8,7 +8,10 @@ const optimizedImages = require('next-optimized-images');
 
 const nextConfig = {
     images: {
-        domains: ['s3.amazonaws.com']
+        domains: [
+          's3.amazonaws.com',
+          'res.cloudinary.com'
+        ]
     }
 }
 // module.exports = withSass({

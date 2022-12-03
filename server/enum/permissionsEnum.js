@@ -23,6 +23,8 @@ const userPermissions = Object.freeze({
     userListBusinesses: 'userListBusinesses',
     listAllBusinesses: 'listAllBusinesses',
     deleteBusiness: 'deleteBusiness',
+    // departments
+    CreateDepartment: 'createDepartment',
     // likes
     UserLike: 'userLike',
     ListLikesForUser: 'listLikesForUser',
@@ -48,6 +50,8 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
         userPermissions.UserDeleteLike,
+        // department
+        userPermissions.CreateDepartment,
     ],
     [accountTypeEnum.INVESTOR]: [
         // users
@@ -95,6 +99,8 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
         userPermissions.UserDeleteLike,
+        // department
+        userPermissions.CreateDepartment,
     ]
 })
   

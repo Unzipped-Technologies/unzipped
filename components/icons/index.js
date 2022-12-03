@@ -15,6 +15,16 @@ import AWSIcon from './aws'
 import ReactNativeIcon from './reactNative'
 import SkillPodImage from './skillpod-homepage'
 import DownIcon from './down'
+import WorkIcon from './work'
+import BookmarkIcon from './bookmark'
+import DiamondIcon from './diamond'
+import FolderIcon from './folder'
+import LightIcon from './light'
+import StarIcon from './star'
+import DownSolidIcon from './downSolid'
+import ThumbsDownIcon from './thumbsDownIcon'
+import ThumbsUpIcon from './thumbsUp'
+import DownWideIcon from './downWideIcon'
 
 export {
     ClearFitLogo,
@@ -22,9 +32,16 @@ export {
     HexagonIcon,
     MailIcon,
     PhoneIcon,
+    DiamondIcon,
+    DownWideIcon,
+    FolderIcon,
     FacebookIcon,
     DownIcon,
     LinkedInIcon,
+    WorkIcon,
+    ThumbsDownIcon,
+    ThumbsUpIcon,
+    BookmarkIcon,
     InstagramIcon,
     TwitterIcon,
     ReactIcon,
@@ -33,5 +50,8 @@ export {
     UIUXIcon,
     AWSIcon,
     ReactNativeIcon,
+    StarIcon,
+    LightIcon,
+    DownSolidIcon,
     SkillPodImage
 };

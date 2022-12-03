@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const businessHelper = require('../helpers/business')
+const departmentHelper = require('../helpers/department')
 const requireLogin = require('../middlewares/requireLogin');
 const permissionCheckHelper = require('../middlewares/permissionCheck');
 
 router.post('/create', requireLogin, permissionCheckHelper.hasPermission('createBusiness'), async (req, res) => {
+    const id = req.body.id || req.user.sub
     try {
-      const createBusiness = await businessHelper.createBusiness(req.body)
+      const createBusiness = await businessHelper.createBusiness(req.body, id)
       if(!createBusiness) throw Error('business already exists')
       res.json(createBusiness)
     } catch (e) {
@@ -16,8 +18,7 @@ router.post('/create', requireLogin, permissionCheckHelper.hasPermission('create
 
 router.post('/user/create', requireLogin, permissionCheckHelper.hasPermission('userCreateBusiness'), async (req, res) => {
     try {
-      req.body.userId = req.user.sub
-      const createBusiness = await userHelper.createBusiness(req.body)
+      const createBusiness = await businessHelper.createBusiness(req.body, req.user.sub)
       if(!createBusiness) throw Error('failed to create business')
       res.json(createBusiness)
     } catch (e) {
@@ -27,7 +28,7 @@ router.post('/user/create', requireLogin, permissionCheckHelper.hasPermission('u
 
 router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateBusiness'), async (req, res) => {
     try {
-      const existingBusiness = await userHelper.updateBusiness(req.body)
+      const existingBusiness = await businessHelper.updateBusiness(req.body)
       if(!existingBusiness) throw Error('business does not exist')
       res.json(existingBusiness)
     } catch (e) {
@@ -77,5 +78,18 @@ router.post('/delete', requireLogin, permissionCheckHelper.hasPermission('delete
       res.status(400).json({msg: e.message})
     }
 });
+
+// departments //
+
+router.post('/department/create', requireLogin, permissionCheckHelper.hasPermission('createDepartment'), async (req, res) => {
+    try {
+      const createDepartment = await departmentHelper.addDepartmentToBusiness(req.body, req.user.sub)
+      if(!createDepartment) throw Error('failed to create department')
+      res.json(createDepartment)
+    } catch (e) {
+      res.status(400).json({msg: e.message})
+    }
+});
+
 
 module.exports = router;

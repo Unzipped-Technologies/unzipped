@@ -1,4 +1,6 @@
 const department = require('../../models/Department');
+const business = require('../../models/Business');
+const tags = require('../../models/Tag');
 const businessAssociatesItems = require('../../models/BusinessAssociatesItem');
 const mongoose = require('mongoose');
 
@@ -6,19 +8,19 @@ const createDepartments = async (data) => {
     return await department.create(data);
 }
 
-const addDepartmentItemToList = async (data, departmentId) => {
+// add a department to a business
+const addDepartmentToBusiness = async (data, id) => {
     try {
-        const updateDepartment = await department.findById(departmentId)
-        const ids = []
-        for (const item of data.items) {
-            const id = await businessAssociatesItems.create({
-                ...item
-            });
-            ids.push(id.id)
+        const item = {
+            ...data,
+            tags: await tags.find({businessId: data.businessId})
         }
-        updateDepartment.businessAssociatesItems.push(...ids.map(item => mongoose.Types.ObjectId(item.id)))
-        updateDepartment.save()
-        return updateDepartment;
+        await department.create(item)
+        // update business to have department
+        await business.findByIdAndUpdate(data.BusinessId, { 
+            departments: await department.find({businessId: data.businessId})
+        });
+        return {msg: `department created for ${data.businessId}`};
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     }
@@ -84,7 +86,7 @@ const addBusinessAssociateToDepartment = async (data, listId) => {
 
 module.exports = {
     createDepartments,
-    addDepartmentItemToList,
+    addDepartmentToBusiness,
     listDepartments,
     getDepartmentById,
     updateDepartment,
