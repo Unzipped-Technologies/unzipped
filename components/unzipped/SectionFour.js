@@ -137,7 +137,7 @@ const bullets = [
         sub: `build your businesses /n using a proven best practices`
     },
     {
-        title: <P2>get to mvp faster</P2>,
+        title: <P2>Get to MVP faster</P2>,
         icon: <CircleStar />,
         sub: `Set up equity sharing for initial /n talent contributions.`
     },
