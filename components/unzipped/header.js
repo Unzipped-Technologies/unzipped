@@ -22,6 +22,7 @@ const Container = styled.div`
     line-height: 19px;
     min-height: 77px;
     border-bottom: solid 1px #d8d8d8;
+    width: 100%;
 `;
 
 const Logo = styled.img`
@@ -286,16 +287,16 @@ const Nav = () => {
         <Container>
             <Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/>
             <Menu>
-                {menuItems && menuItems.map(item => {
+                {menuItems && menuItems.map((item, index) => {
                     return (
-                    <Item onMouseEnter={() => setDropdowns(item.item)} onClick={() => setDropdowns(item.item)}>
+                    <Item onMouseEnter={() => setDropdowns(item.item)} onClick={() => setDropdowns(item.item)} key={index}>
                         <Span>{item.item} </Span>
                         {item?.sub?.length && <Span2><DownIcon /></Span2>}
                         {menuOpen === item.item && item?.sub && (
                             <MenuDropdown ref={dropdownRef} onMouseLeave={setCloseDropdowns}>
-                                {item?.sub?.map(e => {
+                                {item?.sub?.map((e, index) => {
                                     return (
-                                        <Row>{e.icon}<Span3>{e.name}</Span3></Row>
+                                        <Row key={e.name + index}>{e.icon}<Span3>{e.name}</Span3></Row>
                                     )
                                 })}
                             </MenuDropdown>
@@ -318,9 +319,9 @@ const Nav = () => {
                     </MenuIcon>
                     {menuOpen === 'mobile' && (
                         <Dropdown>
-                            {menuItems && menuItems?.map(item => {
+                            {menuItems && menuItems?.map((item, index) => {
                                 return (
-                                <Row>{item.icon}<Span3>{item.item}</Span3></Row>
+                                <Row key={item.item + index}>{item.icon}<Span3>{item.item}</Span3></Row>
                     )})}
                         </Dropdown>
                     )}

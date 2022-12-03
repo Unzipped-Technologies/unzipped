@@ -75,8 +75,8 @@ const HeroUnzipped = () => {
                     Better businesses
                 </Title>
                 <List>
-                {items.map(item => (
-                    <Bullet text={item.content} icon={item.icon} />
+                {items.map((item, index) => (
+                    <Bullet text={item.content} icon={item.icon} key={item.content + index}/>
                 ))}
                 </List>
                 <Buttons buttonOne="EARN MONEY FREELANCING" buttonTwo="HIRE A FREELANCER" />

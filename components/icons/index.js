@@ -25,6 +25,10 @@ import DownSolidIcon from './downSolid'
 import ThumbsDownIcon from './thumbsDownIcon'
 import ThumbsUpIcon from './thumbsUp'
 import DownWideIcon from './downWideIcon'
+import LongArrow from './longArrow'
+import LeafIcon from './leaf'
+import CycleIcon from './cycleIcon'
+import CircleStar from './circleStar'
 
 export {
     ClearFitLogo,
@@ -36,13 +40,17 @@ export {
     DownWideIcon,
     FolderIcon,
     FacebookIcon,
+    LeafIcon,
+    CycleIcon,
     DownIcon,
     LinkedInIcon,
+    CircleStar,
     WorkIcon,
     ThumbsDownIcon,
     ThumbsUpIcon,
     BookmarkIcon,
     InstagramIcon,
+    LongArrow,
     TwitterIcon,
     ReactIcon,
     NetIcon,

@@ -355,7 +355,7 @@ const HeroUnzipped = () => {
                 <Box>
                     {categories.map((item, index) => {
                         return (
-                            <Card borderRadius={15}>
+                            <Card borderRadius={15} key={index}>
                                 <Div>
                                     <Title long={item.content.length > 17} superLong={item.content.length > 21}>{item.content}</Title>
                                     <Row><StarIcon color={'#8EDE64'}/><Span>{item.star}/5</Span></Row>
@@ -371,7 +371,7 @@ const HeroUnzipped = () => {
             <Right>
                 <Text>AMAZING PROJECTS</Text>
                 {projects.map(item => (
-                    <Card>
+                    <Card key={item}>
                         <Flex>
                             <ImageContainer>
                                 <Image src={item.businessImage} />
