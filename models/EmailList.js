@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const emailListSchema = new Schema({
-  email: Number,
-  isActive: { type: Boolean, default: false },
+  email: String,
+  isActive: { type: Boolean, default: true },
 }, {
   timestamps: true
 });

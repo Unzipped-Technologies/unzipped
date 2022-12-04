@@ -1,10 +1,9 @@
+const path = require('path');
 const withPlugins = require('next-compose-plugins')
 const withOffline = require("next-offline")
 const withImages = require('next-images')
 const withSass = require("@zeit/next-sass")
 const optimizedImages = require('next-optimized-images');
-
-
 
 const nextConfig = {
     images: {
@@ -14,11 +13,14 @@ const nextConfig = {
         ]
     }
 }
+
 // module.exports = withSass({
 //     cssLoaderOptions: {
 //       importLoaders: 2
 //     }
 //   });
+
+
 module.exports = withOffline(
   withPlugins(
     [
@@ -29,12 +31,12 @@ module.exports = withOffline(
               }
       }
       ], 
-      withOffline, 
+      withOffline,
       [optimizedImages,
         {
           optimizeImagesInDev: true
         }
-      ]
+      ],
     ], nextConfig))
 
 

@@ -1,3 +1,0 @@
-```js
-<InitialsIcon initials="PO" />
-```

@@ -6,6 +6,7 @@ const thirdPartyApplicationSchema = new Schema({
   githubId: String,
   stripeId: String,
   googleId: String,
+  calendlyId: String,
 }, {
   timestamps: true
 });

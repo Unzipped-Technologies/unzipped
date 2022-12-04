@@ -78,4 +78,13 @@ router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermiss
     }
 });
 
+router.post('/newsletter/add', async (req, res) => {
+    try {
+      await userHelper.addToNewsletter(req.body.email)
+      res.json({msg: 'success', email: req.body.email})
+    } catch (e) {
+      res.status(400).json({msg: e.message})
+    }
+});
+
 module.exports = router;

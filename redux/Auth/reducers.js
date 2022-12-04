@@ -1,6 +1,4 @@
-import { removeCookie } from './actions';
 import {
-    LOGIN_USER,
     USER_LOADING,
     USER_LOADED,
     AUTH_ERROR,
@@ -9,16 +7,12 @@ import {
     LOGOUT_USER,
     CURRENT_USER,
     SET_TOKEN,
-    // REGISTER_USER,
+    SIGN_UP_FOR_NEWSLETTER,
     REGISTER_USER,
-    REGISTER_USER_FAILED,
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
     SET_DEFAULT_VEHICLE,
     LOGGED_OUT,
-    // FORGET_PASSWORD_FAILED,
-    // CLEAR_ERRORS,
-    // SET_COOKIE
 } from './constants';
 
 const INIT_STATE = {
@@ -29,6 +23,7 @@ const INIT_STATE = {
     error: {data: ''},
     loggedOut: false,
     notification: '',
+    email: ''
 };
 
 const Auth = (state = INIT_STATE, action) => {
@@ -37,11 +32,10 @@ const Auth = (state = INIT_STATE, action) => {
             return {...INIT_STATE, loading: true };
         case CURRENT_USER:
             return {...state, loading: false, user: {...state.user, paymentMethod: {card: action.payload.card.last4, id: action.payload.id}} };
+        case SIGN_UP_FOR_NEWSLETTER:
+            return {...state, loading: false, email: action.payload.email };
         case USER_LOADED:
-            let authenticate = true
-            if (action.payload.error) {
-                authenticate = false
-            }
+            console.log('///success', action.payload)
             return {...state, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: {data: ''}}
         case LOGIN_USER_SUCCESS:
             return { ...state, user: action.payload, loading: false, error: {data: ''} };
@@ -54,7 +48,8 @@ const Auth = (state = INIT_STATE, action) => {
         case LOGOUT_USER:
             return {...INIT_STATE, loggedOut: true, loading: false}
         case AUTH_ERROR:
-            return {...state, error: action.payload, loading: false}
+            console.log('///fail', action.payload)
+            return {...state, error: action.payload, loading: false, isAuthenticated: false}
         case SET_DEFAULT_VEHICLE:
             return {...state, user: action.payload, loading: false, error: {data: ''}}
         case FORGET_PASSWORD:

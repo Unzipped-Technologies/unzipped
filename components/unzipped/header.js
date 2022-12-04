@@ -10,6 +10,12 @@ import {
 import Search from './input'
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import Link from 'next/link'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import { logoutUser } from '../../redux/actions';
+import Image from '../ui/Image'
+import {Button as Buttons} from '../ui'
 
 const Container = styled.div`
     display: flex;
@@ -170,6 +176,42 @@ const MenuDropdown = styled.div`
     z-index: 99;
 `;
 
+// sub menu styling
+
+const SubMenu = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 49px;
+
+    background: #0E1724;
+    color: #fff;
+    padding: 0px 15%;
+`;
+
+const SpanWhite = styled.div`
+    display: flex;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 23px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    min-width: 70px;
+    border-bottom: ${({underline}) => underline ? 'solid 4px #fff' : 'none'}
+`;
+
+const Sub = styled.div`
+    max-height: 24px;
+`;
+
+const ButtonHolder = styled.div`
+    display: flex;
+    flex-flow: row;
+`;
+
 const menuItems = [
     {
         item: 'Find Talent',
@@ -220,6 +262,24 @@ const menuItems = [
     }
 ]
 
+const subMenuItems = [
+    {
+        name: 'Dashboard'
+    },
+    {
+        name: 'Lists'
+    },
+    {
+        name: 'Tasklists'
+    },
+    {
+        name: 'My Projects'
+    },
+    {
+        name: 'Inbox'
+    },
+]
+
 const useStyles = makeStyles((theme) => ({
 	button: {
         width: '74px',
@@ -237,8 +297,9 @@ const useStyles = makeStyles((theme) => ({
 	}
 }))
 
-const Nav = () => {
+const Nav = ({isSubMenu, isAuthenticated, profilePic}) => {
     const [menuOpen, setMenuOpen] = useState(false)
+    const [underline, setUnderline] = useState('Dashboard')
     const classes = useStyles();
     const wrapperRef = useRef(null);
     const dropdownRef = useRef(null);
@@ -253,6 +314,24 @@ const Nav = () => {
         setTimeout(function() { 
             setMenuOpen(false)
         }, 500);
+    }
+
+    const getButtons = () => {
+        if (isAuthenticated) {
+            return (
+                <ButtonHolder>
+                <Buttons noBorder oval type={'green'} fontSize="14px">Start A Project</Buttons>
+                <Image src={profilePic} alt="profile pic" radius="50%" width="48px" />
+                </ButtonHolder>
+            )
+        } else {
+            return (
+                <>
+                <Link href="/login"><Login>Log In</Login></Link>
+                <Button className={classes.button}>Sign up</Button>
+                </>
+            )
+        }
     }
 
     useEffect(() => {
@@ -284,6 +363,7 @@ const Nav = () => {
     }, [dropdownRef]);
 
     return (
+        <>
         <Container>
             <Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/>
             <Menu>
@@ -309,8 +389,7 @@ const Nav = () => {
                 <Desktop>
                     <Search placeholder="Search" icon="search"/>
                     <SignIn>
-                        <Login>Log In</Login>
-                        <Button className={classes.button}>Sign up</Button>
+                        {getButtons()}
                     </SignIn>
                 </Desktop>
                 <Mobile>
@@ -328,7 +407,31 @@ const Nav = () => {
                 </Mobile>
             </Right>
         </Container>
+        {isSubMenu && (
+                <SubMenu>
+                    {subMenuItems.map(item => (
+                        <SpanWhite key={item} underline={underline === item.name} onClick={() => setUnderline(item.name)}><Sub>{item.name} </Sub></SpanWhite>
+                    ))}
+                </SubMenu>
+            )}
+        </>
     )
 }
 
-export default Nav;
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+        isAuthenticated: state.Auth.isAuthenticated,
+        token: state.Auth.token,
+        loading: state.Auth.loading,
+        profilePic: state.Auth?.user?.profileImage,
+    }
+  }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        logoutUser: bindActionCreators(logoutUser, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);

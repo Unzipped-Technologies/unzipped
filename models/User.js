@@ -34,6 +34,7 @@ const userSchema = new Schema({
   AddressCity:  { type: String, default: '' },
   AddressState:  { type: String, default: '' },
   AddressZip:  { type: String, default: '' },
+  profileImage: { type: String, default: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'},
   freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
   lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
   freelancerSkills: { type: Schema.Types.Mixed, refs: 'freelancerSkills'},

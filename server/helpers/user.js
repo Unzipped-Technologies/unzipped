@@ -4,6 +4,7 @@ const thirdPartyApplications = require('../../models/ThirdPartyApplications');
 const freelancerSkills = require('../../models/FreelancerSkills');
 const list = require('../../models/List');
 const freelancer = require('../../models/Freelancer');
+const emailList = require('../../models/EmailList');
 const listHelper = require('./list');
 const { accountTypeEnum } = require("../enum/accountTypeEnum");
 const { planEnum } = require("../enum/planEnum");
@@ -284,6 +285,11 @@ const listLikes = async (id) => {
         })
 }
 
+// list likes for user
+const addToNewsletter = async (data) => {
+    return await emailList.findOneAndUpdate({email: data}, {$set: {email: data}}, { upsert: true  })
+}
+
 
 
 module.exports = {
@@ -300,5 +306,6 @@ module.exports = {
     addListsToFreelancer,
     addLikeToFreelancer,
     removeLikeToFreelancer,
-    listLikes
+    listLikes,
+    addToNewsletter
 }

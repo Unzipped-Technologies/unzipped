@@ -7,6 +7,7 @@ import SectionThree from '../components/unzipped/sectionThree'
 import SectionFour from '../components/unzipped/sectionFour'
 import styled from 'styled-components'
 import News from '../components/unzipped/NewsletterSignup'
+import Footer from '../components/unzipped/Footer'
 
 const Container = styled.div`
     display: flex;
@@ -25,6 +26,7 @@ const Home = () => {
             <SectionThree />
             <SectionFour />
             <News />
+            <Footer />
         </Container>
     )
 }

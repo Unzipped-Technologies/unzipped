@@ -13,7 +13,7 @@ const SectionFive = () => {
                         </span>
                         <br />
                         <span className="title-span">
-                        Design.Develop.<span className="enjoy">enjoy </span>.
+                        Connect.Build.<span className="enjoy">grow </span>.
                         </span>
                     </h1>
                     <p >

@@ -9,22 +9,16 @@ import {
     REGISTER_USER,
     SET_TOKEN,
     CURRENT_USER,
-    REGISTER_USER_SUCCESS,
-    REGISTER_USER_FAILED,
+    SIGN_UP_FOR_NEWSLETTER,
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
-    FORGET_PASSWORD_FAILED,
     CLEAR_ERRORS,
     SET_DEFAULT_VEHICLE,
     LOGGED_OUT,
-    SET_COOKIE
 } from './constants';
 import _ from 'lodash';
-import { API } from '../../services/api';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
-import { removeCookie } from '../../services/cookie';
-import keys from '../../config/keys';
 
 export const loginUser = async (dispatch) => {
     dispatch({ type: USER_LOADING })
@@ -47,6 +41,19 @@ export const logoutUser = () => async (dispatch, getState) => {
         .get(`/api/auth/logout`, tokenConfig(getState().Auth.token))
         .then(res => dispatch({
             type: LOGOUT_USER,
+            })
+        )
+};
+
+export const signUpForNewsletter = () => async (dispatch, getState) => {
+    dispatch({
+        type: USER_LOADING
+    })
+    await axios
+        .post(`/api/user/newsletter/add`)
+        .then(res => dispatch({
+            type: SIGN_UP_FOR_NEWSLETTER,
+            payload: res.data
             })
         )
 };
@@ -75,19 +82,19 @@ export const reloadLogout = () => ({
 });
 
 export const resendVerify = (user) => async (dispatch, getState) => {
-    await axios
+    const data = await axios
         .post(`/api/auth/resend`, user, tokenConfig(getState().Auth.token))
         .then(res => dispatch({
             type: USER_LOADED,
             payload: res.data,
         }))
         .catch(err => {
-            // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: AUTH_ERROR,
                 payload: err.response.data
             })
         })
+    return data
 }
 //Check token & Load User
 export const googleUser = (token) => async (dispatch, getState) => {
@@ -111,9 +118,8 @@ export const googleUser = (token) => async (dispatch, getState) => {
 //Check token & Load User
 export const loadUser = (user) => async (dispatch, getState) => {
     //User Loading
-    // console.log(user);
     dispatch({type: USER_LOADING})
-
+    console.log('here')
     await axios
         .post(`/api/auth/login`, user)
         .then(res => dispatch({
@@ -121,7 +127,6 @@ export const loadUser = (user) => async (dispatch, getState) => {
             payload: res.data,
         }))
         .catch(err => {
-            // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: AUTH_ERROR,
                 payload: err.response

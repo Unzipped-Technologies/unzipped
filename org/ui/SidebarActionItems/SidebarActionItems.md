@@ -1,3 +1,0 @@
-```js
-<SidebarActionItems>test</SidebarActionItems>
-```

@@ -246,12 +246,12 @@ router.post(
         if(!t) throw Error('Invalid Credentials')
         console.log('cookie:' + t),
         res.cookie('access_token', t, { httpOnly: true }),
-        res.json({...existingUsers._doc, cookie: t}),
+        res.json({...existingUsers._doc, msg: 'success', cookie: t}),
         
         next()
         } catch (e) {
         console.log(e);
-        res.status(400).send('Email and Password does not match');
+        res.status(400).send('Email and Password do not match');
     }
 })
 
