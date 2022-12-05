@@ -63,6 +63,11 @@ import Tiktok from '../icons/tiktok';
 import Copywrite from '../icons/Copywrite';
 import GoogleCircle from '../icons/GoogleCircle';
 import Github from '../icons/github';
+import Question from '../icons/question';
+import Glasses from '../icons/glasses';
+import Compass from '../icons/compass';
+import Play from '../icons/play';
+import QuestionCircle from '../icons/questionCircle';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -94,6 +99,10 @@ const mapNameIcons = {
     exclaimPoint: ExclaimationPoint,
     expand: ExpandIcon,
     file: FileIcon,
+    glasses: Glasses,
+    compass: Compass,
+    play: Play,
+    questionCircle: QuestionCircle,
     filterup: FilterUpIcon,
     filterdown: FilterDownIcon,
     fund: FundIcon,
@@ -119,6 +128,7 @@ const mapNameIcons = {
     profilePic: ProfileIconSquareBorder,
     report: ReportingIcon,
     menu: MenuIcon,
+    question: Question,
     RightArrow: RightArrow,
     search: SearchIcon,
     starEmpty: StarEmpty,

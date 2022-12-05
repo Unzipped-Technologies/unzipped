@@ -21,6 +21,12 @@ const NotificationsPanel = () => {
                 <Notification type="plan"/>
                 <Notification type="github"/>
                 <Notification type="browse"/>
+                <Notification type="dismiss"/>
+                <Notification type="blue"/>
+                <Notification type="createBusiness"/>
+                <Notification type="faq"/>
+                <Notification type="updateBusiness"/>
+                <Notification type="explore"/>
             </Notifications>
             <Panel>
 sdf

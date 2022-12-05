@@ -146,7 +146,7 @@ const bullets = [
         icon: <CircleStar />,
         sub: `Focus on your work knowing /n
         we help protect your data /n
-        and privacy. we’re here with /n
+        and privacy. we're here with /n
         you 24/7.`
     },
 ]
