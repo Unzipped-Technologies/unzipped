@@ -35,8 +35,8 @@ const Auth = (state = INIT_STATE, action) => {
         case SIGN_UP_FOR_NEWSLETTER:
             return {...state, loading: false, email: action.payload.email };
         case USER_LOADED:
-            console.log('///success', action.payload)
-            return {...state, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: {data: ''}}
+            console.log(action.payload)
+            return {...state, email: action.payload.email, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: {data: ''}}
         case LOGIN_USER_SUCCESS:
             return { ...state, user: action.payload, loading: false, error: {data: ''} };
         case REGISTER_USER:
@@ -46,9 +46,9 @@ const Auth = (state = INIT_STATE, action) => {
             }
             return {...state, isAuthenticated: isAuthenticated, loading: false, user: action.payload, token: action.payload.cookie};
         case LOGOUT_USER:
-            return {...INIT_STATE, loggedOut: true, loading: false}
+            console.log('///success', action.payload)
+            return {...INIT_STATE, loggedOut: true, isAuthenticated: false, loading: false}
         case AUTH_ERROR:
-            console.log('///fail', action.payload)
             return {...state, error: action.payload, loading: false, isAuthenticated: false}
         case SET_DEFAULT_VEHICLE:
             return {...state, user: action.payload, loading: false, error: {data: ''}}
@@ -57,7 +57,7 @@ const Auth = (state = INIT_STATE, action) => {
         case SET_TOKEN:
             return {...state, notification: action.payload, loading: false}
         case LOGGED_OUT:
-            return {...state, loggedOut: false}
+            return {...state, loggedOut: false, isAuthenticated: false}
         case FORGET_PASSWORD_SUCCESS:
             return {...state, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: ''}
         case LOGIN_USER_FAILED:

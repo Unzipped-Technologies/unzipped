@@ -259,7 +259,7 @@ router.get('/logout', (req, res) => {
     let t = delToken.signToken(123);
     req.logout();
     res.cookie('access_token', t, { httpOnly: true }),
-    res.redirect('/');
+    res.json({msg: 'success', cookie: t});
 });
 
 router.get('/current_user', requireLogin, async (req, res) => {

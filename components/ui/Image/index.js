@@ -13,9 +13,9 @@ const Img = styled.img`
     height: auto;
 `;
 
-const Image = ({src, alt = 'img', radius, height, width}) => {
+const Image = ({src, alt = 'img', radius, height, width, onMouseEnter, onClick}) => {
     return (
-        <Container radius={radius} height={height} width={width}>
+        <Container radius={radius} height={height} width={width} onClick={onClick} onMouseEnter={onMouseEnter}>
             <Img src={src} alt={alt} />
         </Container>
     )

@@ -21,8 +21,8 @@ const ButtonContainer = styled.button`
     color: ${({colors}) => colors ? colors.text : theme.text};
     box-sizing: border-box;
     border-radius: ${({oval}) => oval ? '25px' : '4px'};
-    padding: ${props => (props.small ? '7px' : '15px')} ${props => (props.popout ? '12px' : '15px')}
-        ${props => (props.small ? '7px' : '15px')} ${props => (props.popout ? '4px' : '15px')};
+    padding: ${props => (props.small ? '10px' : '15px')} ${props => (props.popout ? '12px' : '15px')}
+        ${props => (props.small ? '10px' : '15px')} ${props => (props.popout ? '4px' : '15px')};
     font-family: arial;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : 'auto')};
@@ -32,7 +32,7 @@ const ButtonContainer = styled.button`
     align-items: center;
     gap: ${props => (props.$condensed ? '0' : '10px')};
     font-size: ${(props) => props.fontSize ? props.fontSize : props.theme.fontSizeXS};
-    font-weight: bold;
+    font-weight: ${({normal}) => normal ? 400 : 'bold'};
     letter-spacing: 0.031rem;
     justify-content: center;
     white-space: nowrap;
@@ -104,8 +104,24 @@ const Separator = styled.div`
 const typeColors = {
     default: {
         text: '#fff',
-        background: theme.primary,
-        border: theme.primary,
+        background: '#37DEC5',
+        border: 'none',
+        hover: '#8EDE64',
+        hoverText: '#333'
+    },
+    black: {
+        text: '#333',
+        background: '#37DEC5',
+        border: 'none',
+        hover: '#8EDE64',
+        hoverText: '#777'
+    },
+    dark: {
+        text: theme.text,
+        background: '#282932',
+        border: 'none',
+        hover: '#37DEC5',
+        hoverText: theme.text2
     },
     green: {
         text: '#333',
@@ -163,6 +179,7 @@ const Button = ({
     noUppercase,
     fontSize,
     popoutWidth,
+    normal,
     oval,
     ...rest
 }) => {
@@ -188,6 +205,7 @@ const Button = ({
             iconRight={iconRight}
             onClick={handleClick}
             small={small}
+            normal={normal}
             fontSize={fontSize}
             colors={colors}
             $condensed={condensed}

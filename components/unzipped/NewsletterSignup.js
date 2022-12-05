@@ -33,6 +33,7 @@ const News = ({email, signUpForNewsletter, loading}) => {
 
     const updateEmail = (e) => {
         setForm({email: e.target.value})
+        setAlert('');
     }
 
     const validateEmail = () => {
@@ -69,7 +70,7 @@ const News = ({email, signUpForNewsletter, loading}) => {
                     UNZIPPED NEWSLETTER
                 </FormField>
             </Center>
-            <Button onClick={submitEmail} noBorder radius='15px' margin="auto 0px 0px 0px">{loading ? <CircularProgress /> : 'SUBSCRIBE'}</Button>
+            <Button onClick={submitEmail} noBorder radius='15px' margin={alert ? "auto 0px 20px 0px" : "auto 0px 0px 0px"} type="default">{loading ? <CircularProgress /> : 'SUBSCRIBE'}</Button>
             <Notification error={notifications} />
         </Container>
     )

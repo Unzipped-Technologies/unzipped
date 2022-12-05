@@ -14,8 +14,11 @@ import Link from 'next/link'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { logoutUser } from '../../redux/actions';
+import Icon from '../ui/Icon'
 import Image from '../ui/Image'
+import Dropdowns from '../ui/Dropdowns'
 import {Button as Buttons} from '../ui'
+import router from 'next/router';
 
 const Container = styled.div`
     display: flex;
@@ -210,6 +213,13 @@ const Sub = styled.div`
 const ButtonHolder = styled.div`
     display: flex;
     flex-flow: row;
+    margin-left: 15px;
+    & div:first-of-type {
+        margin: 0px 15px;
+    }
+    & div:last-of-type {
+        cursor: pointer;
+    }
 `;
 
 const menuItems = [
@@ -234,14 +244,17 @@ const menuItems = [
         sub: [
             {
                 name: 'Browse Projects',
+                link: '/',
                 icon: <FolderIcon width={35} height={35} />
             },
             {
                 name: 'Search By Founders',
+                link: '/',
                 icon: <WorkIcon width={35} height={35}/>
             },
             {
                 name: 'Get Ideas',
+                link: '/',
                 icon: <LightIcon width={35} height={35} />
             },
             
@@ -297,23 +310,65 @@ const useStyles = makeStyles((theme) => ({
 	}
 }))
 
-const Nav = ({isSubMenu, isAuthenticated, profilePic}) => {
+const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [underline, setUnderline] = useState('Dashboard')
     const classes = useStyles();
     const wrapperRef = useRef(null);
     const dropdownRef = useRef(null);
-
+    console.log(menuOpen)
     const setDropdowns = (item) => {
+        console.log('ran')
         setTimeout(function() { 
             setMenuOpen(item)
         }, 500);
     }
 
-    const setCloseDropdowns = () => {
+    const signOut = () => {
+        logoutUser()
+        router.push('/')
+    }
+
+    const profileItems = [
+        {
+            name: 'Membership',
+            link: '/',
+            icon: <FolderIcon width={35} height={35} />
+        },
+        {
+            name: 'Hire a freelancer',
+            link: '/',
+            icon: <WorkIcon width={35} height={35}/>
+        },
+        {
+            name: 'Work with us',
+            link: '/',
+            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+        },
+        {
+            name: 'Get Ideas',
+            link: '/',
+            icon: <LightIcon width={35} height={35} />
+        },
+        { name: "<hr />", link: '/'},
+        {
+            name: 'Sign out',
+            onClick: () => signOut(),
+            link: '',
+            icon: <LightIcon width={35} height={35} />
+        },
+        {
+            name: 'Help',
+            link: '/',
+            icon: <LightIcon width={35} height={35} />
+        },
+    ]
+
+    const setCloseDropdowns = (time) => {
+        console.log('ran for some reason')
         setTimeout(function() { 
             setMenuOpen(false)
-        }, 500);
+        }, (time || 500));
     }
 
     const getButtons = () => {
@@ -321,46 +376,19 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic}) => {
             return (
                 <ButtonHolder>
                 <Buttons noBorder oval type={'green'} fontSize="14px">Start A Project</Buttons>
-                <Image src={profilePic} alt="profile pic" radius="50%" width="48px" />
+                <Image src={profilePic} alt="profile pic" radius="50%" width="48px" onClick={() => setDropdowns('profile')} onMouseEnter={() => setDropdowns('profile')}/>
+                {menuOpen === 'profile' && <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token}/>}
                 </ButtonHolder>
             )
         } else {
             return (
-                <>
+                <SignIn>
                 <Link href="/login"><Login>Log In</Login></Link>
                 <Button className={classes.button}>Sign up</Button>
-                </>
+                </SignIn>
             )
         }
     }
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-                setMenuOpen(false);
-            }
-        }
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            // Unbind the event listener on clean up
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [wrapperRef]);
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-                setMenuOpen(false);
-            }
-        }
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            // Unbind the event listener on clean up
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [dropdownRef]);
 
     return (
         <>
@@ -388,9 +416,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic}) => {
             <Right>
                 <Desktop>
                     <Search placeholder="Search" icon="search"/>
-                    <SignIn>
-                        {getButtons()}
-                    </SignIn>
+                    {getButtons(token)}
                 </Desktop>
                 <Mobile>
                     <MenuIcon className="material-icons" onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
@@ -410,7 +436,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic}) => {
         {isSubMenu && (
                 <SubMenu>
                     {subMenuItems.map(item => (
-                        <SpanWhite key={item} underline={underline === item.name} onClick={() => setUnderline(item.name)}><Sub>{item.name} </Sub></SpanWhite>
+                        <SpanWhite key={item.name} underline={underline === item.name} onClick={() => setUnderline(item.name)}><Sub>{item.name} </Sub></SpanWhite>
                     ))}
                 </SubMenu>
             )}

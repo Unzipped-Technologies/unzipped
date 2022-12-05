@@ -36,9 +36,9 @@ export const loginUserSuccess = (user) => ({
     payload: user,
 });
 
-export const logoutUser = () => async (dispatch, getState) => {
+export const logoutUser = (token) => async (dispatch, getState) => {
     await axios
-        .get(`/api/auth/logout`, tokenConfig(getState().Auth.token))
+        .get(`/api/auth/logout`, tokenConfig(token))
         .then(res => dispatch({
             type: LOGOUT_USER,
             })

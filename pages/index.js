@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import Nav from '../components/unzipped/header'
 import HeroUnzipped from '../components/unzipped/heroUnzipped'
 import SectionOne from '../components/unzipped/sectionOne'
@@ -8,6 +8,10 @@ import SectionFour from '../components/unzipped/sectionFour'
 import styled from 'styled-components'
 import News from '../components/unzipped/NewsletterSignup'
 import Footer from '../components/unzipped/Footer'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import { googleUser } from '../redux/actions';
+import { parseCookies } from "../services/cookieHelper";
 
 const Container = styled.div`
     display: flex;
@@ -16,10 +20,19 @@ const Container = styled.div`
     align-items: center;
 `;
 
-const Home = () => {
+const Home = ({token}) => {
+    console.log(token)
+    useEffect(() => {
+        if (token.access_token) {
+            if (!user) {
+            googleUser(token.access_token);
+            }
+        }
+    }, [])
+
     return (
         <Container>
-            <Nav />
+            <Nav token={token}/>
             <HeroUnzipped />
             <SectionOne />
             <SectionTwo />
@@ -31,4 +44,28 @@ const Home = () => {
     )
 }
 
-export default Home;
+Home.getInitialProps = async ({ req, res }) => {
+    const token = parseCookies(req)
+    
+      return {
+        token: token && token,
+      }
+    }
+
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+        isAuthenticated: state.Auth.isAuthenticated,
+        token: state.Auth.token,
+        loading: state.Auth.loading,
+        profilePic: state.Auth?.user?.profileImage,
+    }
+  }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        googleUser: bindActionCreators(googleUser, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

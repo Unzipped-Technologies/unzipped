@@ -62,6 +62,7 @@ import Twitter from '../icons/twitter';
 import Tiktok from '../icons/tiktok';
 import Copywrite from '../icons/Copywrite';
 import GoogleCircle from '../icons/GoogleCircle';
+import Github from '../icons/github';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -126,6 +127,7 @@ const mapNameIcons = {
     timeout: Timeout,
     copywrite: Copywrite,
     googleCircle: GoogleCircle,
+    github: Github,
 };
 
 /**
