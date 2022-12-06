@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
@@ -164,6 +164,7 @@ const stories = [
 
 const Panel = ({list, selectedList, type}) => {
     const [menuOpen, setMenuOpen] = useState(false)
+    const [storyList, setStoryList] = useState([])
 
     const setDropdowns = (item) => {
         setTimeout(function() { 
@@ -195,11 +196,26 @@ const Panel = ({list, selectedList, type}) => {
         },
     ]
 
+    useEffect(() => {
+        const storyList = []
+        for (const tag of tags) {
+            storyList.push({
+                name: tag,
+                points: 'STORY POINTS',
+                assignee: {
+                    name: 'ASSIGNEE'
+                }
+            })
+            storyList.push(...stories.filter(item => item.tag === tag))
+        }
+        console.log(storyList)
+    }, [stories])
+
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <TitleText paddingLeft>{selectedList}</TitleText>
             <Underline color="#333" noMargin={type === 'department'}/>   
-            {type === 'department' && <Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')} onMouseEnter={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>}
+            {<Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>}
             {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top/>}
             {!freelancer && (
                 <NoUsersInList>
@@ -215,7 +231,7 @@ const Panel = ({list, selectedList, type}) => {
                 ))}
             </UserContainer>
             <StoryTable>
-                {tags.map(tag => (
+                {type === 'department' && tags.map(tag => (
                     <>
                     <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
                         <DarkText noMargin bold>{tag} ({stories.filter(i => tag === i.tag).length})</DarkText>

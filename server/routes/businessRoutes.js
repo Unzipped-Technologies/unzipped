@@ -91,5 +91,7 @@ router.post('/department/create', requireLogin, permissionCheckHelper.hasPermiss
     }
 });
 
+// TODO create an update department route
+
 
 module.exports = router;

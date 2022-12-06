@@ -25,10 +25,26 @@ const userPermissions = Object.freeze({
     deleteBusiness: 'deleteBusiness',
     // departments
     CreateDepartment: 'createDepartment',
+    UpdateDepartment: 'updateDepartment',
+    GetDepartmentById: 'getDepartmentById',
+    DeleteDepartment: 'deleteDepartment',
+    ListDepartment: 'listDepartments',
     // likes
     UserLike: 'userLike',
     ListLikesForUser: 'listLikesForUser',
     UserDeleteLike: 'userDeleteLike',
+    // tags
+    CreateTag: 'createTag',
+    UpdateTag: 'updateTag',
+    GetTagById: 'getTagById',
+    DeleteTag: 'deleteTag',
+    ListTag: 'listTags',
+    // stories
+    CreateStory: 'createStory',
+    UpdateStory: 'updateStory',
+    GetStoryById: 'getStoryById',
+    DeleteStory: 'deleteStory',
+    ListStory: 'listStories',
 })
 
 const accountTypePermissions = Object.freeze({
@@ -52,6 +68,28 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserDeleteLike,
         // department
         userPermissions.CreateDepartment,
+        userPermissions.UpdateDepartment,
+        userPermissions.GetDepartmentById,
+        userPermissions.DeleteDepartment,
+        userPermissions.ListDepartments,
+        // tags
+        userPermissions.CreateTag,
+        userPermissions.UpdateTag,
+        userPermissions.GetTagById,
+        userPermissions.DeleteTag,
+        userPermissions.ListTags,
+        // stories
+        userPermissions.CreateStory,
+        userPermissions.UpdateStory,
+        userPermissions.GetStoryById,
+        userPermissions.DeleteStory,
+        userPermissions.ListStories,
+        // message
+        userPermissions.CreateMessage,
+        userPermissions.UpdateMessage,
+        userPermissions.GetMessageById,
+        userPermissions.DeleteMessage,
+        userPermissions.ListMessages,
     ],
     [accountTypeEnum.INVESTOR]: [
         // users
@@ -72,6 +110,18 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
         userPermissions.UserDeleteLike,
+        // stories
+        userPermissions.CreateStory,
+        userPermissions.UpdateStory,
+        userPermissions.GetStoryById,
+        userPermissions.DeleteStory,
+        userPermissions.ListStories,
+        // messages
+        userPermissions.CreateMessage,
+        userPermissions.UpdateMessage,
+        userPermissions.GetMessageById,
+        userPermissions.DeleteMessage,
+        userPermissions.ListMessages,
     ],
     [accountTypeEnum.ADMIN]: [
         // users
@@ -101,6 +151,28 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserDeleteLike,
         // department
         userPermissions.CreateDepartment,
+        userPermissions.UpdateDepartment,
+        userPermissions.GetDepartmentById,
+        userPermissions.DeleteDepartment,
+        userPermissions.ListDepartments,
+        // tags
+        userPermissions.CreateTag,
+        userPermissions.UpdateTag,
+        userPermissions.GetTagById,
+        userPermissions.DeleteTag,
+        userPermissions.ListTags,
+        // stories
+        userPermissions.CreateStory,
+        userPermissions.UpdateStory,
+        userPermissions.GetStoryById,
+        userPermissions.DeleteStory,
+        userPermissions.ListStories,
+        // message
+        userPermissions.CreateMessage,
+        userPermissions.UpdateMessage,
+        userPermissions.GetMessageById,
+        userPermissions.DeleteMessage,
+        userPermissions.ListMessages,
     ]
 })
   
