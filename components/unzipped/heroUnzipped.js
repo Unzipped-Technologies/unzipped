@@ -17,6 +17,7 @@ const Container = styled.div`
 const Image = styled.img`
     width: 100vw;
     position: relative;
+    min-height: 50vh;
 `;
 
 const Content = styled.div`

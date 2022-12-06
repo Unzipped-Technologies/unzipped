@@ -12,7 +12,7 @@ const ProgressBarContainer = styled.div`
     font-family: arial;
     font-weight: 600;
     font-size: ${props => (props.$tileView ? '1.5rem' : '1.625rem')};
-    padding: ${props => (props.$showValue ? '20px' : ' 5px 20px')};
+    padding: ${props => (props.$showValue ? '20px 0px' : ' 5px 20px')};
     color: ${props => (props.$tileView ? props.theme.secondary : '#fff')};
     height: auto;
     ${props =>
@@ -29,21 +29,26 @@ const ProgressBarContainer = styled.div`
 `;
 
 const ProgressBarBack = styled.div`
-    background-color: ${props => (props.$tileView ? props.theme.secondaryLight : props.theme.accent2)};
-    width: ${props => props.$width}px;
-    min-height: 30px;
-    height: 30px;
+    background-color: #d8d8d8;
+    width: 100%;
+    min-height: 15px;
+    height: 15px;
     position: relative;
-    border-radius: 4px;
+    border-radius: 24px;
+    overflow: hidden;
 `;
 
 const ProgressBarBar = styled.div`
-    background-color: ${props => (props.$tileView ? props.theme.secondary : props.theme.important)};
+    background-color: #fff;
+    background-image: linear-gradient(45deg, #DE43DE, #CC4848);
     width: ${props => props.$width}px;
-    min-height: 30px;
-    height: 30px;
+    min-height: 15px;
+    height: 15px;
     position: absolute;
-    border-radius: 4px;
+    border-radius: 24px;
+    @media (min-width: 1266px) {
+        width: ${props => props.$width + (props.$width * 0.25)}px;
+    }
 `;
 
 const Header = styled.div`
@@ -67,16 +72,6 @@ const ProgressBar = ({tileView, showValue, status, value, width}) => {
 
     return (
         <ProgressBarContainer $showValue={showValue} $tileView={tileView}>
-            {showHeader && (
-                <Header $width={width}>
-                    {showValue && <Value>{value}%</Value>}
-                    {status && (
-                        <BadgeStyled status={displayedStatus} small={tileView} xsmall={displayedStatus.length >= 20}>
-                            {displayedStatus}
-                        </BadgeStyled>
-                    )}
-                </Header>
-            )}
             {showValue && (
                 <ProgressBarBack $width={width} $tileView={tileView}>
                     <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} />

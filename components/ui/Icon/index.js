@@ -68,6 +68,13 @@ import Glasses from '../icons/glasses';
 import Compass from '../icons/compass';
 import Play from '../icons/play';
 import QuestionCircle from '../icons/questionCircle';
+import Logo from '../icons/logo';
+import EyeIcon from '../icons/eye';
+import HeartIcon from '../icons/heart';
+import SuitcaseIcon from '../icons/suitcase';
+import DepartmentIcon from '../icons/department';
+import SelectedDepartmentIcon from '../icons/selectedDepartment';
+import DownWideIcon from '../icons/downWideIcon';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -77,6 +84,9 @@ const mapNameIcons = {
     calendar: calendar,
     check: CheckmarkIcon,
     checkbox: CheckmarkContainerIcon,
+    eye: EyeIcon,
+    heart: HeartIcon,
+    suitcase: SuitcaseIcon,
     checksome: CheckmarkMinusIcon,
     circle: CircleIcon,
     circleWCheck: circleWCheck,
@@ -105,12 +115,16 @@ const mapNameIcons = {
     questionCircle: QuestionCircle,
     filterup: FilterUpIcon,
     filterdown: FilterDownIcon,
+    logo: Logo,
     fund: FundIcon,
     help: HelpIcon,
+    department: DepartmentIcon,
+    selectedDepartment: SelectedDepartmentIcon,
     info: InfoIcon,
     largeExpand: LargeExpand,
     largeMenu: LargeMenu,
     LeftArrow: LeftArrow,
+    downWideIcon: DownWideIcon,
     link: LinkIcon,
     locker: LockerIcon,
     minus: Minus,

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Notification from './Notification';
+import Panel from './UserSetupPanel'
 
 const Container = styled.div`
     display: grid;
@@ -12,25 +13,15 @@ const Notifications = styled.div`
     padding: 0px 10px;
 `;
 
-const Panel = styled.div``;
-
-const NotificationsPanel = () => {
+const NotificationsPanel = ({notifications, user}) => {
     return (
         <Container>
             <Notifications>
-                <Notification type="plan"/>
-                <Notification type="github"/>
-                <Notification type="browse"/>
-                <Notification type="dismiss"/>
-                <Notification type="blue"/>
-                <Notification type="createBusiness"/>
-                <Notification type="faq"/>
-                <Notification type="updateBusiness"/>
-                <Notification type="explore"/>
+                {notifications.map(item => (
+                    <Notification type={item.type}/>
+                ))}
             </Notifications>
-            <Panel>
-sdf
-            </Panel>
+            <div><Panel user={user}/></div>
         </Container>
     )
 }

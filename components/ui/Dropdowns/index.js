@@ -58,7 +58,7 @@ const Dropdown = ({items, ref, onClose, token}) => {
                 return <HR key={index}/> 
             }
             return (
-                <Row key={e.name + index} onClick={() => e?.onClick(token)}>{e.icon}<Link href={e.link}><Span3>{e.name}</Span3></Link></Row>
+                <Row key={e.name + index} onClick={() => e?.onClick ? e?.onClick(token) : () => {}}>{e.icon}<Link href={e.link}><Span3>{e.name}</Span3></Link></Row>
             )
         })}
         </MenuDropdown>

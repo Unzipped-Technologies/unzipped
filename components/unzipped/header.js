@@ -18,7 +18,7 @@ import Icon from '../ui/Icon'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
 import {Button as Buttons} from '../ui'
-import router from 'next/router';
+import router, {useRouter} from 'next/router';
 
 const Container = styled.div`
     display: flex;
@@ -277,19 +277,24 @@ const menuItems = [
 
 const subMenuItems = [
     {
-        name: 'Dashboard'
+        name: 'Dashboard',
+        link: '/dashboard'
     },
     {
-        name: 'Lists'
+        name: 'Lists',
+        link: '/dashboard/lists'
     },
     {
-        name: 'Tasklists'
+        name: 'Tasklist',
+        link: '/dashboard/tasklist'
     },
     {
-        name: 'My Projects'
+        name: 'My Projects',
+        link: '/dashboard/projects'
     },
     {
-        name: 'Inbox'
+        name: 'Inbox',
+        link: '/dashboard/inbox'
     },
 ]
 
@@ -311,14 +316,13 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
+    const {pathname} = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
-    const [underline, setUnderline] = useState('Dashboard')
     const classes = useStyles();
     const wrapperRef = useRef(null);
     const dropdownRef = useRef(null);
-    console.log(menuOpen)
+    console.log(pathname)
     const setDropdowns = (item) => {
-        console.log('ran')
         setTimeout(function() { 
             setMenuOpen(item)
         }, 500);
@@ -330,6 +334,11 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
     }
 
     const profileItems = [
+        {
+            name: 'Dashboard',
+            link: '/dashboard',
+            icon: <FolderIcon width={35} height={35} />
+        },
         {
             name: 'Membership',
             link: '/',
@@ -365,7 +374,6 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
     ]
 
     const setCloseDropdowns = (time) => {
-        console.log('ran for some reason')
         setTimeout(function() { 
             setMenuOpen(false)
         }, (time || 500));
@@ -393,7 +401,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
     return (
         <>
         <Container>
-            <Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/>
+            <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/></Link>
             <Menu>
                 {menuItems && menuItems.map((item, index) => {
                     return (
@@ -436,7 +444,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
         {isSubMenu && (
                 <SubMenu>
                     {subMenuItems.map(item => (
-                        <SpanWhite key={item.name} underline={underline === item.name} onClick={() => setUnderline(item.name)}><Sub>{item.name} </Sub></SpanWhite>
+                        <Link href={item.link}><SpanWhite key={item.name} underline={pathname === item.link}><Sub>{item.name} </Sub></SpanWhite></Link>
                     ))}
                 </SubMenu>
             )}
@@ -445,7 +453,6 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,

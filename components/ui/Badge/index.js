@@ -13,6 +13,7 @@ const BadgeContainer = styled.div`
     padding: 6px 12px;
     margin-right: 10px;
     font-family: arial;
+    cursor: default;
     display: inline-block;
     font-weight: 700;
     text-transform: uppercase;
@@ -31,8 +32,8 @@ const statusColor = {
 
 const colors = {
     default: {
-        text: theme.text,
-        background: theme.tint3,
+        text: '#333',
+        background: '#D0D0D0',
     },
     primary: {
         text: '#fff',

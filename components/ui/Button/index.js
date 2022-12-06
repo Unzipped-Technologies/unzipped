@@ -32,7 +32,7 @@ const ButtonContainer = styled.button`
     align-items: center;
     gap: ${props => (props.$condensed ? '0' : '10px')};
     font-size: ${(props) => props.fontSize ? props.fontSize : props.theme.fontSizeXS};
-    font-weight: ${({normal}) => normal ? 400 : 'bold'};
+    font-weight: ${({normal}) => normal ? 500 : 'bold'};
     letter-spacing: 0.031rem;
     justify-content: center;
     white-space: nowrap;
@@ -125,9 +125,23 @@ const typeColors = {
     },
     green: {
         text: '#333',
-        background: '#8EDE64;',
+        background: '#8EDE64',
         border: 'none',
         hover: '#37DEC5',
+        hoverText: '#fff'
+    },
+    green2: {
+        text: '#333',
+        background: '#8EDE64',
+        border: 'none',
+        hover: '#37DEC5',
+        hoverText: theme.text
+    },
+    grey: {
+        text: '#333',
+        background: '#D0D0D0',
+        border: 'none',
+        hover: '#8EDE64',
         hoverText: '#fff'
     },
     outline: {

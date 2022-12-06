@@ -5,7 +5,7 @@
  */
 export const statusFormat = status => {
     const statusMap = {
-        [closeReady]: 'Complete',
+        'closeReady': 'Complete',
     };
 
     const convertStatus = status => statusMap[status] ?? status;

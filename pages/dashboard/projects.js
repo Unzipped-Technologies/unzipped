@@ -28,13 +28,12 @@ const user = [
     },
 ]
 
-const Dashboard = () => {
+const Projects = () => {
     return (
         <React.Fragment>
             <Nav isSubMenu/>
-            <NotificationsPanel notifications={notifications} user={user}/>
         </React.Fragment>
     )
 }
 
-export default Dashboard;
+export default Projects;
