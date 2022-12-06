@@ -60,12 +60,12 @@ const freelancer = [
         isInvited: true,
     },
     {
-        name: 'James Cameron',
-        type: 'Full Stack Web Developer',
+        name: 'Stefano Campagna',
+        type: 'Fake Web Developer',
         country: 'United States',
         skills: [
             'React',
-            'Node.js',
+            'Taking Calls',
             'Web 3',
             'AWS',
             'UI/UX'
@@ -73,7 +73,7 @@ const freelancer = [
         cover: `I have been a developer for over 20 years. I have worked on many
         large projects and I have contributed superior quality features and improved
         ROI for many developers.`,
-        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        profilePic: '/img/testimonial_1.jpg',
         isInvited: false
     },
     {
@@ -90,7 +90,7 @@ const freelancer = [
         cover: `I have been a developer for over 20 years. I have worked on many
         large projects and I have contributed superior quality features and improved
         ROI for many developers.`,
-        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        profilePic: '/img/testimonial_12.jpg',
         isInvited: false
     },
 ]
