@@ -75,9 +75,13 @@ import SuitcaseIcon from '../icons/suitcase';
 import DepartmentIcon from '../icons/department';
 import SelectedDepartmentIcon from '../icons/selectedDepartment';
 import DownWideIcon from '../icons/downWideIcon';
+import ActionIcon from '../icons/ActionIcon';
+import circleCheck from '../icons/checkCircle';
+import successCheck from '../icons/successCheck';
 
 const mapNameIcons = {
     alert: AlertIcon,
+    actionIcon: ActionIcon,
     alertDone: AlertDoneIcon,
     back: BackIcon,
     arrowRight: ArrowRight,
@@ -120,6 +124,8 @@ const mapNameIcons = {
     help: HelpIcon,
     department: DepartmentIcon,
     selectedDepartment: SelectedDepartmentIcon,
+    successCheck: successCheck,
+    circleCheck: circleCheck,
     info: InfoIcon,
     largeExpand: LargeExpand,
     largeMenu: LargeMenu,

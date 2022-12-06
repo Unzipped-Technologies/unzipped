@@ -229,11 +229,13 @@ const menuItems = [
             
             {
                 name: 'Search Freelancers',
-                icon: <WorkIcon width={35} height={35}/>
+                icon: <WorkIcon width={35} height={35}/>,
+                link: '/'
             },
             {
                 name: 'Browse By Skill',
-                icon: <FolderIcon width={35} height={35} />
+                icon: <FolderIcon width={35} height={35} />,
+                link: '/'
             }
         ],
         link: '/',
@@ -321,7 +323,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
     const classes = useStyles();
     const wrapperRef = useRef(null);
     const dropdownRef = useRef(null);
-    console.log(pathname)
+
     const setDropdowns = (item) => {
         setTimeout(function() { 
             setMenuOpen(item)
@@ -409,13 +411,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
                         <Span>{item.item} </Span>
                         {item?.sub?.length && <Span2><DownIcon /></Span2>}
                         {menuOpen === item.item && item?.sub && (
-                            <MenuDropdown ref={dropdownRef} onMouseLeave={setCloseDropdowns}>
-                                {item?.sub?.map((e, index) => {
-                                    return (
-                                        <Row key={e.name + index}>{e.icon}<Span3>{e.name}</Span3></Row>
-                                    )
-                                })}
-                            </MenuDropdown>
+                            <Dropdowns items={item?.sub} onClose={() => setCloseDropdowns(0)} token={token}/>
                         )}
                     </Item>
                     )
@@ -431,12 +427,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
                         menu
                     </MenuIcon>
                     {menuOpen === 'mobile' && (
-                        <Dropdown>
-                            {menuItems && menuItems?.map((item, index) => {
-                                return (
-                                <Row key={item.item + index}>{item.icon}<Span3>{item.item}</Span3></Row>
-                    )})}
-                        </Dropdown>
+                        <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token}/>
                     )}
                 </Mobile>
             </Right>

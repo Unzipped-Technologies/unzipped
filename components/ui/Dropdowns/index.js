@@ -6,7 +6,8 @@ import Link from 'next/link'
 const MenuDropdown = styled.div`
     position: absolute;
     width: 220px;
-    top: 84px;
+    top: ${({right}) => right ? '50px' : '84px'};
+    right: ${({right}) => right ? '0px' : 'unset'};
     border-radius: 5px;
     box-shadow: 0 0 12px #00000029,0 8px 24px #0003;
     padding: 10px 10px;
@@ -34,13 +35,13 @@ const Span3 = styled.div`
 
 const HR = styled.hr``;
 
-const Dropdown = ({items, ref, onClose, token}) => {
+const Dropdown = ({items, ref, onClose, token, right, top}) => {
     const profileRef = useRef(null);
     
     useEffect(() => {
         function handleClickOutside(event) {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
-                setMenuOpen(false);
+                onClose(false);
             }
         }
         // Bind the event listener
@@ -52,13 +53,13 @@ const Dropdown = ({items, ref, onClose, token}) => {
     }, [profileRef]);
 
     return (
-        <MenuDropdown ref={ref} onMouseLeave={() => onClose()}>
+        <MenuDropdown ref={profileRef} onMouseLeave={() => onClose()} right={right} top={top}>
         {items?.map((e, index) => {
             if (e.name === "<hr />") {
                 return <HR key={index}/> 
             }
             return (
-                <Row key={e.name + index} onClick={() => e?.onClick ? e?.onClick(token) : () => {}}>{e.icon}<Link href={e.link}><Span3>{e.name}</Span3></Link></Row>
+                <Row key={e.name + index}  onClick={() => e?.onClick ? e?.onClick(token) : () => {}}>{e.icon}<Link href={e.link}><Span3>{e.name}</Span3></Link></Row>
             )
         })}
         </MenuDropdown>

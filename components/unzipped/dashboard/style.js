@@ -44,7 +44,7 @@ const TitleText = styled.div`
 const DarkText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${({bold}) => bold ? '600' : '400'};
     font-size: ${({small, fontSize}) => small ? '14px' : fontSize ? fontSize : '16px'};
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
@@ -52,6 +52,9 @@ const DarkText = styled.div`
     margin-top: ${({topMargin}) => topMargin ? topMargin : 'unset'};
     margin-bottom: ${({noMargin}) => noMargin ? '0px' : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
+    text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
+    white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'unset'};
+    overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
     width: 96%;
     text-align: ${({center}) => center ? 'center' : 'unset'};
     color: ${theme.text2};
@@ -65,14 +68,16 @@ const Absolute = styled.div`
     display: flex;
     flex-flow: row;
     align-items: center;
+    text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
+    width: ${({width}) => width ?  width : 'unset'};
     top: ${({top}) => top ? top : 'unset'};
-    right: ${({left}) => left ? 'unset' : '10px'};
+    right: ${({left, right}) => left ? 'unset' : right ? right : '10px'};
     left: ${({left}) => left ? '10px' : 'unset'};
 `;
 
 const Underline = styled.div`
     border-bottom: solid 1px ${({color}) => color ? color : '#d8d8d8'};
-    margin: 5px 0px;
+    margin: ${({noMargin}) => noMargin ? "5px 0px 0px 0px" : "5px 0px"};
 `;
 
 const WhiteCard = styled.div`

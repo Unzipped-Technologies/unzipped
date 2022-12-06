@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
@@ -13,13 +13,15 @@ import {
 import FreelancerCard from './FreelancerCard'
 import Icon from '../../ui/Icon'
 import Button from '../../ui/Button'
+import Image from '../../ui/Image'
+import Dropdowns from '../../ui/Dropdowns'
 
 const Container = styled.div`
     position: relative;
     display: flex;
     flex-flow: column;
     border: 1px solid #D9D9D9;
-    background: #D9D9D9;
+    background: ${({background}) => background ? background : '#D9D9D9'};
     width: 95%;
     max-height: 900px;
     padding: 20px 0px;
@@ -40,6 +42,15 @@ const UserContainer = styled.div`
     display: flex;
     flex-flow: column;
 `;
+
+const Row = styled.div`
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    position: relative;
+`;
+
+const StoryTable = styled.div``;
 
 const freelancer = [
     {
@@ -95,14 +106,101 @@ const freelancer = [
     },
 ]
 
+const tags = [
+    'To Do',
+    'In Progress',
+    'Done'
+]
+
+const stories = [
+    {
+        tag: 'To Do',
+        name: 'Build Home Page',
+        points: 3,
+        assignee: {
+            name: 'Jason Maynard',
+            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+        }
+    },
+    {
+        tag: 'To Do',
+        name: 'Build Update Icons',
+        points: 2,
+        assignee: {
+            name: 'Jason Maynard',
+            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+        }
+    },
+    {
+        tag: 'In Progress',
+        name: 'Build Update Icons',
+        points: 3,
+        assignee: {
+            name: 'Jason Maynard',
+            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+        }
+    },
+    {
+        tag: 'Done',
+        name: 'Build notification component',
+        points: 5,
+        assignee: {
+            name: 'Jason Maynard',
+            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+        }
+    },
+    {
+        tag: 'Done',
+        name: 'Build notification component with a really long story name',
+        points: 5,
+        assignee: {
+            name: 'Jason Maynard',
+            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+        }
+    },
+]
+
 
 
 const Panel = ({list, selectedList, type}) => {
+    const [menuOpen, setMenuOpen] = useState(false)
+
+    const setDropdowns = (item) => {
+        setTimeout(function() { 
+            setMenuOpen(item)
+        }, 500);
+    }
+
+    const setCloseDropdowns = (time) => {
+        setTimeout(function() { 
+            setMenuOpen(false)
+        }, (time || 500));
+    }
+
+    const menuItems = [
+        {
+            name: 'Create a story',
+            link: '/dashboard',
+            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+        },
+        {
+            name: 'Create Department',
+            link: '/',
+            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+        },
+        {
+            name: 'Remove Department',
+            link: '/',
+            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+        },
+    ]
+
     return (
-        <Container>
+        <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <TitleText paddingLeft>{selectedList}</TitleText>
-            <Underline color="#333"/>   
-            {type === 'department' && <Absolute><Icon name="downWideIcon" color="#333"/></Absolute>}
+            <Underline color="#333" noMargin={type === 'department'}/>   
+            {type === 'department' && <Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')} onMouseEnter={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>}
+            {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top/>}
             {!freelancer && (
                 <NoUsersInList>
                     <WorkIcon width={200} height={200}/>
@@ -116,6 +214,28 @@ const Panel = ({list, selectedList, type}) => {
                     <FreelancerCard user={user} />
                 ))}
             </UserContainer>
+            <StoryTable>
+                {tags.map(tag => (
+                    <>
+                    <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
+                        <DarkText noMargin bold>{tag} ({stories.filter(i => tag === i.tag).length})</DarkText>
+                        <DarkText noMargin> </DarkText>
+                        <DarkText noMargin center bold>STORY POINTS</DarkText>
+                        <DarkText noMargin center bold>ASSIGNEE</DarkText>
+                    </WhiteCard>
+                    {stories.filter(i => tag === i.tag).map((item, index) => (
+                        <WhiteCard noMargin borderRadius="0px" row>
+                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
+                            <DarkText noMargin> </DarkText>
+                            <DarkText noMargin> </DarkText>
+                            <DarkText noMargin center>{item.points}</DarkText>
+                            {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
+                            <DarkText noMargin row center>{item.assignee.name}</DarkText>
+                        </WhiteCard>
+                    ))}
+                    </>
+                ))}
+            </StoryTable>
 
         </Container>
     )
