@@ -106,7 +106,6 @@ const Business = (state = INIT_STATE, action = {}) => {
         case UPDATE_BUSINESS_FORM:
             return {...state, loading: false, businessForm: {...state.businessForm, ...action.payload}};
         case RESET_BUSINESS_FORM:
-            console.log('this one', {...INIT_STATE.businessForm})
             return {...state, loading: false, businessForm: {...INIT_STATE.businessForm}};
         case LOAD_STATE:
             return {...state, loading: true};

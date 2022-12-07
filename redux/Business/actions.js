@@ -26,7 +26,6 @@ export const updateBusinessForm = (data) => async (dispatch, getState) => {
 }
 
 export const resetBusinessForm = () => async (dispatch, getState) => {
-    console.log('ran ran ran')
     dispatch({
         type: RESET_BUSINESS_FORM
     })

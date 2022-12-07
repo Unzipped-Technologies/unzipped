@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import OptionTileGroup from '../components/ui/OptionTileGroup'
 import CreateABusiness from '../components/unzipped/CreateABusiness'
+import FormField from '../components/ui/FormField'
 import {
     BlackCard,
     WhiteText,
@@ -45,7 +46,9 @@ const CreateBusiness = ({
     socialMediaPlatforms = [], 
     numberOfSocialFollowing,
     businessNiche,
+    name,
 }) => {
+    const [businessName, setBusinessName] = useState(name)
     const submitForm = (step) => {
         // submit form
         // if step is true then go forward 1 step
@@ -76,14 +79,13 @@ const CreateBusiness = ({
         }
 
     }
-    console.log('/////', stage)
     const GetCard = ({stage}) => {
         switch (stage) {
             case 1:
                 return (
                     <CreateABusiness 
-                    title="Let’s get started. Which of these best describes this business?"
-                    sub="We’ll help you get started based on your business needs."
+                    title={`Let’s get started. Which of these best describes this business?`}
+                    sub={`We’ll help you get started based on your business needs.`}
                     onUpdate={updateForm}
                     onBack={goBack}
                     onSubmit={submitForm}
@@ -407,8 +409,8 @@ const CreateBusiness = ({
                     >
                         <Grid margin="10px 0px">
                             <OptionTileGroup
-                                selectedValue={socialMediaPlatforms}
-                                type="check"
+                                selectedValue={businessNiche}
+                                type="radio"
                                 tileList={[
                                     {
                                         label: `BEAUTY`,
@@ -430,12 +432,12 @@ const CreateBusiness = ({
                                     },
                                 ]}
                                 margin="5px 0px"
-                                onChange={e => updateForm({ socialMediaPlatforms: socialMediaPlatforms.find(i => i === e.target.value) ? socialMediaPlatforms.filter(i => i !== e.target.value) : [...socialMediaPlatforms ,e.target.value]})}
+                                onChange={e => updateForm({ businessNiche: e.target.value })}
                                 stage={stage}
                             /> 
                             <OptionTileGroup
-                                selectedValue={socialMediaPlatforms}
-                                type="check"
+                                selectedValue={businessNiche}
+                                type="radio"
                                 tileList={[
                                     {
                                         label: `ANIMALS & PETS`,
@@ -457,12 +459,12 @@ const CreateBusiness = ({
                                     },
                                 ]}
                                 margin="5px 0px"
-                                onChange={e => updateForm({ socialMediaPlatforms: socialMediaPlatforms.find(i => i === e.target.value) ? socialMediaPlatforms.filter(i => i !== e.target.value) : [...socialMediaPlatforms ,e.target.value]})}
+                                onChange={e => updateForm({ businessNiche: e.target.value })}
                                 stage={stage}
                             /> 
                             <OptionTileGroup
                                 selectedValue={businessNiche}
-                                type="check"
+                                type="radio"
                                 tileList={[
                                     {
                                         label: `CRAFTS & DIY`,
@@ -484,7 +486,7 @@ const CreateBusiness = ({
                                     },
                                 ]}
                                 margin="5px 0px"
-                                onChange={e => updateForm({ businessNiche: businessNiche.find(i => i === e.target.value) ? businessNiche.filter(i => i !== e.target.value) : [...socialMediaPlatforms ,e.target.value]})}
+                                onChange={e => updateForm({ businessNiche: e.target.value })}
                                 stage={stage}
                             /> 
                         </Grid>
@@ -493,9 +495,8 @@ const CreateBusiness = ({
                 case 7:
                     return (
                         <CreateABusiness 
-                        title="Do you have an online audience or following?"
-                        sub="If you’re engaging with an audience on online platforms like YouTube, Instagram, Twitter, Substack, Patreon,
-                        or elsewhere, we can set you up to sell to them."
+                        title="What would you like to name your business?"
+                        sub="You can skip this for now if you’re still working on it."
                         onUpdate={updateForm}
                         onBack={goBack}
                         onSubmit={submitForm}
@@ -503,24 +504,16 @@ const CreateBusiness = ({
                         stage={isExistingAudience !== "true" ? stage + 2 : stage}
                     >
                         <Grid>
-                            <OptionTileGroup
-                                selectedValue={isExistingAudience}
-                                type="radio"
-                                tileList={[
-                                    {
-                                        label: `YES`,
-                                        iconName: 'profileNew',
-                                        value: 'true',
-                                    },
-                                    {
-                                        label: `NO`,
-                                        iconName: 'desktop',
-                                        value: 'false',
-                                    },
-                                ]}
-                                onChange={e => updateForm({ isExistingAudience: e.target.value})}
-                                stage={stage}
-                            /> 
+                            <FormField 
+                                fieldType="input"
+                                fontSize='20px'
+                                width="80%"
+                                onChange={e => setBusinessName(e.target.value)}
+                                onBlur={e => updateForm({ name: businessName })}
+                                value={businessName}
+                            >
+                                Business Name (you can change this later)
+                            </FormField>
                         </Grid>
                     </CreateABusiness>
                     );

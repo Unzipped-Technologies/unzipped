@@ -208,7 +208,6 @@ const Panel = ({list, selectedList, type}) => {
             })
             storyList.push(...stories.filter(item => item.tag === tag))
         }
-        console.log(storyList)
     }, [stories])
 
     return (

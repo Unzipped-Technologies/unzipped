@@ -16,7 +16,6 @@ const ButtonContainer = styled.button`
     &:hover {
         background: ${({colors}) => colors ? colors.hover : theme.background2};
         color: ${({colors}) => colors ? colors.hoverText : theme.text2};
-        border: ${({colors}) => colors ? `${colors.hover} solid 1px` : `${colors.border} solid 1px`} !important;
     }
     border: ${({noBorder, colors}) => noBorder ? '0' : `${colors.border} solid 1px`} !important;
     color: ${({colors}) => colors ? colors.text : theme.text};
@@ -202,7 +201,6 @@ const Button = ({
     ...rest
 }) => {
     const colors = typeColors[type] ? typeColors[type] : typeColors.default;
-    console.log(colors)
     const [popoutOpen, setPopoutOpen] = useState(false);
     const onClickOutside = () => setPopoutOpen(false);
     const handleClick = () => {
