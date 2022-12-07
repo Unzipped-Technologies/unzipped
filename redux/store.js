@@ -5,6 +5,7 @@ import Auth from "./Auth/reducers";
 import Booking from './booking/reducers';
 import Vehicle from './Vehicle/reducers';
 import Dashboard from './Dashboard/reducers';
+import Business from './Business/reducers';
 
 
 //COMBINING ALL REDUCERS
@@ -13,6 +14,7 @@ const combinedReducer = combineReducers({
   Booking,
   Vehicle,
   Dashboard,
+  Business,
   // OTHER REDUCERS WILL BE ADDED HERE
 });
 
@@ -36,7 +38,7 @@ const makeStore = ({ isServer }) => {
 
     const persistConfig = {
       key: "nextjs",
-      whitelist: ["Auth", "Booking", "Vehicle", "Dashboard"], 
+      whitelist: ["Auth", "Booking", "Vehicle", "Dashboard", "Business"], 
       storage, // if needed, use a safer storage
     };
 

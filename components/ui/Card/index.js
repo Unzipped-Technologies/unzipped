@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 
 const CardContainer = styled.div`
     background: #fff;
-    border: 2px solid ${props => props.theme.border};
+    border: 2px solid ${props => props.noBorder ? 'transparent' : props.theme.border};
     box-sizing: border-box;
-    border-radius: 4px;
-    padding: 20px;
+    border-radius: ${({borderRadius}) => borderRadius ? borderRadius : '4px'};
+    padding: 30px 50px;
     font-family: arial;
     width: 100%;
     height: 100%;
@@ -32,8 +32,8 @@ const CardTitle = styled.h2`
 /**
  * Base Card Component.
  */
-const Card = ({children, inline, action, className, testId, title, margin}) => (
-    <CardContainer inline={inline} margin={margin} className={className} data-testid={testId}>
+const Card = ({children, inline, action, className, testId, title, margin, noBorder, borderRadius}) => (
+    <CardContainer noBorder inline={inline} borderRadius={borderRadius} margin={margin} className={className} data-testid={testId}>
         {title && <CardTitle>{title}</CardTitle>}
         {action && <ActionContainer>{action}</ActionContainer>}
         {children}

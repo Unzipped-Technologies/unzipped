@@ -96,6 +96,22 @@ const WhiteCard = styled.div`
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '12px' : '24px'};
 `;
 
+const SelectCard = styled.div`
+    background: ${({background}) => background ? background : '#D9D9D9'};
+    border: 1px ${({borderColor}) => borderColor ? borderColor : 'transparent'} solid;
+    border-radius: ${({borderRadius}) => borderRadius ? borderRadius : '0px'};
+    width: 100%;
+    display: flex;
+    cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
+    flex-flow: ${({row}) => row ? 'column' : 'row'};
+    height: ${({size, unset, height}) => size === 'large' ? '151px' : size === 'extraLarge' ? '370px' : unset ? 'unset' : height ? height :'87px'};
+    align-items: center;
+    padding: ${({padding}) => padding ? padding : '20px 20px'};
+    position: relative;
+    box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
+    margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '12px' : '24px'};
+`;
+
 const Dismiss = styled.div`
     font-weight: 500;
     font-size: 12px;
@@ -110,13 +126,23 @@ const Dismiss = styled.div`
     margin: 0px 20px;
 `;
 
+const Grid = styled.div`
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    margin: ${({margin}) => margin ? margin : '75px 0px'};
+`;
+
 module.exports = {
     BlackCard,
     WhiteText,
+    Grid,
     TitleText,
     DarkText,
     Absolute,
     WhiteCard,
     Dismiss,
-    Underline
+    Underline,
+    SelectCard
 }

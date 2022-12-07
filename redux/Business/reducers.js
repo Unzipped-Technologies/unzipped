@@ -18,7 +18,9 @@ import {
     SELECT_DEPARTMENT,
     GET_STORIES,
     DEPARTMENT_ERROR,
-    LOAD_DEPARTMENTS,
+    RESET_BUSINESS_FORM,
+    UPDATE_BUSINESS_FORM,
+    LOAD_STATE,
 } from './constants';
 
 const INIT_STATE = {
@@ -28,6 +30,28 @@ const INIT_STATE = {
     loading: false,
     selectedDepartment: 0,
     selectedBusiness: {},
+    businessForm: {
+        name: "",
+        isFirstBusiness: '',
+        isExistingAudience: 'null',
+        socialMediaPlatforms: [""],
+        budget: 0,
+        isEquity: false,
+        equity: 0,
+        deadline: "",
+        incomePlatform: [""],
+        numberOfSocialFollowing: "",
+        businessNiche: "",
+        businessAddressLineOne: "",
+        businessAddressLineTwo: "",
+        businessCountry: "",
+        businessCity: "",
+        businessState: "",
+        businessZip: "",
+        description: "",
+        businessImage: "/",
+        stage: 1,
+    },
     error: ''
 }
 
@@ -79,7 +103,12 @@ const Business = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, selectedDepartment: action.payload.selected, stories: [...action.payload.stories]};
         case DEPARTMENT_ERROR:
             return {...state, loading: false, error: action.payload};
-        case LOAD_DEPARTMENTS:
+        case UPDATE_BUSINESS_FORM:
+            return {...state, loading: false, businessForm: {...state.businessForm, ...action.payload}};
+        case RESET_BUSINESS_FORM:
+            console.log('this one', {...INIT_STATE.businessForm})
+            return {...state, loading: false, businessForm: {...INIT_STATE.businessForm}};
+        case LOAD_STATE:
             return {...state, loading: true};
         default: 
             return state;

@@ -194,7 +194,6 @@ const Login = ({ loading, PassError, loadUser, isAuthenticated, error }) => {
         return;
     }
     try {
-        console.log('/////', user)
         await loadUser(user)
     } catch (e) {
         console.log('error:', e)

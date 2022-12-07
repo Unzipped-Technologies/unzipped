@@ -13,12 +13,28 @@ import {
     SELECT_DEPARTMENT,
     GET_STORIES,
     DEPARTMENT_ERROR,
-    LOAD_DEPARTMENTS,
+    LOAD_STATE,
+    UPDATE_BUSINESS_FORM,
+    RESET_BUSINESS_FORM
 } from './constants';
+
+export const updateBusinessForm = (data) => async (dispatch, getState) => {
+    dispatch({
+        type: UPDATE_BUSINESS_FORM,
+        payload: data,
+    })
+}
+
+export const resetBusinessForm = () => async (dispatch, getState) => {
+    console.log('ran ran ran')
+    dispatch({
+        type: RESET_BUSINESS_FORM
+    })
+}
 
 export const createDepartment = (data) => async (dispatch, getState) => {
     //department Loading
-    dispatch({type: LOAD_DEPARTMENTS})
+    dispatch({type: LOAD_STATE})
 
     await axios
         .post(`/api/department/create`, data)
@@ -37,7 +53,7 @@ export const createDepartment = (data) => async (dispatch, getState) => {
 // TODO update department BE route and action
 export const updateDepartment = (data) => async (dispatch, getState) => {
     //department Loading
-    dispatch({type: LOAD_DEPARTMENTS})
+    dispatch({type: LOAD_STATE})
 
     // await axios
     //     .post(`/api/department/update`, data)
@@ -59,7 +75,7 @@ export const updateDepartment = (data) => async (dispatch, getState) => {
 
 export const deleteDepartment = (data) => async (dispatch, getState) => {
     //department Loading
-    dispatch({type: LOAD_DEPARTMENTS})
+    dispatch({type: LOAD_STATE})
 
     await axios
         .post(`/api/department/delete`, data)

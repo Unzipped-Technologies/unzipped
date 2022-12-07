@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Link from 'next/link'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { logoutUser } from '../../redux/actions';
+import { logoutUser, resetBusinessForm } from '../../redux/actions';
 import Icon from '../ui/Icon'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
@@ -317,7 +317,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }))
 
-const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
+const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm}) => {
     const {pathname} = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
@@ -381,11 +381,16 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser}) => {
         }, (time || 500));
     }
 
+    const startAProject = async () => {
+        await resetBusinessForm()
+        router.push('/create-your-business')
+    }
+
     const getButtons = () => {
         if (isAuthenticated) {
             return (
                 <ButtonHolder>
-                <Buttons noBorder oval type={'green'} fontSize="14px">Start A Project</Buttons>
+                <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>Start A Project</Buttons>
                 <Image src={profilePic} alt="profile pic" radius="50%" width="48px" onClick={() => setDropdowns('profile')} onMouseEnter={() => setDropdowns('profile')}/>
                 {menuOpen === 'profile' && <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token}/>}
                 </ButtonHolder>
@@ -455,6 +460,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         logoutUser: bindActionCreators(logoutUser, dispatch),
+        resetBusinessForm: bindActionCreators(resetBusinessForm, dispatch),
     }
 }
 

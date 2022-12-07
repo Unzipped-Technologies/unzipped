@@ -39,9 +39,9 @@ const ProgressBarBack = styled.div`
 `;
 
 const ProgressBarBar = styled.div`
-    background-color: #fff;
-    background-image: linear-gradient(45deg, #DE43DE, #CC4848);
-    width: ${props => props.$width}px;
+    background-color: ${({bar}) => bar ? bar : '#fff'}  !important;
+    background-image: ${({bar}) => bar ? 'unset' : 'linear-gradient(45deg, #DE43DE, #CC4848)'};
+    width: ${props => props.$width}px !important;
     min-height: 15px;
     height: 15px;
     position: absolute;
@@ -65,8 +65,9 @@ const Value = styled.span`
 /**
  * Progress Bar Component.
  */
-const ProgressBar = ({tileView, showValue, status, value, width}) => {
+const ProgressBar = ({tileView, showValue, status, value, width, bar}) => {
     const barWidth = (width / 100) * value;
+    console.log(barWidth)
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;
 
@@ -74,7 +75,7 @@ const ProgressBar = ({tileView, showValue, status, value, width}) => {
         <ProgressBarContainer $showValue={showValue} $tileView={tileView}>
             {showValue && (
                 <ProgressBarBack $width={width} $tileView={tileView}>
-                    <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} />
+                    <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} bar={bar} />
                 </ProgressBarBack>
             )}
         </ProgressBarContainer>

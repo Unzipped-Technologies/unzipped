@@ -1,14 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import {
-    BlackCard,
-    WhiteText,
-    TitleText,
-    DarkText,
-    Absolute,
-    WhiteCard,
-    Dismiss
-} from './style'
 import LeftListPanel from './LeftListPanel'
 import RightListPanel from './RightListPanel'
 

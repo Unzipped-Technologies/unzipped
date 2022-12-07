@@ -16,13 +16,14 @@ const ButtonContainer = styled.button`
     &:hover {
         background: ${({colors}) => colors ? colors.hover : theme.background2};
         color: ${({colors}) => colors ? colors.hoverText : theme.text2};
+        border: ${({colors}) => colors ? `${colors.hover} solid 1px` : `${colors.border} solid 1px`} !important;
     }
-    border: ${props => (props.noBorder ? '0' : `2px solid ${props.theme.border}`)};
+    border: ${({noBorder, colors}) => noBorder ? '0' : `${colors.border} solid 1px`} !important;
     color: ${({colors}) => colors ? colors.text : theme.text};
     box-sizing: border-box;
     border-radius: ${({oval}) => oval ? '25px' : '4px'};
-    padding: ${props => (props.small ? '10px' : '15px')} ${props => (props.popout ? '12px' : '15px')}
-        ${props => (props.small ? '10px' : '15px')} ${props => (props.popout ? '4px' : '15px')};
+    padding: ${props => (props.small ? '10px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
+        ${props => (props.small ? '10px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
     font-family: arial;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : 'auto')};
@@ -112,7 +113,7 @@ const typeColors = {
     black: {
         text: '#333',
         background: '#37DEC5',
-        border: 'none',
+        border: '#37DEC5',
         hover: '#8EDE64',
         hoverText: '#777'
     },
@@ -150,9 +151,11 @@ const typeColors = {
         border: theme.primary,
     },
     outlineInverse: {
-        text: '#fff',
-        background: theme.primary,
-        border: '#fff',
+        text: '##333',
+        background: '#fff',
+        border: '#37DEC5',
+        hover: '#8EDE64',
+        hoverText: '#fff'
     },
     inverse: {
         text: theme.primary,
@@ -193,11 +196,13 @@ const Button = ({
     noUppercase,
     fontSize,
     popoutWidth,
+    extraWide,
     normal,
     oval,
     ...rest
 }) => {
     const colors = typeColors[type] ? typeColors[type] : typeColors.default;
+    console.log(colors)
     const [popoutOpen, setPopoutOpen] = useState(false);
     const onClickOutside = () => setPopoutOpen(false);
     const handleClick = () => {
@@ -225,6 +230,7 @@ const Button = ({
             $condensed={condensed}
             popout={popout}
             margin={margin}
+            extraWide={extraWide}
             noBorder={noBorder}
             noUppercase={noUppercase}
             oval={oval}
