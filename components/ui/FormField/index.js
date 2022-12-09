@@ -33,7 +33,7 @@ const FormFieldContainer = styled.div`
         // Override menlo styling here, line 659
         // src/pages/Dashboard/index.scss
         // label { margin-bottom: 0 !important; }
-        margin-bottom: 14px !important;
+        margin-bottom: ${({noMargin}) => noMargin ? '0px' : '14px !important'};
     }
     & > label {
         width: 100%;
@@ -62,6 +62,7 @@ const FormField = ({
     currency,
     onChange,
     onFocus,
+    noMargin,
     fontSize = '',
     ...rest
 }) => {
@@ -101,7 +102,7 @@ const FormField = ({
     }, [error]);
 
     return (
-        <FormFieldContainer className={className} $inline={inline} $bottom={bottom} maxWidth={maxWidth}>
+        <FormFieldContainer className={className} $inline={inline} noMargin={noMargin} $bottom={bottom} maxWidth={maxWidth}>
             {children && (
                 <FormLabel forId={name} fontSize={fontSize} help={help} required={required}>
                     {children}

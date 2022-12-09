@@ -21,8 +21,8 @@ const ButtonContainer = styled.button`
     color: ${({colors}) => colors ? colors.text : theme.text};
     box-sizing: border-box;
     border-radius: ${({oval}) => oval ? '25px' : '4px'};
-    padding: ${props => (props.small ? '10px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
-        ${props => (props.small ? '10px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
+    padding: ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
+        ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
     font-family: arial;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : 'auto')};
@@ -194,6 +194,7 @@ const Button = ({
     noBorder,
     noUppercase,
     fontSize,
+    extraTall,
     popoutWidth,
     extraWide,
     normal,
@@ -223,6 +224,7 @@ const Button = ({
             onClick={handleClick}
             small={small}
             normal={normal}
+            extraTall={extraTall}
             fontSize={fontSize}
             colors={colors}
             $condensed={condensed}

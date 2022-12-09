@@ -25,6 +25,7 @@ import {
 
 const INIT_STATE = {
     departments: [],
+    businesses: [],
     tags: [],
     stories: [],
     loading: false,
@@ -33,13 +34,14 @@ const INIT_STATE = {
     businessForm: {
         name: "",
         isFirstBusiness: '',
-        isExistingAudience: 'null',
+        isExistingAudience: '',
         socialMediaPlatforms: [""],
         budget: 0,
-        isEquity: false,
+        isEquity: '',
         equity: 0,
         deadline: "",
         incomePlatform: [""],
+        typesOfHires: [""],
         numberOfSocialFollowing: "",
         businessNiche: "",
         businessAddressLineOne: "",
@@ -58,17 +60,17 @@ const INIT_STATE = {
 const Business = (state = INIT_STATE, action = {}) => {
     switch (action.type) {
         case CREATE_BUSINESS:
-            return {...state, loading: false, BUSINESSs: action.payload};
+            return {...state, loading: false, businesses: [...state.businesses, action.payload], selectedBusiness: action.payload};
         case UPDATE_BUSINESS:
-            const RemoveUpdateBusiness = state.BUSINESSs.filter(item => item.id !== action.payload.id)
-            return {...state, loading: false, BUSINESSs: [action.payload, ...RemoveUpdateBusiness]};
+            const RemoveUpdateBusiness = state.businesses.filter(item => item.id !== action.payload.id)
+            return {...state, loading: false, businesses: [action.payload, ...RemoveUpdateBusiness]};
         case DELETE_BUSINESS:
-            let newListBusinesses = state.BUSINESSs.filter(item => action.payload.id !== item.id)
-            return {...state, loading: false, BUSINESSs: [...newListBusinesses]};
+            let newListBusinesses = state.business.filter(item => action.payload.id !== item.id)
+            return {...state, loading: false, business: [...newListBusinesses]};
         case GET_BUSINESSES:
-            return {...state, loading: false, BUSINESSs: action.payload};
+            return {...state, loading: false, businesses: action.payload};
         case SELECT_BUSINESS:
-            return {...state, loading: false, selectedBUSINESS: action.payload.selected, stories: [...action.payload.stories]};
+            return {...state, loading: false, selectedBusiness: action.payload.selected, stories: [...action.payload.stories]};
         case CREATE_DEPARTMENT:
             return {...state, loading: false, departments: action.payload};
         case UPDATE_DEPARTMENT:

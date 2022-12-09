@@ -14,11 +14,14 @@ import {
     GET_STORIES,
     DEPARTMENT_ERROR,
     LOAD_STATE,
+    CREATE_BUSINESS,
     UPDATE_BUSINESS_FORM,
     RESET_BUSINESS_FORM
 } from './constants';
+import axios from 'axios';
+import {tokenConfig} from '../../services/tokenConfig';
 
-export const updateBusinessForm = (data) => async (dispatch, getState) => {
+export const updateBusinessForm = (data, token) => async (dispatch, getState) => {
     dispatch({
         type: UPDATE_BUSINESS_FORM,
         payload: data,
@@ -31,12 +34,30 @@ export const resetBusinessForm = () => async (dispatch, getState) => {
     })
 }
 
+export const createBusiness = (data, token) => async (dispatch, getState) => {
+    //department Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .post(`/api/business/create`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: CREATE_BUSINESS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
 export const createDepartment = (data) => async (dispatch, getState) => {
     //department Loading
     dispatch({type: LOAD_STATE})
 
     await axios
-        .post(`/api/department/create`, data)
+        .post(`/api/department/create`, data, tokenConfig(token))
         .then(res => dispatch({
             type: CREATE_DEPARTMENT,
             payload: res.data,

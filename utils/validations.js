@@ -33,6 +33,28 @@ class Validations {
         return false;
     }
 
+    _isNumber(data) {
+        const re = /^[0-9\b]+$/;
+        if (re.test(data)) {
+            return true
+        }
+        if (data==='') return true;
+        return false;
+    }
+
+    _percentValidate(data) {
+        const isNumber = this._isNumber(data)
+        if (isNumber) {
+            if (data >= 0 && data <= 100) {
+                return true
+            }
+        }
+        if (data === '') {
+            return true
+        }
+        return false
+    }
+
     checkNullOrEmpty(list, obj) {
         for (let index of list) {
             const value = obj[index];

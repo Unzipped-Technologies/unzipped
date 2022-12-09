@@ -16,6 +16,7 @@ const businessSchema = new Schema({
   isExistingAudience: {type: Boolean, default: false},
   numberOfSocialFollowing: String,
   socialMediaPlatforms: [String],
+  typesOfHires: [String],
   businessNiche: String,
   businessAddressLineOne: { type: String, default: '' },
   businessAddressLineTwo: { type: String, default: '' },

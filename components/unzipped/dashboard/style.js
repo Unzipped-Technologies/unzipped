@@ -128,9 +128,16 @@ const Dismiss = styled.div`
 
 const Grid = styled.div`
     display: grid;
-    justify-items: center;
+    justify-items: ${({left}) => left ? 'left' : 'center'};
     align-items: center;
     width: 100%;
+    margin: ${({margin}) => margin ? margin : '75px 0px'};
+`;
+
+const Grid2 = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 80%;
     margin: ${({margin}) => margin ? margin : '75px 0px'};
 `;
 
@@ -138,6 +145,7 @@ module.exports = {
     BlackCard,
     WhiteText,
     Grid,
+    Grid2,
     TitleText,
     DarkText,
     Absolute,
