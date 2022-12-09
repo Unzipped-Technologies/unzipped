@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 const keys = require('../config/keys');
 require('../models/User');
 require('../services/passport/passport');
@@ -16,7 +17,7 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 mongoose.Promise = global.Promise;
-mongoose.connect(keys.mongoURI, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(keys.mongoURI, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
 app
     .prepare()
@@ -44,6 +45,7 @@ app
             keys: [keys.cookieKey]
         })
         );
+
         server.use(passport.initialize());
         server.use(passport.session());
 

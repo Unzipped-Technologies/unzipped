@@ -5,7 +5,7 @@ module.exports = {
   signToken: (userID) => {
     return jwt.sign(
       {
-        iss: 'Vohnt',
+        iss: 'Unzipped',
         sub: userID,
       },
       keys.cookieKey,

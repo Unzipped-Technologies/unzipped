@@ -4,11 +4,18 @@
 module.exports = {
     //google
     googleClientID:
-      '734491624672-s2heuq6gdse7sg0akrci792qbtlqg8q1.apps.googleusercontent.com',
-    googleClientSecret: 'PWqvQELK1MVVIDLY_7WBy8HT',
+      '510901918774-aq8e215rtmogvfj7bnv1pkeonq543utq.apps.googleusercontent.com',
+    googleClientSecret: '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',
+    googleApiKey: 'AIzaSyDtayOFbb3R-I_0lwlhCovFDBZJzc4K_4k',
     //database
-    mongoURI: `mongodb+srv://DeveloperAccount:7CELAMCzusr89y@cluster1.szxtq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
-
+    mongoURI: 'mongodb+srv://jason123:Myfirst1@contactkeeper.n6tza.mongodb.net/?retryWrites=true&w=majority',
+    // 'mongodb+srv://jason123:Welcome75$#31@contactkeeper.n6tza.mongodb.net/?retryWrites=true&w=majority',
+    // `mongodb+srv://DeveloperAccount:7CELAMCzusr89y@cluster1.szxtq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    CLOUDINARY_URL: 'cloudinary://367721181168573:LDo3thl241Z86yWH59SVb0dU5H4@dghsmwkfq',
+    CloudName: 'dghsmwkfq',
+    CloudinaryAPIKey: '367721181168573',
+    CloudinarySecretKey: 'LDo3thl241Z86yWH59SVb0dU5H4',
+               
     cookieKey: '1Xxp382GgnXxYz49528',
     //payment
     stripePublishableKey:

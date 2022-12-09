@@ -1,0 +1,12 @@
+import React from 'react'
+
+const LongArrow = ({color="#F1C40F"}) => {
+    return (
+        <svg width="32" height="16" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24.02 6H0V10H24.02V16L32 8L24.02 0V6Z" fill="white"/>
+        </svg>
+    )
+}
+
+export default LongArrow
+

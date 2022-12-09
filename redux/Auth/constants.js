@@ -17,3 +17,4 @@ export const SET_COOKIE = "SET_COOKIE";
 export const SET_TOKEN = "SET_TOKEN";
 export const SET_DEFAULT_VEHICLE = "SET_DEFAULT_VEHICLE";
 export const LOGGED_OUT = "LOGGED_OUT";
+export const SIGN_UP_FOR_NEWSLETTER = "SIGN_UP_FOR_NEWSLETTER";

@@ -2,31 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  googleId: String,
-  credits: { type: Number, default: 0 },
-  usePromo: { type: Boolean, default: 0 },
-  isHotel: { type: Boolean, default: false },
-  isAdmin: { type: Boolean, default: false },
-  userType: { type: String, default: 'Customer'},
-  stripeId: String,
-  hotel: String,
-  defaultVehicle: {
-    year: Number,
-    make: String,
-    model: String,
-    color: String,
-    vin: String,
-    license: String
-  },
-  paymentMethod: {
-    card: String, 
-    id: String
-  },
-  promo: Number,
-  defaultLocation: {Object},
-  first_name: String,
-  last_name: String,
-  name: String,
+  role: Number,
   email: {
     type: String,
     require: true,
@@ -39,10 +15,37 @@ const userSchema = new Schema({
     minlength: 10,
     maxlength: 1024,
   },
-  emailVerified: {type: Boolean, default: false},
-  isMember: {type: Boolean, default: false},
-  dateCreated: String,
-  phone: String,
+  isEmailVerified: {type: Boolean, default: false},
+  googleId: String,
+  isGithubConnected: { type: Boolean, default: false },
+  isAdmin: { type: Boolean, default: false },
+  isUserSubscribed: { type: Boolean, default: false },
+  isIdentityVerified: { type: Boolean, default: false },
+  isSuspended: { type: Boolean, default: false },
+  plan: { type: Number, default: 0},
+  phoneNumber: String,
+  stripeId: String,
+  isQuestionaireCompleted: { type: Boolean, default: false },
+  AddressLineOne: { type: String, default: '' },
+  AddressLineTwo: { type: String, default: '' },
+  AddressLineCountry: { type: String, default: '' },
+  FirstName: { type: String, default: '' },
+  LastName: { type: String, default: '' },
+  AddressCity:  { type: String, default: '' },
+  AddressState:  { type: String, default: '' },
+  AddressZip:  { type: String, default: '' },
+  profileImage: { type: String, default: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'},
+  freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
+  lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
+  freelancerSkills: { type: Schema.Types.Mixed, refs: 'freelancerSkills'},
+  business: { type: Schema.Types.Mixed, refs: 'businesses'},
+  // these refer times the user liked freelancers or businesses
+  likeTotal: { type: Number, default: 0 },
+  dislikeTotal: { type: Number, default: 0 },
+  likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+  dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model('users', userSchema);
