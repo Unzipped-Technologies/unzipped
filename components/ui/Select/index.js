@@ -82,6 +82,7 @@ const SelectInput = ({
     valueForMulti,
     small,
     $modalSelect,
+    input,
     viewAll,
     width,
     widthInModal,
@@ -109,7 +110,7 @@ const SelectInput = ({
         if (small) {
             return '200px';
         }
-        return '280px';
+        return '40px';
     };
 
     const styles = {
@@ -118,8 +119,8 @@ const SelectInput = ({
             pointerEvents: 'auto',
             border: `2px solid ${border}`,
             borderRadius: '4px',
-            height: '100%',
-            width: width ? width : '360px',
+            height: input ? '28px' : '100%',
+            width: width ? width : input ? '67px' : '360px',
             minWidth: `${getMinWidth(dateTime, small)}`,
             maxWidth: `${small ? 225 : 800}px`,
             fontFamily: 'arial',
@@ -227,6 +228,7 @@ const SelectInput = ({
                 placeholder={isMulti && valueForMulti?.length > 0 ? `${valueForMulti.length} selected` : placeholder}
                 value={value}
                 name={name}
+                input={input}
                 onFocus={onFocus}
                 onBlur={() => onBlur(value)}
                 menuIsOpen={menuIsOpen}

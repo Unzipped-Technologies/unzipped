@@ -65,7 +65,7 @@ const Business = (state = INIT_STATE, action = {}) => {
             const RemoveUpdateBusiness = state.businesses.filter(item => item.id !== action.payload.id)
             return {...state, loading: false, businesses: [action.payload, ...RemoveUpdateBusiness]};
         case DELETE_BUSINESS:
-            let newListBusinesses = state.business.filter(item => action.payload.id !== item.id)
+            let newListBusinesses = state.businesses.filter(item => action.payload.id !== item.id)
             return {...state, loading: false, business: [...newListBusinesses]};
         case GET_BUSINESSES:
             return {...state, loading: false, businesses: action.payload};

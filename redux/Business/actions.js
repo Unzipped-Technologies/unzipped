@@ -16,7 +16,8 @@ import {
     LOAD_STATE,
     CREATE_BUSINESS,
     UPDATE_BUSINESS_FORM,
-    RESET_BUSINESS_FORM
+    RESET_BUSINESS_FORM,
+    GET_BUSINESSES
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
@@ -42,6 +43,25 @@ export const createBusiness = (data, token) => async (dispatch, getState) => {
         .post(`/api/business/create`, data, tokenConfig(token))
         .then(res => dispatch({
             type: CREATE_BUSINESS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
+export const getBusinessList = (data, token) => async (dispatch, getState) => {
+    console.log('data', data)
+    //business list Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .post(`/api/business/user/list`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: GET_BUSINESSES,
             payload: res.data,
         }))
         .catch(err => {

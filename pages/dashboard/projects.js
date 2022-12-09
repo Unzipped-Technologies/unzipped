@@ -1,39 +1,51 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Nav from '../../components/unzipped/header';
 import Image from '../../components/ui/Image'
-import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel';
+import SearchBar from '../../components/ui/SearchBar'
+import ProjectsContainer from '../../components/unzipped/dashboard/ProjectsContainer'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import { getBusinessList} from '../../redux/actions';
+import { parseCookies } from "../../services/cookieHelper";
 
-const notifications = [
-    { type:"plan"},
-    { type:"github"},
-    { type:"browse"},
-    { type:"dismiss"},
-    { type:"blue"},
-    { type:"createBusiness"},
-    { type:"faq"},
-    { type:"updateBusiness"},
-    { type:"explore"},
-]
+const Projects = ({token, businesses, getBusinessList}) => {
+    const [take, setTake] = useState(25)
+    useEffect(() => {
+        getBusinessList({
+            take: 25,
+            skip: 0,
+        }, token.access_token)
+    }, [])
 
-const user = [
-    {
-        text: 'Upload a profile picture',
-        icon: <Image radius="50%" width="34px" src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png" />,
-        padding: true
-    },
-    {
-        text: 'Select a plan for your account',
-        icon: <></>,
-        padding: false
-    },
-]
-
-const Projects = () => {
     return (
         <React.Fragment>
             <Nav isSubMenu/>
+            <SearchBar take={take} setTake={setTake} />
+            <ProjectsContainer type='projects' businesses={businesses}/>
         </React.Fragment>
     )
 }
 
-export default Projects;
+Projects.getInitialProps = async ({ req, res }) => {
+    const token = parseCookies(req)
+    
+      return {
+        token: token && token,
+      }
+    }
+
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+        businesses: state.Business?.businesses,
+        loading: state.Business?.loading,
+    }
+  }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getBusinessList: bindActionCreators(getBusinessList, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Projects);

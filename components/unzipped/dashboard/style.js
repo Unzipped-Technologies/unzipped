@@ -72,7 +72,7 @@ const Absolute = styled.div`
     width: ${({width}) => width ?  width : 'unset'};
     top: ${({top}) => top ? top : 'unset'};
     right: ${({left, right}) => left ? 'unset' : right ? right : '10px'};
-    left: ${({left}) => left ? '10px' : 'unset'};
+    left: ${({left, wideLeft}) => left ? '10px' : wideLeft ? '20px' : 'unset'};
 `;
 
 const Underline = styled.div`

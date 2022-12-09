@@ -248,6 +248,25 @@ class Validations {
         return array.filter((obj, index, self) => index === self.findIndex(el => el[key] === obj[key]));
     }
 
+    formatDate(data) {
+        const date = new Date(data);
+        console.log(date)
+        /* Date format you have */
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear() + 1}`;
+    }
+
+    checkNumberEven(num) {
+        //check if the number is even
+        if(num % 2 == 0) {
+            return true;
+        }
+
+        // if the number is odd
+        else {
+            return false;
+        }
+    }
+
     validateInvestorCapitalCommitmentValue(value, propsObj) {
         const {minCapitalCommitment, maxCapitalCommitment} = propsObj;
         const lpCapitalCommitment = parseFloat(value);
