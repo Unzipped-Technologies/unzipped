@@ -50,6 +50,7 @@ router.post('/user/update', requireLogin, permissionCheckHelper.hasPermission('u
 router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('userListBusinesses'), async (req, res) => {
     try {
       req.body.userId = req.user.sub
+      console.log('////req.user.sub', req.user.sub)
       const { filter, take = 25, skip = 0 } = req.body;
       const listBusinesses = await businessHelper.listBusinesses({ filter, take, skip })
       if(!listBusinesses) throw Error('could not find businesses')

@@ -6,7 +6,7 @@ import Icon from '../Icon';
 
 const SearchContainer = styled.div`
     display: flex;
-    border: 2px solid ${props => props.theme.tint3};
+    border: 1px solid ${props => props.theme.tint3};
     border-radius: 4px;
     width: ${props => props.width};
     @media (max-width: ${props => props.theme.mobileWidth}px) {
@@ -16,12 +16,14 @@ const SearchContainer = styled.div`
 `;
 
 const Input = styled.input`
-    outline: none; // Override user agent stylesheet
+    outline: none !important; // Override user agent stylesheet
     width: 100%;
-    border: none;
+    border: none !important;
     height: ${props => (props.large ? '56px' : '40px')};
     background: transparent;
     padding: 20px;
+    outline: none;
+    padding: 8px 0px 0px 0px !important;
     font-family: arial;
     font-size: ${props => props.theme.fontSizeM};
     color: ${props => props.theme.textSecondary};
@@ -33,6 +35,7 @@ const Input = styled.input`
     }
     &:focus {
         border: none !important;
+        outline: none !important;
     }
 `;
 
@@ -58,6 +61,7 @@ const ClearIcon = styled.span`
 `;
 
 const SearchIcon = styled.span`
+    padding: 0px 15px;
     ${icon};
     svg {
         width: 25px;
@@ -105,6 +109,9 @@ const Search = ({
 
     return (
         <SearchContainer width={width} {...rest}>
+            <SearchIcon>
+                <Icon name="search" />
+            </SearchIcon>
             <Input
                 data-testid="search-bar-input"
                 type="text"
@@ -116,9 +123,6 @@ const Search = ({
             <ClearIcon onClick={handleClearInput} $show={inputValue !== ''}>
                 <Icon name="closeBtn" />
             </ClearIcon>
-            <SearchIcon>
-                <Icon name="search" />
-            </SearchIcon>
         </SearchContainer>
     );
 };

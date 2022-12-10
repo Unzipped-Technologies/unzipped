@@ -1,39 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import Nav from '../components/Navbar/ColorNav';
+import Nav from '../components/unzipped/header';
 import { connect, useDispatch } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { resendVerify } from '../redux/actions';
 import { useRouter } from 'next/router';
+import { parseCookies } from "../services/cookieHelper";
 import Notification from '../components/animation/notifications';
 
-const Verify = ({location, date, count, isAuthenticated, error, emails, auth}) => {
+const Verify = ({token, error}) => {
     const dispatch = useDispatch();
     const [focus, setFocus] = useState('');
     const [email, setEmail] = useState('');
-    const [link, setLink] = useState('/services');
+    const [link, setLink] = useState('/dashboard');
     const [password, setPassword] = useState('');
     const [notifications, setNotifications] = useState('');
     const [errorHandler, setErrorHandler] = useState(false);
-    const router = useRouter()
+    // const router = useRouter()
     const [cursor, setCursor] = useState({});
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState({
         email: '',
       });
-
-    useEffect(() => {
-    if (count === 0) {
-        setLink('/services');
-    } else if (date === 'Select a Date') {
-        setLink('/schedule');
-    } else if (location.name === 'Select map area') {
-        setLink('/maps');
-    } else {
-        setLink('/cart');
-    }
-    }, [count, location, date, isAuthenticated])
 
     const updateUser = () => {
     setUser({
@@ -75,14 +64,6 @@ const Verify = ({location, date, count, isAuthenticated, error, emails, auth}) =
     useEffect(() => {
         updateUser();
       }, [email]);
-    
-    useEffect(() => {
-        if (emails) {
-            setEmail(emails)
-            console.log('here:' + user.email)
-        } else { router.push(link) }
-
-    }, [])
 
     useEffect(() => {
         if (error) {
@@ -103,15 +84,7 @@ const Verify = ({location, date, count, isAuthenticated, error, emails, auth}) =
             <title>Confirm Password | Unzipped</title>
             <meta name="Confirm Password | Unzipped" content="Confirm Password"/>
             </Head>
-            <div className="service-header-1">
-            <Nav popBox="services"/>
-            {/* <div className="service-selector">
-            <Selector />
-            </div> */}
-            {/* <div className="mobile-service-selector">
-            <AppointmentMobile />
-            </div> */}
-            </div>
+            <Nav token={token}/>
             <div className="service-section-1">
                 <div className="vohnt-register">
                     <div className="register-box-3">
@@ -153,6 +126,14 @@ const Verify = ({location, date, count, isAuthenticated, error, emails, auth}) =
         </React.Fragment>
     )
 }
+
+Verify.getInitialProps = async ({ req, res }) => {
+    const token = parseCookies(req)
+    
+      return {
+        token: token && token,
+      }
+    }
 
 const mapStateToProps = (state) => {
     return {

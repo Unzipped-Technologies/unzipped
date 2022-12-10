@@ -46,49 +46,49 @@ router.post(
     async (req, res, next) => {
       const {email, password} = req.body
       const data = req.body;
-      //find user by email, if exists tell user to login
-      const existingUser = await user.findOne({ email });
-      //If a user exists check which signup method they used
-      if (existingUser) {
-        if (existingUser.googleId) {
-          return res.send('Login with Google');
+      try {
+        //find user by email, if exists tell user to login
+        const existingUser = await user.findOne({ email });
+        //If a user exists check which signup method they used
+        if (existingUser) {
+          if (existingUser.googleId) {
+            return res.send('Login with Google');
+          } else {
+            throw Error('User with this email already exists')
+          }
         } else {
-          return res.send('User with this email already exists');
-        }
-      } else {
-        try {
-          //salt password
-          const salt = await bcrypt.genSalt(10);
-          if (!salt) throw Error('Something went wrong with bcrypt');
+            //salt password
+            const salt = await bcrypt.genSalt(10);
+            if (!salt) throw Error('Something went wrong with bcrypt');
 
-          const hash = await bcrypt.hash(password, salt);
-          if (!hash) throw Error('Something went wrong hashing the password');
-          ///Create user and save to database
-          let newuser = await userHelper.createUser(data, hash)
-          const existingUsers = await user.findOne({ email }).select('-password');
-          //send verification email
-          const msg = {
-            //recipients: existingUsers.email,
-            id: newuser.id,
-            name: email,
-            recipients: [{email}],
-            from: "support@vohnt.com",
-            subject: "Verify your email to start using",
-            text: "and easy to do anywhere, even with Node.js",
-            html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-          };
-          const mailer = new Mailer(msg, verifyTemplate(msg));
-          // mailer.send();
+            const hash = await bcrypt.hash(password, salt);
+            if (!hash) throw Error('Something went wrong hashing the password');
+            ///Create user and save to database
+            let newuser = await userHelper.createUser(data, hash)
+            const existingUsers = await user.findOne({ email }).select('-password');
+            //send verification email
+            const msg = {
+              //recipients: existingUsers.email,
+              id: newuser.id,
+              name: email,
+              recipients: [{email}],
+              from: "support@vohnt.com",
+              subject: "Verify your email to start using",
+              text: "and easy to do anywhere, even with Node.js",
+              html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+            };
+            const mailer = new Mailer(msg, verifyTemplate(msg));
+            // mailer.send();
 
-          let t = token.signToken(newuser._id);
-          // await newuser.save()
-          res.cookie('access_token', t, { httpOnly: true });
-          res.send({...existingUsers._doc, cookie: t})
-          next();
-        } catch (e) {
-          console.log(e);
-          res.status(400).send('Bad request');
-        }
+            let t = token.signToken(newuser._id);
+            // await newuser.save()
+            res.cookie('access_token', t, { httpOnly: true });
+            res.send({...existingUsers._doc, cookie: t})
+            next();
+          }
+      } catch (e) {
+        console.log('error error: ', e);
+        res.status(400).send('User with this email already exists')
       }
     },
     ////Log user into app and redirect to localhost:3000

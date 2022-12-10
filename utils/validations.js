@@ -250,7 +250,6 @@ class Validations {
 
     formatDate(data) {
         const date = new Date(data);
-        console.log(date)
         /* Date format you have */
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear() + 1}`;
     }

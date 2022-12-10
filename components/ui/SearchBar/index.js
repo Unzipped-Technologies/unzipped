@@ -1,13 +1,13 @@
 import React from 'react'
 import Button from '../Button'
-import FormField from '../FormField'
+import Search from '../Search'
 import styled from 'styled-components'
 
 const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-
+    margin: 45px 0px 0px 0px;
 `;
 
 const Span = styled.span`
@@ -31,7 +31,17 @@ const SearchBar = ({take, setTake}) => {
     return (
         <Container>
             <Block>
-                <FormField fieldType="input" />
+                <Search 
+                    searchableItems={[
+                        {id: 1, name: 'item 1'},
+                        {id: 2, name: 'item 2'},
+                        {id: 3, name: 'item 3'},
+                    ]}
+                    width="90%"
+                    keys={['name']}
+                    onChange={filteredResults => console.log(filteredResults)}
+                    placeholder={'filter based on string'}
+                />
                 <Item>
                     <Span>Show: </Span>                        
                     <Button

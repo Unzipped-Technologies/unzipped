@@ -65,7 +65,7 @@ const GetCard = ({
                 onBack={goBack}
                 disabled={isFirstBusiness === ''}
                 onSubmit={submitForm}
-                progress={stage * 10}
+                progress={stage * 7.15}
                 stage={stage}
             >
                 <Grid>
@@ -99,7 +99,7 @@ const GetCard = ({
                 onSubmit={submitForm}
                 disabled={incomePlatform.length === 1}
                 noMargin
-                progress={stage * 10}
+                progress={stage * 7.15}
                 stage={stage}
             >
                 <Grid margin="10px 0px">
@@ -181,7 +181,7 @@ const GetCard = ({
                     onBack={goBack}
                     disabled={isExistingAudience === ''}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={isExistingAudience !== "true" ? stage + 2 : stage}
                 >
                     <Grid>
@@ -215,7 +215,7 @@ const GetCard = ({
                     onBack={() => goBack()}
                     onSubmit={submitForm}
                     disabled={socialMediaPlatforms.length <= 1}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid margin="10px 0px">
@@ -312,7 +312,7 @@ const GetCard = ({
                     onBack={goBack}
                     disabled={numberOfSocialFollowing.length <= 1}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid margin="10px 0px">
@@ -384,7 +384,7 @@ const GetCard = ({
                     onUpdate={updateForm}
                     onBack={() => goBack(isExistingAudience !== "true" ? stage - 2 : stage)}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     disabled={businessNiche.length <= 1}
                     stage={stage}
                 >
@@ -482,7 +482,7 @@ const GetCard = ({
                     onUpdate={updateForm}
                     onBack={goBack}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid>
@@ -514,7 +514,7 @@ const GetCard = ({
                     onUpdate={updateForm}
                     onBack={goBack}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid margin="0px 0px 20px 0px" left>
@@ -598,7 +598,7 @@ const GetCard = ({
                     disabled={isEquity.length === 0}
                     onBack={goBack}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={isEquity !== "true" ? stage + 1 : stage}
                 >
                     <Grid>
@@ -633,7 +633,7 @@ const GetCard = ({
                     disabled={equity === 0}
                     onBack={goBack}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid>
@@ -661,7 +661,7 @@ const GetCard = ({
                     onUpdate={updateForm}
                     onBack={() => goBack(isExistingAudience !== "true" ? stage - 1 : stage)}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid>
@@ -688,7 +688,7 @@ const GetCard = ({
                     onUpdate={updateForm}
                     onBack={() => goBack(isExistingAudience !== "true" ? stage - 1 : stage)}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                     skip
                 >
@@ -708,7 +708,7 @@ const GetCard = ({
                     loading={loading}
                     disabled={typesOfHires.length === 1}
                     onSubmit={submitForm}
-                    progress={stage * 10}
+                    progress={stage * 7.15}
                     stage={stage}
                 >
                     <Grid margin="10px 0px">

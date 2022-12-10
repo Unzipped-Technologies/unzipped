@@ -28,6 +28,7 @@ const Container = styled.div`
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
+    background: #fff;
     line-height: 19px;
     min-height: 77px;
     border-bottom: solid 1px #d8d8d8;
@@ -399,7 +400,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
             return (
                 <SignIn>
                 <Link href="/login"><Login>Log In</Login></Link>
-                <Button className={classes.button}>Sign up</Button>
+                <Button className={classes.button} onClick={() => router.push('/register')}>Sign up</Button>
                 </SignIn>
             )
         }

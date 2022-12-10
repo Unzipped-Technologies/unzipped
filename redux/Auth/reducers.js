@@ -12,6 +12,7 @@ import {
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
     SET_DEFAULT_VEHICLE,
+    UPDATE_REGISTER_FORM,
     LOGGED_OUT,
 } from './constants';
 
@@ -19,6 +20,23 @@ const INIT_STATE = {
     token: '',
     isAuthenticated: false,//null,
     user: {},
+    userForm: {
+        role: 0,
+        FirstName: '',
+        LastName: '',
+        email: '',
+        password: '',
+        phoneNumber: '',
+        addressLineOne: '',
+        addressLineTwo: '',
+        AddressLineCountry: '',
+        AddressState: '',
+        AddressZip: '',
+        AddressCity: '',
+        profileImage: '',
+        socialSecurityNumber: '',
+        stage: 0,
+    },
     loading: false,
     error: {data: ''},
     loggedOut: false,
@@ -54,13 +72,14 @@ const Auth = (state = INIT_STATE, action) => {
             return {...state, user: action.payload, loading: false, error: {data: ''}}
         case FORGET_PASSWORD:
             return {...state, token: action.payload, loading: false}
+        case UPDATE_REGISTER_FORM:
+            return {...state, loading: false, userForm: {...state.userForm, ...action.payload}}
         case SET_TOKEN:
             return {...state, notification: action.payload, loading: false}
         case LOGGED_OUT:
             return {...state, loggedOut: false, isAuthenticated: false}
         case FORGET_PASSWORD_SUCCESS:
             return {...state, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: ''}
-        case LOGIN_USER_FAILED:
         default:
             return state;
     }

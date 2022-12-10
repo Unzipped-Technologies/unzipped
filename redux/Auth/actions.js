@@ -15,6 +15,7 @@ import {
     CLEAR_ERRORS,
     SET_DEFAULT_VEHICLE,
     LOGGED_OUT,
+    UPDATE_REGISTER_FORM,
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
@@ -71,6 +72,11 @@ export const tokenSet = (token) => async (dispatch) => {
         payload: token,
     })
 };
+
+export const updateRegisterForm = (data) => ({
+    type: UPDATE_REGISTER_FORM,
+    payload: data,
+});
 
 export const loginUserFailed = (error) => ({
     type: LOGIN_USER_FAILED,
@@ -182,10 +188,9 @@ export const registerUser = (user) => async (dispatch) => {
         }))
         .catch(err => {
             // dispatch(returnErrors(err.response, err.response))
-            console.log(err)
             dispatch({
                 type: AUTH_ERROR,
-                payload: err
+                payload: {data: 'User with that email already exists'}
             })
         })
 }
