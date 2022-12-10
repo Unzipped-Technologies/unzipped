@@ -61,6 +61,7 @@ import ValueTile from './ValueTile';
 import ValueList from './ValueList';
 import UploadImageProfile from './UploadImageProfile';
 import CountdownTimer from './CountdownTimer';
+import SearchBar from './SearchBar';
 import WarnIcon from './WarnIcon';
 import Theme from './theme';
 
@@ -108,6 +109,7 @@ export {
     PhoneNumberInput,
     PreviousNextHeader,
     ProgressBar,
+    SearchBar,
     Radio,
     RequiredMessage,
     Search,

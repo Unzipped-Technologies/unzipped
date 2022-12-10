@@ -8,6 +8,9 @@ import {
     Underline,
 } from './style'
 import {
+    TableTitle
+} from './tableStyle'
+import {
     WorkIcon
 } from '../../icons'
 import FreelancerCard from './FreelancerCard'
@@ -16,6 +19,7 @@ import Button from '../../ui/Button'
 import Image from '../../ui/Image'
 import Dropdowns from '../../ui/Dropdowns'
 import Projects from '../../../pages/dashboard/projects'
+import { ValidationUtils } from '../../../utils'
 
 const Container = styled.div`
     position: relative;
@@ -163,7 +167,7 @@ const stories = [
 
 
 
-const Panel = ({list, selectedList, type, projects=[]}) => {
+const Panel = ({list, selectedList, type, projects=[], businesses}) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [storyList, setStoryList] = useState([])
 
@@ -213,63 +217,57 @@ const Panel = ({list, selectedList, type, projects=[]}) => {
 
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
-            <TitleText paddingLeft>{selectedList}</TitleText>
-            <Underline color="#333" noMargin={type === 'department'}/>   
-            {<Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>}
-            {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top/>}
-            {!freelancer && (
-                <NoUsersInList>
-                    <WorkIcon width={200} height={200}/>
-                    <TitleText center noMargin>This list is empty</TitleText>
-                    <DarkText center>Add investors to your list to quickly find them later. </DarkText>
-                    <div><Button noBorder oval>BROWSE INVESTORS</Button></div>
-                </NoUsersInList>
-            )}
-            <UserContainer>
-                {type === 'list' && freelancer.map(user => (
-                    <FreelancerCard user={user} />
-                ))}
-            </UserContainer>
+            <TableTitle paddingLeft half row>
+                <DarkText noMargin bold>Project Name</DarkText>
+                <DarkText noMargin> </DarkText>
+                <DarkText noMargin center bold>Budget</DarkText>
+                <DarkText noMargin center bold>Equity</DarkText>
+                <DarkText noMargin center bold>Points</DarkText>
+                <DarkText noMargin center bold>Value Estimate</DarkText>
+                <DarkText noMargin center bold>Deadline</DarkText>
+                <DarkText noMargin center bold>Actions</DarkText>
+            </TableTitle>
+            <Underline color="#333" noMargin/>   
             <StoryTable>
-                {type === 'department' && tags.map(tag => (
-                    <>
-                    <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
-                        <DarkText noMargin bold>{tag} ({stories.filter(i => tag === i.tag).length})</DarkText>
-                        <DarkText noMargin> </DarkText>
-                        <DarkText noMargin center bold>STORY POINTS</DarkText>
-                        <DarkText noMargin center bold>ASSIGNEE</DarkText>
+                {businesses.map((item, index) => (
+                    <WhiteCard noMargin borderRadius="0px" row background={!ValidationUtils.checkNumberEven(index) ? "#F7F7F7" : "#fff"}>
+                            <Absolute width="45%" wideLeft textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
+                            <DarkText noMargin> </DarkText>
+                            <DarkText noMargin> </DarkText>
+                        <DarkText noMargin center>${(item.budget || 0).toLocaleString()}</DarkText>
+                        <DarkText noMargin center>{item?.equity || 0}%</DarkText>
+                        <DarkText noMargin center>27</DarkText>
+                        <DarkText noMargin center>{item?.valueEstimate || 'N/A'}</DarkText>
+                        <DarkText noMargin center>{(item?.deadline && ValidationUtils.formatDate(item?.deadline)) || ValidationUtils.formatDate(item?.updatedAt || item?.createdAt)}</DarkText>
+                        <DarkText noMargin center></DarkText>
+                        <Absolute>
+                        <Button
+                            icon="largeExpand"
+                            popoutWidth="150px"
+                            noBorder
+                            block
+                            type="lightgrey"
+                            fontSize="13px"
+                            popout={[
+                                {
+                                    text: 'Details',
+                                    onClick: () => console.log('ITEM 1'),
+                                },
+                                {
+                                    text: 'Delete Job',
+                                    onClick: () => console.log('ITEM 2'),
+                                },
+                                {
+                                    text: 'Assign department',
+                                    onClick: () => console.log('ITEM 3'),
+                                },
+                            ]}
+                            iconRight>
+                            Details
+                        </Button>
+                        </Absolute>
                     </WhiteCard>
-                    {stories.filter(i => tag === i.tag).map((item, index) => (
-                        <WhiteCard noMargin borderRadius="0px" row>
-                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
-                            <DarkText noMargin> </DarkText>
-                            <DarkText noMargin> </DarkText>
-                            <DarkText noMargin center>{item.points}</DarkText>
-                            {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
-                            <DarkText noMargin row center>{item.assignee.name}</DarkText>
-                        </WhiteCard>
-                    ))}
-                    </>
                 ))}
-                {type === 'projects' && (
-                    <>
-                        <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
-                            <DarkText noMargin bold>Project Name</DarkText>
-                            <DarkText noMargin> </DarkText>
-                            <DarkText noMargin center bold>Budget</DarkText>
-                            <DarkText noMargin center bold>Equity</DarkText>
-                            <DarkText noMargin center bold>Points</DarkText>
-                            <DarkText noMargin center bold>Value Estimate</DarkText>
-                            <DarkText noMargin center bold>Deadline</DarkText>
-                            <DarkText noMargin center bold>Actions</DarkText>
-                        </WhiteCard>
-                        {projects.map(project => (
-                            <></>
-                        ))}
-                    </>
-                    
-
-                )}
             </StoryTable>
 
         </Container>

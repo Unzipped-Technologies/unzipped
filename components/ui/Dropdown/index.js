@@ -13,13 +13,13 @@ const Wrapper = styled.div`
 
 const DropdownOutline = styled.div`
     height: ${({$height}) => ($height ? $height : 'auto')};
+    width: ${({width}) => width ? width : 'auto'};
     display: flex;
     position: ${({btnDropdown}) => (btnDropdown ? 'absolute' : 'fixed')};
     z-index: 9999;
     bottom: ${props => (props.sidebar && !props.dashboard ? '20px' : null)};
-    border: 2px solid ${props => props.theme.border};
-    box-sizing: border-box;
-    border-radius: 4px;
+    border: 0px solid ${props => props.theme.border};
+    border-radius: 12px;
     @media (max-width: ${props => props.theme.phoneWidth}px) {
         margin-left: ${props => (props.sidebar && !props.dashboard ? '-80px' : '0')};
     }
@@ -27,7 +27,7 @@ const DropdownOutline = styled.div`
         props.btnDropdown &&
         `
         right: -3px;
-        top: 42px;
+        top: 34px;
         text-align: left;`};
 `;
 DropdownOutline.displayName = 'DropdownOutline';
@@ -36,9 +36,10 @@ const DropdownList = styled.ul`
     margin: 0;
     min-width: 200px;
     width: ${({width}) => width};
-    background: #fff;
-    padding: 15px 15px 0 15px;
+    padding: 10px 15px 5px 15px;
+    background: #F4F4F4;
     font-family: arial;
+    overflow: hidden;
     @media (max-width: ${props => props.theme.phoneWidth}px) {
         min-width: ${props => (props.sidebar ? '160px' : '200px')};
     }
@@ -47,9 +48,13 @@ DropdownList.displayName = 'DropdownList';
 
 const LinkWrapper = styled.li`
     text-transform: uppercase;
-    padding-bottom: 15px;
+    width: 100%;
+    padding: 7px;
     list-style-type: none;
     overflow-wrap: anywhere;
+    &:hover {
+        color: #000;
+    }
 `;
 
 const LinkContainer = styled(Link)`
@@ -123,14 +128,12 @@ const Dropdown = ({visible, links, dashboard, sidebar, btnDropdown, width, class
                 dashboard={dashboard}
                 btnDropdown={btnDropdown}
                 data-testid="dropdown">
-                <SimpleBar data-simplebar $width={width}>
-                    <DropdownList width={width} sidebar={sidebar}>
-                        <div ref={first10Ref}>
-                            <DropdownItems links={first10Items} width={width} />
-                        </div>
-                        <DropdownItems links={itemsAfter10} width={width} />
-                    </DropdownList>
-                </SimpleBar>
+                <DropdownList width={width} sidebar={sidebar}>
+                    <div ref={first10Ref}>
+                        <DropdownItems links={first10Items} width={width} />
+                    </div>
+                    <DropdownItems links={itemsAfter10} width={width} />
+                </DropdownList>
             </DropdownOutline>
         </Wrapper>
     );

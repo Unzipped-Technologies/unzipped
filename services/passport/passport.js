@@ -1,4 +1,5 @@
 const passport = require('passport');
+require('dotenv').config();
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
@@ -15,12 +16,12 @@ passport.deserializeUser((id, done) => {
     done(null, user);
   });
 });
-
+console.log('/////', keys.googleClientID)
 passport.use(
   new GoogleStrategy(
     {
-      clientID: keys.googleClientID,
-      clientSecret: keys.googleClientSecret,
+      clientID: keys.googleClientID || process.env.GOOGLE_CLIENT_ID,
+      clientSecret: keys.googleClientSecret || process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: '/api/auth/google/callback',
       proxy: true
     },

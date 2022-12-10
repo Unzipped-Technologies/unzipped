@@ -39,7 +39,7 @@ router.post('/update', requireLogin, permissionCheckHelper.hasPermission('update
 router.post('/user/update', requireLogin, permissionCheckHelper.hasPermission('userUpdateBusiness'), async (req, res) => {
     try {
       req.body.userId = req.user.sub
-      const existingBusiness = await userHelper.updateBusiness({ filter, take, skip })
+      const existingBusiness = await businessHelper.updateBusiness({ filter, take, skip })
       if(!existingBusiness) throw Error('business does not exist')
       res.json(existingBusiness)
     } catch (e) {
@@ -51,7 +51,7 @@ router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('use
     try {
       req.body.userId = req.user.sub
       const { filter, take = 25, skip = 0 } = req.body;
-      const listBusinesses = await userHelper.listBusinesses({ filter, take, skip })
+      const listBusinesses = await businessHelper.listBusinesses({ filter, take, skip })
       if(!listBusinesses) throw Error('could not find businesses')
       res.json(listBusinesses)
     } catch (e) {
@@ -62,7 +62,7 @@ router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('use
 router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllBusinesses'), async (req, res) => {
     try {
       const { filter, take = 25, skip = 0 } = req.body;
-      const listBusinesses = await userHelper.listBusinesses({ filter, take, skip })
+      const listBusinesses = await businessHelper.listBusinesses({ filter, take, skip })
       if(!listBusinesses) throw Error('could not find businesses')
       res.json(listBusinesses)
     } catch (e) {
@@ -72,7 +72,7 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllB
 
 router.post('/delete', requireLogin, permissionCheckHelper.hasPermission('deleteBusiness'), async (req, res) => {
     try {
-      const deleteBusiness = await userHelper.deleteBusiness(req.user.sub)
+      const deleteBusiness = await businessHelper.deleteBusiness(req.user.sub)
       res.json(deleteBusiness)
     } catch (e) {
       res.status(400).json({msg: e.message})

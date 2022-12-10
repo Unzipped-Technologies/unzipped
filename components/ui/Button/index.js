@@ -26,13 +26,13 @@ const ButtonContainer = styled.button`
     font-family: arial;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : 'auto')};
-    min-width: ${({popout}) => (popout ? '200px' : 'auto')};
+    min-width: ${({popout}) => (popout ? 'auto' : 'auto')};
     display: ${props => (props.block ? 'flex' : 'inline-flex')};
     flex-direction: ${props => (props.iconRight ? 'row-reverse' : 'row')};
     align-items: center;
     gap: ${props => (props.$condensed ? '0' : '10px')};
     font-size: ${(props) => props.fontSize ? props.fontSize : props.theme.fontSizeXS};
-    font-weight: ${({normal}) => normal ? 500 : 'bold'};
+    font-weight: ${({normal, popout}) => normal ? 500 : popout ? 400 : 'bold'};
     letter-spacing: 0.031rem;
     justify-content: center;
     white-space: nowrap;
@@ -41,7 +41,8 @@ const ButtonContainer = styled.button`
         props.popout &&
         `
         position: relative;
-        height: 42px;`}
+        height: 34px;
+        width: ${({small}) => small ? '66px' : '108px'};`}
     &:disabled {
         cursor: default;
         opacity: 0.5;
@@ -71,7 +72,7 @@ const ButtonIconContainer = styled.div`
     ${props =>
         props.popout &&
         `
-        margin-left: 15px;`}
+        margin-left: 0px;`}
     svg {
         width: 15px;
         height: 15px;
@@ -143,6 +144,19 @@ const typeColors = {
         border: 'none',
         hover: '#8EDE64',
         hoverText: '#fff'
+    },
+    lightgrey: {
+        text: '#333',
+        background: '#D9D9D9',
+        border: 'none',
+        hover: '#8EDE64',
+    },
+    sort: {
+        text: '#333',
+        background: '#D9D9D9',
+        border: 'none',
+        hover: '#D8D8D8',
+
     },
     outline: {
         text: theme.primary,
