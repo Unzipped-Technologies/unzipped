@@ -1,114 +1,237 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import Nav from '../components/Navbar/ColorNav';
-import { connect, useDispatch } from 'react-redux';
-import { registerUser } from '../redux/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { registerUser } from '../redux/actions';
+import { useRouter } from 'next/router';
+import Notification from '../components/animation/notifications';
+import styled from 'styled-components'
+import {
+    Text,
+    FormField,
+    Button,
+    Image,
+    Icon
+} from '../components/ui'
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from 'next/link'
+import theme from '../components/ui/theme'
+import {ValidationUtils} from '../utils'
 
-const Register = ({location, date, count, isAuthenticated, userVerified, error, loading}) => {
-    const dispatch = useDispatch();
-    const [focus, setFocus] = useState('');
+const Container = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Roboto';
+`;
+const Box = styled.div`
+    display: flex;
+    background-color: #D9D9D9;
+    width: 464px;
+    height: 674px;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+`;
+
+const Sign = styled.div`
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 24px;
+
+    text-align: center;
+    letter-spacing: 0.39998px;
+    text-transform: uppercase;
+
+    color: #333333;
+`;
+
+const Google = styled.button`
+    background-color: #4285F4;
+    outline: none;
+    border: none;
+    color: ${theme.text};
+    border-radius: 24px;
+    width: 80%;
+    height: 44px;
+    margin: 20px 10%;
+    position: relative;
+    cursor: pointer;
+`;
+
+const Abs = styled.div`
+    position: absolute;
+    left: -2px;
+    bottom: -4px;
+`;
+
+const Span = styled.span`
+    padding: 15px;
+`;
+
+const Form = styled.form`
+    position: relative;
+    bottom: 20px;
+    margin: 40px 0px 0px 0px;;
+    display: grid;
+    height: 225px;
+`;
+
+const Hold = styled.div`
+    width: 79%;
+`;
+
+const Or = styled.div`
+    position: relative;
+    font-size: 16px;
+    z-index: 1;
+    overflow: hidden;
+    text-align: center;
+    &:after {
+        position: absolute;
+        top: 51%;
+        overflow: hidden;
+        width: 50%;
+        height: 1px;
+        content: '\a0';
+        background-color: #444;
+    }
+    &:before {
+        position: absolute;
+        top: 51%;
+        overflow: hidden;
+        width: 50%;
+        height: 1px;
+        content: '\a0';
+        background-color: #444;
+        margin-left: -50%;
+        text-align: right;
+    }
+`;
+
+const TextBox = styled.div`
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    padding: 00px 0px;
+`;
+
+const Contain = styled.div`
+    position: relative;
+    bottom: 25px;
+    width: 80%;
+    align-items: left;
+`;
+
+const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) => {
+    const [emailAlert, setEmailAlert] = useState('');
+    const [passwordAlert, setPasswordAlert] = useState('');
     const [email, setEmail] = useState('');
-    const [link, setLink] = useState('/services');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
+    const [link, setLink] = useState('');
     const [emailVerify, setEmailVerify] = useState(false);
-    const [passwordVerify, setPasswordVerify] = useState(false);
-    const [altLink, setAltLink] = useState('/verify');
+    const [notifications, setNotifications] = useState('');
     const router = useRouter()
     const [user, setUser] = useState({
         email: '',
         password: '',
       });
-
+    console.log('error', error)
     const updateUser = () => {
-    setUser({
-        email: email,
-        password: password,
+        setUser({
+            email: email.toLowerCase(),
+            password: password,
     });
-    console.log(user);
     };
 
-      //update Email date
-    const handleEmailFocus = (e) => {
-        setFocus(e.target.name);
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            RegisterUsers();
+        }
     };
 
-    const handlePasswordFocus = (e) => {
-        setFocus(e.target.name);
+    const updateEmail = (e) => {
+        setEmail(e.target.value);
+        updateUser();
     };
 
-    const handleEmailChange = (e) => {
-        const { name, value } = e.target;
-        setEmail(value);
+    const updatePassword = (e) => {
+        setPassword(e.target.value);
+        updateUser();
     };
 
-    const handlePasswordChange = (e) => {
-        const { name, value } = e.target;
-        setPassword(value);
+    const updateRememberMe = () => {
+        setRememberMe(!rememberMe);
     };
 
-    const google = (ev) => {
-        ev.preventDefault();
-        router.push('/api/auth/google')
-    }
-
-    const isVerified = () => {
-        if (userVerified === false) {
-            setAltLink('/confirmVerify');
-            console.log('false:' + altLink)
-            return;
+    const validateEmail = () => {
+        const error = !ValidationUtils._emailValidation(email)
+        if (!error) {
+            setEmailAlert('Please enter a valid email address');
         } else {
-            console.log('true:' + altLink)
-            return;
+            setEmailAlert('');
         }
+        return error;
     }
 
-      ///register
-      const registerNow = (ev) => {
-        ev.preventDefault();
-        try {
-          console.log(user)
-          dispatch(registerUser(user))
-          if(isAuthenticated !== true) {
-            setEmailVerify('inUse');
-            return;
+    const validatePassword = () => {
+        const error = ValidationUtils._passwordValidation(password)
+        if (!error) {
+            setPasswordAlert('Password must be at least 8 characters long');
+        } else {
+            setPasswordAlert('');
         }
-    } catch {
-        console.log('error')
+        return error;
     }
-    };
+
+      ///Register
+  const RegisterUsers = async () => {
+    if (passwordAlert || emailAlert) {
+        return;
+    }
+    try {
+        await registerUser(user)
+    } catch (e) {
+        console.log('error:', e)
+    }
+  };
+
+    const google = () => {
+        router.push('/api/auth/google');
+    }
 
     useEffect(() => {
         updateUser();
       }, [email, password]);
-
-      useEffect(() => {
-        console.log(count)
-        if (count === 0) {
-            setAltLink('/services');
-        } else if (date === 'Select a Date') {
-            setAltLink('/schedule');
-        } else if (location.name === 'Select map area') {
-            setAltLink('/maps');
-        } else {
-            setAltLink('/cart');
+    
+    useEffect(() => {
+        if (PassError === "Email and Password does not match") {
+            setEmailVerify("inUse");
         }
-        if(isAuthenticated === true) {
-            isVerified()
-            console.log('last:' + altLink)
-            if (userVerified === false) {
-                router.push('/confirmVerify');
-            } else {
-                router.push(altLink);
+    }, [PassError])
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setNotifications('Register Successful')
+            setTimeout(() => {  
+                router.push('/sign-up')
+            }, 2000);
+        } else {
+            if (error) {
+                setNotifications(error?.data)
+                setTimeout(() => {  
+                    setNotifications('')
+                }, 1000);
             }
         }
-        }, [isAuthenticated, userVerified, count, location, date]);
-
+    }, [isAuthenticated, error])
 
     return (
         <React.Fragment>
-            <div className="services-page-register">
             <Head>
             <link rel="preconnect" href="https://fonts.gstatic.com" />
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
@@ -116,86 +239,51 @@ const Register = ({location, date, count, isAuthenticated, userVerified, error, 
             <title>Unzipped | Register</title>
             <meta name="Unzipped | Register" content="Unzipped"/>
             </Head>
-            <div className="service-header-1">
-            <Nav popBox="services"/>
-            {/* <div className="service-selector">
-            <Selector />
-            </div> */}
-            {/* <div className="mobile-service-selector">
-            <AppointmentMobile />
-            </div> */}
-            </div>
-            <div className="service-section-1">
-                <div className="vohnt-register">
-                    <div className="register-box">
-                        <p className="top-text-r">Login or create an account to continue with this order</p>
-                        <button className="outer-button" onClick={(ev) => google(ev)}>
-                            <div className="button-holder">
-                            <img src={'/img/google-icon.png'} alt="" className="google-s-icon"/>
-                            <span>Sign up with Google</span>
-                            </div>
-                        </button>
-                        <div className="top-text-f">or</div>
-                        <form onSubmit={registerNow} className="form-r">
-                        <div className="input-login">
-                            <input 
-                                id="register-input" 
-                                type="email" 
-                                value={email}
-                                placeholder="Email"
-                                onChange={handleEmailChange}
-                                onFocus={handleEmailFocus}
-                                onBlur={() => email.length < 6 ? setEmailVerify('valid') : setEmailVerify(false)}
-                                required
-                                // onBlur={() => setEmailVerify(false)}
-                            />
-                        </div>
-                        {emailVerify === 'inUse' && <p id="alert-text">{error}</p>}
-                        {emailVerify === 'valid' && <p id="alert-text">Enter a valid email</p>}
-                        <div className="input-login">
-                            <input 
-                                id="register-input" 
-                                type="password" 
-                                value={password}
-                                placeholder="Password"
-                                onChange={handlePasswordChange}
-                                onFocus={handlePasswordFocus}
-                                onBlur={() => password.length < 8 ? setPasswordVerify('valid') : setPasswordVerify(false)}
-                                required
-                            />
-                        </div>
-                        {passwordVerify === 'valid' && <p id="alert-text">Password must be a least 8 characters</p>}
-                        <button className="outer-button" id="create-button" disabled={password.length < 8 ? true : false} type="submit">
-                            {loading ? <CircularProgress /> : 'Create account'}
-                        </button>
-                        </form>
-                        <div className="privacy-text-l">Already have an account? <a href="/login">Log in</a></div>
-                        <div className="privacy-text-l" >
-                            This site is protected by reCAPTCHA and the <a href="https://policies.google.com/privacy">Google Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {/* <div className="alt-footer-2">
-            <Footer />
-            </div> */}
-            </div>
+            <Container>
+                <Box>
+                    <Image src='/img/Unzipped-Primary-Logo.png' alt='logo' width="50%" />
+                    <Sign textAlign="center" level={2} fontWeight={500}>SIGN UP</Sign>
+                    <Google onClick={google}>REGISTER WITH GOOGLE<Abs><Icon name="googleCircle" /></Abs></Google>
+                    <Hold><Or><Span>OR</Span>  </Or></Hold>
+                    <Form>
+                    <FormField validate={validateEmail} error={emailAlert} placeholder="Email" name="email" type="email" fieldType="input" fontSize={'18px'} bottom="0px" onChange={updateEmail}>
+                    </FormField>
+                    <FormField validate={validatePassword} onKeyDown={handleKeyDown} error={passwordAlert} placeholder="Password" name="password" type="password" fieldType="input" fontSize={'18px'} bottom="0px" onChange={updatePassword}>
+                    </FormField>
+                    <TextBox>
+                    <Checkbox
+                        color="primary"
+                        checked={rememberMe}
+                        onClick={updateRememberMe}
+                        name="Remember Me"
+                        
+                    ></Checkbox>
+                    <Text>Remember Me</Text></TextBox>
+                    <Button noBorder background="#1890FF" block type="submit" onClick={RegisterUsers}>{loading ? <CircularProgress size={18} /> : 'Sign up'}</Button>
+                    </Form>
+                    <Contain><Text> Or <Link href="/login">log in now!</Link></Text></Contain>
+                    <Notification error={notifications}/>
+                </Box>
+                
+            </Container>
         </React.Fragment>
     )
 }
 
 const mapStateToProps = (state) => {
-    console.log(state.Auth)
+    console.log(state)
     return {
-        location: state.Booking.location,
-        date: state.Booking.date,
-        count: state.Booking.count,
         isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,
-        error: state.Auth.user.error,
-        userVerified: state.Auth.user.emailVerified,
         loading: state.Auth.loading,
+        error: state.Auth.error
     }
   }
 
-export default connect(mapStateToProps, {registerUser})(Register);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        registerUser: bindActionCreators(registerUser, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import Nav from '../components/Navbar/ColorNav';
 import { connect, useDispatch } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { parseCookies } from "../services/cookieHelper";
 import Notification from '../components/animation/notifications';
 import { useRouter } from 'next/router';
 import {changePassword} from '../redux/actions';
+import Nav from '../components/unzipped/header';
+import { parseCookies } from "../services/cookieHelper";
 
 const Reset = ({ error, token }) => {
     const [focus, setFocus] = useState('');
@@ -68,15 +67,7 @@ const Reset = ({ error, token }) => {
             <title>Change Password | Unzipped</title>
             <meta name="Change Password | Unzipped" content="Change Password"/>
             </Head>
-            <div className="service-header-1">
-            <Nav popBox="services"/>
-            {/* <div className="service-selector">
-            <Selector />
-            </div> */}
-            {/* <div className="mobile-service-selector">
-            <AppointmentMobile />
-            </div> */}
-            </div>
+            <Nav token={token}/>
             <div className="service-section-1">
                 <div className="vohnt-register">
                     <div className="register-box" id="change-password">
@@ -117,13 +108,6 @@ const Reset = ({ error, token }) => {
 
 Reset.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
-    // if (res) {
-    //     if (Object.keys(token).length === 0 && token.constructor === Object) {
-    //       res.writeHead(301, { Location: "/" })
-    //       res.end()
-    //     }
-    //   }
     
       return {
         token: token && token,

@@ -241,7 +241,7 @@ const Login = ({ loading, PassError, loadUser, isAuthenticated, error }) => {
             <Container>
                 <Box>
                     <Image src='/img/Unzipped-Primary-Logo.png' alt='logo' width="50%" />
-                    <Sign textAlign="center" level={2} fontWeight={500}>SIGN UP</Sign>
+                    <Sign textAlign="center" level={2} fontWeight={500}>SIGN IN</Sign>
                     <Google onClick={google}>CONTINUE WITH GOOGLE<Abs><Icon name="googleCircle" /></Abs></Google>
                     <Hold><Or><Span>OR</Span>  </Or></Hold>
                     <Form>
@@ -260,63 +260,11 @@ const Login = ({ loading, PassError, loadUser, isAuthenticated, error }) => {
                     <Text>Remember Me <Link href="/">Forgot password</Link></Text></TextBox>
                     <Button noBorder background="#1890FF" block type="submit" onClick={loginUser}>{loading ? <CircularProgress size={18} /> : 'Log in'}</Button>
                     </Form>
-                    <Contain><Text> Or <Link href="/">register now!</Link></Text></Contain>
+                    <Contain><Text> Or <Link href="/register">register now!</Link></Text></Contain>
                     <Notification error={notifications}/>
                 </Box>
                 
             </Container>
-            {/* <div className="service-section-1" id="login-sec-1">
-                <div className="vohnt-register">
-                    <div className="register-box">
-                        <button className="outer-button" onClick={(ev) => google(ev)}>
-                            <div className="button-holder">
-                            <img src={'/img/google-icon.png'} alt="" className="google-s-icon"/>
-                            <span>Log in with Google</span>
-                            </div>
-                        </button>
-                        <div className="top-text-f">or</div>
-                        <form onSubmit={loginUser} className="form-r">
-                        <div className="input-login">
-                            <input 
-                                id="register-input" 
-                                type="email" 
-                                value={email}
-                                placeholder="Email"
-                                onChange={handleEmailChange}
-                                onFocus={handleEmailFocus}
-                                required
-                                onBlur={() => email.length < 4 ? setEmailVerify('valid') : setEmailVerify(false)}
-                            />
-                        </div>
-                        {emailVerify === 'inUse' && <p id="alert-text">{error}</p>}
-                        {emailVerify === 'valid' && <p id="alert-text">Enter a valid email</p>}
-                        <div className="input-login">
-                            <input 
-                                id="register-input" 
-                                type="password" 
-                                value={password}
-                                placeholder="Password"
-                                onChange={handlePasswordChange}
-                                onFocus={handlePasswordFocus}
-                                required
-                                onBlur={() => password.length < 8 ? setPasswordVerify('valid') : setPasswordVerify(false)}
-                            />
-                        </div>
-                        {passwordVerify === 'valid' && <p id="alert-text">Password must be at least 8 characters</p>}
-                        {passwordVerify === 'match' && <p id="alert-text">{PassError}</p>}
-                        <button className="outer-button" id="create-button" type="submit">
-                            {loading ? <CircularProgress /> : 'Sign in'}
-                        </button>
-                        </form>
-                        <div className="privacy-text-l" >No account? <a href="/register">Register</a></div>
-                        <a className="privacy-text-l" href="/forgot-password" id="register-link">Forgot password?</a>
-                        <div className="privacy-text-l" id="bottom-text">
-                            This site is protected by reCAPTCHA and the <a href="https://policies.google.com/privacy">Google Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.
-                        </div>
-                    </div>
-                    <Notification error = {notifications}/>
-                </div>
-            </div>  */}
         </React.Fragment>
     )
 }

@@ -30,7 +30,7 @@ const TitleText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 600;
-    font-size: ${({small}) => small ? '16px' : '18px'};
+    font-size: ${({small, title}) => small ? '16px' : title ? '36px' : '18px'};
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '7px' :'15px'};

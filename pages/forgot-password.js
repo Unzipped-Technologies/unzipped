@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Nav from '../components/Navbar/ColorNav';
+import Nav from '../components/unzipped/header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect, useDispatch } from 'react-redux';
 import Notification from '../components/animation/notifications';
 import {forgotPassword} from '../redux/actions';
+import { parseCookies } from "../services/cookieHelper";
 
-const Reset = ({error}) => {
+const Reset = ({token}) => {
     const [focus, setFocus] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -60,15 +61,7 @@ const Reset = ({error}) => {
             <title>Forgot Password | Unzipped</title>
             <meta name="Forgot Password | Unzipped" content="Forgot Password"/>
             </Head>
-            <div className="service-header-1">
-            <Nav popBox="services"/>
-            {/* <div className="service-selector">
-            <Selector />
-            </div> */}
-            {/* <div className="mobile-service-selector">
-            <AppointmentMobile />
-            </div> */}
-            </div>
+            <Nav token={token}/>
             <div className="service-section-1">
                 <div className="vohnt-register">
                     <div className="register-box" id="change-password">
@@ -104,6 +97,14 @@ const Reset = ({error}) => {
         </React.Fragment>
     )
 }
+
+Reset.getInitialProps = async ({ req, res }) => {
+    const token = parseCookies(req)
+    
+      return {
+        token: token && token,
+      }
+    }
 
 const mapStateToProps = (state) => {
     return {
