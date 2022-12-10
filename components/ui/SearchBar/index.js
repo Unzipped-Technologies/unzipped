@@ -40,7 +40,7 @@ const SearchBar = ({take, setTake}) => {
                     width="90%"
                     keys={['name']}
                     onChange={filteredResults => console.log(filteredResults)}
-                    placeholder={'filter based on string'}
+                    placeholder={'Search'}
                 />
                 <Item>
                     <Span>Show: </Span>                        

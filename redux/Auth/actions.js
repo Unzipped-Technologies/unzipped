@@ -78,6 +78,11 @@ export const updateRegisterForm = (data) => ({
     payload: data,
 });
 
+export const updateUser = (data) => ({
+    type: UPDATE_REGISTER_FORM,
+    payload: data,
+});
+
 export const loginUserFailed = (error) => ({
     type: LOGIN_USER_FAILED,
     payload: error,
