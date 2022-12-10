@@ -3,7 +3,7 @@ import Nav from '../components/unzipped/header'
 import HeroUnzipped from '../components/unzipped/heroUnzipped'
 import SectionOne from '../components/unzipped/sectionOne'
 import SectionTwo from '../components/unzipped/sectionTwo'
-import SectionThree from '../components/unzipped/sectionThree'
+import SectionThree from '../components/unzipped/sectionThrees'
 import SectionFour from '../components/unzipped/sectionFour'
 import styled from 'styled-components'
 import News from '../components/unzipped/NewsletterSignup'
@@ -19,7 +19,7 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
 `;
-
+ 
 const Home = ({token}) => {
     console.log(token)
     useEffect(() => {
