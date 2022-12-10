@@ -1,4 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import { updateRegisterForm, updateUser} from '../redux/actions';
+import { parseCookies } from "../services/cookieHelper";import styled from 'styled-components'
+
+const Container = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #D9D9D9;
+    height: 100vh;
+    width: 100vw;
+`;
 
 const Signup = ({
     stage, 
@@ -22,11 +35,11 @@ const Signup = ({
         if (step < 13) {
             // submit form
             // if step is true then go forward 1 step
-            updateBusinessForm({
+            updateRegisterForm({
                 stage: step ? step + 1 : stage
             })
         } else {
-            createBusiness({
+            updateUser({
                 role,
                 FirstName,
                 LastName,
@@ -52,7 +65,7 @@ const Signup = ({
 
     const updateForm = (data) => {
         // update form
-        updateBusinessForm({
+        updateRegisterForm({
             ...data
         })
     }
@@ -61,7 +74,7 @@ const Signup = ({
         // update form step 
         // if on 1st page go back to dashboard
         if (stage > 1) {
-            updateBusinessForm({
+            updateRegisterForm({
                 stage: (step || stage) - 1
             })
         } else {
@@ -72,7 +85,7 @@ const Signup = ({
 
     return (
         <Container>
-            <GetCard 
+            {/* <GetCard 
                 stage={stage} 
                 submitForm={submitForm}
                 updateForm={updateForm}
@@ -92,7 +105,7 @@ const Signup = ({
                 AddressCity={AddressCity}
                 profileImage={profileImage}
                 socialSecurityNumber={socialSecurityNumber}
-            />
+            /> */}
         </Container>
     )
 }
@@ -108,28 +121,28 @@ Signup.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = (state) => {
     console.log(state)
     return {
-        stage: state.Auth?.userForm.stage,
+        stage: state.Auth?.userForm?.stage,
         loading: state.Auth?.loading,
-        role: state.Auth.userForm.role,
-        FirstName: state.Auth.userForm.FirstName,
-        LastName: state.Auth.userForm.LastName,
-        email: state.Auth.userForm.email,
-        password: state.Auth.userForm.password,
-        phoneNumber: state.Auth.userForm.phoneNumber,
-        addressLineOne: state.Auth.userForm.addressLineOne,
-        addressLineTwo: state.Auth.userForm.addressLineTwo,
-        AddressLineCountry: state.Auth.userForm.AddressLineCountry,
-        AddressState: state.Auth.userForm.AddressState,
-        AddressZip: state.Auth.userForm.AddressZip,
-        AddressCity: state.Auth.userForm.AddressCity,
-        socialSecurityNumber: state.Auth.userForm.socialSecurityNumber,
+        role: state.Auth.userForm?.role,
+        FirstName: state.Auth.userForm?.FirstName,
+        LastName: state.Auth.userForm?.LastName,
+        email: state.Auth.userForm?.email,
+        password: state.Auth.userForm?.password,
+        phoneNumber: state.Auth.userForm?.phoneNumber,
+        addressLineOne: state.Auth.userForm?.addressLineOne,
+        addressLineTwo: state.Auth.userForm?.addressLineTwo,
+        AddressLineCountry: state.Auth.userForm?.AddressLineCountry,
+        AddressState: state.Auth.userForm?.AddressState,
+        AddressZip: state.Auth.userForm?.AddressZip,
+        AddressCity: state.Auth.userForm?.AddressCity,
+        socialSecurityNumber: state.Auth?.userForm?.socialSecurityNumber,
     }
   }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateBusinessForm: bindActionCreators(updateBusinessForm, dispatch),
-        Signup: bindActionCreators(Signup, dispatch),
+        updateRegisterForm: bindActionCreators(updateRegisterForm, dispatch),
+        updateUser: bindActionCreators(updateUser, dispatch),
     }
 }
 
