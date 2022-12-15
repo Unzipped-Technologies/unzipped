@@ -93,7 +93,6 @@ const Dashboard = ({loading, token, cookies, hotelOwed, hotel}) => {
 
     useEffect(() => {
         updateMonth();
-        console.log(month);
     }, [])
 
     // useEffect(() => {
@@ -110,7 +109,6 @@ const Dashboard = ({loading, token, cookies, hotelOwed, hotel}) => {
         if (token.access_token) {
             cookie = token.access_token
         } else { cookie = cookies}
-        console.log(selected)
         dispatch(getHotelOwed(month[selected], cookie));
     }, [month])
 

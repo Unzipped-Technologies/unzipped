@@ -56,7 +56,6 @@ const Booking = (state = INIT_STATE, action = {}) => {
     switch (action.type) {
         case ADD_CART_DATA:
             let addedItem = state.existingItems.find(item => item.id == action.payload.id);
-            console.log(addedItem)
             let existed_item = state.cart.find(item => item.id === action.payload.id);
             let total = state.total
             if (addedItem.price !== 50) {
@@ -151,7 +150,6 @@ const Booking = (state = INIT_STATE, action = {}) => {
             case CONFIRM_PROMO:
                 return {...state, loading: false, promo: action.payload};
             case ORDER_HISTORY:
-                console.log('reducer: ' + action.payload)
                 return {...state, loading: false, orderHistory: [...action.payload]};
             case PRODUCT_ERROR:
                 return {...state, loading: false, error: action.payload};

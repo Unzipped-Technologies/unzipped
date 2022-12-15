@@ -221,7 +221,6 @@ const Login = ({ loading, PassError, loadUser, isAuthenticated, error }) => {
                 router.push('/dashboard')
             }, 2000);
         } else {
-            console.log('set note')
             setNotifications(error?.data)
             setTimeout(() => {  
                 setNotifications('')
@@ -270,7 +269,6 @@ const Login = ({ loading, PassError, loadUser, isAuthenticated, error }) => {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,

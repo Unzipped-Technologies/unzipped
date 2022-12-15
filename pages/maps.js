@@ -43,7 +43,6 @@ const Maps = ({location, date, count, isAuthenticated, moreGarages, selLocation,
                 }
             })
             if (node) observer.current.observe(node)
-            console.log('print More')
         } else {return;}
     }, [loading])
 
@@ -147,18 +146,6 @@ const Maps = ({location, date, count, isAuthenticated, moreGarages, selLocation,
         console.log({lat: e.latLng.lat(), lng: e.latLng.lng()})
       }
     }
-
-    // useEffect(() => {
-    //     if ("geolocation" in navigator) {
-    //         navigator.geolocation.getCurrentPosition(function(position) {
-    //             setCoordinates({latitude: position.coords.latitude, longitude: position.coords.longitude})
-    //           });
-    //       } 
-    // },[])
-
-    useEffect(() => {
-      console.log(coords)
-    }, [coords])
 
     useEffect(() => {
       dispatch(getMapGarages(0))

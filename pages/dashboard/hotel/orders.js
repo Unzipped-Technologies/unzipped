@@ -61,7 +61,6 @@ const Orders = ({token, cookies, orders, loading, hasMoreOrders, users, hotel}) 
 
     const editSelected = () => {
         let list = checked.filter(x=> x.checked !== false); 
-        console.log(list[0])
         setEdits(list);
         setEditOpen(true);
     }
@@ -150,10 +149,6 @@ const Orders = ({token, cookies, orders, loading, hasMoreOrders, users, hotel}) 
     useEffect(() => {
         grabChecked()
     }, [orders])
-
-    useEffect(() => {
-        console.log(open)
-    }, [open])
 
     return (
         <React.Fragment>

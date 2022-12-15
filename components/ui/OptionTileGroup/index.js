@@ -21,8 +21,6 @@ export const OptionTileList = styled.div`
  * OptionTileGroup holds *N* number of OptionTiles. Only one option in the group can be selected at one time.
  */
 const OptionTileGroup = ({breakpoint, selectedValue, tileList, onChange, rest, margin, type}) => {
-    console.log('selectedValue', selectedValue)
-    console.log(tileList)
     return (
         <OptionTileList numTiles={tileList.length} breakpoint={breakpoint}>
             {tileList.map(({iconName, label, subLabel, value}) => (

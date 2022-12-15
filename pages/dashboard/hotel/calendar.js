@@ -27,7 +27,6 @@ const Dashboard = ({orders, token, cookies, hotel}) => {
     const eventModal = (event) => {
         // console.log(event)
         let itemToShow = orders.find(item => item._id === event.id);
-        console.log(itemToShow)
         setSelected(itemToShow)
         setOpen(true)
     }
@@ -41,13 +40,7 @@ const Dashboard = ({orders, token, cookies, hotel}) => {
     }, [])
 
     useEffect(() => {
-        console.log(hotel);
-        console.log(orderList)
-    }, [orderList, hotel])
-
-    useEffect(() => {
         let list = orders.map((item) => {
-            console.log(item.time)
         if (item.time !== "Overnight") {
             let time = item.time.substring(0,7);
             let hour = time.split(':')[0];

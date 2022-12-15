@@ -23,12 +23,10 @@ const SimpleExample = () => {
     }) 
     const calcDate = () => {
         const date = new Date();
-        console.log(date)
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     }
     const calcTime = () => {
         const date = new Date();
-        console.log(date)
         let ampm = 'AM'
         let hours = date.getUTCHours()
         if(hours > 12) {

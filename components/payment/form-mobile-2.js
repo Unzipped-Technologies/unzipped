@@ -77,11 +77,6 @@ function CheckoutForm({changeFocus}) {
         document.getElementById(id).scrollIntoView();
     }
 
-
-    // useEffect(() => {
-    //     console.log(orderDetails)
-    // }, [orderDetails])
-
     return (
       <div style={{width: '93%'}}>
         <form onSubmit={handleSubmit}>

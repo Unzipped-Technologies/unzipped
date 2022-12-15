@@ -78,11 +78,6 @@ function CheckoutForm({changeFocus}) {
         document.getElementById(id).scrollIntoView();
     }
 
-
-    // useEffect(() => {
-    //     console.log(orderDetails)
-    // }, [orderDetails])
-
     return (
       <div id="sb">
         <form onSubmit={handleSubmit}>

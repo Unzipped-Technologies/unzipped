@@ -9,11 +9,13 @@ import {
     REGISTER_USER,
     SET_TOKEN,
     CURRENT_USER,
+    RESET_REGISTER_FORM,
     SIGN_UP_FOR_NEWSLETTER,
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
     CLEAR_ERRORS,
     SET_DEFAULT_VEHICLE,
+    UPDATE_USER_SUCCESS,
     LOGGED_OUT,
     UPDATE_REGISTER_FORM,
 } from './constants';
@@ -73,15 +75,18 @@ export const tokenSet = (token) => async (dispatch) => {
     })
 };
 
-export const updateRegisterForm = (data) => ({
-    type: UPDATE_REGISTER_FORM,
-    payload: data,
-});
+export const updateRegisterForm = (data) => async (dispatch) => {
+    await dispatch({
+        type: UPDATE_REGISTER_FORM,
+        payload: data,
+    })
+};
 
-export const updateUser = (data) => ({
-    type: UPDATE_REGISTER_FORM,
-    payload: data,
-});
+export const resetRegisterForm = () => async (dispatch) => {
+    await dispatch({
+        type: RESET_REGISTER_FORM,
+    })
+};
 
 export const loginUserFailed = (error) => ({
     type: LOGIN_USER_FAILED,
@@ -91,6 +96,21 @@ export const loginUserFailed = (error) => ({
 export const reloadLogout = () => ({
     type: LOGGED_OUT
 });
+
+export const updateUser = (data, token) => async (dispatch, getState) => {
+    await axios
+        .post(`/api/user/current/update`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: UPDATE_USER_SUCCESS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: AUTH_ERROR,
+                payload: err.response.data
+            })
+        })
+}
 
 export const resendVerify = (user) => async (dispatch, getState) => {
     const data = await axios
@@ -130,7 +150,6 @@ export const googleUser = (token) => async (dispatch, getState) => {
 export const loadUser = (user) => async (dispatch, getState) => {
     //User Loading
     dispatch({type: USER_LOADING})
-    console.log('here')
     await axios
         .post(`/api/auth/login`, user)
         .then(res => dispatch({

@@ -48,7 +48,6 @@ const Customers = ({garages, token, cookies, userType, loading}) => {
 
     const editSelected = () => {
         let list = checked.filter(x=> x.checked !== false); 
-        console.log(list[0])
         setEdits(list);
         setEditOpen(true);
     }
@@ -117,7 +116,6 @@ const Customers = ({garages, token, cookies, userType, loading}) => {
 
     useEffect(() => {
         grabChecked()
-        console.log(checked)
     }, [garages])
 
 

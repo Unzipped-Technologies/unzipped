@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import API from '../utils/api';
-import Calendar from '../components/Custom/Presentation/Calendar-display';
 import Nav from '../components/Navbar/ColorNav';
 import Selector from '../components/Custom/Presentation/MapSelector';
 import Footer from '../components/Footer/alt-footer';
@@ -38,11 +35,10 @@ const Register = ({location, date, count, isAuthenticated, token, error, users})
     }, [count, location, date, isAuthenticated])
 
     const updateUser = () => {
-    setUser({
-        email: email,
-        password: password,
-    });
-    console.log(user);
+        setUser({
+            email: email,
+            password: password,
+        });
     };
 
       //update Email date
@@ -68,7 +64,6 @@ const Register = ({location, date, count, isAuthenticated, token, error, users})
       const verifyNow = (ev) => {
         ev.preventDefault();
         try {
-          console.log(user)
             dispatch(registerUser(user))
               if (error) {
                 setEmailVerify('inUse');

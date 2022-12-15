@@ -102,7 +102,6 @@ const Dashboard = (state = INIT_STATE, action = {}) => {
         case GARAGE_ORDERS:
             return {...state, loading: false, garageOrders: [...action.payload]};
         case HOTEL_ORDERS:
-            console.log(action.payload)
             return {...state, loading: false, hotelOrders: [...action.payload]};
         case SUBMIT_ORDER:
             return {...state, loading: false, orders: action.payload}

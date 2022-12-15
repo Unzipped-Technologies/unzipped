@@ -20,9 +20,6 @@ const Payment = ({changeFocus}) => {
     'pk_live_51IBOwxJBXTGShTxE1q9q4wSWoLuQbFZMNMVvETlX8mg3ovTE6bTjgOWZ77uhcpUG2qaS2hc6LUoVJVEeevv6HydV00xEfuZBHD'
   );
 
-  useEffect(() => {
-      console.log(process.env.STRIPE_PUBLISHABLE_KEY)
-  }, [])
   return (
     <Elements stripe={stripe}>
       <CheckoutForm changeFocus={changeFocus}/>

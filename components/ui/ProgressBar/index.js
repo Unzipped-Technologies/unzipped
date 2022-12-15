@@ -67,7 +67,6 @@ const Value = styled.span`
  */
 const ProgressBar = ({tileView, showValue, status, value, width, bar}) => {
     const barWidth = (width / 100) * value;
-    console.log(barWidth)
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;
 

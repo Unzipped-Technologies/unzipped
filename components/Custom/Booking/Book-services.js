@@ -18,9 +18,6 @@ const BookService = ({cart, existingItems, count, location, date, isAuthenticate
     const setQty = (i) => {
         let e = cart.find(item => item.id === existingItems[i].id)
             if (e) {
-                console.log(cart)
-                console.log(existingItems[i].id)
-                console.log(e)
                 return e.quantity
             }
             return 0

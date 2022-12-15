@@ -7,7 +7,6 @@ const BlogContent = ({data, prelink, nextlink, prev, next}) => {
             {data.map((item, index) => {
 
                 const textd = item.content.split('\n')
-                console.log(textd)
                 const text = item.content.split('\n').map((n) => {
                     if (n === '') {
                         if( item.content !== 'bullet') {

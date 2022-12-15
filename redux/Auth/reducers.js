@@ -3,6 +3,7 @@ import {
     USER_LOADED,
     AUTH_ERROR,
     LOGIN_USER_SUCCESS,
+    UPDATE_USER_SUCCESS,
     LOGIN_USER_FAILED,
     LOGOUT_USER,
     CURRENT_USER,
@@ -14,6 +15,7 @@ import {
     SET_DEFAULT_VEHICLE,
     UPDATE_REGISTER_FORM,
     LOGGED_OUT,
+    RESET_REGISTER_FORM,
 } from './constants';
 
 const INIT_STATE = {
@@ -21,21 +23,21 @@ const INIT_STATE = {
     isAuthenticated: false,//null,
     user: {},
     userForm: {
-        role: 0,
+        role: -1,
         FirstName: '',
         LastName: '',
-        email: '',
-        password: '',
         phoneNumber: '',
-        addressLineOne: '',
-        addressLineTwo: '',
+        AddressLineOne: '',
+        AddressLineTwo: '',
         AddressLineCountry: '',
         AddressState: '',
         AddressZip: '',
         AddressCity: '',
-        profileImage: '',
+        AddressCountry: '',
+        taxEIN: '',
         socialSecurityNumber: '',
-        stage: 0,
+        businessType: '',
+        stage: 1,
     },
     loading: false,
     error: {data: ''},
@@ -53,10 +55,11 @@ const Auth = (state = INIT_STATE, action) => {
         case SIGN_UP_FOR_NEWSLETTER:
             return {...state, loading: false, email: action.payload.email };
         case USER_LOADED:
-            console.log(action.payload)
             return {...state, email: action.payload.email, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: {data: ''}}
         case LOGIN_USER_SUCCESS:
             return { ...state, user: action.payload, loading: false, error: {data: ''} };
+        case UPDATE_USER_SUCCESS:
+            return { ...state, user: {...state.user, ...state.userForm}, loading: false, error: {data: ''} };
         case REGISTER_USER:
             let isAuthenticated = true
             if(action.payload.error) {
@@ -64,7 +67,6 @@ const Auth = (state = INIT_STATE, action) => {
             }
             return {...state, isAuthenticated: isAuthenticated, loading: false, user: action.payload, token: action.payload.cookie};
         case LOGOUT_USER:
-            console.log('///success', action.payload)
             return {...INIT_STATE, loggedOut: true, isAuthenticated: false, loading: false}
         case AUTH_ERROR:
             return {...state, error: action.payload, loading: false, isAuthenticated: false}
@@ -78,6 +80,8 @@ const Auth = (state = INIT_STATE, action) => {
             return {...state, notification: action.payload, loading: false}
         case LOGGED_OUT:
             return {...state, loggedOut: false, isAuthenticated: false}
+        case RESET_REGISTER_FORM:
+            return {...state, userForm: {...INIT_STATE.userForm}}
         case FORGET_PASSWORD_SUCCESS:
             return {...state, isAuthenticated: true, loading: false, user: action.payload, token: action.payload.cookie, error: ''}
         default:

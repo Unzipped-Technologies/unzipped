@@ -32,7 +32,6 @@ const Container = ({token, access, loading, orderHistory, email, phone, discount
     }
 
     useEffect(() => {
-        console.log('useEffect')
         getOrders();
     }, [])
 

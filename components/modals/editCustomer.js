@@ -67,8 +67,7 @@ const SimpleModal = ({open, setOpen, token, edits, loading}) => {
             role: select,
             id: id,
         });
-        console.log(user);
-        };
+    };
 
     const dispatch = useDispatch();
 
@@ -100,7 +99,6 @@ const SimpleModal = ({open, setOpen, token, edits, loading}) => {
 
     useEffect(() => {
         updateUser()
-        console.log(user)
     }, [email, name, select])
 
     useEffect(() => {

@@ -53,10 +53,6 @@ const SimpleModal = ({open, setOpen, token, refund, setNotificationfunction}) =>
         setOpen(false);
     };
 
-    useEffect(() => {
-        console.log(refund)
-    }, [])
-
     return (
         <div>
             <Modal

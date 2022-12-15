@@ -59,10 +59,6 @@ const SimpleModal = ({open, setOpen, selected, token}) => {
         };
     }, [wrapperRef]);
 
-    useEffect(() => {
-        console.log(selected)
-    }, [])
-    
     return (
         <div>
             <Modal

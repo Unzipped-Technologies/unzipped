@@ -78,11 +78,13 @@ import DownWideIcon from '../icons/downWideIcon';
 import ActionIcon from '../icons/ActionIcon';
 import circleCheck from '../icons/checkCircle';
 import successCheck from '../icons/successCheck';
+import AlertRedIcon from '../icons/alert-red';
 
 const mapNameIcons = {
     alert: AlertIcon,
     actionIcon: ActionIcon,
     alertDone: AlertDoneIcon,
+    alertRed: AlertRedIcon,
     back: BackIcon,
     arrowRight: ArrowRight,
     calendar: calendar,

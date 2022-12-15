@@ -920,7 +920,6 @@ CreateBusiness.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         name: state.Business?.businessForm.name,
         isFirstBusiness: state.Business?.businessForm.isFirstBusiness,

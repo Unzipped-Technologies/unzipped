@@ -44,6 +44,7 @@ const userSchema = new Schema({
   dislikeTotal: { type: Number, default: 0 },
   likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
   dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+  notifications: { type: Schema.Types.Mixed, ref: 'notifications' },
 }, {
   timestamps: true
 });

@@ -81,7 +81,6 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
 
     useEffect(() => {
         updateMonth();
-        console.log(month);
     }, [])
 
     useEffect(() => {
@@ -89,7 +88,6 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
         if (token.access_token) {
             cookie = token.access_token
         } else { cookie = cookies}
-        console.log(selected)
         dispatch(getGarageOrders(month[selected], cookie));
     }, [month])
 
@@ -98,7 +96,6 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
         if (token.access_token) {
             cookie = token.access_token
         } else { cookie = cookies}
-        console.log(selected)
         dispatch(getHotelOrders(month[selected], cookie));
     }, [month])
 
@@ -107,7 +104,6 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
         if (token.access_token) {
             cookie = token.access_token
         } else { cookie = cookies}
-        console.log(selected)
         dispatch(getHotelOwed(month[selected], cookie));
     }, [month])
     return (

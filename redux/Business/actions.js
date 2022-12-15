@@ -54,7 +54,6 @@ export const createBusiness = (data, token) => async (dispatch, getState) => {
 }
 
 export const getBusinessList = (data, token) => async (dispatch, getState) => {
-    console.log('data', data)
     //business list Loading
     dispatch({type: LOAD_STATE})
 

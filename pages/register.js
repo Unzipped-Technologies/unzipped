@@ -218,7 +218,7 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
         if (isAuthenticated) {
             setNotifications('Register Successful')
             setTimeout(() => {  
-                router.push('/sign-up')
+                router.push('/confirmVerify')
             }, 2000);
         } else {
             if (error) {
@@ -271,7 +271,6 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,

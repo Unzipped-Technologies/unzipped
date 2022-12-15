@@ -21,10 +21,9 @@ const Reset = ({ error, token }) => {
     const router = useRouter()
 
     const updateUser = () => {
-    setUser({
-        password: password,
-    });
-    console.log(user);
+        setUser({
+            password: password,
+        });
     };
 
     const resetPassword = (ev) => {

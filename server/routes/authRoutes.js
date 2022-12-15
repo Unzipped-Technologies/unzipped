@@ -28,7 +28,6 @@ router.get(
     (req, res) => {
       if (req.isAuthenticated()) {
         const { _id } = req.user;
-        console.log(req.user)
         const t = token.signToken(_id);
         res.cookie('access_token', t, { httpOnly: true });
         res.redirect(`/services`);
@@ -66,6 +65,10 @@ router.post(
             ///Create user and save to database
             let newuser = await userHelper.createUser(data, hash)
             const existingUsers = await user.findOne({ email }).select('-password');
+
+            // create notifications
+            await userHelper.setUpNotificationsForUser();
+            
             //send verification email
             const msg = {
               //recipients: existingUsers.email,
@@ -121,7 +124,6 @@ router.get('/reset/:id', async (req, res, next) => {
 })
 
 router.post('/password', requireLogin, async (req, res, next) => {
-  console.log(req.user.sub)
   const password = req.body.password;
   const existingUser = await user.findById(req.user.sub);
   //salt password
@@ -135,7 +137,6 @@ router.post('/password', requireLogin, async (req, res, next) => {
     await user.updateOne({email: existingUser._doc.email}, {$set:{password: hash}})
     const t = token.signToken(req.user.sub);
     const existingUsers = await user.findById(req.user.sub).select('-password').select('-stripeId');
-    console.log(existingUsers)
     res.cookie('access_token', t, { httpOnly: true });
     res.send({...existingUsers._doc, cookie: token});
   } catch {
@@ -180,10 +181,8 @@ router.post('/resend', requireLogin, async (req, res, next) => {
 })
 
 router.post('/reset', async (req, res, next) => {
-  console.log(req.body.email)
   const existinguser = await user.findOne({ email: req.body.email });
   if (!existinguser || existinguser === null) {
-    console.log('failed')
     res.send({ message: 'User with that email does not exist'})
   } 
   if (existinguser) {
@@ -231,7 +230,6 @@ router.post('/contact', async (req, res, next) => {
 router.post(
     '/login',
     async (req, res, next) => {
-        console.log(req.body)
         const {email, password} = req.body
         ///check if user exists
         try {
