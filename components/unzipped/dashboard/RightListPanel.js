@@ -73,7 +73,7 @@ const freelancer = [
     },
     {
         name: 'Stefano Campagna',
-        type: 'Fake Web Developer',
+        type: 'Tutor',
         country: 'United States',
         skills: [
             'React',
