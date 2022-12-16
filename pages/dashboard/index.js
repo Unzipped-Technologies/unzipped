@@ -44,7 +44,8 @@ const Dashboard = ({resetRegisterForm, token}) => {
         {
             text: 'Select a plan for your account',
             icon: <></>,
-            padding: false
+            padding: false,
+            onClick: () => router.push('/pick-a-plan')
         },
     ]
 
