@@ -124,7 +124,7 @@ const Notification = ({type, children, noButton}) => {
                 <WhiteCard size="large">
                     <DarkText>You created your first business. Hooray! Now you need to customize your
                     business homepage to attract better talent.</DarkText>
-                    <Button noBorder type="dark" normal>CUSTOMIZE YOUR BUSSINESS PAGE</Button>
+                    <Button noBorder type="dark" normal>CUSTOMIZE YOUR BUSINESS PAGE</Button>
                 </WhiteCard> 
             )
         case 'explore':
