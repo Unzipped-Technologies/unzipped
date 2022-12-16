@@ -5,6 +5,7 @@ import BackLink from './BackLink';
 import Badge from './Badge';
 import Banner from './Banner';
 import Button from './Button';
+import Bullet from './Bullet';
 import Buttons from './Buttons';
 import Card from './Card';
 import Checkbox from './Checkbox';
@@ -74,6 +75,7 @@ export {
     Banner,
     Button,
     Buttons,
+    Bullet,
     Card,
     Checkbox,
     CountdownTimer,

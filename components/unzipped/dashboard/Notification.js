@@ -12,6 +12,8 @@ import {
     Dismiss
 } from './style'
 
+import { useRouter } from 'next/router';
+
 const help = [
     {
         name: 'Help Center',
@@ -51,14 +53,15 @@ const help = [
     },
 ]
 
-const Notification = ({type}) => {
+const Notification = ({type, children, noButton}) => {
+    const router = useRouter()
     switch (type) {
         case 'plan':
             return (
                 <BlackCard>
                     <WhiteText>Build your dream business, grow your following, and collaborate with other professionals to <br/>
                     make your vision a reality. Start your free trial now.</WhiteText>
-                    <Absolute><Button noBorder type="black">PICK A PLAN</Button></Absolute>
+                    <Absolute><Button noBorder type="black"  onClick={() => router.push('/pick-a-plan')}>PICK A PLAN</Button></Absolute>
                 </BlackCard>
             )
         case 'github':
@@ -79,7 +82,7 @@ const Notification = ({type}) => {
         case 'dismiss':
             return (
                 <WhiteCard row>
-                    <DarkText noMargin>Update types of professionals you are seeking for your business</DarkText>
+                    <DarkText noMargin>{children}</DarkText>
                     <Absolute>
                     <Dismiss>Dismiss</Dismiss>
                     <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
@@ -99,10 +102,13 @@ const Notification = ({type}) => {
             return (
                 <WhiteCard row borderColor="#0029FF" background="#F8FAFF">
                     <Icon name="question" />
-                    <DarkText noMargin paddingLeft>Update types of professionals you are seeking for your business</DarkText>
+                    <DarkText noMargin paddingLeft>{children}</DarkText>
+                    {!noButton && (
                     <Absolute>
-                    <Dismiss>Dismiss</Dismiss>
-                    <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
+                        <Dismiss>Dismiss</Dismiss>
+                        <Button noBorder type="default" normal small>UPDATE</Button>
+                    </Absolute>
+                    )}
                 </WhiteCard> 
             )
         case 'createBusiness':

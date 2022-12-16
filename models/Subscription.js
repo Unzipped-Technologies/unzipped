@@ -6,6 +6,7 @@ const subscriptionSchema = new Schema({
   stripeId: String,
   plan: { type: Number, default: 0 },
   isBusiness: {type: Boolean, default: false},
+  paymentFrequency: Number,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   BillingAddressLineOne: { type: String, default: '' },

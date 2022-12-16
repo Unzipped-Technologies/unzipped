@@ -30,7 +30,7 @@ const TitleText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 600;
-    font-size: ${({small, title}) => small ? '16px' : title ? '36px' : '18px'};
+    font-size: ${({small, title, size}) => small ? '16px' : title ? '36px' : size? size : '18px'};
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '7px' :'15px'};
@@ -50,7 +50,7 @@ const DarkText = styled.div`
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
     margin-top: ${({topMargin}) => topMargin ? topMargin : 'unset'};
-    margin-bottom: ${({noMargin}) => noMargin ? '0px' : '15px'};
+    margin-bottom: ${({noMargin, marginLarge}) => noMargin ? '0px' : marginLarge ? '35px'  : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
     text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
     white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'unset'};
@@ -72,12 +72,12 @@ const Absolute = styled.div`
     width: ${({width}) => width ?  width : 'unset'};
     top: ${({top}) => top ? top : 'unset'};
     right: ${({left, right}) => left ? 'unset' : right ? right : '10px'};
-    left: ${({left, wideLeft}) => left ? '10px' : wideLeft ? '20px' : 'unset'};
+    left: ${({left, wideLeft, smallLeft}) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
 `;
 
 const Underline = styled.div`
     border-bottom: solid 1px ${({color}) => color ? color : '#d8d8d8'};
-    margin: ${({noMargin}) => noMargin ? "5px 0px 0px 0px" : "5px 0px"};
+    margin: ${({noMargin, margin}) => noMargin ? "5px 0px 0px 0px" : margin ? margin : "5px 0px"};
 `;
 
 const WhiteCard = styled.div`
@@ -141,8 +141,69 @@ const Grid2 = styled.div`
     margin: ${({margin}) => margin ? margin : '75px 0px'};
 `;
 
+const Box = styled.div`
+    display: flex;
+    flex-flow: row;
+    width: 100%;
+    align-items: center;
+    margin: 6px 0px;
+`;
+
+export const Title = styled.div`
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 52px;
+    line-height: 56px;
+    letter-spacing: 0.39998px;
+    min-width: 80%;
+    color: #fff;
+    padding: 20px;
+    margin-bottom: 10px;
+    @media (max-width: 1435px) {
+        min-width: 90%;
+    }
+`;
+
+export const SimpleText = styled.span`
+    display: flex;
+    flex-flow: row;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24.5px;
+    letter-spacing: 0.39998px;
+    align-items: center;
+    color: #333;
+`;
+
+export const Span = styled.span`
+    display: flex;
+    flex-flow: row;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 45px;
+    letter-spacing: 0.39998px;
+    align-items: center;
+    color: #FFFFFF;
+`;
+
+export const PaddingLeft = styled.span`
+    padding-left: 10px;
+`;
+
+export const MinWidth = styled.span`
+    min-width: 10%;
+`;
+
+
+
 module.exports = {
     BlackCard,
+    MinWidth,
     WhiteText,
     Grid,
     Grid2,
@@ -151,6 +212,11 @@ module.exports = {
     Absolute,
     WhiteCard,
     Dismiss,
+    SimpleText,
     Underline,
-    SelectCard
+    SelectCard,
+    Span,
+    Box,
+    PaddingLeft,
+    Title
 }

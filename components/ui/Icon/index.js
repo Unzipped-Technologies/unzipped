@@ -79,6 +79,13 @@ import ActionIcon from '../icons/ActionIcon';
 import circleCheck from '../icons/checkCircle';
 import successCheck from '../icons/successCheck';
 import AlertRedIcon from '../icons/alert-red';
+import BackArrowLong from '../icons/backArrowLong';
+import Breifcase from '../icons/breifcase';
+import User from '../icons/user';
+import CheckMenu from '../icons/CheckMenu';
+import CartAlt from '../icons/CartAlt';
+import ChatBubble from '../icons/ChatBubble';
+import PhoneAlt from '../icons/PhoneAlt';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -86,6 +93,12 @@ const mapNameIcons = {
     alertDone: AlertDoneIcon,
     alertRed: AlertRedIcon,
     back: BackIcon,
+    BackArrowLong: BackArrowLong,
+    breifcase: Breifcase,
+    checkMenu: CheckMenu,
+    cartAlt: CartAlt,
+    chatBubble: ChatBubble,
+    phoneAlt: PhoneAlt,
     arrowRight: ArrowRight,
     calendar: calendar,
     check: CheckmarkIcon,
@@ -160,6 +173,7 @@ const mapNameIcons = {
     copywrite: Copywrite,
     googleCircle: GoogleCircle,
     github: Github,
+    user: User
 };
 
 /**

@@ -18,6 +18,8 @@ import {
     UPDATE_USER_SUCCESS,
     LOGGED_OUT,
     UPDATE_REGISTER_FORM,
+    SELECT_A_PLAN,
+    UPDATE_SUBSCRIPTION_FORM,
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
@@ -66,6 +68,21 @@ export const userPayment = () => async (dispatch, getState) => {
         type: CURRENT_USER,
         payload: getState().Booking.orderDetails,
         })
+};
+
+export const selectAPlan = (data) => async (dispatch) => {
+    dispatch({
+        type: SELECT_A_PLAN,
+        payload: data,
+        })
+};
+
+export const updateSubscriptionForm = (data) => async (dispatch) => {
+    console.log('data', data)
+    dispatch({
+        type: UPDATE_SUBSCRIPTION_FORM,
+        payload: data,
+    })
 };
 
 export const tokenSet = (token) => async (dispatch) => {

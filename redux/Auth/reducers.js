@@ -16,7 +16,10 @@ import {
     UPDATE_REGISTER_FORM,
     LOGGED_OUT,
     RESET_REGISTER_FORM,
+    SELECT_A_PLAN,
+    UPDATE_SUBSCRIPTION_FORM,
 } from './constants';
+import { paymentFrequencyEnum } from '../../server/enum/planEnum';
 
 const INIT_STATE = {
     token: '',
@@ -43,7 +46,32 @@ const INIT_STATE = {
     error: {data: ''},
     loggedOut: false,
     notification: '',
-    email: ''
+    selectedPlan: null,
+    subscriptionForm: {
+        paymentFrequency: paymentFrequencyEnum.MONTHLY,
+        stripeId: '',
+        BusinessAddressLineOne: '',
+        BusinessAddressLineTwo: '',
+        BusinessAddressLineCountry: '',
+        BusinessFirstName: '',
+        BusinessLastName: '',
+        BusinessAddressCity: '',
+        BusinessAddressState: '',
+        BusinessAddressZip: '',
+        paymentMethod: {
+            BillingAddressLineOne: '',
+            BillingAddressLineTwo: '',
+            BillingAddressLineCountry: '',
+            BillingFirstName: '',
+            BillingLastName: '',
+            BillingAddressCity: '',
+            BillingAddressState: '',
+            BillingAddressZip: '',
+        },
+    },
+    email: '',
+    planCost: 29,
+    trialLength: 7
 };
 
 const Auth = (state = INIT_STATE, action) => {
@@ -68,6 +96,10 @@ const Auth = (state = INIT_STATE, action) => {
             return {...state, isAuthenticated: isAuthenticated, loading: false, user: action.payload, token: action.payload.cookie};
         case LOGOUT_USER:
             return {...INIT_STATE, loggedOut: true, isAuthenticated: false, loading: false}
+        case SELECT_A_PLAN:
+            return {...state, loading: false, ...action.payload}
+        case UPDATE_SUBSCRIPTION_FORM:
+            return {...state, loading: false, subscriptionForm: {...state.subscriptionForm, ...action.payload}}
         case AUTH_ERROR:
             return {...state, error: action.payload, loading: false, isAuthenticated: false}
         case SET_DEFAULT_VEHICLE:

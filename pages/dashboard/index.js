@@ -13,8 +13,11 @@ const notifications = [
     { type:"plan"},
     { type:"github"},
     { type:"browse"},
-    { type:"dismiss"},
-    { type:"blue"},
+    { type:"dismiss", text: "Update types of professionals you are seeking for your business"},
+    { 
+      type:"blue",
+      text: "Update types of professionals you are seeking for your business"
+    },
     { type:"createBusiness"},
     { type:"faq"},
     { type:"updateBusiness"},
