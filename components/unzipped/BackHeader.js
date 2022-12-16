@@ -5,7 +5,7 @@ import {
     TitleText,
     Underline
 } from './dashboard/style'
-import Icon from '../ui/icon'
+import Icon from '../ui/Icon'
 import { useRouter } from 'next/router'
 
 const Container = styled.div`
