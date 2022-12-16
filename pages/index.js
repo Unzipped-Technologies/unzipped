@@ -22,9 +22,9 @@ const Container = styled.div`
  
 const Home = ({token}) => {
     useEffect(() => {
-        if (token.access_token) {
+        if (token?.access_token) {
             if (!user) {
-            googleUser(token.access_token);
+            googleUser(token?.access_token);
             }
         }
     }, [])

@@ -88,8 +88,8 @@ const Cart = ({ cart, total, credits, date, time, location, orderHistory, promoV
         if (paymentFocus === 'verified') {
             setLoading(true);
             let cookie;
-            if (token.access_token) {
-                cookie = token.access_token
+            if (token?.access_token) {
+                cookie = token?.access_token
             } else { cookie = access}
             submitPayment(cookie)
             return;
@@ -124,8 +124,8 @@ const Cart = ({ cart, total, credits, date, time, location, orderHistory, promoV
         } else if (isAdmin) {
             userType = "Admin";
         } else { userType = "Any"; }
-        if (token.access_token) {
-            cookie = token.access_token
+        if (token?.access_token) {
+            cookie = token?.access_token
         } else {
             cookie = access
         }

@@ -15,9 +15,9 @@ const Services = ({user, token}) => {
 
     useEffect(() => {
         dispatch(stopAppScreen());
-        if (token.access_token) {
+        if (token?.access_token) {
             if (!user) {
-            dispatch(googleUser(token.access_token));
+            dispatch(googleUser(token?.access_token));
             }
         }
     }, [])

@@ -26,7 +26,6 @@ const notifications = [
 
 const Dashboard = ({resetRegisterForm, token}) => {
     const router = useRouter()
-    console.log('token: ', token.access_token)
     const user = [
         {
             text: 'Update account details',

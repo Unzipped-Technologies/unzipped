@@ -71,8 +71,8 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
     const selectAMonth = (index) => {
         setSelected(index);
         let cookie;
-        if (token.access_token) {
-            cookie = token.access_token
+        if (token?.access_token) {
+            cookie = token?.access_token
         } else { cookie = cookies}
         dispatch(getGarageOrders(month[index], cookie));
         dispatch(getHotelOrders(month[index], cookie));
