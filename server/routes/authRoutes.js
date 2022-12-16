@@ -30,7 +30,7 @@ router.get(
         const { _id } = req.user;
         const t = token.signToken(_id);
         res.cookie('access_token', t, { httpOnly: true });
-        res.redirect(`/services`);
+        res.redirect(`/signup`);
         }
     }
 );
