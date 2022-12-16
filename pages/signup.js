@@ -181,7 +181,6 @@ const GetCard = ({
                 with any local regulations."
                 submit
                 disabled={!(AddressLineOne.length > 0 
-                    && AddressLineTwo.length > 0
                     && AddressCity.length > 0
                     && AddressZip.length > 0
                     && AddressCountry?.length > 0

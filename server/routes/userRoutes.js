@@ -50,7 +50,7 @@ router.post('/update', requireLogin, permissionCheckHelper.hasPermission('update
 router.post('/current/update', requireLogin, permissionCheckHelper.hasPermission('updateCurrentUsers'), async (req, res) => {
     try {
       const updatedUser = await userHelper.updateUserByid(req.user.sub, req.body)
-      console.log('updatedUser', updatedUser)
+      await userHelper.updateTaxDataByid(req.user.sub, req.body)
       if(!updatedUser) throw Error('user not updated')
       res.json(updatedUser)
     } catch (e) {

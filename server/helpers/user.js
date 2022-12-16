@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const user = require('../../models/User');
+const taxDataTables = require('../../models/TaxDataTable');
 const thirdPartyApplications = require('../../models/ThirdPartyApplications');
 const freelancerSkills = require('../../models/FreelancerSkills');
 const list = require('../../models/List');
@@ -84,6 +85,15 @@ const createUser = async (data, hash) => {
 const updateUserByid = async (id, data) => {
     try {
         return await user.findByIdAndUpdate(id, {$set:{...data}})
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
+    } 
+}
+
+// update tax data
+const updateTaxDataByid = async (id, data) => {
+    try {
+        return await taxDataTables.findByIdAndUpdate(id, {$set:{...data}})
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     } 
@@ -337,6 +347,7 @@ module.exports = {
     getFreelancerById,
     addListsToFreelancer,
     setUpNotificationsForUser,
+    updateTaxDataByid,
     addLikeToFreelancer,
     removeLikeToFreelancer,
     listLikes,
