@@ -506,7 +506,6 @@ const GetCard = ({
                     sub="We’ll use your location to help ensure you are compliant 
                     with any local regulations."
                     disabled={!(businessAddressLineOne.length > 0 
-                        && businessAddressLineTwo.length > 0
                         && businessCity.length > 0
                         && businessZip.length > 0
                         && businessCountry.length > 0
