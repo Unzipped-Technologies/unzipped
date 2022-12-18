@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {
     DarkText,
     TitleText,
@@ -9,6 +9,8 @@ import styled from 'styled-components'
 import { paymentFrequencyEnum } from '../../server/enum/planEnum';
 import Radio from '@material-ui/core/Radio';
 import Button from '../ui/Button';
+import Image from '../ui/Image';
+import { CircularProgress } from '@material-ui/core';
 
 const Container = styled.div`
     margin: 0px 10px 0px 0px;
@@ -26,7 +28,22 @@ const Blue = styled.span`
     font-size: 13px;
 `;
 
-const SubscriptionCard = ({planCost, subscriptionForm, updateSubscription}) => {
+const Span = styled.div`
+    width: 200px;
+`;
+
+const SubscriptionCard = ({planCost, subscriptionForm, updateSubscription, onClick, loading}) => {
+    const [isBillingCycle, setIsBillingCycle] = useState(true);
+    const [isLoading, setIsLoading] = useState(false)
+
+    const billingCycleUpdate = () => {
+        onClick && onClick()
+        setIsBillingCycle(false)
+        setIsLoading(true)
+        setTimeout (() => {
+            setIsLoading(false)
+        }, 750)
+    }
     const calcPrice = (months) => {
         return planCost * (0.85 - (0.05 * months)).toFixed(2)
     }
@@ -65,7 +82,7 @@ const SubscriptionCard = ({planCost, subscriptionForm, updateSubscription}) => {
             id: paymentFrequencyEnum.MONTHLY,
             name: 'MONTHLY',
             icon: 'radio',
-            text: `$${calcPrice(paymentFrequencyEnum.MONTHLY).toFixed(2)} X 36 MONTHS`,
+            text: `$${planCost.toFixed(2)} / MONTH`,
             save: undefined,
             onChange: updateSubscription
         },
@@ -73,21 +90,37 @@ const SubscriptionCard = ({planCost, subscriptionForm, updateSubscription}) => {
 
     return (
         <Container>
-            <WhiteCard height="437px">
-                <TitleText size="22px">Billing cycle</TitleText>
-                <DarkText >Chose how often you’d like to be billed. You can cancel anytime.</DarkText>
-                {cards.map((item, index) => (
-                    <WhiteCard shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="5px 40px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
-                        <Absolute smallLeft top="0px"><Radio checked={subscriptionForm?.paymentFrequency === item.id} onClick={() => item.onChange({paymentFrequency: item.id})} /></Absolute>
-                        <TitleText noMargin small >{item.name}</TitleText>
-                        <DarkText noMargin small>{item.text}</DarkText>
-                        {item.save && <Absolute top="20px"><Blue>{item.save}</Blue></Absolute>}
-                    </WhiteCard> 
-                ))}
-                <ButtonContainer>
-                    <Button noBorder>CONFIRM BILLING CYCLE</Button>
-                </ButtonContainer>
-            </WhiteCard>
+            {isBillingCycle ? (
+                <WhiteCard height="437px">
+                    <TitleText size="22px">Billing cycle</TitleText>
+                    <DarkText >Chose how often you’d like to be billed. You can cancel anytime.</DarkText>
+                    {cards.map((item, index) => (
+                        <WhiteCard shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="5px 40px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
+                            <Absolute smallLeft top="0px"><Radio checked={subscriptionForm?.paymentFrequency === item.id} onClick={() => item.onChange({paymentFrequency: item.id})} /></Absolute>
+                            <TitleText noMargin small >{item.name}</TitleText>
+                            <DarkText noMargin small>{item.text}</DarkText>
+                            {item.save && <Absolute top="20px"><Blue>{item.save}</Blue></Absolute>}
+                        </WhiteCard> 
+                    ))}
+                    <ButtonContainer>
+                        <Button noBorder onClick={billingCycleUpdate}>{loading ? <Span><CircularProgress size={18} /></Span> : 'CONFIRM BILLING CYCLE'}</Button>
+                    </ButtonContainer>
+                </WhiteCard>
+            ) : (
+                <WhiteCard onClick={() => setIsBillingCycle(true)}>
+                    <TitleText size="22px">Billing cycle</TitleText>
+                    {isLoading && (
+                        <Absolute top="18px">
+                            <CircularProgress size={24} />
+                        </Absolute>
+                        )}
+                    {!isLoading && (
+                        <Absolute top="12px">
+                            <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png" alt="success" height="34px" width="34px"/>
+                        </Absolute>
+                    )}
+                </WhiteCard>
+            )}
         </Container>
 
     )

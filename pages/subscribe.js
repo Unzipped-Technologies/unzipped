@@ -2,6 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import BackHeader from '../components/unzipped/BackHeader';
 import SubscriptionCard from '../components/unzipped/SubscriptionCard';
+import BusinessAddress from '../components/unzipped/businessAddress';
+import PaymentMethod from '../components/unzipped/paymentMethod';
+import ReceiptCard from '../components/unzipped/ReceiptCard';
 import Nav from '../components/unzipped/header';
 import Footer from '../components/unzipped/Footer'
 import { planEnum } from '../server/enum/planEnum';
@@ -11,7 +14,7 @@ import { ValidationUtils } from '../utils'
 //redux
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateSubscriptionForm } from '../redux/actions';
+import { updateSubscriptionForm, createSubscription } from '../redux/actions';
 import { parseCookies } from "../services/cookieHelper";
 
 const Container = styled.div`
@@ -33,6 +36,11 @@ const Cards = styled.div`
     width: 953px;
 `;
 
+const Left = styled.div`
+    display: flex;
+    flex-flow: column;
+`;
+
 const getSubscriptionName = (plan) => {
     switch (plan) {
         case planEnum.BASIC:
@@ -46,14 +54,26 @@ const getSubscriptionName = (plan) => {
     }
 }
 
-const Subscribe = ({selectedPlan, user, subscriptionForm, trialLength = 7, planCost, updateSubscriptionForm}) => {
+const Subscribe = ({plans, form, selectedPlan, disabled, user, createSubscription, subscriptionForm, trialLength = 7, planCost, updateSubscriptionForm, token}) => {
     const updatedDate = ValidationUtils.addDaysToDate((new Date(user?.updatedAt) || new Date()), trialLength)
     const month = ValidationUtils.getMonthInText(updatedDate)
-
+    const dateCode = `${month} ${new Date(updatedDate).getDate()}, ${new Date(updatedDate).getFullYear()}`
     const updateSubscription = (data) => {
         updateSubscriptionForm({
             ...data
         })
+    }
+
+    const submitSubscription = () => {
+        createSubscription({
+            ...form,
+            selectedPlan,
+            PaymentMethod: {
+                stripeId: form?.card?.id,
+                card: form?.card?.card?.brand,
+                lastFour: form?.card?.card?.last4,
+            }
+        }, token?.access_token)
     }
 
     return (
@@ -65,12 +85,27 @@ const Subscribe = ({selectedPlan, user, subscriptionForm, trialLength = 7, planC
             />
             <Content>
                 <Notification type="blue" noButton>
-                    We won’t charge you until your free trial ends on {month} {new Date(updatedDate).getDate()}, {new Date(updatedDate).getFullYear()}.
+                    We won’t charge you until your free trial ends on {dateCode}.
                 </Notification>
             </Content>
             <Cards>
-                <SubscriptionCard planCost={planCost} subscriptionForm={subscriptionForm} updateSubscription={updateSubscription}/>
-                <SubscriptionCard />
+                <Left>
+                    <SubscriptionCard planCost={planCost} subscriptionForm={subscriptionForm} updateSubscription={updateSubscription}/>    
+                    <BusinessAddress form={form} planCost={planCost} subscriptionForm={subscriptionForm} updateSubscription={updateSubscription}/>    
+                    <PaymentMethod form={form} user={user} planCost={planCost} subscriptionForm={subscriptionForm} updateSubscription={updateSubscription}/>    
+                </Left>
+
+                <ReceiptCard 
+                    planCost={planCost} 
+                    subscriptionForm={subscriptionForm} 
+                    subscriptionName={getSubscriptionName(selectedPlan)}
+                    selectedPlan={selectedPlan}
+                    updateSubscription={updateSubscription}
+                    dateCode={dateCode}
+                    plans={plans}
+                    disabled={disabled}
+                    submitSubscription={submitSubscription}
+                />
             </Cards>
         </Container>
     )
@@ -91,13 +126,17 @@ const mapStateToProps = (state) => {
         user: state.Auth.user,
         subscriptionForm: state.Auth.subscriptionForm,
         trialLength: state.Auth.trialLength,
-        planCost: state.Auth.planCost
+        planCost: state.Auth.planCost,
+        plans: state.Auth.plans,
+        form: state.Auth.subscriptionForm,
+        disabled: state.Auth?.disabled
     }
   }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         updateSubscriptionForm: bindActionCreators(updateSubscriptionForm, dispatch),
+        createSubscription: bindActionCreators(createSubscription, dispatch),
     }
 }
 

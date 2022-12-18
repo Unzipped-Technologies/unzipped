@@ -19,7 +19,7 @@ module.exports = {
     cookieKey: '1Xxp382GgnXxYz49528',
     //payment
     stripePublishableKey:
-      'pk_live_51IBOwxJBXTGShTxE1q9q4wSWoLuQbFZMNMVvETlX8mg3ovTE6bTjgOWZ77uhcpUG2qaS2hc6LUoVJVEeevv6HydV00xEfuZBHD',
+      'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog',
     stripeSecretKey:
       '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',
     sendGridKey: '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',

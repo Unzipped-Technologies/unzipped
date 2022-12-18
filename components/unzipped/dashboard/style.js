@@ -57,7 +57,7 @@ const DarkText = styled.div`
     overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
     width: 96%;
     text-align: ${({center}) => center ? 'center' : 'unset'};
-    color: ${theme.text2};
+    color: ${({error}) => !error ? theme.text2 : theme.error};
     &:hover {
         color: ${({hover}) => hover ? theme.selectedText : theme.text2}
     }
@@ -78,6 +78,7 @@ const Absolute = styled.div`
 const Underline = styled.div`
     border-bottom: solid 1px ${({color}) => color ? color : '#d8d8d8'};
     margin: ${({noMargin, margin}) => noMargin ? "5px 0px 0px 0px" : margin ? margin : "5px 0px"};
+    width: ${({width}) => width ? width : 'unset'}
 `;
 
 const WhiteCard = styled.div`
@@ -94,6 +95,7 @@ const WhiteCard = styled.div`
     position: relative;
     box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '12px' : '24px'};
+    overflow: ${({overflow}) => overflow ? overflow : 'visible'}
 `;
 
 const SelectCard = styled.div`
@@ -137,7 +139,14 @@ const Grid = styled.div`
 const Grid2 = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
-    width: 80%;
+    width: ${({block}) => block ? '100%' : '80%'};
+    margin: ${({margin}) => margin ? margin : '75px 0px'};
+`;
+
+const Grid3 = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: ${({block}) => block ? '100%' : '80%'};
     margin: ${({margin}) => margin ? margin : '75px 0px'};
 `;
 
@@ -207,6 +216,7 @@ module.exports = {
     WhiteText,
     Grid,
     Grid2,
+    Grid3,
     TitleText,
     DarkText,
     Absolute,

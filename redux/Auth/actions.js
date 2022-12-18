@@ -15,6 +15,8 @@ import {
     FORGET_PASSWORD_SUCCESS,
     CLEAR_ERRORS,
     SET_DEFAULT_VEHICLE,
+    SET_LOADING,
+    SUBSCRIPTION_CREATED,
     UPDATE_USER_SUCCESS,
     LOGGED_OUT,
     UPDATE_REGISTER_FORM,
@@ -183,11 +185,15 @@ export const loadUser = (user) => async (dispatch, getState) => {
 
 //Check token & Load User
 export const updateVehicle = (token, vehicle) => async (dispatch, getState) => {
-    dispatch({type: USER_LOADING});
+}
+
+//Check token & Load User
+export const createSubscription = (data, token) => async (dispatch, getState) => {
+    dispatch({type: SET_LOADING});
     await axios
-        .post(`/api/vehicle/default`, vehicle, tokenConfig(token))
+        .post(`/api/payment/subscription/create`, data, tokenConfig(token))
         .then(res => dispatch({
-            type: SET_DEFAULT_VEHICLE,
+            type: SUBSCRIPTION_CREATED,
             payload: res.data,
         }))
         .catch(err => {

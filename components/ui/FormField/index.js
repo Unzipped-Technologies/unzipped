@@ -27,6 +27,7 @@ const FormFieldContainer = styled.div`
     font-family: arial;
     display: ${props => (props.$inline ? 'inline-block' : 'block')};
     max-width: ${props => props.maxWidth};
+    margin-bottom: ${({margin}) => margin ? '5px' : 'unset'};
     padding-bottom: ${({$bottom}) => $bottom};
     position: relative;
     & > label:first-of-type {
@@ -63,6 +64,7 @@ const FormField = ({
     onChange,
     onFocus,
     noMargin,
+    margin,
     fontSize = '',
     ...rest
 }) => {
@@ -102,7 +104,7 @@ const FormField = ({
     }, [error]);
 
     return (
-        <FormFieldContainer className={className} $inline={inline} noMargin={noMargin} $bottom={bottom} maxWidth={maxWidth}>
+        <FormFieldContainer className={className} $inline={inline} noMargin={noMargin} margin={margin} $bottom={bottom} maxWidth={maxWidth}>
             {children && (
                 <FormLabel forId={name} fontSize={fontSize} help={help} required={required}>
                     {children}

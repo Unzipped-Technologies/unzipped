@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import keys from '../../config/keys';
 import {
   Elements,
   CardNumberElement,
@@ -8,20 +9,20 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import keys from '../../config/keys';
 import {connect, useDispatch} from 'react-redux';
 import { orderDetail } from '../../redux/actions';
 import { loadStripe } from "@stripe/stripe-js";
-// import "./Payment.scss";
+// import "./StripeForm.scss";
 
-const Payment = ({changeFocus}) => {
+
+const StripeForm = ({changeFocus}) => {
   const stripe = loadStripe(
     // `${process.env.STRIPE_PUBLISHABLE_KEY}`
     'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog'
   );
   return (
     <Elements stripe={stripe}>
-      <CheckoutForm changeFocus={changeFocus} />
+      <CheckoutForm changeFocus={changeFocus}/>
     </Elements>
   );
 };
@@ -56,21 +57,21 @@ function CheckoutForm({changeFocus}) {
               address: {
                   postal_code: document.getElementById('inputZip').value
               },
-            
+          phone: document.getElementById('inputPhone').value
           }
-        });
+        })
     
         if (error) {
-            console.log('[error]', error);
-            setPaymentLoading(false);
-            changeFocus('credit')
-          } else {
-            console.log('[PaymentMethod]', paymentMethod);
-            dispatch(orderDetail({
-                ...paymentMethod
-            }))
-            changeFocus('verified')
-          }
+          console.log('[error]', error);
+          setPaymentLoading(false);
+          changeFocus('credit')
+        } else {
+          console.log('[PaymentMethod]', paymentMethod);
+          dispatch(orderDetail({
+              ...paymentMethod
+          }))
+          changeFocus('verified')
+        }
       };
 
       const scrollView = (id) => {
@@ -78,59 +79,18 @@ function CheckoutForm({changeFocus}) {
     }
 
     return (
-      <div style={{width: '93%'}}>
+      <div id="sb">
         <form onSubmit={handleSubmit}>
         <div style={{
-            borderRadius: '0px', 
-            display: 'grid', 
-            border: '1px darkgray solid', 
-            overflow: 'hidden', 
-            gridTemplateColumns: '1fr', 
-            marginBottom: '5px',
-            justifyItems: 'center',
-            height: '43px'
-            }}>
-
-        <input 
-            placeholder="First" 
-            id="inputFirstName" 
-            onClick={() => scrollView("sb")}
-            style={{
-                width:'99%', 
-                position: 'relative',
-                left: '10px',
-                           
-            }}/>
-            </div>
-        <div style={{
-            borderRadius: '0px', 
-            display: 'grid', 
-            border: '1px darkgray solid', 
-            overflow: 'hidden', 
-            marginBottom: '5px',
-            gridTemplateColumns: '1fr', 
-            justifyItems: 'center',
-            height: '43px'
-        }}>
-        <input 
-            placeholder="Last" 
-            id="inputLastName" 
-            style={{
-                width:'99%',
-                position: 'relative',
-                left: '10px',
-                }}/>
-        </div>
-        <div style={{
+            marginTop: '10px',
             border: '1px solid darkgray',
             borderRadius: '0px', 
-            marginBottom: '5px',
-            height: '43px',
+            height: '47px',
             display: 'grid',
             alignItems: 'center'
         }}>
         <div style={{
-            width: '95%',
+            width: '98%',
             position: 'relative',
             marginLeft: '10px',
         }}>
@@ -154,10 +114,10 @@ function CheckoutForm({changeFocus}) {
             display: 'grid',
             alignItems: 'center',
             gridTemplateColumns: '1fr 1fr',
-            height: '43px',
+            height: '47px',
             border: '1px solid darkgray',
             borderRadius: '0px', 
-            marginBottom: '5px',
+            marginTop: '10px',
         }}>
         <div style={{
             height: '100%',
@@ -191,7 +151,6 @@ function CheckoutForm({changeFocus}) {
         </div>
         <div style={{
             marginLeft: '10px',
-            width: '90%',
         }}>
         <CardCvcElement 
             options={{
@@ -213,23 +172,6 @@ function CheckoutForm({changeFocus}) {
         />
         </div>
         </div>
-        <div style={{
-            display: 'grid',
-            justifyItems: 'center',
-            gridTemplateColumns: '1fr',
-            height: '43px',
-            overflow: 'hidden',
-            border: '1px solid darkgray',
-            borderRadius: '0px', 
-        }}>
-        <div style={{
-            position: 'relative',
-            width: '100%',
-            left: '10px',
-        }}>
-        <input placeholder="zip-code" id="inputZip" />
-        </div>
-        </div>
         <button 
             type="submit" 
             disabled={!stripe}
@@ -237,7 +179,6 @@ function CheckoutForm({changeFocus}) {
                 float: 'right',
                 marginTop: '10px',
             }}
-            id="sb"
             >
             Save
         </button>
@@ -255,4 +196,4 @@ function CheckoutForm({changeFocus}) {
 //     }
 // }
 
-export default connect(null, { orderDetail })(Payment);
+export default connect(null, { orderDetail })(StripeForm);

@@ -11,6 +11,7 @@ import {
     SIGN_UP_FOR_NEWSLETTER,
     REGISTER_USER,
     FORGET_PASSWORD,
+    SET_LOADING,
     FORGET_PASSWORD_SUCCESS,
     SET_DEFAULT_VEHICLE,
     UPDATE_REGISTER_FORM,
@@ -18,11 +19,26 @@ import {
     RESET_REGISTER_FORM,
     SELECT_A_PLAN,
     UPDATE_SUBSCRIPTION_FORM,
+    SUBSCRIPTION_CREATED,
 } from './constants';
-import { paymentFrequencyEnum } from '../../server/enum/planEnum';
+import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum';
+import { ValidationUtils } from '../../utils';
+
+const setDisabled = (data) => {
+    if (
+        data?.paymentFrequency >= 0
+        && data?.paymentMethod?.card?.id
+    ) {
+        console.log('it was true', data)
+        return false
+    }
+    console.log('it was false', data)
+    return true
+}
 
 const INIT_STATE = {
     token: '',
+    disabled: true,
     isAuthenticated: false,//null,
     user: {},
     userForm: {
@@ -58,6 +74,7 @@ const INIT_STATE = {
         BusinessAddressCity: '',
         BusinessAddressState: '',
         BusinessAddressZip: '',
+        BusinessAddressPhone: '',
         paymentMethod: {
             BillingAddressLineOne: '',
             BillingAddressLineTwo: '',
@@ -67,17 +84,110 @@ const INIT_STATE = {
             BillingAddressCity: '',
             BillingAddressState: '',
             BillingAddressZip: '',
+            card: undefined,
         },
     },
     email: '',
     planCost: 29,
-    trialLength: 7
-};
+    trialLength: 7,
+    plans: [
+        {
+            id: planEnum.BASIC,
+            name: 'Basic Unzipped',
+            description: 'Everything you need to create your business and begin collaborating with professionals ',
+            cost: ValidationUtils.getPlanCost(planEnum.BASIC),
+            features: [
+                {
+                    icon: 'breifcase',
+                    text: 'Create up to 1 business'
+                },
+                {
+                    icon: 'user',
+                    text: 'Hire Unlimited professionals to work on your project'
+                },
+                {
+                    icon: 'github',
+                    text: 'Create and manage your unzipped repo'
+                },
+                {
+                    icon: 'checkMenu',
+                    text: 'Plan and monitor effort remaining'
+                },
+            ]
+        },
+        {
+            id: planEnum.STANDARD,
+            name: 'Unzipped',
+            description: 'Level up your business with profit sharing and advanced collaboration',
+            cost: ValidationUtils.getPlanCost(planEnum.STANDARD),
+            features: [
+                {
+                    icon: 'breifcase',
+                    text: 'Create up to 3 businesses'
+                },
+                {
+                    icon: 'user',
+                    text: 'Hire Unlimited professionals to work on your project'
+                },
+                {
+                    icon: 'cartAlt',
+                    text: 'Offer ownership and profit sharing'
+                },
+                {
+                    icon: 'github',
+                    text: 'Create and manage your unzipped repo'
+                },
+                {
+                    icon: 'checkMenu',
+                    text: 'Plan and monitor effort remaining'
+                },
+            ]
+        },
+        {
+            id: planEnum.ADVANCED,
+            name: 'Advanced Unzipped',
+            description: 'Everything you need to create your business and begin collaborating with professionals ',
+            cost: ValidationUtils.getPlanCost(planEnum.ADVANCED),
+            features: [
+                {
+                    icon: 'breifcase',
+                    text: 'Create unlimited businesses'
+                },
+                {
+                    icon: 'user',
+                    text: 'Hire Unlimited professionals to work on your project'
+                },
+                {
+                    icon: 'cartAlt',
+                    text: 'Offer ownership and profit sharing'
+                },
+                {
+                    icon: 'github',
+                    text: 'Create and manage your unzipped repo'
+                },
+                {
+                    icon: 'checkMenu',
+                    text: 'Plan and monitor effort remaining'
+                },
+                {
+                    icon: 'chatBubble',
+                    text: 'Dedicated support staff member'
+                },
+                {
+                    icon: 'phoneAlt',
+                    text: 'Advanced promotion options'
+                },
+            ]
+        },
+    ],
+}
 
 const Auth = (state = INIT_STATE, action) => {
     switch (action.type) {
         case USER_LOADING:
-            return {...INIT_STATE, loading: true };
+            return {...INIT_STATE, loading: true};
+        case SET_LOADING:
+            return { loading: true };
         case CURRENT_USER:
             return {...state, loading: false, user: {...state.user, paymentMethod: {card: action.payload.card.last4, id: action.payload.id}} };
         case SIGN_UP_FOR_NEWSLETTER:
@@ -99,7 +209,10 @@ const Auth = (state = INIT_STATE, action) => {
         case SELECT_A_PLAN:
             return {...state, loading: false, ...action.payload}
         case UPDATE_SUBSCRIPTION_FORM:
-            return {...state, loading: false, subscriptionForm: {...state.subscriptionForm, ...action.payload}}
+            const disabled = setDisabled({ ...state?.subscriptionForm, ...action.payload})
+            return {...state, loading: false, disabled: disabled, subscriptionForm: {...state.subscriptionForm, ...action.payload}}
+        case SUBSCRIPTION_CREATED:
+            return {...state, loading: false, disabled: true}
         case AUTH_ERROR:
             return {...state, error: action.payload, loading: false, isAuthenticated: false}
         case SET_DEFAULT_VEHICLE:

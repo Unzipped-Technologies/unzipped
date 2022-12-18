@@ -17,9 +17,11 @@ const subscriptionSchema = new Schema({
   BillingAddressCity:  { type: String, default: '' },
   BillingAddressState:  { type: String, default: '' },
   BillingAddressZip:  { type: String, default: '' },
+  BusinessAddressPhone:  { type: String, default: '' },
   paymentMethod: {
     card: String, 
-    id: String
+    stripeId: String,
+    lastFour: String
   },
 }, {
   timestamps: true

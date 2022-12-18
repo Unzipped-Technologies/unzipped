@@ -30,7 +30,6 @@ router.post('/stripe', requireLogin, async (req, res) => {
     let hotel = req.body.hotel;
     let roomNumber = req.body.roomNumber;
     let valetNumber = req.body.valetNumber;
-    console.log(phone);
     var month = new Array(12);
     month[0] = "Jan.";
     month[1] = "Feb.";
@@ -182,5 +181,13 @@ router.post('/stripe', requireLogin, async (req, res) => {
     mailer.send();
     res.send('success');
   });
+
+  
+  router.post('/subscription/create', requireLogin, async (req, res) => {
+    
+    res.send('success');
+  });
+
+
 
   module.exports = router;

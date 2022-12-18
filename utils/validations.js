@@ -1,5 +1,6 @@
 ﻿import {PhoneNumberUtil} from 'google-libphonenumber';
 import Constants from './constants';
+import { planEnum } from '../server/enum/planEnum';
 
 class Validations {
     isEmpty(obj) {
@@ -278,8 +279,6 @@ class Validations {
 
     addDaysToDate(time, days) {
         const date = new Date(time);
-        console.log(date)
-        console.log(new Date(time).setDate(date.getDate() + days))
         // Add ten days to specified date
         return date.setDate(date.getDate() + days);
     }
@@ -306,6 +305,19 @@ class Validations {
         }
 
         return {error, message};
+    }
+
+    // product helpers
+
+    getPlanCost(id) {
+        switch (id) {
+            case planEnum.BASIC:
+                return 29
+            case planEnum.STANDARD:
+                return 79
+            case planEnum.ADVANCED:
+                return 299
+        }
     }
 }
 
