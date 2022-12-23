@@ -187,7 +187,7 @@ const Auth = (state = INIT_STATE, action) => {
         case USER_LOADING:
             return {...INIT_STATE, loading: true};
         case SET_LOADING:
-            return { loading: true };
+            return { ...state, loading: true };
         case CURRENT_USER:
             return {...state, loading: false, user: {...state.user, paymentMethod: {card: action.payload.card.last4, id: action.payload.id}} };
         case SIGN_UP_FOR_NEWSLETTER:

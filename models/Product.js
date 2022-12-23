@@ -9,7 +9,7 @@ const productSchema = new Schema({
   stripeProductId: String,
   stripePriceId: String,
   price: Number,
-  subscription: { type: Number, default: 0},
+  subscriptionType: { type: Number, default: 0},
   paymentFrequency: Number,
   isRecurring: { type: Boolean, default: false },
   image: String,

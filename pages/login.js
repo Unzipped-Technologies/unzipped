@@ -221,7 +221,7 @@ const Login = ({ loading, PassError, loadUser, isAuthenticated, error }) => {
                 router.push('/dashboard')
             }, 2000);
         } else {
-            setNotifications(error?.data)
+            setNotifications(JSON.stringify(error?.data).replace('{', '').replace('}', ''))
             setTimeout(() => {  
                 setNotifications('')
             }, 1000);

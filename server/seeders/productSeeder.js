@@ -61,7 +61,7 @@ const seedProducts = [
         stripeProductId: "prod_N08YQOXrZQxzWf",
         stripePriceId: "price_1MG8GwHVpfsarZmB2agKGM4G",
         price: 79,
-        subscriptionType: 1,
+        subscriptionType: 2,
         paymentFrequency: 0,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png",
         isRecurring: false
@@ -73,7 +73,7 @@ const seedProducts = [
         stripeProductId: "prod_N08YQOXrZQxzWf",
         stripePriceId: "price_1MG9aUHVpfsarZmBBFPIffCl",
         price: 758.4,
-        subscriptionType: 1,
+        subscriptionType: 2,
         paymentFrequency: 1,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png",
         isRecurring: false,
@@ -85,7 +85,7 @@ const seedProducts = [
         stripeProductId: "prod_N08YQOXrZQxzWf",
         stripePriceId: "price_1MG9aVHVpfsarZmBmAgwzi11",
         price: 1422,
-        subscriptionType: 1,
+        subscriptionType: 2,
         paymentFrequency: 2,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png"
     },
@@ -96,7 +96,7 @@ const seedProducts = [
         stripeProductId: "prod_N08YQOXrZQxzWf",
         stripePriceId: "price_1MG9aVHVpfsarZmBtPHegGkG",
         price: 1990.8,
-        subscriptionType: 1,
+        subscriptionType: 2,
         paymentFrequency: 3,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png"
     },
@@ -108,7 +108,7 @@ const seedProducts = [
         stripeProductId: "prod_N08ZaatJDRvaAB",
         stripePriceId: "price_1MG8HtHVpfsarZmBAje27gPY",
         price: 299,
-        subscriptionType: 1,
+        subscriptionType: 3,
         paymentFrequency: 0,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png",
         isRecurring: false
@@ -120,7 +120,7 @@ const seedProducts = [
         stripeProductId: "prod_N08ZaatJDRvaAB",
         stripePriceId: "price_1MG9bdHVpfsarZmBOVkHthPE",
         price: 2870.4,
-        subscriptionType: 1,
+        subscriptionType: 3,
         paymentFrequency: 1,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png",
         isRecurring: false,
@@ -132,7 +132,7 @@ const seedProducts = [
         stripeProductId: "prod_N08ZaatJDRvaAB",
         stripePriceId: "price_1MG9bdHVpfsarZmBWZXTed74",
         price: 5382,
-        subscriptionType: 1,
+        subscriptionType: 3,
         paymentFrequency: 2,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png"
     },
@@ -143,7 +143,7 @@ const seedProducts = [
         stripeProductId: "prod_N08ZaatJDRvaAB",
         stripePriceId: "price_1MG9bdHVpfsarZmBdaodxYZs",
         price: 7534.8,
-        subscriptionType: 1,
+        subscriptionType: 3,
         paymentFrequency: 3,
         image: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671319559/Unzipped_3d_imorrg.png"
     },

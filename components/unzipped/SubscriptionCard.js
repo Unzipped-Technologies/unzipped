@@ -32,7 +32,7 @@ const Span = styled.div`
     width: 200px;
 `;
 
-const SubscriptionCard = ({planCost, subscriptionForm, updateSubscription, onClick, loading}) => {
+const SubscriptionCard = ({planCost = 0, subscriptionForm, updateSubscription, onClick, loading}) => {
     const [isBillingCycle, setIsBillingCycle] = useState(true);
     const [isLoading, setIsLoading] = useState(false)
 

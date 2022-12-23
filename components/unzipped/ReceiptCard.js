@@ -27,7 +27,7 @@ const Blue = styled.span`
     font-size: 13px;
 `;
 
-const SubscriptionCard = ({submitSubscription, disabled, plans, dateCode, subscriptionName, planCost, subscriptionForm, selectedPlan}) => {
+const SubscriptionCard = ({submitSubscription, disabled, plans = [], dateCode, subscriptionName, planCost, subscriptionForm, selectedPlan}) => {
     const plan = plans.find(e => e.id === selectedPlan)
     const calcPrice = (months) => {
         return planCost * (0.85 - (0.05 * months)).toFixed(2)

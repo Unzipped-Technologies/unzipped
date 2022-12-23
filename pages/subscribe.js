@@ -57,6 +57,7 @@ const getSubscriptionName = (plan) => {
 const Subscribe = ({plans, form, selectedPlan, disabled, user, createSubscription, subscriptionForm, trialLength = 7, planCost, updateSubscriptionForm, token}) => {
     const updatedDate = ValidationUtils.addDaysToDate((new Date(user?.updatedAt) || new Date()), trialLength)
     const month = ValidationUtils.getMonthInText(updatedDate)
+    const access = token?.access_token || user.cookie
     const dateCode = `${month} ${new Date(updatedDate).getDate()}, ${new Date(updatedDate).getFullYear()}`
     const updateSubscription = (data) => {
         updateSubscriptionForm({
@@ -73,7 +74,7 @@ const Subscribe = ({plans, form, selectedPlan, disabled, user, createSubscriptio
                 card: form?.card?.card?.brand,
                 lastFour: form?.card?.card?.last4,
             }
-        }, token?.access_token)
+        }, access)
     }
 
     return (

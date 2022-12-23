@@ -185,6 +185,25 @@ router.post('/stripe', requireLogin, async (req, res) => {
   
   router.post('/subscription/create', requireLogin, async (req, res) => {
     
+    const [existinguser] = await Promise.all([
+      user.findByIdAndUpdate(req.user.sub, {$set:{...req.body}}).select('-password')
+      
+    ])
+    if (!existinguser.stripeId) {
+      const customer = await stripe.customers.create({
+        name: name,
+        email: email,
+      });
+      await user.updateOne({_id: req.user.sub}, {$set:{stripeId: customer.id}})
+    }
+    const existingUser2 = await user.findById(req.user.sub).select('-password')
+    const subscription = await stripe.subscriptions.create({
+      customer: existingUser2?.stripeId,
+      items: [
+        {price: 'price_1MG9bdHVpfsarZmBOVkHthPE'},
+      ],
+    });
+
     res.send('success');
   });
 
