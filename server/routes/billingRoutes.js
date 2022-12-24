@@ -8,6 +8,10 @@ const promo = require('../../models/Promo');
 const Order = require('../../models/Orders');
 const Mailer = require('../../services/Mailer');
 const receiptTemplate = require('../../services/emailTemplates/receipt');
+const product = require("../../models/Product");
+const subscription = require("../../models/Subscription");
+const PaymentHistory = require("../../models/PaymentHistory");
+const { paymentStatusEnum, paymentTypeEnum } = require("../enum/paymentEnum");
 
 router.post('/stripe', requireLogin, async (req, res) => {
     // console.log(req.body)
@@ -184,27 +188,102 @@ router.post('/stripe', requireLogin, async (req, res) => {
 
   
   router.post('/subscription/create', requireLogin, async (req, res) => {
-    
-    const [existinguser] = await Promise.all([
-      user.findByIdAndUpdate(req.user.sub, {$set:{...req.body}}).select('-password')
-      
-    ])
+    // calculate date for free trial end
+    const trialEnd = new Date().setDate(new Date().getDate() + 7)
+
+    // get users ip address
+    const ip = req.headers['x-forwarded-for'] ||
+    req.socket.remoteAddress ||
+    null;
+    const [existinguser, subscriptionType] = await Promise.all([
+      user.findByIdAndUpdate(req.user.sub, {$set:{...req.body}}).select('-password'),
+      product.findOne({subscriptionType: req.body.selectedPlan, paymentFrequency: req.body.paymentFrequency})
+    ]);
+    let customerId = existinguser.stripeId
+
+    // if no customer Id then create customer
     if (!existinguser.stripeId) {
       const customer = await stripe.customers.create({
-        name: name,
-        email: email,
+        name: req.body.paymentMethod.card.billing_details.name,
+        email: existinguser.email,
+        payment_method: req.body.paymentMethod.card.id,
       });
-      await user.updateOne({_id: req.user.sub}, {$set:{stripeId: customer.id}})
+      customerId = customer.id
+      await user.updateOne({_id: req.user.sub}, {$set:{stripeId: customer.id, isUserSubscribed: true}})
     }
-    const existingUser2 = await user.findById(req.user.sub).select('-password')
-    const subscription = await stripe.subscriptions.create({
-      customer: existingUser2?.stripeId,
-      items: [
-        {price: 'price_1MG9bdHVpfsarZmBOVkHthPE'},
-      ],
-    });
 
+    // create user subscription, and a payment history entry
+    const [newSubscription] = await Promise.all([
+      stripe.subscriptions.create({
+        customer: customerId,
+        items: [
+          {price: subscriptionType.stripePriceId},
+        ],
+        trial_end: new Date(trialEnd),
+        default_payment_method: req.body.paymentMethod.card.id,
+        metadata: {
+          userId: req.user.sub,
+          stripeId: customerId,
+          email: existinguser.email
+        }
+      }),
+      subscription.create({
+        ...req.body,
+        userId: req.user.sub, 
+        stripeId: customerId,
+        plan: req.body.selectedPlan,
+        isBusiness: true,
+        paymentMethod: {
+          card: req.body.paymentMethod.card.card.brand,
+          stripeId: req.body.paymentMethod.card.id,
+          lastFour: req.body.paymentMethod.card.card.last4
+        }
+      }),
+      PaymentHistory.create({
+        userId: req.user.sub,
+        ipAddress: ip,
+        paymentStatus: paymentStatusEnum.INITIATED,
+        paymentType: paymentTypeEnum.SUBSCRIPTION,
+        paymentAmount: subscriptionType.price,
+      })
+    ])
+    await Promise.all([
+      user.findByIdAndUpdate(req.user.sub, {$set: { trialEndDate: new Date(trialEnd), phoneNumber: req.body.BusinessAddressPhone, stripeSubscription: newSubscription.id }}),
+      subscription.findOneAndUpdate(
+        {userId: req.user.sub}, 
+        {$set: {
+          product: await product.findOne({subscriptionType: req.body.selectedPlan, paymentFrequency: req.body.paymentFrequency}),
+          payments: await PaymentHistory.find({userId: req.user.sub})
+        }})
+    ])
     res.send('success');
+  });
+
+  router.post('/subscription/payment/webhook', async (req, res) => {
+    const [current_user, UserSubscription] = await Promise.all([
+      user.findById(req.body.userId),
+      subscription.findOne({userId: req.body.id})
+        .populate({
+          path: 'product', 
+          model: 'product',
+      })
+      .exec()
+    ])
+    await Promise.all([
+      PaymentHistory.create({
+        userId: current_user.id,
+        ipAddress: ip,
+        paymentStatus: paymentStatusEnum.SUCCESSFUL,
+        paymentType: paymentTypeEnum.SUBSCRIPTION,
+        paymentAmount: UserSubscription.product.price,
+      })
+    ])
+    await subscription.findOneAndUpdate(
+      {userId: req.user.sub}, 
+      {$set: {
+        payments: await PaymentHistory.find({userId: req.user.sub})
+      }})
+    res.send(req.body);
   });
 
 

@@ -23,6 +23,8 @@ const subscriptionSchema = new Schema({
     stripeId: String,
     lastFour: String
   },
+  product: { type: Schema.Types.ObjectId, ref: 'product' },
+  payments: { type: Schema.Types.Mixed, ref: 'paymentHistory' },
 }, {
   timestamps: true
 });
