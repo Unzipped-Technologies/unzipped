@@ -21,6 +21,7 @@ const userSchema = new Schema({
   isAdmin: { type: Boolean, default: false },
   isUserSubscribed: { type: Boolean, default: false },
   isIdentityVerified: { type: Boolean, default: false },
+  isPhoneVerified: { type: Boolean, default: false },
   isSuspended: { type: Boolean, default: false },
   plan: { type: Number, default: 0},
   phoneNumber: String,

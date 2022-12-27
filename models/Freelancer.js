@@ -12,6 +12,8 @@ const freelancerSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'users' },
   freelancerSkills: { type: Schema.Types.ObjectId, refs: 'freelancerSkills'},
   lists: { type: Schema.Types.ObjectId, ref: 'lists' },
+  invites: { type: Schema.Types.Mixed, ref: 'invites' },
+  cover: String,
   // refer to other users likes of this freelancer
   likeTotal: { type: Number, default: 0 },
   dislikeTotal: { type: Number, default: 0 },

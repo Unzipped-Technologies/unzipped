@@ -15,6 +15,7 @@ const seedFreelancers = [
         password: "Myfirst1",
         role: 1,
         rate: 40.00,
+        cover: `I have been a Developer for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
         category: "Developer",
         isEquityAccepted: false,
         profileImage: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914235/testimonial_12_k3c5lq.jpg",
@@ -36,6 +37,7 @@ const seedFreelancers = [
         password: "Myfirst1",
         role: 1,
         rate: 45.00,
+        cover: `I have been a Developer for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
         category: "Developer",
         isEquityAccepted: false,
         profileImage: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914235/testimonial_9_sle98g.jpg",
@@ -59,6 +61,7 @@ const seedFreelancers = [
         rate: 75.00,
         category: "Developer",
         isEquityAccepted: false,
+        cover: `I have been a Developer for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
         profileImage: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914235/testimonial_10_wqef8r.jpg",
         skills: [
             {
@@ -80,6 +83,7 @@ const seedFreelancers = [
         rate: 90.00,
         category: "Developer",
         isEquityAccepted: false,
+        cover: `I have been a Developer for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
         profileImage: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914235/testimonial_11_fxas92.png",
         skills: [
             {
@@ -100,6 +104,7 @@ const seedFreelancers = [
         role: 1,
         rate: 90.00,
         category: "Developer",
+        cover: `I have been a Developer for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
         isEquityAccepted: false,
         profileImage: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914235/testimonial_11_fxas92.png",
         skills: [
@@ -122,6 +127,7 @@ const seedFreelancers = [
         rate: 30.00,
         category: "Sales",
         isEquityAccepted: false,
+        cover: `I have been a Developer for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
         profileImage: "https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914234/testimonial_3_tfkunz.jpg",
         skills: [
             {

@@ -146,7 +146,7 @@ const listFreelancers = async ({filter, take, skip}) => {
 
 const getFreelancerById = async (id) => {
     try {
-        return await freelancer.findOne({userId: id})
+        return await freelancer.findById(id)
             .populate({
                 path: 'user', 
                 model: 'users', 

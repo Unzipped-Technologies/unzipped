@@ -26,7 +26,7 @@ router.post('/freelancer/list', requireLogin, permissionCheckHelper.hasPermissio
     }
 });
 
-router.get('/freelancer/:id', requireLogin, permissionCheckHelper.hasPermission('listFreelancers'), async (req, res) => {
+router.get('/freelancer/:id', requireLogin, permissionCheckHelper.hasPermission('getFreelancerById'), async (req, res) => {
     try {
       const id = req.params.id;
       const User = await userHelper.getFreelancerById(id)

@@ -11,7 +11,7 @@ import {
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getFreelancerList} from '../../redux/actions';
+import { getFreelancerList, clearSelectedFreelancer } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
 const Container = styled.div`
@@ -25,86 +25,52 @@ const Container = styled.div`
 const Box = styled.div`
     display: flex;
     width: 80%;
+    max-width: 1100px;
     align-self: center;
+    min-height: 320px;
 `;
 
-const freelancer = [
-    {
-        name: 'James Cameron',
-        type: 'Full Stack Web Developer',
-        country: 'United States',
-        skills: [
-            'React',
-            'Node.js',
-            'Web 3',
-            'AWS',
-            'UI/UX'
-        ],
-        cover: `I have been a developer for over 20 years. I have worked on many
-        large projects and I have contributed superior quality features and improved
-        ROI for many developers.`,
-        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-        isInvited: true,
-    },
-    {
-        name: 'Stefano Campagna',
-        type: 'Tutor',
-        country: 'United States',
-        skills: [
-            'React',
-            'Taking Calls',
-            'Web 3',
-            'AWS',
-            'UI/UX'
-        ],
-        cover: `I have been a developer for over 20 years. I have worked on many
-        large projects and I have contributed superior quality features and improved
-        ROI for many developers.`,
-        profilePic: '/img/testimonial_1.jpg',
-        isInvited: false
-    },
-    {
-        name: 'James Cameron',
-        type: 'Full Stack Web Developer',
-        country: 'United States',
-        skills: [
-            'React',
-            'Node.js',
-            'Web 3',
-            'AWS',
-            'UI/UX'
-        ],
-        cover: `I have been a developer for over 20 years. I have worked on many
-        large projects and I have contributed superior quality features and improved
-        ROI for many developers.`,
-        profilePic: '/img/testimonial_12.jpg',
-        isInvited: false
-    },
-]
-
-const Freelancers = ({freelancerList, getFreelancerList, token}) => {
+const Freelancers = ({freelancerList = [], getFreelancerList, token, clearSelectedFreelancer}) => {
     const [take, setTake] = useState(25)
-    console.log(freelancerList)
-
     useEffect(() => {
         getFreelancerList({
-            filter: {},
+            filter: { },
+            take,
         }, token.access_token)
-    }, [])
+    }, [take])
 
     return (
         <React.Fragment>
                 <Nav isSubMenu/>
-                <TitleText>Freelancers</TitleText>
-                <SearchBar take={take} setTake={setTake} />
+                <SearchBar title="Freelancers" take={take} setTake={setTake} />
             <Container>
-                {freelancer.map(user => (
+                {freelancerList.map(user => {
+                    const freelancer = {
+                        id: user._id,
+                        name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
+                        type: user.category,
+                        country: user?.user?.AddressLineCountry || 'United States',
+                        skills: user?.user?.freelancerSkills?.map(e => e.skill),
+                        cover: user?.cover || `I have been a ${user?.category || 'developer'} for over ${user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience || 1} years. schedule a meeting to check if I'm a good fit for your business.`,
+                        profilePic: user?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                        rate: user?.rate,
+                        likes: user?.likeTotal
+                    }
+                    if (user?.user?.FirstName) {
+                        return (
+                            <Box>
+                                <WhiteCard height="270px">
+                                    <FreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer}/>
+                                </WhiteCard>
+                            </Box>
+                        )
+                    }
+                })}
+                {freelancerList?.length === 0 && (
                     <Box>
-                        <WhiteCard height="270px">
-                            <FreelancerCard user={user} />
-                        </WhiteCard>
+                        <DarkText>0 Freelancers found for this search</DarkText>
                     </Box>
-                ))}
+                )}
             </Container>
             <Footer />
         </React.Fragment>
@@ -128,6 +94,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getFreelancerList: bindActionCreators(getFreelancerList, dispatch),
+        clearSelectedFreelancer: bindActionCreators(clearSelectedFreelancer, dispatch),
     }
 }
 

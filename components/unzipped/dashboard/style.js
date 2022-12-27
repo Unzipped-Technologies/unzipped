@@ -33,7 +33,7 @@ const TitleText = styled.div`
     font-size: ${({small, title, size}) => small ? '16px' : title ? '36px' : size? size : '18px'};
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
-    margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '7px' :'15px'};
+    margin-bottom: ${({noMargin, half, large}) => noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
     text-align: ${({center}) => center ? 'center' : 'unset'};
     width: 96%;
@@ -50,7 +50,7 @@ const DarkText = styled.div`
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
     margin-top: ${({topMargin}) => topMargin ? topMargin : 'unset'};
-    margin-bottom: ${({noMargin, marginLarge}) => noMargin ? '0px' : marginLarge ? '35px'  : '15px'};
+    margin-bottom: ${({noMargin, marginLarge, half}) => noMargin ? '0px' : marginLarge ? '35px'  : half ? '7px' : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
     text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
     white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'unset'};
@@ -200,6 +200,15 @@ export const Span = styled.span`
     color: #FFFFFF;
 `;
 
+export const DarkSpan = styled.span`
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 26px;
+    padding-left: 3px;
+    color: #333;
+`;
+
 export const PaddingLeft = styled.span`
     padding-left: 10px;
 `;
@@ -216,6 +225,7 @@ module.exports = {
     WhiteText,
     Grid,
     Grid2,
+    DarkSpan,
     Grid3,
     TitleText,
     DarkText,

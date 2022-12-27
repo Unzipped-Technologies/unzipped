@@ -7,6 +7,7 @@ const userPermissions = Object.freeze({
     UpdateCurrentUsers: 'updateCurrentUsers',
     AddSkill: 'addSkill',
     ListFreelancers: 'listFreelancers',
+    getFreelancerById: 'getFreelancerById',
     // lists
     GetList: 'getList',
     CreateList: 'createList',
@@ -52,6 +53,7 @@ const accountTypePermissions = Object.freeze({
         // users
         userPermissions.UpdateCurrentUsers,
         userPermissions.ListFreelancers,
+        userPermissions.getFreelancerById,
         // lists
         userPermissions.GetList,
         userPermissions.UserCreateList,
@@ -96,6 +98,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateCurrentUsers,
         userPermissions.AddSkill,
         userPermissions.ListFreelancers,
+        userPermissions.getFreelancerById,
         // lists
         userPermissions.GetList,
         userPermissions.UserCreateList,
@@ -129,6 +132,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateAllUsers,
         userPermissions.UpdateCurrentUsers,
         userPermissions.ListFreelancers,
+        userPermissions.getFreelancerById,
         // lists
         userPermissions.GetList,
         userPermissions.CreateList,

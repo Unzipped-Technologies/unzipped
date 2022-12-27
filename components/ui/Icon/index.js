@@ -86,6 +86,12 @@ import CheckMenu from '../icons/CheckMenu';
 import CartAlt from '../icons/CartAlt';
 import ChatBubble from '../icons/ChatBubble';
 import PhoneAlt from '../icons/PhoneAlt';
+import colorEmail from '../icons/colorEmail';
+import colorPhone from '../icons/colorPhone';
+import colorSheild from '../icons/colorSheild';
+import colorUser from '../icons/colorUser';
+import thumbsUp from '../icons/thumbsUp';
+import thumbsDown from '../icons/thumbsDown';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -98,6 +104,10 @@ const mapNameIcons = {
     checkMenu: CheckMenu,
     cartAlt: CartAlt,
     chatBubble: ChatBubble,
+    colorEmail: colorEmail,
+    colorPhone: colorPhone,
+    colorSheild: colorSheild,
+    colorUser: colorUser,
     phoneAlt: PhoneAlt,
     arrowRight: ArrowRight,
     calendar: calendar,
@@ -173,7 +183,9 @@ const mapNameIcons = {
     copywrite: Copywrite,
     googleCircle: GoogleCircle,
     github: Github,
-    user: User
+    user: User,
+    thumbsUp: thumbsUp,
+    thumbsDown: thumbsDown
 };
 
 /**
