@@ -15,13 +15,14 @@ const Container = styled.div`
     justify-content: center;
 `;
 
-const Profile = ({token, selectedFreelancer, getFreelancerById}) => {
+const Profile = ({token, cookie, selectedFreelancer, getFreelancerById}) => {
     const router = useRouter();
+    const accessId = token?.access_token || cookie
     const { id } = router.query;
     const [selected, setSelected] = useState(0);
 
     useEffect(() => {
-        getFreelancerById(id, token?.access_token)
+        getFreelancerById(id, accessId)
     }, [id])
 
     return (
@@ -45,7 +46,8 @@ Profile.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = (state) => {
     return {
-        selectedFreelancer: state.Freelancers?.selectedFreelancer
+        selectedFreelancer: state.Freelancers?.selectedFreelancer,
+        cookie: state.Auth.token
     }
   }
 

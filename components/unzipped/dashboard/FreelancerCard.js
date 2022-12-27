@@ -52,12 +52,12 @@ const FreelancerCard = ({user, includeRate, clearSelectedFreelancer}) => {
                 <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
             <Right includeRate={includeRate}>
-                <TitleText half color="blue">{user.name}</TitleText>
+                <TitleText half color="blue" onClick={redirectToProfile}>{user.name}</TitleText>
                 <TitleText noMargin>{user.type}</TitleText>
                 {user?.country && <DarkText half>{user.country}</DarkText>}
                 {includeRate && (
                     <Flex>
-                        <DarkText half>$<DarkSpan fontSize="18px">{user.rate}</DarkSpan> / hour</DarkText>
+                        <DarkText half>$<DarkSpan fontSize="18px">{user?.rate}</DarkSpan> / hour</DarkText>
                         {user?.likes > 0 && <DarkText noMargin>{user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
                     </Flex>
                 )}

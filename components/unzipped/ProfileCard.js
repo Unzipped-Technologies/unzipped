@@ -76,8 +76,8 @@ const ProfileCard = ({user}) => {
                         <Underline margin="35px 0px 10px 0px"/>
                         {user?.likeTotal > 0 && <DarkText bold>{user?.likeTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
                         <TextBox><Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span></TextBox>
-                        <TextBox><Span bold>SALARY</Span> <Span>${user.rate.toFixed(2)} / HOUR</Span></TextBox>
-                        <TextBox><Span bold>EQUITY</Span> <Span>{user.isAcceptEquity ? 'YES' : 'NO'}</Span></TextBox>
+                        {user?.rate && <TextBox><Span bold>SALARY</Span> <Span>${user?.rate.toFixed(2)} / HOUR</Span></TextBox>}
+                        <TextBox><Span bold>EQUITY</Span> <Span>{user?.isAcceptEquity ? 'YES' : 'NO'}</Span></TextBox>
                     </Description>
                     <Badges>
                         <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
