@@ -12,6 +12,7 @@ import {
     DELETE_STORY,
     SELECT_DEPARTMENT,
     GET_STORIES,
+    GET_DEPARTMENT_BY_ID,
     DEPARTMENT_ERROR,
     LOAD_STATE,
     CREATE_BUSINESS,
@@ -61,6 +62,42 @@ export const getBusinessList = (data, token) => async (dispatch, getState) => {
         .post(`/api/business/user/list`, data, tokenConfig(token))
         .then(res => dispatch({
             type: GET_BUSINESSES,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
+export const getDepartmentsForBusiness = (data, token) => async (dispatch, getState) => {
+    //business list Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .post(`/api/business/department/list`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: GET_DEPARTMENTS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
+export const getDepartmentsById = (id, token) => async (dispatch, getState) => {
+    //business list Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .get(`/api/business/department/${id}`, tokenConfig(token))
+        .then(res => dispatch({
+            type: GET_DEPARTMENT_BY_ID,
             payload: res.data,
         }))
         .catch(err => {

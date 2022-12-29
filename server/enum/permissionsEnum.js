@@ -40,6 +40,12 @@ const userPermissions = Object.freeze({
     GetTagById: 'getTagById',
     DeleteTag: 'deleteTag',
     ListTag: 'listTags',
+    // task
+    CreateTask: 'createTask',
+    UpdateTask: 'updateTask',
+    GetTaskById: 'getTaskById',
+    DeleteTask: 'deleteTask',
+    ListTask: 'listTasks',
     // stories
     CreateStory: 'createStory',
     UpdateStory: 'updateStory',
@@ -73,19 +79,25 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateDepartment,
         userPermissions.GetDepartmentById,
         userPermissions.DeleteDepartment,
-        userPermissions.ListDepartments,
+        userPermissions.ListDepartment,
         // tags
         userPermissions.CreateTag,
         userPermissions.UpdateTag,
         userPermissions.GetTagById,
         userPermissions.DeleteTag,
         userPermissions.ListTags,
+        // tasks
+        userPermissions.CreateTask,
+        userPermissions.UpdateTask,
+        userPermissions.GetTaskById,
+        userPermissions.DeleteTask,
+        userPermissions.ListTask,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
         userPermissions.GetStoryById,
         userPermissions.DeleteStory,
-        userPermissions.ListStories,
+        userPermissions.ListStory,
         // message
         userPermissions.CreateMessage,
         userPermissions.UpdateMessage,
@@ -118,7 +130,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateStory,
         userPermissions.GetStoryById,
         userPermissions.DeleteStory,
-        userPermissions.ListStories,
+        userPermissions.ListStory,
         // messages
         userPermissions.CreateMessage,
         userPermissions.UpdateMessage,
@@ -158,19 +170,25 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateDepartment,
         userPermissions.GetDepartmentById,
         userPermissions.DeleteDepartment,
-        userPermissions.ListDepartments,
+        userPermissions.ListDepartment,
         // tags
         userPermissions.CreateTag,
         userPermissions.UpdateTag,
         userPermissions.GetTagById,
         userPermissions.DeleteTag,
         userPermissions.ListTags,
+        // tasks
+        userPermissions.CreateTask,
+        userPermissions.UpdateTask,
+        userPermissions.GetTaskById,
+        userPermissions.DeleteTask,
+        userPermissions.ListTask,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
         userPermissions.GetStoryById,
         userPermissions.DeleteStory,
-        userPermissions.ListStories,
+        userPermissions.ListStory,
         // message
         userPermissions.CreateMessage,
         userPermissions.UpdateMessage,

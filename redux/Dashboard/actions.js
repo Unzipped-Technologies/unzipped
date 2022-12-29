@@ -25,6 +25,9 @@ import {
     GARAGE_ORDERS,
     SUBMIT_ORDER,
     HOTEL_ORDERS,
+    GET_STORIES_LIST,
+    GET_TAGS_LIST,
+    SORT_STORIES_ON_DRAG
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
@@ -425,4 +428,26 @@ export const updateStatus = (status, order, token) => async (dispatch, getState)
                 payload: err.response
             })
         })
+}
+
+export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
+    //tasks Loading
+    dispatch({type: LOAD_TASKS})
+    dispatch({
+        type: SORT_STORIES_ON_DRAG,
+        payload: data,
+    })
+    // await axios
+    //     .post(`/api/dashboard/status`, {status, order}, tokenConfig(token))
+    //     .then(res => dispatch({
+    //         type: SORT_STORIES_ON_DRAG,
+    //         payload: res.data,
+    //     }))
+    //     .catch(err => {
+    //         // dispatch(returnErrors(err.response, err.response))
+    //         dispatch({
+    //             type: UPDATE_ERROR,
+    //             payload: err.response
+    //         })
+    //     })
 }

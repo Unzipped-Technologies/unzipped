@@ -3,7 +3,8 @@ const businessAudience = require('../../models/BusinessAudience');
 const listItems = require('../../models/ListItems');
 const likeHistory = require('../../models/LikeHistory');
 const department = require('../../models/Department');
-const tags = require('../../models/Tag');
+const departmentHelper = require('./department')
+const tags = require('../../models/tags');
 const mongoose = require('mongoose');
 const { likeEnum } = require('../enum/likeEnum');
 
@@ -14,13 +15,8 @@ const createBusiness = async(data, id) => {
         ...data,
         business: await business.findById(newBusiness.id)
     })
-    // create 3 tags ToDo, In Progress, In Review, Done
-    let tagsToCreate = ['To-Do', 'In Progress', 'Done']
-    for (const tag of tagsToCreate) {
-        await tags.create({businessId: newBusiness.id, tagName: tag})
-    }
     // create department management and assign main user to it
-    const dep = await department.create({
+    const dep = await departmentHelper.addDepartmentToBusiness({
         name: 'Management',
         businessId: newBusiness.id,
         userId: id,
@@ -29,8 +25,7 @@ const createBusiness = async(data, id) => {
     // associate department with business
     await business.findByIdAndUpdate(newBusiness.id, {
         departments: [await department.findById(dep.id)],
-        audience: await businessAudience.findById(audience.id),
-        tags: await tags.find({businessId: newBusiness.id})
+        audience: await businessAudience.findById(audience.id)
     })
     return {msg: 'business created successfully'}
 }

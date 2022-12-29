@@ -13,6 +13,7 @@ const businessSchema = new Schema({
   deadline: Date,
   isFirstBusiness: {type: Boolean, default: true},
   incomePlatform: [String],
+  isSelected: {type: Boolean, default: false},
   isExistingAudience: {type: Boolean, default: false},
   numberOfSocialFollowing: String,
   socialMediaPlatforms: [String],

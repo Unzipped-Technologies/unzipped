@@ -1,7 +1,9 @@
 const department = require('../../models/Department');
 const business = require('../../models/Business');
-const tags = require('../../models/Tag');
+const tags = require('../../models/tags');
+const tasks = require('../../models/Task');
 const businessAssociatesItems = require('../../models/BusinessAssociatesItem');
+const user = require('../../models/User');
 const mongoose = require('mongoose');
 
 const createDepartments = async (data) => {
@@ -13,13 +15,41 @@ const addDepartmentToBusiness = async (data, id) => {
     try {
         const item = {
             ...data,
-            tags: await tags.find({businessId: data.businessId})
+            tags: [],
+            tasks: [],
         }
-        await department.create(item)
+        const Dept = await department.create(item)
+
+        // create initial tags for department
+        const initTags = [
+            {
+                departmentId: Dept.id,
+                tagName: "To Do",
+                department: await department.findById(Dept.id)
+            },
+            {
+                departmentId: Dept.id,
+                tagName: "In Progress",
+                department: await department.findById(Dept.id)
+            },
+            {
+                departmentId: Dept.id,
+                tagName: "Done",
+                department: await department.findById(Dept.id)
+            },
+        ]
+        for (const tag of initTags) {
+            await tags.create(tag)
+        }
         // update business to have department
         await business.findByIdAndUpdate(data.BusinessId, { 
             departments: await department.find({businessId: data.businessId})
         });
+        // update department with new tags
+        await department.findByIdAndUpdate(Dept.id, {
+            tags: await tags.find({departmentId: Dept.id})
+        })
+
         return {msg: `department created for ${data.businessId}`};
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
@@ -28,12 +58,19 @@ const addDepartmentToBusiness = async (data, id) => {
 
 const getDepartmentById = async (id) => {
     try {
-        return await department.findOne({userId: id})
-            .populate({
-                path: 'businessAssociatesItems', 
-                model: 'businessAssociatesItems'
-            })
-            .exec()
+        return await department.findById(id)
+        // const [getDept, getTags, getTasks, people] = await Promise.all([
+        //     department.findById(id),
+        //     tags.find({departmentId: id}),
+        //     tasks.find({departmentId: id}),
+        //     businessAssociatesItems.find({departmentId: id})
+        // ])
+        // return {
+        //     ...getDept._doc,
+        //     tags: getTags,
+        //     tasks: getTasks,
+        //     people
+        // }
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     } 
@@ -45,6 +82,7 @@ const listDepartments = async ({filter, take, skip}) => {
         const list = await department.find({...filter})
             .skip( skip )
             .limit( take )
+            // get users associated with this department
             .populate({
                 path: 'businessAssociatesItems', 
                 model: 'businessAssociatesItems'
@@ -83,6 +121,22 @@ const addBusinessAssociateToDepartment = async (data, listId) => {
     }
 }
 
+const addTagToDepartment = () => {
+    return
+}
+
+const addTaskToDepartment = async (body, id) => {
+    const Task = await tasks.create({
+        ...body,
+        tag: await tags.findById(body.tagId),
+        assignee: await user.findById(body.userId)
+    })
+    await department.findByIdAndUpdate(body.departmentId, {
+        tasks: await tasks.find({departmentId: body.departmentId})
+    })
+    return Task
+}
+
 
 module.exports = {
     createDepartments,
@@ -91,5 +145,7 @@ module.exports = {
     getDepartmentById,
     updateDepartment,
     deleteDepartment,
-    addBusinessAssociateToDepartment
+    addBusinessAssociateToDepartment,
+    addTagToDepartment,
+    addTaskToDepartment,
 }

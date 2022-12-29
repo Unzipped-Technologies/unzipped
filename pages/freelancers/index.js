@@ -32,6 +32,29 @@ const Box = styled.div`
 
 const Freelancers = ({freelancerList = [], getFreelancerList, token, clearSelectedFreelancer}) => {
     const [take, setTake] = useState(25)
+    const [sort, setSort] = useState('All')
+    const sortOptions = [
+        {
+            text: 'All',
+            onClick: () => setSort('All'),
+        },
+        {
+            text: 'Salary',
+            onClick: () => setSort('Salary'),
+        },
+        {
+            text: 'Upvotes',
+            onClick: () => setSort('Upvotes'),
+        },
+        {
+            text: 'Category',
+            onClick: () => setSort('Category'),
+        },
+        {
+            text: 'Skils',
+            onClick: () => setSort('Skils'),
+        },
+    ]
     useEffect(() => {
         getFreelancerList({
             filter: { },
@@ -42,7 +65,7 @@ const Freelancers = ({freelancerList = [], getFreelancerList, token, clearSelect
     return (
         <React.Fragment>
                 <Nav isSubMenu/>
-                <SearchBar title="Freelancers" take={take} setTake={setTake} />
+                <SearchBar title="Freelancers" take={take} setTake={setTake} sort={sort} setSort={setSort} sortOptions={sortOptions}/>
             <Container>
                 {freelancerList.map(user => {
                     const freelancer = {

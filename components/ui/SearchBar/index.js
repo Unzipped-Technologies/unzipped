@@ -36,7 +36,7 @@ const Item = styled.div`
     align-items: center;
 `;
 
-const SearchBar = ({take, setTake, title}) => {
+const SearchBar = ({take, setTake, title, sort, setSort, sortOptions}) => {
     return (
         <Container>
             {title && <TitleBlock><TitleText title large>{title}</TitleText></TitleBlock>}
@@ -53,32 +53,52 @@ const SearchBar = ({take, setTake, title}) => {
                     placeholder={'Search'}
                 />
                 <Item>
-                    <Span>Show: </Span>                        
-                    <Button
-                        icon="largeExpand"
-                        popoutWidth="50px !important"
-                        noBorder
-                        block
-                        type="sort"
-                        small
-                        fontSize="13px"
-                        popout={[
-                            {
-                                text: '25',
-                                onClick: () => setTake(25),
-                            },
-                            {
-                                text: '50',
-                                onClick: () => setTake(50),
-                            },
-                            {
-                                text: '100',
-                                onClick: () => setTake(100),
-                            },
-                        ]}
-                        iconRight>
-                        {take}
-                    </Button>
+                    {take && (
+                        <Span>Show: </Span>  
+                    )}   
+                    {take && (                   
+                        <Button
+                            icon="largeExpand"
+                            popoutWidth="50px !important"
+                            noBorder
+                            block
+                            type="sort"
+                            small
+                            fontSize="13px"
+                            popout={[
+                                {
+                                    text: '25',
+                                    onClick: () => setTake(25),
+                                },
+                                {
+                                    text: '50',
+                                    onClick: () => setTake(50),
+                                },
+                                {
+                                    text: '100',
+                                    onClick: () => setTake(100),
+                                },
+                            ]}
+                            iconRight>
+                            {take}
+                        </Button>
+                    )}
+
+                    {sort && sortOptions && <Span>Sort: </Span> }
+                    {sort && sortOptions && (                      
+                        <Button
+                            icon="largeExpand"
+                            popoutWidth="50px !important"
+                            noBorder
+                            block
+                            type="sort"
+                            small
+                            fontSize="13px"
+                            popout={sortOptions}
+                            iconRight>
+                            {sort}
+                        </Button>
+                    )}
                 </Item>
             </Block>
         </Container>

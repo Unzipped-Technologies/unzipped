@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
@@ -107,65 +107,20 @@ const freelancer = [
     },
 ]
 
-const tags = [
-    'To Do',
-    'In Progress',
-    'Done'
-]
+const setTagsAndStories = ({tags = [], stories = []}) => {
+    return tags.map(item => {
+        return {
+            tag: item,
+            stories: stories.filter(e => item._id === e.tag)
+        }
+    })
+}
 
-const stories = [
-    {
-        tag: 'To Do',
-        name: 'Build Home Page',
-        points: 3,
-        assignee: {
-            name: 'Jason Maynard',
-            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-        }
-    },
-    {
-        tag: 'To Do',
-        name: 'Build Update Icons',
-        points: 2,
-        assignee: {
-            name: 'Jason Maynard',
-            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-        }
-    },
-    {
-        tag: 'In Progress',
-        name: 'Build Update Icons',
-        points: 3,
-        assignee: {
-            name: 'Jason Maynard',
-            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-        }
-    },
-    {
-        tag: 'Done',
-        name: 'Build notification component',
-        points: 5,
-        assignee: {
-            name: 'Jason Maynard',
-            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-        }
-    },
-    {
-        tag: 'Done',
-        name: 'Build notification component with a really long story name',
-        points: 5,
-        assignee: {
-            name: 'Jason Maynard',
-            profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-        }
-    },
-]
-
-
-
-const Panel = ({list, selectedList, type, projects=[]}) => {
+const Panel = ({list, selectedList, type, projects=[], tags, stories, updateTasksOrder}) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [storyList, setStoryList] = useState([])
+    const dragItem = useRef();
+    const dragOverItem = useRef();
 
     const setDropdowns = (item) => {
         setTimeout(function() { 
@@ -178,6 +133,31 @@ const Panel = ({list, selectedList, type, projects=[]}) => {
             setMenuOpen(false)
         }, (time || 500));
     }
+
+    const dragStart = (e, position) => {
+        dragItem.current = position;
+        // console.log(e.target.innerHTML);
+      };
+
+    const dragEnter = (e, position) => {
+    dragOverItem.current = position;
+    // console.log(e.target.innerHTML);
+    };
+
+    const drop = (e, item) => {
+        const copyListItems = [...stories];
+        const dragItemContent = item
+        dragItemContent.order = dragOverItem.current.order + 0.5
+        dragItemContent.tag = dragOverItem.current.tag
+        console.log('///contnet', dragItemContent)
+        console.log('///drop', dragOverItem.current)
+        copyListItems.splice(dragItem.current, 1);
+        copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+        updateTasksOrder()
+        dragItem.current = null;
+        dragOverItem.current = null;
+        // setStoryList(copyListItems);
+    };
 
     const menuItems = [
         {
@@ -211,6 +191,10 @@ const Panel = ({list, selectedList, type, projects=[]}) => {
         }
     }, [stories])
 
+    useEffect(() => {
+        setStoryList(setTagsAndStories({tags, stories}))
+    }, [tags, stories])
+    console.log(storyList)
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <TitleText paddingLeft>{selectedList}</TitleText>
@@ -231,22 +215,22 @@ const Panel = ({list, selectedList, type, projects=[]}) => {
                 ))}
             </UserContainer>
             <StoryTable>
-                {type === 'department' && tags.map(tag => (
+                {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => (
                     <>
                     <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
-                        <DarkText noMargin bold>{tag} ({stories.filter(i => tag === i.tag).length})</DarkText>
+                        <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
                         <DarkText noMargin> </DarkText>
                         <DarkText noMargin center bold>STORY POINTS</DarkText>
                         <DarkText noMargin center bold>ASSIGNEE</DarkText>
                     </WhiteCard>
-                    {stories.filter(i => tag === i.tag).map((item, index) => (
-                        <WhiteCard noMargin borderRadius="0px" row>
-                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
+                    {tag.stories.sort((a, b) => a.order - b.order).map((item, index) => (
+                        <WhiteCard noMargin value={item} borderRadius="0px" row onDragEnd={e => drop(e, item)} onDragEnter={(e) => dragEnter(e, item)} onDragStart={(e) => dragStart(e, item)} draggable key={index + item.tag}> 
+                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
                             <DarkText noMargin> </DarkText>
                             <DarkText noMargin> </DarkText>
-                            <DarkText noMargin center>{item.points}</DarkText>
+                            <DarkText noMargin center>{item?.storyPoints}</DarkText>
                             {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
-                            <DarkText noMargin row center>{item.assignee.name}</DarkText>
+                            <DarkText noMargin row center>{item?.assignee?.name}</DarkText>
                         </WhiteCard>
                     ))}
                     </>

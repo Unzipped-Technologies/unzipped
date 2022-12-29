@@ -8,6 +8,7 @@ import {
     UPDATE_DEPARTMENT,
     DELETE_DEPARTMENT,
     GET_DEPARTMENTS,
+    GET_DEPARTMENT_BY_ID,
     CREATE_TAG,
     UPDATE_TAG,
     GET_TAGS,
@@ -68,7 +69,8 @@ const Business = (state = INIT_STATE, action = {}) => {
             let newListBusinesses = state.businesses.filter(item => action.payload.id !== item.id)
             return {...state, loading: false, business: [...newListBusinesses]};
         case GET_BUSINESSES:
-            return {...state, loading: false, businesses: action.payload};
+            const selectedBusiness = action.payload.find(e => e.isSelected) || action.payload[0]
+            return {...state, loading: false, businesses: action.payload, selectedBusiness};
         case SELECT_BUSINESS:
             return {...state, loading: false, selectedBusiness: action.payload.selected, stories: [...action.payload.stories]};
         case CREATE_DEPARTMENT:
@@ -79,8 +81,11 @@ const Business = (state = INIT_STATE, action = {}) => {
         case DELETE_DEPARTMENT:
             let newList = state.departments.filter(item => action.payload.id !== item.id)
             return {...state, loading: false, departments: [...newList]};
+        case GET_DEPARTMENT_BY_ID:
+            return {...state, loading: false, selectedDepartment: action.payload, tags: action.payload.tags, stories: action.payload?.tasks};
         case GET_DEPARTMENTS:
-            return {...state, loading: false, departments: action.payload};
+            const selectedDepartment = action.payload.find(e => e.isSelected) || action.payload[0]
+            return {...state, loading: false, departments: action.payload, selectedDepartment};
         case CREATE_TAG:
             return {...state, loading: false, tags: [...state.tags, action.payload]};
         case UPDATE_TAG:

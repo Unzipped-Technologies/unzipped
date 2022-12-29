@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const businessAssociatesItemSchema = new Schema({
   userId: String,
   businessId: String,
+  departmentId: String,
   profileId: String,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
