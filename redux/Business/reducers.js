@@ -22,6 +22,7 @@ import {
     RESET_BUSINESS_FORM,
     UPDATE_BUSINESS_FORM,
     LOAD_STATE,
+    UPDATE_CREATE_STORY,
 } from './constants';
 
 const INIT_STATE = {
@@ -55,6 +56,13 @@ const INIT_STATE = {
         businessImage: "/",
         stage: 1,
     },
+    createStoryForm: {
+        taskName: '',
+        assignee: '',
+        storyPoints: 1,
+        priority: 1,
+        description: '',
+    },
     error: ''
 }
 
@@ -82,7 +90,13 @@ const Business = (state = INIT_STATE, action = {}) => {
             let newList = state.departments.filter(item => action.payload.id !== item.id)
             return {...state, loading: false, departments: [...newList]};
         case GET_DEPARTMENT_BY_ID:
-            return {...state, loading: false, selectedDepartment: action.payload, tags: action.payload.tags, stories: action.payload?.tasks};
+            const depart = state.departments.map(e => { 
+                return {
+                    ...e, 
+                    isSelected: action.payload._id === e._id
+            }})
+            console.log('////////', depart)
+            return {...state, loading: false, selectedDepartment: action.payload, departments: depart, tags: action.payload.tags, stories: action.payload?.tasks};
         case GET_DEPARTMENTS:
             const selectedDepartment = action.payload.find(e => e.isSelected) || action.payload[0]
             return {...state, loading: false, departments: action.payload, selectedDepartment};
@@ -96,6 +110,8 @@ const Business = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, tags: [...RemoveTag]};
         case GET_TAGS:
             return {...state, loading: false, tags: [...action.payload]};
+        case UPDATE_CREATE_STORY:
+            return {...state, loading: false, createStoryForm: {...state.createStoryForm, ...action.payload}};
         case CREATE_STORY:
             return {...state, loading: false, stories: [action.payload, ...state.stories]};
         case UPDATE_STORY:

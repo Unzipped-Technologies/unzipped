@@ -6,6 +6,7 @@ import {
     Absolute,
     WhiteCard,
     Underline,
+    Grid2,
 } from './style'
 import {
     WorkIcon
@@ -13,6 +14,8 @@ import {
 import FreelancerCard from './FreelancerCard'
 import Icon from '../../ui/Icon'
 import Button from '../../ui/Button'
+import FormField from '../../ui/FormField'
+import Modal from '../../ui/Modal'
 import Image from '../../ui/Image'
 import Dropdowns from '../../ui/Dropdowns'
 import Projects from '../../../pages/dashboard/projects'
@@ -116,9 +119,23 @@ const setTagsAndStories = ({tags = [], stories = []}) => {
     })
 }
 
-const Panel = ({list, selectedList, type, projects=[], tags, stories, updateTasksOrder}) => {
+const Panel = ({
+    list, 
+    selectedList, 
+    type, 
+    projects=[], 
+    tags, 
+    stories, 
+    updateTasksOrder, 
+    onBack,
+    onSubmit,
+    loading,
+    updateCreateStoryForm,
+    form
+}) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [storyList, setStoryList] = useState([])
+    const [createAStory, setCreateAStory] = useState(false)
     const dragItem = useRef();
     const dragOverItem = useRef();
 
@@ -223,7 +240,7 @@ const Panel = ({list, selectedList, type, projects=[], tags, stories, updateTask
                         <DarkText noMargin center bold>STORY POINTS</DarkText>
                         <DarkText noMargin center bold>ASSIGNEE</DarkText>
                     </WhiteCard>
-                    {tag.stories.sort((a, b) => a.order - b.order).map((item, index) => (
+                    {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => (
                         <WhiteCard noMargin value={item} borderRadius="0px" row onDragEnd={e => drop(e, item)} onDragEnter={(e) => dragEnter(e, item)} onDragStart={(e) => dragStart(e, item)} draggable key={index + item.tag}> 
                             <Absolute width="50%" left textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
                             <DarkText noMargin> </DarkText>
@@ -233,6 +250,11 @@ const Panel = ({list, selectedList, type, projects=[], tags, stories, updateTask
                             <DarkText noMargin row center>{item?.assignee?.name}</DarkText>
                         </WhiteCard>
                     ))}
+                    {tag.stories.length === 0 && (
+                        <WhiteCard onClick={() => setCreateAStory(true)} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
+                            <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
+                        </WhiteCard>
+                    )}
                     </>
                 ))}
                 {type === 'projects' && (
@@ -251,11 +273,71 @@ const Panel = ({list, selectedList, type, projects=[], tags, stories, updateTask
                             <></>
                         ))}
                     </>
-                    
-
                 )}
             </StoryTable>
-
+            {createAStory && (
+                <Modal onHide={() => setCreateAStory(false)} height="520px">
+                    <FormField 
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        width="95%"
+                        onChange={(e) => updateCreateStoryForm({ taskName: e.target.value })}
+                        value={form?.taskName}
+                    >
+                        TASK NAME(REQUIRED)
+                    </FormField>
+                    <Grid2 margin="0px" block>
+                    <FormField 
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        width="90%"
+                        onChange={(e) => updateCreateStoryForm({ assignee: e.target.value })}
+                        value={form?.assignee}
+                    >
+                        ASSIGN TO
+                    </FormField>
+                    <FormField 
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        width="90%"
+                        onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
+                        value={form?.storyPoints}
+                    >
+                        STORY POINTS
+                    </FormField>
+                    </Grid2>
+                    <FormField 
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        width="95%"
+                        onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
+                        value={form?.priority}
+                    >
+                        PRIORITY
+                    </FormField>
+                    <FormField 
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        height="150px"
+                        textarea
+                        onChange={(e) => updateCreateStoryForm({ description: e.target.value })}
+                        value={form?.description}
+                    >
+                        DESCRIPTION
+                    </FormField>
+                    <Absolute bottom="20px"><Button oval extraWide type="outlineInverse" onClick={onBack}>CANCEL</Button><Button disabled={false} onClick={() => onSubmit()} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">{!loading ? 'ADD TASK' : <CircularProgress size={18} />}</Button></Absolute>
+                </Modal>
+            )}
         </Container>
     )
 }

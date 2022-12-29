@@ -95,7 +95,6 @@ router.get('/department/:id', requireLogin, permissionCheckHelper.hasPermission(
     try {
       const id = req.params.id;
       const department = await departmentHelper.getDepartmentById(id)
-      console.log('/////department', department)
       if(!department) throw Error('failed to get department')
       res.json(department)
     } catch (e) {

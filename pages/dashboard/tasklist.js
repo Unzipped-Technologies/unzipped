@@ -4,7 +4,7 @@ import Icon from '../../components/ui/Icon'
 import ListPanel from '../../components/unzipped/dashboard/ListPanel';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById } from '../../redux/actions';
+import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById, updateCreateStoryForm } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
 const Tasklist = ({
@@ -15,12 +15,14 @@ const Tasklist = ({
     departments = [],
     business='My Business', 
     selectedDepartment, 
+    form,
     tags = [], 
     stories = [],
     // Actions
     updateTasksOrder, 
     getDepartmentsForBusiness,
-    getDepartmentsById
+    getDepartmentsById,
+    updateCreateStoryForm
 }) => {
     const access = token?.access_token || cookie
 
@@ -43,7 +45,9 @@ const Tasklist = ({
             <ListPanel 
                 departments={departments} 
                 updateTasksOrder={updateTasksOrder} 
+                updateCreateStoryForm={updateCreateStoryForm}
                 tags={tags} 
+                form={form}
                 stories={stories} 
                 list={departments.map(e => {
                     return {
@@ -80,7 +84,8 @@ const mapStateToProps = (state) => {
         selectedDepartment: state.Business.selectedDepartment,
         businesses: state.Business.businesses,
         cookie: state.Auth.token,
-        departments: state.Business.departments
+        departments: state.Business.departments,
+        form: state.Business?.createStoryForm,
     }
   }
 
@@ -89,6 +94,7 @@ const mapDispatchToProps = (dispatch) => {
         updateTasksOrder: bindActionCreators(updateTasksOrder, dispatch),
         getDepartmentsForBusiness: bindActionCreators(getDepartmentsForBusiness, dispatch),
         getDepartmentsById: bindActionCreators(getDepartmentsById, dispatch),
+        updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
     }
 }
 

@@ -17,6 +17,7 @@ const addDepartmentToBusiness = async (data, id) => {
             ...data,
             tags: [],
             tasks: [],
+            employees: [],
         }
         const Dept = await department.create(item)
 
@@ -58,19 +59,10 @@ const addDepartmentToBusiness = async (data, id) => {
 
 const getDepartmentById = async (id) => {
     try {
-        return await department.findById(id)
-        // const [getDept, getTags, getTasks, people] = await Promise.all([
-        //     department.findById(id),
-        //     tags.find({departmentId: id}),
-        //     tasks.find({departmentId: id}),
-        //     businessAssociatesItems.find({departmentId: id})
-        // ])
-        // return {
-        //     ...getDept._doc,
-        //     tags: getTags,
-        //     tasks: getTasks,
-        //     people
-        // }
+        const departments = await department.findById(id)
+        await department.updateMany({ businessId: departments.businessId }, {$set: { isSelected: false }})
+        const selectedDepartment = await department.findByIdAndUpdate(id, {$set: { isSelected: true }})
+        return {...selectedDepartment._doc, isSelected: true}
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     } 

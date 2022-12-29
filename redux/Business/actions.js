@@ -18,7 +18,8 @@ import {
     CREATE_BUSINESS,
     UPDATE_BUSINESS_FORM,
     RESET_BUSINESS_FORM,
-    GET_BUSINESSES
+    GET_BUSINESSES,
+    UPDATE_CREATE_STORY
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
@@ -26,6 +27,13 @@ import {tokenConfig} from '../../services/tokenConfig';
 export const updateBusinessForm = (data, token) => async (dispatch, getState) => {
     dispatch({
         type: UPDATE_BUSINESS_FORM,
+        payload: data,
+    })
+}
+
+export const updateCreateStoryForm = (data, token) => async (dispatch, getState) => {
+    dispatch({
+        type: UPDATE_CREATE_STORY,
         payload: data,
     })
 }

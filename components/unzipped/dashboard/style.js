@@ -57,7 +57,7 @@ const DarkText = styled.div`
     overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
     width: 96%;
     text-align: ${({center}) => center ? 'center' : 'unset'};
-    color: ${({error}) => !error ? theme.text2 : theme.error};
+    color: ${({error, color}) => !error ? color ? color : theme.text2 : theme.error};
     &:hover {
         color: ${({hover}) => hover ? theme.selectedText : theme.text2}
     }
@@ -71,6 +71,7 @@ const Absolute = styled.div`
     text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
     width: ${({width}) => width ?  width : 'unset'};
     top: ${({top}) => top ? top : 'unset'};
+    bottom: ${({bottom}) => bottom ? bottom : 'unset'};
     right: ${({left, right}) => left ? 'unset' : right ? right : '10px'};
     left: ${({left, wideLeft, smallLeft}) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
 `;

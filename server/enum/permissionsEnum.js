@@ -29,6 +29,7 @@ const userPermissions = Object.freeze({
     UpdateDepartment: 'updateDepartment',
     GetDepartmentById: 'getDepartmentById',
     DeleteDepartment: 'deleteDepartment',
+    selectDepartment: 'selectDepartment',
     ListDepartment: 'listDepartments',
     // likes
     UserLike: 'userLike',
@@ -79,6 +80,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateDepartment,
         userPermissions.GetDepartmentById,
         userPermissions.DeleteDepartment,
+        userPermissions.selectDepartment,
         userPermissions.ListDepartment,
         // tags
         userPermissions.CreateTag,
@@ -170,6 +172,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateDepartment,
         userPermissions.GetDepartmentById,
         userPermissions.DeleteDepartment,
+        userPermissions.selectDepartment,
         userPermissions.ListDepartment,
         // tags
         userPermissions.CreateTag,
