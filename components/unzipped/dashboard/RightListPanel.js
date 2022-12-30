@@ -128,6 +128,7 @@ const Panel = ({
     stories, 
     updateTasksOrder, 
     onBack,
+    dropdownList,
     onSubmit,
     loading,
     updateCreateStoryForm,
@@ -135,6 +136,8 @@ const Panel = ({
 }) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [storyList, setStoryList] = useState([])
+    const [pointsDropdown, setPointsDropdown] = useState([1, 2, 3, 5, 8])
+    const [searchDropdown, setSearchDropdown] = useState([1, 2, 3, 5, 8])
     const [createAStory, setCreateAStory] = useState(false)
     const dragItem = useRef();
     const dragOverItem = useRef();
@@ -211,7 +214,32 @@ const Panel = ({
     useEffect(() => {
         setStoryList(setTagsAndStories({tags, stories}))
     }, [tags, stories])
-    console.log(storyList)
+
+    useEffect(() => {
+        setPointsDropdown([1, 2, 3, 5, 8].filter(element => {
+            if (form?.storyPoints === '') {
+                return false;
+            }
+            console.log(element > form?.storyPoints - 2)
+            console.log(form?.storyPoints + 2)
+            if (element > form?.storyPoints - 2 && element < form?.storyPoints + 2) {
+                console.log('made it here')
+              return true;
+        }}))
+    }, [form?.storyPoints])
+
+    useEffect(() => {
+        setSearchDropdown(
+            dropdownList.filter(element => {
+                if (form?.assignee === '') {
+                    return false;
+                }
+                if (`${element?.FirstName} ${element?.LastName}`.includes(form?.assignee) || element?.FirstName.includes(form?.assignee) || element?.LastName.includes(form?.assignee)) {
+                  return true;
+            }})
+        )
+    }, [form?.assignee])
+    console.log(pointsDropdown)
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <TitleText paddingLeft>{selectedList}</TitleText>
@@ -295,8 +323,11 @@ const Panel = ({
                         fontSize='14px'
                         noMargin
                         width="90%"
+                        dropdownList={searchDropdown}
                         onChange={(e) => updateCreateStoryForm({ assignee: e.target.value })}
                         value={form?.assignee}
+                        clickType="assignee"
+                        onUpdate={updateCreateStoryForm}
                     >
                         ASSIGN TO
                     </FormField>
@@ -308,6 +339,9 @@ const Panel = ({
                         width="90%"
                         onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
                         value={form?.storyPoints}
+                        dropdownList={pointsDropdown}
+                        clickType="storyPoints"
+                        onUpdate={updateCreateStoryForm}
                     >
                         STORY POINTS
                     </FormField>
@@ -335,7 +369,7 @@ const Panel = ({
                     >
                         DESCRIPTION
                     </FormField>
-                    <Absolute bottom="20px"><Button oval extraWide type="outlineInverse" onClick={onBack}>CANCEL</Button><Button disabled={false} onClick={() => onSubmit()} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">{!loading ? 'ADD TASK' : <CircularProgress size={18} />}</Button></Absolute>
+                    <Absolute bottom="20px"><Button oval extraWide type="outlineInverse" onClick={() => setCreateAStory(false)}>CANCEL</Button><Button disabled={false} onClick={() => onSubmit()} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">{!loading ? 'ADD TASK' : <CircularProgress size={18} />}</Button></Absolute>
                 </Modal>
             )}
         </Container>

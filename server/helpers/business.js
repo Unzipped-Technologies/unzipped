@@ -5,6 +5,7 @@ const likeHistory = require('../../models/LikeHistory');
 const department = require('../../models/Department');
 const departmentHelper = require('./department')
 const tags = require('../../models/tags');
+const user = require('../../models/User');
 const mongoose = require('mongoose');
 const { likeEnum } = require('../enum/likeEnum');
 
@@ -42,14 +43,12 @@ const deleteBusiness = async (id) => {
     // delete questions
 }
 
-const getBusinessById = async (id) => {
+const getBusinessById = async (id, sub) => {
     try {
-        return await business.findById(id)
-            .populate({
-                path: 'departments', 
-                model: 'departments',
-            })
-            .exec()
+        await business.updateMany({userId: sub}, {$set: {isSelected: false}})
+        const getBusiness = await business.findByIdAndUpdate(id, {$set: {isSelected: true}})
+        const getUsers = await user.find({ _id: {$in: getBusiness.employees.map(e => e.profile)}}).select('email FirstName LastName profileImage freelancers')
+        return {...getBusiness._doc, employees: getUsers, isSelected: true}
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     } 

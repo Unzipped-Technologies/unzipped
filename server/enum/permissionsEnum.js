@@ -24,6 +24,7 @@ const userPermissions = Object.freeze({
     userListBusinesses: 'userListBusinesses',
     listAllBusinesses: 'listAllBusinesses',
     deleteBusiness: 'deleteBusiness',
+    getBusinessById: 'getBusinessById',
     // departments
     CreateDepartment: 'createDepartment',
     UpdateDepartment: 'updateDepartment',
@@ -71,6 +72,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userCreateBusiness,
         userPermissions.userUpdateBusiness,
         userPermissions.userListBusinesses,
+        userPermissions.getBusinessById,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -163,6 +165,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userListBusinesses,
         userPermissions.listAllBusinesses,
         userPermissions.deleteBusiness,
+        userPermissions.getBusinessById,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,

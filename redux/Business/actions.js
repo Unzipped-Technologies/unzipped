@@ -12,6 +12,7 @@ import {
     DELETE_STORY,
     SELECT_DEPARTMENT,
     GET_STORIES,
+    SELECT_BUSINESS,
     GET_DEPARTMENT_BY_ID,
     DEPARTMENT_ERROR,
     LOAD_STATE,
@@ -88,6 +89,24 @@ export const getDepartmentsForBusiness = (data, token) => async (dispatch, getSt
         .post(`/api/business/department/list`, data, tokenConfig(token))
         .then(res => dispatch({
             type: GET_DEPARTMENTS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
+export const getBusinessById = (id, token) => async (dispatch, getState) => {
+    //business list Loading
+    dispatch({type: LOAD_STATE})
+    console.log('here here here')
+    await axios
+        .get(`/api/business/${id}`, tokenConfig(token))
+        .then(res => dispatch({
+            type: SELECT_BUSINESS,
             payload: res.data,
         }))
         .catch(err => {

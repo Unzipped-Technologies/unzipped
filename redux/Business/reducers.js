@@ -33,6 +33,7 @@ const INIT_STATE = {
     loading: false,
     selectedDepartment: 0,
     selectedBusiness: {},
+    employees: [],
     businessForm: {
         name: "",
         isFirstBusiness: '',
@@ -80,7 +81,7 @@ const Business = (state = INIT_STATE, action = {}) => {
             const selectedBusiness = action.payload.find(e => e.isSelected) || action.payload[0]
             return {...state, loading: false, businesses: action.payload, selectedBusiness};
         case SELECT_BUSINESS:
-            return {...state, loading: false, selectedBusiness: action.payload.selected, stories: [...action.payload.stories]};
+            return {...state, loading: false, selectedBusiness: action.payload, stories: action.payload?.stories || [], employees: action.payload?.employees || []};
         case CREATE_DEPARTMENT:
             return {...state, loading: false, departments: action.payload};
         case UPDATE_DEPARTMENT:
@@ -95,7 +96,6 @@ const Business = (state = INIT_STATE, action = {}) => {
                     ...e, 
                     isSelected: action.payload._id === e._id
             }})
-            console.log('////////', depart)
             return {...state, loading: false, selectedDepartment: action.payload, departments: depart, tags: action.payload.tags, stories: action.payload?.tasks};
         case GET_DEPARTMENTS:
             const selectedDepartment = action.payload.find(e => e.isSelected) || action.payload[0]
@@ -125,6 +125,7 @@ const Business = (state = INIT_STATE, action = {}) => {
         case SELECT_DEPARTMENT:
             return {...state, loading: false, selectedDepartment: action.payload.selected, stories: [...action.payload.stories]};
         case DEPARTMENT_ERROR:
+            console.log('error failed')
             return {...state, loading: false, error: action.payload};
         case UPDATE_BUSINESS_FORM:
             return {...state, loading: false, businessForm: {...state.businessForm, ...action.payload}};

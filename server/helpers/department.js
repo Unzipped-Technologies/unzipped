@@ -5,6 +5,7 @@ const tasks = require('../../models/Task');
 const businessAssociatesItems = require('../../models/BusinessAssociatesItem');
 const user = require('../../models/User');
 const mongoose = require('mongoose');
+const { Users } = require('react-feather');
 
 const createDepartments = async (data) => {
     return await department.create(data);
@@ -95,19 +96,21 @@ const deleteDepartment = async (id) => {
     await businessAssociatesItems.deleteMany({listId: id})
 }
 
-const addBusinessAssociateToDepartment = async (data, listId) => {
+const addBusinessAssociateToBusiness = async (data) => {
     try {
-        const updateDepartment = await department.findById(listId)
-        const ids = []
-        for (const item of data.items) {
-            const id = await businessAssociatesItems.create({
-                ...item
-            });
-            ids.push(id.id)
-        }
-        updateDepartment.businessAssociatesItems.push(...ids.map(item => mongoose.Types.ObjectId(item.id)))
-        updateDepartment.save()
-        return updateDepartment;
+        const [success] = await Promise.all([
+            businessAssociatesItems.create({
+                ...data,
+                profile: await user.findById(data.profileId).select('email FirstName LastName profileImage freelancers')
+            }),
+            department.findByIdAndUpdate(data.departmentId, {
+                employees: await businessAssociatesItems.find({departmentId: data.departmentId})
+            }),
+            business.findByIdAndUpdate(data.businessId, {
+                employees: await businessAssociatesItems.find({businessId: data.businessId})
+            })
+        ])
+        return success
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     }
@@ -137,7 +140,7 @@ module.exports = {
     getDepartmentById,
     updateDepartment,
     deleteDepartment,
-    addBusinessAssociateToDepartment,
+    addBusinessAssociateToBusiness,
     addTagToDepartment,
     addTaskToDepartment,
 }

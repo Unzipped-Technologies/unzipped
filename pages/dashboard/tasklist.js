@@ -4,7 +4,7 @@ import Icon from '../../components/ui/Icon'
 import ListPanel from '../../components/unzipped/dashboard/ListPanel';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById, updateCreateStoryForm } from '../../redux/actions';
+import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById, updateCreateStoryForm, getBusinessById } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
 const Tasklist = ({
@@ -22,7 +22,8 @@ const Tasklist = ({
     updateTasksOrder, 
     getDepartmentsForBusiness,
     getDepartmentsById,
-    updateCreateStoryForm
+    updateCreateStoryForm,
+    getBusinessById
 }) => {
     const access = token?.access_token || cookie
 
@@ -31,6 +32,9 @@ const Tasklist = ({
     }
 
     useEffect(() => {
+        if (!selectedBusiness?._id) {
+            getBusinessById(businesses[0]._id, access)
+        }
         getDepartmentsForBusiness({
             take: 10,
             filter: {
@@ -48,6 +52,17 @@ const Tasklist = ({
                 updateCreateStoryForm={updateCreateStoryForm}
                 tags={tags} 
                 form={form}
+                dropdownList={[
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                    ...selectedBusiness?.employees,
+                 ] || []}
                 stories={stories} 
                 list={departments.map(e => {
                     return {
@@ -57,7 +72,7 @@ const Tasklist = ({
                         padding: true
                     }
                 })} 
-                business={selectedBusiness?.name || businesses[0]?.name} 
+                business={selectedBusiness?.name} 
                 selectedList={selectedDepartment?.name} 
                 selectList={selectDepartment}
                 type="department"
@@ -95,6 +110,7 @@ const mapDispatchToProps = (dispatch) => {
         getDepartmentsForBusiness: bindActionCreators(getDepartmentsForBusiness, dispatch),
         getDepartmentsById: bindActionCreators(getDepartmentsById, dispatch),
         updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
+        getBusinessById: bindActionCreators(getBusinessById, dispatch),
     }
 }
 

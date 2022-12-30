@@ -6,6 +6,7 @@ const Container = styled.div`
     height: ${({height}) => height ? height : 'auto'};
     width: ${({width}) => width ? width : 'auto'};
     overflow: hidden;
+    position: relative;
 `;
 
 const Img = styled.img`

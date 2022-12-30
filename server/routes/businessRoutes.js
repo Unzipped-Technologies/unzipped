@@ -70,6 +70,17 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllB
     }
 });
 
+router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getBusinessById'), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const business = await businessHelper.getBusinessById(id, req.user.sub)
+    if(!business) throw Error('failed to get business')
+    res.json(business)
+  } catch (e) {
+    res.status(400).json({msg: e.message})
+  }
+});
+
 router.post('/delete', requireLogin, permissionCheckHelper.hasPermission('deleteBusiness'), async (req, res) => {
     try {
       const deleteBusiness = await businessHelper.deleteBusiness(req.user.sub)
@@ -120,6 +131,16 @@ router.post('/current/tag/create', requireLogin, permissionCheckHelper.hasPermis
     const createTag = await departmentHelper.addTagToDepartment(req.body, req.user.sub)
     if(!createTag) throw Error('failed to create department')
     res.json(createTag)
+  } catch (e) {
+    res.status(400).json({msg: e.message})
+  }
+});
+
+router.post('/employee/create', requireLogin, permissionCheckHelper.hasPermission('createTag'), async (req, res) => {
+  try {
+    const createSubscription = await departmentHelper.addBusinessAssociateToBusiness(req.body)
+    if(!createSubscription) throw Error('failed to create department')
+    res.json(createSubscription)
   } catch (e) {
     res.status(400).json({msg: e.message})
   }

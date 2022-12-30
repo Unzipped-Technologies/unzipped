@@ -30,6 +30,7 @@ const TitleText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 600;
+    cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     font-size: ${({small, title, size}) => small ? '16px' : title ? '36px' : size? size : '18px'};
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
@@ -44,6 +45,7 @@ const TitleText = styled.div`
 const DarkText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
+    position: relative;
     font-weight: ${({bold}) => bold ? '600' : '400'};
     font-size: ${({small, fontSize}) => small ? '14px' : fontSize ? fontSize : '16px'};
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
@@ -52,6 +54,7 @@ const DarkText = styled.div`
     margin-top: ${({topMargin}) => topMargin ? topMargin : 'unset'};
     margin-bottom: ${({noMargin, marginLarge, half}) => noMargin ? '0px' : marginLarge ? '35px'  : half ? '7px' : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
+    padding-top: ${({topPadding}) => topPadding ? '10px' : '0px'};
     text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
     white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'unset'};
     overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
