@@ -6,7 +6,7 @@ import {
     Absolute,
     WhiteCard,
     Underline,
-    Grid2,
+    Grid3,
 } from './style'
 import {
     WorkIcon
@@ -114,7 +114,7 @@ const setTagsAndStories = ({tags = [], stories = []}) => {
     return tags.map(item => {
         return {
             tag: item,
-            stories: stories.filter(e => item._id === e.tag)
+            stories: stories.filter(e => item._id === (e?.tag?._id || e?.tag))
         }
     })
 }
@@ -124,20 +124,21 @@ const Panel = ({
     selectedList, 
     type, 
     projects=[], 
-    tags, 
-    stories, 
+    tags = [], 
+    stories = [], 
     updateTasksOrder, 
     onBack,
-    dropdownList,
-    onSubmit,
+    dropdownList = [],
     loading,
     updateCreateStoryForm,
+    createNewStory,
     form
 }) => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [storyList, setStoryList] = useState([])
     const [pointsDropdown, setPointsDropdown] = useState([1, 2, 3, 5, 8])
     const [searchDropdown, setSearchDropdown] = useState([1, 2, 3, 5, 8])
+    const [tagsDropdown, setTagsDropdown] = useState(tags);
     const [createAStory, setCreateAStory] = useState(false)
     const dragItem = useRef();
     const dragOverItem = useRef();
@@ -173,7 +174,9 @@ const Panel = ({
         console.log('///drop', dragOverItem.current)
         copyListItems.splice(dragItem.current, 1);
         copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-        updateTasksOrder()
+        updateTasksOrder({
+            
+        })
         dragItem.current = null;
         dragOverItem.current = null;
         // setStoryList(copyListItems);
@@ -182,7 +185,10 @@ const Panel = ({
     const menuItems = [
         {
             name: 'Create a story',
-            link: '/dashboard',
+            onClick: () => {
+                updateCreateStoryForm({ tagId: tags[0]._id })
+                setCreateAStory(true)
+            },
             icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
         },
         {
@@ -196,6 +202,25 @@ const Panel = ({
             icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
         },
     ]
+
+    const onSubmit = () => {
+        createNewStory()
+        setCreateAStory(false)
+    }
+
+    const updateAssigee = (e) => {
+        updateCreateStoryForm({ 
+            assignee: e.target.value, 
+            assigneeId: searchDropdown.find(item => item?.FirstName.toLowerCase().includes(e.target?.value.toLowerCase().split(' ')[0]) && item.LastName.toLowerCase().includes(e.target?.value.toLowerCase()?.split(' ')[1]))?._id
+        })
+    }
+
+    const updateTagName = (e) => {
+        updateCreateStoryForm({ 
+            tagName: e.target.value, 
+            tagId: tagsDropdown.find(item => item.tagName.toLowerCase().includes(e.target.value.toLowerCase()))?._id
+        })
+    }
 
     useEffect(() => {
         const storyList = []
@@ -220,10 +245,7 @@ const Panel = ({
             if (form?.storyPoints === '') {
                 return false;
             }
-            console.log(element > form?.storyPoints - 2)
-            console.log(form?.storyPoints + 2)
             if (element > form?.storyPoints - 2 && element < form?.storyPoints + 2) {
-                console.log('made it here')
               return true;
         }}))
     }, [form?.storyPoints])
@@ -234,12 +256,23 @@ const Panel = ({
                 if (form?.assignee === '') {
                     return false;
                 }
-                if (`${element?.FirstName} ${element?.LastName}`.includes(form?.assignee) || element?.FirstName.includes(form?.assignee) || element?.LastName.includes(form?.assignee)) {
+                if (`${element?.FirstName} ${element?.LastName}`.toLowerCase().includes(form?.assignee.toLowerCase()) || element?.FirstName.toLowerCase().includes(form?.assignee.toLowerCase()) || element?.LastName.toLowerCase().includes(form?.assignee.toLowerCase())) {
                   return true;
             }})
         )
     }, [form?.assignee])
-    console.log(pointsDropdown)
+
+    useEffect(() => {
+        setTagsDropdown(
+            tags.filter(element => {
+                if (form?.tagName === '') {
+                    return false;
+                }
+                return true;
+            })
+        )
+    }, [form?.tagName])
+
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <TitleText paddingLeft>{selectedList}</TitleText>
@@ -268,18 +301,23 @@ const Panel = ({
                         <DarkText noMargin center bold>STORY POINTS</DarkText>
                         <DarkText noMargin center bold>ASSIGNEE</DarkText>
                     </WhiteCard>
-                    {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => (
-                        <WhiteCard noMargin value={item} borderRadius="0px" row onDragEnd={e => drop(e, item)} onDragEnter={(e) => dragEnter(e, item)} onDragStart={(e) => dragStart(e, item)} draggable key={index + item.tag}> 
-                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
+                    {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
+                        const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
+                        return (
+                        <WhiteCard clickable noMargin value={item} borderRadius="0px" row onDragEnd={e => drop(e, item)} onDragEnter={(e) => dragEnter(e, item)} onDragStart={(e) => dragStart(e, item)} draggable key={index + item.tag}> 
+                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
                             <DarkText noMargin> </DarkText>
                             <DarkText noMargin> </DarkText>
-                            <DarkText noMargin center>{item?.storyPoints}</DarkText>
+                            <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
                             {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
-                            <DarkText noMargin row center>{item?.assignee?.name}</DarkText>
+                            <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
                         </WhiteCard>
-                    ))}
+                    )})}
                     {tag.stories.length === 0 && (
-                        <WhiteCard onClick={() => setCreateAStory(true)} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
+                        <WhiteCard onClick={() => {
+                            updateCreateStoryForm({ tagId: tag.tag._id })
+                            setCreateAStory(true)
+                        }} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
                             <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
                         </WhiteCard>
                     )}
@@ -316,20 +354,20 @@ const Panel = ({
                     >
                         TASK NAME(REQUIRED)
                     </FormField>
-                    <Grid2 margin="0px" block>
+                    <Grid3 margin="0px" width="95%" grid="2fr 1fr 1fr">
                     <FormField 
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
-                        width="90%"
-                        dropdownList={searchDropdown}
-                        onChange={(e) => updateCreateStoryForm({ assignee: e.target.value })}
-                        value={form?.assignee}
-                        clickType="assignee"
+                        width="95%"
+                        dropdownList={tagsDropdown}
+                        onChange={e => updateTagName(e)}
+                        value={form?.tagName}
+                        clickType="tagName"
                         onUpdate={updateCreateStoryForm}
                     >
-                        ASSIGN TO
+                        Tag
                     </FormField>
                     <FormField 
                         fieldType="input"
@@ -337,6 +375,17 @@ const Panel = ({
                         fontSize='14px'
                         noMargin
                         width="90%"
+                        onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
+                        value={form?.priority}
+                    >
+                        PRIORITY
+                    </FormField>
+                    <FormField 
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        width="100%"
                         onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
                         value={form?.storyPoints}
                         dropdownList={pointsDropdown}
@@ -345,17 +394,20 @@ const Panel = ({
                     >
                         STORY POINTS
                     </FormField>
-                    </Grid2>
+                    </Grid3>
                     <FormField 
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
                         width="95%"
-                        onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
-                        value={form?.priority}
+                        dropdownList={searchDropdown}
+                        onChange={e => updateAssigee(e)}
+                        value={form?.assignee}
+                        clickType="assignee"
+                        onUpdate={updateCreateStoryForm}
                     >
-                        PRIORITY
+                        ASSIGN TO
                     </FormField>
                     <FormField 
                         fieldType="input"

@@ -63,7 +63,9 @@ const getDepartmentById = async (id) => {
         const departments = await department.findById(id)
         await department.updateMany({ businessId: departments.businessId }, {$set: { isSelected: false }})
         const selectedDepartment = await department.findByIdAndUpdate(id, {$set: { isSelected: true }})
-        return {...selectedDepartment._doc, isSelected: true}
+        console.log(selectedDepartment.tasks)
+        const getUsers = await user.find({ _id: {$in: selectedDepartment?.tasks?.map(e => e.assigneeId && e.assigneeId) || []}}).select('email FirstName LastName profileImage freelancers')
+        return {...selectedDepartment._doc, employees: getUsers, isSelected: true}
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     } 
@@ -124,12 +126,20 @@ const addTaskToDepartment = async (body, id) => {
     const Task = await tasks.create({
         ...body,
         tag: await tags.findById(body.tagId),
-        assignee: await user.findById(body.userId)
+        userId: id,
+        assigneeId: body.assigneeId,
+        assignee: await user.findById(body.assigneeId)
     })
     await department.findByIdAndUpdate(body.departmentId, {
         tasks: await tasks.find({departmentId: body.departmentId})
     })
     return Task
+}
+
+const reorderTasks = async (tasks) => {
+    await Promise.all(tasks.map(task => {
+        tasks.findByIdAndUpdate(task._id, {order: task.order})
+    }))
 }
 
 
@@ -143,4 +153,5 @@ module.exports = {
     addBusinessAssociateToBusiness,
     addTagToDepartment,
     addTaskToDepartment,
+    reorderTasks,
 }

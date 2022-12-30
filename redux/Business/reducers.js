@@ -18,6 +18,7 @@ import {
     DELETE_STORY,
     SELECT_DEPARTMENT,
     GET_STORIES,
+    SORT_STORIES_ON_DRAG,
     DEPARTMENT_ERROR,
     RESET_BUSINESS_FORM,
     UPDATE_BUSINESS_FORM,
@@ -60,9 +61,12 @@ const INIT_STATE = {
     createStoryForm: {
         taskName: '',
         assignee: '',
-        storyPoints: 1,
+        assigneeId: '',
+        storyPoints: '',
         priority: 1,
         description: '',
+        tagId: '',
+        tagName: '',
     },
     error: ''
 }
@@ -113,13 +117,16 @@ const Business = (state = INIT_STATE, action = {}) => {
         case UPDATE_CREATE_STORY:
             return {...state, loading: false, createStoryForm: {...state.createStoryForm, ...action.payload}};
         case CREATE_STORY:
-            return {...state, loading: false, stories: [action.payload, ...state.stories]};
+            return {...state, loading: false, stories: [action.payload, ...state.stories], createStoryForm: INIT_STATE.createStoryForm};
         case UPDATE_STORY:
             const RemoveUpdateStories = state.stories.filter(item => item.id !== action.payload.id)
             return {...state, loading: false, stories: [action.payload, ...RemoveUpdateStories]};
         case DELETE_STORY:
             const RemoveStories = state.stories.filter(item => item.id !== action.payload.id)
             return {...state, loading: false, stories: [...RemoveStories]};
+            return {...state, loading: false, stories: [action.payload, ...RemoveUpdateStories]};
+        case SORT_STORIES_ON_DRAG:
+            return {...state, loading: false, stories: action.payload};
         case GET_STORIES:
             return {...state, loading: false, stories: [...action.payload]};
         case SELECT_DEPARTMENT:

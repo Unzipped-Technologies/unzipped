@@ -4,7 +4,7 @@ import Icon from '../../components/ui/Icon'
 import ListPanel from '../../components/unzipped/dashboard/ListPanel';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById, updateCreateStoryForm, getBusinessById } from '../../redux/actions';
+import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById, updateCreateStoryForm, createStory, getBusinessById } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
 const Tasklist = ({
@@ -18,17 +18,31 @@ const Tasklist = ({
     form,
     tags = [], 
     stories = [],
+    employees,
     // Actions
     updateTasksOrder, 
     getDepartmentsForBusiness,
     getDepartmentsById,
     updateCreateStoryForm,
+    createStory,
     getBusinessById
 }) => {
     const access = token?.access_token || cookie
 
     const selectDepartment = (item) => {
         getDepartmentsById(item._id, access)
+    }
+
+    const createNewStory = () => {
+        createStory({
+            departmentId: selectedDepartment._id,
+            taskName: form?.taskName,
+            assigneeId: form?.assigneeId || employees.find(item => item?.FirstName.toLowerCase().includes(form?.assignee.toLowerCase().split(' ')[0]) && item.LastName.toLowerCase().includes(form?.assignee.toLowerCase()?.split(' ')[1]))?._id,
+            storyPoints: form?.storyPoints,
+            priority: form?.priority,
+            description: form?.description,
+            tagId: form?.tagId || tags[0]?._id
+        }, access)
     }
 
     useEffect(() => {
@@ -43,6 +57,12 @@ const Tasklist = ({
         }, access)
     }, [selectedBusiness])
 
+    useEffect(() => {
+        if (selectedDepartment) {
+            getDepartmentsById(selectedDepartment._id, access)
+        }
+    }, [])
+
     return (
         <React.Fragment>
             <Nav isSubMenu/>
@@ -50,19 +70,10 @@ const Tasklist = ({
                 departments={departments} 
                 updateTasksOrder={updateTasksOrder} 
                 updateCreateStoryForm={updateCreateStoryForm}
+                createNewStory={createNewStory}
                 tags={tags} 
                 form={form}
-                dropdownList={[
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                    ...selectedBusiness?.employees,
-                 ] || []}
+                dropdownList={employees}
                 stories={stories} 
                 list={departments.map(e => {
                     return {
@@ -101,6 +112,7 @@ const mapStateToProps = (state) => {
         cookie: state.Auth.token,
         departments: state.Business.departments,
         form: state.Business?.createStoryForm,
+        employees: state.Business?.employees
     }
   }
 
@@ -111,6 +123,7 @@ const mapDispatchToProps = (dispatch) => {
         getDepartmentsById: bindActionCreators(getDepartmentsById, dispatch),
         updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
         getBusinessById: bindActionCreators(getBusinessById, dispatch),
+        createStory: bindActionCreators(createStory, dispatch),
     }
 }
 

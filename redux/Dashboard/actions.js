@@ -429,25 +429,3 @@ export const updateStatus = (status, order, token) => async (dispatch, getState)
             })
         })
 }
-
-export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
-    //tasks Loading
-    dispatch({type: LOAD_TASKS})
-    dispatch({
-        type: SORT_STORIES_ON_DRAG,
-        payload: data,
-    })
-    // await axios
-    //     .post(`/api/dashboard/status`, {status, order}, tokenConfig(token))
-    //     .then(res => dispatch({
-    //         type: SORT_STORIES_ON_DRAG,
-    //         payload: res.data,
-    //     }))
-    //     .catch(err => {
-    //         // dispatch(returnErrors(err.response, err.response))
-    //         dispatch({
-    //             type: UPDATE_ERROR,
-    //             payload: err.response
-    //         })
-    //     })
-}

@@ -116,9 +116,9 @@ const FormField = ({
     ...rest
 }) => {
     const Control = types[fieldType];
-    const [currentError, setCurrentError] = useState(error);
+    const [currentError, setCurrentError] = useState(error)
     const [dropdownOpen, setDropdownOpen] = useState(false)
-    const [isClicked, setIsClicked] = useState(false)
+    const [isClicked, setIsClicked] = useState(!!rest.value)
     const wrapperRef = useRef(null);
     useEffect(() => {
         function handleClickOutside(event) {
@@ -159,7 +159,7 @@ const FormField = ({
     };
 
     const updateInput = (data) => {
-        onUpdate({ [clickType]: data.FirstName ? `${data?.FirstName} ${data?.LastName || ''}` : data })
+        onUpdate({ [clickType]: data.FirstName ? `${data?.FirstName} ${data?.LastName || ''}` : data?.tagName ? data?.tagName : data })
         setDropdownOpen(false)
         setIsClicked(true)
     }
@@ -202,13 +202,13 @@ const FormField = ({
                 {...rest}
             />
             {dropdownList.length > 0 && dropdownOpen && (
-                <Absolute smallLeft width="90%">
-                    <WhiteCard height={(50 * dropdownList.length) < 300 ? (50 * dropdownList.length) + 'px' : '300px'} padding="10px 10px" maxWidth={maxWidth} ref={wrapperRef}>
+                <Absolute smallLeft {...rest}>
+                    <WhiteCard height={(50 * dropdownList.length) < 300 ? ((50 * dropdownList.length) + 15) + 'px' : '300px'} padding="10px 10px" maxWidth={maxWidth} ref={wrapperRef}>
                     <Scroll>
                         {dropdownList.map((item, key) => (
                             <Item key={key} onClick={() => setDropdownOpen(false)}>
                                 {item?.profileImage && <Image src={item.profileImage} width="35px" height="32px"  alt="profile pic" radius="50%" />}
-                                <DarkText half hover clickable onClick={() => updateInput(item)} paddingLeft topPadding="10px" value={`${item.FirstName} ${item.LastName}`}>{item.FirstName || item} {item.LastName}</DarkText>
+                                <DarkText half hover clickable onClick={() => updateInput(item)} paddingLeft topPadding="10px" value={`${item.FirstName} ${item.LastName}`}>{item.FirstName || item?.tagName || item} {item.LastName}</DarkText>
                             </Item>
                         ))}
                     </Scroll>

@@ -12,6 +12,7 @@ import {
     DELETE_STORY,
     SELECT_DEPARTMENT,
     GET_STORIES,
+    SORT_STORIES_ON_DRAG,
     SELECT_BUSINESS,
     GET_DEPARTMENT_BY_ID,
     DEPARTMENT_ERROR,
@@ -43,6 +44,24 @@ export const resetBusinessForm = () => async (dispatch, getState) => {
     dispatch({
         type: RESET_BUSINESS_FORM
     })
+}
+
+export const createStory = (data, token) => async (dispatch, getState) => {
+    //department Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .post(`/api/business/current/task/create`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: CREATE_STORY,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
 }
 
 export const createBusiness = (data, token) => async (dispatch, getState) => {
@@ -192,5 +211,27 @@ export const deleteDepartment = (data) => async (dispatch, getState) => {
                 payload: err.response
             })
         })
+}
+
+export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
+    //tasks Loading
+    dispatch({type: LOAD_STATE})
+    dispatch({
+        type: SORT_STORIES_ON_DRAG,
+        payload: data,
+    })
+    // await axios
+    //     .post(`/api/dashboard/status`, {status, order}, tokenConfig(token))
+    //     .then(res => dispatch({
+    //         type: SORT_STORIES_ON_DRAG,
+    //         payload: res.data,
+    //     }))
+    //     .catch(err => {
+    //         // dispatch(returnErrors(err.response, err.response))
+    //         dispatch({
+    //             type: UPDATE_ERROR,
+    //             payload: err.response
+    //         })
+    //     })
 }
 

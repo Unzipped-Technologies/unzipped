@@ -149,8 +149,8 @@ const Grid2 = styled.div`
 
 const Grid3 = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    width: ${({block}) => block ? '100%' : '80%'};
+    grid-template-columns: ${({grid}) => grid ? grid : '1fr 1fr 1fr'};
+    width: ${({block, width}) => block ? '100%' : width ? width : '80%'};
     margin: ${({margin}) => margin ? margin : '75px 0px'};
 `;
 

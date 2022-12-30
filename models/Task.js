@@ -7,7 +7,7 @@ const taskSchema = new Schema({
   departmentId: String,
   taskName: String,
   storyPoints: { type: Number, default: 1 },
-  assigneeId: { type: Number, default: 0 },
+  assigneeId: String,
   priority: { type: Number, default: 0 },
   order: { type: Number, default: 0 },
   description: String,

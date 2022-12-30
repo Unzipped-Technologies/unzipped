@@ -42,12 +42,13 @@ const userPermissions = Object.freeze({
     GetTagById: 'getTagById',
     DeleteTag: 'deleteTag',
     ListTag: 'listTags',
-    // task
+    // tasks
     CreateTask: 'createTask',
     UpdateTask: 'updateTask',
     GetTaskById: 'getTaskById',
     DeleteTask: 'deleteTask',
     ListTask: 'listTasks',
+    orderTasks: 'orderTasks',
     // stories
     CreateStory: 'createStory',
     UpdateStory: 'updateStory',
@@ -96,6 +97,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.GetTaskById,
         userPermissions.DeleteTask,
         userPermissions.ListTask,
+        userPermissions.orderTasks,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
@@ -129,6 +131,13 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
         userPermissions.UserDeleteLike,
+        // tasks
+        userPermissions.CreateTask,
+        userPermissions.UpdateTask,
+        userPermissions.GetTaskById,
+        userPermissions.DeleteTask,
+        userPermissions.ListTask,
+        userPermissions.orderTasks,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
@@ -189,6 +198,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.GetTaskById,
         userPermissions.DeleteTask,
         userPermissions.ListTask,
+        userPermissions.orderTasks,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
