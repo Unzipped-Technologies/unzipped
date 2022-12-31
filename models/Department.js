@@ -10,6 +10,7 @@ const departmentSchema = new Schema({
   isSubDepartment: {type: Boolean, default: false},
   isSelected: {type: Boolean, default: false},
   parentDepartmentId: String,
+  order: { type: Number, default: 0 },
   isEquity: { type: Boolean, default: false },
   tags: { type: [Schema.Types.Mixed], ref: 'tags' },
   tasks: { type: Schema.Types.Mixed, ref: 'tasks' },

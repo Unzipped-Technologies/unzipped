@@ -6,6 +6,7 @@ const businessAssociatesItems = require('../../models/BusinessAssociatesItem');
 const user = require('../../models/User');
 const mongoose = require('mongoose');
 const { Users } = require('react-feather');
+const { Select } = require('@material-ui/core');
 
 const createDepartments = async (data) => {
     return await department.create(data);
@@ -63,7 +64,6 @@ const getDepartmentById = async (id) => {
         const departments = await department.findById(id)
         await department.updateMany({ businessId: departments.businessId }, {$set: { isSelected: false }})
         const selectedDepartment = await department.findByIdAndUpdate(id, {$set: { isSelected: true }})
-        console.log(selectedDepartment.tasks)
         const getUsers = await user.find({ _id: {$in: selectedDepartment?.tasks?.map(e => e.assigneeId && e.assigneeId) || []}}).select('email FirstName LastName profileImage freelancers')
         return {...selectedDepartment._doc, employees: getUsers, isSelected: true}
     } catch (e) {
@@ -123,12 +123,18 @@ const addTagToDepartment = () => {
 }
 
 const addTaskToDepartment = async (body, id) => {
+    const findDepartment = await department.findById(body.departmentId)
+    const SelectedBusiness = await business.findById(findDepartment.businessId)
+    const businessCode = SelectedBusiness.businessCode || SelectedBusiness.name.slice(0,3)
+    const docCount = await tasks.countDocuments({businessId: SelectedBusiness._id}) + 1
     const Task = await tasks.create({
         ...body,
         tag: await tags.findById(body.tagId),
         userId: id,
+        businessId: SelectedBusiness._id,
         assigneeId: body.assigneeId,
-        assignee: await user.findById(body.assigneeId)
+        assignee: await user.findById(body.assigneeId),
+        ticketCode: `${businessCode.replace(' ', '')}-${docCount}`
     })
     await department.findByIdAndUpdate(body.departmentId, {
         tasks: await tasks.find({departmentId: body.departmentId})
@@ -136,10 +142,17 @@ const addTaskToDepartment = async (body, id) => {
     return Task
 }
 
-const reorderTasks = async (tasks) => {
-    await Promise.all(tasks.map(task => {
-        tasks.findByIdAndUpdate(task._id, {order: task.order})
+const reorderTasks = async (lists) => {
+    await Promise.all(lists.map(task => {
+        tasks.findByIdAndUpdate(task._id, {
+            order: task.order,
+            tag: task.tag,
+        })
     }))
+    await department.findByIdAndUpdate(lists[0].departmentId, {
+        tasks: await tasks.find({departmentId: lists[0].departmentId})
+    })
+    return {msg: 'success'}
 }
 
 

@@ -15,7 +15,9 @@ import {
     SORT_STORIES_ON_DRAG,
     SELECT_BUSINESS,
     GET_DEPARTMENT_BY_ID,
+    REORDER_STORIES,
     DEPARTMENT_ERROR,
+    SUCCESS,
     LOAD_STATE,
     CREATE_BUSINESS,
     UPDATE_BUSINESS_FORM,
@@ -37,6 +39,26 @@ export const updateCreateStoryForm = (data, token) => async (dispatch, getState)
     dispatch({
         type: UPDATE_CREATE_STORY,
         payload: data,
+    })
+}
+
+export const reorderStories = (data, token) => async (dispatch, getState) => {
+    dispatch({
+        type: REORDER_STORIES,
+        payload: data,
+    })
+    dispatch({type: LOAD_STATE})
+    await axios
+    .post(`/api/business/current/task/order`, data, tokenConfig(token))
+    .then(res => dispatch({
+        type: SUCCESS,
+        payload: res.data,
+    }))
+    .catch(err => {
+        dispatch({
+            type: DEPARTMENT_ERROR,
+            payload: err.response
+        })
     })
 }
 

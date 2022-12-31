@@ -160,7 +160,7 @@ router.post('/current/task/create', requireLogin, permissionCheckHelper.hasPermi
 router.post('/current/task/order', requireLogin, permissionCheckHelper.hasPermission('orderTasks'), async (req, res) => {
   try {
     const orderTasks = await departmentHelper.reorderTasks(req.body)
-    if(!orderTasks) throw Error('failed to create task')
+    if(!orderTasks) throw Error('failed to reorder tasks')
     res.json(orderTasks)
   } catch (e) {
     res.status(400).json({msg: e.message})

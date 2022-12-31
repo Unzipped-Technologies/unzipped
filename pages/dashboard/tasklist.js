@@ -4,7 +4,15 @@ import Icon from '../../components/ui/Icon'
 import ListPanel from '../../components/unzipped/dashboard/ListPanel';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { updateTasksOrder, getDepartmentsForBusiness, getDepartmentsById, updateCreateStoryForm, createStory, getBusinessById } from '../../redux/actions';
+import { 
+    updateTasksOrder, 
+    getDepartmentsForBusiness, 
+    getDepartmentsById, 
+    updateCreateStoryForm, 
+    createStory, 
+    getBusinessById, 
+    reorderStories 
+} from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
 const Tasklist = ({
@@ -19,13 +27,15 @@ const Tasklist = ({
     tags = [], 
     stories = [],
     employees,
+    user,
     // Actions
     updateTasksOrder, 
     getDepartmentsForBusiness,
     getDepartmentsById,
     updateCreateStoryForm,
     createStory,
-    getBusinessById
+    getBusinessById,
+    reorderStories
 }) => {
     const access = token?.access_token || cookie
 
@@ -70,11 +80,14 @@ const Tasklist = ({
                 departments={departments} 
                 updateTasksOrder={updateTasksOrder} 
                 updateCreateStoryForm={updateCreateStoryForm}
+                reorderStories={reorderStories}
                 createNewStory={createNewStory}
                 tags={tags} 
+                access={access}
                 form={form}
                 dropdownList={employees}
                 stories={stories} 
+                user={user}
                 list={departments.map(e => {
                     return {
                         ...e,
@@ -110,6 +123,7 @@ const mapStateToProps = (state) => {
         selectedDepartment: state.Business.selectedDepartment,
         businesses: state.Business.businesses,
         cookie: state.Auth.token,
+        user: state.Auth.user,
         departments: state.Business.departments,
         form: state.Business?.createStoryForm,
         employees: state.Business?.employees
@@ -124,6 +138,7 @@ const mapDispatchToProps = (dispatch) => {
         updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
         getBusinessById: bindActionCreators(getBusinessById, dispatch),
         createStory: bindActionCreators(createStory, dispatch),
+        reorderStories: bindActionCreators(reorderStories, dispatch),
     }
 }
 

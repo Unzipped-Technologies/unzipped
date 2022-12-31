@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const taskSchema = new Schema({
   userId: String,
   businessId: String,
+  ticketCode: String,
   departmentId: String,
   taskName: String,
   storyPoints: { type: Number, default: 1 },
@@ -11,6 +12,14 @@ const taskSchema = new Schema({
   priority: { type: Number, default: 0 },
   order: { type: Number, default: 0 },
   description: String,
+  comments: {
+    type: [{
+      text: String, 
+      img: String,
+      profilePic: String,
+      name: String,
+    }], 
+    default: []},
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   Status: { type: Number, default: 0 },

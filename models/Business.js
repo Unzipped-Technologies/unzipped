@@ -38,6 +38,7 @@ const businessSchema = new Schema({
   businessImage: String,
   createdBy: String,
   customMarkdown: String,
+  businessCode: String,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   isSelected: {type: Boolean, default: false},

@@ -18,11 +18,13 @@ import {
     DELETE_STORY,
     SELECT_DEPARTMENT,
     GET_STORIES,
+    REORDER_STORIES,
     SORT_STORIES_ON_DRAG,
     DEPARTMENT_ERROR,
     RESET_BUSINESS_FORM,
     UPDATE_BUSINESS_FORM,
     LOAD_STATE,
+    SUCCESS,
     UPDATE_CREATE_STORY,
 } from './constants';
 
@@ -121,10 +123,11 @@ const Business = (state = INIT_STATE, action = {}) => {
         case UPDATE_STORY:
             const RemoveUpdateStories = state.stories.filter(item => item.id !== action.payload.id)
             return {...state, loading: false, stories: [action.payload, ...RemoveUpdateStories]};
+        case REORDER_STORIES:
+            return {...state, loading: false, stories: action.payload};
         case DELETE_STORY:
             const RemoveStories = state.stories.filter(item => item.id !== action.payload.id)
             return {...state, loading: false, stories: [...RemoveStories]};
-            return {...state, loading: false, stories: [action.payload, ...RemoveUpdateStories]};
         case SORT_STORIES_ON_DRAG:
             return {...state, loading: false, stories: action.payload};
         case GET_STORIES:
@@ -138,6 +141,8 @@ const Business = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, businessForm: {...state.businessForm, ...action.payload}};
         case RESET_BUSINESS_FORM:
             return {...state, loading: false, businessForm: {...INIT_STATE.businessForm}};
+        case SUCCESS:
+            return {...state, loading: true};
         case LOAD_STATE:
             return {...state, loading: true};
         default: 

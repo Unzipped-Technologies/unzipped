@@ -71,6 +71,7 @@
     "prop-types": "^15.7.2",
     "react": "17.0.2",
     "react-animate-on-scroll": "^2.1.5",
+    "react-beautiful-dnd": "^13.1.1",
     "react-big-calendar": "^0.33.2",
     "react-calendar": "^3.3.1",
     "react-cookie": "^4.0.3",

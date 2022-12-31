@@ -8,6 +8,7 @@ import {
     Underline,
     Grid3,
 } from './style'
+import StoryModal from './StoryModal'
 import {
     WorkIcon
 } from '../../icons'
@@ -18,6 +19,7 @@ import FormField from '../../ui/FormField'
 import Modal from '../../ui/Modal'
 import Image from '../../ui/Image'
 import Dropdowns from '../../ui/Dropdowns'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Projects from '../../../pages/dashboard/projects'
 
 const Container = styled.div`
@@ -110,13 +112,24 @@ const freelancer = [
     },
 ]
 
+// sets stories to correct tags and updates any missing orders in redux
 const setTagsAndStories = ({tags = [], stories = []}) => {
-    return tags.map(item => {
+    const storyOrder = []
+    const story = tags.map(item => {
+        const orderStories = stories.filter(e => item._id === (e?.tag?._id || e?.tag)).sort((a, b) => a.order - b.order).map((e, index) => {
+            return {
+                ...e,
+                order: index
+            }
+        })
+        storyOrder.push(orderStories)
         return {
             tag: item,
-            stories: stories.filter(e => item._id === (e?.tag?._id || e?.tag))
+            stories: orderStories
         }
     })
+    // reorderStories(storyOrder)
+    return story
 }
 
 const Panel = ({
@@ -126,10 +139,13 @@ const Panel = ({
     projects=[], 
     tags = [], 
     stories = [], 
+    reorderStories,
+    access,
     updateTasksOrder, 
     onBack,
     dropdownList = [],
     loading,
+    user,
     updateCreateStoryForm,
     createNewStory,
     form
@@ -139,7 +155,9 @@ const Panel = ({
     const [pointsDropdown, setPointsDropdown] = useState([1, 2, 3, 5, 8])
     const [searchDropdown, setSearchDropdown] = useState([1, 2, 3, 5, 8])
     const [tagsDropdown, setTagsDropdown] = useState(tags);
-    const [createAStory, setCreateAStory] = useState(false)
+    const [createAStory, setCreateAStory] = useState(false);
+    const [storyModal, setStoryModal] = useState(false);
+    const [selectedStory, setSelectedStory] = useState(null);
     const dragItem = useRef();
     const dragOverItem = useRef();
 
@@ -155,32 +173,67 @@ const Panel = ({
         }, (time || 500));
     }
 
-    const dragStart = (e, position) => {
-        dragItem.current = position;
-        // console.log(e.target.innerHTML);
-      };
+    const handleOnDragEnd = (result) => {
+        if (!result.destination) return;
+        const { source, destination } = result;
+        const allStories = []
 
-    const dragEnter = (e, position) => {
-    dragOverItem.current = position;
-    // console.log(e.target.innerHTML);
-    };
-
-    const drop = (e, item) => {
-        const copyListItems = [...stories];
-        const dragItemContent = item
-        dragItemContent.order = dragOverItem.current.order + 0.5
-        dragItemContent.tag = dragOverItem.current.tag
-        console.log('///contnet', dragItemContent)
-        console.log('///drop', dragOverItem.current)
-        copyListItems.splice(dragItem.current, 1);
-        copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-        updateTasksOrder({
-            
-        })
-        dragItem.current = null;
-        dragOverItem.current = null;
-        // setStoryList(copyListItems);
-    };
+        if (source.droppableId !== destination.droppableId) {
+            const sourceColumn = storyList.find(e => source.droppableId === e.tag._id);
+            const destColumn = storyList.find(e => destination.droppableId === e.tag._id);
+            const sourceItems = sourceColumn.stories;
+            const destItems = destColumn.stories;
+            const [removed] = sourceItems.splice(source.index, 1);
+            removed.tag = destColumn.tag._id
+            destItems.splice(destination.index, 0, removed).map((e, index) => {
+                    return {
+                        ...e,
+                        order: index
+                    }
+                });
+            const newSource = sourceItems.map((e, index) => {
+                return {
+                    ...e,
+                    order: index
+                }
+            });
+            const newDestination = destItems.map((e, index) => {
+                return {
+                    ...e,
+                    order: index
+                }
+            });
+            storyList.forEach(e => {
+                if (e.tag._id === sourceColumn.tag._id) {
+                    allStories.push(...newSource)
+                } else if (e.tag._id === destColumn.tag._id) {
+                    allStories.push(...newDestination)
+                } else {
+                    allStories.push(...e.stories)
+                }
+            })
+            reorderStories(allStories, access)
+        } else {
+            const column = storyList.find(e => source.droppableId === e.tag._id);
+            const copiedItems = [...column.stories];
+            const [removed] = copiedItems.splice(source.index, 1);
+            copiedItems.splice(destination.index, 0, removed);
+            const newSource = copiedItems.map((e, index) => {
+                return {
+                    ...e,
+                    order: index
+                }
+            });
+            storyList.forEach(e => {
+                if (e.tag._id === column.tag._id) {
+                    allStories.push(...newSource)
+                } else {
+                    allStories.push(...e.stories)
+                }
+            })
+            reorderStories(allStories, access)
+        }
+    }
 
     const menuItems = [
         {
@@ -220,6 +273,11 @@ const Panel = ({
             tagName: e.target.value, 
             tagId: tagsDropdown.find(item => item.tagName.toLowerCase().includes(e.target.value.toLowerCase()))?._id
         })
+    }
+
+    const openAStory = (data) => {
+        setSelectedStory(data)
+        setStoryModal(true)
     }
 
     useEffect(() => {
@@ -293,36 +351,64 @@ const Panel = ({
                 ))}
             </UserContainer>
             <StoryTable>
-                {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => (
-                    <>
-                    <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
-                        <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
-                        <DarkText noMargin> </DarkText>
-                        <DarkText noMargin center bold>STORY POINTS</DarkText>
-                        <DarkText noMargin center bold>ASSIGNEE</DarkText>
-                    </WhiteCard>
-                    {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
-                        const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
-                        return (
-                        <WhiteCard clickable noMargin value={item} borderRadius="0px" row onDragEnd={e => drop(e, item)} onDragEnter={(e) => dragEnter(e, item)} onDragStart={(e) => dragStart(e, item)} draggable key={index + item.tag}> 
-                            <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
-                            <DarkText noMargin> </DarkText>
-                            <DarkText noMargin> </DarkText>
-                            <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
-                            {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
-                            <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
-                        </WhiteCard>
-                    )})}
-                    {tag.stories.length === 0 && (
-                        <WhiteCard onClick={() => {
-                            updateCreateStoryForm({ tagId: tag.tag._id })
-                            setCreateAStory(true)
-                        }} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
-                            <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
-                        </WhiteCard>
-                    )}
-                    </>
-                ))}
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                    {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => (
+                        <div key={count}>
+                            <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
+                                <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
+                                <DarkText noMargin> </DarkText>
+                                <DarkText noMargin center bold>STORY POINTS</DarkText>
+                                <DarkText noMargin center bold>ASSIGNEE</DarkText>
+                            </WhiteCard>
+                            <Droppable 
+                                droppableId={tag.tag._id}
+                                type="COLUMN" 
+                                direction="vertical"
+                                key={tag.tag._id}
+                            >
+                                {(provided) => (
+                                    <div {...provided.droppableProps} ref={provided.innerRef}>
+                                        {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
+                                            const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
+                                            return (
+                                                <Draggable draggableId={item._id} key={item._id} index={index} >
+                                                    {(provided) => {
+                                                        if (typeof provided.draggableProps.onTransitionEnd === "function") {
+                                                            queueMicrotask(() => 
+                                                                provided.draggableProps.onTransitionEnd?.({
+                                                                    propertyName: "transform"
+                                                                })
+                                                            );
+                                                         } 
+                                                        return (
+                                                            <WhiteCard onClick={() => openAStory({...item, employee, tagName: tag?.tag?.tagName})} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row > 
+                                                                <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
+                                                                <DarkText noMargin> </DarkText>
+                                                                <DarkText noMargin> </DarkText>
+                                                                <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
+                                                                {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
+                                                                <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
+                                                            </WhiteCard>
+                                                        )
+                                                    }}
+                                                </Draggable>
+                                            )}
+                                        )}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                            {tag.stories.length === 0 && (
+                                <WhiteCard onClick={() => {
+                                    updateCreateStoryForm({ tagId: tag.tag._id })
+                                    setCreateAStory(true)
+                                }} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
+                                    <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
+                                </WhiteCard>
+                            )}
+                        </div>
+                    ))}
+                </DragDropContext>
                 {type === 'projects' && (
                     <>
                         <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
@@ -341,6 +427,22 @@ const Panel = ({
                     </>
                 )}
             </StoryTable>
+            {storyModal && (
+                <StoryModal user={user} content={{...selectedStory, department: selectedList, comments: [
+                    {
+                        text: 'safdfds dsfosai dnsofnds ndosiafnidsaf n oashfisajf ndsiafnosadi dsaofj',
+                        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914234/testimonial_5_tksguz.jpg',
+                        img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047049/cld-sample-3.jpg',
+                        name: 'Andrew Hill'
+                    },
+                    {
+                        text: 'safdfds dssdaffosai dnsofnds afnosadi dsaofj',
+                        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914234/testimonial_8_qce67b.jpg',
+                        img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047048/cld-sample.jpg',
+                        name: 'Jessica Maynard'
+                    },
+                ]}} onHide={setStoryModal}/>
+            )}
             {createAStory && (
                 <Modal onHide={() => setCreateAStory(false)} height="520px">
                     <FormField 

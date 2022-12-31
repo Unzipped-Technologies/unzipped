@@ -37,8 +37,11 @@ const TitleText = styled.div`
     margin-bottom: ${({noMargin, half, large}) => noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
     text-align: ${({center}) => center ? 'center' : 'unset'};
-    width: 96%;
+    width: ${({width}) => width ? width : '96%'};
     align-items: center;
+    text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
+    white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'unset'};
+    overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
     color: ${({color}) => color ? color : theme.text2};
 `;
 
@@ -56,7 +59,7 @@ const DarkText = styled.div`
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
     padding-top: ${({topPadding}) => topPadding ? '10px' : '0px'};
     text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
-    white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'unset'};
+    white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'pre-line'};
     overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
     width: 96%;
     text-align: ${({center}) => center ? 'center' : 'unset'};
@@ -150,6 +153,7 @@ const Grid2 = styled.div`
 const Grid3 = styled.div`
     display: grid;
     grid-template-columns: ${({grid}) => grid ? grid : '1fr 1fr 1fr'};
+    align-items: center;
     width: ${({block, width}) => block ? '100%' : width ? width : '80%'};
     margin: ${({margin}) => margin ? margin : '75px 0px'};
 `;
@@ -196,12 +200,16 @@ export const Span = styled.span`
     flex-flow: row;
     font-family: 'Roboto';
     font-style: normal;
-    font-weight: 400;
-    font-size: 26px;
+    font-weight: ${({bold}) => bold ? 600 : 400};
+    font-size: ${({size}) => size ? size : '26px'};
     line-height: 45px;
     letter-spacing: 0.39998px;
+    width: 100%;
+    margin: ${({margin}) => margin ? margin : 'unset'};
+    margin-left: ${({space}) => space ? '6px' : 'unset'};
     align-items: center;
-    color: #FFFFFF;
+    color: ${({dark}) => dark ? theme.text2 : '#FFFFFF'};
+    cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
 `;
 
 export const DarkSpan = styled.span`
