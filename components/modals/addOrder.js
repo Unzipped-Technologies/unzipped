@@ -249,7 +249,6 @@ const SimpleModal = ({open, setOpen, token, location, access, setNotificationfun
         } else {
             cookie = access
         }
-        console.log(token)
         // dispatch(updateVehicle(cookie, { year: year, make: selMake, model: selModel, color: color, vin: vin, license: license }))
         changeVehicleFocus();
     }
@@ -261,7 +260,6 @@ const SimpleModal = ({open, setOpen, token, location, access, setNotificationfun
       } else {
           cookie = access
       }
-      console.log(orderDetails)
       dispatch(dashboardSubmitOrder(orderDetails, cookie));
       setNotificationfunction('Order created Success')
     }
@@ -299,10 +297,6 @@ const SimpleModal = ({open, setOpen, token, location, access, setNotificationfun
     useEffect(() => {
       setOrderNumber(Math.round(Math.random() * 1000000))
     }, [])
-
-    useEffect(() => {
-      console.log(selectedUser)
-    }, [selectedUser])
 
     useEffect(() => {
       updateOrderDetails()

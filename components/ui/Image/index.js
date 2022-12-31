@@ -6,6 +6,10 @@ const Container = styled.div`
     height: ${({height}) => height ? height : 'auto'};
     width: ${({width}) => width ? width : 'auto'};
     overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: ${({margin}) => margin ? margin : 'unset'}
 `;
 
 const Img = styled.img`
@@ -13,9 +17,9 @@ const Img = styled.img`
     height: auto;
 `;
 
-const Image = ({src, alt = 'img', radius, height, width, onMouseEnter, onClick}) => {
+const Image = ({src, alt = 'img', radius, height, width, onMouseEnter, onClick, margin}) => {
     return (
-        <Container radius={radius} height={height} width={width} onClick={onClick} onMouseEnter={onMouseEnter}>
+        <Container radius={radius} margin={margin} height={height} width={width} onClick={onClick} onMouseEnter={onMouseEnter}>
             <Img src={src} alt={alt} />
         </Container>
     )

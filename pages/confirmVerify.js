@@ -43,7 +43,6 @@ const Verify = ({token, error}) => {
 
     const Resend = (ev) => {
         ev.preventDefault();
-        console.log('it worked')
         setLoading(true);
         dispatch(resendVerify({email: email}));
         setTimeout(() => {

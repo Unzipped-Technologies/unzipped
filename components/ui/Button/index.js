@@ -115,7 +115,7 @@ const typeColors = {
         background: '#37DEC5',
         border: '#37DEC5',
         hover: '#8EDE64',
-        hoverText: '#777'
+        hoverText: '#FFF'
     },
     dark: {
         text: theme.text,
@@ -164,7 +164,7 @@ const typeColors = {
         border: theme.primary,
     },
     outlineInverse: {
-        text: '##333',
+        text: '#37DEC5',
         background: '#fff',
         border: '#37DEC5',
         hover: '#8EDE64',
@@ -213,6 +213,7 @@ const Button = ({
     extraWide,
     normal,
     oval,
+    submit,
     ...rest
 }) => {
     const colors = typeColors[type] ? typeColors[type] : typeColors.default;
@@ -231,7 +232,7 @@ const Button = ({
             className={className}
             isAnimated={isAnimated}
             data-testid="button-container"
-            type="button"
+            type={submit ? "submit" : "button"}
             block={block}
             disabled={disabled}
             iconRight={iconRight}

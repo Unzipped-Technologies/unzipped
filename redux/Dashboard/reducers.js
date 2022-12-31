@@ -25,6 +25,9 @@ import {
     GARAGE_ORDERS,
     HOTEL_ORDERS,
     HOTEL_OWED,
+    GET_STORIES_LIST,
+    GET_TAGS_LIST,
+    SORT_STORIES_ON_DRAG
 } from './constants';
 
 const INIT_STATE = {
@@ -40,6 +43,74 @@ const INIT_STATE = {
     garageOrders: [],
     hotelOrders: [],
     hotelOwed: [],
+    tags: [
+        {
+            name: 'To Do',
+            order: 0,
+        },
+        {
+            name: 'In Progress',
+            order: 1,
+        },
+        {
+            name: 'Done',
+            order: 2,
+        },
+        
+        
+    ],
+    stories: [
+        {
+            tag: 'To Do',
+            name: 'Build Home Page',
+            points: 3,
+            order: 1,
+            assignee: {
+                name: 'Jason Maynard',
+                profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+            }
+        },
+        {
+            tag: 'To Do',
+            name: 'Build Update Icons',
+            points: 2,
+            order: 2,
+            assignee: {
+                name: 'Jason Maynard',
+                profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+            }
+        },
+        {
+            tag: 'In Progress',
+            name: 'Build Update Icons',
+            points: 3,
+            order: 1,
+            assignee: {
+                name: 'Jason Maynard',
+                profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+            }
+        },
+        {
+            tag: 'Done',
+            name: 'Build notification component',
+            points: 5,
+            order: 1,
+            assignee: {
+                name: 'Jason Maynard',
+                profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+            }
+        },
+        {
+            tag: 'Done',
+            name: 'Build notification component with a really long story name',
+            points: 5,
+            order: 2,
+            assignee: {
+                name: 'Jason Maynard',
+                profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+            }
+        },
+    ],
     error: ''
 }
 
@@ -102,7 +173,6 @@ const Dashboard = (state = INIT_STATE, action = {}) => {
         case GARAGE_ORDERS:
             return {...state, loading: false, garageOrders: [...action.payload]};
         case HOTEL_ORDERS:
-            console.log(action.payload)
             return {...state, loading: false, hotelOrders: [...action.payload]};
         case SUBMIT_ORDER:
             return {...state, loading: false, orders: action.payload}

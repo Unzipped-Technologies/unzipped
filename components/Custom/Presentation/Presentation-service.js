@@ -48,8 +48,6 @@ const CalendarDisplay = ({ getServices, count, cart, total, simpleHeight, button
     const setQty = (i) => {
         let e = cart.find(item => item.id === getServices[i].id)
             if (e) {
-                console.log(cart)
-                console.log(getServices[i].id)
                 console.log(e)
 
                 return e.quantity

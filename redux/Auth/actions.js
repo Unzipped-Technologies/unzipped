@@ -9,13 +9,19 @@ import {
     REGISTER_USER,
     SET_TOKEN,
     CURRENT_USER,
+    RESET_REGISTER_FORM,
     SIGN_UP_FOR_NEWSLETTER,
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
     CLEAR_ERRORS,
     SET_DEFAULT_VEHICLE,
+    SET_LOADING,
+    SUBSCRIPTION_CREATED,
+    UPDATE_USER_SUCCESS,
     LOGGED_OUT,
     UPDATE_REGISTER_FORM,
+    SELECT_A_PLAN,
+    UPDATE_SUBSCRIPTION_FORM,
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
@@ -66,6 +72,21 @@ export const userPayment = () => async (dispatch, getState) => {
         })
 };
 
+export const selectAPlan = (data) => async (dispatch) => {
+    dispatch({
+        type: SELECT_A_PLAN,
+        payload: data,
+        })
+};
+
+export const updateSubscriptionForm = (data) => async (dispatch) => {
+    console.log('data', data)
+    dispatch({
+        type: UPDATE_SUBSCRIPTION_FORM,
+        payload: data,
+    })
+};
+
 export const tokenSet = (token) => async (dispatch) => {
     await dispatch({
         type: SET_TOKEN,
@@ -73,15 +94,18 @@ export const tokenSet = (token) => async (dispatch) => {
     })
 };
 
-export const updateRegisterForm = (data) => ({
-    type: UPDATE_REGISTER_FORM,
-    payload: data,
-});
+export const updateRegisterForm = (data) => async (dispatch) => {
+    await dispatch({
+        type: UPDATE_REGISTER_FORM,
+        payload: data,
+    })
+};
 
-export const updateUser = (data) => ({
-    type: UPDATE_REGISTER_FORM,
-    payload: data,
-});
+export const resetRegisterForm = () => async (dispatch) => {
+    await dispatch({
+        type: RESET_REGISTER_FORM,
+    })
+};
 
 export const loginUserFailed = (error) => ({
     type: LOGIN_USER_FAILED,
@@ -91,6 +115,21 @@ export const loginUserFailed = (error) => ({
 export const reloadLogout = () => ({
     type: LOGGED_OUT
 });
+
+export const updateUser = (data, token) => async (dispatch, getState) => {
+    await axios
+        .post(`/api/user/current/update`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: UPDATE_USER_SUCCESS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: AUTH_ERROR,
+                payload: err.response.data
+            })
+        })
+}
 
 export const resendVerify = (user) => async (dispatch, getState) => {
     const data = await axios
@@ -130,7 +169,6 @@ export const googleUser = (token) => async (dispatch, getState) => {
 export const loadUser = (user) => async (dispatch, getState) => {
     //User Loading
     dispatch({type: USER_LOADING})
-    console.log('here')
     await axios
         .post(`/api/auth/login`, user)
         .then(res => dispatch({
@@ -147,11 +185,15 @@ export const loadUser = (user) => async (dispatch, getState) => {
 
 //Check token & Load User
 export const updateVehicle = (token, vehicle) => async (dispatch, getState) => {
-    dispatch({type: USER_LOADING});
+}
+
+//Check token & Load User
+export const createSubscription = (data, token) => async (dispatch, getState) => {
+    dispatch({type: SET_LOADING});
     await axios
-        .post(`/api/vehicle/default`, vehicle, tokenConfig(token))
+        .post(`/api/payment/subscription/create`, data, tokenConfig(token))
         .then(res => dispatch({
-            type: SET_DEFAULT_VEHICLE,
+            type: SUBSCRIPTION_CREATED,
             payload: res.data,
         }))
         .catch(err => {

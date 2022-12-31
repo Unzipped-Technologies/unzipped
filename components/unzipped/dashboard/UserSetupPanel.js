@@ -6,6 +6,7 @@ import {
     Absolute,
     WhiteCard,
 } from './style'
+import Link from 'next/link'
 import ProgressBar from '../../ui/ProgressBar'
 
 const Container = styled.div`
@@ -30,10 +31,10 @@ const Panel = ({user}) => {
             <TitleText small>Complete your account setup by:</TitleText>
             <WhiteCard unset background="#d8d8d8">
                 {user.map(item => (
-                    <WhiteCard borderColor="#37DEC5" row half clickable>
-                        {item.icon}
-                        <DarkText clickable noMargin paddingLeft={item.padding} fontSize="12px">{item.text}</DarkText>
-                    </WhiteCard>
+                        <WhiteCard onClick={item?.onClick || (() => {})} borderColor="#37DEC5" row half clickable>
+                            {item.icon}
+                            <DarkText clickable noMargin paddingLeft={item.padding} fontSize="12px">{item.text}</DarkText>
+                        </WhiteCard>
                 ))}
             </WhiteCard>
         </Container>

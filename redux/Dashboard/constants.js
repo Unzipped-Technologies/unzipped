@@ -26,6 +26,9 @@ export const HOTEL_ORDERS = "HOTEL_ORDERS";
 export const HOTEL_OWED = "HOTEL_OWED";
 export const UPDATE_STATUS = "UPDATE_STATUS";
 export const SUBMIT_ORDER = "SUBMIT_ORDER";
+export const GET_STORIES_LIST = "GET_STORIES_LIST";
+export const GET_TAGS_LIST = "GET_TAGS_LIST";
+export const SORT_STORIES_ON_DRAG = "SORT_STORIES_ON_DRAG";
 
 
 

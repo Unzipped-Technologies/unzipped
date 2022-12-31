@@ -7,6 +7,7 @@ const userPermissions = Object.freeze({
     UpdateCurrentUsers: 'updateCurrentUsers',
     AddSkill: 'addSkill',
     ListFreelancers: 'listFreelancers',
+    getFreelancerById: 'getFreelancerById',
     // lists
     GetList: 'getList',
     CreateList: 'createList',
@@ -23,11 +24,13 @@ const userPermissions = Object.freeze({
     userListBusinesses: 'userListBusinesses',
     listAllBusinesses: 'listAllBusinesses',
     deleteBusiness: 'deleteBusiness',
+    getBusinessById: 'getBusinessById',
     // departments
     CreateDepartment: 'createDepartment',
     UpdateDepartment: 'updateDepartment',
     GetDepartmentById: 'getDepartmentById',
     DeleteDepartment: 'deleteDepartment',
+    selectDepartment: 'selectDepartment',
     ListDepartment: 'listDepartments',
     // likes
     UserLike: 'userLike',
@@ -39,6 +42,13 @@ const userPermissions = Object.freeze({
     GetTagById: 'getTagById',
     DeleteTag: 'deleteTag',
     ListTag: 'listTags',
+    // tasks
+    CreateTask: 'createTask',
+    UpdateTask: 'updateTask',
+    GetTaskById: 'getTaskById',
+    DeleteTask: 'deleteTask',
+    ListTask: 'listTasks',
+    orderTasks: 'orderTasks',
     // stories
     CreateStory: 'createStory',
     UpdateStory: 'updateStory',
@@ -52,6 +62,7 @@ const accountTypePermissions = Object.freeze({
         // users
         userPermissions.UpdateCurrentUsers,
         userPermissions.ListFreelancers,
+        userPermissions.getFreelancerById,
         // lists
         userPermissions.GetList,
         userPermissions.UserCreateList,
@@ -62,6 +73,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userCreateBusiness,
         userPermissions.userUpdateBusiness,
         userPermissions.userListBusinesses,
+        userPermissions.getBusinessById,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -71,19 +83,27 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateDepartment,
         userPermissions.GetDepartmentById,
         userPermissions.DeleteDepartment,
-        userPermissions.ListDepartments,
+        userPermissions.selectDepartment,
+        userPermissions.ListDepartment,
         // tags
         userPermissions.CreateTag,
         userPermissions.UpdateTag,
         userPermissions.GetTagById,
         userPermissions.DeleteTag,
         userPermissions.ListTags,
+        // tasks
+        userPermissions.CreateTask,
+        userPermissions.UpdateTask,
+        userPermissions.GetTaskById,
+        userPermissions.DeleteTask,
+        userPermissions.ListTask,
+        userPermissions.orderTasks,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
         userPermissions.GetStoryById,
         userPermissions.DeleteStory,
-        userPermissions.ListStories,
+        userPermissions.ListStory,
         // message
         userPermissions.CreateMessage,
         userPermissions.UpdateMessage,
@@ -96,6 +116,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateCurrentUsers,
         userPermissions.AddSkill,
         userPermissions.ListFreelancers,
+        userPermissions.getFreelancerById,
         // lists
         userPermissions.GetList,
         userPermissions.UserCreateList,
@@ -110,12 +131,19 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
         userPermissions.UserDeleteLike,
+        // tasks
+        userPermissions.CreateTask,
+        userPermissions.UpdateTask,
+        userPermissions.GetTaskById,
+        userPermissions.DeleteTask,
+        userPermissions.ListTask,
+        userPermissions.orderTasks,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
         userPermissions.GetStoryById,
         userPermissions.DeleteStory,
-        userPermissions.ListStories,
+        userPermissions.ListStory,
         // messages
         userPermissions.CreateMessage,
         userPermissions.UpdateMessage,
@@ -129,6 +157,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateAllUsers,
         userPermissions.UpdateCurrentUsers,
         userPermissions.ListFreelancers,
+        userPermissions.getFreelancerById,
         // lists
         userPermissions.GetList,
         userPermissions.CreateList,
@@ -145,6 +174,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userListBusinesses,
         userPermissions.listAllBusinesses,
         userPermissions.deleteBusiness,
+        userPermissions.getBusinessById,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -154,19 +184,27 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UpdateDepartment,
         userPermissions.GetDepartmentById,
         userPermissions.DeleteDepartment,
-        userPermissions.ListDepartments,
+        userPermissions.selectDepartment,
+        userPermissions.ListDepartment,
         // tags
         userPermissions.CreateTag,
         userPermissions.UpdateTag,
         userPermissions.GetTagById,
         userPermissions.DeleteTag,
         userPermissions.ListTags,
+        // tasks
+        userPermissions.CreateTask,
+        userPermissions.UpdateTask,
+        userPermissions.GetTaskById,
+        userPermissions.DeleteTask,
+        userPermissions.ListTask,
+        userPermissions.orderTasks,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
         userPermissions.GetStoryById,
         userPermissions.DeleteStory,
-        userPermissions.ListStories,
+        userPermissions.ListStory,
         // message
         userPermissions.CreateMessage,
         userPermissions.UpdateMessage,

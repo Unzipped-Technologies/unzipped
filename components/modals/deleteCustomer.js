@@ -52,11 +52,6 @@ const SimpleModal = ({open, setOpen, token, deletes}) => {
         setOpen(false);
     }
 
-    useEffect(() => {
-        console.log('delete:')
-        console.log(deletes);
-    }, [])
-
     return (
         <div>
             <Modal

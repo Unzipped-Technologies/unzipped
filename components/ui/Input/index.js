@@ -25,7 +25,7 @@ const ControlContainer = styled.div`
     }
     width: ${props => {
         if (props.textarea) {
-            return '100%';
+            return '95%';
         } else if (props.width) {
             return props.width;
         } else {
@@ -74,6 +74,7 @@ const InputControl = styled.input`
     ${props => inputStyles(props)}
     border-bottom: none !important;
     margin-bottom: 0px  !important;
+    height: 100%;
     &:hover {
         border-bottom: none !important;
     }

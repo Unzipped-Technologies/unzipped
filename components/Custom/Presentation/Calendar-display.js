@@ -152,7 +152,6 @@ const CalendarDisplay = ({gtime, time, available, handler, hotel, link}) => {
 
     const timeClick = (c) => {
         var day = displayDates(c - 1)
-        console.log('item:' + c)
         // setDate(day.dateCode);
         dispatch(selectDate(String(day.dateCode).substring(4,15)));
         dispatch(selectTimes(null));
@@ -161,7 +160,6 @@ const CalendarDisplay = ({gtime, time, available, handler, hotel, link}) => {
     }
 
     const selectADate = (e) => {
-        console.log(e)
         if (e > new Date(yesterday)) {
             setDate(e);
             dispatch(selectDate(String(e).substring(4,15)));
@@ -179,10 +177,6 @@ const CalendarDisplay = ({gtime, time, available, handler, hotel, link}) => {
         dispatch(selectTimes(time))
         handler()
     }
-
-    useEffect(() => {
-        console.log(date)
-    }, [date])
 
     useEffect(() => {
         var now = new Date(date);

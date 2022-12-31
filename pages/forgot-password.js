@@ -19,10 +19,9 @@ const Reset = ({token}) => {
     const dispatch = useDispatch();
 
     const updateUser = () => {
-    setUser({
-        email: email,
-    });
-    console.log(user);
+        setUser({
+            email: email,
+        });
     };
 
     const resetPassword = (ev) => {

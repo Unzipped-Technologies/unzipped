@@ -25,6 +25,9 @@ import {
     GARAGE_ORDERS,
     SUBMIT_ORDER,
     HOTEL_ORDERS,
+    GET_STORIES_LIST,
+    GET_TAGS_LIST,
+    SORT_STORIES_ON_DRAG
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';

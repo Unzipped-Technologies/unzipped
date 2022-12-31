@@ -5,8 +5,6 @@ import IconHolder from '../IconHolder'
 
 const SectionElement = ({title, content, link}) => {
     const [focus, setFocus] = useState(false);
-    // console.log(image)
-    console.log(content)
     return (
         <React.Fragment>
             <div className="section-one-inner-container">

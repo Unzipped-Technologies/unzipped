@@ -40,7 +40,6 @@ const Orders = ({token, cookies, orders, loading, hasMoreOrders, userType, users
                 }
             })
             if (node) observer.current.observe(node)
-            console.log('print More')
         }
     }, [loading])
 

@@ -231,12 +231,12 @@ const menuItems = [
             {
                 name: 'Search Freelancers',
                 icon: <WorkIcon width={35} height={35}/>,
-                link: '/'
+                link: '/freelancers'
             },
             {
                 name: 'Browse By Skill',
                 icon: <FolderIcon width={35} height={35} />,
-                link: '/'
+                link: '/freelancers'
             }
         ],
         link: '/',

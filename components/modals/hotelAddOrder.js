@@ -93,10 +93,6 @@ const SimpleModal = ({open, setOpen, token, location, access, hotel, setNotifica
       }
     });
 
-    useEffect(() => {
-      console.log(orderDetails)
-    }, [orderDetails])
-
     const updateOrderDetails = () => {
       setOrderDetails({
         orderNumber: orderNumber,
@@ -137,7 +133,6 @@ const SimpleModal = ({open, setOpen, token, location, access, hotel, setNotifica
       } else {
           cookie = access
       }
-      console.log(orderDetails)
       dispatch(createOrder(orderDetails, cookie));
       setNotificationfunction('Order created Success');
       setTimeout(() => {  setNotificationfunction(''); }, 4000);

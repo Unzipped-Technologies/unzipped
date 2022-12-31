@@ -8,10 +8,11 @@ const ModalContainer = styled.div`
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     background: #fff;
+    height: ${({$height}) => $height ? $height : 'unset'};
     border: 2px solid #dcdcdc;
     box-sizing: border-box;
     border-radius: 4px;
-    padding: 0 20px 30px 20px;
+    padding: 30px 20px 30px 20px;
     border-radius: 4px;
     font-family: arial;
     z-index: 1000;
@@ -32,6 +33,15 @@ const ModalContainer = styled.div`
 export const ClosingIcon = styled(Icon)`
     position: absolute;
     right: 20px;
+    top: 20px;
+    &:hover {
+        cursor: pointer;
+    }
+`;
+
+export const Absolute = styled.div`
+    position: absolute !important;
+    right: 20px !important;
     top: 20px;
     &:hover {
         cursor: pointer;
@@ -59,14 +69,14 @@ const Heading = styled.h2`
     }
 `;
 
-const Modal = ({heading, children, onHide, hideOnClickOutside, className}) => {
+const Modal = ({heading, children, onHide, hideOnClickOutside, className, height}) => {
     const onModalClick = e => e.stopPropagation();
     return (
         <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}}>
-            <ModalContainer onClick={onModalClick}>
-                <Heading>{heading}</Heading>
+            <ModalContainer onClick={onModalClick} $height={height}>
+                <Absolute><ClosingIcon name="close" onClick={onHide} /></Absolute>
+                {heading && <Heading>{heading}</Heading>}
                 <div>{children}</div>
-                <ClosingIcon name="close" onClick={onHide} />
             </ModalContainer>
         </ModalShade>
     );

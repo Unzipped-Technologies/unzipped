@@ -6,6 +6,7 @@ const subscriptionSchema = new Schema({
   stripeId: String,
   plan: { type: Number, default: 0 },
   isBusiness: {type: Boolean, default: false},
+  paymentFrequency: Number,
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   BillingAddressLineOne: { type: String, default: '' },
@@ -16,10 +17,14 @@ const subscriptionSchema = new Schema({
   BillingAddressCity:  { type: String, default: '' },
   BillingAddressState:  { type: String, default: '' },
   BillingAddressZip:  { type: String, default: '' },
+  BusinessAddressPhone:  { type: String, default: '' },
   paymentMethod: {
     card: String, 
-    id: String
+    stripeId: String,
+    lastFour: String
   },
+  product: { type: Schema.Types.ObjectId, ref: 'product' },
+  payments: { type: Schema.Types.Mixed, ref: 'paymentHistory' },
 }, {
   timestamps: true
 });

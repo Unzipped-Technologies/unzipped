@@ -31,13 +31,13 @@ const Action = styled.div`
     }
 `;
 
-const Panel = ({list, business}) => {
+const Panel = ({list, business, selectList}) => {
     return (
         <Container>
-            <TitleText paddingLeft>{business}<Absolute top="20px"><Action>+ New List</Action></Absolute></TitleText>
+            <TitleText paddingLeft clickable>{business}<Absolute top="20px"><Action>+ New List</Action></Absolute></TitleText>
             <Underline />   
             {list.map(item => (
-                <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <WhiteCard borderColor="transparent" height="30px" row noMargin clickable onClick={() => selectList(item)}>
                     {item.icon}
                     <DarkText clickable noMargin paddingLeft hover>{item.text}</DarkText>
                 </WhiteCard>

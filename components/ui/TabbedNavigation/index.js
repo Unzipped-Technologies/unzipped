@@ -35,6 +35,7 @@ export const Simplebar = styled.div`
     }
     .simplebar-placeholder {
         width: auto !important;
+        height: 1px;
     }
 `;
 

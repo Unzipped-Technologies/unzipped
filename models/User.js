@@ -21,6 +21,7 @@ const userSchema = new Schema({
   isAdmin: { type: Boolean, default: false },
   isUserSubscribed: { type: Boolean, default: false },
   isIdentityVerified: { type: Boolean, default: false },
+  isPhoneVerified: { type: Boolean, default: false },
   isSuspended: { type: Boolean, default: false },
   plan: { type: Number, default: 0},
   phoneNumber: String,
@@ -34,6 +35,9 @@ const userSchema = new Schema({
   AddressCity:  { type: String, default: '' },
   AddressState:  { type: String, default: '' },
   AddressZip:  { type: String, default: '' },
+  trialEndDate: { type: Date, default: new Date() },
+  stripeSubscription: { type: String, default: '' },
+  isUserSubscribed: { type: Boolean, default: false },
   profileImage: { type: String, default: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'},
   freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
   lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
@@ -44,6 +48,7 @@ const userSchema = new Schema({
   dislikeTotal: { type: Number, default: 0 },
   likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
   dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+  notifications: { type: Schema.Types.Mixed, ref: 'notifications' },
 }, {
   timestamps: true
 });

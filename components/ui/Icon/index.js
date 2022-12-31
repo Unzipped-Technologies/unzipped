@@ -78,12 +78,37 @@ import DownWideIcon from '../icons/downWideIcon';
 import ActionIcon from '../icons/ActionIcon';
 import circleCheck from '../icons/checkCircle';
 import successCheck from '../icons/successCheck';
+import AlertRedIcon from '../icons/alert-red';
+import BackArrowLong from '../icons/backArrowLong';
+import Breifcase from '../icons/breifcase';
+import User from '../icons/user';
+import CheckMenu from '../icons/CheckMenu';
+import CartAlt from '../icons/CartAlt';
+import ChatBubble from '../icons/ChatBubble';
+import PhoneAlt from '../icons/PhoneAlt';
+import colorEmail from '../icons/colorEmail';
+import colorPhone from '../icons/colorPhone';
+import colorSheild from '../icons/colorSheild';
+import colorUser from '../icons/colorUser';
+import thumbsUp from '../icons/thumbsUp';
+import thumbsDown from '../icons/thumbsDown';
 
 const mapNameIcons = {
     alert: AlertIcon,
     actionIcon: ActionIcon,
     alertDone: AlertDoneIcon,
+    alertRed: AlertRedIcon,
     back: BackIcon,
+    BackArrowLong: BackArrowLong,
+    breifcase: Breifcase,
+    checkMenu: CheckMenu,
+    cartAlt: CartAlt,
+    chatBubble: ChatBubble,
+    colorEmail: colorEmail,
+    colorPhone: colorPhone,
+    colorSheild: colorSheild,
+    colorUser: colorUser,
+    phoneAlt: PhoneAlt,
     arrowRight: ArrowRight,
     calendar: calendar,
     check: CheckmarkIcon,
@@ -158,6 +183,9 @@ const mapNameIcons = {
     copywrite: Copywrite,
     googleCircle: GoogleCircle,
     github: Github,
+    user: User,
+    thumbsUp: thumbsUp,
+    thumbsDown: thumbsDown
 };
 
 /**

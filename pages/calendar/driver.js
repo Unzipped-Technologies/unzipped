@@ -26,7 +26,6 @@ const Driver = ({orders, cookies, token}) => {
     const eventModal = (event) => {
         // console.log(event)
         let itemToShow = orders.find(item => item._id === event.id);
-        console.log(itemToShow)
         setSelected(itemToShow)
         setOpen(true)
     }

@@ -21,11 +21,10 @@ const Container = styled.div`
 `;
  
 const Home = ({token}) => {
-    console.log(token)
     useEffect(() => {
-        if (token.access_token) {
+        if (token?.access_token) {
             if (!user) {
-            googleUser(token.access_token);
+            googleUser(token?.access_token);
             }
         }
     }, [])
@@ -53,7 +52,6 @@ Home.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,

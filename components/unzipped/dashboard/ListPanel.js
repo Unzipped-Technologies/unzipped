@@ -10,11 +10,27 @@ const Container = styled.div`
     border-radius: 10px;
 `;
 
-const ListPanel = ({list, business, selectedList, type}) => {
+const ListPanel = ({selectList, user, access, reorderStories, createNewStory, dropdownList, form, list, business, selectedList, type, tags = [], stories = [], updateCreateStoryForm, updateTasksOrder, departments = []}) => {
     return (
         <Container>
-            <LeftListPanel list={list} business={business} selectedList={selectedList}/>
-            <RightListPanel list={list} business={business} selectedList={selectedList} type={type}/>
+            <LeftListPanel selectList={selectList} list={list} business={business} selectedList={selectedList} departments={departments}/>
+            <RightListPanel 
+                updateTasksOrder={updateTasksOrder} 
+                updateCreateStoryForm={updateCreateStoryForm}
+                reorderStories={reorderStories}
+                tags={tags} 
+                dropdownList={dropdownList}
+                stories={stories} 
+                list={list} 
+                access={access}
+                createNewStory={createNewStory}
+                user={user}
+                business={business} 
+                selectedList={selectedList} 
+                type={type}
+                form={form}
+                departments={departments}
+            />
         </Container>
     )
 }

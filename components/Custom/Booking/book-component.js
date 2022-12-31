@@ -66,8 +66,6 @@ const BookService = ({ item, count, cart, bookNow, quantity, date, location, isA
     useState(() => {
         if (cart.length > 0) {
             let existed_item = cart.find(e => e.id === item.id);
-            console.log(item)
-            console.log(existed_item)
             // setQty(existed_item.quantity)
         }
 

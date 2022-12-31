@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
 const user = require('../../models/User');
+const taxDataTables = require('../../models/TaxDataTable');
 const thirdPartyApplications = require('../../models/ThirdPartyApplications');
 const freelancerSkills = require('../../models/FreelancerSkills');
 const list = require('../../models/List');
 const freelancer = require('../../models/Freelancer');
+const notifications = require('../../models/Notifications');
 const emailList = require('../../models/EmailList');
 const listHelper = require('./list');
 const { accountTypeEnum } = require("../enum/accountTypeEnum");
 const { planEnum } = require("../enum/planEnum");
+const { notificationEnum } = require("../enum/notificationEnum");
 const likeHistory = require('../../models/LikeHistory');
 const { likeEnum } = require('../enum/likeEnum');
 
@@ -87,6 +90,15 @@ const updateUserByid = async (id, data) => {
     } 
 }
 
+// update tax data
+const updateTaxDataByid = async (id, data) => {
+    try {
+        return await taxDataTables.findByIdAndUpdate(id, {$set:{...data}})
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
+    } 
+}
+
 // update User
 const updateUserByEmail = async (email, data) => {
     try {
@@ -134,7 +146,7 @@ const listFreelancers = async ({filter, take, skip}) => {
 
 const getFreelancerById = async (id) => {
     try {
-        return await freelancer.findOne({userId: id})
+        return await freelancer.findById(id)
             .populate({
                 path: 'user', 
                 model: 'users', 
@@ -290,7 +302,37 @@ const addToNewsletter = async (data) => {
     return await emailList.findOneAndUpdate({email: data}, {$set: {email: data}}, { upsert: true  })
 }
 
+const setUpNotificationsForUser = async (id) => {
+    const userNotifications = [
+        notificationEnum.IS_GITHUB,
+        notificationEnum.PICK_A_PLAN,
+        notificationEnum.SELECT_TYPE_OF_TALENT,
+        notificationEnum.CREATE_FIRST_BUSINESS,
+        // complete account
+        notificationEnum.UPDATE_ACCOUNT_DETAILS,
+        notificationEnum.UPLOAD_PROFILE_PIC,
+        // business notifications
+        notificationEnum.HIRE_A_FREELANCER,
+        notificationEnum.VIEW_FIRST_INVOICE,
+        // freelancer
+        notificationEnum.FIND_FIRST_JOB,
+    ]
+    try {
+        for (const notification of userNotifications) {
+            await notifications.create({
+                type: notification, 
+                userId: id,
+                user: await user.findById(id)
+            })
+        }
 
+        await user.findByIdAndUpdate(id, {
+            notifications: await notifications.find({ userId: id })
+        })
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
+    }
+}
 
 module.exports = {
     createUser,
@@ -304,6 +346,8 @@ module.exports = {
     listFreelancers,
     getFreelancerById,
     addListsToFreelancer,
+    setUpNotificationsForUser,
+    updateTaxDataByid,
     addLikeToFreelancer,
     removeLikeToFreelancer,
     listLikes,

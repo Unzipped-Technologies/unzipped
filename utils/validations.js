@@ -1,5 +1,6 @@
 ﻿import {PhoneNumberUtil} from 'google-libphonenumber';
 import Constants from './constants';
+import { planEnum } from '../server/enum/planEnum';
 
 class Validations {
     isEmpty(obj) {
@@ -248,12 +249,6 @@ class Validations {
         return array.filter((obj, index, self) => index === self.findIndex(el => el[key] === obj[key]));
     }
 
-    formatDate(data) {
-        const date = new Date(data);
-        /* Date format you have */
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear() + 1}`;
-    }
-
     checkNumberEven(num) {
         //check if the number is even
         if(num % 2 == 0) {
@@ -264,6 +259,28 @@ class Validations {
         else {
             return false;
         }
+    }
+    
+    // Date helpers
+
+    formatDate(data) {
+        const date = new Date(data);
+        /* Date format you have */
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear() + 1}`;
+    }
+
+    getMonthInText(date) {
+        // Creating a date object
+        const today = new Date(date);
+
+        // Getting full month name (e.g. "June")
+        return today.toLocaleString('default', { month: 'long' });
+    }
+
+    addDaysToDate(time, days) {
+        const date = new Date(time);
+        // Add ten days to specified date
+        return date.setDate(date.getDate() + days);
     }
 
     validateInvestorCapitalCommitmentValue(value, propsObj) {
@@ -288,6 +305,19 @@ class Validations {
         }
 
         return {error, message};
+    }
+
+    // product helpers
+
+    getPlanCost(id) {
+        switch (id) {
+            case planEnum.BASIC:
+                return 29
+            case planEnum.STANDARD:
+                return 79
+            case planEnum.ADVANCED:
+                return 299
+        }
     }
 }
 

@@ -18,7 +18,7 @@ import { loadStripe } from "@stripe/stripe-js";
 const Payment = ({changeFocus}) => {
   const stripe = loadStripe(
     // `${process.env.STRIPE_PUBLISHABLE_KEY}`
-    'pk_live_51IBOwxJBXTGShTxE1q9q4wSWoLuQbFZMNMVvETlX8mg3ovTE6bTjgOWZ77uhcpUG2qaS2hc6LUoVJVEeevv6HydV00xEfuZBHD'
+    'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog'
   );
   return (
     <Elements stripe={stripe}>
@@ -77,11 +77,6 @@ function CheckoutForm({changeFocus}) {
       const scrollView = (id) => {
         document.getElementById(id).scrollIntoView();
     }
-
-
-    // useEffect(() => {
-    //     console.log(orderDetails)
-    // }, [orderDetails])
 
     return (
       <div id="sb">
