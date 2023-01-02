@@ -42,6 +42,8 @@ const userPermissions = Object.freeze({
     GetTagById: 'getTagById',
     DeleteTag: 'deleteTag',
     ListTag: 'listTags',
+    addComment: 'addComment',
+    removeComment: 'removeComment',
     // tasks
     CreateTask: 'createTask',
     UpdateTask: 'updateTask',
@@ -91,6 +93,8 @@ const accountTypePermissions = Object.freeze({
         userPermissions.GetTagById,
         userPermissions.DeleteTag,
         userPermissions.ListTags,
+        userPermissions.addComment,
+        userPermissions.removeComment,
         // tasks
         userPermissions.CreateTask,
         userPermissions.UpdateTask,
@@ -138,6 +142,8 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteTask,
         userPermissions.ListTask,
         userPermissions.orderTasks,
+        userPermissions.addComment,
+        userPermissions.removeComment,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
@@ -199,6 +205,8 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteTask,
         userPermissions.ListTask,
         userPermissions.orderTasks,
+        userPermissions.addComment,
+        userPermissions.removeComment,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,

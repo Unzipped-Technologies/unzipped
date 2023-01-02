@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import Modal from '../../ui/Modal'
+import Button from '../../ui/Button'
 import Image from '../../ui/Image'
 import {
     TitleText,
@@ -12,6 +13,7 @@ import {
     Grid3,
 } from './style'
 import { FormField } from '../../ui'
+import { ValidationUtils } from '../../../utils'
 import styled from 'styled-components'
 
 const Left = styled.div`
@@ -21,13 +23,27 @@ const Left = styled.div`
     margin-right: 10px;
 `;
 
-const StoryModal = ({content, onHide, user}) => {
+const Relative = styled.div`
+    position: relative;
+`;
+
+const StoryModal = ({content, onHide, user, submitComments}) => {
     const [editDescription, setEditDescription] = useState(false)
     const [form, setForm] = useState({
         description: content?.description || '',
         comment: '',
+        img: ''
     })
     const wrapperRef = useRef(null);
+
+    const updateComments = () => {
+        submitComments({taskId: content._id, ...form})
+        setForm({
+            description: content?.description || '',
+            comment: '',
+            img: ''
+        })
+    }
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -42,13 +58,6 @@ const StoryModal = ({content, onHide, user}) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [wrapperRef]);
-    console.log(content)
-
-    // const handleKeyDown = (event) => {
-    //     if (event.key === 'Enter') {
-    //         setEditDescription(false);
-    //     }
-    // }; onKeyDown={handleKeyDown}
 
     return (
         <Modal onHide={() => onHide(false)} height="520px">
@@ -56,7 +65,7 @@ const StoryModal = ({content, onHide, user}) => {
             <Underline margin="15px 0px"/>
             <TitleText size="24px" textOverflow="ellipsis" width="90%" lineHeight="32px">{content?.taskName}</TitleText>
             <Grid3 block margin="0px" grid="2fr 1fr 1fr">
-                <Span dark size="16px" bold>assignee: <Span dark size="16px" clickable><Image radius="50%" src={content.employee.profileImage} margin="0px 5px 0px 10px" width="20px" height="20px" />{content.employee?.FirstName || 'Unassigned'} {content.employee?.LastName}</Span></Span>
+                <Span dark size="16px" bold>assignee: <Span dark size="16px" clickable><Image radius="50%" src={content.employee?.profileImage} margin="0px 5px 0px 10px" width="20px" height="20px" />{content.employee?.FirstName || 'Unassigned'} {content.employee?.LastName}</Span></Span>
                 <Span dark size="16px" bold>priority: <Span dark size="16px" clickable space> {content?.priority}</Span></Span>
                 <Span dark size="16px" bold>points: <Span clickable dark size="16px" space> {content?.storyPoints}</Span></Span>
             </Grid3>
@@ -67,7 +76,7 @@ const StoryModal = ({content, onHide, user}) => {
             {!editDescription ? (
                 <DarkText onClick={() => setEditDescription(true)} topMargin="20px">{form.description}</DarkText>
             ) : (
-                <div ref={wrapperRef}>
+                <Relative ref={wrapperRef}>
                     <FormField 
                         fieldType="input"
                         margin
@@ -79,19 +88,23 @@ const StoryModal = ({content, onHide, user}) => {
                         value={form.description}
                     >
                     </FormField>
-                </div>
+                </Relative>
 
             )}
 
             <Underline margin="15px 0px"/>
-            {content?.comments.length > 0 && <Span dark size="16px" bold>comments:</Span>}
-            {content?.comments.length > 0 && content?.comments.map(item => (
+            {content?.comments && content?.comments.length > 0 && <Span dark size="16px" bold>comments:</Span>}
+            {content?.comments && content?.comments.length > 0 && content?.comments.sort((a, b) => a?.updatedAt - b?.updatedAt).map(item => (
                 <WhiteCard borderColor="transparent" unset>
+                    <Grid2 block margin="0px">
                     <Span margin="10px 0px 10px 0px">
                         {item?.profilePic && <Image src={item?.profilePic} width="24px" height="24px" radius="50%"/>}
                         {item?.name && <Span space><DarkText noMargin>{item?.name}</DarkText></Span>}
                     </Span>
-
+                    <Span margin="10px 0px 10px 0px" size="14px">
+                        {item?.updatedAt && <Span space><DarkText small right noMargin>{ValidationUtils.formatDateWithDate(item?.updatedAt)} - {ValidationUtils.getTimeFormated(item?.updatedAt)}</DarkText></Span>}
+                    </Span>
+                    </Grid2>
                     {item?.text && <DarkText>{item?.text}</DarkText>}
                     {item?.img && <Image src={item?.img}/>}
                 </WhiteCard>
@@ -114,6 +127,7 @@ const StoryModal = ({content, onHide, user}) => {
                     value={form.comment}
                 >
                 </FormField>
+                <Absolute zIndex={10} right="45px" bottom="25px"><Button type="action" fontSize="14px" small onClick={() => updateComments({taskId: content._id, ...form})}>Comment</Button></Absolute>
             </Span>
 
         </Modal>

@@ -12,14 +12,19 @@ const taskSchema = new Schema({
   priority: { type: Number, default: 0 },
   order: { type: Number, default: 0 },
   description: String,
-  comments: {
-    type: [{
+  comments: [{
+    type: new Schema({
+      id: String,
       text: String, 
       img: String,
       profilePic: String,
+      userId: String,
       name: String,
-    }], 
-    default: []},
+    },
+    { timestamps: true }
+    ), 
+    default: [],
+  }],
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
   Status: { type: Number, default: 0 },

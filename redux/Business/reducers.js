@@ -25,6 +25,8 @@ import {
     UPDATE_BUSINESS_FORM,
     LOAD_STATE,
     SUCCESS,
+    ADD_COMMENT_TO_STORY,
+    REMOVE_COMMENT_FROM_STORY,
     UPDATE_CREATE_STORY,
 } from './constants';
 
@@ -132,6 +134,16 @@ const Business = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, stories: action.payload};
         case GET_STORIES:
             return {...state, loading: false, stories: [...action.payload]};
+        case ADD_COMMENT_TO_STORY:
+            const updatedStories = state.stories || []
+            const index = updatedStories.map(e => e._id).indexOf(action.payload._id);
+            if (index !== -1) {
+            updatedStories[index] = action.payload;
+            }
+            return {...state, loading: false, stories: [...updatedStories]};
+        case REMOVE_COMMENT_FROM_STORY:
+            const removeStory = state.stories.filter(e => e._id !== action.payload._id)
+            return {...state, loading: false, stories: removeStory};
         case SELECT_DEPARTMENT:
             return {...state, loading: false, selectedDepartment: action.payload.selected, stories: [...action.payload.stories]};
         case DEPARTMENT_ERROR:

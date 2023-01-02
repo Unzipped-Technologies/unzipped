@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
-import {useRouter} from 'next/router';
 
 
 const MenuDropdown = styled.div`
@@ -38,7 +37,6 @@ const HR = styled.hr``;
 
 const Dropdown = ({items, ref, onClose, token, right, top}) => {
     const profileRef = useRef(null);
-    const router = useRouter();
     
     useEffect(() => {
         function handleClickOutside(event) {
@@ -61,7 +59,7 @@ const Dropdown = ({items, ref, onClose, token, right, top}) => {
                 return <HR key={index}/> 
             }
             return (
-                <Row key={e.name + index}  onClick={() => e?.onClick ? e?.onClick(token) : () => router.push(e.link)}>{e.icon}<Span3>{e.name}</Span3></Row>
+                <Row key={e.name + index}  onClick={() => e?.onClick ? e?.onClick(token) : () => {}}>{e.icon}{e?.link ? <Link href={e.link}><Span3>{e.name}</Span3></Link> : <Span3>{e.name}</Span3>}</Row>
             )
         })}
         </MenuDropdown>

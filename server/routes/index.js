@@ -11,6 +11,7 @@ router.use('/facebook', require('./facebookRoutes'));
 router.use('/list', require('./listRoutes'));
 router.use('/business', require('./businessRoutes'));
 router.use('/like', require('./likeRoutes'));
+router.use('/message', require('./messageRoutes'));
 
 
 module.exports = router;

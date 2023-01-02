@@ -180,10 +180,11 @@ const typeColors = {
         background: theme.accent3,
         border: theme.accent3,
     },
-    table: {
-        text: theme.secondary,
-        border: theme.border,
+    action: {
+        text: 'rgb(60, 65, 73)',
+        border: 'rgb(223, 225, 228)',
         background: '#fff',
+        hover: 'rgb(244, 245, 248)'
     },
 };
 

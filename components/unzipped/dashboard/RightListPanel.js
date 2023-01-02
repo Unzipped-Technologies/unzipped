@@ -21,6 +21,7 @@ import Image from '../../ui/Image'
 import Dropdowns from '../../ui/Dropdowns'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Projects from '../../../pages/dashboard/projects'
+import { ValidationUtils } from '../../../utils'
 
 const Container = styled.div`
     position: relative;
@@ -147,6 +148,7 @@ const Panel = ({
     loading,
     user,
     updateCreateStoryForm,
+    addCommentToStory,
     createNewStory,
     form
 }) => {
@@ -160,7 +162,6 @@ const Panel = ({
     const [selectedStory, setSelectedStory] = useState(null);
     const dragItem = useRef();
     const dragOverItem = useRef();
-
     const setDropdowns = (item) => {
         setTimeout(function() { 
             setMenuOpen(item)
@@ -280,7 +281,20 @@ const Panel = ({
         setStoryModal(true)
     }
 
+    const submitComments = (form) => {
+        addCommentToStory({
+            taskId: form.taskId,
+            text: form?.comment,
+            profilePic: user?.profileImage,
+            userId: user._id,
+            name: ValidationUtils.getFullNameFromUser(user),
+            img: form?.img
+        }, access)
+        // setStoryModal(false)
+    }
+
     useEffect(() => {
+        // updates list of stories displayed when changes happen to stories
         const storyList = []
         for (const tag of tags) {
             storyList.push({
@@ -291,6 +305,14 @@ const Panel = ({
                 }
             })
             storyList.push(...stories.filter(item => item.tag === tag))
+        }
+        // updates selected story when updates happen to story
+        if (selectedStory) {
+            const story = stories.find(e => selectedStory._id === e._id)
+            if (story) {
+                const employee = dropdownList.find(e => e._id === (story?.assigneeId || story?.assignee))
+                setSelectedStory({...story, employee})
+            }
         }
     }, [stories])
 
@@ -428,20 +450,7 @@ const Panel = ({
                 )}
             </StoryTable>
             {storyModal && (
-                <StoryModal user={user} content={{...selectedStory, department: selectedList, comments: [
-                    {
-                        text: 'safdfds dsfosai dnsofnds ndosiafnidsaf n oashfisajf ndsiafnosadi dsaofj',
-                        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914234/testimonial_5_tksguz.jpg',
-                        img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047049/cld-sample-3.jpg',
-                        name: 'Andrew Hill'
-                    },
-                    {
-                        text: 'safdfds dssdaffosai dnsofnds afnosadi dsaofj',
-                        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671914234/testimonial_8_qce67b.jpg',
-                        img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047048/cld-sample.jpg',
-                        name: 'Jessica Maynard'
-                    },
-                ]}} onHide={setStoryModal}/>
+                <StoryModal user={user} content={{...selectedStory, department: selectedList}} submitComments={submitComments} onHide={setStoryModal}/>
             )}
             {createAStory && (
                 <Modal onHide={() => setCreateAStory(false)} height="520px">

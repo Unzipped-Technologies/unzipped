@@ -27,6 +27,10 @@ class Validations {
         return true;
     }
 
+    getFullNameFromUser(user) {
+        return `${user?.FirstName || ''} ${user?.LastName || ''}`
+    }
+
     _isNull(value) {
         if (value === '') return true;
         if (value === undefined) return true;
@@ -269,12 +273,22 @@ class Validations {
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear() + 1}`;
     }
 
-    getMonthInText(date) {
+    formatDateWithDate(data) {
+        const date = new Date(data);
+        /* Date format you have */
+        return `${this.getMonthInText(date, true)}. ${date.getDate()}, ${date.getFullYear()}`;
+    }
+
+    getTimeFormated(data) {
+        return new Date(data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+
+    getMonthInText(date, short) {
         // Creating a date object
         const today = new Date(date);
 
         // Getting full month name (e.g. "June")
-        return today.toLocaleString('default', { month: 'long' });
+        return today.toLocaleString('default', { month: short ? 'short' : 'long' });
     }
 
     addDaysToDate(time, days) {

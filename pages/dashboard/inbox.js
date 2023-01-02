@@ -15,7 +15,7 @@ const notifications = [
     { type:"explore"},
 ]
 
-const user = [
+const message = [
     {
         text: 'Upload a profile picture',
         icon: <Image radius="50%" width="34px" src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png" />,

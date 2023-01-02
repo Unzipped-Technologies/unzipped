@@ -74,7 +74,7 @@ const Modal = ({heading, children, onHide, hideOnClickOutside, className, height
     return (
         <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}}>
             <ModalContainer onClick={onModalClick} $height={height}>
-                <Absolute><ClosingIcon name="close" onClick={onHide} /></Absolute>
+                <Absolute onClick={onHide}><ClosingIcon name="close" onClick={onHide} /></Absolute>
                 {heading && <Heading>{heading}</Heading>}
                 <div>{children}</div>
             </ModalContainer>

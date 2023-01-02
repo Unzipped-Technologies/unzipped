@@ -11,7 +11,8 @@ import {
     updateCreateStoryForm, 
     createStory, 
     getBusinessById, 
-    reorderStories 
+    reorderStories,
+    addCommentToStory
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
@@ -35,7 +36,8 @@ const Tasklist = ({
     updateCreateStoryForm,
     createStory,
     getBusinessById,
-    reorderStories
+    reorderStories,
+    addCommentToStory
 }) => {
     const access = token?.access_token || cookie
 
@@ -81,6 +83,7 @@ const Tasklist = ({
                 updateTasksOrder={updateTasksOrder} 
                 updateCreateStoryForm={updateCreateStoryForm}
                 reorderStories={reorderStories}
+                addCommentToStory={addCommentToStory}
                 createNewStory={createNewStory}
                 tags={tags} 
                 access={access}
@@ -114,7 +117,6 @@ Tasklist.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         tags: state.Business.tags,
         loading: state.Business?.loading,
@@ -139,6 +141,7 @@ const mapDispatchToProps = (dispatch) => {
         getBusinessById: bindActionCreators(getBusinessById, dispatch),
         createStory: bindActionCreators(createStory, dispatch),
         reorderStories: bindActionCreators(reorderStories, dispatch),
+        addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
     }
 }
 

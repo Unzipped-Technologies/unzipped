@@ -62,7 +62,7 @@ const DarkText = styled.div`
     white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'pre-line'};
     overflow: ${({textOverflow}) => textOverflow ? 'hidden' : 'unset'};
     width: 96%;
-    text-align: ${({center}) => center ? 'center' : 'unset'};
+    text-align: ${({center, right}) => center ? 'center' : right ? 'right' : 'unset'};
     color: ${({error, color}) => !error ? color ? color : theme.text2 : theme.error};
     &:hover {
         color: ${({hover}) => hover ? theme.selectedText : theme.text2}
@@ -80,6 +80,7 @@ const Absolute = styled.div`
     bottom: ${({bottom}) => bottom ? bottom : 'unset'};
     right: ${({left, right}) => left ? 'unset' : right ? right : '10px'};
     left: ${({left, wideLeft, smallLeft}) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
+    z-index: ${({zIndex}) => zIndex ? zIndex : 'inherit'};
 `;
 
 const Underline = styled.div`
@@ -198,6 +199,7 @@ export const SimpleText = styled.span`
 export const Span = styled.span`
     display: flex;
     flex-flow: row;
+    position: relative;
     font-family: 'Roboto';
     font-style: normal;
     font-weight: ${({bold}) => bold ? 600 : 400};

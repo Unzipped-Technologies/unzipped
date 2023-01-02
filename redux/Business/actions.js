@@ -20,6 +20,8 @@ import {
     SUCCESS,
     LOAD_STATE,
     CREATE_BUSINESS,
+    ADD_COMMENT_TO_STORY,
+    REMOVE_COMMENT_FROM_STORY,
     UPDATE_BUSINESS_FORM,
     RESET_BUSINESS_FORM,
     GET_BUSINESSES,
@@ -76,6 +78,42 @@ export const createStory = (data, token) => async (dispatch, getState) => {
         .post(`/api/business/current/task/create`, data, tokenConfig(token))
         .then(res => dispatch({
             type: CREATE_STORY,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
+export const addCommentToStory = (data, token) => async (dispatch, getState) => {
+    //department Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .post(`/api/business/current/comment/add`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: ADD_COMMENT_TO_STORY,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+}
+
+export const removeCommentFromStory = (data, token) => async (dispatch, getState) => {
+    //department Loading
+    dispatch({type: LOAD_STATE})
+
+    await axios
+        .post(`/api/business/current/task/create`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: REMOVE_COMMENT_FROM_STORY,
             payload: res.data,
         }))
         .catch(err => {

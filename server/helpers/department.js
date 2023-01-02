@@ -155,6 +155,31 @@ const reorderTasks = async (lists) => {
     return {msg: 'success'}
 }
 
+const addCommentToTask = async (data) => {
+    const task = await tasks.findById(data.taskId)
+
+    if (!task) return undefined
+    if (!task?.comments) task.comments = []
+    
+    const idNumber = task?.comments.length + 1
+    task?.comments.push({id: idNumber, ...data})
+    await task.save()
+    await department.findByIdAndUpdate(task.departmentId, {
+        tasks: await tasks.find({departmentId: task.departmentId})
+    })
+    return task
+}
+
+const removeCommentToTask = async (data) => {
+    const task = await tasks.findById(data.taskId)
+    task.comments.filter(e => e.id !== data.commentId)
+    await task.save()
+    await department.findByIdAndUpdate(task.departmentId, {
+        tasks: await tasks.find({departmentId: task.departmentId})
+    })
+    return task
+}
+
 
 module.exports = {
     createDepartments,
@@ -162,6 +187,8 @@ module.exports = {
     listDepartments,
     getDepartmentById,
     updateDepartment,
+    addCommentToTask,
+    removeCommentToTask,
     deleteDepartment,
     addBusinessAssociateToBusiness,
     addTagToDepartment,

@@ -167,5 +167,25 @@ router.post('/current/task/order', requireLogin, permissionCheckHelper.hasPermis
   }
 });
 
+router.post('/current/comment/add', requireLogin, permissionCheckHelper.hasPermission('addComment'), async (req, res) => {
+  try {
+    const newComment = await departmentHelper.addCommentToTask(req.body)
+    if(!newComment) throw Error('failed to add comment to story')
+    res.json(newComment)
+  } catch (e) {
+    res.status(400).json({msg: e.message})
+  }
+});
+
+router.post('/current/comment/remove', requireLogin, permissionCheckHelper.hasPermission('removeComment'), async (req, res) => {
+  try {
+    const newComment = await departmentHelper.removeCommentToTask(req.body)
+    if(!newComment) throw Error('failed to remove comment from story')
+    res.json(newComment)
+  } catch (e) {
+    res.status(400).json({msg: e.message})
+  }
+});
+
 
 module.exports = router;
