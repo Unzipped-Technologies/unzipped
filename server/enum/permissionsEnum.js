@@ -57,6 +57,9 @@ const userPermissions = Object.freeze({
     GetStoryById: 'getStoryById',
     DeleteStory: 'deleteStory',
     ListStory: 'listStories',
+    // messages
+    sendMessage: 'sendMessage',
+    getMessagesById: 'getMessagesById',
 })
 
 const accountTypePermissions = Object.freeze({
@@ -109,11 +112,11 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteStory,
         userPermissions.ListStory,
         // message
-        userPermissions.CreateMessage,
+        userPermissions.sendMessage,
         userPermissions.UpdateMessage,
         userPermissions.GetMessageById,
         userPermissions.DeleteMessage,
-        userPermissions.ListMessages,
+        userPermissions.getMessagesById,
     ],
     [accountTypeEnum.INVESTOR]: [
         // users
@@ -151,11 +154,11 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteStory,
         userPermissions.ListStory,
         // messages
-        userPermissions.CreateMessage,
+        userPermissions.sendMessage,
         userPermissions.UpdateMessage,
         userPermissions.GetMessageById,
         userPermissions.DeleteMessage,
-        userPermissions.ListMessages,
+        userPermissions.getMessagesById,
     ],
     [accountTypeEnum.ADMIN]: [
         // users
@@ -214,11 +217,11 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteStory,
         userPermissions.ListStory,
         // message
-        userPermissions.CreateMessage,
+        userPermissions.sendMessage,
         userPermissions.UpdateMessage,
         userPermissions.GetMessageById,
         userPermissions.DeleteMessage,
-        userPermissions.ListMessages,
+        userPermissions.getMessagesById,
     ]
 })
   

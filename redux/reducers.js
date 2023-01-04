@@ -5,6 +5,7 @@ import Vehicle from './vehicle/reducers';
 import Dashboard from './Dashboard/reducers';
 import Business from './Business/reducers';
 import Freelancers from './Freelancers/reducers';
+import Messages from './Messages/reducers';
 
 const rootReducer = combineReducers({
     // counter: counterReducer
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
     Vehicle,
     Dashboard,
     Business,
-    Freelancers
+    Freelancers,
+    Messages,
 });
 
 export default rootReducer;

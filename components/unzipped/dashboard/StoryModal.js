@@ -94,7 +94,7 @@ const StoryModal = ({content, onHide, user, submitComments}) => {
 
             <Underline margin="15px 0px"/>
             {content?.comments && content?.comments.length > 0 && <Span dark size="16px" bold>comments:</Span>}
-            {content?.comments && content?.comments.length > 0 && content?.comments.sort((a, b) => a?.updatedAt - b?.updatedAt).map(item => (
+            {content?.comments && content?.comments.length > 0 && content?.comments.map(item => (
                 <WhiteCard borderColor="transparent" unset>
                     <Grid2 block margin="0px">
                     <Span margin="10px 0px 10px 0px">

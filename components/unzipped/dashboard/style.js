@@ -81,6 +81,9 @@ const Absolute = styled.div`
     right: ${({left, right}) => left ? 'unset' : right ? right : '10px'};
     left: ${({left, wideLeft, smallLeft}) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
     z-index: ${({zIndex}) => zIndex ? zIndex : 'inherit'};
+    @media(max-width: ${({hide}) => hide ? hide + 'px' : '0px'}) {
+        display: none;
+    }
 `;
 
 const Underline = styled.div`
@@ -93,12 +96,14 @@ const WhiteCard = styled.div`
     background: ${({background}) => background ? background : '#fff'};
     border: 1px ${({borderColor}) => borderColor ? borderColor : '#d8d8d8'} solid;
     border-radius: ${({borderRadius}) => borderRadius ? borderRadius : '5px'};
+    max-width: ${({maxWidth}) => maxWidth ? maxWidth : 'unset'};
     width: 100%;
     display: flex;
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     flex-flow: ${({row}) => row ? 'row' : 'column'};
     height: ${({size, unset, height}) => size === 'large' ? '151px' : size === 'extraLarge' ? '370px' : unset ? 'unset' : height ? height :'63px'};
     align-items: center;
+    justify-content: ${({center}) => center ? 'center' : 'normal'};
     padding: ${({padding}) => padding ? padding : '20px 20px'};
     position: relative;
     box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
@@ -209,7 +214,7 @@ export const Span = styled.span`
     width: 100%;
     margin: ${({margin}) => margin ? margin : 'unset'};
     margin-left: ${({space}) => space ? '6px' : 'unset'};
-    align-items: center;
+    align-items: ${({top}) => top ? top : 'center'};
     color: ${({dark}) => dark ? theme.text2 : '#FFFFFF'};
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
 `;

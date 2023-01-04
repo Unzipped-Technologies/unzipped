@@ -2,13 +2,12 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const messageSchema = new Schema({
-  userSentId: String,
-  userReceivedId: String,
+  sender: { type: Schema.Types.ObjectId, ref: 'users' },
   message: { type: String, default: '' },
   attachment: String,
-  otherUserProfilePic: String,
-  isAlert: {type: Boolean, default: true},
-  isRead: {type: Boolean, default: true},
+  conversationId: String,
+  isAlert: {type: Boolean, default: false},
+  isRead: {type: Boolean, default: false},
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
 }, {

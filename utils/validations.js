@@ -291,6 +291,12 @@ class Validations {
         return today.toLocaleString('default', { month: short ? 'short' : 'long' });
     }
 
+    getMostRecentlyUpdated(array) {
+        if (Array.isArray(array) && array.length > 0) {
+            return array.reduce((a, b) => a.updatedAt > b.updatedAt ? a : b);
+          }
+    }
+
     addDaysToDate(time, days) {
         const date = new Date(time);
         // Add ten days to specified date

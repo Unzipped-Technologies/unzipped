@@ -9,7 +9,7 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     flex-flow: column;
-    margin: 45px 0px 0px 0px;
+    margin: ${({margin}) => margin ? margin : '45px 0px 0px 0px'};
 `;
 
 const Span = styled.span`
@@ -23,9 +23,10 @@ const TitleBlock = styled.div`
 `;
 
 const Block = styled.div`
-    width: 70%;
-    display: grid;
-    grid-template-columns: 3fr 1fr;
+    width: ${({$width}) => $width ? $width : '70%'};
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
     align-items: center;
     max-width: 1100px;
 `;
@@ -36,18 +37,18 @@ const Item = styled.div`
     align-items: center;
 `;
 
-const SearchBar = ({take, setTake, title, sort, setSort, sortOptions}) => {
+const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, width}) => {
     return (
-        <Container>
+        <Container margin={margin}>
             {title && <TitleBlock><TitleText title large>{title}</TitleText></TitleBlock>}
-            <Block>
+            <Block $width={width}>
                 <Search 
                     searchableItems={[
                         {id: 1, name: 'item 1'},
                         {id: 2, name: 'item 2'},
                         {id: 3, name: 'item 3'},
                     ]}
-                    width="90%"
+                    width="80%"
                     keys={['name']}
                     onChange={filteredResults => console.log(filteredResults)}
                     placeholder={'Search'}

@@ -1,39 +1,89 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Nav from '../../components/unzipped/header';
-import Image from '../../components/ui/Image'
-import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel';
+import ConversationContainer from '../../components/unzipped/ConversationContainer';
+import MessageContainer from '../../components/unzipped/MessageContainer';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import { 
+    getConversationList, 
+    sendMessage, 
+    selectConversation, 
+} from '../../redux/actions';
+import { parseCookies } from "../../services/cookieHelper";
+import styled from 'styled-components'
 
-const notifications = [
-    { type:"plan"},
-    { type:"github"},
-    { type:"browse"},
-    { type:"dismiss"},
-    { type:"blue"},
-    { type:"createBusiness"},
-    { type:"faq"},
-    { type:"updateBusiness"},
-    { type:"explore"},
-]
+const Page = styled.div`
+    max-height: 100vh;
+    overflow: hidden;
+`;
 
-const message = [
-    {
-        text: 'Upload a profile picture',
-        icon: <Image radius="50%" width="34px" src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png" />,
-        padding: true
-    },
-    {
-        text: 'Select a plan for your account',
-        icon: <></>,
-        padding: false
-    },
-]
+const Container = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+`;
 
-const Inbox = () => {
+const Inbox = ({
+    token, 
+    cookie,
+    user,
+    // redux variables
+    conversations,
+    selectedConversation,
+    // redux actions
+    getConversationList,
+    sendMessage,
+    selectConversation,
+}) => {
+    const access = token.access_token || cookie
+    const [form, setForm] = useState({
+        filter: {},
+        skip: 0,
+        take: 25
+    })
+
+    const openConversation = (id) => {
+        selectConversation(id, access)
+    }
+
+    useEffect(() => {
+        getConversationList(form, access)
+    }, [])
+
     return (
-        <React.Fragment>
+        <Page>
             <Nav isSubMenu/>
-        </React.Fragment>
+            <Container>
+                <ConversationContainer conversations={conversations} userEmail={user.email} openConversation={openConversation}/>
+                <MessageContainer />
+            </Container>
+        </Page>
     )
 }
 
-export default Inbox;
+Inbox.getInitialProps = async ({ req, res }) => {
+    const token = parseCookies(req)
+    
+      return {
+        token: token && token,
+      }
+    }
+
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+        cookie: state.Auth.token,
+        user: state.Auth?.user,
+        conversations: state.Messages?.conversations,
+        selectedConversation: state.Messages?.selectConversation
+    }
+  }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getConversationList: bindActionCreators(getConversationList, dispatch),
+        sendMessage: bindActionCreators(sendMessage, dispatch),
+        selectConversation: bindActionCreators(selectConversation, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Inbox);
