@@ -36,6 +36,7 @@ const ControlContainer = styled.div`
 
 const InputContainer = styled.div`
     ${props => inputContainerStyles(props)}
+    padding-left: ${({message}) => message ? '45px' : '5px'} !important;
 `;
 
 const inputContainerStyles = props => `
@@ -43,7 +44,7 @@ const inputContainerStyles = props => `
     border-radius: 4px;
     border: 2px solid ${props.border};
     height: 100%;
-    padding-left: 5px;
+    padding-left: ${({message}) => message ? '45px' : '10px'} !important;
 `;
 
 const inputStyles = props => `
@@ -111,6 +112,7 @@ const Input = ({
     autosize,
     children,
     currency,
+    message,
     width,
     fontSize = '',
     borderColor = '',
@@ -125,7 +127,7 @@ const Input = ({
     }
     return (
         <ControlContainer textarea={textarea} height={height} autosize={autosize} width={width}>
-            <InputContainer disabled={disabled} border={border}>
+            <InputContainer disabled={disabled} border={border} message={message}>
                 <Control fontSize={fontSize} type={type} accepted={accepted} disabled={disabled} {...rest} />
                 {accepted && <Bullet border={border}>&bull;</Bullet>}
             </InputContainer>

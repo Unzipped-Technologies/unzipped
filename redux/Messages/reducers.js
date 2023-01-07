@@ -25,8 +25,12 @@ const Messages = (state = INIT_STATE, action) => {
             return { ...state, loading: true };
         case GET_CONVERSATIONS:
             const convoList = action.payload.sort((a, b) => a?.updatedAt - b?.updatedAt)
-            convoList[0] = {...action.payload[0], isSelected: true}
-            return { ...state, loading: false, conversations: [...convoList], selectedConversation: convoList };
+            let index = 0
+            if (state.selectedConversation) {
+                index = convoList.map(e => e._id).indexOf(state.selectedConversation._id)
+            }
+            convoList[index] = {...action.payload[0], isSelected: true}
+            return { ...state, loading: false, conversations: [...convoList], selectedConversation: state.selectedConversation || convoList[0] };
         case SELECT_CONVERSATION:
             const newConversation = state.conversations
             const indexToUpdate = newConversation.map(e => e._id).indexOf(action.payload._id)

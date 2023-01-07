@@ -8,18 +8,22 @@ import {
     getConversationList, 
     sendMessage, 
     selectConversation, 
+    getFreelancerById,
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components'
 
 const Page = styled.div`
     max-height: 100vh;
+    height: 100vh;
     overflow: hidden;
 `;
 
 const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr 4fr;
+    height: calc(100% - 127px);
+    max-height: 100%;
 `;
 
 const Inbox = ({
@@ -45,6 +49,21 @@ const Inbox = ({
         selectConversation(id, access)
     }
 
+    const sendMessageToUser = (form) => {
+        sendMessage({
+            sender: {
+                userId: form.senderId,
+                isInitiated: true
+            },
+            receiver: {
+                userId: form.receiverId
+            },
+            message: form.message,
+            attachment: form.attachment,
+            conversationId: selectedConversation._id || null
+        }, access)
+    }
+
     useEffect(() => {
         getConversationList(form, access)
     }, [])
@@ -54,7 +73,7 @@ const Inbox = ({
             <Nav isSubMenu/>
             <Container>
                 <ConversationContainer conversations={conversations} userEmail={user.email} openConversation={openConversation}/>
-                <MessageContainer />
+                <MessageContainer data={selectedConversation} userEmail={user.email} userId={user._id} sendMessageToUser={sendMessageToUser}/>
             </Container>
         </Page>
     )
@@ -69,12 +88,11 @@ Inbox.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         cookie: state.Auth.token,
         user: state.Auth?.user,
         conversations: state.Messages?.conversations,
-        selectedConversation: state.Messages?.selectConversation
+        selectedConversation: state.Messages?.selectedConversation,
     }
   }
 
@@ -83,6 +101,7 @@ const mapDispatchToProps = (dispatch) => {
         getConversationList: bindActionCreators(getConversationList, dispatch),
         sendMessage: bindActionCreators(sendMessage, dispatch),
         selectConversation: bindActionCreators(selectConversation, dispatch),
+        getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
     }
 }
 

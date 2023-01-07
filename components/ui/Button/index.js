@@ -11,6 +11,7 @@ const ButtonContainer = styled.button`
     outline: none !important;
     &:focus {
         outline: ${({popout}) => (popout ? 'none' : 'inherit')};
+        background: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
     }
     background: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
     &:hover {
@@ -185,6 +186,12 @@ const typeColors = {
         border: 'rgb(223, 225, 228)',
         background: '#fff',
         hover: 'rgb(244, 245, 248)'
+    },
+    transparent: {
+        text: 'rgb(60, 65, 73)',
+        border: 'transparent',
+        background: 'transparent',
+        hover: 'transparent'
     },
 };
 

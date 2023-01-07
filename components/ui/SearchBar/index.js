@@ -9,7 +9,7 @@ const Container = styled.div`
     align-items: center;
     justify-content: center;
     flex-flow: column;
-    margin: ${({margin}) => margin ? margin : '45px 0px 0px 0px'};
+    padding: ${({margin}) => margin ? margin : '45px 0px 0px 0px'};
 `;
 
 const Span = styled.span`

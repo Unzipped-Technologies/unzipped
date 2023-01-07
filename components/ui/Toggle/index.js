@@ -3,12 +3,16 @@ import styled from 'styled-components';
 import Text from '../Text';
 import PropTypes from 'prop-types';
 import {HelpIcon} from '..';
+import theme from '../theme';
+import {
+    TitleText,
+} from '../../unzipped/dashboard/style'
 
 /**
  * Toggle Component.
  */
 
-const calculateColor = ({theme, toggled, disabled}) => {
+const calculateColor = ({toggled, disabled}) => {
     if (disabled) {
         return toggled ? theme.secondaryLight : theme.tint3;
     }
@@ -19,11 +23,17 @@ const ToggleDiv = styled.div`
     display: flex;
     align-items: center;
     margin-bottom: 30px;
+    justify-content: space-between;
+    width: 90%;
+    @media(max-width: 1516px) {
+        width: 98%;
+    }
 `;
 
 const ToggleText = styled(Text)`
     color: ${props => (props.disabled ? props.theme.tint2 : '')};
-    margin-left: 12px;
+    font-size: 13px;
+    margin: 0px;
 `;
 
 const ToggleContainer = styled.div`
@@ -41,6 +51,8 @@ const TextContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-flow: column;
+    margin: 0px;
 `;
 
 const StyledIcon = styled(HelpIcon)`
@@ -61,7 +73,7 @@ const Notch = styled.div`
     }
 `;
 
-const Toggle = ({toggled, isToggled, sideText, help, helpText, className = '', disabled}) => {
+const Toggle = ({toggled, isToggled, sideText, help, helpText, title, className = '', disabled}) => {
     const handleToggle = () => {
         if (disabled) {
             return;
@@ -71,15 +83,17 @@ const Toggle = ({toggled, isToggled, sideText, help, helpText, className = '', d
 
     return (
         <ToggleDiv className={className}>
-            <ToggleContainer role="button" toggled={toggled} onClick={handleToggle} disabled={disabled}>
-                <Notch role="button" toggled={toggled} disabled={disabled}></Notch>
-            </ToggleContainer>
             <TextContainer>
+                {title && <TitleText noMargin>{title}</TitleText>}
                 <ToggleText level={2} disabled={disabled}>
                     {sideText}
                 </ToggleText>
                 {help && <StyledIcon text={helpText} />}
             </TextContainer>
+            <ToggleContainer role="button" toggled={toggled} onClick={handleToggle} disabled={disabled}>
+                <Notch role="button" toggled={toggled} disabled={disabled}></Notch>
+            </ToggleContainer>
+
         </ToggleDiv>
     );
 };

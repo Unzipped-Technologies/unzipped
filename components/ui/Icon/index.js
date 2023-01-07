@@ -70,6 +70,8 @@ import Play from '../icons/play';
 import QuestionCircle from '../icons/questionCircle';
 import Logo from '../icons/logo';
 import EyeIcon from '../icons/eye';
+import send from '../icons/send';
+import paperClip from '../icons/paperClip';
 import HeartIcon from '../icons/heart';
 import SuitcaseIcon from '../icons/suitcase';
 import DepartmentIcon from '../icons/department';
@@ -114,6 +116,8 @@ const mapNameIcons = {
     check: CheckmarkIcon,
     checkbox: CheckmarkContainerIcon,
     eye: EyeIcon,
+    send: send,
+    paperClip: paperClip,
     heart: HeartIcon,
     suitcase: SuitcaseIcon,
     checksome: CheckmarkMinusIcon,

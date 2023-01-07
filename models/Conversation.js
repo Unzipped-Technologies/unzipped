@@ -11,6 +11,7 @@ const conversationSchema = new Schema({
   isAlert: {type: Boolean, default: false},
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
+  isMute: {type: Boolean, default: false},
 }, {
   timestamps: true
 });

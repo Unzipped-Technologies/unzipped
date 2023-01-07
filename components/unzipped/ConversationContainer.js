@@ -11,13 +11,42 @@ import Image from '../../components/ui/Image'
 import SearchBar from '../../components/ui/SearchBar'
 import { ValidationUtils } from '../../utils'
 import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import styled from 'styled-components'
+import theme from '../ui/theme'
+
+const Div = styled.div``;
+const Extra = styled.div`
+    height: 150px;
+`;
+
+const Scroll = styled(SimpleBar)`
+    width: 100%;
+    z-index: 1;
+    height: calc(100% - 20px);
+    overflow: hidden auto;
+    .simplebar-track > .simplebar-scrollbar:before {
+        background-color: ${() => theme.tint2};
+        opacity: 0.1;
+    }
+    .simplebar-track > .simplebar-scrollbar.simplebar-visible:before {
+        opacity: 0.3;
+    }
+    .simplebar-track[style] {
+        background-color: transparent !important;
+    }
+    .simplebar-placeholder {
+        width: auto !important;
+        height: 1px !important;
+    }
+`;
 
 const ConversationContainer = ({conversations = [], userEmail, openConversation}) => {
     return (
-        <WhiteCard height="86vh" padding="10px 0px" maxWidth="20vw" overflow="hidden">
-            <SearchBar margin="0px 0px 15px 0px" width="100%"/>
-            <SimpleBar style={{ width: '100%', maxHeight: '74vh' }}>
+        <WhiteCard height="100%" padding="10px 0px 0px 0px" maxWidth="20vw" overflow="hidden" noMargin>
+            <Div>
+                <SearchBar margin="0px 0px 15px 0px" width="100%"/>                
+            </Div>
+            <Scroll>
             {conversations.map((item, index) => {
                 const receiver = item.participants.find(e => e.userId.email !== userEmail)
                 return (
@@ -33,7 +62,8 @@ const ConversationContainer = ({conversations = [], userEmail, openConversation}
                     </WhiteCard>
                 )
             })}
-            </SimpleBar>
+            <Extra></Extra>
+            </Scroll>
         </WhiteCard>
     )
 }

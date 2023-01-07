@@ -7,7 +7,7 @@ const theme = {
     primaryBackHover: '#0d2248',
     primaryHover: '#001b52',
     primary: '#002269',
-    secondary: '#5046FF',
+    secondary: '#8EDE64',
     secondaryLight: '#DCDAFE',
     secondaryText: '#555',
     success: '#E1EFE1',

@@ -407,7 +407,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
     }
 
     return (
-        <>
+        <div>
         <Container>
             <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/></Link>
             <Menu>
@@ -445,7 +445,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
                     ))}
                 </SubMenu>
             )}
-        </>
+        </div>
     )
 }
 

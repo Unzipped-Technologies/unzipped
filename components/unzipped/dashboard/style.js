@@ -65,7 +65,7 @@ const DarkText = styled.div`
     text-align: ${({center, right}) => center ? 'center' : right ? 'right' : 'unset'};
     color: ${({error, color}) => !error ? color ? color : theme.text2 : theme.error};
     &:hover {
-        color: ${({hover}) => hover ? theme.selectedText : theme.text2}
+        color: ${({hover, color}) => hover ? theme.selectedText : color ? color : theme.text2}
     }
 `;
 
@@ -102,8 +102,8 @@ const WhiteCard = styled.div`
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     flex-flow: ${({row}) => row ? 'row' : 'column'};
     height: ${({size, unset, height}) => size === 'large' ? '151px' : size === 'extraLarge' ? '370px' : unset ? 'unset' : height ? height :'63px'};
-    align-items: center;
-    justify-content: ${({center}) => center ? 'center' : 'normal'};
+    align-items: ${({alignEnd}) => alignEnd ? 'flex-end' : 'center'};
+    justify-content: ${({center, justifyEnd}) => center ? 'center' : justifyEnd ? 'flex-end' : 'normal'};
     padding: ${({padding}) => padding ? padding : '20px 20px'};
     position: relative;
     box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
@@ -211,7 +211,7 @@ export const Span = styled.span`
     font-size: ${({size}) => size ? size : '26px'};
     line-height: 45px;
     letter-spacing: 0.39998px;
-    width: 100%;
+    width: ${({unset}) => unset ? 'unset' : '100%'};
     margin: ${({margin}) => margin ? margin : 'unset'};
     margin-left: ${({space}) => space ? '6px' : 'unset'};
     align-items: ${({top}) => top ? top : 'center'};

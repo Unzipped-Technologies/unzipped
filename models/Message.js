@@ -7,6 +7,7 @@ const messageSchema = new Schema({
   attachment: String,
   conversationId: String,
   isAlert: {type: Boolean, default: false},
+  attachment: { type: String, default: '' },
   isRead: {type: Boolean, default: false},
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
