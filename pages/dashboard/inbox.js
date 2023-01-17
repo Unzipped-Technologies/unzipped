@@ -71,6 +71,9 @@ const Inbox = ({
     }
 
     useEffect(() => {
+        if (!access) {
+            router.push('/login')
+        }
         getConversationList(form, access)
     }, [])
 

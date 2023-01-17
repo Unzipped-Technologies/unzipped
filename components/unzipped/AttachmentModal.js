@@ -11,7 +11,11 @@ const Right = styled.div`
     margin-top: 20px;
 `;
 
-const AttachmentModal = ({setFileUploadModal}) => {
+const AttachmentModal = ({
+    //functions
+    setFileUploadModal, 
+    createTempFile
+}) => {
     const [messageFile, setMessageFile] = useState({})
     const handleFileChange = (e) => {
         console.log(e.target.files[0])

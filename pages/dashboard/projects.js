@@ -52,7 +52,8 @@ const Right = styled.div`
     background: ${({selected}) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
 `;
 
-const Projects = ({token, businesses=[], getBusinessList, role}) => {
+const Projects = ({token, cookie, businesses=[], getBusinessList, role}) => {
+    const access = token?.access_token || cookie
     const [take, setTake] = useState(25)
     const [page, setPage] = useState(1)
     const [selected, setSelected] = useState(role)
@@ -71,7 +72,7 @@ const Projects = ({token, businesses=[], getBusinessList, role}) => {
         getBusinessList({
             take: take,
             skip: (page - 1) * 25,
-        }, token.access_token)
+        }, access)
     }, [take])
 
     setTimeout(() => {  
@@ -79,7 +80,7 @@ const Projects = ({token, businesses=[], getBusinessList, role}) => {
             getBusinessList({
                 take: 25,
                 skip: 0,
-            }, token.access_token)
+            }, access)
         } 
     }, 5000);
 
@@ -116,6 +117,7 @@ const mapStateToProps = (state) => {
         businesses: state.Business?.businesses,
         loading: state.Business?.loading,
         role: state.Auth.user.role,
+        cookie: state.Auth.token,
     }
   }
 

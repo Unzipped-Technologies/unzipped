@@ -42,12 +42,12 @@ const Tasklist = ({
     const access = token?.access_token || cookie
 
     const selectDepartment = (item) => {
-        getDepartmentsById(item._id, access)
+        getDepartmentsById(item?._id, access)
     }
 
     const createNewStory = () => {
         createStory({
-            departmentId: selectedDepartment._id,
+            departmentId: selectedDepartment?._id,
             taskName: form?.taskName,
             assigneeId: form?.assigneeId || employees.find(item => item?.FirstName.toLowerCase().includes(form?.assignee.toLowerCase().split(' ')[0]) && item.LastName.toLowerCase().includes(form?.assignee.toLowerCase()?.split(' ')[1]))?._id,
             storyPoints: form?.storyPoints,
@@ -59,19 +59,22 @@ const Tasklist = ({
 
     useEffect(() => {
         if (!selectedBusiness?._id) {
-            getBusinessById(businesses[0]._id, access)
+            getBusinessById(businesses[0]?._id, access)
         }
         getDepartmentsForBusiness({
             take: 10,
             filter: {
-                businessId: selectedBusiness._id || businesses[0]._id
+                businessId: selectedBusiness?._id || businesses[0]?._id
             }
         }, access)
     }, [selectedBusiness])
 
     useEffect(() => {
         if (selectedDepartment) {
-            getDepartmentsById(selectedDepartment._id, access)
+            getDepartmentsById(selectedDepartment?._id, access)
+        }
+        if (!access) {
+            router.push('/login')
         }
     }, [])
 
