@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {
     TitleText,
     DarkText,
@@ -93,13 +93,14 @@ const MessageContainer = ({
     const [receiver, setReceiver] = useState(data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail))
     const [sender, setSender] = useState(data?.participants && data?.participants.find(e => e?.userId?.email === userEmail))
     const [isProfile, setIsProfile] = useState(true)
-    const [fileUploadModal, setFileUploadModal] = useState(true)
+    const [fileUploadModal, setFileUploadModal] = useState(false)
     const [form, setForm] = useState({
         senderId: sender.userId._id,
         receiverId: receiver.userId._id,
         message: '',
         attachment: '',
     })
+    const messagesEndRef = useRef()
 
     const send = () => {
         if (form.message || form.attachment) {
@@ -112,10 +113,19 @@ const MessageContainer = ({
         }
     }
 
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+
     useEffect(() => {
         setReceiver(data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail))
         setSender(data?.participants && data?.participants.find(e => e?.userId?.email === userEmail))
     }, [data])
+
+    useEffect(() => {
+        scrollToBottom()
+    }, [])
+
     console.log(data)
     // TODO: add emojis to site with this
     // https://blog.logrocket.com/adding-emojis-react-app/#:~:text=To%20include%20it%20in%20your,use%20React%2016.8%20or%20higher!
@@ -162,6 +172,7 @@ const MessageContainer = ({
                                         }
         
                                     })}
+                                    <div ref={messagesEndRef} />
                                 </Scroll>
                             </Div>
                             <Absolute bottom="10px" width="95%" right="2.5%">
