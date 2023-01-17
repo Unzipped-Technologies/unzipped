@@ -124,7 +124,7 @@ const MessageContainer = ({
 
     useEffect(() => {
         scrollToBottom()
-    }, [])
+    }, [receiver])
 
     console.log(data)
     // TODO: add emojis to site with this
