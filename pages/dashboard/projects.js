@@ -73,16 +73,16 @@ const Projects = ({token, cookie, businesses=[], getBusinessList, role}) => {
             take: take,
             skip: (page - 1) * 25,
         }, access)
-    }, [take])
+    }, [])
 
-    setTimeout(() => {  
-        if (businesses.length === 0) {
-            getBusinessList({
-                take: 25,
-                skip: 0,
-            }, access)
-        } 
-    }, 5000);
+    // setTimeout(() => {  
+    //     if (businesses.length === 0) {
+    //         getBusinessList({
+    //             take: 25,
+    //             skip: 0,
+    //         }, access)
+    //     } 
+    // }, 5000);
 
     return (
         <React.Fragment>

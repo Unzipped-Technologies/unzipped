@@ -12,7 +12,8 @@ import {
     createStory, 
     getBusinessById, 
     reorderStories,
-    addCommentToStory
+    addCommentToStory,
+    getBusinessList
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 
@@ -37,7 +38,8 @@ const Tasklist = ({
     createStory,
     getBusinessById,
     reorderStories,
-    addCommentToStory
+    addCommentToStory,
+    getBusinessList
 }) => {
     const access = token?.access_token || cookie
 
@@ -59,7 +61,16 @@ const Tasklist = ({
 
     useEffect(() => {
         if (!selectedBusiness?._id) {
-            getBusinessById(businesses[0]?._id, access)
+            if (businesses.length === 0) {
+                getBusinessList({
+                    take: 10,
+                    skip: 0,
+                }, access)
+            }
+            if(businesses[0]) {
+                getBusinessById(businesses[0]?._id, access)                
+            }
+
         }
         getDepartmentsForBusiness({
             take: 10,
@@ -120,6 +131,7 @@ Tasklist.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
+    console.log(state)
     return {
         tags: state.Business.tags,
         loading: state.Business?.loading,
@@ -145,6 +157,7 @@ const mapDispatchToProps = (dispatch) => {
         createStory: bindActionCreators(createStory, dispatch),
         reorderStories: bindActionCreators(reorderStories, dispatch),
         addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
+        getBusinessList: bindActionCreators(getBusinessList, dispatch),
     }
 }
 

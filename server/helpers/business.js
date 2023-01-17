@@ -11,7 +11,7 @@ const { likeEnum } = require('../enum/likeEnum');
 
 const createBusiness = async(data, id) => {
     // create business
-    const newBusiness = await business.create(data);
+    const newBusiness = await business.create({...data, userId: id});
     const audience = await businessAudience.create({
         ...data,
         business: await business.findById(newBusiness.id)
