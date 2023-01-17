@@ -52,7 +52,7 @@ const Right = styled.div`
     background: ${({selected}) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
 `;
 
-const Projects = ({token, cookie, businesses=[], getBusinessList, role}) => {
+const Projects = ({token, cookie, businesses=[], getBusinessList, role, loading}) => {
     const access = token?.access_token || cookie
     const [take, setTake] = useState(25)
     const [page, setPage] = useState(1)
@@ -99,7 +99,7 @@ const Projects = ({token, cookie, businesses=[], getBusinessList, role}) => {
                 </Toggle>
             </Title>
             <SearchBar take={take} setTake={setTake} />
-            <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page}/>
+            <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading}/>
         </React.Fragment>
     )
 }

@@ -31,10 +31,10 @@ const Action = styled.div`
     }
 `;
 
-const Panel = ({list, business, selectList}) => {
+const Panel = ({list, business, selectList, type}) => {
     return (
         <Container>
-            <TitleText paddingLeft clickable>{business}<Absolute top="20px"><Action>+ New List</Action></Absolute></TitleText>
+            <TitleText paddingLeft clickable>{business}<Absolute top="20px"><Action>{type === 'department' ? '' : '+ New List'}</Action></Absolute></TitleText>
             <Underline />   
             {list.map(item => (
                 <WhiteCard borderColor="transparent" height="30px" row noMargin clickable onClick={() => selectList(item)}>

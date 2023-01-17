@@ -13,7 +13,7 @@ const Container = styled.div`
 const ListPanel = ({selectList, addCommentToStory, user, access, reorderStories, createNewStory, dropdownList, form, list, business, selectedList, type, tags = [], stories = [], updateCreateStoryForm, updateTasksOrder, departments = []}) => {
     return (
         <Container>
-            <LeftListPanel selectList={selectList} list={list} business={business} selectedList={selectedList} departments={departments}/>
+            <LeftListPanel selectList={selectList} list={list} business={business} selectedList={selectedList} departments={departments} type={type}/>
             <RightListPanel 
                 updateTasksOrder={updateTasksOrder} 
                 updateCreateStoryForm={updateCreateStoryForm}

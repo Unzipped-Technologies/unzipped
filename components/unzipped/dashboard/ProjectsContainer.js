@@ -9,10 +9,10 @@ const Container = styled.div`
     border-radius: 10px;
 `;
 
-const ListPanel = ({list, business, selectedList, type, businesses}) => {
+const ListPanel = ({list, business, selectedList, type, businesses, loading}) => {
     return (
         <Container>
-            <DashboardTable list={list} business={business} selectedList={selectedList} businesses={businesses} type={type}/>
+            <DashboardTable list={list} business={business} selectedList={selectedList} businesses={businesses} type={type} loading={loading}/>
         </Container>
     )
 }

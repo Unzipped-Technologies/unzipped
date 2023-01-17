@@ -59,7 +59,7 @@ const Row = styled.div`
 
 const StoryTable = styled.div``;
 
-const Panel = ({list, selectedList, type, projects=[], businesses}) => {
+const Panel = ({list, selectedList, type, projects=[], businesses, loading}) => {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const setDropdowns = (item) => {
@@ -88,7 +88,8 @@ const Panel = ({list, selectedList, type, projects=[], businesses}) => {
             </TableTitle>
             <Underline color="#333" noMargin/>   
             <StoryTable>
-                {businesses.length === 0 && <Box><CircularProgress /></Box>}
+                {businesses.length === 0 && loading && <Box><CircularProgress /></Box>}
+                {businesses.length === 0 && <Box>Start a project and you will see it here...</Box>}
                 {businesses.length > 0 && businesses.map((item, index) => (
                     <WhiteCard noMargin borderRadius="0px" row background={!ValidationUtils.checkNumberEven(index) ? "#F7F7F7" : "#fff"}>
                             <Absolute width="45%" wideLeft textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
