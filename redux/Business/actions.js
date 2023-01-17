@@ -18,6 +18,7 @@ import {
     REORDER_STORIES,
     DEPARTMENT_ERROR,
     SUCCESS,
+    CREATE_FILE,
     LOAD_STATE,
     CREATE_BUSINESS,
     ADD_COMMENT_TO_STORY,
@@ -54,6 +55,28 @@ export const reorderStories = (data, token) => async (dispatch, getState) => {
     .post(`/api/business/current/task/order`, data, tokenConfig(token))
     .then(res => dispatch({
         type: SUCCESS,
+        payload: res.data,
+    }))
+    .catch(err => {
+        dispatch({
+            type: DEPARTMENT_ERROR,
+            payload: err.response
+        })
+    })
+}
+
+export const createTempFile = (data, token) => async (dispatch, getState) => {
+    dispatch({
+        type: LOAD_STATE
+    })
+    var formData = new FormData();
+    var imagefile = document.querySelector('#file');
+    formData.append("image", data.file);
+    formData.append("name", data.name);
+    await axios
+    .post(`/api/file/create`, data, tokenConfig(token))
+    .then(res => dispatch({
+        type: CREATE_FILE,
         payload: res.data,
     }))
     .catch(err => {

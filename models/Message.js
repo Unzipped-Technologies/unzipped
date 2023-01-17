@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const messageSchema = new Schema({
   sender: { type: Schema.Types.ObjectId, ref: 'users' },
   message: { type: String, default: '' },
-  attachment: String,
+  attachment: [String],
   conversationId: String,
   isAlert: {type: Boolean, default: false},
   attachment: { type: String, default: '' },

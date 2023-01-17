@@ -81,7 +81,15 @@ const messageItem = () => {
 
 }
 
-const MessageContainer = ({data = {}, userEmail, userId, sendMessageToUser}) => {
+const MessageContainer = ({
+    // data
+    data = {}, 
+    userEmail, 
+    userId, 
+    // functions
+    sendMessageToUser, 
+    createTempFile
+}) => {
     const [receiver, setReceiver] = useState(data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail))
     const [sender, setSender] = useState(data?.participants && data?.participants.find(e => e?.userId?.email === userEmail))
     const [isProfile, setIsProfile] = useState(true)
@@ -174,7 +182,7 @@ const MessageContainer = ({data = {}, userEmail, userId, sendMessageToUser}) => 
                 </WhiteCard>
             )}
             {fileUploadModal && (
-                <AttachmentModal setFileUploadModal={setFileUploadModal}/>
+                <AttachmentModal setFileUploadModal={setFileUploadModal} createTempFile={createTempFile}/>
             )}
 
         </>

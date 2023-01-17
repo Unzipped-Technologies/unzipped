@@ -2,21 +2,12 @@ import {
     FETCH_CUSTOMERS,
     LOAD_CUSTOMERS,
     FETCH_ORDERS,
-    FETCH_SCHEDULE,
     FETCH_GARAGES,
     FETCH_PROMOS,
-    ADD_GARAGE,
     DEL_GARAGE,
-    UPDATE_GARAGE,
     UPDATE_USER_DATA,
-    ADD_PROMO,
     DEL_PROMO,
-    UPDATE_PROMO,
     REFUND_ORDER,
-    ADD_ORDER,
-    UPDATE_ORDER,
-    UPDATE_ORDER_STATUS,
-    FETCH_PENDING_ORDERS,
     HOTEL_OWED,
     UPDATE_ERROR,
     FETCH_MORE_CUSTOMERS,
@@ -25,9 +16,6 @@ import {
     GARAGE_ORDERS,
     SUBMIT_ORDER,
     HOTEL_ORDERS,
-    GET_STORIES_LIST,
-    GET_TAGS_LIST,
-    SORT_STORIES_ON_DRAG
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';

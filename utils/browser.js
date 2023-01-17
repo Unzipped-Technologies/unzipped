@@ -129,13 +129,8 @@ class BrowserUtil {
     }
 
     _openDoc(url) {
-        if (url.indexOf('token=') === -1) {
-            this.getToken().then(token => {
-                window.open(`${url}?token=${token}`, '_blank').focus();
-            });
-        } else {
-            window.open(url, '_blank').focus();
-        }
+        console.log(url)
+        window.open(url, '_blank').focus();
     }
 
     _openNewTab(url, target = '_blank', appendToken = true) {

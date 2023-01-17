@@ -9,6 +9,7 @@ import {
     sendMessage, 
     selectConversation, 
     getFreelancerById,
+    createTempFile
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components'
@@ -37,6 +38,7 @@ const Inbox = ({
     getConversationList,
     sendMessage,
     selectConversation,
+    createTempFile,
 }) => {
     const access = token.access_token || cookie
     const [form, setForm] = useState({
@@ -44,6 +46,10 @@ const Inbox = ({
         skip: 0,
         take: 25
     })
+
+    const createNewFile = (data) => {
+        createTempFile(data, access)
+    }
 
     const openConversation = (id) => {
         selectConversation(id, access)
@@ -73,7 +79,13 @@ const Inbox = ({
             <Nav isSubMenu/>
             <Container>
                 <ConversationContainer conversations={conversations} userEmail={user.email} openConversation={openConversation}/>
-                <MessageContainer data={selectedConversation} userEmail={user.email} userId={user._id} sendMessageToUser={sendMessageToUser}/>
+                <MessageContainer 
+                    data={selectedConversation} 
+                    userEmail={user.email} 
+                    userId={user._id} 
+                    sendMessageToUser={sendMessageToUser}
+                    createTempFile={createNewFile}
+                />
             </Container>
         </Page>
     )
@@ -102,6 +114,7 @@ const mapDispatchToProps = (dispatch) => {
         sendMessage: bindActionCreators(sendMessage, dispatch),
         selectConversation: bindActionCreators(selectConversation, dispatch),
         getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
+        createTempFile: bindActionCreators(createTempFile, dispatch),
     }
 }
 

@@ -8,7 +8,9 @@ import ScrollbarUtils from './scrollbar'
 import SetUtils from './set'
 import SortUtils from './sort'
 import UserUtils from './user'
+import FSNetHTTP from './fsnetHttp'
 import ValidationUtils from './validations'
+import appInsights from './appInsights'
 
 export {
     BrowserUtils,
@@ -20,6 +22,8 @@ export {
     ScrollbarUtils,
     SetUtils,
     SortUtils,
+    appInsights,
     UserUtils,
+    FSNetHTTP,
     ValidationUtils,
 };

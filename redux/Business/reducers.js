@@ -26,6 +26,7 @@ import {
     LOAD_STATE,
     SUCCESS,
     ADD_COMMENT_TO_STORY,
+    CREATE_FILE,
     REMOVE_COMMENT_FROM_STORY,
     UPDATE_CREATE_STORY,
 } from './constants';
@@ -33,6 +34,7 @@ import {
 const INIT_STATE = {
     departments: [],
     businesses: [],
+    files: [],
     tags: [],
     stories: [],
     loading: false,
@@ -153,6 +155,8 @@ const Business = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, businessForm: {...state.businessForm, ...action.payload}};
         case RESET_BUSINESS_FORM:
             return {...state, loading: false, businessForm: {...INIT_STATE.businessForm}};
+        case CREATE_FILE:
+            return {...state, loading: false, files: [...state.files, action.payload]};
         case SUCCESS:
             return {...state, loading: true};
         case LOAD_STATE:

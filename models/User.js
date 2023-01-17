@@ -49,6 +49,7 @@ const userSchema = new Schema({
   likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
   dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
   notifications: { type: Schema.Types.Mixed, ref: 'notifications' },
+  files: { type: Schema.Types.Mixed, ref: 'file' },
 }, {
   timestamps: true
 });

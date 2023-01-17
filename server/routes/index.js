@@ -12,6 +12,7 @@ router.use('/list', require('./listRoutes'));
 router.use('/business', require('./businessRoutes'));
 router.use('/like', require('./likeRoutes'));
 router.use('/message', require('./messageRoutes'));
+router.use('/file', require('./fileRoutes'));
 
 
 module.exports = router;
