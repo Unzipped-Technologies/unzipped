@@ -8,6 +8,7 @@ import styled from 'styled-components';
 const ButtonWrapper = styled.div`
     width: 100%;
     display: flex;
+    position: relative;
     margin-top: 20px;
     justify-content: ${({justifyContent}) => justifyContent};
     flex-flow: row nowrap;
@@ -16,13 +17,27 @@ const ButtonWrapper = styled.div`
         margin-left: 10px;
         min-width: 107px;
     }
+    @media(max-width: 564px) {
+        flex-flow: ${({mobileCenter}) => mobileCenter ? 'column nowrap' : 'row nowrap'};
+        width: ${({mobileCenter}) => mobileCenter ? '80%' : '100%'};
+        justify-content: ${({mobileCenter, justifyContent}) => mobileCenter ? 'center' : justifyContent};
+        & > *${({$flush}) => ($flush ? ':not(:first-child)' : '')} {
+            margin-left: ${({mobileCenter}) => mobileCenter ? '0px' : '10px'};
+            margin-top: ${({mobileCenter}) => mobileCenter ? '15px' : '0px'};
+            min-width: 107px;
+        }
+    }
+    @media(max-width: 448px) {
+        position: ${({mobileAbsolute}) => mobileAbsolute ? 'absolute' : 'relative'};
+        bottom: ${({mobileAbsolute}) => mobileAbsolute ? '15px' : 'unset'};
+    }
 `;
 
 /**
  * Buttons Component - This component will automatically group multiple Button components together.
  */
-const Buttons = ({children, justifyContent, flush, className}) => (
-    <ButtonWrapper className={className} $flush={flush} justifyContent={justifyContent}>
+const Buttons = ({children, justifyContent, flush, className, mobileCenter, mobileAbsolute}) => (
+    <ButtonWrapper className={className} $flush={flush} justifyContent={justifyContent} mobileCenter={mobileCenter} mobileAbsolute={mobileAbsolute}>
         {children}
     </ButtonWrapper>
 );

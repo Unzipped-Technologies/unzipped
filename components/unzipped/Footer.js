@@ -17,6 +17,19 @@ const Socials = styled.div`
     justify-content: space-around;
     align-items: center;
     width: 315px;
+    flex-wrap: wrap;
+    @media(max-width: 369px) {
+        width: 195px;
+    }
+`;
+
+const Break = styled.div`
+    @media(min-width: 370px) {
+        display: none;
+    }
+    @media(max-width: 369px) {
+        flex-basis: 100%;
+    }
 `;
 
 const Underline = styled.div`
@@ -27,6 +40,10 @@ const Underline = styled.div`
 const Links = styled.div`
     display: flex;
     flex-flow: row;
+    @media(max-width: 847px) {
+        flex-flow: column;
+        flex-direction: column-reverse; 
+    }
 `;
 
 const DIV = styled.div`
@@ -37,13 +54,20 @@ const ValueList = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     margin-left: 20%;
+    @media(max-width: 847px) {
+        margin-left: 10px; 
+    }
+    @media(max-width: 554px) {
+        grid-template-columns: 1fr; 
+    }
 `;
 
 const Footer = () => {
     return (
         <Container>
             <Socials>
-                <Text color={theme.text}>FOLLOW US</Text>
+                <Text color={theme.text} className="break">FOLLOW US</Text>
+                <Break/>
                 <Link href="https://www.facebook.com/Alien4Hire/" target="_blank" rel="noopener noreferrer"><DIV><Icon name="Facebook" /></DIV></Link>
                 <Link href="https://twitter.com/jason_unzipped" target="_blank" rel="noopener noreferrer"><DIV><Icon name="Twitter" /></DIV></Link>
                 <Link href="https://www.tiktok.com/@jason_unzipped" target="_blank" rel="noopener noreferrer"><DIV><Icon name="Tiktok" /></DIV></Link>

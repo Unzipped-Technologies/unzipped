@@ -15,10 +15,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { logoutUser, resetBusinessForm } from '../../redux/actions';
 import Icon from '../ui/Icon'
+import { Absolute } from './dashboard/style'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
 import {Button as Buttons} from '../ui'
 import router, {useRouter} from 'next/router';
+
+const Div = styled.div`
+    width: 100%;
+`;
 
 const Container = styled.div`
     display: flex;
@@ -138,48 +143,6 @@ const MenuIcon = styled.div`
     cursor: default;
 `;
 
-const Dropdown = styled.div`
-    position: absolute;
-    display: flex;
-    right: 1rem;
-    top: 4rem;
-    flex-flow: column;
-    border: 0.5px solid #999;
-    background-color: #fff;
-    min-width: 100px;
-    border-radius: 10px;
-    padding: 10px;
-`;
-
-const Span3 = styled.div`
-    margin-top: 15px;
-    cursor: pointer;
-    margin-left: 5px;
-    &:hover {
-        color: #8EDE64;
-    }
-    &:last-child {
-        margin-bottom: 10px;
-    }
-`;
-
-const Row = styled.span`
-    display: flex;
-    flex-flow: row;
-    align-items center;
-`;
-
-const MenuDropdown = styled.div`
-    position: absolute;
-    width: 220px;
-    top: 84px;
-    border-radius: 5px;
-    box-shadow: 0 0 12px #00000029,0 8px 24px #0003;
-    padding: 10px 10px;
-    background-color: #fff;
-    z-index: 99;
-`;
-
 // sub menu styling
 
 const SubMenu = styled.div`
@@ -225,7 +188,7 @@ const ButtonHolder = styled.div`
 
 const menuItems = [
     {
-        item: 'Find Talent',
+        name: 'Find Talent',
         sub: [
             
             {
@@ -243,7 +206,7 @@ const menuItems = [
         icon: <WorkIcon width={35} height={35}/>
     },
     {
-        item: 'Find a Project',
+        name: 'Find a Project',
         sub: [
             {
                 name: 'Browse Projects',
@@ -267,12 +230,12 @@ const menuItems = [
         icon: <FolderIcon width={35} height={35} />
     },
     {
-        item: 'Why Unzipped',
+        name: 'Why Unzipped',
         link: '/',
         icon: <BookmarkIcon width={35} height={35} />
     },
     {
-        item: 'Get Ideas',
+        name: 'Get Ideas',
         link: '/',
         icon: <LightIcon width={35} height={35} />
     }
@@ -407,16 +370,16 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
     }
 
     return (
-        <div>
+        <Div>
         <Container>
             <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/></Link>
             <Menu>
                 {menuItems && menuItems.map((item, index) => {
                     return (
-                    <Item onMouseEnter={() => setDropdowns(item.item)} onClick={() => setDropdowns(item.item)} key={index}>
-                        <Span>{item.item} </Span>
+                    <Item onMouseEnter={() => setDropdowns(item.name)} onClick={() => setDropdowns(item.name)} key={index}>
+                        <Span>{item.name} </Span>
                         {item?.sub?.length && <Span2><DownIcon /></Span2>}
-                        {menuOpen === item.item && item?.sub && (
+                        {menuOpen === item.name && item?.sub && (
                             <Dropdowns items={item?.sub} onClose={() => setCloseDropdowns(0)} token={token}/>
                         )}
                     </Item>
@@ -433,7 +396,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
                         menu
                     </MenuIcon>
                     {menuOpen === 'mobile' && (
-                        <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token}/>
+                        <Absolute right="228px" top="0px"><Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token}/></Absolute>
                     )}
                 </Mobile>
             </Right>
@@ -445,7 +408,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
                     ))}
                 </SubMenu>
             )}
-        </div>
+        </Div>
     )
 }
 

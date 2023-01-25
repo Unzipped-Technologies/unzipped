@@ -8,14 +8,17 @@ import {
     ThumbsUpIcon,
     DownWideIcon
 } from '../icons'
-import Buttons from './ButtonStep'
-import Button from '@material-ui/core/Button';
+import Buttons from '../ui/Buttons'
+import Button from '../ui/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
 const Container = styled.div`
     display: grid;
     position: relative;
     grid-template-columns: 1fr 2fr;
+    @media(max-width: 857px) {
+        display: none;
+    }
 `;
 
 const Left = styled.div`
@@ -264,70 +267,7 @@ const items = [
     },
 ]
 
-const projects = [
-    {
-        name: 'PEBBLE TIME',
-        description: `Color e-paper smartwatch with up to 7 days of battery and a new timeline interface 
-        that highlights what's important in your day.`,
-        updatedAt: 'DECEMBER 7, 2022',
-        equity: 40,
-        budget: 40000,
-        totalTimeInvested: 236,
-        likeTotal: 426276,
-        id: 3333333333333,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047282/goaimly-potato-chips-bust_mnnb0r.png'
-    },
-    {
-        name: 'PEBBLE TIME',
-        description: `Color e-paper smartwatch with up to 7 days of battery and a new timeline interface 
-        that highlights what's important in your day.`,
-        updatedAt: 'DECEMBER 7, 2022',
-        equity: 40,
-        budget: 40000,
-        totalTimeInvested: 236,
-        likeTotal: 426276,
-        id: 3333333333333,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047050/cld-sample-4.jpg'
-    },
-    {
-        name: 'PEBBLE TIME',
-        description: `Color e-paper smartwatch with up to 7 days of battery and a new timeline interface 
-        that highlights what's important in your day.`,
-        updatedAt: 'DECEMBER 7, 2022',
-        equity: 40,
-        budget: 40000,
-        totalTimeInvested: 236,
-        likeTotal: 426276,
-        id: 3333333333333,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047049/cld-sample-3.jpg'
-    },
-    {
-        name: 'PEBBLE TIME',
-        description: `Color e-paper smartwatch with up to 7 days of battery and a new timeline interface 
-        that highlights what's important in your day.`,
-        updatedAt: 'DECEMBER 7, 2022',
-        equity: 40,
-        budget: 40000,
-        totalTimeInvested: 236,
-        likeTotal: 426276,
-        id: 3333333333333,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047048/cld-sample.jpg'
-    },
-    {
-        name: 'PEBBLE TIME',
-        description: `Color e-paper smartwatch with up to 7 days of battery and a new timeline interface 
-        that highlights what's important in your day.`,
-        updatedAt: 'DECEMBER 7, 2022',
-        equity: 40,
-        budget: 40000,
-        totalTimeInvested: 236,
-        likeTotal: 426276,
-        id: 3333333333333,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047282/goaimly-potato-chips-bust_mnnb0r.png'
-    },
-]
-
-const HeroUnzipped = () => {
+const HeroUnzipped = ({projects}) => {
     const [low, setLow] = useState(0);
     const [categories, setCategories] = useState(items.slice(0, 5));
     const classes = useStyles();
@@ -393,7 +333,9 @@ const HeroUnzipped = () => {
                             <IconContainer><ThumbsDownIcon /></IconContainer>    
                             </ButtonContainer>
                             <LikeText>{item.likeTotal.toLocaleString()} Likes</LikeText>
-                            <Buttons buttonTwo="LEARN MORE" onClickOne={() => {}} />
+                            <Buttons>
+                                <Button noBorder onClick={() => {}}>LEARN MORE</Button>
+                            </Buttons>
                         </Like>
                     </Card>
                 ))}

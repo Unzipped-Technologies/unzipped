@@ -14,6 +14,27 @@ export const Title = styled.div`
     @media (max-width: 1435px) {
         min-width: 90%;
     }
+    @media (max-width: 1145px) {
+        padding: 20px 20px 0px 20px;
+    }
+    @media(max-width: 1100px) {
+        padding: 20px 20px 0px 20px;
+        font-size: 40px;
+    }
+    @media(max-width: 802px) {
+        padding: 0px 20px 0px 20px;
+    }
+    @media (max-width: 448px) {
+        padding: 50px 0px 20px 1vw;
+        font-size: 30px;
+        line-height: 36px;
+        font-weight: bold;
+    }
+    @media (max-width: 280px) {
+        padding: 30px 0px 20px 1vw;
+        font-size: 28px;
+        line-height: 34px;
+    }
 `;
 
 export const Span = styled.span`

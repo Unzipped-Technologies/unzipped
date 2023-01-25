@@ -19,9 +19,9 @@ const Img = styled.img`
     border-radius: ${({radius}) => radius ? radius : '0px'};
 `;
 
-const Image = ({src, alt = 'img', radius, height, width, onMouseEnter, onClick, margin}) => {
+const Image = ({src, alt = 'img', name, radius, height, width, onMouseEnter, onClick, margin}) => {
     return (
-        <Container radius={radius} margin={margin} height={height} width={width} onClick={onClick} onMouseEnter={onMouseEnter}>
+        <Container radius={radius} margin={margin} height={height} width={width} className={name} name={name} onClick={onClick} onMouseEnter={onMouseEnter}>
             <Img radius={radius} src={src} alt={alt} />
         </Container>
     )

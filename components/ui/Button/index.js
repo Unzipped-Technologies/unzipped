@@ -18,13 +18,13 @@ const ButtonContainer = styled.button`
         background: ${({colors}) => colors ? colors.hover : theme.background2};
         color: ${({colors}) => colors ? colors.hoverText : theme.text2};
     }
-    border: ${({noBorder, colors}) => noBorder ? '0' : `${colors.border} solid 1px`} !important;
+    border: ${({noBorder, colors}) => noBorder ? '0' : `${colors.border} solid ${colors.wideBorder || '1px'}`} !important;
     color: ${({colors}) => colors ? colors.text : theme.text};
     box-sizing: border-box;
     border-radius: ${({oval}) => oval ? '25px' : '4px'};
     padding: ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
         ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
-    font-family: arial;
+    font-family: roboto;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : 'auto')};
     min-width: ${({popout}) => (popout ? 'auto' : 'auto')};
@@ -168,6 +168,14 @@ const typeColors = {
         text: '#37DEC5',
         background: '#fff',
         border: '#37DEC5',
+        hover: '#8EDE64',
+        hoverText: '#fff'
+    },
+    outlineTransparent: {
+        text: '#fff',
+        background: 'transparent',
+        border: '#37DEC5',
+        wideBorder: '2px',
         hover: '#8EDE64',
         hoverText: '#fff'
     },

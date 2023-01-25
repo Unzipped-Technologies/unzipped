@@ -52,7 +52,7 @@ const DarkText = styled.div`
     font-weight: ${({bold}) => bold ? '600' : '400'};
     font-size: ${({small, fontSize}) => small ? '14px' : fontSize ? fontSize : '16px'};
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
-    line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
+    line-height: ${({lineHeight, fontSize}) => lineHeight ? lineHeight : fontSize ? fontSize : '24px'};
     letter-spacing: 0.15008px;
     margin-top: ${({topMargin}) => topMargin ? topMargin : 'unset'};
     margin-bottom: ${({noMargin, marginLarge, half}) => noMargin ? '0px' : marginLarge ? '35px'  : half ? '7px' : '15px'};
@@ -67,7 +67,21 @@ const DarkText = styled.div`
     &:hover {
         color: ${({hover, color}) => hover ? theme.selectedText : color ? color : theme.text2}
     }
-`;
+    @media(max-width: 750px) {
+        font-size: ${({small, fontSize}) => small ? '14px' : fontSize ? `${(fontSize.replace('px', '') * 0.75) > 16 ? fontSize.replace('px', '') * 0.75 : 16}px` : '16px'};
+        line-height: ${({lineHeight, fontSize}) => lineHeight ? `${(lineHeight.replace('px', '') * 0.75) > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px` : fontSize ? `${(fontSize.replace('px', '') * 0.75) > 16 ? fontSize.replace('px', '') * 0.75 : 18}px` : '18px'};
+    }
+    @media(max-width: 416px) {
+        margin-left: ${({paddingLeft}) => paddingLeft ? '10px' : '0px'};
+        font-size: ${({small}) => small ? '14px' : '16px'};
+        line-height: '18px';
+    }
+    @media(max-width: 341px) {
+        margin-left: ${({paddingLeft}) => paddingLeft ? '5px' : '0px'};
+        font-size: ${({small}) => small ? '12px' : '14px'};
+        line-height: '16px';
+    }
+`
 
 const Absolute = styled.div`
     position: absolute;
@@ -108,7 +122,13 @@ const WhiteCard = styled.div`
     position: relative;
     box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '12px' : '24px'};
-    overflow: ${({overflow}) => overflow ? overflow : 'visible'}
+    overflow: ${({overflow}) => overflow ? overflow : 'visible'};
+    @media(max-width: 740px) {
+        padding: ${({padding}) => padding ? padding : '10px 10px'};
+    }
+    @media(max-width: 448px) {
+        padding: ${({padding}) => padding ? padding : '10px 5px'};
+    }
 `;
 
 const SelectCard = styled.div`
