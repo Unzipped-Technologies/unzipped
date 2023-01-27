@@ -37,7 +37,9 @@ const Cards = styled.div`
         width: 670px;
     }
     @media(max-width: 677px) {
-        width: 630px;
+        width: 375px;
+        padding: 20px 0px;
+        padding-left: 20px;
     }
     @media(max-width: 646px) {
         grid-template-columns: 1fr;
@@ -68,10 +70,10 @@ const SectionOneMobile = ({projects}) => {
             {projects.map((item, index) => {
                 return (
                     <Index key={index} index={index}>
-                    <WhiteCard clickable height="199px" center maxWidth="300px" key={item.id} padding="0px" overflow="hidden" borderRadius="15px">
-                        <Image src={item.businessImage} height="300px" width="auto"/>
-                        <Absolute bottom="0px" right="0px"><Floor><DarkText center noMargin>{item.name}</DarkText></Floor></Absolute>
-                    </WhiteCard> 
+                        <WhiteCard clickable height="199px" center maxWidth="300px" key={item.id} padding="0px" overflow="hidden" borderRadius="15px">
+                            <Image src={item.businessImage} height="300px" width="auto"/>
+                            <Absolute bottom="0px" right="0px"><Floor><DarkText center noMargin>{item.name}</DarkText></Floor></Absolute>
+                        </WhiteCard> 
                     </Index>                   
                 )
             })}
