@@ -94,6 +94,7 @@ import colorSheild from '../icons/colorSheild';
 import colorUser from '../icons/colorUser';
 import thumbsUp from '../icons/thumbsUp';
 import thumbsDown from '../icons/thumbsDown';
+import wrenchIcon from '../icons/wrench';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -189,7 +190,8 @@ const mapNameIcons = {
     github: Github,
     user: User,
     thumbsUp: thumbsUp,
-    thumbsDown: thumbsDown
+    thumbsDown: thumbsDown,
+    wrenchIcon: wrenchIcon
 };
 
 /**

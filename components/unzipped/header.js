@@ -154,6 +154,10 @@ const SubMenu = styled.div`
     background: #0E1724;
     color: #fff;
     padding: 0px 15%;
+    @media(max-width: 580px) {
+        justify-content: center;
+        padding: 0px;
+    }
 `;
 
 const SpanWhite = styled.div`
@@ -166,8 +170,14 @@ const SpanWhite = styled.div`
     align-items: center;
     justify-content: center;
     margin-right: 10px;
-    min-width: 70px;
-    border-bottom: ${({underline}) => underline ? 'solid 4px #fff' : 'none'}
+    min-width: 75px;
+    border-bottom: ${({underline}) => underline ? 'solid 4px #fff' : 'none'};
+    @media(max-width: 449px) {
+        display: ${({count}) => count > 3 ? 'none' : 'flex'};
+    }
+    @media(max-width: 449px) {
+        margin-right: 0px;
+    }
 `;
 
 const Sub = styled.div`
@@ -403,8 +413,8 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
         </Container>
         {isSubMenu && (
                 <SubMenu>
-                    {subMenuItems.map(item => (
-                        <Link href={item.link}><SpanWhite key={item.name} underline={pathname === item.link}><Sub>{item.name} </Sub></SpanWhite></Link>
+                    {subMenuItems.map((item, key) => (
+                        <Link href={item.link} key={key}><SpanWhite count={key} underline={pathname === item.link}><Sub>{item.name} </Sub></SpanWhite></Link>
                     ))}
                 </SubMenu>
             )}
