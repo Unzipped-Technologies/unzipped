@@ -145,7 +145,7 @@ const Home = ({token}) => {
             <SectionTwo />
             <SectionThree />
             <Spacer />
-            {/* <SectionFour /> */}
+            <SectionFour />
             <News />
             <NewsSpacer />
             <Footer />

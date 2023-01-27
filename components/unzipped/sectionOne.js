@@ -16,6 +16,19 @@ const Container = styled.div`
     display: grid;
     position: relative;
     grid-template-columns: 1fr 2fr;
+    @media(max-width: 1246px) {
+        width: 93%;
+    }
+    @media(max-width: 1246px) {
+        width: 85%;
+        grid-template-columns: 1fr;
+    }
+    @media(max-width: 976px) {
+        width: 90%;
+    }
+    @media(max-width: 917px) {
+        width: 95%;
+    }
     @media(max-width: 857px) {
         display: none;
     }
@@ -23,18 +36,42 @@ const Container = styled.div`
 
 const Left = styled.div`
     margin: 20px 40px;
+    @media(max-width: 1246px) {
+        margin: 20px 0px 20px 0px;
+    }
+    @media(max-width: 1126px) {
+        display: none;
+    }
 `;
 
 const Box = styled.div`
     width: 90%;
+    @media(max-width: 1246px) {
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        justify-content: flex-end;
+    }
 `;
 
 const Right = styled.div`
     margin: 20px 40px;
+    @media(max-width: 1246px) {
+        margin: 20px 0px 20px 20px;
+    }
+    @media(max-width: 1126px) {
+        margin: 20px 0px 20px 0px;
+    }
 `;
 const Div = styled.div`
     width: 406px;
     height: 147px;
+    @media(max-width: 1246px) {
+        width: 340px;
+    }
+    @media(max-width: 1145px) {
+        width: 313px;
+    }
 `;
 
 const Row = styled.span`

@@ -48,6 +48,7 @@ const Container = styled.div`
     }
     @media(max-width: 463px) {
         padding: 10px;
+        margin-top: 30px;
         button:nth-child(4) {
             bottom: -50px;
             width: 75vw;
