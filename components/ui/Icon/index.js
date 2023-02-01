@@ -94,12 +94,20 @@ import colorSheild from '../icons/colorSheild';
 import colorUser from '../icons/colorUser';
 import thumbsUp from '../icons/thumbsUp';
 import thumbsDown from '../icons/thumbsDown';
+import WorkIcon from '../icons/work';
+import FolderIcon from '../icons/folder';
+import BookmarkIcon from '../icons/bookmark';
+import LightIcon from '../icons/light';
 
 const mapNameIcons = {
     alert: AlertIcon,
     actionIcon: ActionIcon,
     alertDone: AlertDoneIcon,
     alertRed: AlertRedIcon,
+    WorkIcon: WorkIcon,
+    FolderIcon: FolderIcon,
+    BookmarkIcon: BookmarkIcon,
+    LightIcon: LightIcon,
     back: BackIcon,
     BackArrowLong: BackArrowLong,
     breifcase: Breifcase,
