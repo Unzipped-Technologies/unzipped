@@ -1,13 +1,19 @@
+const sgMail = require('@sendgrid/mail');
+const sgClient = require('@sendgrid/client');
+const keys = require('../config/keys');
 const sendgrid = require('sendgrid');
 const helper = sendgrid.mail;
-const keys = require('../config/keys');
+
+
+sgMail.setApiKey(keys.sendGridKey);
+sgClient.setApiKey(keys.sendGridKey);
+
 
 class Mailer extends helper.Mail {
   constructor({ subject, recipients }, content) {
     super();
-
-    this.sgApi = sendgrid(process.env.SEND_GRID_KEY);
-    this.from_email = new helper.Email('schedule@unzipped.com');
+    this.sgApi = sendgrid(keys.sendGridKey);
+    this.from_email = new helper.Email('jason@unzipped.com');
     this.subject = subject;
     this.body = new helper.Content('text/html', content);
     this.recipients = this.formatAddresses(recipients);
@@ -53,6 +59,37 @@ class Mailer extends helper.Mail {
     } catch (e) {
       console.log('error', e)
     }
+  }
+
+  randNum() {
+    return Math.floor(Math.random() * 90000) + 10000;
+  }
+
+  async addContact(email, confNum) {
+    const customFieldId = await this.getCustomFieldID('conf_num');
+    const data = {
+      "contacts": [{
+        "email": email,
+      }]
+    };
+    data.contacts[0].custom_fields[customFieldId] = confNum;
+    const request = {
+      url: `/v3/marketing'contacts`,
+      method: 'PUT',
+      body: data
+    }
+    return sgClient.request(request)
+  }
+
+  async getCustomFieldID(customFieldName) {
+    const request = {
+      method: 'GET',
+      path: '/v3/marketing/field_definitions'
+    };
+
+    const response = await sgClient.request(request);
+    const allCustomFields = response[1].custom_fields;
+    return allCustomFields.find(x => x.name === customFieldName).id;
   }
 }
 

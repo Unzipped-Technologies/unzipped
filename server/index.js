@@ -6,6 +6,7 @@ const passport = require('passport');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const keys = require('../config/keys');
+const expressFileUpload = require('express-fileupload');
 require('../models/User');
 require('../services/passport/passport');
 
@@ -48,6 +49,7 @@ app
 
         server.use(passport.initialize());
         server.use(passport.session());
+        server.use(expressFileUpload());
 
         const getRoutes = require('./routes/index.js');
         server.use('/api', getRoutes);

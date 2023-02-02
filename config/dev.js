@@ -22,7 +22,7 @@ module.exports = {
       'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog',
     stripeSecretKey:
       'sk_test_51M4xI7HVpfsarZmB00kaNw3rrH722ddi84qWASUSAkFFM7ACHxhxAiQ8I3tzeOdwjSMI0oRxbLP5FGkFm9HnDwPX00pcXTtQB4',
-    sendGridKey: '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',
+    sendGridKey: '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',
     redirectDomain: 'http://localhost:3000',
     nextPublicGAID: 'UA-183226924-1',
     carsXe: 'b4pbu5nbd_te7e4y4dl_zlbdt9z1u',
