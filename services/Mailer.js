@@ -1,71 +1,69 @@
+const Handlebars = require('handlebars')
 const sgMail = require('@sendgrid/mail');
 const sgClient = require('@sendgrid/client');
+const path = require('path')
+const nodemailer = require('nodemailer')
+const fileService = require('./fileService')
 const keys = require('../config/keys');
-const sendgrid = require('sendgrid');
-const helper = sendgrid.mail;
 
 
 sgMail.setApiKey(keys.sendGridKey);
 sgClient.setApiKey(keys.sendGridKey);
 
-
-class Mailer extends helper.Mail {
-  constructor({ subject, recipients }, content) {
-    super();
-    this.sgApi = sendgrid(keys.sendGridKey);
-    this.from_email = new helper.Email('jason@unzipped.com');
-    this.subject = subject;
-    this.body = new helper.Content('text/html', content);
-    this.recipients = this.formatAddresses(recipients);
-
-    this.addContent(this.body);
-    this.addClickTracking();
-    this.addRecipients();
-  }
-
-  formatAddresses(recipients) {
-    return recipients.map(({ email }) => {
-      return new helper.Email(email);
-    });
-  }
-
-  addClickTracking() {
-    const trackingSettings = new helper.TrackingSettings();
-    const clickTracking = new helper.ClickTracking(true, true);
-
-    trackingSettings.setClickTracking(clickTracking);
-    this.addTrackingSettings(trackingSettings);
-  }
-
-  addRecipients() {
-    const personalize = new helper.Personalization();
-
-    this.recipients.forEach(recipient => {
-      personalize.addTo(recipient);
-    });
-    this.addPersonalization(personalize);
-  }
-
-  async send() {
+  const send = async (data) => {
     try {
-      const request = this.sgApi.emptyRequest({
-        method: 'POST',
-        path: '/v3/mail/send',
-        body: this.toJSON()
-      });
-  
-      const response = await this.sgApi.API(request);
-      return response;
+      const content = fileService.readFile(path.join(__dirname, '/emailTemplates/', data.html)).toString()
+
+      const template = Handlebars.compile(content)
+      const html = template(data?.data)
+      const msg = {
+        to: data.toAddress,
+        from: data?.from || 'jason@unzipped.io',
+        subject: data.subject,
+        html: html,
+        attachments: data.attachments,
+        bcc: ['jason@unzipped.io']
+      }
+
+      if (['uat', 'production'].includes(keys.env) && data?.bcc) {
+        msg.bcc = [...(msg?.bcc || []), data?.bcc]
+      }
+
+      if (data?.replyTo) {
+        msg.replyTo = data.replyTo
+      }
+
+      // // filter attachments out of logs due to data buffers being too large for logs
+      // const msgToLog = { ...msg, attachments: `${(msg.attachments && msg.attachments.length) || 0} attachments found.` }
+      // logger.info(`******** Email Helper after content 5 ******${JSON.stringify(msgToLog, null, 2)}*********`)
+      
+      // create reusable transporter object using the default SMTP transport
+      const transporter = nodemailer.createTransport({
+        service: 'SendGrid',
+        pool: true,
+        maxMessages: 100,
+        maxConnections: 10,
+        auth: {
+          user: "apikey",
+          pass: keys.sendGridKey
+        }
+      })
+
+      // send mail with defined transport object
+      const info = await transporter.sendMail(msg)
+      // logger.info(`******** Email Helper after content 6 ******${JSON.stringify(info, null, 2)}*********`)
+      // logger.info(`******** Email Helper Message sent Message id ${info.messageId}  to email ***************${mailOptionsObject.toAddress}`)
+      return 1
     } catch (e) {
       console.log('error', e)
     }
   }
 
-  randNum() {
+  const randNum = () => {
     return Math.floor(Math.random() * 90000) + 10000;
   }
 
-  async addContact(email, confNum) {
+  const addContact = async (email, confNum) => {
     const customFieldId = await this.getCustomFieldID('conf_num');
     const data = {
       "contacts": [{
@@ -74,14 +72,14 @@ class Mailer extends helper.Mail {
     };
     data.contacts[0].custom_fields[customFieldId] = confNum;
     const request = {
-      url: `/v3/marketing'contacts`,
+      url: `/v3/marketing/contacts`,
       method: 'PUT',
       body: data
     }
     return sgClient.request(request)
   }
 
-  async getCustomFieldID(customFieldName) {
+  const getCustomFieldID = async (customFieldName) => {
     const request = {
       method: 'GET',
       path: '/v3/marketing/field_definitions'
@@ -91,6 +89,10 @@ class Mailer extends helper.Mail {
     const allCustomFields = response[1].custom_fields;
     return allCustomFields.find(x => x.name === customFieldName).id;
   }
-}
 
-module.exports = Mailer;
+module.exports = {
+  send,
+  randNum,
+  addContact,
+  getCustomFieldID,
+};

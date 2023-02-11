@@ -15,9 +15,11 @@ import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components'
 
 const Page = styled.div`
-    max-height: 100vh;
+    display: flex;
     height: 100vh;
     overflow: hidden;
+    top: 0px;
+    flex-flow: column nowrap;
 `;
 
 const Container = styled.div`

@@ -3,9 +3,15 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 const levelToRem = {
-    1: '1.875rem',
-    2: '1.625rem',
-    3: '1.375rem',
+    1: '3rem',
+    2: '2.25rem',
+    3: '1.5rem',
+};
+
+const levelToLine = {
+    1: '4rem',
+    2: '3.25rem',
+    3: '2.25rem',
 };
 
 const titleStyles = props => `
@@ -14,7 +20,7 @@ const titleStyles = props => `
     font-style: normal;
     font-weight: 600;
     font-size: ${levelToRem[props.level]};
-    line-height: 2.125rem;
+    line-height: ${levelToLine[props.level]};
     margin: ${props.linkAbove ? '30px 0 20px 0' : '40px 0 20px 0'};
     max-width: ${props.$width};
 `;

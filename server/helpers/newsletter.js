@@ -1,21 +1,32 @@
 const Mailer = require('../../services/Mailer');
-const newsletterTemplate = require('../../services/emailTemplates/newsletterIntro');
+const emailList = require('../../models/EmailList');
 
 const sendIntro = async (email) => {
-    const msg = {
-        to: email,
-        recipients: [{email}],
-        from: "jason@unzipped.com",
-        subject: `Welcome to the unzipped newsletter`,
-        html: newsletterTemplate,
-      };
-    const mailer = new Mailer(msg, newsletterTemplate);
-    const confNum = mailer.randNum();
-    await mailer.addContact(email, confNum);
-    await mailer.send(msg)
-    return true;
+    try {
+        const msg = {
+            toAddress: email || 'jaymaynard84@gmail.com',
+            from: 'jason@unzipped.io',
+            subject: 'Welcome to the unzipped newsletter',
+            html: 'newsletterIntro.html',
+        }
+        Mailer
+            .send(msg)
+            .then(() => {
+            console.log('Email sent')
+            })
+            .catch((error) => {
+            console.error(error)
+            })
+        } catch (e) {
+        // logger.info(`******** Email error log ******${JSON.stringify(msgToLog, null, 2)}*********`)
+        }
+}
+
+const unsubscribeNewsletter = async (data) => {
+    return await emailList.findOneAndUpdate({email: data}, {$set: {isActive: false}})
 }
 
 module.exports = {
-    sendIntro
+    sendIntro,
+    unsubscribeNewsletter
 }

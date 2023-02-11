@@ -11,12 +11,12 @@ import {ValidationUtils} from '../../utils'
 import Notification from '../animation/notifications';
 
 const Container = styled.div`
-    padding: 40px;
+    padding: ${({$small}) => $small ? '0px' : '40px'};
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
     align-items: bottom;
     justify-content: center;
-    width: 780px;
+    width: ${({$small}) => $small ? '675px' : '780px'};
     .mobile {
         display: none;
     }
@@ -27,7 +27,7 @@ const Container = styled.div`
         button:nth-child(4) {
             margin-top: 20px !important;
             position: absolute;
-            bottom: -20px;
+            bottom: ${({$small}) => $small ? '-70px' : '-20px'};
             left: 40px;
             width: 440px;
         }
@@ -95,7 +95,7 @@ const Center = styled.div`
     width: 100%;
 `;
 
-const News = ({email, signUpForNewsletter, loading}) => {
+const News = ({email, signUpForNewsletter, loading, small}) => {
     const [form, setForm] = useState({email: ''});
     const [alert, setAlert] = useState('');
     const [notifications, setNotifications] = useState('');
@@ -132,7 +132,7 @@ const News = ({email, signUpForNewsletter, loading}) => {
         }
     };
     return (
-        <Container>
+        <Container $small={small}>
             <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png" name="desktop" alt="dinosaur" height="94px" width="94px" radius='15px'/>
             <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png" name="mobile" alt="dinosaur" height="70px" width="70px" radius='15px'/>
             <Center>

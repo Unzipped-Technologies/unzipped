@@ -111,6 +111,13 @@ const typeColors = {
         hover: '#8EDE64',
         hoverText: '#333'
     },
+    red: {
+        text: '#fff',
+        background: '#FF626E',
+        border: 'none',
+        hover: '#8EDE64',
+        hoverText: '#333'
+    },
     black: {
         text: '#333',
         background: '#37DEC5',

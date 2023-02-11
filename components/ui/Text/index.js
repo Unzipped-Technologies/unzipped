@@ -16,6 +16,10 @@ const bodyStyles = {
         fontSize: theme.fontSizeS,
         lineHeight: theme.lineHeightS,
     },
+    4: {
+        fontSize: theme.fontSizeXL,
+        lineHeight: theme.lineHeightL,
+    },
 };
 
 const styles = ({

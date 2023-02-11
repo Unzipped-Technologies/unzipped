@@ -5,8 +5,8 @@ const newsletterHelper = require('../helpers/newsletter')
 const requireLogin = require('../middlewares/requireLogin');
 const permissionCheckHelper = require('../middlewares/permissionCheck');
 const sgMail = require('@sendgrid/mail')
+const Mailer = require('../../services/Mailer')
 const keys = require('../../config/keys');
-const newsletterTemplate = require('../../services/emailTemplates/newsletterIntro');
 
 sgMail.setApiKey(keys.sendGridKey)
 
@@ -87,7 +87,8 @@ router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermiss
 
 router.post('/newsletter/add', async (req, res) => {
     try {
-      await userHelper.addToNewsletter(req.body.email)
+      const newUser = await userHelper.addToNewsletter(req.body.email)
+      console.log(newUser)
       await newsletterHelper.sendIntro(req.body.email)
       res.json({msg: 'success', email: req.body.email})
     } catch (e) {
@@ -95,23 +96,10 @@ router.post('/newsletter/add', async (req, res) => {
     }
 });
 
-router.post('/newsletter/send', async (req, res) => {
+router.post('/newsletter/unsubscribe', async (req, res) => {
     try {
-      const msg = {
-        to: 'jaymaynard84@gmail.com', // Change to your recipient
-        from: 'jason@unzipped.io', // Change to your verified sender
-        subject: 'Welcome to the unzipped newsletter',
-        template_id: 'd-ee82a3f6fd1f4b56aa1aa648435046ba'
-      }
-      sgMail
-        .send(msg)
-        .then(() => {
-          console.log('Email sent')
-          res.json({msg: 'Email sent'})
-        })
-        .catch((error) => {
-          console.error(error)
-        })
+      await newsletterHelper.unsubscribeNewsletter(req.body.email)
+      res.json({msg: 'success', email: req.body.email})
     } catch (e) {
       res.status(400).json({msg: e.message})
     }

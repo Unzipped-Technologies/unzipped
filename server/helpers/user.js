@@ -299,7 +299,7 @@ const listLikes = async (id) => {
 
 // list likes for user
 const addToNewsletter = async (data) => {
-    return await emailList.findOneAndUpdate({email: data}, {$set: {email: data}}, { upsert: true  })
+    return await emailList.findOneAndUpdate({email: data}, {$set: {email: data, isActive: true}}, { upsert: true  })
 }
 
 const setUpNotificationsForUser = async (id) => {

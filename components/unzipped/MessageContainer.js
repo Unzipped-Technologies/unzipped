@@ -123,7 +123,7 @@ const MessageContainer = ({
     }, [data])
 
     useEffect(() => {
-        scrollToBottom()
+        // scrollToBottom()
     }, [receiver])
 
     console.log(data)
