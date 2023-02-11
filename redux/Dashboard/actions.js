@@ -1,6 +1,8 @@
 import {
     FETCH_CUSTOMERS,
     LOAD_CUSTOMERS,
+    FETCH_NEWS,
+    LOAD_NEWS,
     FETCH_ORDERS,
     FETCH_GARAGES,
     FETCH_PROMOS,
@@ -19,6 +21,25 @@ import {
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
+
+// get the news
+export const getNews = (number, token) => async (dispatch, getState) => {
+    //products Loading
+    dispatch({type: LOAD_NEWS})
+
+    await axios
+        .get(`/api/user/newsletter/list`)
+        .then(res => dispatch({
+            type: FETCH_NEWS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: UPDATE_ERROR,
+                payload: err.response
+            })
+        })
+}
 
 export const getCustomers = (number, token) => async (dispatch, getState) => {
     //products Loading

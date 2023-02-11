@@ -105,4 +105,22 @@ router.post('/newsletter/unsubscribe', async (req, res) => {
     }
 });
 
+router.get('/newsletter/get', async (req, res) => {
+    try {
+      const getNews = await newsletterHelper.getNewsStories()
+      res.json(getNews)
+    } catch (e) {
+      res.status(400).json({msg: e.message})
+    }
+});
+
+router.get('/newsletter/list', async (req, res) => {
+    try {
+      const getNews = await newsletterHelper.retrieveExternalNews()
+      res.json(getNews)
+    } catch (e) {
+      res.status(400).json({msg: e.message})
+    }
+});
+
 module.exports = router;

@@ -27,7 +27,9 @@ import {
     HOTEL_OWED,
     GET_STORIES_LIST,
     GET_TAGS_LIST,
-    SORT_STORIES_ON_DRAG
+    SORT_STORIES_ON_DRAG,
+    LOAD_NEWS,
+    FETCH_NEWS,
 } from './constants';
 
 const INIT_STATE = {
@@ -111,6 +113,7 @@ const INIT_STATE = {
             }
         },
     ],
+    news: [],
     error: ''
 }
 
@@ -120,6 +123,10 @@ const Dashboard = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, users: action.payload};
         case FETCH_MORE_CUSTOMERS:
             return {...state, loading: false, users: [...action.payload, ...state.users]};
+        case LOAD_NEWS:
+            return {...state, loading: true, news: []};
+        case FETCH_NEWS:
+            return {...state, loading: false, news: action.payload};
         case FETCH_MORE_ORDERS:
             let hasMoreOrders = true;
             if (action.payload.length === 0) {

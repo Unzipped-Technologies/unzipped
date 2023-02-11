@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Head from "next/head"
 import Image from '../components/ui/Image'
 import Text from '../components/ui/Text'
@@ -6,10 +6,14 @@ import Title from '../components/ui/Title'
 import News from '../components/unzipped/NewsletterSignup'
 import Nav from '../components/unzipped/header'
 import Button from '../components/ui/Button'
-import { Absolute } from '../components/unzipped/dashboard/style'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
+
+//redux
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { getNews } from '../redux/actions'
 
 const Container = styled.div`
     display: flex;
@@ -115,6 +119,11 @@ const Left = styled.div`
 
 const NewsContainer = styled.div`
     margin: 15px 0px;
+    @media(max-width: 420px) {
+        position: relative;
+        bottom: 30px;
+        margin: 10px 0px;
+    }
 `;
 
 const ImageLarge = styled.div`
@@ -193,8 +202,12 @@ const items = [
 ]
     
 
-const LandingPage = () => {
+const LandingPage = ({news, getNews}) => {
     const router = useRouter();
+    useEffect(() => {
+        getNews()
+    }, [])
+    console.log(news)
     return (
         <React.Fragment>
             <Head>
@@ -258,4 +271,15 @@ const LandingPage = () => {
     )
 }
 
-export default LandingPage;
+const mapStateToProps = (state) => {
+    return {
+        news: state.Dashboard.news
+    }
+  }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getNews: bindActionCreators(getNews, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);

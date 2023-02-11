@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+const scheduledFunctions = require('./cronJobs')
 require('dotenv').config();
 const keys = require('../config/keys');
 const expressFileUpload = require('express-fileupload');
@@ -50,7 +51,7 @@ app
         server.use(passport.initialize());
         server.use(passport.session());
         server.use(expressFileUpload());
-
+        scheduledFunctions.initScheduledJobs()
         const getRoutes = require('./routes/index.js');
         server.use('/api', getRoutes);
         // const routes = getRoutes();

@@ -29,6 +29,9 @@ export const SUBMIT_ORDER = "SUBMIT_ORDER";
 export const GET_STORIES_LIST = "GET_STORIES_LIST";
 export const GET_TAGS_LIST = "GET_TAGS_LIST";
 export const SORT_STORIES_ON_DRAG = "SORT_STORIES_ON_DRAG";
+// newsletter
+export const LOAD_NEWS = "LOAD_NEWS";
+export const FETCH_NEWS = "FETCH_NEWS";
 
 
 
