@@ -184,6 +184,14 @@ class Validations {
         return error;
     }
 
+    truncate($str, $chars, $end) {
+        const $new = ($str || '').substring(0, $chars)
+        if ($new.length >= ($chars - 3)) {
+            return `${$new}...`
+        }
+        return $new
+    }
+
     // _passwordValidation(pw) {
     //     return /[A-Z]/       .test(pw) &&
     //     /[a-z]/       .test(pw) &&

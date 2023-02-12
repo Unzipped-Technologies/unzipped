@@ -41,7 +41,7 @@ const theme = {
     fontSizeXS: '0.75rem',
     fontSizeS: '0.875rem',
     baseFontSize: '1rem',
-    fontSizeM: '1.125rem',
+    fontSizeM: '1.25rem',
     fontSizeL: '1.375rem',
     fontSizeXL: '1.5rem',
     fontSizeXXL: '2.5rem',
@@ -51,6 +51,7 @@ const theme = {
     baseLineHeight: '1.5rem',
     lineHeightM: '1.625rem',
     lineHeightL: '2.3rem',
+    lineHeight_L: '2rem',
     // colors
     background: '#37DEC5',
     background2: '#8EDE64',

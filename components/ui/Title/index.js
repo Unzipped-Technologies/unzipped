@@ -6,12 +6,16 @@ const levelToRem = {
     1: '3rem',
     2: '2.25rem',
     3: '1.5rem',
+    4: '2.25rem',
+    5: '1.375rem',
 };
 
 const levelToLine = {
     1: '4rem',
-    2: '3.25rem',
+    2: '2.75rem',
     3: '2.25rem',
+    4: '2.5rem',
+    5: '2rem',
 };
 
 const titleStyles = props => `
@@ -19,9 +23,9 @@ const titleStyles = props => `
     font-family: arial;
     font-style: normal;
     font-weight: 600;
-    font-size: ${levelToRem[props.level]};
-    line-height: ${levelToLine[props.level]};
-    margin: ${props.linkAbove ? '30px 0 20px 0' : '40px 0 20px 0'};
+    font-size: ${levelToRem[props.level] || '2.25rem'};
+    line-height: ${levelToLine[props.level] || '2.25rem'};
+    margin: ${props.linkAbove ? '15px 0px 5px 0px' : props.margin ? props.margin : '40px 0 20px 0'};
     max-width: ${props.$width};
 `;
 
@@ -37,20 +41,30 @@ const Title3 = styled.h3`
     ${props => titleStyles(props)}
 `;
 
+const Title4 = styled.h4`
+    ${props => titleStyles(props)}
+`;
+
+const Title5 = styled.h5`
+    ${props => titleStyles(props)}
+`;
+
 const levelToTitle = {
     1: Title1,
     2: Title2,
     3: Title3,
+    4: Title4,
+    5: Title5,
 };
 
 /**
  * Title Component.
  */
-const Title = ({children, className, level, color, width, linkAbove}) => {
+const Title = ({children, className, level, color, width, linkAbove, margin}) => {
     const TitleContainer = levelToTitle[level];
 
     return (
-        <TitleContainer className={className} level={level} linkAbove={linkAbove} $color={color} $width={width}>
+        <TitleContainer className={className} margin={margin} level={level} linkAbove={linkAbove} $color={color} $width={width}>
             {children}
         </TitleContainer>
     );

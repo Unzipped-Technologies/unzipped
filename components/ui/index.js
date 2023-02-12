@@ -26,6 +26,7 @@ import HelpIcon from './HelpIcon';
 import Icon from './Icon';
 import Image from './Image';
 import InfoModal from './InfoModal';
+import BlogFeature from './BlogFeature';
 import InlineLink from './InlineLink';
 import Input from './Input';
 import LargeHeading from './LargeHeading';
@@ -76,6 +77,7 @@ export {
     Button,
     Buttons,
     Bullet,
+    BlogFeature,
     Card,
     Checkbox,
     CountdownTimer,

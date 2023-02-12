@@ -6,6 +6,9 @@ import Title from '../components/ui/Title'
 import News from '../components/unzipped/NewsletterSignup'
 import Nav from '../components/unzipped/header'
 import Button from '../components/ui/Button'
+import Action from '../components/ui/Action'
+import BlogFeature from '../components/ui/BlogFeature'
+import BlogList from '../components/ui/BlogList'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
@@ -115,6 +118,17 @@ const Left = styled.div`
     @media(max-width: 950px) {
         top: 0px;
     }
+    @media(max-width: 421px) {
+        h1 {
+            font-size: 26px;
+            line-height: 30px;
+            max-width: 315px;
+            margin: 10px 0 10px 0;
+        }
+        p {
+            margin-bottom: 0px;
+        }
+    }
 `;
 
 const NewsContainer = styled.div`
@@ -123,6 +137,7 @@ const NewsContainer = styled.div`
         position: relative;
         bottom: 30px;
         margin: 10px 0px;
+        margin-top: 55px;
     }
 `;
 
@@ -185,6 +200,79 @@ const ImageMobileSmall = styled.div`
     }
 `;
 
+const SectionOne = styled.div`
+    display: flex;
+    max-width: 100%;
+    justify-content: center;
+    margin: 40px;
+`;
+
+const ArticleSection = styled.div`
+    display: grid;
+    grid-template-columns: 4fr 5fr;
+    max-width: 1200px;
+    justify-content: center;
+    @media(max-width: 999px) {
+        grid-template-columns: 1fr;
+    }
+`;
+
+const MobileBlog = styled.div`
+    display: none;
+    @media(max-width: 355px) {
+        display: flex;
+        flex-flow: column;
+    }
+`;
+
+const Footer = styled.div`
+    background: #192733;
+    color: #fff;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    height: 192px;
+    div {
+        font-weight: 400;
+        max-width: 235px;
+        text-align: center;
+    }
+    p {
+        max-width: 585px;
+    }
+    @media(max-width: 620px) {
+        p {
+            font-size: 16px;
+            max-width: 530px;
+        }
+    }
+    @media(max-width: 542px) {
+        p {
+            font-size: 14px;
+            max-width: 480px;
+        }
+    }
+    @media(max-width: 487px) {
+        p {
+            font-size: 12px;
+            max-width: 320px;
+            text-align: center;
+        }
+    }
+    @media(max-width: 487px) {
+        p {
+            max-width: 280px;
+        }
+        div {
+            font-size: 14px;
+        }
+    }
+`;
+const Links = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+`;
 
 const items = [
     {
@@ -226,7 +314,7 @@ const LandingPage = ({news, getNews}) => {
                             ))}
                         </MenuItems>
                         <ButtonContainer>
-                            <Button type="red" onClick={() => router.push('/')} noOutline noBorder oval>Get Started</Button>                    
+                            <Button type="red" onClick={() => router.push('/register')} noOutline noBorder oval>Get Started</Button>                    
                         </ButtonContainer>                    
                     </RightMenu>
                 </BasicNav>
@@ -264,7 +352,26 @@ const LandingPage = ({news, getNews}) => {
                     </ImageMobileSmall>
                   
                 </Content>
-             
+                <SectionOne>
+                    <ArticleSection>
+                        <BlogFeature data={news[0]} />
+                        <BlogList data={news} limit={3} />  
+                        <MobileBlog>
+                            {news.map((e, index) => {
+                                if (index > 0 && index < 3) {
+                                    return (
+                                        <BlogFeature data={e} index={index} />                                        
+                                    )
+
+                                }
+                            })}
+                        </MobileBlog>
+                    </ArticleSection>                  
+                </SectionOne>
+                <Footer>
+                    <Text color="#848b92">If you don't like it, unsubscribe at any time. Seriously, no hard feelings.</Text>
+                    <Links><Action onClick={() => window.location = 'https://legal.hubspot.com/privacy-policy'}>Privacy Policy</Action><Action onClick={() => router.push('/contact')}>Contact Us</Action></Links>
+                </Footer>
             </Container>
 
         </React.Fragment>

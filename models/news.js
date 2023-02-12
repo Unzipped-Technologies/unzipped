@@ -11,6 +11,7 @@ const newsSchema = new Schema({
   pubDate: String,
   image_url: String,
   source_id: String,
+  category: [String],
 }, {
   timestamps: true
 });

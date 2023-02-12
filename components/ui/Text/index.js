@@ -20,11 +20,16 @@ const bodyStyles = {
         fontSize: theme.fontSizeXL,
         lineHeight: theme.lineHeightL,
     },
+    4: {
+        fontSize: theme.fontSizeL,
+        lineHeight: theme.lineHeight_L,
+    },
 };
 
 const styles = ({
     level,
     marginBottom,
+    marginTop,
     $display,
     theme,
     $color,
@@ -34,6 +39,7 @@ const styles = ({
     $textAlign,
     $underline,
     $whiteSpace,
+    clickable
 }) => `
     font-size: ${bodyStyles[level]?.fontSize || bodyStyles[1].fontSize};
     line-height: ${bodyStyles[level]?.lineHeight || bodyStyles[1].lineHeight};
@@ -48,6 +54,8 @@ const styles = ({
     white-space: ${$whiteSpace};
     gap: 10px;
     margin-bottom: ${marginBottom}px;
+    margin-top: ${marginTop}px;
+    cursor: ${clickable ? 'pointer' : 'default'}
     svg {
         height: 16px;
         margin-left: 10px;
@@ -71,6 +79,7 @@ const Text = ({
     fontWeight = '400',
     level = 1,
     marginBottom = '',
+    marginTop="13.125",
     onClick = null,
     type = 'p',
     underline = 'none',
@@ -79,6 +88,7 @@ const Text = ({
     display = 'inline-block',
     className = '',
     whiteSpace = 'auto',
+    clickable,
 }) => {
     let TextStyled;
     switch (type.toLowerCase()) {
@@ -98,6 +108,8 @@ const Text = ({
             $fontWeight={fontWeight}
             level={level}
             marginBottom={marginBottom}
+            marginTop={marginTop}
+            clickable={clickable}
             $display={display}
             $padding={padding}
             $textAlign={textAlign}
