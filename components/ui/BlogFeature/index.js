@@ -56,7 +56,7 @@ const BlogFeature = ({data, index}) => {
         <Link href={data?.link || '/'}>
             <Container>
                 <Image src={data?.image_url || getImageCase(index)} radius="5px"/>
-                {data?.category.length >= 0 && <Text level={2} color="#1c7ff2" marginBottom={0}>{data?.category[0].toUpperCase()}</Text>}
+                {data?.category.length >= 0 && <Text level={2} color="#1c7ff2" marginBottom={0}>{data?.category[0]?.toUpperCase()}</Text>}
                 <Title level={2} linkAbove>{data?.title}</Title>
                 <Text level={4} color="#333" marginBottom={0}>{ValidationUtils.truncate(data?.description, 111)}</Text>
                 <Text level={2} marginBottom={0}>{data?.creator[0]}</Text>

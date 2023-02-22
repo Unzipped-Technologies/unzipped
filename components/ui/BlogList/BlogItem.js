@@ -112,7 +112,7 @@ const BlogItem = ({data, index}) => {
         <Link href={data?.link || '/'}>
             <Container>
                 <Left>
-                    {data?.category && data?.category.length >= 0 && <Text clickable level={3} color="#1c7ff2" marginBottom={0}>{data?.category[0].toUpperCase()}</Text>}
+                    {data?.category && data?.category.length >= 0 && <Text clickable level={3} color="#1c7ff2" marginBottom={0}>{(data?.category[0] || '').toUpperCase()}</Text>}
                     <Title level={5} margin="5px 0px 0px 0px">{data?.title}</Title>
                     <Text clickable level={3} color="#333" marginBottom={0} marginTop="5">{ValidationUtils.truncate(data?.description, 100)}</Text>
                     <br/>
