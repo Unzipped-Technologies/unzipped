@@ -88,7 +88,6 @@ router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermiss
 router.post('/newsletter/add', async (req, res) => {
     try {
       const newUser = await userHelper.addToNewsletter(req.body.email)
-      console.log(newUser)
       await newsletterHelper.sendIntro(req.body.email)
       res.json({msg: 'success', email: req.body.email})
     } catch (e) {

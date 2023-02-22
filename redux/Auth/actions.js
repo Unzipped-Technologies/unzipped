@@ -52,12 +52,12 @@ export const logoutUser = (token) => async (dispatch, getState) => {
         )
 };
 
-export const signUpForNewsletter = () => async (dispatch, getState) => {
+export const signUpForNewsletter = (data) => async (dispatch, getState) => {
     dispatch({
         type: USER_LOADING
     })
     await axios
-        .post(`/api/user/newsletter/add`)
+        .post(`/api/user/newsletter/add`, data)
         .then(res => dispatch({
             type: SIGN_UP_FOR_NEWSLETTER,
             payload: res.data

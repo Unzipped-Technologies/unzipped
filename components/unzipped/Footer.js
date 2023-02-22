@@ -81,7 +81,7 @@ const Footer = () => {
                     <Link href="/"><Text color={theme.text}>HELP AND SUPPORT</Text></Link>
                     <Link href="/"><Text color={theme.text}>CAREERS</Text></Link>
                     <Link href="/"><Text color={theme.text}>CONTACT US</Text></Link>
-                    <Link href="/"><Text color={theme.text}>PRESS</Text></Link>
+                    <Link href="/newsletter"><Text color={theme.text}>PRESS</Text></Link>
                 </ValueList>
             </Links>
 
