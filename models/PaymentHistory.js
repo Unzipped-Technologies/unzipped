@@ -10,7 +10,8 @@ const paymentHistorySchema = new Schema({
   paymentStatus: { type: Number, default: 0 },
   paymentType: { type: String, default: 0 },
   paymentAmount: Number,
-  paymentCurrency: { type: String, default: 'USD' }
+  paymentCurrency: { type: String, default: 'USD' },
+  paymentIntentId: String,
 }, {
   timestamps: true
 });

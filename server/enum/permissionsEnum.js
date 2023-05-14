@@ -32,6 +32,12 @@ const userPermissions = Object.freeze({
     DeleteDepartment: 'deleteDepartment',
     selectDepartment: 'selectDepartment',
     ListDepartment: 'listDepartments',
+    // invoice
+    createInvoice: 'createInvoice',
+    listInvoices: 'listInvoices',
+    getInvoiceByUserId: 'getInvoiceByUserId',
+    updateInvoice: 'updateInvoice',
+    disableInvoice: 'disableInvoice',
     // likes
     UserLike: 'userLike',
     ListLikesForUser: 'listLikesForUser',
@@ -90,6 +96,12 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteDepartment,
         userPermissions.selectDepartment,
         userPermissions.ListDepartment,
+        // invoice
+        userPermissions.createInvoice,
+        userPermissions.listInvoices,
+        userPermissions.getInvoiceByUserId,
+        userPermissions.updateInvoice,
+        userPermissions.disableInvoice,
         // tags
         userPermissions.CreateTag,
         userPermissions.UpdateTag,
@@ -138,6 +150,12 @@ const accountTypePermissions = Object.freeze({
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
         userPermissions.UserDeleteLike,
+        // invoice
+        userPermissions.createInvoice,
+        userPermissions.listInvoices,
+        userPermissions.getInvoiceByUserId,
+        userPermissions.updateInvoice,
+        userPermissions.disableInvoice,
         // tasks
         userPermissions.CreateTask,
         userPermissions.UpdateTask,
@@ -195,6 +213,12 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteDepartment,
         userPermissions.selectDepartment,
         userPermissions.ListDepartment,
+        // invoice
+        userPermissions.createInvoice,
+        userPermissions.listInvoices,
+        userPermissions.getInvoiceByUserId,
+        userPermissions.updateInvoice,
+        userPermissions.disableInvoice,
         // tags
         userPermissions.CreateTag,
         userPermissions.UpdateTag,
