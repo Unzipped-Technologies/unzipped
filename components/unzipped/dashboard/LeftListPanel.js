@@ -32,11 +32,12 @@ const Action = styled.div`
 `;
 
 const Panel = ({list, business, selectList, type}) => {
+    const isDepartment = type === 'department';
     return (
         <Container>
-            <TitleText paddingLeft clickable>{business}<Absolute top="20px"><Action>{type === 'department' ? '' : '+ New List'}</Action></Absolute></TitleText>
-            <Underline />   
-            {list.map(item => (
+            <TitleText paddingLeft clickable>{business}<Absolute top="20px"><Action>{isDepartment ? '' : '+ New List'}</Action></Absolute></TitleText>
+            <Underline />
+            {list.filter(item => isDepartment ? item.tags.length > 0 : true).map(item => (
                 <WhiteCard borderColor="transparent" height="30px" row noMargin clickable onClick={() => selectList(item)}>
                     {item.icon}
                     <DarkText clickable noMargin paddingLeft hover>{item.text}</DarkText>
