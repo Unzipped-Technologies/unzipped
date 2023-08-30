@@ -95,8 +95,8 @@ const MessageContainer = ({
     const [isProfile, setIsProfile] = useState(true)
     const [fileUploadModal, setFileUploadModal] = useState(false)
     const [form, setForm] = useState({
-        senderId: sender.userId._id,
-        receiverId: receiver.userId._id,
+        senderId: sender?.userId?._id,
+        receiverId: receiver?.userId?._id,
         message: '',
         attachment: '',
     })
