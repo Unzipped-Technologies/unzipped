@@ -217,8 +217,10 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
     useEffect(() => {
         if (isAuthenticated) {
             setNotifications('Register Successful')
-            setTimeout(() => {  
-                router.push('/confirmVerify')
+            setTimeout(() => { 
+                // TODO: redirect to confirm verify once email is back online
+                // router.push('/confirmVerify')
+                router.push('/dashboard')
             }, 2000);
         } else {
             if (error) {

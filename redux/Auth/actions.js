@@ -237,7 +237,7 @@ export const registerUser = (user) => async (dispatch) => {
             // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: AUTH_ERROR,
-                payload: {data: 'User with that email already exists'}
+                payload: {data: err.message}
             })
         })
 }
