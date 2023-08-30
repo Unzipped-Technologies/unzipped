@@ -80,7 +80,7 @@ router.post(
               text: "and easy to do anywhere, even with Node.js",
               html: "<strong>and easy to do anywhere, even with Node.js</strong>",
             };
-            const mailer = new Mailer(msg, verifyTemplate(msg));
+            // const mailer = new Mailer(msg, verifyTemplate(msg));
             // mailer.send();
 
             let t = token.signToken(newuser._id);
@@ -91,7 +91,7 @@ router.post(
           }
       } catch (e) {
         console.log('error error: ', e);
-        res.status(400).send('User with this email already exists')
+        res.status(400).send(e.message)
       }
     },
     ////Log user into app and redirect to localhost:3000

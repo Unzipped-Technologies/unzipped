@@ -18,7 +18,9 @@ const { likeEnum } = require('../enum/likeEnum');
 const createUser = async (data, hash) => {
     // create User 
     const newUser = await user.create({ 
-        ...data, 
+        ...data,
+        // TODO: needs to be removed once email is back online
+        isEmailVerified: true, 
         password: hash,
         plan: planEnum.UNSUBSCRIBED
     });
