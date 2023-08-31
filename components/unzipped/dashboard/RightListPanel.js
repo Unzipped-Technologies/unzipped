@@ -28,7 +28,7 @@ const Container = styled.div`
     display: flex;
     flex-flow: column;
     border: 1px solid #D9D9D9;
-    background: ${({background}) => background ? background : '#D9D9D9'};
+    background: ${({background}) => background ? background : '#D9D9D930'};
     width: 95%;
     max-height: 900px;
     padding: 20px 0px;
@@ -355,16 +355,16 @@ const Panel = ({
 
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
-            <TitleText paddingLeft>{selectedList}</TitleText>
+            <TitleText paddingLeft size="24px">{selectedList}</TitleText>
             <Underline color="#333" noMargin={type === 'department'}/>   
-            {<Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>}
+            {type === "department" && (<Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>)}
             {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top/>}
             {!freelancer && (
                 <NoUsersInList>
                     <WorkIcon width={200} height={200}/>
-                    <TitleText center noMargin>This list is empty</TitleText>
+                    <TitleText center noMargin size="24px">This list is empty</TitleText>
                     <DarkText center>Add investors to your list to quickly find them later. </DarkText>
-                    <div><Button noBorder oval>BROWSE INVESTORS</Button></div>
+                    <div><Button noBorder oval style={{ color: "black" }}>BROWSE INVESTORS</Button></div>
                 </NoUsersInList>
             )}
             <UserContainer>

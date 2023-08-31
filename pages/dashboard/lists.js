@@ -34,7 +34,7 @@ const Lists = [
     },
 ]
 
-const Dashboard = ({business='My Business', selectedList="Favorites", token, cookie}) => {
+const Dashboard = ({business='Lists', selectedList="Favorites", token, cookie}) => {
     const access = token?.access_token || cookie
     
     useEffect(() => {

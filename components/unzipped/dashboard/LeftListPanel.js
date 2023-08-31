@@ -14,10 +14,11 @@ const Container = styled.div`
     flex-flow: column;
     border: 1px solid #D9D9D9;
     width: 100%;
-    max-height: 900px;
+    height: fit-content;
     padding: 20px 0px;
     margin-left: 10px;
     border-radius: 10px;
+    overflow: hidden
 `;
 
 const Action = styled.div`
