@@ -23,7 +23,7 @@ const Tasklist = ({
     selectedBusiness, 
     businesses = [], 
     departments = [],
-    business='My Business', 
+    business='Lists', 
     selectedDepartment, 
     form,
     tags = [], 
