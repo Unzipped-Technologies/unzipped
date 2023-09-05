@@ -62,6 +62,7 @@ import Twitter from '../icons/twitter';
 import Tiktok from '../icons/tiktok';
 import Copywrite from '../icons/Copywrite';
 import GoogleCircle from '../icons/GoogleCircle';
+import googleLogo from '../icons/googleLogo';
 import Github from '../icons/github';
 import Question from '../icons/question';
 import Glasses from '../icons/glasses';
@@ -95,6 +96,7 @@ import colorUser from '../icons/colorUser';
 import thumbsUp from '../icons/thumbsUp';
 import thumbsDown from '../icons/thumbsDown';
 import wrenchIcon from '../icons/wrench';
+import backArrow from '../../icons/backArrow';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -187,11 +189,13 @@ const mapNameIcons = {
     timeout: Timeout,
     copywrite: Copywrite,
     googleCircle: GoogleCircle,
+    googleLogo: googleLogo,
     github: Github,
     user: User,
     thumbsUp: thumbsUp,
     thumbsDown: thumbsDown,
-    wrenchIcon: wrenchIcon
+    wrenchIcon: wrenchIcon,
+    backArrow: backArrow,
 };
 
 /**
