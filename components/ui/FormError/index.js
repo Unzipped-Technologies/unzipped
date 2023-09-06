@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 const ErrorContainer = styled.div`
   color: ${props => props.theme.error || '#D35B5B'};
   font-weight: 400;
-  font-size: ${props => props.theme.fontSizeS || '11px'};
+  font-size: ${props => props.theme.fontSizeS || '12px'};
   font-family: arial;
   margin-top: 4px;
 `

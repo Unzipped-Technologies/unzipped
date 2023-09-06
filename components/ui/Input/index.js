@@ -49,7 +49,9 @@ const inputContainerStyles = props => `
 
 const inputStyles = props => `
     background-color: inherit;
-    width: 100%;
+    width: -moz-available !important;          /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available !important;  /* Mozilla-based browsers will ignore this. */
+    width: fill-available !important;
     border: none;
     outline: none;
     color: ${props.disabled ? props.theme.tint2 : props.theme.textSecondary};
@@ -79,6 +81,10 @@ const InputControl = styled.input`
   height: 100%;
   &:hover {
     border-bottom: none !important;
+    
+  }
+  &:focus {
+    box-shadow: 0 0 0 0 #ffffff00 !important;
   }
 `
 

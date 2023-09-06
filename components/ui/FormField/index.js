@@ -130,9 +130,7 @@ const FormField = ({
     }
   }, [wrapperRef])
   const handleBlur = e => {
-    console.log(e)
     const value = e?.label || e?.target?.value || e?.value || null
-    console.log(value)
     if (required && (!value || !validate(value))) {
       setCurrentError(requiredError)
     } else {
