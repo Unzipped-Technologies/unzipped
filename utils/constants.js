@@ -15,7 +15,7 @@ export default {
     TERMS_CONDITIONS: 'Please accept terms & conditions.',
     MOBILE_NUMBER_FORMAT: 'Phone number is invalid.',
     PASSWORD_RULE_MESSAGE:
-        'Password must be at least 8 characters and include one number and one special character (e.g., & @ !).").',
+        'Passwords should contain at least 1 special character',
     USER_NAME_EXISTS: 'Username already in use.',
     USER_NAME_REQUIRED: 'Please select username.',
     REASON_REQUIRED: 'Please enter reason to deactivate fund.',
@@ -27,8 +27,8 @@ export default {
     INVESTOR_NAME_REQUIRED: 'Please enter investor name',
     LAST_NAME_REQUIRED: 'Please enter last name.',
     MIDDLE_NAME_REQUIRED: 'Please enter Middle name.',
-    LOGIN_PASSWORD_REQUIRED: 'Please enter password.',
-    LOGIN_EMAIL_REQUIRED: 'Please enter Email.',
+    LOGIN_PASSWORD_REQUIRED: 'Passwords should contain at least 1 special character',
+    LOGIN_EMAIL_REQUIRED: 'Pease enter a valid email address for email login',
     INVALID_LOGIN:
         'Invalid credentials. Please try again. Please note your account will get locked after 5 unsuccessful attempts.',
     CELL_NUMBER_REQUIRED: 'Phone number is required.',
