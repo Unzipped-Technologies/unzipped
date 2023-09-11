@@ -7,6 +7,7 @@ const thirdPartyApplicationSchema = new Schema({
   stripeId: String,
   googleId: String,
   calendlyId: String,
+  meta: Object,
 }, {
   timestamps: true
 });
