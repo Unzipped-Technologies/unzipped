@@ -10,6 +10,9 @@ const Container = styled.div`
     justify-content: center;
     flex-flow: column;
     padding: ${({margin}) => margin ? margin : '45px 0px 0px 0px'};
+    @media(max-width: 680px) {
+        display: none;
+    }
 `;
 
 const Span = styled.span`
@@ -23,7 +26,7 @@ const TitleBlock = styled.div`
 `;
 
 const Block = styled.div`
-    width: ${({$width}) => $width ? $width : '70%'};
+    width: ${({$width}) => $width ? $width : '80%'};
     display: flex;
     flex-flow: row;
     justify-content: space-between;
@@ -48,7 +51,7 @@ const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, wi
                         {id: 2, name: 'item 2'},
                         {id: 3, name: 'item 3'},
                     ]}
-                    width="80%"
+                    width="100%"
                     keys={['name']}
                     onChange={filteredResults => console.log(filteredResults)}
                     placeholder={'Search'}
@@ -61,7 +64,8 @@ const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, wi
                         <Button
                             icon="largeExpand"
                             popoutWidth="50px !important"
-                            noBorder
+                            background='#D9D9D926'
+                            marginRight='9px'
                             block
                             type="sort"
                             small
@@ -85,12 +89,12 @@ const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, wi
                         </Button>
                     )}
 
-                    {sort && sortOptions && <Span>Sort: </Span> }
+                    {sort && sortOptions && <Span></Span> }
                     {sort && sortOptions && (                      
                         <Button
                             icon="largeExpand"
-                            popoutWidth="50px !important"
-                            noBorder
+                            // popoutWidth="50px !important"
+                            background='#D9D9D926'
                             block
                             type="sort"
                             small

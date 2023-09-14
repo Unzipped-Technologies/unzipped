@@ -7,6 +7,7 @@ import { wrapper } from '../redux/store';
 import { CookiesProvider } from "react-cookie";
 import { PersistGate } from 'redux-persist/integration/react';
 import * as gtag from '../lib/gtag';
+import 'bootstrap/dist/css/bootstrap.css'
 
 ///styles
 import '../styles/App.scss';

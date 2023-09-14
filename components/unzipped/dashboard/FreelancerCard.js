@@ -16,7 +16,8 @@ import {
 const Container = styled.div`
     display: flex;
     flex-flow: row;
-    padding: ${({includeRate}) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
+    width: inherit;
+    padding: ${({ includeRate }) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
 `;
 const Left = styled.div`
     display: flex;
@@ -25,7 +26,7 @@ const Left = styled.div`
     margin: 0px 10px;
 `;
 const Right = styled.div`
-    padding: ${({includeRate}) => includeRate ? '5px 30px' : '15px 30px'};
+    padding: ${({ includeRate }) => includeRate ? '5px 30px' : '15px 30px'};
     min-width: 850px;
 `;
 
@@ -34,10 +35,13 @@ const Flex = styled.div`
     flex-flow: row;
     justify-items: space-between;
 `;
+const inviteButton = {
+    height: "33px",
+    flexShrink: "0",
+}
 
 
-
-const FreelancerCard = ({user, includeRate, clearSelectedFreelancer}) => {
+const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer }) => {
     const router = useRouter()
     const redirectToProfile = () => {
         clearSelectedFreelancer()
@@ -48,29 +52,29 @@ const FreelancerCard = ({user, includeRate, clearSelectedFreelancer}) => {
     return (
         <Container includeRate={includeRate}>
             <Left>
-                <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%"/>
-                <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
+                <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
+                <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} style={inviteButton} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
             <Right includeRate={includeRate}>
-                <TitleText half color="blue" onClick={redirectToProfile}>{user.name}</TitleText>
-                <TitleText noMargin>{user.type}</TitleText>
-                {user?.country && <DarkText half>{user.country}</DarkText>}
+                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user.name}</TitleText>
+                <TitleText small light color='#000' noMargin>{user.type}</TitleText>
+                {user?.country && <DarkText lighter small half>{user.country}</DarkText>}
                 {includeRate && (
                     <Flex>
-                        <DarkText half>$<DarkSpan fontSize="18px">{user?.rate}</DarkSpan> / hour</DarkText>
-                        {user?.likes > 0 && <DarkText noMargin>{user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
+                        <DarkText small half><DarkSpan large>${user?.rate}</DarkSpan > / hour</DarkText>
+                        {user?.likes > 0 && <DarkText right color='#000' fontSize='15px' noMargin>{user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
                     </Flex>
                 )}
                 {user.skills?.length > 0 && user.skills.map(item => (
                     <Badge>{item}</Badge>
                 ))}
                 {user?.cover && (
-                    <DarkText topMargin="10px"><strong>cover letter: </strong>
-                    {user.cover}
+                    <DarkText fontSize='13px' topMargin="15px"><b>cover letter: </b>
+                        {user.cover}
                     </DarkText>
                 )}
             </Right>
-            <Absolute><Button normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
+            <Absolute><Button color='#000' padding="8px 22px" normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
         </Container>
     )
 }

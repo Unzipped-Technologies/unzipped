@@ -13,7 +13,7 @@ const ButtonContainer = styled.button`
         outline: ${({popout}) => (popout ? 'none' : 'inherit')};
         background: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
     }
-    background: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
+    background-color: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
     &:hover {
         background: ${({colors}) => colors ? colors.hover : theme.background2};
         color: ${({colors}) => colors ? colors.hoverText : theme.text2};
@@ -22,7 +22,7 @@ const ButtonContainer = styled.button`
     color: ${({colors}) => colors ? colors.text : theme.text};
     box-sizing: border-box;
     border-radius: ${({oval}) => oval ? '25px' : '4px'};
-    padding: ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
+    padding: ${(padding)=>padding ? padding : props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
         ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
     font-family: roboto;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};

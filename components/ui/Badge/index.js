@@ -8,16 +8,19 @@ const BadgeContainer = styled.div`
     color: ${props => props.color.text};
     border: 0;
     box-sizing: border-box;
-    border-radius: 14px;
+    border-radius: 22px;
     font-size: ${props => (props.small ? '0.688rem' : '0.813rem')};
-    padding: 6px 12px;
+    padding: 4px 21px;
     margin-right: 10px;
+    margin-bottom: 5px;
     font-family: arial;
     cursor: default;
     display: inline-block;
-    font-weight: 700;
     text-transform: uppercase;
     white-space: nowrap;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
 `;
 
 const statusColor = {
