@@ -18,8 +18,8 @@ import Icon from '../ui/Icon'
 import { Absolute } from './dashboard/style'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
-import {Button as Buttons} from '../ui'
-import router, {useRouter} from 'next/router';
+import { Button as Buttons } from '../ui'
+import router, { useRouter } from 'next/router';
 import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
@@ -171,9 +171,9 @@ const SpanWhite = styled.div`
     justify-content: center;
     margin-right: 10px;
     min-width: 75px;
-    border-bottom: ${({underline}) => underline ? 'solid 4px #fff' : 'none'};
+    border-bottom: ${({ underline }) => underline ? 'solid 4px #fff' : 'none'};
     @media(max-width: 449px) {
-        display: ${({count}) => count > 3 ? 'none' : 'flex'};
+        display: ${({ count }) => count > 3 ? 'none' : 'flex'};
     }
     @media(max-width: 449px) {
         margin-right: 0px;
@@ -200,10 +200,10 @@ const menuItems = [
     {
         name: 'Find Talent',
         sub: [
-            
+
             {
                 name: 'Search Freelancers',
-                icon: <WorkIcon width={35} height={35}/>,
+                icon: <WorkIcon width={35} height={35} />,
                 link: '/freelancers'
             },
             {
@@ -213,7 +213,7 @@ const menuItems = [
             }
         ],
         link: '/',
-        icon: <WorkIcon width={35} height={35}/>
+        icon: <WorkIcon width={35} height={35} />
     },
     {
         name: 'Find a Project',
@@ -226,15 +226,15 @@ const menuItems = [
             {
                 name: 'Search By Founders',
                 link: '/',
-                icon: <WorkIcon width={35} height={35}/>
+                icon: <WorkIcon width={35} height={35} />
             },
             {
                 name: 'Get Ideas',
                 link: '/',
                 icon: <LightIcon width={35} height={35} />
             },
-            
-            
+
+
         ],
         link: '/',
         icon: <FolderIcon width={35} height={35} />
@@ -275,7 +275,7 @@ const subMenuItems = [
 ]
 
 const useStyles = makeStyles((theme) => ({
-	button: {
+    button: {
         width: '74px',
         height: '28px',
         border: 'none',
@@ -287,19 +287,19 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: '#8EDE64',
             color: '#222',
-          }
-	}
+        }
+    }
 }))
 
-const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm}) => {
-    const {pathname} = useRouter();
+const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm }) => {
+    const { pathname } = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
     const wrapperRef = useRef(null);
     const dropdownRef = useRef(null);
 
     const setDropdowns = (item) => {
-        setTimeout(function() { 
+        setTimeout(function () {
             setMenuOpen(item)
         }, 500);
     }
@@ -323,19 +323,19 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
         {
             name: 'Hire a freelancer',
             link: '/',
-            icon: <WorkIcon width={35} height={35}/>
+            icon: <WorkIcon width={35} height={35} />
         },
         {
             name: 'Work with us',
             link: '/',
-            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+            icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
         },
         {
             name: 'Get Ideas',
             link: '/',
             icon: <LightIcon width={35} height={35} />
         },
-        { name: "<hr />", link: '/'},
+        { name: "<hr />", link: '/' },
         {
             name: 'Sign out',
             onClick: () => signOut(),
@@ -350,7 +350,7 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
     ]
 
     const setCloseDropdowns = (time) => {
-        setTimeout(function() { 
+        setTimeout(function () {
             setMenuOpen(false)
         }, (time || 500));
     }
@@ -364,16 +364,16 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
         if (isAuthenticated) {
             return (
                 <ButtonHolder>
-                <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>Start A Project</Buttons>
-                <Image src={profilePic} alt="profile pic" radius="50%" width="48px" onClick={() => setDropdowns('profile')} onMouseEnter={() => setDropdowns('profile')}/>
-                {menuOpen === 'profile' && <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token}/>}
+                    <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>Start A Project</Buttons>
+                    <Image src={profilePic} alt="profile pic" radius="50%" width="48px" onClick={() => setDropdowns('profile')} onMouseEnter={() => setDropdowns('profile')} />
+                    {menuOpen === 'profile' && <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />}
                 </ButtonHolder>
             )
         } else {
             return (
                 <SignIn>
-                <Link href="/login"><Login>Log In</Login></Link>
-                <Button className={classes.button} onClick={() => router.push('/register')}>Sign up</Button>
+                    <Link href="/login"><Login>Log In</Login></Link>
+                    <Button className={classes.button} onClick={() => router.push('/register')}>Sign up</Button>
                 </SignIn>
             )
         }
@@ -381,37 +381,37 @@ const Nav = ({isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBu
 
     return (
         <Div>
-        <Container>
-            <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo'/></Link>
-            <Menu>
-                {menuItems && menuItems.map((item, index) => {
-                    return (
-                    <Item onMouseEnter={() => setDropdowns(item.name)} onClick={() => setDropdowns(item.name)} key={index}>
-                        <Span>{item.name} </Span>
-                        {item?.sub?.length && <Span2><DownIcon /></Span2>}
-                        {menuOpen === item.name && item?.sub && (
-                            <Dropdowns items={item?.sub} onClose={() => setCloseDropdowns(0)} token={token}/>
+            <Container>
+                <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
+                <Menu>
+                    {menuItems && menuItems.map((item, index) => {
+                        return (
+                            <Item onMouseEnter={() => setDropdowns(item.name)} onClick={() => setDropdowns(item.name)} key={index}>
+                                <Span>{item.name} </Span>
+                                {item?.sub?.length && <Span2><DownIcon /></Span2>}
+                                {menuOpen === item.name && item?.sub && (
+                                    <Dropdowns items={item?.sub} onClose={() => setCloseDropdowns(0)} token={token} />
+                                )}
+                            </Item>
+                        )
+                    })}
+                </Menu>
+                <Right>
+                    <Desktop>
+                        <Search placeholder="Search" icon="search" />
+                        {getButtons(token)}
+                    </Desktop>
+                    <Mobile>
+                        <MenuIcon onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
+                            <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
+                        </MenuIcon>
+                        {menuOpen === 'mobile' && (
+                            <Absolute right="228px" top="0px"><Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /></Absolute>
                         )}
-                    </Item>
-                    )
-                })}
-            </Menu>
-            <Right>
-                <Desktop>
-                    <Search placeholder="Search" icon="search"/>
-                    {getButtons(token)}
-                </Desktop>
-                <Mobile>
-                    <MenuIcon  onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
-                      <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333"  />
-                    </MenuIcon>
-                    {menuOpen === 'mobile' && (
-                        <Absolute right="228px" top="0px"><Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token}/></Absolute>
-                    )}
-                </Mobile>
-            </Right>
-        </Container>
-        {isSubMenu && (
+                    </Mobile>
+                </Right>
+            </Container>
+            {isSubMenu && (
                 <SubMenu>
                     {subMenuItems.map((item, key) => (
                         <Link href={item.link} key={key}><SpanWhite count={key} underline={pathname === item.link}><Sub>{item.name} </Sub></SpanWhite></Link>
@@ -429,7 +429,7 @@ const mapStateToProps = (state) => {
         loading: state.Auth.loading,
         profilePic: state.Auth?.user?.profileImage,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
