@@ -29,6 +29,8 @@ import LongArrow from './longArrow'
 import LeafIcon from './leaf'
 import CycleIcon from './cycleIcon'
 import CircleStar from './circleStar'
+import BackArrow from './backArrow'
+import RightArrow from './rightArrow'
 
 export {
     ClearFitLogo,
@@ -61,5 +63,7 @@ export {
     StarIcon,
     LightIcon,
     DownSolidIcon,
-    SkillPodImage
+    SkillPodImage,
+    BackArrow,
+    RightArrow,
 };
