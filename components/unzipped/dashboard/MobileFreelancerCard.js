@@ -19,7 +19,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
   `
   return (
     <div className='bg-white' style={{ borderBottom: "2px solid rgba(0, 0, 0, 0.25)", color: "black" }}>
-      <div className=' px-3 py-2' >
+      <div className='px-3 py-2'>
         <div className='d-flex'>
           <img src={user?.profilePic} alt="Profile Pic" style={{ width: "55px", height: "55px" }} className='mt-2' />
           <div style={{ marginLeft: "16px" }}>

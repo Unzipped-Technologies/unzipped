@@ -8,14 +8,23 @@ import { bindActionCreators } from 'redux'
 import { getFreelancerById } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components'
+import MobileProfileCard from '../../components/unzipped/MobileProfileCard';
 
 const Container = styled.div`
     display: flex;
     flex-flow: column;
     justify-content: center;
+    @media(max-width: 680px) {
+        display: none;
+    }
 `;
+const MobileContainer =styled.div`
+    @media(min-width: 680px) {
+        display: none;
+    }
+`
 
-const Profile = ({token, cookie, selectedFreelancer, getFreelancerById}) => {
+const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
     const router = useRouter();
     const accessId = token?.access_token || cookie
     const { id } = router.query;
@@ -26,30 +35,38 @@ const Profile = ({token, cookie, selectedFreelancer, getFreelancerById}) => {
     }, [id])
 
     return (
+        <>
         <Container>
-            <Nav/>
-            <ProfileCard user={selectedFreelancer}/>
-            <ProfileTab tabs={["PROJECTS"]} selected={selected} setSelected={setSelected}>
+            <Nav />
+            <div style={{ overflow: "scroll hidden" }}>
+                <ProfileCard user={selectedFreelancer} />
+            </div>
+            {/* <ProfileTab tabs={["PROJECTS"]} selected={selected} setSelected={setSelected}>
 
-            </ProfileTab>
+            </ProfileTab> */}
         </Container>
+        <MobileContainer>
+        <MobileProfileCard user={selectedFreelancer}/>
+        </MobileContainer>
+
+        </>
     )
 }
 
 Profile.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
-      return {
+
+    return {
         token: token && token,
-      }
     }
+}
 
 const mapStateToProps = (state) => {
     return {
         selectedFreelancer: state.Freelancers?.selectedFreelancer,
         cookie: state.Auth.token
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
