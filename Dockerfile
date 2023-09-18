@@ -13,6 +13,7 @@ COPY . .
 
 EXPOSE 3000
 
+# Build next app
 RUN npm run build
 
 # Start the app
