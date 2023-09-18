@@ -13,5 +13,7 @@ COPY . .
 
 EXPOSE 3000
 
+RUN npm run build
+
 # Start the app
 CMD ["npm", "start"]
