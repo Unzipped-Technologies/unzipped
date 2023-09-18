@@ -18,14 +18,9 @@ import Icon from '../ui/Icon'
 import { Absolute } from './dashboard/style'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
-<<<<<<< HEAD
 import {Button as Buttons} from '../ui'
 import router, {useRouter} from 'next/router';
 import IconComponent from '../ui/icons/IconComponent';
-=======
-import { Button as Buttons } from '../ui'
-import router, { useRouter } from 'next/router';
->>>>>>> main
 
 const Div = styled.div`
     width: 100%;

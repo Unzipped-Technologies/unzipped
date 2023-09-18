@@ -17,10 +17,10 @@ const { likeEnum } = require('../enum/likeEnum');
 // create user
 const createUser = async (data, hash) => {
     // create User 
-    const newUser = await user.create({ 
+    const newUser = await user.create({
         ...data,
         // TODO: needs to be removed once email is back online
-        isEmailVerified: true, 
+        isEmailVerified: true,
         password: hash,
         plan: planEnum.UNSUBSCRIBED
     });
@@ -28,15 +28,15 @@ const createUser = async (data, hash) => {
     if (accountTypeEnum.FOUNDER === data.role || accountTypeEnum.ADMIN === data.role) {
         const listsToCreate = [
             {
-                name: 'Favorites', 
+                name: 'Favorites',
                 icon: "heart"
             },
             {
-                name: 'Recently Viewed', 
+                name: 'Recently Viewed',
                 icon: "eye"
             },
             {
-                name: 'My Team', 
+                name: 'My Team',
                 icon: "work"
             }
         ]
@@ -49,15 +49,15 @@ const createUser = async (data, hash) => {
             }
             await listHelper.createLists(list)
         }
-        const ids = await list.find({userId: newUser.id})
+        const ids = await list.find({ userId: newUser.id })
         // update users to have skills
-        await user.findByIdAndUpdate(newUser.id, { 
+        await user.findByIdAndUpdate(newUser.id, {
             lists: ids.map(item => mongoose.Types.ObjectId(item.id))
         });
     }
-    
+
     // create 3rd party application row with googleId if have it
-    thirdPartyApplications.create({_id: newUser.id, userId: newUser.id})
+    thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
     if (accountTypeEnum.INVESTOR === data.role) {
         createFreelanceAccount({
             isAcceptEquity: data.isAcceptEquity,
@@ -73,9 +73,9 @@ const createUser = async (data, hash) => {
                     user: await user.findById(newUser.id)
                 })
             }
-            const ids = await freelancerSkills.find({profileId: newUser.id})
+            const ids = await freelancerSkills.find({ profileId: newUser.id })
             // update users to have skills
-            await user.findByIdAndUpdate(newUser.id, { 
+            await user.findByIdAndUpdate(newUser.id, {
                 freelancerSkills: ids.map(item => mongoose.Types.ObjectId(item.id))
             });
         }
@@ -86,25 +86,25 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
     try {
-        return await user.findByIdAndUpdate(id, {$set:{...data}})
+        return await user.findByIdAndUpdate(id, { $set: { ...data } })
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
-    } 
+    }
 }
 
 // update tax data
 const updateTaxDataByid = async (id, data) => {
     try {
-        return await taxDataTables.findByIdAndUpdate(id, {$set:{...data}})
+        return await taxDataTables.findByIdAndUpdate(id, { $set: { ...data } })
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
-    } 
+    }
 }
 
 // update User
 const updateUserByEmail = async (email, data) => {
     try {
-        return await user.updateOne({email}, {$set:{...data}})
+        return await user.updateOne({ email }, { $set: { ...data } })
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     }
@@ -116,58 +116,127 @@ const getUserById = async (id) => {
         return await user.findById(id).select('-password')
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
-    } 
+    }
 }
 
 // list users
-const listUsers = async ({filter, take, skip}) => {
+const listUsers = async ({ filter, take, skip }) => {
     try {
-        return await user.find({...filter}).skip( skip ).limit( take )
+        return await user.find({ ...filter }).skip(skip).limit(take)
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
-    } 
+    }
 }
 
-// list freelancers
-const listFreelancers = async ({filter, take, skip}) => {
+const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, skill }) => {
     try {
-        const list = await freelancer.find({...filter})
-            .skip( skip )
-            .limit( take )
-            .populate({
-                path: 'user', 
-                model: 'users', 
-                populate: { path: 'freelancerSkills', model: 'freelancerSkills' }
+        const regexQuery = new RegExp(filter, 'i'); // Create a case-insensitive regex query
+
+        const aggregationPipeline = [
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $unwind: '$user', // Unwind the 'user' array
+            },
+            {
+                $lookup: {
+                    from: 'freelancerskills', // The name of the "freelancerSkills" collection
+                    localField: 'user.freelancerSkills', // The field in the "user" subdocument that refers to the "freelancerSkills" collection
+                    foreignField: '_id', // The field in the "freelancerSkills" collection that you want to match
+                    as: 'user.freelancerSkills', // The alias for the populated "user.freelancerSkills" field
+                },
+            },
+            {
+                $addFields: {
+                    mergedName: {
+                        $concat: ['$user.FirstName', ' ', '$user.LastName'],
+                    },
+                },
+            },
+            {
+                $match: {
+                    mergedName: { $regex: regexQuery },
+                },
+            },
+            {
+                $skip: +skip,
+            },
+            {
+                $limit: +take,
+            },
+        ];
+        if (skill?.length > 0) {
+            aggregationPipeline.push({
+                $match: {
+                    'user.freelancerSkills.skill': {
+                        $in: skill, // Check if any skill in the array matches any skill in 'skills'
+                    },
+                },
             })
-            .exec()
+        }
+        if (sort === 'lowest hourly rate' || sort === 'highest hourly rate') {
+            aggregationPipeline.push({
+                $sort: {
+                    rate: sort === 'lowest hourly rate' ? 1 : -1, // Sort by rate in the specified order
+                },
+            });
+        }
+        // Check for minRate and maxRate conditions
+        if (minRate && maxRate) {
+            aggregationPipeline.push({
+                $match: {
+                    rate: { $gte: +minRate, $lte: +maxRate },
+                },
+            });
+        } else if (minRate) {
+            aggregationPipeline.push({
+                $match: {
+                    rate: { $gte: +minRate },
+                },
+            });
+        } else if (maxRate) {
+            aggregationPipeline.push({
+                $match: {
+                    rate: { $lte: +maxRate },
+                },
+            });
+        }
+        const list = await freelancer.aggregate(aggregationPipeline).exec();
         return list;
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
-    } 
-}
+    }
+};
+
 
 const getFreelancerById = async (id) => {
     try {
         return await freelancer.findById(id)
             .populate({
-                path: 'user', 
-                model: 'users', 
+                path: 'user',
+                model: 'users',
                 populate: { path: 'freelancerSkills', model: 'freelancerSkills' }
             })
             .exec()
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
-    } 
+    }
 }
 
 // delete users
 const deleteUser = async (id) => {
     // set inactive, dont actually delete
     try {
-        return await user.findByIdAndUpdate(id, {$set:{isActive: false}})
+        return await user.findByIdAndUpdate(id, { $set: { isActive: false } })
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
-    } 
+    }
 }
 
 // create freelancer account
@@ -212,13 +281,13 @@ const addListsToFreelancer = async (data, id) => {
             }
             await listHelper.createLists(list)
         }
-        const ids = await list.find({userId: id})
+        const ids = await list.find({ userId: id })
         // update users to have skills
-        await user.findByIdAndUpdate(id, { 
+        await user.findByIdAndUpdate(id, {
             lists: ids.map(item => mongoose.Types.ObjectId(item.id))
         });
-        
-        return {msg: 'success'};
+
+        return { msg: 'success' };
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     }
@@ -229,17 +298,19 @@ const addListsToFreelancer = async (data, id) => {
 const addLikeToFreelancer = async (data, id) => {
     try {
         if (data.likeType === likeEnum.PROFILE_LIKES || data.likeType === likeEnum.PROFILE_DISLIKES) {
-            await likeHistory.findOneAndUpdate({profileId: data.profileId, userId: id}, 
-                { $set: { 
-                    ...data,
-                    freelancers: await freelancer.findById(data.profileId),
-                    user: await user.findById(id)  
-                }}, { upsert: true  })
-            const ids = await likeHistory.find({profileId: data.profileId})
+            await likeHistory.findOneAndUpdate({ profileId: data.profileId, userId: id },
+                {
+                    $set: {
+                        ...data,
+                        freelancers: await freelancer.findById(data.profileId),
+                        user: await user.findById(id)
+                    }
+                }, { upsert: true })
+            const ids = await likeHistory.find({ profileId: data.profileId })
             const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
             const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
             // update users to have skills
-            await freelancer.findByIdAndUpdate(data.profileId, { 
+            await freelancer.findByIdAndUpdate(data.profileId, {
                 likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
                 dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
                 likeTotal: likes.length,
@@ -251,7 +322,7 @@ const addLikeToFreelancer = async (data, id) => {
                 likeTotal: likes.length,
                 dislikeTotal: dislikes.length
             })
-            return {likes: ids.length, msg: 'success'};
+            return { likes: ids.length, msg: 'success' };
         }
 
     } catch (e) {
@@ -264,12 +335,12 @@ const addLikeToFreelancer = async (data, id) => {
 const removeLikeToFreelancer = async (data, id) => {
     try {
         if (data.likeType === likeEnum.PROFILE_LIKES || data.likeType === likeEnum.PROFILE_DISLIKES) {
-            await likeHistory.findOneAndDelete({profileId: data.profileId, userId: id})
-            const ids = await likeHistory.find({profileId: data.profileId})
+            await likeHistory.findOneAndDelete({ profileId: data.profileId, userId: id })
+            const ids = await likeHistory.find({ profileId: data.profileId })
             const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
             const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
             // update users to have skills
-            await freelancer.findByIdAndUpdate(data.profileId, { 
+            await freelancer.findByIdAndUpdate(data.profileId, {
                 likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
                 dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
                 likeTotal: likes.length,
@@ -281,7 +352,7 @@ const removeLikeToFreelancer = async (data, id) => {
                 likeTotal: likes.length,
                 dislikeTotal: dislikes.length
             })
-            return {likes: ids.length, msg: 'success'};
+            return { likes: ids.length, msg: 'success' };
         }
 
     } catch (e) {
@@ -293,15 +364,15 @@ const removeLikeToFreelancer = async (data, id) => {
 const listLikes = async (id) => {
     return user.findById(id)
         .populate({
-            path: 'likes', 
-            model: 'likeHistorys', 
+            path: 'likes',
+            model: 'likeHistorys',
             populate: { path: 'freelancers', model: 'freelancers' }
         })
 }
 
 // list likes for user
 const addToNewsletter = async (data) => {
-    return await emailList.findOneAndUpdate({email: data}, {$set: {email: data, isActive: true}}, { upsert: true  })
+    return await emailList.findOneAndUpdate({ email: data }, { $set: { email: data, isActive: true } }, { upsert: true })
 }
 
 const setUpNotificationsForUser = async (id) => {
@@ -322,7 +393,7 @@ const setUpNotificationsForUser = async (id) => {
     try {
         for (const notification of userNotifications) {
             await notifications.create({
-                type: notification, 
+                type: notification,
                 userId: id,
                 user: await user.findById(id)
             })

@@ -3,7 +3,6 @@ import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
 
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
-  console.log(user)
   const UserSkills = styled.div`
   ::-webkit-scrollbar {
     width: 0.1em;

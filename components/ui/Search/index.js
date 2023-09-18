@@ -82,35 +82,27 @@ const Search = ({
     onAction = () => {},
     onChange = () => {},
     placeholder = '',
-    searchableItems = [],
     width = '36.75rem',
     initialValue = '',
+    handleSearch,
     ...rest
 }) => {
     const [inputValue, setInputValue] = useState(initialValue);
 
     const handleClearInput = () => {
         setInputValue('');
-        onChange(searchableItems);
         onAction('');
     };
 
     const handleOnChange = e => {
         setInputValue(e.target.value);
         onAction(e.target.value);
-        const filteredItems = searchableItems.filter(item => {
-            for (const key of keys) {
-                if (filterCondition(get(item, key), e.target.value)) {
-                    return true;
-                }
-            }
-        });
-        onChange(filteredItems, e.target.value);
+        onChange(e.target.value);
     };
 
     return (
         <SearchContainer width={width} {...rest}>
-            <SearchIcon>
+            <SearchIcon onClick={handleSearch}>
                 <Icon name="search" />
             </SearchIcon>
             <Input
@@ -118,7 +110,7 @@ const Search = ({
                 type="text"
                 placeholder={placeholder}
                 value={inputValue}
-                // large={large}
+                large={large}
                 onChange={handleOnChange}
             />
             <ClearIcon onClick={handleClearInput} $show={inputValue !== ''}>
@@ -142,7 +134,7 @@ Search.propTypes = {
     /** the placeholder for the input */
     placeholder: PropTypes.string,
     /** array of unflattened searchable objects */
-    searchableItems: PropTypes.arrayOf(PropTypes.object),
+    // searchableItems: PropTypes.arrayOf(PropTypes.object),
     /** width of the input  */
     width: PropTypes.string,
     /** Initial value of the input  */

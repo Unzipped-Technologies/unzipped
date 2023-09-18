@@ -40,20 +40,16 @@ const Item = styled.div`
     align-items: center;
 `;
 
-const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, width}) => {
+const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, width, handleSearch,setFilter}) => {
     return (
         <Container margin={margin}>
             {title && <TitleBlock><TitleText title large>{title}</TitleText></TitleBlock>}
             <Block $width={width}>
                 <Search 
-                    searchableItems={[
-                        {id: 1, name: 'item 1'},
-                        {id: 2, name: 'item 2'},
-                        {id: 3, name: 'item 3'},
-                    ]}
+                    handleSearch={handleSearch}
                     width="100%"
                     keys={['name']}
-                    onChange={filteredResults => console.log(filteredResults)}
+                    onChange={filteredResults => {setFilter(filteredResults)}}
                     placeholder={'Search'}
                 />
                 <Item>
@@ -93,7 +89,6 @@ const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, wi
                     {sort && sortOptions && (                      
                         <Button
                             icon="largeExpand"
-                            // popoutWidth="50px !important"
                             background='#D9D9D926'
                             block
                             type="sort"

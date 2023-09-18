@@ -13,7 +13,6 @@ const INIT_STATE = {
     error: null,
 }
 
-
 const Freelancers = (state = INIT_STATE, action) => {
     switch (action.type) {
         case FREELANCER_LOADING:
