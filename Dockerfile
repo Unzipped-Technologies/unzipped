@@ -6,10 +6,12 @@ WORKDIR /usr/src/app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copy local code to the container
 COPY . .
 
+EXPOSE 3000
+
 # Start the app
-CMD ["npm", "start"]
+CMD ["npm", "run", "server"]
