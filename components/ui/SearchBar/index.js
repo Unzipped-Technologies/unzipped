@@ -53,7 +53,6 @@ const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, wi
                     ]}
                     width="100%"
                     keys={['name']}
-                    onChange={filteredResults => console.log(filteredResults)}
                     placeholder={'Search'}
                 />
                 <Item>

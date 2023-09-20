@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import IconComponent from '../icons/IconComponent';
 
 function MobileSearchBar({handleFilterOpenClose}) {

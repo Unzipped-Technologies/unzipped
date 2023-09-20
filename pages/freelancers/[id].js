@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import Nav from '../../components/unzipped/header';
-import ProfileCard from '../../components/unzipped/ProfileCard';
-import ProfileTab from '../../components/unzipped/ProfileTab';
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
+import styled from 'styled-components'
+import Nav from '../../components/unzipped/header';
+import ProfileCard from '../../components/unzipped/ProfileCard';
+import ProfileTab from '../../components/unzipped/ProfileTab';
 import { getFreelancerById } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
-import styled from 'styled-components'
 import MobileProfileCard from '../../components/unzipped/MobileProfileCard';
+import MobileProfileCardOptions from '../../components/unzipped/MobileProfileCardOptions';
+import ProjectsCard from '../../components/unzipped/ProjectsCard';
 
 const Container = styled.div`
     display: flex;
@@ -18,37 +20,37 @@ const Container = styled.div`
         display: none;
     }
 `;
-const MobileContainer =styled.div`
+const MobileContainer = styled.div`
     @media(min-width: 680px) {
         display: none;
     }
 `
-
 const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
     const router = useRouter();
     const accessId = token?.access_token || cookie
     const { id } = router.query;
+    const [interViewView, setInterViewView] = useState(true)
     const [selected, setSelected] = useState(0);
 
     useEffect(() => {
         getFreelancerById(id, accessId)
     }, [id])
-
+    const handleValueFromChild = (value) => {
+        setInterViewView(value)
+    };
     return (
         <>
-        <Container>
-            <Nav />
-            <div style={{ overflow: "scroll hidden" }}>
-                <ProfileCard user={selectedFreelancer} />
-            </div>
-            {/* <ProfileTab tabs={["PROJECTS"]} selected={selected} setSelected={setSelected}>
-
-            </ProfileTab> */}
-        </Container>
-        <MobileContainer>
-        <MobileProfileCard user={selectedFreelancer}/>
-        </MobileContainer>
-
+            <Container>
+                <Nav />
+                <div style={{ overflow: "overlay" }}>
+                    <ProfileCard user={selectedFreelancer} />
+                </div>
+                <ProfileTab tabs={["PROJECTS"]} selected={selected} setSelected={setSelected} />
+                <ProjectsCard user={selectedFreelancer} />
+            </Container>
+            <MobileContainer>
+                {interViewView ? <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} /> : <MobileProfileCardOptions handleProfilePage={handleValueFromChild} />}
+            </MobileContainer>
         </>
     )
 }

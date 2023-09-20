@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import styled from 'styled-components';
 import IconComponent from '../ui/icons/IconComponent'
 
 function MobileSearchFilter({ sortOptions,handleFilterOpenClose }) {
@@ -9,7 +8,7 @@ function MobileSearchFilter({ sortOptions,handleFilterOpenClose }) {
         <div style={{ backgroundColor: "white", color: "black" }}>
 
             <div className='py-3 px-2 d-flex align-items-center' style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25)", gap: "11px" }}>
-                <span onClick={() => { console.log("hi");handleFilterOpenClose(false) }} style={{ cursor: "pointer" }}><IconComponent name='backArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span>
+                <span onClick={() => { handleFilterOpenClose(false) }} style={{ cursor: "pointer" }}><IconComponent name='backArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span>
                 <span style={{ fontWeight: "500", fontSize: "16px" }}>Filters</span>
             </div>
             <div style={{ padding: "0 25px" }}>
@@ -53,8 +52,8 @@ function MobileSearchFilter({ sortOptions,handleFilterOpenClose }) {
                     <IconComponent name='footerSearch' width="24" height="20" viewBox="0 0 24 20" fill="black" />
                     <input placeholder='SEARCH' style={{ margin: "0", border: "0", height: "auto" }}></input>
                 </div>
-                {skillData?.map((skill) => (
-                    <div className='d-flex' style={{ lineHeight: "normal" }}>
+                {skillData?.map((skill,index) => (
+                    <div key={index} className='d-flex' style={{ lineHeight: "normal" }}>
                         {skills.includes(skill?.label) ? <div onClick={() => { setSkills(skills.filter((data) => data !== skill?.label)) }} style={{ maxWidth: "18px", minWidth: "18px", minHeight: "18px", maxHeight: "16px", border: "1px solid rgba(102, 102, 102, 0.70)", backgroundColor: "rgba(102, 102, 102, 0.1)", borderRadius: "2px" }}><span style={{ display: "flex", justifyContent: "center", fontSize: "smaller", fontWeight: "bolder" }}>✓</span></div>
                             : <div onClick={() => { setSkills((prev) => [...prev, skill?.label]) }} style={{ maxWidth: "18px", minWidth: "18px", minHeight: "18px", maxHeight: "16px", border: "1px solid rgba(102, 102, 102, 0.20)", borderRadius: "2px" }}></div>}
                         <p className='mx-3'>{skill?.label}</p>

@@ -11,7 +11,8 @@ const nextConfig = {
   // Other Next.js configuration options go here if needed
 };
 
-module.exports = withPlugins([
+module.exports =  withOffline(
+  withPlugins([
   [
     withSass,
     {
@@ -28,4 +29,4 @@ module.exports = withPlugins([
     },
   ],
   withImages,
-], nextConfig);
+]), nextConfig);
