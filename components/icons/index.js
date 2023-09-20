@@ -31,6 +31,10 @@ import CycleIcon from './cycleIcon'
 import CircleStar from './circleStar'
 import BackArrow from './backArrow'
 import RightArrow from './rightArrow'
+import DownArrow from './downArrow'
+import Review from './reviews'
+import ReviewHalf from './reviewHalf'
+import ReviewSmall from './reviewSmall'
 
 export {
     ClearFitLogo,
@@ -66,4 +70,8 @@ export {
     SkillPodImage,
     BackArrow,
     RightArrow,
+    DownArrow,
+    Review,
+    ReviewHalf,
+    ReviewSmall
 };
