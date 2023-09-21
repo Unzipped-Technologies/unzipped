@@ -41,7 +41,7 @@ const Body = styled.div`
 `;
 
 const ImageContainer = styled.div`
-    width: 393px;
+    width: 377px;
     height: 189px; 
     @media screen and (width: 600px){
         margin-bottom: 21px;
@@ -80,7 +80,7 @@ const CreateButtonTextStyled = styled.span`
 `;
 
 const ServiceWrapper = styled.div`
-    width: 841px; 
+    width: 781px; 
     margin-top: 69px; 
     @media screen and (max-width: 600px){
         width:  370px;
@@ -88,7 +88,7 @@ const ServiceWrapper = styled.div`
     }
 `
 const CommitmentWrapper = styled.div`
-    width: 841px;
+    width: 781px;
     @media screen and (max-width: 600px){
         width:  370px;
     }

@@ -17,6 +17,7 @@ const BannerContainer = styled.div`
     height: 373px;
     border-radius: 10px;
     background: rgba(142, 222, 100, 0.25);
+    margin-top: 30px
 `;
 
 const BannerContent = styled.div`
@@ -112,6 +113,7 @@ const TrustedByTextStyled = styled.span`
 const BannerResponsiveWrapper = styled.div`
     display: flex;
     justify-content: center;
+    margin-top: 20px;
 `;
 
 const BannerResponsiveContent = styled.div`
@@ -214,8 +216,11 @@ const ReviewTextStyledLg = styled.p`
     font-style: normal;
     font-weight: 400;
     line-height: 23px;
+    width:150px;
     letter-spacing: 0.15px;
-    display: inline;
+    display: flex;
+    justify-content:center;
+    align-items:center;
 `;
 
 export {

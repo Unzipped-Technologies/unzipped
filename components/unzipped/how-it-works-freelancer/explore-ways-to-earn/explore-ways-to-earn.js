@@ -71,9 +71,7 @@ const ExploreWaysToEarn = () => {
                     <ContentHeading>Explore ways to earn</ContentHeading>
                     <ResponsiveContentHeading>Explore ways to earn</ResponsiveContentHeading>
                     <CommitmentContainer>
-                        <ScreenHeading_1>Find your next opportunity</ScreenHeading_1>
-
-                        <ImageContainer> <img src='/img/Opportunity.png' /> </ImageContainer>
+                        <ScreenHeading_1>Find your next opportunity</ScreenHeading_1>                      
 
                         <CommitmentContent>
                             <ContentHeading>Engage in Longer Commitments</ContentHeading>
@@ -90,16 +88,14 @@ const ExploreWaysToEarn = () => {
                                 </CreateProfileButtonStyled>
                             </div>
                         </CommitmentContent>
-
+                        <ImageContainer> <img src='/img/Opportunity.png' /> </ImageContainer>
                     </CommitmentContainer>
                 </CommitmentWrapper>
 
                 <ServiceWrapper>
                     <ServiceContainer>
                         <ScreenHeading_1>Sell what do best</ScreenHeading_1>
-                        <ImageContainer>
-                            <img src='/img/DefineYourService.png' />
-                        </ImageContainer>
+                        <ImageContainer> <img src='/img/DefineYourService.png' /> </ImageContainer>
                         <ServiceContent>
                             <ContentHeading>Pre-define Your Services</ContentHeading>
                             <ParagraphTextStyled>

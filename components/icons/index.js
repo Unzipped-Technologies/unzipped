@@ -35,6 +35,7 @@ import DownArrow from './downArrow'
 import Review from './reviews'
 import ReviewHalf from './reviewHalf'
 import ReviewSmall from './reviewSmall'
+import ReviewHalfSmall from './reviewHalfSmall'
 
 export {
     ClearFitLogo,
@@ -73,5 +74,6 @@ export {
     DownArrow,
     Review,
     ReviewHalf,
-    ReviewSmall
+    ReviewSmall,
+    ReviewHalfSmall
 };

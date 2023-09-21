@@ -14,7 +14,7 @@ const TrustedByWrapper = styled.div`
     align-items: center;
     margin-top: 86px;
     @media screen and (max-width: 600px){
-        margin-top: 0;
+        margin-top: 60px;
     }
 `;
 
@@ -22,7 +22,6 @@ const TrustContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 86px;
     width: 781px;
     justify-content: space-between;
     @media screen and (max-width: 600px){

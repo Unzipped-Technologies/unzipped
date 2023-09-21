@@ -101,6 +101,7 @@ import downArrow from '../../icons/downArrow';
 import reviewIcon from '../../icons/reviews';
 import reviewHalf from '../../icons/reviewHalf';
 import reviewSmall from '../../icons/reviewSmall';
+import reviewHalfSmall from '../../icons/reviewHalfSmall';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -203,7 +204,8 @@ const mapNameIcons = {
     downArrow: downArrow,
     review: reviewIcon,
     reviewHalf: reviewHalf,
-    reviewSmall: reviewSmall
+    reviewSmall: reviewSmall,
+    reviewHalfSmall: reviewHalfSmall
 };
 
 /**

@@ -122,6 +122,7 @@ const CommitmentContent = styled.div`
     display: flex; 
     justify-content: space-between; 
     gap: 90px;
+    margin-top: 90px;
     @media screen and (max-width: 600px){
         width: 370px;
         flex-direction: column;

@@ -22,7 +22,7 @@ import {
     ReviewTextStyledLg,
     ResponsiveTextStyled_5
 } from "./FreelancerStyled";
-import { Review, ReviewHalf, ReviewSmall } from '../../icons';
+import { Review, ReviewHalf, ReviewHalfSmall, ReviewSmall } from '../../icons';
 
 const ReivewContainer = styled.div`
     display: flex;
@@ -54,11 +54,9 @@ const BannerWrapper = () => {
                                 <div style={{ display: 'flex', flexDirection: "column" }}>
                                     <div style={{ marginTop: 35}}>
                                         <ReviewTextStyledLg>
-                                            <ReviewSmall /> <ReviewSmall /> <ReviewSmall /> <ReviewSmall />
+                                            <ReviewSmall /> <ReviewSmall /> <ReviewSmall /> <ReviewSmall /> <ReviewHalfSmall /> 4.9/5
                                         </ReviewTextStyledLg>
-                                        <ReviewTextStyledLg>
-                                            4.9/5
-                                        </ReviewTextStyledLg>
+                                        {/* <ReviewTextStyledLg> </ReviewTextStyledLg> */}
                                     </div>
                                     <div>
                                         <ResponsiveTextStyled_5>based on 900k+ reviews</ResponsiveTextStyled_5>
