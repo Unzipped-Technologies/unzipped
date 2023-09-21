@@ -11,7 +11,7 @@ import {
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getFreelancerList, clearSelectedFreelancer,getFreelancerSkillsList } from '../../redux/actions';
+import { getFreelancerList, clearSelectedFreelancer, getFreelancerSkillsList } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import MobileSearchBar from '../../components/ui/MobileSearchBar';
 import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard';
@@ -35,13 +35,13 @@ const Box = styled.div`
     width: 80%;
     max-width: 1100px;
     align-self: center;
-    min-height: 320px;
     @media(max-width: 680px) {
         display: none;
     }
 `;
 
 const MobileDisplayBox = styled.div`
+    position: relative;
     @media(min-width: 680px) {
         display: none;
     }
@@ -51,18 +51,18 @@ const DesktopDisplayBox = styled.div`
     display: none;
 }
 `
-const Freelancers = ({ freelancerList = [], getFreelancerList, token, clearSelectedFreelancer,getFreelancerSkillsList,freelancerSkillsList=[] }) => {
+const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount, clearSelectedFreelancer, getFreelancerSkillsList, freelancerSkillsList = [] }) => {
     const [take, setTake] = useState(25)
     const [skip] = useState(0);
     const [filter, setFilter] = useState('')
     const [sort, setSort] = useState('ALL CATEGORIES')
-    const [minRate,setMinRate] = useState();
-    const [maxRate,setMaxRate] = useState();
-    const [skill,setSkill]=useState([])
+    const [minRate, setMinRate] = useState();
+    const [maxRate, setMaxRate] = useState();
+    const [skill, setSkill] = useState([])
     const [filterOpenClose, setFilterOpenClose] = useState(false);
     const sortOptions = [
         {
-            text: 'ALL CATEGORIES',
+            text: 'All Categories',
             onClick: () => setSort('ALL CATEGORIES'),
         },
         {
@@ -88,18 +88,18 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, clearSelec
     ]
     useEffect(() => {
         getFreelancerSkillsList();
-        if(!filterOpenClose){
-        getFreelancerList({
-            filter,
-            take,
-            skip,
-            sort,
-            minRate,
-            maxRate,
-            skill,
-        }, token.access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjYzOTY0MDhhNjNiMTQzMzk2MGEzOTgyMSIsImlhdCI6MTY5NDc5MTE4MCwiZXhwIjo0Mjg2NzkxMTgwfQ.26w-FzvkymHELA1re6Q5SgdqiumCpAsHfOR5d2JfiBQ')
+        if (!filterOpenClose) {
+            getFreelancerList({
+                filter,
+                take,
+                skip,
+                sort,
+                minRate,
+                maxRate,
+                skill,
+            }, token.access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjYzOTY0MDhhNjNiMTQzMzk2MGEzOTgyMSIsImlhdCI6MTY5NDc5MTE4MCwiZXhwIjo0Mjg2NzkxMTgwfQ.26w-FzvkymHELA1re6Q5SgdqiumCpAsHfOR5d2JfiBQ')
         }
-    }, [take,sort,filter])
+    }, [take, sort, filter])
     const handleFilterOpenClose = (value) => {
         setFilterOpenClose(value)
     }
@@ -115,6 +115,7 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, clearSelec
         }, token.access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjYzOTY0MDhhNjNiMTQzMzk2MGEzOTgyMSIsImlhdCI6MTY5NDc5MTE4MCwiZXhwIjo0Mjg2NzkxMTgwfQ.26w-FzvkymHELA1re6Q5SgdqiumCpAsHfOR5d2JfiBQ')
 
     }
+    console.log(freelancerList, "freee")
     return (
         <React.Fragment>
             {!filterOpenClose && <Nav isSubMenu />}
@@ -122,20 +123,21 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, clearSelec
             {!filterOpenClose && <MobileDisplayBox><MobileSearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} handleFilterOpenClose={handleFilterOpenClose} /></MobileDisplayBox>}
             <Container>
                 {!filterOpenClose ? <MobileDisplayBox>
-                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "41px" }}>
+                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "21px" }}>
                         <b style={{ paddingRight: "20px" }}>Top Results</b>
-                        <small>{"1 - 2 of 300 results"}</small>
+                        {totalCount && <small>{skip + ' - ' + freelancerList?.length}{" of " + totalCount + " " + "results"}</small>}
                     </div>
-                    <div style={{ margin: "0 5px", padding: "1px", border: "3px solid #EFF1F4", }}></div>
+                    <div style={{ margin: "0 5px", border: "2px solid #EFF1F4" }}></div>
                 </MobileDisplayBox> :
                     <MobileDisplayBox>
-                        <MobileSearchFilter maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} sort={sort} setSort={setSort} sortOptions={sortOptions} handleFilterOpenClose={handleFilterOpenClose} handleSearch={handleSearch} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill}/>
+                        <MobileSearchFilter maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} sort={sort} setSort={setSort} sortOptions={sortOptions} handleFilterOpenClose={handleFilterOpenClose} handleSearch={handleSearch} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill} />
                     </MobileDisplayBox>}
-                {freelancerList.map(user => {
+                {freelancerList?.map(user => {
                     const freelancer = {
                         id: user._id,
                         name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
                         type: user.category,
+                        isPreferedFreelancer: user?.isPreferedFreelancer,
                         country: user?.user?.AddressLineCountry || 'United States',
                         skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
                         cover: user?.cover || `I have been a ${user?.category || 'developer'} for over ${user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience || 1} years. schedule a meeting to check if I'm a good fit for your business.`,
@@ -143,7 +145,7 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, clearSelec
                         rate: user?.rate,
                         likes: user?.likeTotal
                     }
-                    if (user?.user) {
+                    if (user?.user?.FirstName) {
                         return (
                             <>
                                 <Box>
@@ -182,9 +184,11 @@ Freelancers.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = (state) => {
+    console.log(state)
     return {
         freelancerList: state.Freelancers?.freelancers,
-        freelancerSkillsList: state.FreelancerSkills?.freelancerSkills
+        freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
+        totalCount: state.Freelancers?.totalCount
     }
 }
 

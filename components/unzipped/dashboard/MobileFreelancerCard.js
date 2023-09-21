@@ -3,6 +3,7 @@ import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
 
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
+  console.log(user,"user")
   const UserSkills = styled.div`
   ::-webkit-scrollbar {
     width: 0.1em;
@@ -24,7 +25,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
           <div style={{ marginLeft: "16px" }}>
             <div className='d-flex'>
               <p className='mb-0 pe-2' style={{ color: "#0057FF", fontWeight: "500", fontSize: "16px" }}>{user?.name}</p>
-              <IconComponent name='verifiedUser' width="27" height="27" viewBox="0 0 20 27" fill="#37DEC5" />
+              {user?.isPreferedFreelancer && <IconComponent name='verifiedUser' width="27" height="27" viewBox="0 0 20 27" fill="#37DEC5" />}
             </div>
             <p className='mb-0' style={{ fontSize: "15px", fontWeight: "600" }}>{user?.type}</p>
             <p className='mb-0'>{user?.country}</p>

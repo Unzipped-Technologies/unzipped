@@ -12,6 +12,7 @@ import {
     DarkSpan,
     Underline,
 } from './style'
+import IconComponent from '../../ui/icons/IconComponent';
 
 const Container = styled.div`
     display: flex;
@@ -56,7 +57,10 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer }) => {
                 <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} style={inviteButton} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
             <Right includeRate={includeRate}>
-                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user.name}</TitleText>
+                {/* <div className='d-flex'> */}
+                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user.name} {user?.isPreferedFreelancer && <IconComponent name='verifiedUser' width="27" height="27" viewBox="0 0 20 27" fill="#37DEC5" /> }</TitleText>
+                 
+                {/* </div> */}
                 <TitleText small light color='#000' noMargin>{user.type}</TitleText>
                 {user?.country && <DarkText lighter small half>{user.country}</DarkText>}
                 {includeRate && (

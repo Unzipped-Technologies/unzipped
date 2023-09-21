@@ -208,7 +208,8 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
             });
         }
         const list = await freelancer.aggregate(aggregationPipeline).exec();
-        return list;
+        const totalCount = await freelancer.countDocuments();
+        return {list,totalCount};
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     }

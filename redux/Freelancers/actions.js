@@ -22,6 +22,7 @@ export const getFreelancerList = (queryParams, token) => async (dispatch, getSta
             headers,
             params: queryParams
         });
+        console.log(response)
         dispatch({
             type: GET_LIST_FREELANCERS,
             payload: response.data
