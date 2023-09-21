@@ -13,7 +13,7 @@ const Container = styled.div`
     display: flex;
     flex-flow: column;
     border: 1px solid #D9D9D9;
-    width: 100%;
+    min-width: 342px;
     height: fit-content;
     padding: 20px 0px;
     margin-left: 10px;

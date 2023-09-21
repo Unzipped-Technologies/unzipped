@@ -4,6 +4,7 @@ import LeftListPanel from './LeftListPanel'
 import RightListPanel from './RightListPanel'
 
 const Container = styled.div`
+    overflow: overlay;
     display: grid;
     grid-template-columns: 1fr 3fr;
     padding: 40px 12.5%;
