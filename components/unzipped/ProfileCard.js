@@ -21,7 +21,7 @@ const Container = styled.div`
     margin-left: 10%;
 `;
 const Content = styled.div`
-    margin: 0px 30px;
+   
 `;
 const Box = styled.div`
     display: flex;
@@ -67,7 +67,7 @@ const ProfileCard = ({ user }) => {
             </ImageContainer>
             <Content>
                 <TitleText title>{user?.user?.FirstName} {user?.user?.LastName}</TitleText>
-                <DarkText>SKIILS</DarkText>
+                <DarkText noMargin >SKIILS</DarkText>
                 {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item,index) => (
                     <Badge key={index}>{item?.skill}</Badge>
                 ))}

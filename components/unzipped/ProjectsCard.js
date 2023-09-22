@@ -52,7 +52,7 @@ display:  ${({ display }) => display ? display : ''};
 function ProjectsCard({ user }) {
     const images = [];
     for (let i = 0; i < 3; i++) {
-        images.push(<img src='/img/projectImages.png' key={i} alt={`Image ${i}`} />);
+        images.push(<img src='/img/projectImages.png' style={{ marginRight: "21px" }} key={i} alt={`Image ${i}`} />);
     }
     return (
         <Container>
@@ -63,7 +63,22 @@ function ProjectsCard({ user }) {
                         <P margin='0' fontSize="15px" >{user?.category}</P>
                         <P fontSize="14px" fontWeight="300">{user?.user?.AddressLineCountry || 'United States'}</P>
                         <div>
-                            {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item,index) => (
+                            {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item, index) => (
+                                <Badge key={index}>{item?.skill}</Badge>
+                            ))}
+                        </div>
+                        <div style={{ gap: "21px" }}>
+                            {images}
+                        </div>
+                    </ProjectInnerCard>
+                </ProjectCard>
+                <ProjectCard>
+                    <ProjectInnerCard>
+                        <P margin='0' color='#0057FF' fontSize="16px" fontWeight="500">Create a Landing page for a react site</P>
+                        <P margin='0' fontSize="15px" >{user?.category}</P>
+                        <P fontSize="14px" fontWeight="300">{user?.user?.AddressLineCountry || 'United States'}</P>
+                        <div>
+                            {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item, index) => (
                                 <Badge key={index}>{item?.skill}</Badge>
                             ))}
                         </div>
@@ -78,22 +93,7 @@ function ProjectsCard({ user }) {
                         <P margin='0' fontSize="15px" >{user?.category}</P>
                         <P fontSize="14px" fontWeight="300">{user?.user?.AddressLineCountry || 'United States'}</P>
                         <div>
-                            {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item,index) => (
-                                <Badge key={index}>{item?.skill}</Badge>
-                            ))}
-                        </div>
-                        <div>
-                            {images}
-                        </div>
-                    </ProjectInnerCard>
-                </ProjectCard>
-                <ProjectCard>
-                    <ProjectInnerCard>
-                        <P margin='0' color='#0057FF' fontSize="16px" fontWeight="500">Create a Landing page for a react site</P>
-                        <P margin='0' fontSize="15px" >{user?.category}</P>
-                        <P fontSize="14px" fontWeight="300">{user?.user?.AddressLineCountry || 'United States'}</P>
-                        <div>
-                            {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item,index) => (
+                            {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item, index) => (
                                 <Badge key={index}>{item?.skill}</Badge>
                             ))}
                         </div>
@@ -115,10 +115,10 @@ function ProjectsCard({ user }) {
                 <OtherInformationCard>
                     <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px" margin="0" >Browse Similar Freelancers</P>
                     <div style={{ gap: "6px", display: "flex", padding: "20px 10px", flexWrap: "wrap" }}>
-                        <P border="1px solid #666666" fontSize="14px" margin="0" padding="5px 10px">C Programmers in France</P>
-                        <P border="1px solid #666666" fontSize="14px" margin="0" padding="5px 10px">C Programmers</P>
-                        <P border="1px solid #666666" fontSize="14px" margin="0" padding="5px 10px">Algorithm Experts</P>
-                        <P border="1px solid #666666" fontSize="14px" margin="0" padding="5px 10px">C++ Programming</P>
+                        <P border="1px solid #666666" fontSize="14px" margin="0" radius='4px' padding="5px 10px">C Programmers in France</P>
+                        <P border="1px solid #666666" fontSize="14px" margin="0" radius='4px' padding="5px 10px">C Programmers</P>
+                        <P border="1px solid #666666" fontSize="14px" margin="0" radius='4px' padding="5px 10px">Algorithm Experts</P>
+                        <P border="1px solid #666666" fontSize="14px" margin="0" radius='4px' padding="5px 10px">C++ Programming</P>
                     </div>
                 </OtherInformationCard>
                 <OtherInformationCard>
