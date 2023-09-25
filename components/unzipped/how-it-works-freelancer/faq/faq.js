@@ -1,4 +1,7 @@
+
 import { DownArrow } from '../../../icons';
+import useWindowWidthEventListener from '../../../../hooks/windowWidth';
+import { useState, useEffect } from 'react';
 import {
     Heading_1,
     Heading_2,
@@ -41,9 +44,24 @@ const faqArray = [
         question: "What do Unzipped's performance badges mean?",
         answer: "Our performance badges help you stand out and gain visibility. They're awarded based on your achievements and client feedback."
     }
-]
+];
 
 const Faq = () => {
+    const isSmallWindow = useWindowWidthEventListener(600);
+    const [isShortText, setIsShortText] = useState(false);
+
+    useEffect(() => {
+        isSmallWindow ? setIsShortText(true) : setIsShortText(false);
+    }, [isSmallWindow]);
+
+    const [expandedStates, setExpandedStates] = useState(new Array(faqArray.length).fill(false));
+
+    const toggleAnswer = (index) => {
+        const newExpandedStates = expandedStates.map((state, i) => (i === index ? !state : false));
+        setExpandedStates(newExpandedStates);
+    };
+
+
     return (
         <>
             <Wrapper>
@@ -51,15 +69,21 @@ const Faq = () => {
                     <ContentBody>
                         <HeaderContainer> <Heading_1> Frequently asked questions</Heading_1>  </HeaderContainer>
                         <FaqContainer>
-                            {
-                                faqArray.map((item) => (
-                                    <FaqStyled>
-                                        <Heading_2>{item.question}</Heading_2>
-                                        <ParagraphTextStyled> {item.answer} </ParagraphTextStyled>
-                                        <ReadMoreTextStyled>Read More<DownArrow /> </ReadMoreTextStyled>
-                                    </FaqStyled>
-                                ))
-                            }
+                            {faqArray.map((item, index) => (
+                                <FaqStyled key={index}>
+                                    <Heading_2>{item.question}</Heading_2>
+                                    <ParagraphTextStyled>
+                                        {!isSmallWindow || expandedStates[index]
+                                            ? item.answer
+                                            : item.answer.substring(0, 100)}
+                                    </ParagraphTextStyled>
+                                    {isSmallWindow && (
+                                        <ReadMoreTextStyled onClick={() => toggleAnswer(index)}>
+                                            {expandedStates[index] ? 'Read Less' : 'Read More'}<DownArrow />
+                                        </ReadMoreTextStyled>
+                                    )}
+                                </FaqStyled>
+                            ))}
                         </FaqContainer>
                     </ContentBody>
                 </ContentContainer>

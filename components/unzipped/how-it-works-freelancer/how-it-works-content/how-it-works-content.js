@@ -15,8 +15,6 @@ import {
 import { useEffect, useState } from 'react';
 import useWindowWidthEventListener from '../../../../hooks/windowWidth'
 
-// imgSource: "/img/DiscoverOpportunities.png"
-
 const labelsArray = [
     {
         title: "Build Your Standout Profile (It's Free)",
@@ -88,12 +86,12 @@ const TextContainer = styled.div`
 `;
 
 const SmallScreenContainer = styled.div`
-display: none;
-justify-content: space-between;
-align-items:items;
-gap: 20px;
-@media screen and (max-width: 600px){
-        display: flex;
+    display: none;
+    justify-content: space-between;
+    align-items:items;
+    gap: 20px;
+    @media screen and (max-width: 600px){
+            display: flex;
     }
 `;
 
@@ -102,7 +100,7 @@ const VXCont = styled.div`
     @media screen and (max-width: 600px){
         display: block;
     }
-    `;
+`;
 
 const ImageContainerResponsive = styled.div`
     width: 127px; 
@@ -112,7 +110,7 @@ const ImageContainerResponsive = styled.div`
     @media screen and (max-width: 600px){
         display: block;
     }
-`
+`;
 
 const HowItWorksContentWrapper = () => {
     const isSmallWindow = useWindowWidthEventListener(600);
