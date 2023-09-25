@@ -31,6 +31,7 @@ import CycleIcon from './cycleIcon'
 import CircleStar from './circleStar'
 import BackArrow from './backArrow'
 import RightArrow from './rightArrow'
+import Check from './check'
 
 export {
     ClearFitLogo,
@@ -66,4 +67,5 @@ export {
     SkillPodImage,
     BackArrow,
     RightArrow,
+    Check
 };
