@@ -125,7 +125,16 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount
                 {!filterOpenClose ? <MobileDisplayBox>
                     <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "21px" }}>
                         <b style={{ paddingRight: "20px" }}>Top Results</b>
-                        {totalCount && <small>{skip + ' - ' + freelancerList?.length}{" of " + totalCount + " " + "results"}</small>}
+                        {totalCount && (
+                            <small>
+                                {skip === 0
+                                    ? `1 - ${freelancerList?.length} of ${totalCount} results`
+                                    : `${(+skip * +take) + 1} - ${Math.min(
+                                        (+skip * +take) + +take,
+                                        totalCount
+                                    )} of ${totalCount} results`}
+                            </small>
+                        )}
                     </div>
                     <div style={{ margin: "0 5px", border: "2px solid #EFF1F4" }}></div>
                 </MobileDisplayBox> :
