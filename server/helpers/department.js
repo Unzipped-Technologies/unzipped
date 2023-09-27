@@ -2,7 +2,7 @@ const department = require('../../models/Department');
 const business = require('../../models/Business');
 const tags = require('../../models/tags');
 const tasks = require('../../models/Task');
-const businessAssociatesItems = require('../../models/BusinessAssociatesItem');
+const contracts = require('../../models/Contract');
 const user = require('../../models/User');
 const mongoose = require('mongoose');
 const { Users } = require('react-feather');
@@ -79,8 +79,8 @@ const listDepartments = async ({filter, take, skip}) => {
             .limit( take )
             // get users associated with this department
             .populate({
-                path: 'businessAssociatesItems', 
-                model: 'businessAssociatesItems'
+                path: 'contracts', 
+                model: 'contracts'
             })
             .exec()
         return list;
@@ -95,21 +95,21 @@ const updateDepartment = async (data) => {
 
 const deleteDepartment = async (id) => {
     await department.findByIdAndDelete(id);
-    await businessAssociatesItems.deleteMany({listId: id})
+    await contracts.deleteMany({listId: id})
 }
 
 const addBusinessAssociateToBusiness = async (data) => {
     try {
         const [success] = await Promise.all([
-            businessAssociatesItems.create({
+            contracts.create({
                 ...data,
-                profile: await user.findById(data.profileId).select('email FirstName LastName profileImage freelancers')
+                userId: await user.findById(data.profileId).select('email FirstName LastName profileImage freelancers')
             }),
             department.findByIdAndUpdate(data.departmentId, {
-                employees: await businessAssociatesItems.find({departmentId: data.departmentId})
+                employees: await contracts.find({departmentId: data.departmentId})
             }),
             business.findByIdAndUpdate(data.businessId, {
-                employees: await businessAssociatesItems.find({businessId: data.businessId})
+                employees: await contracts.find({businessId: data.businessId})
             })
         ])
         return success

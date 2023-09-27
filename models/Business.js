@@ -48,7 +48,7 @@ const businessSchema = new Schema({
   audience: { type: Schema.Types.ObjectId, ref: 'businessAudiences' },
   invoices: { type: Schema.Types.Mixed, ref: 'invoices' },
   departments: { type: Schema.Types.Mixed, ref: 'departments' },
-  employees: { type: Schema.Types.Mixed, ref: 'businessAssociatesItems' },
+  employees: { type: Schema.Types.Mixed, ref: 'contracts' },
   // refer to other users likes of this business
   likeTotal: { type: Number, default: 0 },
   dislikeTotal: { type: Number, default: 0 },

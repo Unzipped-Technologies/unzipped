@@ -1,21 +1,44 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
-const businessAssociatesItemSchema = new Schema({
-  userId: String,
-  businessId: String,
-  departmentId: String,
-  profileId: String,
-  equityShare: { type: Number, default: 0 },
-  isActive: {type: Boolean, default: true},
-  isArchived: {type: Boolean, default: false},
-  currentRate: Number,
-  TotalStoryPoints: { type: Number, default: 1 },
-  business: { type: Schema.Types.ObjectId, ref: 'businesses' },
-  department: { type: Schema.Types.ObjectId, ref: 'departments' },
-  profile: { type: Schema.Types.ObjectId, ref: 'users' },
-}, {
-  timestamps: true
+// Define the Mongoose schema for Contracts
+const contractsSchema = new mongoose.Schema({
+  businessId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'businesses', // Reference to the Business model
+  },
+  departmentId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'departments', 
+  },
+  freelancerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'freelancers', // Reference to the Freelancer model
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users', // Reference to the User model
+  },
+  hourlyRate: {
+    type: Number,
+  },
+  hoursLimit: {
+    type: Number,
+  },
+  isOfferAccepted: {
+    type: Boolean,
+  },
+  totalStoryPoints: {
+    type: Number,
+  },
+  isActive: {
+    type: Boolean,
+  },
+  isArchived: {
+    type: Boolean,
+  }
 });
 
-module.exports = mongoose.model('businessAssociatesItems', businessAssociatesItemSchema);
+// Create the Contracts model
+const Contracts = mongoose.model('contracts', contractsSchema);
+
+module.exports = Contracts;
