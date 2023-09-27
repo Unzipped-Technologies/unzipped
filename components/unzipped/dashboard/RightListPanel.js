@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
@@ -28,9 +28,7 @@ const Container = styled.div`
     display: flex;
     flex-flow: column;
     border: 1px solid #D9D9D9;
-    background: ${({background}) => background ? background : '#D9D9D930'};
-    width: 95%;
-    max-height: 900px;
+    background: ${({ background }) => background ? background : '#D9D9D930'};
     padding: 20px 0px;
     margin-left: 34px;
     border-radius: 10px;
@@ -114,7 +112,7 @@ const freelancer = [
 ]
 
 // sets stories to correct tags and updates any missing orders in redux
-const setTagsAndStories = ({tags = [], stories = []}) => {
+const setTagsAndStories = ({ tags = [], stories = [] }) => {
     const storyOrder = []
     const story = tags.map(item => {
         const orderStories = stories.filter(e => item._id === (e?.tag?._id || e?.tag)).sort((a, b) => a.order - b.order).map((e, index) => {
@@ -134,15 +132,15 @@ const setTagsAndStories = ({tags = [], stories = []}) => {
 }
 
 const Panel = ({
-    list, 
-    selectedList, 
-    type, 
-    projects=[], 
-    tags = [], 
-    stories = [], 
+    list,
+    selectedList,
+    type,
+    projects = [],
+    tags = [],
+    stories = [],
     reorderStories,
     access,
-    updateTasksOrder, 
+    updateTasksOrder,
     onBack,
     dropdownList = [],
     loading,
@@ -163,13 +161,13 @@ const Panel = ({
     const dragItem = useRef();
     const dragOverItem = useRef();
     const setDropdowns = (item) => {
-        setTimeout(function() { 
+        setTimeout(function () {
             setMenuOpen(item)
         }, 500);
     }
 
     const setCloseDropdowns = (time) => {
-        setTimeout(function() { 
+        setTimeout(function () {
             setMenuOpen(false)
         }, (time || 500));
     }
@@ -187,11 +185,11 @@ const Panel = ({
             const [removed] = sourceItems.splice(source.index, 1);
             removed.tag = destColumn.tag._id
             destItems.splice(destination.index, 0, removed).map((e, index) => {
-                    return {
-                        ...e,
-                        order: index
-                    }
-                });
+                return {
+                    ...e,
+                    order: index
+                }
+            });
             const newSource = sourceItems.map((e, index) => {
                 return {
                     ...e,
@@ -243,17 +241,17 @@ const Panel = ({
                 updateCreateStoryForm({ tagId: tags[0]._id })
                 setCreateAStory(true)
             },
-            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+            icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
         },
         {
             name: 'Create Department',
             link: '/',
-            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+            icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
         },
         {
             name: 'Remove Department',
             link: '/',
-            icon: <Icon name="contacts" width={27} height={27} style={{marginLeft: '8px'}} />
+            icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
         },
     ]
 
@@ -263,15 +261,15 @@ const Panel = ({
     }
 
     const updateAssigee = (e) => {
-        updateCreateStoryForm({ 
-            assignee: e.target.value, 
+        updateCreateStoryForm({
+            assignee: e.target.value,
             assigneeId: searchDropdown.find(item => item?.FirstName.toLowerCase().includes(e.target?.value.toLowerCase().split(' ')[0]) && item.LastName.toLowerCase().includes(e.target?.value.toLowerCase()?.split(' ')[1]))?._id
         })
     }
 
     const updateTagName = (e) => {
-        updateCreateStoryForm({ 
-            tagName: e.target.value, 
+        updateCreateStoryForm({
+            tagName: e.target.value,
             tagId: tagsDropdown.find(item => item.tagName.toLowerCase().includes(e.target.value.toLowerCase()))?._id
         })
     }
@@ -311,13 +309,13 @@ const Panel = ({
             const story = stories.find(e => selectedStory._id === e._id)
             if (story) {
                 const employee = dropdownList.find(e => e._id === (story?.assigneeId || story?.assignee))
-                setSelectedStory({...story, employee})
+                setSelectedStory({ ...story, employee })
             }
         }
     }, [stories])
 
     useEffect(() => {
-        setStoryList(setTagsAndStories({tags, stories}))
+        setStoryList(setTagsAndStories({ tags, stories }))
     }, [tags, stories])
 
     useEffect(() => {
@@ -326,8 +324,9 @@ const Panel = ({
                 return false;
             }
             if (element > form?.storyPoints - 2 && element < form?.storyPoints + 2) {
-              return true;
-        }}))
+                return true;
+            }
+        }))
     }, [form?.storyPoints])
 
     useEffect(() => {
@@ -337,8 +336,9 @@ const Panel = ({
                     return false;
                 }
                 if (`${element?.FirstName} ${element?.LastName}`.toLowerCase().includes(form?.assignee.toLowerCase()) || element?.FirstName.toLowerCase().includes(form?.assignee.toLowerCase()) || element?.LastName.toLowerCase().includes(form?.assignee.toLowerCase())) {
-                  return true;
-            }})
+                    return true;
+                }
+            })
         )
     }, [form?.assignee])
 
@@ -356,12 +356,12 @@ const Panel = ({
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <TitleText paddingLeft size="24px">{selectedList}</TitleText>
-            <Underline color="#333" noMargin={type === 'department'}/>   
+            <Underline color="#333" noMargin={type === 'department'} />
             {type === "department" && (<Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>)}
-            {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top/>}
+            {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top />}
             {!freelancer && (
                 <NoUsersInList>
-                    <WorkIcon width={200} height={200}/>
+                    <WorkIcon width={200} height={200} />
                     <TitleText center noMargin size="24px">This list is empty</TitleText>
                     <DarkText center>Add investors to your list to quickly find them later. </DarkText>
                     <div><Button noBorder oval style={{ color: "black" }}>BROWSE INVESTORS</Button></div>
@@ -369,7 +369,7 @@ const Panel = ({
             )}
             <UserContainer>
                 {type === 'list' && freelancer.map(user => (
-                    <FreelancerCard user={user} />
+                    <FreelancerCard user={user} width={'650px'} />
                 ))}
             </UserContainer>
             <StoryTable>
@@ -382,9 +382,9 @@ const Panel = ({
                                 <DarkText noMargin center bold>STORY POINTS</DarkText>
                                 <DarkText noMargin center bold>ASSIGNEE</DarkText>
                             </WhiteCard>
-                            <Droppable 
+                            <Droppable
                                 droppableId={tag.tag._id}
-                                type="COLUMN" 
+                                type="COLUMN"
                                 direction="vertical"
                                 key={tag.tag._id}
                             >
@@ -396,14 +396,14 @@ const Panel = ({
                                                 <Draggable draggableId={item._id} key={item._id} index={index} >
                                                     {(provided) => {
                                                         if (typeof provided.draggableProps.onTransitionEnd === "function") {
-                                                            queueMicrotask(() => 
+                                                            queueMicrotask(() =>
                                                                 provided.draggableProps.onTransitionEnd?.({
                                                                     propertyName: "transform"
                                                                 })
                                                             );
-                                                         } 
+                                                        }
                                                         return (
-                                                            <WhiteCard onClick={() => openAStory({...item, employee, tagName: tag?.tag?.tagName})} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row > 
+                                                            <WhiteCard onClick={() => openAStory({ ...item, employee, tagName: tag?.tag?.tagName })} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row >
                                                                 <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
                                                                 <DarkText noMargin> </DarkText>
                                                                 <DarkText noMargin> </DarkText>
@@ -414,7 +414,8 @@ const Panel = ({
                                                         )
                                                     }}
                                                 </Draggable>
-                                            )}
+                                            )
+                                        }
                                         )}
                                         {provided.placeholder}
                                     </div>
@@ -450,11 +451,11 @@ const Panel = ({
                 )}
             </StoryTable>
             {storyModal && (
-                <StoryModal user={user} content={{...selectedStory, department: selectedList}} submitComments={submitComments} onHide={setStoryModal}/>
+                <StoryModal user={user} content={{ ...selectedStory, department: selectedList }} submitComments={submitComments} onHide={setStoryModal} />
             )}
             {createAStory && (
                 <Modal onHide={() => setCreateAStory(false)} height="520px">
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
@@ -466,47 +467,47 @@ const Panel = ({
                         TASK NAME(REQUIRED)
                     </FormField>
                     <Grid3 margin="0px" width="95%" grid="2fr 1fr 1fr">
-                    <FormField 
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="95%"
-                        dropdownList={tagsDropdown}
-                        onChange={e => updateTagName(e)}
-                        value={form?.tagName}
-                        clickType="tagName"
-                        onUpdate={updateCreateStoryForm}
-                    >
-                        Tag
-                    </FormField>
-                    <FormField 
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="90%"
-                        onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
-                        value={form?.priority}
-                    >
-                        PRIORITY
-                    </FormField>
-                    <FormField 
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="100%"
-                        onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
-                        value={form?.storyPoints}
-                        dropdownList={pointsDropdown}
-                        clickType="storyPoints"
-                        onUpdate={updateCreateStoryForm}
-                    >
-                        STORY POINTS
-                    </FormField>
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width="95%"
+                            dropdownList={tagsDropdown}
+                            onChange={e => updateTagName(e)}
+                            value={form?.tagName}
+                            clickType="tagName"
+                            onUpdate={updateCreateStoryForm}
+                        >
+                            Tag
+                        </FormField>
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width="90%"
+                            onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
+                            value={form?.priority}
+                        >
+                            PRIORITY
+                        </FormField>
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width="100%"
+                            onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
+                            value={form?.storyPoints}
+                            dropdownList={pointsDropdown}
+                            clickType="storyPoints"
+                            onUpdate={updateCreateStoryForm}
+                        >
+                            STORY POINTS
+                        </FormField>
                     </Grid3>
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
@@ -520,7 +521,7 @@ const Panel = ({
                     >
                         ASSIGN TO
                     </FormField>
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'

@@ -16,7 +16,7 @@ import {
 const Container = styled.div`
     display: flex;
     flex-flow: row;
-    padding: ${({includeRate}) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
+    padding: ${({ includeRate }) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
 `;
 const Left = styled.div`
     display: flex;
@@ -25,8 +25,8 @@ const Left = styled.div`
     margin: 0px 10px;
 `;
 const Right = styled.div`
-    padding: ${({includeRate}) => includeRate ? '5px 30px' : '15px 30px'};
-    min-width: 850px;
+    padding: ${({ includeRate }) => includeRate ? '5px 30px' : '15px 30px'};
+    min-width: ${({ minWidth }) => minWidth ? minWidth : '850px'} ;
 `;
 
 const Flex = styled.div`
@@ -37,7 +37,7 @@ const Flex = styled.div`
 
 
 
-const FreelancerCard = ({user, includeRate, clearSelectedFreelancer}) => {
+const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
     const router = useRouter()
     const redirectToProfile = () => {
         clearSelectedFreelancer()
@@ -48,10 +48,10 @@ const FreelancerCard = ({user, includeRate, clearSelectedFreelancer}) => {
     return (
         <Container includeRate={includeRate}>
             <Left>
-                <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%"/>
+                <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
                 <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
-            <Right includeRate={includeRate}>
+            <Right minWidth={width} includeRate={includeRate}>
                 <TitleText half color="blue" onClick={redirectToProfile}>{user.name}</TitleText>
                 <TitleText noMargin>{user.type}</TitleText>
                 {user?.country && <DarkText half>{user.country}</DarkText>}
@@ -66,7 +66,7 @@ const FreelancerCard = ({user, includeRate, clearSelectedFreelancer}) => {
                 ))}
                 {user?.cover && (
                     <DarkText topMargin="10px"><strong>cover letter: </strong>
-                    {user.cover}
+                        {user.cover}
                     </DarkText>
                 )}
             </Right>
