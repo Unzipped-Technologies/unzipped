@@ -13,6 +13,17 @@ text-align: ${({ align }) => align ? align : ''};
 border-bottom: ${({ borderBottom }) => borderBottom ? borderBottom : ''};
 right: ${({ right }) => right ? right : ''}
 `
+
+const DropDown = styled.div`
+    display: ${({ display }) => display ? display : ''};
+    position: absolute;
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    margin: 0 2%;
+    width: 96%; /* Adjust the width as needed */
+    border: 1px solid #ccc;
+`
 function MobileProfileCardOptions({ handleProfilePage }) {
     const [openList, setOpenList] = useState(false);
     return (
@@ -31,7 +42,7 @@ function MobileProfileCardOptions({ handleProfilePage }) {
                 </div>
             </div >
 
-            {openList && <>
+             <DropDown display={openList? 'block' : 'none'} >
                 <div className='d-flex px-4 py-2 me-2' style={{ gap: "15px", borderBottom: "3px solid #EFF1F4" }} >
                     <div>
                         <img src='/img/heart.png' />
@@ -88,7 +99,7 @@ function MobileProfileCardOptions({ handleProfilePage }) {
                         </div>
                     </div>
                 </div>
-            </>}
+            </DropDown>
         </div>
 
     )
