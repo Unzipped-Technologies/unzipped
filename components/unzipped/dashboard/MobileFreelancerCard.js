@@ -1,22 +1,31 @@
 import React from 'react'
 import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
+
+const UserSkills = styled.div`
+::-webkit-scrollbar {
+  width: 0.1em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+`
 
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
-  console.log(user,"user")
-  const UserSkills = styled.div`
-  ::-webkit-scrollbar {
-    width: 0.1em;
+  const router = useRouter()
+  const redirectToProfile = () => {
+    clearSelectedFreelancer()
+    if (user?.id) {
+      router.push(`/freelancers/${user.id}`)
+    }
   }
-  
-  ::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: transparent;
-  }
-  `
+
   return (
     <div className='bg-white' style={{ borderBottom: "2px solid rgba(0, 0, 0, 0.25)", color: "black" }}>
       <div className=' px-3 py-2' >
@@ -53,7 +62,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
           {user?.cover}
         </p>
       </div>
-      <div className='px-4 mb-3' style={{ display: "grid" }}>
+      <div className='px-4 mb-3' style={{ display: "grid" }} onClick={redirectToProfile}>
         <button style={{ background: "#37DEC5", color: "white", fontSize: "16px", border: "0", padding: "10px 0px", fontWeight: "600" }}>VIEW PROFILE</button>
       </div>
     </div>

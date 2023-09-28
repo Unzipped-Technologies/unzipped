@@ -4,7 +4,6 @@ import SearchBar from '../../components/ui/SearchBar'
 import FreelancerCard from '../../components/unzipped/dashboard/FreelancerCard'
 import Footer from '../../components/unzipped/Footer'
 import {
-    TitleText,
     DarkText,
     WhiteCard
 } from '../../components/unzipped/dashboard/style'
@@ -25,8 +24,8 @@ const Container = styled.div`
     justify-content: center;
     margin-top: 41px;
     @media(max-width: 680px) {
-        margin-top:0;
         background-color: #F6F7F9;
+        margin-bottom: 48px;
     }
 `;
 
@@ -52,7 +51,7 @@ const DesktopDisplayBox = styled.div`
 }
 `
 const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount, clearSelectedFreelancer, getFreelancerSkillsList, freelancerSkillsList = [] }) => {
-    const [take, setTake] = useState(25)
+    const [take, setTake] = useState(15)
     const [skip] = useState(0);
     const [filter, setFilter] = useState('')
     const [sort, setSort] = useState('ALL CATEGORIES')
@@ -115,7 +114,6 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount
         }, token.access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjYzOTY0MDhhNjNiMTQzMzk2MGEzOTgyMSIsImlhdCI6MTY5NDc5MTE4MCwiZXhwIjo0Mjg2NzkxMTgwfQ.26w-FzvkymHELA1re6Q5SgdqiumCpAsHfOR5d2JfiBQ')
 
     }
-    console.log(freelancerList, "freee")
     return (
         <React.Fragment>
             {!filterOpenClose && <Nav isSubMenu />}
@@ -123,18 +121,20 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount
             {!filterOpenClose && <MobileDisplayBox><MobileSearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} handleFilterOpenClose={handleFilterOpenClose} /></MobileDisplayBox>}
             <Container>
                 {!filterOpenClose ? <MobileDisplayBox>
-                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "21px" }}>
+                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "100px" }}>
                         <b style={{ paddingRight: "20px" }}>Top Results</b>
-                        {totalCount && (
-                            <small>
-                                {skip === 0
-                                    ? `1 - ${freelancerList?.length} of ${totalCount} results`
-                                    : `${(+skip * +take) + 1} - ${Math.min(
-                                        (+skip * +take) + +take,
-                                        totalCount
-                                    )} of ${totalCount} results`}
-                            </small>
-                        )}
+
+                        <small>
+                            {freelancerList?.length === 0 ? `0 results` :
+                                freelancerList?.length === 1 ? `1 results` :
+                                    skip === 0
+                                        ? `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
+                                        : `${(+skip * +take) + 1} - ${Math.min(
+                                            (+skip * +take) + +take,
+                                            totalCount
+                                        )} ${totalCount > (+take * +skip) ? `of ${totalCount} results` : `results`}  `}
+                        </small>
+
                     </div>
                     <div style={{ margin: "0 5px", border: "2px solid #EFF1F4" }}></div>
                 </MobileDisplayBox> :
@@ -193,11 +193,10 @@ Freelancers.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         freelancerList: state.Freelancers?.freelancers,
         freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
-        totalCount: state.Freelancers?.totalCount
+        totalCount: state.Freelancers?.totalCount[0]?.count
     }
 }
 

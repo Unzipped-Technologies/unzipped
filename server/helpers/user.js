@@ -146,10 +146,10 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
             },
             {
                 $lookup: {
-                    from: 'freelancerskills', // The name of the "freelancerSkills" collection
-                    localField: 'user.freelancerSkills', // The field in the "user" subdocument that refers to the "freelancerSkills" collection
-                    foreignField: '_id', // The field in the "freelancerSkills" collection that you want to match
-                    as: 'user.freelancerSkills', // The alias for the populated "user.freelancerSkills" field
+                    from: 'freelancerskills',
+                    localField: 'user.freelancerSkills',
+                    foreignField: '_id',
+                    as: 'user.freelancerSkills',
                 },
             },
             {
@@ -162,54 +162,47 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
             {
                 $match: {
                     mergedName: { $regex: regexQuery },
+                    ...(skill?.length > 0 ? {
+                        'user.freelancerSkills.skill': {
+                            $in: skill,
+                        }
+                    } : {}),
+                    ...(minRate && {
+                        rate: { $gte: +minRate },
+                    }),
+                    ...(maxRate && {
+                        rate: { $lte: +maxRate },
+                    })
                 },
             },
+            ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate' ? [
+                {
+                    $sort: {
+                        rate: sort === 'lowest hourly rate' ? 1 : -1,
+                    },
+                }
+            ] : []),
             {
-                $skip: +skip,
-            },
-            {
-                $limit: +take,
+                $facet: {
+                    limitedRecords: [
+                        {
+                            $skip: +skip,
+                        },
+                        {
+                            $limit: +take,
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: 'count',
+                        }
+                    ]
+                }
             },
         ];
-        if (skill?.length > 0) {
-            aggregationPipeline.push({
-                $match: {
-                    'user.freelancerSkills.skill': {
-                        $in: skill, // Check if any skill in the array matches any skill in 'skills'
-                    },
-                },
-            })
-        }
-        if (sort === 'lowest hourly rate' || sort === 'highest hourly rate') {
-            aggregationPipeline.push({
-                $sort: {
-                    rate: sort === 'lowest hourly rate' ? 1 : -1, // Sort by rate in the specified order
-                },
-            });
-        }
-        // Check for minRate and maxRate conditions
-        if (minRate && maxRate) {
-            aggregationPipeline.push({
-                $match: {
-                    rate: { $gte: +minRate, $lte: +maxRate },
-                },
-            });
-        } else if (minRate) {
-            aggregationPipeline.push({
-                $match: {
-                    rate: { $gte: +minRate },
-                },
-            });
-        } else if (maxRate) {
-            aggregationPipeline.push({
-                $match: {
-                    rate: { $lte: +maxRate },
-                },
-            });
-        }
+
         const list = await freelancer.aggregate(aggregationPipeline).exec();
-        const totalCount = await freelancer.countDocuments();
-        return {list,totalCount};
+        return list[0];
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     }
