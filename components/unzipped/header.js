@@ -20,6 +20,7 @@ import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
 import { Button as Buttons } from '../ui'
 import router, { useRouter } from 'next/router';
+import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
     width: 100%;
@@ -122,7 +123,7 @@ const Desktop = styled.div`
     align-items: center;
     margin-left: auto;
     flex-flow: row;
-    @media(max-width: 650px) {
+    @media(max-width: 680px) {
         display: none;
     }
 `;
@@ -130,7 +131,7 @@ const Desktop = styled.div`
 const Mobile = styled.div`
     display: flex;
     border-radius: 5px;
-    @media(min-width: 650px) {
+    @media(min-width: 680px) {
         display: none;
     }
     &:hover {
@@ -154,9 +155,8 @@ const SubMenu = styled.div`
     background: #0E1724;
     color: #fff;
     padding: 0px 15%;
-    @media(max-width: 580px) {
-        justify-content: center;
-        padding: 0px;
+    @media(max-width: 680px) {
+        display:none;
     }
 `;
 
@@ -171,9 +171,9 @@ const SpanWhite = styled.div`
     justify-content: center;
     margin-right: 10px;
     min-width: 75px;
-    border-bottom: ${({underline}) => underline ? 'solid 4px #fff' : 'none'};
+    border-bottom: ${({ underline }) => underline ? 'solid 4px #fff' : 'none'};
     @media(max-width: 449px) {
-        display: ${({count}) => count > 3 ? 'none' : 'flex'};
+        display: ${({ count }) => count > 3 ? 'none' : 'flex'};
     }
     @media(max-width: 449px) {
         margin-right: 0px;
@@ -203,7 +203,7 @@ const menuItems = [
 
             {
                 name: 'Search Freelancers',
-                icon: <WorkIcon width={35} height={35}/>,
+                icon: <WorkIcon width={35} height={35} />,
                 link: '/freelancers'
             },
             {
@@ -213,7 +213,7 @@ const menuItems = [
             }
         ],
         link: '/',
-        icon: <WorkIcon width={35} height={35}/>
+        icon: <WorkIcon width={35} height={35} />
     },
     {
         name: 'Find a Project',
@@ -226,7 +226,7 @@ const menuItems = [
             {
                 name: 'Search By Founders',
                 link: '/',
-                icon: <WorkIcon width={35} height={35}/>
+                icon: <WorkIcon width={35} height={35} />
             },
             {
                 name: 'Get Ideas',
@@ -415,7 +415,7 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
 
     return (
         <Div>
-            <Container style={{ position: 'relative' }}>
+            <Container style={{ position: 'fixed', top: "0", zIndex: "1" }}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
                     {menuItems && menuItems.map((item, index) => {
@@ -456,8 +456,8 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
                         {getButtons(token)}
                     </Desktop>
                     <Mobile>
-                        <MenuIcon className="material-icons" onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
-                            menu
+                        <MenuIcon onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
+                            <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
                         </MenuIcon>
                         {menuOpen === 'mobile' && (
                             <Absolute right="228px" top="0px"><Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /></Absolute>

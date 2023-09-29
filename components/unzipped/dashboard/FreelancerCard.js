@@ -12,6 +12,7 @@ import {
     DarkSpan,
     Underline,
 } from './style'
+import IconComponent from '../../ui/icons/IconComponent';
 
 const Container = styled.div`
     display: flex;
@@ -34,6 +35,10 @@ const Flex = styled.div`
     flex-flow: row;
     justify-items: space-between;
 `;
+const inviteButton = {
+    height: "33px",
+    flexShrink: "0",
+}
 
 
 
@@ -57,8 +62,8 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                 {user?.country && <DarkText half>{user.country}</DarkText>}
                 {includeRate && (
                     <Flex>
-                        <DarkText half>$<DarkSpan fontSize="18px">{user?.rate}</DarkSpan> / hour</DarkText>
-                        {user?.likes > 0 && <DarkText noMargin>{user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
+                        <DarkText small half><DarkSpan large>${user?.rate}</DarkSpan > / hour</DarkText>
+                        {user?.likes > 0 && <DarkText right color='#000' fontSize='15px' noMargin>{user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
                     </Flex>
                 )}
                 {user.skills?.length > 0 && user.skills.map(item => (
@@ -70,7 +75,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                     </DarkText>
                 )}
             </Right>
-            <Absolute><Button normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
+            <Absolute><Button color='#000' padding="8px 22px" normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
         </Container>
     )
 }

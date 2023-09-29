@@ -184,7 +184,6 @@ const Home = ({token}) => {
 
 Home.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
       return {
         token: token && token,
       }
