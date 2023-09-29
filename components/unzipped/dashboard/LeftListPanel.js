@@ -13,7 +13,7 @@ const Container = styled.div`
     display: flex;
     flex-flow: column;
     border: 1px solid #D9D9D9;
-    width: 100%;
+    width: 371px;
     height: fit-content;
     padding: 20px 0px;
     margin-left: 10px;
@@ -32,7 +32,7 @@ const Action = styled.div`
     }
 `;
 
-const Panel = ({list, business, selectList, type}) => {
+const Panel = ({ list, business, selectList, type }) => {
     const isDepartment = type === 'department';
     return (
         <Container>

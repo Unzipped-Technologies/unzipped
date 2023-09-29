@@ -17,7 +17,6 @@ import IconComponent from '../../ui/icons/IconComponent';
 const Container = styled.div`
     display: flex;
     flex-flow: row;
-    width: inherit;
     padding: ${({ includeRate }) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
 `;
 const Left = styled.div`
@@ -28,7 +27,7 @@ const Left = styled.div`
 `;
 const Right = styled.div`
     padding: ${({ includeRate }) => includeRate ? '5px 30px' : '15px 30px'};
-    min-width: 850px;
+    min-width: ${({ minWidth }) => minWidth ? minWidth : '850px'} ;
 `;
 
 const Flex = styled.div`
@@ -42,7 +41,8 @@ const inviteButton = {
 }
 
 
-const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer }) => {
+
+const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
     const router = useRouter()
     const redirectToProfile = () => {
         clearSelectedFreelancer()
@@ -54,15 +54,12 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer }) => {
         <Container includeRate={includeRate}>
             <Left>
                 <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
-                <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} style={inviteButton} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
+                <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
-            <Right includeRate={includeRate}>
-                {/* <div className='d-flex'> */}
-                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user.name} {user?.isPreferedFreelancer && <IconComponent name='verifiedUser' width="27" height="27" viewBox="0 0 20 27" fill="#37DEC5" /> }</TitleText>
-                 
-                {/* </div> */}
-                <TitleText small light color='#000' noMargin>{user.type}</TitleText>
-                {user?.country && <DarkText lighter small half>{user.country}</DarkText>}
+            <Right minWidth={width} includeRate={includeRate}>
+                <TitleText half color="blue" onClick={redirectToProfile}>{user.name}</TitleText>
+                <TitleText noMargin>{user.type}</TitleText>
+                {user?.country && <DarkText half>{user.country}</DarkText>}
                 {includeRate && (
                     <Flex>
                         <DarkText small half><DarkSpan large>${user?.rate}</DarkSpan > / hour</DarkText>
@@ -73,7 +70,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer }) => {
                     <Badge>{item}</Badge>
                 ))}
                 {user?.cover && (
-                    <DarkText fontSize='13px' topMargin="15px"><b>cover letter: </b>
+                    <DarkText topMargin="10px"><strong>cover letter: </strong>
                         {user.cover}
                     </DarkText>
                 )}

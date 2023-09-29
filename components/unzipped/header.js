@@ -82,7 +82,7 @@ const Item = styled.div`
 
 const Span = styled.span`
     margin-right: 8px;
-    cursor: pointer;
+    // cursor: pointer;
 `;
 
 const Span2 = styled.span`

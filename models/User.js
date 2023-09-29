@@ -41,7 +41,7 @@ const userSchema = new Schema({
   profileImage: { type: String, default: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'},
   freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
   lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
-  freelancerSkills: { type: Schema.Types.Mixed, refs: 'freelancerSkills'},
+  freelancerSkills: [{ type: Schema.Types.Mixed, ref: 'freelancerSkills'}],
   business: { type: Schema.Types.Mixed, refs: 'businesses'},
   // these refer times the user liked freelancers or businesses
   likeTotal: { type: Number, default: 0 },
