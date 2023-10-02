@@ -29,9 +29,9 @@ const WhiteText = styled.div`
 const TitleText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
-    font-weight: 600;
+    font-weight: ${({light,lighter})=> light ? '400' :lighter ? '300' : '600'};
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
-    font-size: ${({small, title, size}) => small ? '16px' : title ? '36px' : size? size : '18px'};
+    font-size: ${({smallest,small, title, size}) => small ? '15px' : title ? '36px' : size? size : '16px'};
     line-height: ${({lineHeight}) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
     margin-bottom: ${({noMargin, half, large}) => noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
@@ -49,7 +49,7 @@ const DarkText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
     position: relative;
-    font-weight: ${({bold}) => bold ? '600' : '400'};
+    font-weight: ${({bold,lighter}) => bold ? '600' : lighter ? '300' : '400'};
     font-size: ${({small, fontSize}) => small ? '14px' : fontSize ? fontSize : '16px'};
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     line-height: ${({lineHeight, fontSize}) => lineHeight ? lineHeight : fontSize ? fontSize : '24px'};
@@ -57,6 +57,7 @@ const DarkText = styled.div`
     margin-top: ${({topMargin}) => topMargin ? topMargin : 'unset'};
     margin-bottom: ${({noMargin, marginLarge, half}) => noMargin ? '0px' : marginLarge ? '35px'  : half ? '7px' : '15px'};
     margin-left: ${({paddingLeft}) => paddingLeft ? '20px' : '0px'};
+    margin-right: ${({marginRight}) => marginRight ? marginRight : '0px'};
     padding-top: ${({topPadding}) => topPadding ? '10px' : '0px'};
     text-overflow: ${({textOverflow}) => textOverflow ? textOverflow : 'unset'};
     white-space: ${({textOverflow}) => textOverflow ? 'nowrap' : 'pre-line'};
@@ -107,6 +108,8 @@ const Underline = styled.div`
 `;
 
 const WhiteCard = styled.div`
+@media (min-width: 681px) {
+    overflow: visible hidden;
     background: ${({background}) => background ? background : '#fff'};
     border: 1px ${({borderColor}) => borderColor ? borderColor : '#d8d8d8'} solid;
     border-radius: ${({borderRadius}) => borderRadius ? borderRadius : '5px'};
@@ -115,20 +118,16 @@ const WhiteCard = styled.div`
     display: flex;
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     flex-flow: ${({row}) => row ? 'row' : 'column'};
-    height: ${({size, unset, height}) => size === 'large' ? '151px' : size === 'extraLarge' ? '370px' : unset ? 'unset' : height ? height :'63px'};
+    height: ${({size, unset, height,cardHeightDesktop}) => size === 'large' ? '151px' : size === 'extraLarge' ? '370px' : unset ? 'unset' : cardHeightDesktop ? '262px' : height ? height :'63px'};
     align-items: ${({alignEnd}) => alignEnd ? 'flex-end' : 'center'};
     justify-content: ${({center, justifyEnd}) => center ? 'center' : justifyEnd ? 'flex-end' : 'normal'};
     padding: ${({padding}) => padding ? padding : '20px 20px'};
     position: relative;
     box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '12px' : '24px'};
-    overflow: ${({overflow}) => overflow ? overflow : 'visible'};
-    @media(max-width: 740px) {
-        padding: ${({padding}) => padding ? padding : '10px 10px'};
-    }
-    @media(max-width: 448px) {
-        padding: ${({padding}) => padding ? padding : '10px 5px'};
-    }
+    overflow: ${({overflow,overlayDesktop}) => overflow ? overflow : overlayDesktop ? 'overlay' : 'visible'};
+}
+    
 `;
 
 const SelectCard = styled.div`
@@ -243,7 +242,7 @@ export const DarkSpan = styled.span`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    font-size: 26px;
+    font-size: ${({large,small,medium})=> large?'24px':small?'15px':'18px'};
     padding-left: 3px;
     color: #333;
 `;
