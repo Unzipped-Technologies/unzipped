@@ -18,8 +18,8 @@ import Icon from '../ui/Icon'
 import { Absolute } from './dashboard/style'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
-import {Button as Buttons} from '../ui'
-import router, {useRouter} from 'next/router';
+import { Button as Buttons } from '../ui'
+import router, { useRouter } from 'next/router';
 import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
@@ -82,7 +82,7 @@ const Item = styled.div`
 
 const Span = styled.span`
     margin-right: 8px;
-    cursor: pointer;
+    // cursor: pointer;
 `;
 
 const Span2 = styled.span`
@@ -171,9 +171,9 @@ const SpanWhite = styled.div`
     justify-content: center;
     margin-right: 10px;
     min-width: 75px;
-    border-bottom: ${({underline}) => underline ? 'solid 4px #fff' : 'none'};
+    border-bottom: ${({ underline }) => underline ? 'solid 4px #fff' : 'none'};
     @media(max-width: 449px) {
-        display: ${({count}) => count > 3 ? 'none' : 'flex'};
+        display: ${({ count }) => count > 3 ? 'none' : 'flex'};
     }
     @media(max-width: 449px) {
         margin-right: 0px;
@@ -203,7 +203,7 @@ const menuItems = [
 
             {
                 name: 'Search Freelancers',
-                icon: <WorkIcon width={35} height={35}/>,
+                icon: <WorkIcon width={35} height={35} />,
                 link: '/freelancers'
             },
             {
@@ -213,7 +213,7 @@ const menuItems = [
             }
         ],
         link: '/',
-        icon: <WorkIcon width={35} height={35}/>
+        icon: <WorkIcon width={35} height={35} />
     },
     {
         name: 'Find a Project',
@@ -226,7 +226,7 @@ const menuItems = [
             {
                 name: 'Search By Founders',
                 link: '/',
-                icon: <WorkIcon width={35} height={35}/>
+                icon: <WorkIcon width={35} height={35} />
             },
             {
                 name: 'Get Ideas',
@@ -415,7 +415,7 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
 
     return (
         <Div>
-            <Container style={{ position: 'relative' }}>
+            <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
                     {menuItems && menuItems.map((item, index) => {
@@ -456,8 +456,8 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
                         {getButtons(token)}
                     </Desktop>
                     <Mobile>
-                        <MenuIcon  onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
-                        <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333"  />
+                        <MenuIcon onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
+                            <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
                         </MenuIcon>
                         {menuOpen === 'mobile' && (
                             <Absolute right="228px" top="0px"><Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /></Absolute>
