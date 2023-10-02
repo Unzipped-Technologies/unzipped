@@ -17,6 +17,7 @@ import IconComponent from '../../ui/icons/IconComponent';
 const Container = styled.div`
     display: flex;
     flex-flow: row;
+    width: inherit;
     padding: ${({ includeRate }) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
 `;
 const Left = styled.div`

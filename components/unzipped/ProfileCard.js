@@ -17,7 +17,7 @@ const Container = styled.div`
     flex-flow: row;
     align-self: center;
     max-width: 1300px;
-    margin-top: 38px;
+    margin-top: 119px;
     margin-left: 10%;
 `;
 const Content = styled.div`
