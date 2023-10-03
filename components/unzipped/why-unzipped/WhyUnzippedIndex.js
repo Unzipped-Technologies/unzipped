@@ -8,6 +8,7 @@ import SecurityPrivacy from './client/security-container/SecurityPrivacy';
 import FAQ from './../FAQ/FAQ';
 import CareerGrowth from './../learn-as-you-work/CareerGrowth';
 import NewsLetter from "../NewsLetter/NewsLetter";
+import Faq from '../how-it-works-freelancer/faq/faq';
 
 
 const Wrapper = styled.div`
@@ -17,7 +18,7 @@ const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
     gap: 1.25rem;
-    margin-top: 2.063rem;
+    margin-top: 8rem;
     margin-bottom: 2.125rem;
 `;
 
@@ -113,7 +114,8 @@ const WhyUnzippedComponent = () => {
             <SealOfApproval />
             <Testimonials />
             <SecurityPrivacy />
-            <FAQ />
+            {/* <FAQ /> */}
+            <Faq />
             <CareerGrowth />
             <NewsLetter />
         </Wrapper>

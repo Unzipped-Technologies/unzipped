@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import { useRouter } from 'next/router';
 
 const BannerContent = styled.div`
     width: 65.75rem;
@@ -96,6 +96,7 @@ const ImageBox = styled.div`
 `;
 
 const ClientBanner = () => {
+    const router = useRouter()
 
     return (
         <>
@@ -108,10 +109,12 @@ const ClientBanner = () => {
                             <ParagraphBox>
                                 Get work done efficiently and build lasting professional relationships on Unzipped, the go-to platform for hourly, long-term contracts.
                             </ParagraphBox>
-                            <ButtonBox> <ButtonText>Create Profile</ButtonText> </ButtonBox>
+                            <ButtonBox> 
+                                <ButtonText onClick={() => router.push('/register')}>Create Profile</ButtonText> </ButtonBox>
                         </TextContainerContent>
                         <FooterTextContent>
-                            <GetHiredText> Looking to get hired? </GetHiredText><SignUpText>Sign up here </SignUpText>
+                            <GetHiredText> Looking to get hired? </GetHiredText>
+                            <SignUpText onClick={() => router.push('/register')}>Sign up here </SignUpText>
                         </FooterTextContent>
                     </TextContainer>
                 </TextBox>

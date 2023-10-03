@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { COLORS, FONT_SIZE, getButtonStyled, getFontStyled, getStyledHeadingComponent, LETTER_SPACING } from "../../../../ui/TextMaskInput/core/utilities";
-
+import { useRouter } from 'next/router';
 
 const FindFreelancerSectionContainer = styled.div`
     display: flex;
@@ -119,6 +119,7 @@ const ImageBoxSkilledFreelancer = styled.div`
 
 `
 const FindYourFreelancer = () => {
+    const router = useRouter();
     return (
         <>
             <FindFreelancerSectionContainer>
@@ -142,7 +143,7 @@ const FindYourFreelancer = () => {
                     <SubHeadingStyled>Bypass the guesswork by directly connecting with proven freelancers.</SubHeadingStyled>
                     <ParagraphText>No need to post a job or sift through applications. Browse profiles and reach out to professionals whose skills align with your project requirements.</ParagraphText>
                     <ParagraphText>With our platform, it's easy to set clear expectations right from the start.</ParagraphText>
-                    <BrowseButtonBox> <ButtonText>Browse Freelancers</ButtonText> </BrowseButtonBox>
+                    <BrowseButtonBox> <ButtonText onClick={() => router.push('/freelancers')}>Browse Freelancers</ButtonText> </BrowseButtonBox>
                 </SkilledParagraphSection>
 
                 <ImageBoxSkilledFreelancer>
