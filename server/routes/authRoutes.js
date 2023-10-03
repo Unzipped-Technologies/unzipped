@@ -290,7 +290,7 @@ router.get('/github', async (req, res) => {
   // 1) use the code to get token from github
   const { code } = req.query
   let githubToken
-  {
+  try {
     const body = {
       client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
       client_secret: process.env.GITHUB_CLIENT_SECRET,
@@ -300,12 +300,14 @@ router.get('/github', async (req, res) => {
     const headers = {
       Accept: 'application/json'
     }
-    console.log(body)
     const res = await API.POST('https://github.com/login/oauth/access_token', headers, body)
     githubToken = res?.access_token
+  } catch (error) {
+    console.error(error)
+    res.status(400).send({ message: 'Exception occured while parsing github token' })
   }
   // 2) use the github token to get user details
-  {
+  try {
     const githubUser = await API.GET('https://api.github.com/user', {
       Authorization: `Bearer ${githubToken}`
     })
@@ -316,18 +318,23 @@ router.get('/github', async (req, res) => {
         'X-GitHub-Api-Version': '2022-11-28'
       })
       let userPrimaryEmail
-      // check if we have an user record with any of the emails , if we do then the user is not new and he is just signing in, if not then the user is new and we need to save his details in db. In this flow we need to update the user record with the new primary email if the user has changed his primary email in github
+      // check if we have an user record with any of the emails, if we do then the user is not new and he is just signing in, if not then the user is new and we need to save his details in db. In this flow we need to update the user record with the new primary email if the user has changed his primary email in github
       userPrimaryEmail = emails?.find(email => email.primary === true)?.email
+      if (!userPrimaryEmail) {
+        res.status(400).send({ message: 'No primary email found for this user on github' })
+      }
       githubUser.email = userPrimaryEmail
       githubUser.emails = emails.map(x => x.email)
     } else {
       githubUser.emails = [githubUser.email]
     }
-    console.log(user, res, 'github', githubToken)
     const existingUser = await user.findOne({ email: githubUser.email })
     await user.findByIdAndUpdate(existingUser.id, { $set: { isGithubConnected: true } })
     await thirdPartyApplications.create({ userId: existingUser.id, payload: { ...res, githubToken } })
     res.redirect(`/create-your-business?github-connect=true`)
+  } catch (error) {
+    console.error(error)
+    res.status(400).send({ message: 'Exception occured when retrieving github user details' })
   }
 })
 
