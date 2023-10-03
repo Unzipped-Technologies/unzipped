@@ -7,45 +7,40 @@ import OutsideAlerter from '../OutsideAlerter'
 import DropDown from '../Dropdown'
 
 const ButtonContainer = styled.button`
-  cursor: pointer;
-  outline: none !important;
-  &:focus {
-    outline: ${({ popout }) => (popout ? 'none' : 'inherit')};
-    background: ${({ background, colors }) =>
-      background ? background : colors ? colors?.background : theme.background};
-  }
-  background: ${({ background, colors }) => (background ? background : colors ? colors?.background : theme.background)};
-  &:hover {
-    background: ${({ colors }) => (colors ? colors.hover : theme.background2)};
-    color: ${({ colors }) => (colors ? colors.hoverText : theme.text2)};
-  }
-  border: ${({ noBorder, colors }) =>
-    noBorder ? '0' : `${colors.border} solid ${colors.wideBorder || '1px'}`} !important;
-  color: ${({ colors }) => (colors ? colors.text : theme.text)};
-  box-sizing: border-box;
-  border-radius: ${({ oval }) => (oval ? '25px' : '4px')};
-  padding: ${props => (props.small ? '10px' : props.extraTall ? '20px' : props.noPadding ? '0px' : '15px')}
-    ${props => (props.extraWide ? '40px' : '15px')}
-    ${props => (props.small ? '10px' : props.extraTall ? '20px' : props.noPadding ? '0px' : '15px')}
-    ${props => (props.extraWide ? '40px' : '15px')};
-  font-family: roboto;
-  text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
-  width: ${props => (props.block ? '100%' : 'auto')};
-  min-width: ${({ popout }) => (popout ? 'auto' : 'auto')};
-  display: ${props => (props.block ? 'flex' : 'inline-flex')};
-  flex-direction: ${props => (props.iconRight ? 'row-reverse' : 'row')};
-  align-items: center;
-  gap: ${props => (props.$condensed ? '0' : '10px')};
-  font-size: ${props => (props.fontSize ? props.fontSize : props.theme.fontSizeXS)};
-  font-weight: ${({ normal, popout }) => (normal ? 500 : popout ? 400 : 'bold')};
-  letter-spacing: 0.031rem;
-  justify-content: center;
-  white-space: nowrap;
-  margin: ${props => props.margin};
-  ${props => props.height && `height: ${props.height}`}
-  ${props =>
-    props.popout &&
-    `
+    cursor: pointer;
+    outline: none !important;
+    &:focus {
+        outline: ${({popout}) => (popout ? 'none' : 'inherit')};
+        background: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
+    }
+    background-color: ${({background, colors}) => background ? background : colors ? colors?.background : theme.background};
+    &:hover {
+        background: ${({colors}) => colors ? colors.hover : theme.background2};
+        color: ${({colors}) => colors ? colors.hoverText : theme.text2};
+    }
+    border: ${({noBorder, colors}) => noBorder ? '0' : `${colors.border} solid ${colors.wideBorder || '1px'}`} !important;
+    color: ${({colors}) => colors ? colors.text : theme.text};
+    box-sizing: border-box;
+    border-radius: ${({oval}) => oval ? '25px' : '4px'};
+    padding: ${(padding)=>padding ? padding : props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
+        ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
+    font-family: roboto;
+    text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
+    width: ${props => (props.block ? '100%' : 'auto')};
+    min-width: ${({popout}) => (popout ? 'auto' : 'auto')};
+    display: ${props => (props.block ? 'flex' : 'inline-flex')};
+    flex-direction: ${props => (props.iconRight ? 'row-reverse' : 'row')};
+    align-items: center;
+    gap: ${props => (props.$condensed ? '0' : '10px')};
+    font-size: ${(props) => props.fontSize ? props.fontSize : props.theme.fontSizeXS};
+    font-weight: ${({normal, popout}) => normal ? 500 : popout ? 400 : 'bold'};
+    letter-spacing: 0.031rem;
+    justify-content: center;
+    white-space: nowrap;
+    margin: ${props => props.margin};
+    ${props =>
+        props.popout &&
+        `
         position: relative;
         height: 34px;
         width: ${({ small }) => (small ? '66px' : '108px')};`}

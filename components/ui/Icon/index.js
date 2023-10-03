@@ -97,6 +97,11 @@ import thumbsUp from '../icons/thumbsUp';
 import thumbsDown from '../icons/thumbsDown';
 import wrenchIcon from '../icons/wrench';
 import backArrow from '../../icons/backArrow';
+import downArrow from '../../icons/downArrow';
+import reviewIcon from '../../icons/reviews';
+import reviewHalf from '../../icons/reviewHalf';
+import reviewSmall from '../../icons/reviewSmall';
+import reviewHalfSmall from '../../icons/reviewHalfSmall';
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -196,6 +201,11 @@ const mapNameIcons = {
     thumbsDown: thumbsDown,
     wrenchIcon: wrenchIcon,
     backArrow: backArrow,
+    downArrow: downArrow,
+    review: reviewIcon,
+    reviewHalf: reviewHalf,
+    reviewSmall: reviewSmall,
+    reviewHalfSmall: reviewHalfSmall
 };
 
 /**
