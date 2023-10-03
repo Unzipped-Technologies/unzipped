@@ -39,7 +39,7 @@ const help = [
         text: 'Learn how to run a successful business with video courses taught by industry experts',
         link: {
             text: 'Learn more',
-            to: '/'
+            to: 'https://www.udemy.com/'
         }
     },
     {
