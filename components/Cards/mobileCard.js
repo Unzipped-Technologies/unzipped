@@ -37,9 +37,9 @@ const CardSubText = styled.p`
   }
 `;
 
-function MobileCard({ title, subText }) {
+function MobileCard({ title, subText, onClick = () => {}, link }) {
   return (
-    <CardWrapper>
+    <CardWrapper onClick={onClick}>
       <div>
         <CardTitle>{title}</CardTitle>
         <CardSubText>{subText}</CardSubText>

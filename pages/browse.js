@@ -4,8 +4,11 @@ import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFoote
 import styled from 'styled-components';
 import MobileCard from '../components/Cards/mobileCard'
 import Image from '../components/ui/Image'
+import { useRouter } from 'next/router';
 
 const Browse = () => {
+    const router = useRouter()
+
     const MobileDisplayBox = styled.div`
         position: relative;
         @media(min-width: 680px) {
@@ -58,14 +61,17 @@ const Browse = () => {
         {
             title: 'Projects',
             subText: 'Explore exciting new project opportunities now!',
+            link: '/dashboard/projects',
         },
         {
             title: 'Freelancers',
             subText: 'Find Talent and Explore your current talent',
+            link: '/freelancers',
         },
         {
             title: 'Dashboard',
             subText: 'Check out The Latest being done for you.',
+            link: '/dashboard',
         },
     ]
 
@@ -78,7 +84,7 @@ const Browse = () => {
                 </ImageContainer>                
                 <CardContainer>
                     {cardData.map(item => (
-                        <MobileCard title={item.title} subText={item.subText}/>
+                        <MobileCard key={item.title} onClick={() => router.push(item.link)} title={item.title} subText={item.subText}/>
                     ))}
                 </CardContainer>
             </ContentArea>

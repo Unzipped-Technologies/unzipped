@@ -83,11 +83,11 @@ function MobileFreelancerFooter({ defaultSelected = 'footerHome' }) {
     ];
 
     const handleIconClick = (e, option) => {
-        if (option.icon === 'footerPlus') {
+        if (option.name === 'Create') {
             e.preventDefault();
             setShowPopup(true);
         }
-        setSelected(option.icon);
+        setSelected(option.name);
     }
 
     return (
@@ -104,14 +104,14 @@ function MobileFreelancerFooter({ defaultSelected = 'footerHome' }) {
               footerOptions.map((option, index) => (
                 <Link key={index} href={option.link} passHref>
                   <FooterLink 
-                    isSelected={option.icon === selected}
+                    isSelected={option.name === selected}
                     onClick={(e) => handleIconClick(e, option)}>
                 <IconComponent
                     name={option.icon}
                     width={option.icon === 'footerMenu' ? "30" : "24"}
                     height="20"
                     viewBox={`0 0 ${option.icon === 'footerMenu' ? "30" : "24"} 20`}
-                    fill={option.icon === selected ? "#0057FF" : "black"}
+                    fill={option.name === selected ? "#0057FF" : "black"}
                 />
                 </FooterLink>
                 </Link>
