@@ -261,15 +261,18 @@ const menuItems = [
                 sub: [
                     {
                         title: 'Guides',
-                        description: 'Getting Started as a Freelancer'
+                        description: 'Getting Started as a Freelancer',
+                        link: '/wiki/getting-started'
                     },
                     {
                         title: 'Guides',
-                        description: 'Growing Your Freelance Career'
+                        description: 'Growing Your Freelance Career',
+                        link: '/wiki/grow-your-career'
                     },
                     {
                         title: 'Guides',
-                        description: 'Hiring & Working with Independent Talent'
+                        description: 'Hiring & Working with Independent Talent',
+                        link: '/wiki/working-with-independent-contractors'
                     }
                 ]
             }

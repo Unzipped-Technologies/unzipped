@@ -179,12 +179,12 @@ const Dropdown = ({ items, ref, onClose, token, right, top, isUnzipped }) => {
                                             : <LinkStyled>{e.name}</LinkStyled>
                                         }
                                         {e?.sub && e?.sub.map((link) => (
-                                            <>
+                                            <Link href={link?.link || ''}>
                                                 <XContainer style={{ width: 454, height: 83 }}>
                                                     <LabelStyled>{link?.title}</LabelStyled>
                                                     <TextStyled>{link?.description}</TextStyled>
                                                 </XContainer>
-                                            </>
+                                            </Link>
                                         ))
                                         }
                                         {e?.sub?.length > 0 && e?.resourcelinks && (
