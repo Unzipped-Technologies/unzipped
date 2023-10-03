@@ -76,7 +76,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                     </DarkText>
                 )}
             </Right>
-            <Absolute><Button color='#000' padding="8px 22px" normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
+            <Absolute><Button color='#000' style={{ padding: "8px 22px" }} normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
         </Container>
     )
 }
