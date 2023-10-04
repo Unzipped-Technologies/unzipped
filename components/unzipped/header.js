@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import {
     DownIcon,
@@ -151,6 +151,7 @@ const SubMenu = styled.div`
     align-items: center;
     width: 100%;
     height: 49px;
+    margin-top: 78px;
 
     background: #0E1724;
     color: #fff;

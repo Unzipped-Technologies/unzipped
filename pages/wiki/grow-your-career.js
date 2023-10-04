@@ -9,15 +9,6 @@ const docsData = [
       title: 'Growing Your Freelance Career with Unzipped',
       content: `
         <p>In today's digital age, freelancing has become an attractive career path for many. <strong>Unzipped</strong> provides an incredible platform for freelancers to showcase their skills and connect with clients. This guide is tailored to help freelancers thrive on <strong>Unzipped</strong>.</p>
-        <h2>Table of Contents:</h2>
-        <ol>
-          <li>Getting Started on Unzipped</li>
-          <li>Creating a Compelling Profile</li>
-          <li>Securing Your First Job</li>
-          <li>Leveraging Feedback and Testimonials</li>
-          <li>Amplifying Your Freelance Career on Unzipped</li>
-          <li>Continuous Learning and Development</li>
-        </ol>
       `,
     },
     {

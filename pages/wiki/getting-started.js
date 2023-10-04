@@ -9,14 +9,6 @@ const docsData = [
       title: 'Getting Started as a Freelancer on Unzipped',
       content: `
         <p>Welcome to the world of freelancing on Unzipped! Whether you're new to the freelancing game or looking for a new platform to showcase your skills, this guide will walk you through the steps to get started on Unzipped.</p>
-        <h2>Table of Contents:</h2>
-        <ol>
-          <li>Creating an Account</li>
-          <li>Setting Up Your Profile</li>
-          <li>Finding and Applying for Jobs</li>
-          <li>Maintaining a Strong Reputation</li>
-          <li>Final Thoughts</li>
-        </ol>
       `,
     },
     {

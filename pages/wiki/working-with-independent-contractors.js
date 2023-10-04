@@ -7,19 +7,7 @@ import Document from '../../components/Documentation/documentation';
 const docsData = [
     {
       title: 'Comprehensive Guide to Hiring and Working with Independent Talent on Unzipped',
-      content: `
-        <h2>Table of Contents</h2>
-        <ol>
-          <li>Introduction to Unzipped</li>
-          <li>Comprehensive Account Setup on Unzipped</li>
-          <li>Crafting an Effective Job Posting on Unzipped</li>
-          <li>Diligent Screening and In-depth Interviewing of Talent</li>
-          <li>Streamlined Hiring Process and Contract Agreement</li>
-          <li>Proactive Management and Transparent Communication with Talent</li>
-          <li>The Importance of Concluding Contracts and Providing Constructive Feedback</li>
-          <li>Unzipped Best Practices and Recommendations</li>
-        </ol>
-      `,
+      text: ' ',
     },
     {
       title: 'Introduction to Unzipped',
