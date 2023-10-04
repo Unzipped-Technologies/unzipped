@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import {
     DownIcon,
@@ -82,7 +82,7 @@ const Item = styled.div`
 
 const Span = styled.span`
     margin-right: 8px;
-    // cursor: pointer;
+    cursor: pointer;
 `;
 
 const Span2 = styled.span`
@@ -151,6 +151,7 @@ const SubMenu = styled.div`
     align-items: center;
     width: 100%;
     height: 49px;
+    margin-top: 78px;
 
     background: #0E1724;
     color: #fff;
@@ -261,15 +262,18 @@ const menuItems = [
                 sub: [
                     {
                         title: 'Guides',
-                        description: 'Getting Started as a Freelancer'
+                        description: 'Getting Started as a Freelancer',
+                        link: '/wiki/getting-started'
                     },
                     {
                         title: 'Guides',
-                        description: 'Growing Your Freelance Career'
+                        description: 'Growing Your Freelance Career',
+                        link: '/wiki/grow-your-career'
                     },
                     {
                         title: 'Guides',
-                        description: 'Hiring & Working with Independent Talent'
+                        description: 'Hiring & Working with Independent Talent',
+                        link: '/wiki/working-with-independent-contractors'
                     }
                 ]
             }
