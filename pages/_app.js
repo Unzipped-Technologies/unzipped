@@ -1,4 +1,5 @@
 // import '../styles/fonts.css';
+import 'bootstrap/dist/css/bootstrap.css'
 import React, { useEffect, useState } from 'react'
 import keys from '../config/keys'
 import { useRouter } from 'next/router'
@@ -8,7 +9,6 @@ import { CookiesProvider } from 'react-cookie'
 import { PersistGate } from 'redux-persist/integration/react'
 import * as gtag from '../lib/gtag'
 import { isProtected } from '../utils/protectedRoutes'
-import 'bootstrap/dist/css/bootstrap.css'
 
 ///styles
 import '../styles/App.scss'

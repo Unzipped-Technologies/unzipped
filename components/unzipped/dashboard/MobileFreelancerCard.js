@@ -18,17 +18,17 @@ const UserSkills = styled.div`
 `
 
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
-  const router = useRouter()
+  const router = useRouter();
+
   const redirectToProfile = () => {
     clearSelectedFreelancer()
     if (user?.id) {
       router.push(`/freelancers/${user.id}`)
     }
   }
-
   return (
     <div className='bg-white' style={{ borderBottom: "2px solid rgba(0, 0, 0, 0.25)", color: "black" }}>
-      <div className=' px-3 py-2' >
+      <div className='px-3 py-2'>
         <div className='d-flex'>
           <img src={user?.profilePic} alt="Profile Pic" style={{ width: "55px", height: "55px" }} className='mt-2' />
           <div style={{ marginLeft: "16px" }}>
@@ -62,8 +62,8 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
           {user?.cover}
         </p>
       </div>
-      <div className='px-4 mb-3' style={{ display: "grid" }} onClick={redirectToProfile}>
-        <button style={{ background: "#37DEC5", color: "white", fontSize: "16px", border: "0", padding: "10px 0px", fontWeight: "600" }}>VIEW PROFILE</button>
+      <div className='px-4 mb-3' style={{ display: "grid" }}>
+        <button onClick={redirectToProfile} style={{ background: "#37DEC5", color: "white", fontSize: "16px", border: "0", padding: "10px 0px", fontWeight: "600" }}>VIEW PROFILE</button>
       </div>
     </div>
 

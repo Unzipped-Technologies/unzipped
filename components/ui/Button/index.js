@@ -22,7 +22,7 @@ const ButtonContainer = styled.button`
     color: ${({colors}) => colors ? colors.text : theme.text};
     box-sizing: border-box;
     border-radius: ${({oval}) => oval ? '25px' : '4px'};
-    padding: ${(padding)=>padding ? padding : props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
+    padding: ${ props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
         ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
     font-family: roboto;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};

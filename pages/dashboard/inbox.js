@@ -13,6 +13,14 @@ import {
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+
+const MobileDisplayBox = styled.div`
+    position: relative;
+    @media(min-width: 680px) {
+        display: none;
+    }
+`;
 
 const Page = styled.div`
     display: flex;
@@ -92,6 +100,9 @@ const Inbox = ({
                     createTempFile={createNewFile}
                 />
             </Container>
+            <MobileDisplayBox>
+                <MobileFreelancerFooter defaultSelected="Messages"/>
+            </MobileDisplayBox>
         </Page>
     )
 }

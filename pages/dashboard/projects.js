@@ -13,6 +13,14 @@ import { getBusinessList} from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components';
 import { accountTypeEnum } from '../../server/enum/accountTypeEnum'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+
+const MobileDisplayBox = styled.div`
+    position: relative;
+    @media(min-width: 680px) {
+        display: none;
+    }
+`;
 
 const Title = styled.div`
     display: flex;
@@ -100,6 +108,9 @@ const Projects = ({token, cookie, businesses=[], getBusinessList, role, loading}
             </Title>
             <SearchBar take={take} setTake={setTake} />
             <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading}/>
+            <MobileDisplayBox>
+                <MobileFreelancerFooter defaultSelected="Projects"/>
+            </MobileDisplayBox>
         </React.Fragment>
     )
 }

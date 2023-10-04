@@ -22,7 +22,6 @@ const Container = styled.div`
     flex-flow: column;
     width: 100%;
     justify-content: center;
-    margin-top: 41px;
     @media(max-width: 680px) {
         background-color: #F6F7F9;
         margin-bottom: 48px;
@@ -121,7 +120,7 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount
             {!filterOpenClose && <MobileDisplayBox><MobileSearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} handleFilterOpenClose={handleFilterOpenClose} /></MobileDisplayBox>}
             <Container>
                 {!filterOpenClose ? <MobileDisplayBox>
-                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "100px" }}>
+                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "130px" }}>
                         <b style={{ paddingRight: "20px" }}>Top Results</b>
 
                         <small>

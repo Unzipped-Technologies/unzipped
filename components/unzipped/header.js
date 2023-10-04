@@ -418,7 +418,7 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
 
     return (
         <Div>
-            <Container style={{ position: 'fixed', top: "0", zIndex: "1" }}>
+            <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
                     {menuItems && menuItems.map((item, index) => {
