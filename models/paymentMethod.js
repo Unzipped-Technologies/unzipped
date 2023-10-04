@@ -16,7 +16,7 @@ const paymentSchema = new mongoose.Schema({
         type: Boolean,
     },
     paymentMethod: {
-        type: String,
+        type: Object,
     }
 });
 

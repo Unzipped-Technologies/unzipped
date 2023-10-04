@@ -48,9 +48,9 @@ router.put('/update', requireLogin, async (req, res) => {
 });
 
 router.put('/freelancer', requireLogin, async (req, res) => {
-   const {_id,freelancerId,newIsOfferAcceptedValue} = req.body;
+    const { _id, freelancerId, newIsOfferAcceptedValue } = req.body;
     try {
-        const updatedContract = await contractHelper.updateContractByFreelancer({_id,freelancerId,newIsOfferAcceptedValue});
+        const updatedContract = await contractHelper.updateContractByFreelancer({ _id, freelancerId, newIsOfferAcceptedValue });
         if (!updatedContract) throw Error('Contract not found');
         res.json(updatedContract);
     } catch (e) {
@@ -63,6 +63,33 @@ router.delete('/delete/:id', requireLogin, async (req, res) => {
     try {
         await contractHelper.deleteContract(req.params.id);
         res.json({ msg: 'Contract successfully deleted' });
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+});
+
+router.post('/create-stripe-customer', requireLogin, async (req, res) => {
+    const { businessId, userId, email, githubId, googleId, calendlyId } = req.body;
+    try {
+        const customer = await contractHelper.createStripeCustomer({ businessId, userId, email, githubId, googleId, calendlyId });
+        res.status(200).json({ clientSecret: customer.client_secret, intent: customer });
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+});
+
+
+router.post('/create-payment-method', requireLogin, async (req, res) => {
+    const { businessId, userId, githubId, stripeId, googleId, calendlyId } = req.body.data.metadata;
+    const paymentMethod = req.body
+    try {
+        const customer = await contractHelper.createPaymentMethod({ businessId, userId, githubId, stripeId, googleId, calendlyId, paymentMethod });
+        if (customer?.savedPaymentMethod && customer?.savedThirdPartyApplication) {
+            res.json({ msg: 'payment method created successfully' });
+        }
+        else {
+            res.status(400).json({ msg: 'Payment method not created' });
+        }
     } catch (e) {
         res.status(400).json({ msg: e.message });
     }
