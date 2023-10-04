@@ -24,6 +24,7 @@ import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
     width: 100%;
+    margin-bottom: 128px;
 `;
 
 const Container = styled.div`
@@ -147,6 +148,9 @@ const MenuIcon = styled.div`
 // sub menu styling
 
 const SubMenu = styled.div`
+    position: fixed;
+    top: -1px;
+    z-index: 1;
     display: flex;
     align-items: center;
     width: 100%;
