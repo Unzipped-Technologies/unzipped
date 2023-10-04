@@ -151,7 +151,6 @@ const SubMenu = styled.div`
     align-items: center;
     width: 100%;
     height: 49px;
-
     background: #0E1724;
     color: #fff;
     padding: 0px 15%;
@@ -414,8 +413,8 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
     }
 
     return (
-        <Div>
-            <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
+        <Div >
+            <Container style={{ position: "relative", top: "0", zIndex: "2", }} >
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
                     {menuItems && menuItems.map((item, index) => {
