@@ -17,6 +17,7 @@ import IconComponent from '../../ui/icons/IconComponent';
 const Container = styled.div`
     display: flex;
     flex-flow: row;
+    width: inherit;
     padding: ${({ includeRate }) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
 `;
 const Left = styled.div`
@@ -75,7 +76,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                     </DarkText>
                 )}
             </Right>
-            <Absolute><Button color='#000' padding="8px 22px" normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
+            <Absolute><Button color='#000' style={{ padding: "8px 22px" }} normal oval type="green2" noBorder onClick={redirectToProfile}>View Profile</Button></Absolute>
         </Container>
     )
 }

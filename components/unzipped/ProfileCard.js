@@ -17,10 +17,11 @@ const Container = styled.div`
     flex-flow: row;
     align-self: center;
     max-width: 1300px;
-    padding: 40px;
+    margin-top: 119px;
+    margin-left: 10%;
 `;
 const Content = styled.div`
-    margin: 0px 30px;
+   
 `;
 const Box = styled.div`
     display: flex;
@@ -30,7 +31,7 @@ const Description = styled.div`
     width: 445px;
 `;
 const ImageContainer = styled.div`
-    padding: 25px 55px 10px 0px;
+    padding: 0px 55px 10px 0px;
 `;
 const Badges = styled.div``;
 const TextBox = styled.div`
@@ -41,7 +42,7 @@ const TextBox = styled.div`
 `;
 const Span = styled.span`
     width: 160px;
-    font-weight: ${({bold}) => bold ? 500 : 'normal'};
+    font-weight: ${({ bold }) => bold ? 500 : 'normal'};
 `;
 const LikeBox = styled.span`
     display: flex;
@@ -56,8 +57,7 @@ const Likes = styled.span`
     align-items: flex-end;
     justify-content: space-between;
 `;
-
-const ProfileCard = ({user}) => {
+const ProfileCard = ({ user }) => {
     const month = ValidationUtils.getMonthInText(user?.updatedAt)
     const dateCode = `${month} ${new Date(user?.updatedAt).getDate()}, ${new Date(user?.updatedAt).getFullYear()}`
     return (
@@ -67,13 +67,13 @@ const ProfileCard = ({user}) => {
             </ImageContainer>
             <Content>
                 <TitleText title>{user?.user?.FirstName} {user?.user?.LastName}</TitleText>
-                <DarkText>skills</DarkText>
-                {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map(item => (
-                    <Badge>{item?.skill}</Badge>
+                <DarkText noMargin >SKIILS</DarkText>
+                {user?.user?.freelancerSkills?.length > 0 && user?.user?.freelancerSkills.map((item,index) => (
+                    <Badge key={index}>{item?.skill}</Badge>
                 ))}
                 <Box>
                     <Description>
-                        <Underline margin="35px 0px 10px 0px"/>
+                        <Underline margin="35px 0px 10px 0px" />
                         {user?.likeTotal > 0 && <DarkText bold>{user?.likeTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
                         <TextBox><Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span></TextBox>
                         {user?.rate && <TextBox><Span bold>SALARY</Span> <Span>${user?.rate.toFixed(2)} / HOUR</Span></TextBox>}
@@ -100,7 +100,7 @@ const ProfileCard = ({user}) => {
                 </Box>
             </Content>
             <LikeBox>
-                <Button noBorder>CHECK AVAILABILITY</Button>
+                <Button padding="10px 22px" noBorder>CHECK AVAILABILITY</Button>
                 <Likes>
                     <Icon name="thumbsUp" />
                     <Icon name="thumbsDown" />

@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import { resetRegisterForm} from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
+import styled from "styled-components"
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
 
 const notifications = [
     { type:"plan"},
@@ -23,6 +25,13 @@ const notifications = [
     { type:"updateBusiness"},
     { type:"explore"},
 ]
+
+const MobileDisplayBox = styled.div`
+    position: relative;
+    @media(min-width: 680px) {
+        display: none;
+    }
+`;
 
 const Dashboard = ({resetRegisterForm, token}) => {
     const router = useRouter()
@@ -53,6 +62,9 @@ const Dashboard = ({resetRegisterForm, token}) => {
         <React.Fragment>
             <Nav isSubMenu/>
             <NotificationsPanel notifications={notifications} user={user}/>
+            <MobileDisplayBox>
+                <MobileFreelancerFooter defaultSelected="Dashboard"/>
+            </MobileDisplayBox>
         </React.Fragment>
     )
 }
