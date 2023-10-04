@@ -120,7 +120,7 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount
             {!filterOpenClose && <MobileDisplayBox><MobileSearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} handleFilterOpenClose={handleFilterOpenClose} /></MobileDisplayBox>}
             <Container>
                 {!filterOpenClose ? <MobileDisplayBox>
-                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "130px" }}>
+                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "10px" }}>
                         <b style={{ paddingRight: "20px" }}>Top Results</b>
 
                         <small>

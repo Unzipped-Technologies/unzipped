@@ -20,8 +20,7 @@ const DropDown = styled.div`
     background-color: white;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    margin: 0 2%;
-    width: 96%; /* Adjust the width as needed */
+    width: 100%; /* Adjust the width as needed */
     border: 1px solid #ccc;
 `
 function MobileProfileCardOptions({ handleProfilePage }) {
