@@ -17,7 +17,7 @@ const HowItWorksFreelancer = () => {
                 <title>How it works | Freelancer</title>
             </Head>
             <Container>
-                <Nav />
+                <Nav spacing={18} />
                 <FreelancerWorks />
                 <Footer />
             </Container>
