@@ -1,4 +1,5 @@
 // import '../styles/fonts.css';
+import 'bootstrap/dist/css/bootstrap.css'
 import React, { useEffect, useState } from 'react'
 import keys from '../config/keys'
 import { useRouter } from 'next/router'

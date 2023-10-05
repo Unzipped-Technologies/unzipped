@@ -50,6 +50,7 @@ const UnzippedNavContainer = styled.div`
 const UnzippedNavItem = styled.div`
     width: 270px;
     height: 495px;
+    cursor: pointer;
     &:nth-child(3) {
         width: 454px;
     }
@@ -59,6 +60,7 @@ const XContainer = styled.div`
     width: 454px;
     border: 1px solid #D5E0D5;
     color: #001E00;
+    cursor: pointer;
     border-radius: 9px;
     height: 83px;
     padding-left: 27px;
@@ -177,12 +179,12 @@ const Dropdown = ({ items, ref, onClose, token, right, top, isUnzipped }) => {
                                             : <LinkStyled>{e.name}</LinkStyled>
                                         }
                                         {e?.sub && e?.sub.map((link) => (
-                                            <>
+                                            <Link href={link?.link || ''}>
                                                 <XContainer style={{ width: 454, height: 83 }}>
                                                     <LabelStyled>{link?.title}</LabelStyled>
                                                     <TextStyled>{link?.description}</TextStyled>
                                                 </XContainer>
-                                            </>
+                                            </Link>
                                         ))
                                         }
                                         {e?.sub?.length > 0 && e?.resourcelinks && (

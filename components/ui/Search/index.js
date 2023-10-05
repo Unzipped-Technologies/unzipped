@@ -6,6 +6,7 @@ import Icon from '../Icon';
 
 const SearchContainer = styled.div`
     display: flex;
+    height:37px;
     border: 1px solid ${props => props.theme.tint3};
     border-radius: 4px;
     width: ${props => props.width};
@@ -17,13 +18,12 @@ const SearchContainer = styled.div`
 
 const Input = styled.input`
     outline: none !important; // Override user agent stylesheet
+    height:2.3rem !important;
     width: 100%;
+    margin:0 !important;
     border: none !important;
-    height: ${props => (props.large ? '56px' : '40px')};
     background: transparent;
-    padding: 20px;
     outline: none;
-    padding: 8px 0px 0px 0px !important;
     font-family: arial;
     font-size: ${props => props.theme.fontSizeM};
     color: ${props => props.theme.textSecondary};
@@ -36,6 +36,7 @@ const Input = styled.input`
     &:focus {
         border: none !important;
         outline: none !important;
+        box-shadow: 0 0px 0 0 #26a69a !important;
     }
 `;
 
@@ -81,35 +82,27 @@ const Search = ({
     onAction = () => {},
     onChange = () => {},
     placeholder = '',
-    searchableItems = [],
     width = '36.75rem',
     initialValue = '',
+    handleSearch,
     ...rest
 }) => {
     const [inputValue, setInputValue] = useState(initialValue);
 
     const handleClearInput = () => {
         setInputValue('');
-        onChange(searchableItems);
         onAction('');
     };
 
     const handleOnChange = e => {
         setInputValue(e.target.value);
         onAction(e.target.value);
-        const filteredItems = searchableItems.filter(item => {
-            for (const key of keys) {
-                if (filterCondition(get(item, key), e.target.value)) {
-                    return true;
-                }
-            }
-        });
-        onChange(filteredItems, e.target.value);
+        onChange(e.target.value);
     };
 
     return (
         <SearchContainer width={width} {...rest}>
-            <SearchIcon>
+            <SearchIcon onClick={handleSearch}>
                 <Icon name="search" />
             </SearchIcon>
             <Input
@@ -141,7 +134,7 @@ Search.propTypes = {
     /** the placeholder for the input */
     placeholder: PropTypes.string,
     /** array of unflattened searchable objects */
-    searchableItems: PropTypes.arrayOf(PropTypes.object),
+    // searchableItems: PropTypes.arrayOf(PropTypes.object),
     /** width of the input  */
     width: PropTypes.string,
     /** Initial value of the input  */

@@ -9,22 +9,30 @@ import _ from 'lodash';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
 
-export const getFreelancerList = (data, token) => async (dispatch, getState) => {
+export const getFreelancerList = (queryParams, token) => async (dispatch, getState) => {
     dispatch({
         type: FREELANCER_LOADING
-    })
-    await axios
-        .post(`/api/user/freelancer/list`, data, tokenConfig(token))
-        .then(res => dispatch({
+    });
+    const headers = {
+        access_token: token
+    };
+
+    try {
+        const response = await axios.get(`/api/user/freelancer/list`, {
+            headers,
+            params: queryParams
+        });
+        console.log(response)
+        dispatch({
             type: GET_LIST_FREELANCERS,
-            payload: res.data
-        }))
-        .catch(err => {
-            dispatch({
-                type: FREELANCER_ERROR,
-                payload: err.response
-            })
-        })
+            payload: response.data
+        });
+    } catch (err) {
+        dispatch({
+            type: FREELANCER_ERROR,
+            payload: err.response
+        });
+    }
 };
 
 export const getFreelancerById = (id, token) => async (dispatch, getState) => {

@@ -6,6 +6,7 @@ import Dashboard from './Dashboard/reducers';
 import Business from './Business/reducers';
 import Freelancers from './Freelancers/reducers';
 import Messages from './Messages/reducers';
+import FreelancerSkills from './FreelancerSkills/reducers';
 
 const rootReducer = combineReducers({
     // counter: counterReducer
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
     Business,
     Freelancers,
     Messages,
+    FreelancerSkills,
 });
 
 export default rootReducer;

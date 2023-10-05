@@ -15,6 +15,9 @@ const Menu = styled.div`
     border-top: 1px solid #666;
     border-bottom: 1px solid #666;
     height: 63px;
+    @media (max-width: 680px) {
+            padding-left: 4%;
+      }
 `;
 const MenuItem = styled.div`
     display: flex;
@@ -23,10 +26,10 @@ const MenuItem = styled.div`
     text-align: center;
     height: 100%;
     width: 98px;
-    border-bottom: ${({selected}) => selected ? '4px solid #333' : '0px'}
+    border-bottom: ${({ selected }) => selected ? '4px solid #333' : '0px'}
 `;
 
-const ProfileTab = ({tabs, selected, setSelected, children}) => {
+const ProfileTab = ({ tabs, selected, setSelected, children }) => {
     return (
         <Container>
             <Menu>
