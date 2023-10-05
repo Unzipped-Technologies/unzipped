@@ -24,7 +24,7 @@ import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
     width: 100%;
-    margin-bottom: 128px;
+    margin-bottom: ${({isSubMenu, spacing}) => spacing ? `${spacing}px` : isSubMenu ? '128px' : '78px'};
 `;
 
 const Container = styled.div`
@@ -330,7 +330,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm }) => {
+const Nav = ({ isSubMenu, spacing, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm }) => {
     const { pathname } = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
@@ -422,7 +422,7 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
     }
 
     return (
-        <Div>
+        <Div isSubMenu={isSubMenu} spacing={spacing}>
             <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
