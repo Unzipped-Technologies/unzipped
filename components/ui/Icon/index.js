@@ -97,6 +97,7 @@ import thumbsUp from '../icons/thumbsUp';
 import thumbsDown from '../icons/thumbsDown';
 import wrenchIcon from '../icons/wrench';
 import backArrow from '../../icons/backArrow';
+import check from '../../icons/check';
 import downArrow from '../../icons/downArrow';
 import reviewIcon from '../../icons/reviews';
 import reviewHalf from '../../icons/reviewHalf';
@@ -201,6 +202,7 @@ const mapNameIcons = {
     thumbsDown: thumbsDown,
     wrenchIcon: wrenchIcon,
     backArrow: backArrow,
+    check: check,
     downArrow: downArrow,
     review: reviewIcon,
     reviewHalf: reviewHalf,

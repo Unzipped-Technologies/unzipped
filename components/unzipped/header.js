@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import {
     DownIcon,
@@ -24,6 +24,7 @@ import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
     width: 100%;
+    margin-bottom: ${({isSubMenu, spacing}) => spacing ? `${spacing}px` : isSubMenu ? '128px' : '78px'};
 `;
 
 const Container = styled.div`
@@ -82,7 +83,7 @@ const Item = styled.div`
 
 const Span = styled.span`
     margin-right: 8px;
-    // cursor: pointer;
+    cursor: pointer;
 `;
 
 const Span2 = styled.span`
@@ -147,6 +148,9 @@ const MenuIcon = styled.div`
 // sub menu styling
 
 const SubMenu = styled.div`
+    position: fixed;
+    top: -1px;
+    z-index: 1;
     display: flex;
     align-items: center;
     width: 100%;
@@ -260,15 +264,18 @@ const menuItems = [
                 sub: [
                     {
                         title: 'Guides',
-                        description: 'Getting Started as a Freelancer'
+                        description: 'Getting Started as a Freelancer',
+                        link: '/wiki/getting-started'
                     },
                     {
                         title: 'Guides',
-                        description: 'Growing Your Freelance Career'
+                        description: 'Growing Your Freelance Career',
+                        link: '/wiki/grow-your-career'
                     },
                     {
                         title: 'Guides',
-                        description: 'Hiring & Working with Independent Talent'
+                        description: 'Hiring & Working with Independent Talent',
+                        link: '/wiki/working-with-independent-contractors'
                     }
                 ]
             }
@@ -321,7 +328,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm }) => {
+const Nav = ({ isSubMenu, spacing, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm }) => {
     const { pathname } = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
@@ -413,8 +420,8 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
     }
 
     return (
-        <Div >
-            <Container style={{ position: "relative", top: "0", zIndex: "2", }} >
+        <Div isSubMenu={isSubMenu} spacing={spacing}>
+            <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
                     {menuItems && menuItems.map((item, index) => {

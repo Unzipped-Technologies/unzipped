@@ -99,10 +99,10 @@ const Projects = ({token, cookie, businesses=[], getBusinessList, role, loading}
                 <TitleText title>Projects</TitleText>
                 <Toggle>
                     <Left selected={selected} onClick={toggleRole}>
-                        <DarkText small>AS INVESTOR</DarkText>
+                        <DarkText small>FREELANCER</DarkText>
                     </Left>
                     <Right selected={selected} onClick={toggleRole}>
-                        <DarkText small>AS FOUNDER</DarkText>
+                        <DarkText small>CLIENT</DarkText>
                     </Right>
                 </Toggle>
             </Title>
