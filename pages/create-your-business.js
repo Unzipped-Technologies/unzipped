@@ -722,7 +722,7 @@ const GetCard = ({
               normal
               onClick={handleGithub}
               disabled={isGithubConnected}>
-              CONNECT YOUR GITHUB ACCOUNT
+              {isGithubConnected ? 'GITHUB CONNECTED' : 'CONNECT YOUR GITHUB ACCOUNT'}
             </Button>
           </Grid>
         </CreateABusiness>
