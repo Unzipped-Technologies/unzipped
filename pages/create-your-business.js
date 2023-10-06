@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux'
 import { updateBusinessForm, createBusiness } from '../redux/actions'
 import router from 'next/router'
 import { parseCookies } from '../services/cookieHelper'
+import { nextPublicGithubClientId } from '../config/keys'
 
 const Container = styled.div`
   display: flex;
@@ -30,7 +31,7 @@ const CardContainer = styled.div`
 
 function handleGithub() {
   router.push(
-    `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&scope=user:email`
+    `https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`
   )
 }
 
