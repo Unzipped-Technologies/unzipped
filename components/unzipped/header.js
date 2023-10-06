@@ -155,8 +155,6 @@ const SubMenu = styled.div`
     align-items: center;
     width: 100%;
     height: 49px;
-    margin-top: 78px;
-
     background: #0E1724;
     color: #fff;
     padding: 0px 15%;

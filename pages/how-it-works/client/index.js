@@ -18,7 +18,7 @@ const ClientPage = () => {
             </Head>
             <Container>
 
-                <Nav />
+                <Nav spacing={18} />
                 <WhyUnzippedComponent />
                 <Footer />
             </Container>
