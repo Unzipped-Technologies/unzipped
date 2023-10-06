@@ -7,7 +7,6 @@ import Head from 'next/head';
 const Container = styled.div`
     display: flex;
     flex-flow: column;
-    margin-top: 6rem;
 `;
 
 const HowItWorksFreelancer = () => {
