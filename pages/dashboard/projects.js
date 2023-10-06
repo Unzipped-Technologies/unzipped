@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Nav from '../../components/unzipped/header';
 import Image from '../../components/ui/Image'
 import SearchBar from '../../components/ui/SearchBar'
@@ -9,14 +9,20 @@ import {
 import ProjectsContainer from '../../components/unzipped/dashboard/ProjectsContainer'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getBusinessList} from '../../redux/actions';
+import { getBusinessList } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components';
 import { accountTypeEnum } from '../../server/enum/accountTypeEnum'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+import MobileProjects from '../../components/unzipped/dashboard/MobileProjects';
 
+
+const Desktop = styled.div`
+@media(max-width: 680px) {
+    display: none;
+}
+`
 const MobileDisplayBox = styled.div`
-    position: relative;
     @media(min-width: 680px) {
         display: none;
     }
@@ -47,7 +53,7 @@ const Left = styled.div`
     padding-top: 5px;
     height: 100%;
     width: 100%;
-    background: ${({selected}) => selected === accountTypeEnum.INVESTOR ? '#5E99D4' : 'transparent'}
+    background: ${({ selected }) => selected === accountTypeEnum.INVESTOR ? '#5E99D4' : 'transparent'}
 `;
 const Right = styled.div`
     display: flex;
@@ -57,10 +63,10 @@ const Right = styled.div`
     padding-top: 5px;
     height: 100%;
     width: 100%;
-    background: ${({selected}) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
+    background: ${({ selected }) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
 `;
 
-const Projects = ({token, cookie, businesses=[], getBusinessList, role, loading}) => {
+const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loading }) => {
     const access = token?.access_token || cookie
     const [take, setTake] = useState(25)
     const [page, setPage] = useState(1)
@@ -94,22 +100,25 @@ const Projects = ({token, cookie, businesses=[], getBusinessList, role, loading}
 
     return (
         <React.Fragment>
-            <Nav isSubMenu/>
-            <Title>
-                <TitleText title>Projects</TitleText>
-                <Toggle>
-                    <Left selected={selected} onClick={toggleRole}>
-                        <DarkText small>AS INVESTOR</DarkText>
-                    </Left>
-                    <Right selected={selected} onClick={toggleRole}>
-                        <DarkText small>AS FOUNDER</DarkText>
-                    </Right>
-                </Toggle>
-            </Title>
-            <SearchBar take={take} setTake={setTake} />
-            <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading}/>
+            <Nav isSubMenu marginBottom={'100px'}/>
+            <Desktop>
+                <Title>
+                    <TitleText title>Projects</TitleText>
+                    <Toggle>
+                        <Left selected={selected} onClick={toggleRole}>
+                            <DarkText small>AS INVESTOR</DarkText>
+                        </Left>
+                        <Right selected={selected} onClick={toggleRole}>
+                            <DarkText small>AS FOUNDER</DarkText>
+                        </Right>
+                    </Toggle>
+                </Title>
+                <SearchBar take={take} setTake={setTake} />
+                <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} />
+            </Desktop>
             <MobileDisplayBox>
-                <MobileFreelancerFooter defaultSelected="Projects"/>
+                <MobileProjects/>
+                <MobileFreelancerFooter defaultSelected="Projects" />
             </MobileDisplayBox>
         </React.Fragment>
     )
@@ -117,11 +126,11 @@ const Projects = ({token, cookie, businesses=[], getBusinessList, role, loading}
 
 Projects.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
-      return {
+
+    return {
         token: token && token,
-      }
     }
+}
 
 const mapStateToProps = (state) => {
     return {
@@ -130,7 +139,7 @@ const mapStateToProps = (state) => {
         role: state.Auth.user.role,
         cookie: state.Auth.token,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {

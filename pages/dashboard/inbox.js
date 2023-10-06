@@ -1,19 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Nav from '../../components/unzipped/header';
 import ConversationContainer from '../../components/unzipped/ConversationContainer';
 import MessageContainer from '../../components/unzipped/MessageContainer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { 
-    getConversationList, 
-    sendMessage, 
-    selectConversation, 
+import {
+    getConversationList,
+    sendMessage,
+    selectConversation,
     getFreelancerById,
     createTempFile
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from 'styled-components'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+import ConversationContainerMobile from '../../components/unzipped/ConversationContainerMobile';
 
 const MobileDisplayBox = styled.div`
     position: relative;
@@ -35,10 +36,13 @@ const Container = styled.div`
     grid-template-columns: 1fr 4fr;
     height: calc(100% - 127px);
     max-height: 100%;
+    @media(max-width: 680px) {
+        display: none;
+    }
 `;
 
 const Inbox = ({
-    token, 
+    token,
     cookie,
     user,
     // redux variables
@@ -56,6 +60,7 @@ const Inbox = ({
         skip: 0,
         take: 25
     })
+    const [marginBottom, setMarginBottom] = useState('0px');
 
     const createNewFile = (data) => {
         createTempFile(data, access)
@@ -85,23 +90,45 @@ const Inbox = ({
             router.push('/login')
         }
         getConversationList(form, access)
+
+        const handleResize = () => {
+            if (window.innerWidth < 680) {
+                setMarginBottom('98px');
+            } else {
+                setMarginBottom('128px');
+            }
+        };
+
+        // Add an event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Initial call to set the marginBottom based on the current window width
+        handleResize();
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, [])
+
+
 
     return (
         <Page>
-            <Nav isSubMenu/>
+            <Nav isSubMenu marginBottom={marginBottom} />
             <Container>
-                <ConversationContainer conversations={conversations} userEmail={user.email} openConversation={openConversation}/>
-                <MessageContainer 
-                    data={selectedConversation} 
-                    userEmail={user.email} 
-                    userId={user._id} 
+                <ConversationContainer conversations={conversations} userEmail={user.email} openConversation={openConversation} />
+                <MessageContainer
+                    data={selectedConversation}
+                    userEmail={user.email}
+                    userId={user._id}
                     sendMessageToUser={sendMessageToUser}
                     createTempFile={createNewFile}
                 />
             </Container>
             <MobileDisplayBox>
-                <MobileFreelancerFooter defaultSelected="Messages"/>
+                <ConversationContainerMobile conversations={conversations} userEmail={user.email} openConversation={openConversation} />
+                <MobileFreelancerFooter defaultSelected="Messages" />
             </MobileDisplayBox>
         </Page>
     )
@@ -109,11 +136,11 @@ const Inbox = ({
 
 Inbox.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
-      return {
+
+    return {
         token: token && token,
-      }
     }
+}
 
 const mapStateToProps = (state) => {
     return {
@@ -122,7 +149,7 @@ const mapStateToProps = (state) => {
         conversations: state.Messages?.conversations,
         selectedConversation: state.Messages?.selectedConversation,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
