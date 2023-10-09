@@ -7,6 +7,10 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     width: 1052px;
+    @media screen and (max-width: 600px){
+        width: 385px;
+        flex-direction: column;
+    }
 `;
 
 const ParagraphText = styled.p`
@@ -24,6 +28,11 @@ const ParagraphText = styled.p`
 const TextBoxContainer = styled.div`
     width: 571px;
     padding-left: 2rem;
+    @media screen and (max-width: 600px){
+        padding-left: 0;
+        width: 385px;
+    }
+
 `;
 
 const ChecklistContainer = styled.div`
