@@ -171,9 +171,12 @@ const Panel = ({
             setMenuOpen(false)
         }, (time || 500));
     }
-
+    const handleOnDragUpdate = (result) => {
+        console.log(result)
+    }
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
+
         const { source, destination } = result;
         const allStories = []
 
@@ -373,64 +376,74 @@ const Panel = ({
                 ))}
             </UserContainer>
             <StoryTable>
-                <DragDropContext onDragEnd={handleOnDragEnd}>
-                    {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => (
-                        <div key={count}>
-                            <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
-                                <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
-                                <DarkText noMargin> </DarkText>
-                                <DarkText noMargin center bold>STORY POINTS</DarkText>
-                                <DarkText noMargin center bold>ASSIGNEE</DarkText>
-                            </WhiteCard>
-                            <Droppable
-                                droppableId={tag.tag._id}
-                                type="COLUMN"
-                                direction="vertical"
-                                key={tag.tag._id}
-                            >
-                                {(provided) => (
-                                    <div {...provided.droppableProps} ref={provided.innerRef}>
-                                        {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
-                                            const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
-                                            return (
-                                                <Draggable draggableId={item._id} key={item._id} index={index} >
-                                                    {(provided) => {
-                                                        if (typeof provided.draggableProps.onTransitionEnd === "function") {
-                                                            queueMicrotask(() =>
-                                                                provided.draggableProps.onTransitionEnd?.({
-                                                                    propertyName: "transform"
-                                                                })
-                                                            );
-                                                        }
-                                                        return (
-                                                            <WhiteCard onClick={() => openAStory({ ...item, employee, tagName: tag?.tag?.tagName })} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row >
-                                                                <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
-                                                                <DarkText noMargin> </DarkText>
-                                                                <DarkText noMargin> </DarkText>
-                                                                <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
-                                                                {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
-                                                                <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
-                                                            </WhiteCard>
-                                                        )
-                                                    }}
-                                                </Draggable>
-                                            )
-                                        }
-                                        )}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                            {tag.stories.length === 0 && (
-                                <WhiteCard onClick={() => {
-                                    updateCreateStoryForm({ tagId: tag.tag._id })
-                                    setCreateAStory(true)
-                                }} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
-                                    <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
+                <DragDropContext onDragEnd={handleOnDragEnd} onDragUpdate={handleOnDragUpdate}>
+                    {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => {
+                        return (
+                            <div key={count}>
+                                <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
+                                    <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
+                                    <DarkText noMargin> </DarkText>
+                                    <DarkText noMargin center bold>STORY POINTS</DarkText>
+                                    <DarkText noMargin center bold>ASSIGNEE</DarkText>
                                 </WhiteCard>
-                            )}
-                        </div>
-                    ))}
+                                {tag?.tag?.tagName === 'To Do' && (
+                                    <WhiteCard onClick={() => {
+                                        updateCreateStoryForm({ tagId: tag.tag._id })
+                                        setCreateAStory(true)
+                                    }} noMargin borderRadius="0px" padding="10px 20px" style={{ marginTop: "2px" }} row background="#FFF">
+                                        <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
+                                    </WhiteCard>
+                                )}
+                                <Droppable
+                                    droppableId={tag.tag._id}
+                                    type="COLUMN"
+                                    direction="vertical"
+                                    key={tag.tag._id}
+                                >
+                                    {(provided, snapshot) => (
+                                        <div {...provided.droppableProps} ref={provided.innerRef} style={{
+                                            background: snapshot.isDraggingOver ? 'lightblue' : 'white', // Change the background color when dragging over
+                                            padding: '2px', // Adjust padding as needed
+                                            borderRadius: '4px', // Add border radius if desired
+                                        }}>
+                                            {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
+                                                const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
+                                                return (
+                                                    <Draggable draggableId={item._id} key={item._id} index={index} >
+                                                        {(provided, snapshot) => {
+                                                            if (typeof provided.draggableProps.onTransitionEnd === "function") {
+                                                                queueMicrotask(() =>
+                                                                    provided.draggableProps.onTransitionEnd?.({
+                                                                        propertyName: "transform"
+                                                                    })
+                                                                );
+                                                            }
+                                                            return (
+                                                                <WhiteCard onClick={() => openAStory({ ...item, employee, tagName: tag?.tag?.tagName })} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row style={{
+                                                                    ...provided.draggableProps.style,
+                                                                    background: snapshot.isDragging ? '#eee' : 'white', // Change background when dragging
+                                                                }}>
+                                                                    <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
+                                                                    <DarkText noMargin> </DarkText>
+                                                                    <DarkText noMargin> </DarkText>
+                                                                    <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
+                                                                    {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
+                                                                    <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
+                                                                </WhiteCard>
+                                                            )
+                                                        }}
+                                                    </Draggable>
+                                                )
+                                            }
+                                            )}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                                
+                            </div>
+                        )
+                    })}
                 </DragDropContext>
                 {type === 'projects' && (
                     <>
