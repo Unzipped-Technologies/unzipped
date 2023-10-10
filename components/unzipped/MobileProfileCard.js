@@ -47,11 +47,11 @@ function MobileProfileCard({ user, handleProfilePage }) {
     return (
         <>
             <div className='text-center'>
-                <div className='py-3 px-2 d-flex align-items-center' style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25)", gap: "11px" }}>
+                <div className='py-3 px-2 d-flex align-items-center' style={{ background: "white", boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25)", gap: "11px", position: "fixed", width: "-webkit-fill-available", zIndex: "2" }}>
                     <Link href="/freelancers" ><span onClick={() => { }} style={{ cursor: "pointer" }}><IconComponent name='backArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span></Link>
                     <span style={{ fontWeight: "500", fontSize: "16px" }}>Profile</span>
                 </div>
-                <div className='m-4'>
+                <div style={{ padding: "75px 16px 16px 16px", }} >
                     <img
                         src={user?.user?.profileImage}
                         width={125}
@@ -99,7 +99,7 @@ function MobileProfileCard({ user, handleProfilePage }) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
             <ProfileTab tabs={["PROJECTS"]} selected={selected} setSelected={setSelected} />
             <ProjectCard>
                 <P margin='0 0 5px' color='#0057FF' fontSize="16px" fontWeight="500">Create a Landing page for a react site</P>
