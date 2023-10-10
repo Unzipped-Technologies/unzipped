@@ -125,7 +125,7 @@ const WhiteCard = styled.div`
     position: relative;
     box-shadow: ${({shadow}) => shadow ? shadow : 'none'};
     margin-bottom: ${({noMargin, half}) => noMargin ? '0px' : half ? '12px' : '24px'};
-    overflow: ${({overflow,overlayDesktop}) => overflow ? overflow : overlayDesktop ? 'overlay' : 'visible'};
+    overflow: ${({overflow,overlayDesktop}) => overflow ? overflow : overlayDesktop ? 'visible hidden' : 'visible'};
 }
     
 `;

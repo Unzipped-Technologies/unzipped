@@ -149,7 +149,7 @@ const MenuIcon = styled.div`
 
 const SubMenu = styled.div`
     position: fixed;
-    top: -1px;
+    top: 78px;
     z-index: 1;
     display: flex;
     align-items: center;
