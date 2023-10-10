@@ -292,9 +292,9 @@ router.get('/github', async (req, res) => {
   let githubToken
   try {
     const body = {
-      client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
-      redirect_uri: process.env.GITHUB_REDIRECT_URL,
+      client_id: keys.nextPublicGithubClientId,
+      client_secret: keys.githubClientSecret,
+      redirect_uri: keys.githubRedirectUrl,
       code
     }
     const headers = {

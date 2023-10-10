@@ -33,4 +33,7 @@ module.exports = {
     googlePlacesId: 'ChIJpbtkDCSPOIgR9X-9avZuqbg',
     facebookID: '384791752906464',
     facebookAPI: 'EAAHeZAVRhGZC8BAHu6ZCf2RGtph4nztDpDDJ4QqxElVNWCBa1rZBi2uqOhmGZA9IvyedXdW1rUy2x1OQSoM2wEcODpKmZBF0pR1nhdJUnqps5yCH7xSYS8ApTZAzqK7AjwTpKZAcjqhU97i3ONjCBrDE3r4YMlZAt3MALTywfPgBLVZC283n4ZAoMSQ',
+    nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || "509d38179ddfee75d61f",
+    githubClientSecret: process.env.GITHUB_CLIENT_SECRET || "30a2ea2b0796b6092f825f80680a608ff57d5e9e",
+    githubRedirectUrl: process.env.GITHUB_REDIRECT_URL || "http://localhost:3000/api/auth/github",
   };
