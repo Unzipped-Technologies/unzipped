@@ -58,57 +58,58 @@ const Notification = ({ type, children, noButton }) => {
     switch (type) {
         case 'plan':
             return (
-                <BlackCard>
+                <BlackCard display='block'>
                     <WhiteText>Build your dream business, grow your following, and collaborate with other professionals to <br />
                         make your vision a reality. Start your free trial now.</WhiteText>
-                    <Absolute><Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>PICK A PLAN</Button></Absolute>
+                    <Absolute justifyContent='end' ><Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>PICK A PLAN</Button></Absolute>
                 </BlackCard>
             )
         case 'github':
             return (
                 <WhiteCard size="large">
-                    <DarkText>Build your dream business, grow your following, and collaborate with other professionals to <br />
-                        make your vision a reality. Start your free trial now.</DarkText>
-                    <Button icon="github" noBorder type="dark" normal>CONNECT YOUR GITHUB ACCOUNT</Button>
+                    <DarkText>You haven't created your first Business yet, create one now so
+                        you can begin Collaborating! Need Ideas? View existing projects here.</DarkText>
+                    <Button icon="github" webKit noBorder type="dark" normal>CONNECT YOUR GITHUB ACCOUNT</Button>
                 </WhiteCard>
             )
         case 'browse':
             return (
-                <WhiteCard row>
+                <WhiteCard row display='block'>
                     <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
-                    <Absolute><Button noBorder type="default" normal small>BROWSE</Button></Absolute>
+                    <Absolute justifyContent='end' ><Button noBorder type="default" normal small>BROWSE</Button></Absolute>
                 </WhiteCard>
             )
         case 'dismiss':
             return (
-                <WhiteCard row>
+                <WhiteCard row display='block'>
                     <DarkText noMargin>{children}</DarkText>
-                    <Absolute>
+                    <Absolute justifyContent='end' >
                         <Dismiss>Dismiss</Dismiss>
                         <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
                 </WhiteCard>
             )
         case 'faq':
             return (
-                <WhiteCard row>
+                <WhiteCard row display='block'>
                     <DarkText noMargin>Investors are asking about your businss. Update Frequently asked
                         questions now.</DarkText>
-                    <Absolute>
+                    <Absolute justifyContent='end'>
                         <Dismiss>Dismiss</Dismiss>
                         <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
                 </WhiteCard>
             )
-        case 'blue':
+        case 'freeTrial':
             return (
                 <WhiteCard row borderColor="#0029FF" background="#F8FAFF">
                     <Icon name="question" />
-                    <DarkText noMargin paddingLeft>{children}</DarkText>
-                    {!noButton && (
+                    <DarkText noMargin paddingLeft>Your free trial will end in 5 days on
+                        12/02/2022</DarkText>
+                    {/* {!noButton && (
                         <Absolute>
                             <Dismiss>Dismiss</Dismiss>
                             <Button noBorder type="default" normal small>UPDATE</Button>
                         </Absolute>
-                    )}
+                    )} */}
                 </WhiteCard>
             )
         case 'createBusiness':
@@ -116,28 +117,29 @@ const Notification = ({ type, children, noButton }) => {
                 <WhiteCard size="large">
                     <DarkText>You haven't created your first Business yet, create one now so
                         you can begin Collaborating! Need Ideas? View existing projects here.</DarkText>
-                    <Button noBorder type="dark" normal>CREATE YOUR FIRST BUSINESS</Button>
+                    <Button noBorder webKit type="dark" normal>CREATE FIRST PROJECT</Button>
                 </WhiteCard>
             )
-        case 'updateBusiness':
-            return (
-                <WhiteCard size="large">
-                    <DarkText>You created your first business. Hooray! Now you need to customize your
-                        business homepage to attract better talent.</DarkText>
-                    <Button noBorder type="dark" normal>CUSTOMIZE YOUR BUSINESS PAGE</Button>
-                </WhiteCard>
-            )
+        // case 'updateBusiness':
+        //     return (
+        //         <WhiteCard size="large">
+        //             <DarkText>You created your first business. Hooray! Now you need to customize your
+        //                 business homepage to attract better talent.</DarkText>
+        //             <Button noBorder type="dark" normal>CUSTOMIZE YOUR BUSINESS PAGE</Button>
+        //         </WhiteCard>
+        //     )
         case 'explore':
             return (
                 <WhiteCard marginBottom='70px' size="extraLarge">
-
                     <TitleText noMargin>Explore more support</TitleText>
                     <DarkText>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
                     {help.map((item, index) => (
-                        <WhiteCard shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
+                        <WhiteCard display='-webkit-box' gap='7px' shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
                             <Absolute left top="17px"><Icon name={item.icon} /></Absolute>
+                            <div style={{width:"95%"}}>
                             <TitleText noMargin small >{item.name}</TitleText>
                             <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
+                            </div>
                         </WhiteCard>
                     ))}
                 </WhiteCard>

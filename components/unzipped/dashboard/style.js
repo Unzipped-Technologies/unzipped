@@ -16,6 +16,7 @@ const BlackCard = styled.div`
         justify-content: space-between;
         padding: 15px 20px;
         margin-top: 20px;
+        display:${({ display }) => display ? display : 'flex'};
     }
 `;
 
@@ -109,6 +110,8 @@ const Absolute = styled.div`
     }
     @media (max-width: 681px) {
         position: unset;
+        justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
+
     }
 `;
 
@@ -144,7 +147,8 @@ const WhiteCard = styled.div`
     border-radius: ${({ borderRadius }) => borderRadius ? borderRadius : '5px'};
     max-width: ${({ maxWidth }) => maxWidth ? maxWidth : 'unset'};
     width: 100%;
-    display: flex;
+    display:${({ display }) => display ? display : 'flex'};
+    gap:${({ gap }) => gap ? gap : ''};
     cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
     flex-flow: ${({ row }) => row ? 'row' : 'column'};
     min-height: ${({ size, unset, height, cardHeightDesktop }) => size === 'large' ? '151px' : size === 'extraLarge' ? '370px' : unset ? 'unset' : cardHeightDesktop ? '262px' : height ? height : '63px'};

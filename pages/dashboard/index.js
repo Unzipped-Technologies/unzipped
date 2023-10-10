@@ -29,7 +29,9 @@ const notifications = [
     { type: "createBusiness" },
     { type: "faq" },
     { type: "updateBusiness" },
+    {type:'freeTrial'},
     { type: "explore" },
+
 ]
 
 const MobileDisplayBox = styled.div`
