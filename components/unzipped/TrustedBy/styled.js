@@ -16,8 +16,9 @@ const TextStyled = styled.span`
 `;
 
 const ImageContainerResp = styled.div`
-    @media screen and (max-width: 600px){
-        margin-top: 17px;
+    margin-top: 17px;
+    @media screen and (min-width: 600px){
+        display: none;
     }
 `
 
