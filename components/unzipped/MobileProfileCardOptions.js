@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import IconComponent from '../ui/icons/IconComponent';
 import styled from 'styled-components'
+import { useRouter } from 'next/router';
 
 const P = styled.p`
 font-size: ${({ fontSize }) => fontSize ? fontSize : ''};
@@ -26,6 +27,7 @@ const DropDown = styled.div`
 `
 function MobileProfileCardOptions({ handleProfilePage }) {
     const [openList, setOpenList] = useState(false);
+    const navigate= useRouter()
     return (
         <div>
             <div className='py-3 px-2 d-flex align-items-center' style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25)", gap: "11px" }}>
@@ -33,7 +35,7 @@ function MobileProfileCardOptions({ handleProfilePage }) {
                 <span style={{ fontWeight: "500", fontSize: "16px" }}>Options</span>
             </div>
             <div className='mx-2'>
-                <P padding="25px 0 18px 0" margin="7px 0 0 0" borderBottom="3px solid #EFF1F4" fontWeight="600" >Make An Offer</P>
+                <P padding="25px 0 18px 0" margin="7px 0 0 0" borderBottom="3px solid #EFF1F4" fontWeight="600" onClick={()=>{navigate.push('/hire')}} >Make An Offer</P>
                 <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" >Schedule an Interview</P>
                 <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" >Send A Message</P>
                 <div onClick={() => setOpenList(!openList)} className='d-flex justify-content-between' style={{ padding: "12px 0 18px 0", borderBottom: "3px solid #EFF1F4" }}>

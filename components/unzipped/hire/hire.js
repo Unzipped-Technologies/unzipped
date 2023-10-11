@@ -98,7 +98,7 @@ const InputHourlyField = styled.input`
     font-size: 12px !important;
     margin-left: 2rem;
     height: 30px !important;
-    width: 21px !important;
+    width: 35px !important;
     margin:0 ;
     border: none !important;
     background: rgba(217, 217, 217, 0.15) !important;
@@ -110,7 +110,7 @@ const TrackingField = styled.input`
     margin-left: 2rem;
     margin-top: 5px !important;
     height: 30px !important;
-    width: 21px !important;
+    width: 35px !important;
     margin:0 ;
     border: none !important;
     background: rgba(217, 217, 217, 0.15) !important;
@@ -147,6 +147,8 @@ const ButtonText = styled.span`
     })}
 `;
 const HireComp = () => {
+    const [weeklyTrackingLimit, setWeeklyTrackingLimit] = useState('50');
+    const [hourlyRate, setHourlyRate] = useState('50');
     const [select, setSelect] = useState('Client');
     const [selectCurrency, setSelectCurrency] = useState('USD');
     const router = useRouter();
@@ -163,8 +165,8 @@ const HireComp = () => {
                     <Label>Project Name</Label>
                     <Select
                         value={select}
-                        onChange={(e) => setSelect(e.target.value)}
-                        style={{ width: '470px', border: '1px solid black' }}
+                        onChange={(e) => {setSelect(e.target.value)}}
+                        style={{ width: '470px', border: '1px solid black', paddingLeft: '8px' }}
                     >
                         <MenuItem value="Unzipped">Unzipped</MenuItem>
                         <MenuItem value="Why">Find Talent</MenuItem>
@@ -179,7 +181,7 @@ const HireComp = () => {
                     <div style={{ display: 'flex', width: 470, gap: 20 }}>
                         <div style={{ border: '1px solid black' }}>
                             <Span>$</Span>
-                            <InputHourlyField value={50} />
+                            <InputHourlyField value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} />
                             <Span>per hours</Span>
                         </div>
                         <div>
@@ -205,7 +207,7 @@ const HireComp = () => {
 
                     <div style={{ display: 'flex', width: 353, border: '1px solid black', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <TrackingField value={50} />
+                            <TrackingField value={weeklyTrackingLimit} onChange={(e) => setWeeklyTrackingLimit(e.target.value)} />
                         </div>
                         <div>
                             <Span>hours / week</Span>
@@ -214,7 +216,7 @@ const HireComp = () => {
                     </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'end', paddingRight: '4rem', marginTop: 35 }}>
-                    <HireButton ><ButtonText onClick={() => router.push('/subscribe')} >Hire (user)</ButtonText></HireButton>
+                    <HireButton ><ButtonText onClick={() => router.push('/recurring-payment')} >Hire (user)</ButtonText></HireButton>
                 </div>
             </HireInputContainer>
         </HireWrapper>
