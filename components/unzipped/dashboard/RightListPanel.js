@@ -171,12 +171,9 @@ const Panel = ({
             setMenuOpen(false)
         }, (time || 500));
     }
-    const handleOnDragUpdate = (result) => {
-        console.log(result)
-    }
+
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
-
         const { source, destination } = result;
         const allStories = []
 
@@ -376,7 +373,7 @@ const Panel = ({
                 ))}
             </UserContainer>
             <StoryTable>
-                <DragDropContext onDragEnd={handleOnDragEnd} onDragUpdate={handleOnDragUpdate}>
+                <DragDropContext onDragEnd={handleOnDragEnd}>
                     {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => {
                         return (
                             <div key={count}>
@@ -402,9 +399,9 @@ const Panel = ({
                                 >
                                     {(provided, snapshot) => (
                                         <div {...provided.droppableProps} ref={provided.innerRef} style={{
-                                            background: snapshot.isDraggingOver ? 'lightblue' : 'white', // Change the background color when dragging over
-                                            padding: '2px', // Adjust padding as needed
-                                            borderRadius: '4px', // Add border radius if desired
+                                            background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                                            padding: '2px',
+                                            borderRadius: '4px',
                                         }}>
                                             {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
                                                 const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
@@ -427,7 +424,6 @@ const Panel = ({
                                                                     <DarkText noMargin> </DarkText>
                                                                     <DarkText noMargin> </DarkText>
                                                                     <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
-                                                                    {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
                                                                     <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
                                                                 </WhiteCard>
                                                             )
@@ -440,7 +436,6 @@ const Panel = ({
                                         </div>
                                     )}
                                 </Droppable>
-                                
                             </div>
                         )
                     })}
