@@ -5,7 +5,7 @@ const freelancerSkillsSchema = new Schema({
   profileId: String,
   skill: String,
   isActive: {type: Boolean, default: true},
-  isArchived: {ty6pe: Boolean, default: false},
+  isArchived: {type: Boolean, default: false},
   yearsExperience: { type: Number, default: 0 },
   user: { type: Schema.Types.ObjectId, refs: 'users'},
 }, {
