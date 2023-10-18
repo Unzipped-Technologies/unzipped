@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Badge from '../Badge';
-import {statusFormat} from '../utils/dataFormat';
+import { statusFormat } from '../utils/dataFormat';
 
 const BadgeStyled = styled(Badge)`
     ${props => props.xsmall && 'font-size: 0.6rem;'}
@@ -29,7 +29,7 @@ const ProgressBarContainer = styled.div`
 `;
 
 const ProgressBarBack = styled.div`
-    background-color: #d8d8d8;
+    background-color: #D2D2D2;
     width: 100%;
     min-height: 15px;
     height: 15px;
@@ -39,9 +39,9 @@ const ProgressBarBack = styled.div`
 `;
 
 const ProgressBarBar = styled.div`
-    background-color: ${({bar}) => bar ? bar : '#fff'}  !important;
-    background-image: ${({bar}) => bar ? 'unset' : 'linear-gradient(45deg, #DE43DE, #CC4848)'};
-    width: ${props => props.$width}px !important;
+    background-color: ${({ bar }) => bar ? bar : '#fff'}  !important;
+    background-image: ${({ bar }) => bar ? 'unset' : 'linear-gradient(45deg, #DE43DE, #CC4848)'};
+    width: ${props => props.$width}% !important;
     min-height: 15px;
     height: 15px;
     position: absolute;
@@ -55,7 +55,7 @@ const Header = styled.div`
     margin: 0 0 10px 0;
     display: flex;
     align-items: center;
-    width: ${({$width}) => `${$width}px`};
+    width: ${({ $width }) => `${$width}px`};
 `;
 
 const Value = styled.span`
@@ -65,7 +65,7 @@ const Value = styled.span`
 /**
  * Progress Bar Component.
  */
-const ProgressBar = ({tileView, showValue, status, value, width, bar}) => {
+const ProgressBar = ({ tileView, showValue, status, value, width, bar }) => {
     const barWidth = (width / 100) * value;
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;

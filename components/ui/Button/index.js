@@ -26,7 +26,7 @@ const ButtonContainer = styled.button`
         ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
     font-family: roboto;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
-    width: ${props => (props.block ? '100%' : 'auto')};
+    width: ${props => (props.block ? '100%' : props.webKit ? '-webkit-fill-available' : 'auto')};
     min-width: ${({popout}) => (popout ? 'auto' : 'auto')};
     display: ${props => (props.block ? 'flex' : 'inline-flex')};
     flex-direction: ${props => (props.iconRight ? 'row-reverse' : 'row')};
