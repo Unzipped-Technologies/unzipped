@@ -99,16 +99,15 @@ function MobileSearchFilter({ sortOptions, handleFilterOpenClose, sort, setSort,
         }
 
     }
-    console.log(minRate, typeof maxRate,  "sda")
     return (
         <div style={{ backgroundColor: "white", color: "black" }}>
 
-            <div className='py-3 px-2 d-flex align-items-center' style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25)", gap: "11px" }}>
+            <div className='py-3 px-2 d-flex align-items-center' style={{ boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.25)", gap: "11px", background: "white", position: "fixed", width: "-webkit-fill-available" }}>
                 <span onClick={() => { handleFilterOpenClose(false) }} style={{ cursor: "pointer" }}><IconComponent name='backArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span>
                 <span style={{ fontWeight: "500", fontSize: "18px" }}>Filters</span>
             </div>
-            <div style={{ padding: "0 25px" }}>
-                <p style={{ fontSize: "18px", fontWeight: "500", paddingLeft: "4px", marginTop: "50px" }}>Sort By</p>
+            <div style={{ padding: "0 25px", paddingTop: "72px" }}>
+                <p style={{ fontSize: "18px", fontWeight: "500", paddingLeft: "4px" }}>Sort By</p>
                 <select style={{ display: "block", width: "auto", border: "1px solid", height: "37px" }} value={sort} onChange={(e) => setSort(e.target.value)}>
                     {sortOptions.map((category, index) => (
                         <option key={index} value={category?.text}>
