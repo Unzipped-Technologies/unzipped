@@ -60,6 +60,7 @@ const userPermissions = Object.freeze({
     // messages
     sendMessage: 'sendMessage',
     getMessagesById: 'getMessagesById',
+    UpdateMessage: 'UpdateMessage',
 })
 
 const accountTypePermissions = Object.freeze({

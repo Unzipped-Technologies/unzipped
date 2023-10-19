@@ -109,6 +109,7 @@ const FormField = ({
   onUpdate,
   clickType,
   fontSize = '',
+  handleEnterKey,
   ...rest
 }) => {
   const Control = types[fieldType]
@@ -179,6 +180,10 @@ const FormField = ({
     }
   }, [dropdownList])
 
+  const handleEnter = (e) => {
+    handleEnterKey(e)
+  }
+
   return (
     <FormFieldContainer
       zIndex={dropdownOpen}
@@ -198,6 +203,7 @@ const FormField = ({
         error={currentError}
         name={name}
         id={name}
+        onKeyDown={handleEnter}
         fontSize={fontSize}
         disabled={disabled}
         $modalSelect={modalSelect}

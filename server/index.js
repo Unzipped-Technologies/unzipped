@@ -10,7 +10,8 @@ const keys = require('../config/keys');
 const expressFileUpload = require('express-fileupload');
 require('../models/User');
 require('../services/passport/passport');
-
+const http = require('http');
+const createSocket = require('./sockets/index.js')
 
 
 const PORT = process.env.PORT || 3000
@@ -25,14 +26,16 @@ app
     .prepare()
     .then(() => {
         const server = express();
+    const httpServer = http.createServer(server);
+
+    createSocket(httpServer);
 
         if (!dev) {
-            // Enforce SSL & HSTS in production
-            server.use(function(req, res, next) {
+      server.use(function (req, res, next) {
               var proto = req.headers["x-forwarded-proto"];
               if (proto === "https") {
                 res.set({
-                  'Strict-Transport-Security': 'max-age=31557600' // one-year
+            'Strict-Transport-Security': 'max-age=31557600' 
                 });
                 return next();
               }
@@ -40,7 +43,7 @@ app
             });
           }
 
-        server.use(bodyParser.json({limit: '50mb'}));
+    server.use(bodyParser.json({ limit: '50mb' }));
         server.use(
         cookieSession({
             maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -65,10 +68,15 @@ app
             return handle(req, res);
         })
 
-        server.listen(PORT, err => {
+    // server.listen(PORT, err => {
+    //   if (err) throw err;
+    //   console.log(`> Ready on ${PORT}`);
+    // })
+
+    httpServer.listen(PORT, err => {
             if (err) throw err;
             console.log(`> Ready on ${PORT}`);
-        })
+    });
 
     })
     .catch(ex => {
