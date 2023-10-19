@@ -20,7 +20,6 @@ const BlackCard = styled.div`
     }
 `;
 
-
 const WhiteText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
@@ -49,7 +48,8 @@ const TitleText = styled.div`
     white-space: ${({ textOverflow }) => textOverflow ? 'nowrap' : 'unset'};
     overflow: ${({ textOverflow }) => textOverflow ? 'hidden' : 'unset'};
     color: ${({ color }) => color ? color : theme.text2};
-    margin-top: ${({ marginTop }) => marginTop ? marginTop : ''}
+    margin-top: ${({ marginTop }) => marginTop ? marginTop : ''};
+    padding-right: ${(paddingRight) => paddingRight ? paddingRight : ''}
 `;
 
 const DarkText = styled.div`
@@ -91,7 +91,7 @@ const DarkText = styled.div`
         font-size: ${({ small }) => small ? '12px' : '14px'};
         line-height: '16px';
     }
-`
+`;
 
 const Absolute = styled.div`
     position: absolute;
@@ -143,7 +143,7 @@ const WhiteCard = styled.div`
 }
 @media (max-width: 681px) {
     background: ${({ background }) => background ? background : '#fff'};
-    border:  ${({ borderColor,noBorder }) => noBorder? '' : borderColor ? borderColor : '1px #d8d8d8 solid'} ;
+    border:  ${({ borderColor, noBorder }) => noBorder ? '' : borderColor ? borderColor : '1px #d8d8d8 solid'} ;
     border-radius: ${({ borderRadius }) => borderRadius ? borderRadius : '5px'};
     max-width: ${({ maxWidth }) => maxWidth ? maxWidth : 'unset'};
     width: 100%;
@@ -160,7 +160,6 @@ const WhiteCard = styled.div`
     margin-bottom: ${({ noMargin, half, marginBottom }) => noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => overflow ? overflow : overlayDesktop ? 'overlay' : 'visible'};
 }
-    
 `;
 
 const SelectCard = styled.div`
@@ -287,8 +286,6 @@ export const PaddingLeft = styled.span`
 export const MinWidth = styled.span`
     min-width: 10%;
 `;
-
-
 
 module.exports = {
     BlackCard,

@@ -89,18 +89,9 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
         }, access)
     }, [])
 
-    // setTimeout(() => {  
-    //     if (businesses.length === 0) {
-    //         getBusinessList({
-    //             take: 25,
-    //             skip: 0,
-    //         }, access)
-    //     } 
-    // }, 5000);
-
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'100px'}/>
+            <Nav isSubMenu marginBottom={'160px'}/>
             <Desktop>
                 <Title>
                     <TitleText title>Projects</TitleText>
