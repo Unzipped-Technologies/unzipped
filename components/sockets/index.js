@@ -1,5 +1,6 @@
 import socketIOClient from 'socket.io-client';
+import keys from '../../config/keys'
 
-const socket = socketIOClient('http://localhost:3000');
+const socket = socketIOClient(`${keys.socketUrl}`);
 
 export default socket;
