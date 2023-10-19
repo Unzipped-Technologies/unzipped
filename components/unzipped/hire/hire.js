@@ -3,10 +3,15 @@ import HireDivider from './hire-divider/hireDivider';
 import { COLORS, getFontStyled, FONT_SIZE, LETTER_SPACING } from '../../ui/TextMaskInput/core/utilities';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { useRouter } from 'next/router';
+// import Select from 'react-select';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProjectsList } from '../../../redux/actions';
+
+import ProjectDropdown from './project-dropdown';
 
 const HireWrapper = styled.div`
     width: 100%;
@@ -76,13 +81,15 @@ const InputField = styled.input`
     margin:0 ;
     border: 1px solid #000 !important;
     background: rgba(217, 217, 217, 0.15) !important;
+    padding-left: 8px !important;
 `;
 const TextareaField = styled.textarea`
     height: 121px !important;
-    width: 470px !important;
+    width: 488px !important;
     margin:0 ;
     border: 1px solid #000 !important;
     background: rgba(217, 217, 217, 0.15) !important;
+    padding: 10px !important;
 `;
 
 const HireButton = styled.button`
@@ -114,6 +121,7 @@ const TrackingField = styled.input`
     margin:0 ;
     border: none !important;
     background: rgba(217, 217, 217, 0.15) !important;
+    
 `;
 
 const Span = styled.span`
@@ -147,38 +155,82 @@ const ButtonText = styled.span`
     })}
 `;
 const HireComp = () => {
-    const [weeklyTrackingLimit, setWeeklyTrackingLimit] = useState('50');
-    const [hourlyRate, setHourlyRate] = useState('50');
-    const [select, setSelect] = useState('Client');
-    const [selectCurrency, setSelectCurrency] = useState('USD');
+    const dispatch = useDispatch();
+    const projects = useSelector(state => state.Business.projectList);
     const router = useRouter();
+    const [weeklyTrackingLimit, setWeeklyTrackingLimit] = useState('40');
+    const [hourlyRate, setHourlyRate] = useState('40');
+    const [selectedVal, setSelectedVal] = useState('');
+    const [selectCurrency, setSelectCurrency] = useState('USD');
+    const [projectList, setProjectList] = useState([]);
+
+    useEffect(() => {
+        const project = projects.map(item => ({ value: item.name, label: item.name }));
+        setProjectList(project);
+    }, [projects])
+
+    const handleSearchChangeEvent = (e) => {
+        setSelectedVal(e);
+    }
+
+    const handleSearch = (e) => {
+        if (e.target.value.length >= 3) {
+            dispatch(getProjectsList({ filter: { name: e.target.value } }))
+        }
+    }
 
     return (
         <HireWrapper>
             <HireDivider />
             <HireInputContainer>
-                <div>
+                <div style={{ width: '488px'}}>
                     <HeadingText>
                         Contact User About Your Job
                     </HeadingText>
                     <Text>Your subscription will be paid using your primary payment method.</Text>
                     <Label>Project Name</Label>
-                    <Select
+                    <ProjectDropdown />
+                        {/* <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            isDisabled={false}
+                            isClearable={true}
+                            isSearchable={true}
+                            name="color"
+                            options={projectList}
+                            onKeyDown={handleSearch}
+                            onChange={handleSearchChangeEvent}
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    width: '470px',
+                                    border: '1px solid black',
+                                    borderRadius: 0,
+                                    boxShadow: state.isFocused ? null : null,
+                                    '&:hover': {
+                                        border: '1px solid black',
+                                    },
+                                    
+                                }),
+                            }}
+                        /> */}
+                    
+                    {/* <Select
                         value={select}
-                        onChange={(e) => {setSelect(e.target.value)}}
+                        onChange={handleProjects}
                         style={{ width: '470px', border: '1px solid black', paddingLeft: '8px' }}
                     >
                         <MenuItem value="Unzipped">Unzipped</MenuItem>
                         <MenuItem value="Why">Find Talent</MenuItem>
                         <MenuItem value="Client">Client</MenuItem>
                         <MenuItem value="Freelancer">Freelancer</MenuItem>
-                    </Select>
+                    </Select> */}
                     <Label>Send a private message</Label>
                     <TextareaField rows={50} cols={100} />
                     <Label>job type</Label>
                     <InputField type='text' />
                     <Label>hourly rate (show budget if selected)</Label>
-                    <div style={{ display: 'flex', width: 470, gap: 20 }}>
+                    <div style={{ display: 'flex', width: 488, gap: 20 }}>
                         <div style={{ border: '1px solid black' }}>
                             <Span>$</Span>
                             <InputHourlyField value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} />

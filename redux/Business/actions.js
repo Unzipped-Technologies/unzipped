@@ -26,7 +26,10 @@ import {
     UPDATE_BUSINESS_FORM,
     RESET_BUSINESS_FORM,
     GET_BUSINESSES,
-    UPDATE_CREATE_STORY
+    UPDATE_CREATE_STORY,
+    GET_PROJECT_LIST,
+    GET_PROJECT_SUCCESS,
+    GET_PROJECT_Error
 } from './constants';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
@@ -318,3 +321,24 @@ export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
     //     })
 }
 
+export const getProjectsList = (data, token) => async (dispatch, getState) => {
+    //business list Loading
+    dispatch({type: LOAD_STATE})
+
+    console.log('_data', data)
+    
+    // GET_PROJECT_SUCCESS
+    
+    await axios
+        .post(`/api/business/list`, data, tokenConfig(token))
+        .then(res => dispatch({
+            type: GET_PROJECT_LIST,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: GET_PROJECT_Error,
+                payload: err.response
+            })
+        })
+}
