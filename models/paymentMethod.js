@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const paymentSchema = new mongoose.Schema({
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'businesses', // Reference to the Business model
+        ref: 'businesses', 
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users', // Reference to the User model
+        ref: 'users', 
     },
     isPrimary: {
         type: Boolean,

@@ -1,19 +1,33 @@
-const Contracts = require('../../models/Contract'); // Import your Contracts model here
+const Contracts = require('../../models/Contract'); 
 const Business = require('../../models/Business');
 const ThirdPartyApplications = require('../../models/ThirdPartyApplications');
 const PaymentMethod = require('../../models/paymentMethod')
 const mongoose = require('mongoose');
-const stripe = require("stripe")(
-    "sk_test_51N8neBKbRhZhJxMgqn7xtwILzeKZPoobbygMQzxUeAFKi3D2ldnUXCsDiaGfdQOH4oALxxXcEIZXlQ3887et74cu00YBfjyyZM"
-);
+const keys = require('../../config/keys');
+const stripe = require('stripe')(`${keys.stripeSecretKey}`);
 
 const createContracts = async (data) => {
+    const { businessId, freelancerId, userId } = data;
     try {
+        const existingPaymentMethod = await PaymentMethod.findOne({
+            userId: userId
+        });
+        if (!existingPaymentMethod) {
+            throw new Error('No payment method exists against user.');
+        }
+        const existingContract = await Contracts.findOne({
+            businessId: businessId,
+            freelancerId: freelancerId
+        });
+
+        if (existingContract) {
+            throw new Error('Freelancer is already hired for this business.');
+        }
         const newContract = new Contracts(data);
         const savedContract = await newContract.save();
         return savedContract;
     } catch (e) {
-        throw Error(`Something went wrong: ${e}`);
+        throw Error(`Something went wrong: ${e.message}`);
     }
 };
 
@@ -40,7 +54,7 @@ const createStripeCustomer = async ({ businessId, userId, email, githubId, googl
 
 const createPaymentMethod = async ({ businessId, userId, githubId, stripeId, googleId, calendlyId, paymentMethod }) => {
     try {
-        const newThirdPartyApplication = new ThirdPartyApplications({ githubId, stripeId, googleId, calendlyId });
+        const newThirdPartyApplication = new ThirdPartyApplications({ userId, githubId, stripeId, googleId, calendlyId });
         const savedThirdPartyApplication = await newThirdPartyApplication.save();
         const newPaymentMethod = new PaymentMethod({ businessId, userId, paymentMethod });
         const savedPaymentMethod = await newPaymentMethod.save();
@@ -55,19 +69,19 @@ const getContractById = async (id) => {
         return await Contracts.findById(id)
             .populate({
                 path: 'businessId',
-                model: 'businesses', // Replace with the actual 'businesses' model name
+                model: 'businesses',
             })
             .populate({
                 path: 'freelancerId',
-                model: 'freelancers', // Replace with the actual 'freelancers' model name
+                model: 'freelancers',
             })
             .populate({
                 path: 'departmentId',
-                model: 'departments', // Replace with the actual 'freelancers' model name
+                model: 'departments',
             })
             .populate({
                 path: 'userId',
-                model: 'users', // Replace with the actual 'users' model name
+                model: 'users',
             })
             .exec();
 
@@ -75,33 +89,31 @@ const getContractById = async (id) => {
         throw Error(`Could not find contract, error: ${e}`);
     }
 };
-
 
 const getContractByfreelacerId = async (id) => {
     try {
         return await Contracts.findOne({ freelancerId: id })
             .populate({
                 path: 'businessId',
-                model: 'businesses', // Replace with the actual 'businesses' model name
+                model: 'businesses',
             })
             .populate({
                 path: 'freelancerId',
-                model: 'freelancers', // Replace with the actual 'freelancers' model name
+                model: 'freelancers',
             })
             .populate({
                 path: 'departmentId',
-                model: 'departments', // Replace with the actual 'freelancers' model name
+                model: 'departments',
             })
             .populate({
                 path: 'userId',
-                model: 'users', // Replace with the actual 'users' model name
+                model: 'users',
             })
             .exec();
     } catch (e) {
         throw Error(`Could not find contract, error: ${e}`);
     }
 };
-
 
 const updateContract = async (data) => {
     try {
@@ -121,18 +133,17 @@ const updateContractByFreelancer = async ({ _id, freelancerId, newIsOfferAccepte
         const updatedContract = await Contracts.findOneAndUpdate(
             { _id, freelancerId },
             { $set: { isOfferAccepted: newIsOfferAcceptedValue } },
-            { new: true } // This option returns the updated document
+            { new: true }
         );
         const userId = updatedContract.userId
         const updatedBusiness = await Business.findOneAndUpdate(
             { userId },
             { $push: { employees: updatedContract?._id } },
-            { new: true } // This option returns the updated document
+            { new: true }
         );
 
         if (!updatedContract) {
             throw Error('Contract not found')
-            // Handle the case where no contract with the specified _id and freelancerId was found
         }
         return { updatedContract, updatedBusiness };
     } catch (e) {
@@ -140,12 +151,25 @@ const updateContractByFreelancer = async ({ _id, freelancerId, newIsOfferAccepte
     }
 };
 
-
+const endContract = async (id) => {
+    try {
+        const updatedContract = await Contracts.findByIdAndUpdate(
+            id,
+            { $set: { isActive: false } },
+            { new: true }
+        );
+        if(!updatedContract){
+            throw Error('Contract not found')
+        }
+        return updatedContract;
+    } catch (error) {
+        throw Error(`Could not end contract, error: ${e}`);
+    }
+}
 
 const deleteContract = async (id) => {
     try {
         await Contracts.findByIdAndDelete(id);
-        // You can add additional cleanup logic here if needed
     } catch (e) {
         throw Error(`Could not delete contract, error: ${e}`);
     }
@@ -160,4 +184,5 @@ module.exports = {
     updateContractByFreelancer,
     createStripeCustomer,
     createPaymentMethod,
+    endContract,
 };

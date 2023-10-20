@@ -68,6 +68,16 @@ router.delete('/delete/:id', requireLogin, async (req, res) => {
     }
 });
 
+// End a contract by ID (END)
+router.patch('/end-contract/:id', requireLogin, async (req, res) => {
+    try {
+        await contractHelper.deleteContract(req.params.id);
+        res.json({ msg: 'Contract ends successfully' });
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+});
+
 router.post('/create-stripe-customer', requireLogin, async (req, res) => {
     const { businessId, userId, email, githubId, googleId, calendlyId } = req.body;
     try {
@@ -81,7 +91,7 @@ router.post('/create-stripe-customer', requireLogin, async (req, res) => {
 
 router.post('/create-payment-method', requireLogin, async (req, res) => {
     const { businessId, userId, githubId, stripeId, googleId, calendlyId } = req.body.data.metadata;
-    const paymentMethod = req.body
+    const {paymentMethod} = req.body
     try {
         const customer = await contractHelper.createPaymentMethod({ businessId, userId, githubId, stripeId, googleId, calendlyId, paymentMethod });
         if (customer?.savedPaymentMethod && customer?.savedThirdPartyApplication) {
