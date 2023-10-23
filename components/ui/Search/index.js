@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {get} from 'lodash';
+import { get } from 'lodash';
 import Icon from '../Icon';
 
 const SearchContainer = styled.div`
@@ -14,6 +14,10 @@ const SearchContainer = styled.div`
         width: 100%;
     }
     background: #ffffff;
+
+    @media(max-width: 680px) {
+        border: 1px solid #C4C4C4;
+    }
 `;
 
 const Input = styled.input`
@@ -58,7 +62,7 @@ const ClearIcon = styled.span`
         height: 14px;
     }
     cursor: pointer;
-    display: ${({$show}) => ($show ? 'inherit' : 'none')};
+    display: ${({ $show }) => ($show ? 'inherit' : 'none')};
 `;
 
 const SearchIcon = styled.span`
@@ -79,8 +83,8 @@ const Search = ({
     },
     keys = [],
     large = false,
-    onAction = () => {},
-    onChange = () => {},
+    onAction = () => { },
+    onChange = () => { },
     placeholder = '',
     width = '36.75rem',
     initialValue = '',

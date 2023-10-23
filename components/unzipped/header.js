@@ -24,7 +24,7 @@ import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
     width: 100%;
-    margin-bottom: 128px;
+    margin-bottom:  ${({ marginBottom }) => marginBottom ? marginBottom : '128px'};;
 `;
 
 const Container = styled.div`
@@ -149,14 +149,12 @@ const MenuIcon = styled.div`
 
 const SubMenu = styled.div`
     position: fixed;
-    top: -1px;
+    top: 78px;
     z-index: 1;
     display: flex;
     align-items: center;
     width: 100%;
     height: 49px;
-    margin-top: 78px;
-
     background: #0E1724;
     color: #fff;
     padding: 0px 15%;
@@ -330,7 +328,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm }) => {
+const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm, marginBottom }) => {
     const { pathname } = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
@@ -422,7 +420,7 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
     }
 
     return (
-        <Div>
+        <Div marginBottom={marginBottom && marginBottom}>
             <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>

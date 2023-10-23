@@ -45,7 +45,7 @@ const Dashboard = ({business='Lists', selectedList="Favorites", token, cookie}) 
 
     return (
         <React.Fragment>
-            <Nav isSubMenu/>
+            <Nav isSubMenu marginBottom={'160px'}/>
             <ListPanel list={Lists} business={business} selectedList={selectedList} type="list"/>
         </React.Fragment>
     )

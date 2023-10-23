@@ -25,6 +25,9 @@ const Browse = () => {
     const CardContainer = styled.div`
         width: 100%;
         padding: 20px;
+        @media(max-width: 680px) {
+            margin-bottom: 48px;
+        }
         div {
             margin: 30px 20px;
             padding: 20px;
@@ -77,7 +80,7 @@ const Browse = () => {
 
     return (
         <React.Fragment>
-            <Nav isSubMenu />
+            <Nav isSubMenu marginBottom={'98px'}/>
             <ContentArea>
                 <ImageContainer>
                     <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1696293321/xkiyysuux8ihcarvs44c.png" height="auto" width="100%"/>

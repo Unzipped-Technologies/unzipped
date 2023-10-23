@@ -3,27 +3,35 @@ import Nav from '../../components/unzipped/header';
 import Image from '../../components/ui/Image'
 import Icon from '../../components/ui/Icon'
 import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { resetRegisterForm} from '../../redux/actions';
+import { resetRegisterForm } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import styled from "styled-components"
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+import Panel from '../../components/unzipped/dashboard/UserSetupPanelMobile';
+import Notification from '../../components/unzipped/dashboard/MobileNotification';
+
+const Notifications = styled.div`
+    padding: 0px 15px;
+`;
 
 const notifications = [
-    { type:"plan"},
-    { type:"github"},
-    { type:"browse"},
-    { type:"dismiss", text: "Update types of professionals you are seeking for your business"},
-    { 
-      type:"blue",
-      text: "Update types of professionals you are seeking for your business"
+    { type: "plan" },
+    { type: "github" },
+    { type: "browse" },
+    { type: "dismiss", text: "Update types of professionals you are seeking for your business" },
+    {
+        type: "blue",
+        text: "Update types of professionals you are seeking for your business"
     },
-    { type:"createBusiness"},
-    { type:"faq"},
-    { type:"updateBusiness"},
-    { type:"explore"},
+    { type: "createBusiness" },
+    { type: "faq" },
+    { type: "updateBusiness" },
+    {type:'freeTrial'},
+    { type: "explore" },
+
 ]
 
 const MobileDisplayBox = styled.div`
@@ -33,7 +41,17 @@ const MobileDisplayBox = styled.div`
     }
 `;
 
-const Dashboard = ({resetRegisterForm, token}) => {
+const DesktopBox = styled.div`
+@media(max-width: 680px) {
+    display: none;
+}
+`
+const MobileBox = styled.div`
+@media(min-width: 680px) {
+    display: none;
+}
+`
+const Dashboard = ({ resetRegisterForm, token }) => {
     const router = useRouter()
     const user = [
         {
@@ -60,22 +78,36 @@ const Dashboard = ({resetRegisterForm, token}) => {
 
     return (
         <React.Fragment>
-            <Nav isSubMenu/>
-            <NotificationsPanel notifications={notifications} user={user}/>
-            <MobileDisplayBox>
-                <MobileFreelancerFooter defaultSelected="Dashboard"/>
-            </MobileDisplayBox>
+            <Nav isSubMenu />
+            <DesktopBox>
+                <NotificationsPanel notifications={notifications} user={user} />
+
+            </DesktopBox>
+            <MobileBox>
+                <div><Panel user={user} />
+                <Notifications>
+                {notifications.map(item => (
+                    <Notification type={item.type}>
+                        {item.text}
+                    </Notification>
+                ))}
+            </Notifications>
+                </div>
+                <MobileDisplayBox>
+                    <MobileFreelancerFooter defaultSelected="Dashboard" />
+                </MobileDisplayBox>
+            </MobileBox>
         </React.Fragment>
     )
 }
 
 Dashboard.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
-      return {
+
+    return {
         token: token && token,
-      }
     }
+}
 
 const mapStateToProps = (state) => {
     return {
@@ -83,7 +115,7 @@ const mapStateToProps = (state) => {
         loading: state.Business?.loading,
         role: state.Auth.user.role,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {

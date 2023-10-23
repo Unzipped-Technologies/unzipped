@@ -167,7 +167,7 @@ const Home = ({token}) => {
                 <Icon name="wrenchIcon" color="#D8D8D8"/>
                 <span><strong>Under construction</strong> <Mobile><strong>:</strong>{' '}sign up for our email list to be updated when service is available</Mobile></span>
             </UnderConstruction>
-            <Nav token={token}/>
+            <Nav token={token} spacing={18}/>
             <HeroUnzipped />
             <SectionOne projects={projects}/>
             <SectionOneMobile projects={projects}/>

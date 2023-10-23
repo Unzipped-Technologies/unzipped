@@ -11,7 +11,7 @@ const Container = styled.div`
     flex-flow: column;
     padding: ${({margin}) => margin ? margin : '45px 0px 0px 0px'};
     @media(max-width: 680px) {
-        display: none;
+        width: -webkit-fill-available
     }
 `;
 

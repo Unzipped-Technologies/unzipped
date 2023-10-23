@@ -14,6 +14,8 @@ module.exports = {
   carsXe: process.env.CARS_XE_API_KEY,
   facebookID: process.env.FACEBOOK_ID,
   googleMapsId: process.env.GOOGLE_MAPS_ID,
-  facebookAPI: process.env.FACEBOOK_API
-
+  facebookAPI: process.env.FACEBOOK_API,
+  nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+  githubRedirectUrl: process.env.GITHUB_REDIRECT_URL,
 };
