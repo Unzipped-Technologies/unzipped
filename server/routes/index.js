@@ -15,5 +15,8 @@ router.use('/business', require('./businessRoutes'));
 router.use('/like', require('./likeRoutes'));
 router.use('/message', require('./messageRoutes'));
 router.use('/file', require('./fileRoutes'));
+router.use('/profile', require('./profileRoutes'));
+router.use('/project', require('./projectRoutes'));
+router.use('/education', require('./educationRoutes'));
 
 module.exports = router;
