@@ -12,7 +12,7 @@ const Divider = styled.div`
     width: 1052px;
     justify-content: start;
     align-items: center;
-    padding-left: 9rem;
+    padding-left: 0rem;
     gap:20px;
 `;
 
@@ -39,23 +39,23 @@ const DivContain = styled.div`
     display: flex;
     flex-direction: column;
     &:after{
-        margin-left: 135px;
+        margin-left: 0px;
         content: '';
         display: block;
-        width: 952px;
+        width: 1070px;
         height: 1px;
         background: ${COLORS.hireDivider};
         margin-top: 1.25rem;
     }
 `
 
-const HireDivider = () => {
+const HireDivider = ({title}) => {
     return (
         <DivContain>
             <Divider>
                 <NavBack> <GoBack /> </NavBack>
                 <NavTextContainer>
-                    <DividerText>Confirm Payment Details</DividerText>
+                    <DividerText>{title}</DividerText>
                 </NavTextContainer>
             </Divider>
         </DivContain>

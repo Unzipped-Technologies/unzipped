@@ -181,7 +181,7 @@ const HireComp = () => {
 
     return (
         <HireWrapper>
-            <HireDivider />
+            <HireDivider title="Confirm Payment Details" />
             <HireInputContainer>
                 <div style={{ width: '488px'}}>
                     <HeadingText>
