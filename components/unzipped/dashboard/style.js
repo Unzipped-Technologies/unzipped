@@ -27,7 +27,6 @@ const WhiteText = styled.div`
     font-size: 14px;
     line-height: 23px;
     letter-spacing: 0.15008px;
-
     color: ${theme.text};
 `;
 
@@ -111,7 +110,6 @@ const Absolute = styled.div`
     @media (max-width: 681px) {
         position: unset;
         justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
-
     }
 `;
 

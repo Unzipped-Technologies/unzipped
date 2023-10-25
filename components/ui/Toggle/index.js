@@ -73,8 +73,9 @@ const Notch = styled.div`
     }
 `;
 
-const Toggle = ({toggled, isToggled, sideText, help, helpText, title, className = '', disabled}) => {
+const Toggle = ({toggled, isToggled, sideText, help, helpText, title, className = '', disabled, handleSetToggle}) => {
     const handleToggle = () => {
+        handleSetToggle(!toggled)
         if (disabled) {
             return;
         }

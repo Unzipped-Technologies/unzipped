@@ -1,8 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-    TitleText,
     DarkText,
-    Underline,
     Absolute,
     Span,
     WhiteCard
@@ -40,34 +38,78 @@ const Scroll = styled(SimpleBar)`
     }
 `;
 
-const ConversationContainer = ({ conversations = [], userEmail, openConversation }) => {
+const ConversationContainer = ({ conversations = [], userId, userEmail, openConversation }) => {
+    const [conversation, setConversation] = useState([])
+    const [selectedItem, setSelectedItem] = useState({})
+    const [archivedChatsShow, setArchivedChatsShow] = useState(false)
+
+    useEffect(() => {
+        setConversation(conversations)
+    }, [conversations])
+
+    const handleSearch = (e) => {
+        const filteredConversations = conversations.filter(conversation => {
+            const participants = conversation.participants;
+            return participants.some(participant => {
+                const fullName = `${participant.userId.FirstName} ${participant.userId.LastName}`;
+                return participant.userId._id !== userId && fullName.includes(e);
+            });
+        });
+        setConversation(filteredConversations)
+    }
+
+    const ConversationCard = ({
+        receiver,
+        sender,
+        index,
+        item: {
+            _id,
+            messages,
+            updatedAt
+        } }) => (
+        <WhiteCard key={index} background={_id === selectedItem ? '#F0F0F0' : '#fff'} noMargin padding="5px" overflow="hidden" unset maxWidth="20vw" onClick={() => { openConversation(_id); setSelectedItem(_id) }}>
+            <Span>
+                <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
+                <WhiteCard background={_id === selectedItem ? '#F0F0F0' : '#fff'} borderColor={'transparent'} noMargin padding="0px" maxWidth="80%" center>
+                    <DarkText paddingLeft bold noMargin>{ValidationUtils.getFullNameFromUser(receiver?.userId)}</DarkText>
+                    <DarkText paddingLeft small textOverflow="ellipsis" noMargin>{ValidationUtils.getMostRecentlyUpdated(messages)?.message}</DarkText>
+                </WhiteCard>
+                {+sender?.unreadCount > 0 && <span style={{
+                    color: "white",
+                    background: "green",
+                    padding: "3px 6px",
+                    borderRadius: "10px",
+                    height: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    width: "maxContent",
+                    fontSize: "14px",
+                }}>{sender?.unreadCount}</span>}
+            </Span>
+            <Absolute width="80px" right="-5px" hide={1250} top="0px"><DarkText fontSize="12px" noMargin>{ValidationUtils.formatDateWithDate(updatedAt)}</DarkText></Absolute>
+        </WhiteCard>
+    )
+
+    const RenderConversations = ({
+        type
+    }) =>
+        conversation.filter((item) => item?.isArchived === (type === 'archived')).map((item, index) => {
+            const receiver = item?.participants?.find(e => e.userId.email !== userEmail)
+            const sender = item?.participants?.find(e => e.userId.email === userEmail)
+            return (
+                <ConversationCard receiver={receiver} sender={sender} item={item} index={index} />
+            )
+        })
+
     return (
         <WhiteCard height="100%" padding="10px 0px 0px 0px" maxWidth="20vw" overflow="hidden" noMargin>
             <Div>
-                <SearchBar margin="0px 0px 15px 0px" width="100%" />
+                <SearchBar margin="0px 0px 15px 0px" width="100%" setFilter={handleSearch} />
             </Div>
             <Scroll>
-                {conversations.map((item, index) => {
-                    const receiver = item.participants.find(e => e.userId.email !== userEmail)
-                    return (
-                        <WhiteCard key={index} background={item?.isSelected ? '#F0F0F0' : '#fff'} noMargin padding="5px" overflow="overlay" unset maxWidth="20vw" onClick={() => openConversation(item?._id)}>
-                            <Span>
-                                <Image src={receiver.userId.profileImage} height="54px" width="54px" radius="22%" />
-                                <WhiteCard background={item?.isSelected ? '#F0F0F0' : '#fff'} borderColor={'transparent'} noMargin padding="0px" maxWidth="100%" center>
-                                    <div style={{ width: "-webkit-fill-available" }} className='d-flex align-items-baseline'>
-                                        <DarkText paddingLeft bold noMargin>{ValidationUtils.getFullNameFromUser(receiver?.userId)}asd</DarkText>
-                                        <div className='gap-1 d-flex  '>
-                                            <DarkText marginRight={'4px'} textAlignLast={'end'} fontSize="12px" noMargin>@Alien4hire</DarkText>
-                                            <DarkText textAlignLast={'end'} textOverflow fontSize="11px" noMargin>{ValidationUtils.formatDateWithDate(item?.updatedAt)}</DarkText>
-                                        </div>
-                                    </div>
-                                    <DarkText paddingLeft small textOverflow="ellipsis" noMargin>{ValidationUtils.getMostRecentlyUpdated(item?.messages)?.message.slice(0, 40)}{ValidationUtils.getMostRecentlyUpdated(item?.messages)?.message.length > 40 && '...'}</DarkText>
-                                </WhiteCard>
-                            </Span>
-
-                        </WhiteCard>
-                    )
-                })}
+                <RenderConversations type='unarchived' />
+                {conversations?.some(item => item?.isArchived === true) && <b className='text-dark' onClick={() => setArchivedChatsShow(!archivedChatsShow)}> <span className="fas fa-archive text-success ms-2"></span> Archived Chats</b>}
+                {archivedChatsShow && <RenderConversations type='archived' />}
                 <Extra></Extra>
             </Scroll>
         </WhiteCard>
