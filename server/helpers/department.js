@@ -143,16 +143,23 @@ const addTaskToDepartment = async (body, id) => {
 }
 
 const reorderTasks = async (lists) => {
-    await Promise.all(lists.map(task => {
-        tasks.findByIdAndUpdate(task._id, {
-            order: task.order,
-            tag: task.tag,
-        })
-    }))
+    await Promise.all(lists.map(async task => {
+        await tasks.findByIdAndUpdate(task._id, {
+            $set: {
+                order: task.order,
+                tag: task.tag,
+            }
+        });
+    }));
+
+    const updatedTasks = await tasks.find({ departmentId: lists[0].departmentId });
     await department.findByIdAndUpdate(lists[0].departmentId, {
-        tasks: await tasks.find({departmentId: lists[0].departmentId})
-    })
-    return {msg: 'success'}
+        $set: {
+            tasks: updatedTasks,
+        }
+    });
+
+    return { msg: 'Tasks updated successfully' };
 }
 
 const addCommentToTask = async (data) => {
