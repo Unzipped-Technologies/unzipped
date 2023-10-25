@@ -16,7 +16,7 @@ const departmentSchema = new Schema({
   tasks: { type: Schema.Types.Mixed, ref: 'tasks' },
   employees: { type: Schema.Types.ObjectId, ref: 'users' },
   business: { type: Schema.Types.ObjectId, ref: 'businesses' },
-  employees: { type: Schema.Types.Mixed, ref: 'businessAssociatesItems' },
+  employees: { type: Schema.Types.Mixed, ref: 'contracts' },
 }, {
   timestamps: true
 });
