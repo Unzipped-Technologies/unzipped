@@ -37,6 +37,7 @@ import Review from './reviews'
 import ReviewHalf from './reviewHalf'
 import ReviewSmall from './reviewSmall'
 import ReviewHalfSmall from './reviewHalfSmall'
+import GoBack from './navback'
 
 export {
     ClearFitLogo,
@@ -77,5 +78,6 @@ export {
     Review,
     ReviewHalf,
     ReviewSmall,
-    ReviewHalfSmall
+    ReviewHalfSmall,
+    GoBack
 };
