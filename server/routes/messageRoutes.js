@@ -32,13 +32,28 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('getMessa
 router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getMessagesById'), async (req, res) => {
     try {
       const conversationId = req.params.id;
+      const { limit } = req.query;
       const id = req.user.sub
-      const getConversation = await messageHelper.getConversationById(conversationId, id)
+      const getConversation = await messageHelper.getConversationById(conversationId, id,limit)
       if(!getConversation) throw Error('conversations not found')
       res.json(getConversation)
     } catch (e) {
       res.status(400).json({msg: e.message})
     }
+});
+
+// update the status of Conversation
+router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('UpdateMessage'), async (req, res) => {
+  try {
+    const {type,status} = req.body
+    const id = req.user.sub
+    const conversationId = req.params.id;
+    const getConversation = await messageHelper.updateConversationStatus(conversationId,type,status,id)
+    if(!getConversation) throw Error('Conversation not found')
+    res.json(getConversation)
+  } catch (e) {
+    res.status(400).json({msg: e.message})
+  }
 });
 
 module.exports = router;

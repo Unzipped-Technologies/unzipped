@@ -42,11 +42,11 @@ function MyApp({ Component, pageProps }) {
     }
   }, [router.events])
 
-  useEffect(() => {
-    if (isProtected(router.route) && !token) {
-      router.push('/login')
-    }
-  }, [router])
+  // useEffect(() => {
+  //   if (isProtected(router.route) && !token) {
+  //     router.push('/login')
+  //   }
+  // }, [router])
 
   // useEffect(() => {
   //   import('react-facebook-pixel')

@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import 'simplebar';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -8,14 +8,14 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: ${props => (props.sidebar ? 'column' : 'row')};
     justify-content: ${props => (props.sidebar ? 'center' : 'flex-end')};
-    visibility: ${({visible}) => (visible ? 'visible' : 'hidden')};
+    visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
 `;
 
 const DropdownOutline = styled.div`
-    height: ${({$height}) => ($height ? $height : 'auto')};
-    width: ${({width}) => width ? width : 'auto'};
+    height: ${({ $height }) => ($height ? $height : 'auto')};
+    width: ${({ width }) => width ? width : 'auto'};
     display: flex;
-    position: ${({btnDropdown}) => (btnDropdown ? 'absolute' : 'fixed')};
+    position: ${({ btnDropdown }) => (btnDropdown ? 'absolute' : 'fixed')};
     z-index: 9999;
     bottom: ${props => (props.sidebar && !props.dashboard ? '20px' : null)};
     border: 0px solid ${props => props.theme.border};
@@ -26,7 +26,7 @@ const DropdownOutline = styled.div`
     ${props =>
         props.btnDropdown &&
         `
-        right: -3px;
+        right: ${props.dropDownRight ? props.dropDownRight : '-3px'};
         top: 34px;
         text-align: left;`};
 `;
@@ -35,7 +35,7 @@ DropdownOutline.displayName = 'DropdownOutline';
 const DropdownList = styled.ul`
     margin: 0;
     min-width: 200px;
-    width: ${({width}) => width};
+    width: ${({ width }) => width};
     padding: 10px 15px 5px 15px;
     background: #F4F4F4;
     font-family: arial;
@@ -65,15 +65,15 @@ const LinkContainer = styled(Link)`
     letter-spacing: 0.031rem;
 `;
 
-const DivContainer = styled(LinkContainer).attrs({as: 'div'})`
+const DivContainer = styled(LinkContainer).attrs({ as: 'div' })`
     cursor: pointer;
-    white-space: ${({width}) => (width === 'unset' ? 'nowrap' : 'pre-line')};
+    white-space: ${({ width }) => (width === 'unset' ? 'nowrap' : 'pre-line')};
 `;
 
 const SimpleBar = styled.div`
     .simplebar-wrapper {
         height: unset;
-        width: ${({$width}) => ($width ? $width : '200px')};
+        width: ${({ $width }) => ($width ? $width : '200px')};
     }
     .simplebar-track > .simplebar-scrollbar:before {
         background-color: ${props => props.theme.tint2};
@@ -84,7 +84,7 @@ const SimpleBar = styled.div`
 `;
 SimpleBar.displayName = 'SimpleBar';
 
-const DropdownItems = ({links, width}) => {
+const DropdownItems = ({ links, width }) => {
     return (
         <>
             {links.map((item, index) => {
@@ -105,7 +105,7 @@ DropdownItems.displayName = 'DropdownItems';
 /**
  * Dropdown Component.
  */
-const Dropdown = ({visible, links, dashboard, sidebar, btnDropdown, width, className}) => {
+const Dropdown = ({ visible, links, dashboard, sidebar, btnDropdown, width, className, dropDownRight }) => {
     const first10Ref = useRef();
     const [first10Height, setFirst10Height] = useState(0);
     const first10Items = links.filter((_, index) => index < 10);
@@ -121,12 +121,13 @@ const Dropdown = ({visible, links, dashboard, sidebar, btnDropdown, width, class
     }, [links, visible]);
 
     return (
-        <Wrapper sidebar={sidebar} className={className} visible={visible}>
+        <Wrapper sidebar={sidebar} className={className} visible={visible}  >
             <DropdownOutline
                 $height={first10Height ? `${first10Height}px` : '0px'}
                 sidebar={sidebar}
                 dashboard={dashboard}
                 btnDropdown={btnDropdown}
+                dropDownRight={dropDownRight}
                 data-testid="dropdown">
                 <DropdownList width={width} sidebar={sidebar}>
                     <div ref={first10Ref}>

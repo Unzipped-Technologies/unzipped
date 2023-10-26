@@ -27,7 +27,6 @@ const Container = styled.div`
     position: relative;
     display: flex;
     flex-flow: column;
-    border: 1px solid #D9D9D9;
     background: ${({ background }) => background ? background : '#D9D9D930'};
     padding: 20px 0px;
     margin-left: 34px;
@@ -54,8 +53,32 @@ const Row = styled.div`
     align-items: center;
     position: relative;
 `;
+const ButtonComp = styled.button`
+border:0;
+background:#1976D2;
+border-radius:5px;
+color:white;
+font-weight: 500;
+padding: 4px 12px;
+`
+const Sign = styled.span`
+    margin-right:15px;
+    font-size:14px;
+    border: 1px solid;
+    padding: 4px 0px 3px 3.5px;
+    border-radius: 50%;
+    height: 16px;
+    display: flex;
+    width: 17px;
+    align-items: center;
+`
 
-const StoryTable = styled.div``;
+const StoryTable = styled.div`
+border: 1px solid rgba(217, 217, 217, 0.25);
+    border-radius: 0px 0px 15px 15px;
+    background: rgba(217, 217, 217, 0.25);
+    padding-bottom: 10px;
+`;
 
 const freelancer = [
     {
@@ -111,7 +134,6 @@ const freelancer = [
     },
 ]
 
-// sets stories to correct tags and updates any missing orders in redux
 const setTagsAndStories = ({ tags = [], stories = [] }) => {
     const storyOrder = []
     const story = tags.map(item => {
@@ -127,7 +149,6 @@ const setTagsAndStories = ({ tags = [], stories = [] }) => {
             stories: orderStories
         }
     })
-    // reorderStories(storyOrder)
     return story
 }
 
@@ -176,7 +197,6 @@ const Panel = ({
         if (!result.destination) return;
         const { source, destination } = result;
         const allStories = []
-
         if (source.droppableId !== destination.droppableId) {
             const sourceColumn = storyList.find(e => source.droppableId === e.tag._id);
             const destColumn = storyList.find(e => destination.droppableId === e.tag._id);
@@ -288,11 +308,9 @@ const Panel = ({
             name: ValidationUtils.getFullNameFromUser(user),
             img: form?.img
         }, access)
-        // setStoryModal(false)
     }
 
     useEffect(() => {
-        // updates list of stories displayed when changes happen to stories
         const storyList = []
         for (const tag of tags) {
             storyList.push({
@@ -304,7 +322,6 @@ const Panel = ({
             })
             storyList.push(...stories.filter(item => item.tag === tag))
         }
-        // updates selected story when updates happen to story
         if (selectedStory) {
             const story = stories.find(e => selectedStory._id === e._id)
             if (story) {
@@ -355,9 +372,41 @@ const Panel = ({
 
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
-            <TitleText paddingLeft size="24px">{selectedList}</TitleText>
+            <div className='d-flex align-items-center justify-content-between pb-3 px-3'>
+                <div className='d-flex align-items-center '>
+                    <TitleText width='max-content' noMargin size="24px" paddingRight='20px'>{selectedList}</TitleText>
+                    {type === "department" && (<Button
+                        className="bg-transparent text-dark"
+                        popoutWidth="150px"
+                        dropDownRight="-130px"
+                        noBorder
+                        block
+                        fontSize="13px"
+                        popout={[
+                            {
+                                text: 'update Statuses',
+                                onClick: () => console.log('ITEM 1'),
+                            },
+                            {
+                                text: 'Create Department',
+                                onClick: () => console.log('ITEM 1'),
+                            },
+                            {
+                                text: 'Edit',
+                                onClick: () => console.log('ITEM 2'),
+                            },
+                            {
+                                text: 'Delete',
+                                onClick: () => console.log('ITEM 3'),
+                            },
+                        ]}
+                    >
+                        <Icon name="actionIcon" color="#333" />
+                    </Button>)}
+                </div>
+                <ButtonComp>+ADD</ButtonComp>
+            </div>
             <Underline color="#333" noMargin={type === 'department'} />
-            {type === "department" && (<Absolute top="30px" right="25px" onClick={() => setDropdowns('profile')}><Icon name="actionIcon" color="#333" /></Absolute>)}
             {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top />}
             {!freelancer && (
                 <NoUsersInList>
@@ -374,63 +423,72 @@ const Panel = ({
             </UserContainer>
             <StoryTable>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
-                    {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => (
-                        <div key={count}>
-                            <WhiteCard noMargin borderRadius="0px" row background="#F7F7F7">
-                                <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
-                                <DarkText noMargin> </DarkText>
-                                <DarkText noMargin center bold>STORY POINTS</DarkText>
-                                <DarkText noMargin center bold>ASSIGNEE</DarkText>
-                            </WhiteCard>
-                            <Droppable
-                                droppableId={tag.tag._id}
-                                type="COLUMN"
-                                direction="vertical"
-                                key={tag.tag._id}
-                            >
-                                {(provided) => (
-                                    <div {...provided.droppableProps} ref={provided.innerRef}>
-                                        {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
-                                            const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
-                                            return (
-                                                <Draggable draggableId={item._id} key={item._id} index={index} >
-                                                    {(provided) => {
-                                                        if (typeof provided.draggableProps.onTransitionEnd === "function") {
-                                                            queueMicrotask(() =>
-                                                                provided.draggableProps.onTransitionEnd?.({
-                                                                    propertyName: "transform"
-                                                                })
-                                                            );
-                                                        }
-                                                        return (
-                                                            <WhiteCard onClick={() => openAStory({ ...item, employee, tagName: tag?.tag?.tagName })} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row >
-                                                                <Absolute width="50%" left textOverflow="ellipsis"><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
-                                                                <DarkText noMargin> </DarkText>
-                                                                <DarkText noMargin> </DarkText>
-                                                                <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
-                                                                {/* <Image src={item.assignee.profilePic} radius="50%" width="34px"/> */}
-                                                                <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
-                                                            </WhiteCard>
-                                                        )
-                                                    }}
-                                                </Draggable>
-                                            )
-                                        }
-                                        )}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                            {tag.stories.length === 0 && (
-                                <WhiteCard onClick={() => {
-                                    updateCreateStoryForm({ tagId: tag.tag._id })
-                                    setCreateAStory(true)
-                                }} noMargin borderRadius="0px" height="24px" padding="10px 20px" row background="#FFF">
-                                    <DarkText noMargin center bold color="#2F76FF" clickable>+</DarkText>
+                    {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => {
+                        return (
+                            <div key={count}>
+                                <WhiteCard padding="10px 40px" noMargin borderRadius="0px" row background="#F7F7F7">
+                                    <DarkText noMargin bold>{tag?.tag?.tagName} ({tag.stories.length})</DarkText>
+                                    <DarkText noMargin> </DarkText>
+                                    <DarkText noMargin center bold>STORY POINTS</DarkText>
+                                    <DarkText noMargin center bold>ASSIGNEE</DarkText>
                                 </WhiteCard>
-                            )}
-                        </div>
-                    ))}
+                                {tag?.tag?.tagName.includes('To') && (
+                                    <WhiteCard onClick={() => {
+                                        updateCreateStoryForm({ tagId: tag.tag._id })
+                                        setCreateAStory(true)
+                                    }} noMargin borderRadius="0px" padding="10px 10px" row background="#FFF">
+                                        <DarkText className='d-flex align-items-center' noMargin bold color="#2F76FF" clickable><Sign className='text-primary pe-3'>+</Sign>ADD TASK</DarkText>
+                                    </WhiteCard>
+                                )}
+                                <Droppable
+                                    droppableId={tag.tag._id}
+                                    type="COLUMN"
+                                    direction="vertical"
+                                    key={tag.tag._id}
+                                >
+                                    {(provided, snapshot) => (
+                                        <div {...provided.droppableProps} ref={provided.innerRef} style={{
+                                            background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                                            padding: '1px 0px 0px 0px',
+                                            borderRadius: '4px',
+                                        }}>
+                                            {tag.stories.length > 0 && tag.stories.sort((a, b) => a.order - b.order).map((item, index) => {
+                                                const employee = dropdownList.find(e => e._id === (item.assigneeId || item.assignee))
+                                                return (
+                                                    <Draggable draggableId={item._id} key={item._id} index={index} >
+                                                        {(provided, snapshot) => {
+                                                            if (typeof provided.draggableProps.onTransitionEnd === "function") {
+                                                                queueMicrotask(() =>
+                                                                    provided.draggableProps.onTransitionEnd?.({
+                                                                        propertyName: "transform"
+                                                                    })
+                                                                );
+                                                            }
+                                                            const tagName = tag?.tag?.tagName
+                                                            return (
+                                                                <WhiteCard padding="20px 40px" onClick={() => openAStory({ ...item, employee, tagName: tagName })} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} clickable noMargin value={item} borderRadius="0px" row style={{
+                                                                    ...provided.draggableProps.style,
+                                                                    background: snapshot.isDragging ? '#eee' : 'white',
+                                                                }}>
+                                                                    <Absolute width="50%" left textOverflow="ellipsis"><i className="fa-thin fa-check" style={{ color: tagName.includes('To') ? "#D9D9D9" : tagName.includes('Done') ? "white" : "white", border: tagName.includes('To') ? "1px solid #D9D9D9" : '', backgroundColor: tagName.includes('Done') ? '#5DC26A' : tagName.includes('Progress') ? '#FFC24E' : '', borderRadius: "50%", height: "16px", display: "flex", alignItems: "center", padding: "3px 3px 1.7px 0", fontSize: "smaller", marginRight: "15px" }} ></i><DarkText clickable textOverflow="ellipsis" noMargin>{item?.taskName}</DarkText></Absolute>
+                                                                    <DarkText noMargin> </DarkText>
+                                                                    <DarkText noMargin> </DarkText>
+                                                                    <DarkText clickable noMargin center>{item?.storyPoints}</DarkText>
+                                                                    <DarkText noMargin row center>{employee?.FirstName || 'Unassigned'} {employee?.LastName || ''}</DarkText>
+                                                                </WhiteCard>
+                                                            )
+                                                        }}
+                                                    </Draggable>
+                                                )
+                                            }
+                                            )}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            </div>
+                        )
+                    })}
                 </DragDropContext>
                 {type === 'projects' && (
                     <>
@@ -454,7 +512,7 @@ const Panel = ({
                 <StoryModal user={user} content={{ ...selectedStory, department: selectedList }} submitComments={submitComments} onHide={setStoryModal} />
             )}
             {createAStory && (
-                <Modal onHide={() => setCreateAStory(false)} height="520px">
+                <Modal onHide={() => setCreateAStory(false)} height="520px" background="#D9D9D9">
                     <FormField
                         fieldType="input"
                         margin
@@ -466,7 +524,7 @@ const Panel = ({
                     >
                         TASK NAME(REQUIRED)
                     </FormField>
-                    <Grid3 margin="0px" width="95%" grid="2fr 1fr 1fr">
+                    <Grid3 margin="0px" width="95%" grid="2fr 2fr">
                         <FormField
                             fieldType="input"
                             margin
@@ -486,11 +544,28 @@ const Panel = ({
                             margin
                             fontSize='14px'
                             noMargin
-                            width="90%"
+                            width="100%"
                             onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
                             value={form?.priority}
                         >
                             PRIORITY
+                        </FormField>
+
+                    </Grid3>
+                    <Grid3 margin="0px" width="95%" grid="2fr 2fr">
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width="95%"
+                            dropdownList={searchDropdown}
+                            onChange={e => updateAssigee(e)}
+                            value={form?.assignee}
+                            clickType="assignee"
+                            onUpdate={updateCreateStoryForm}
+                        >
+                            ASSIGN TO
                         </FormField>
                         <FormField
                             fieldType="input"
@@ -507,20 +582,6 @@ const Panel = ({
                             STORY POINTS
                         </FormField>
                     </Grid3>
-                    <FormField
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="95%"
-                        dropdownList={searchDropdown}
-                        onChange={e => updateAssigee(e)}
-                        value={form?.assignee}
-                        clickType="assignee"
-                        onUpdate={updateCreateStoryForm}
-                    >
-                        ASSIGN TO
-                    </FormField>
                     <FormField
                         fieldType="input"
                         margin

@@ -117,7 +117,7 @@ const Dashboard = ({orders, token, cookies, userType}) => {
                             </div>
                             </SimpleBar>
                         </div>
-                        <ViewOrder open={open} setOpen={setOpen} selected={selected} cookies={cookies} token={token} cookies={cookies}/>
+                        <ViewOrder open={open} setOpen={setOpen} selected={selected} cookies={cookies} token={token} />
                     </div>
                 </div>
                 {userType !== 'Admin' && 
