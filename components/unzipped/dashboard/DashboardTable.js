@@ -59,7 +59,7 @@ const Row = styled.div`
 
 const StoryTable = styled.div``;
 
-const Panel = ({list, selectedList, type, projects=[], businesses, loading}) => {
+const Panel = ({list, selectedList, type, projects=[], businesses, loading, userType}) => {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const setDropdowns = (item) => {
@@ -109,7 +109,9 @@ const Panel = ({list, selectedList, type, projects=[], businesses, loading}) => 
                             block
                             type="lightgrey"
                             fontSize="13px"
-                            popout={[
+                            popout=
+                            {userType == 1 ?
+                              [
                                 {
                                     text: 'Details',
                                     onClick: () => console.log('ITEM 1'),
@@ -122,7 +124,22 @@ const Panel = ({list, selectedList, type, projects=[], businesses, loading}) => 
                                     text: 'Assign department',
                                     onClick: () => console.log('ITEM 3'),
                                 },
-                            ]}
+                              ] :
+                              [
+                                {
+                                    text: 'Log Time',
+                                    onClick: () => console.log('ITEM 1'),
+                                },
+                                {
+                                    text: 'view Project',
+                                    onClick: () => console.log('ITEM 2'),
+                                },
+                                {
+                                    text: 'View Work',
+                                    onClick: () => console.log('ITEM 3'),
+                                },
+                              ]
+                            }
                             iconRight>
                             Details
                         </Button>

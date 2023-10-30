@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Nav from '../../components/unzipped/header';
+import Nav from "../../components/unzipped/header";
 import Image from '../../components/ui/Image'
 import SearchBar from '../../components/ui/SearchBar'
 import {
@@ -15,8 +15,7 @@ import styled from 'styled-components';
 import { accountTypeEnum } from '../../server/enum/accountTypeEnum'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
 import MobileProjects from '../../components/unzipped/dashboard/MobileProjects';
-
-
+import useRole from '../../hooks/role'
 const Desktop = styled.div`
 @media(max-width: 680px) {
     display: none;
@@ -71,7 +70,7 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
     const [take, setTake] = useState(25)
     const [page, setPage] = useState(1)
     const [selected, setSelected] = useState(role)
-
+    // const userRole = useRole();
     const toggleRole = () => {
         if (role === accountTypeEnum.ADMIN) {
             if (selected === accountTypeEnum.FOUNDER) {
@@ -88,7 +87,6 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
             skip: (page - 1) * 25,
         }, access)
     }, [])
-
     // setTimeout(() => {  
     //     if (businesses.length === 0) {
     //         getBusinessList({
@@ -100,7 +98,7 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
 
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'100px'}/>
+            <Nav isSubMenu marginBottom={'160px'} />
             <Desktop>
                 <Title>
                     <TitleText title>Projects</TitleText>
@@ -114,10 +112,10 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
                     </Toggle>
                 </Title>
                 <SearchBar take={take} setTake={setTake} />
-                <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} />
+                <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} userType={selected} />
             </Desktop>
             <MobileDisplayBox>
-                <MobileProjects/>
+                <MobileProjects />
                 <MobileFreelancerFooter defaultSelected="Projects" />
             </MobileDisplayBox>
         </React.Fragment>

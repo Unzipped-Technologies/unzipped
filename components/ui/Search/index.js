@@ -96,6 +96,7 @@ const Search = ({
     const handleClearInput = () => {
         setInputValue('');
         onAction('');
+        onChange('');
     };
 
     const handleOnChange = e => {
