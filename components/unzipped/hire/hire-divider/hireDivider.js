@@ -7,6 +7,8 @@ import {
 } from "../../../ui/TextMaskInput/core/utilities";
 
 import { GoBack } from "../../../icons";
+import BackIcon from "../../../ui/icons/back";
+
 const Divider = styled.div`
     display: flex;
     width: 1052px;
@@ -47,18 +49,54 @@ const DivContain = styled.div`
         background: ${COLORS.hireDivider};
         margin-top: 1.25rem;
     }
-`
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
+`;
 
-const HireDivider = ({title}) => {
+const ResponsiveHeader = styled.div`
+    display: flex; 
+    flex-direction: row;
+    width: 100%; 
+    background: #FFF;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25); 
+    padding: 10px;
+    @media screen and (min-width: 600px) {
+        display: none;
+    }
+`;
+const NotificationText = styled.p`
+    color: #000;
+    font-family: Roboto;
+    font-size: ${({ fontSize }) => fontSize ? fontSize : '12px'};
+    font-style: normal;
+    font-weight: ${({ fontWeight }) => fontWeight ? fontWeight : '300'};
+    line-height: 19.5px;
+    letter-spacing: 0.15px;
+    text-transform: ${({ textTransform }) => textTransform ? textTransform : 'none'};
+    width: ${({ width }) => width ? width : '100%'};
+    text-align: ${({ textAlign }) => textAlign ? textAlign : 'left'};
+    margin-left: ${({ marginLeft }) => marginLeft ? marginLeft : '0'};
+`;
+
+const HireDivider = ({ title }) => {
     return (
-        <DivContain>
-            <Divider>
-                <NavBack> <GoBack /> </NavBack>
-                <NavTextContainer>
-                    <DividerText>{title}</DividerText>
-                </NavTextContainer>
-            </Divider>
-        </DivContain>
+        <>
+            <DivContain>
+                <Divider>
+                    <NavBack> <GoBack /> </NavBack>
+                    <NavTextContainer>
+                        <DividerText>{title}</DividerText>
+                    </NavTextContainer>
+                </Divider>
+            </DivContain>
+            <ResponsiveHeader>
+                <BackIcon color='#000' />
+                <NotificationText fontSize="16px" fontWeight="500" width="100%" marginLeft="20px">
+                    Confirm Payment Details
+                </NotificationText>
+            </ResponsiveHeader>
+        </>
     )
 }
 

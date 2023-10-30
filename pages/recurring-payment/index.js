@@ -9,17 +9,24 @@ import BusinessAddress from '../../components/unzipped/businessAddress';
 const Container = styled.div`
     display: flex;
     flex-flow: column;
-    margin-top: 6rem;
+    // margin-top: 6rem;
     justify-content: center;
 `;
-
+const RemoveNavBar = styled.div`
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
+`
 const RecurringPaymentPage = () => {
     return (
         <>
             <Head>
                 <title>Recurring Payment</title>
             </Head>
-            <Nav />
+            <RemoveNavBar>
+
+                <Nav />
+            </RemoveNavBar>
             <Container>
                 {/* <HireDivider title="Confirm Recurring Payment" /> */}
                 <RecurringPaymentComponent />

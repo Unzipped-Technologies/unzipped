@@ -49,6 +49,10 @@ const TitleText = styled.div`
     color: ${({ color }) => color ? color : theme.text2};
     margin-top: ${({ marginTop }) => marginTop ? marginTop : ''};
     padding-right: ${(paddingRight) => paddingRight ? paddingRight : ''}
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        display: flex;
+    }
 `;
 
 const DarkText = styled.div`
@@ -111,6 +115,10 @@ const Absolute = styled.div`
         position: unset;
         justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
     }
+
+    @media screen and (max-width: 600px){
+        position: absolute;
+    }
 `;
 
 const Underline = styled.div`
@@ -158,6 +166,11 @@ const WhiteCard = styled.div`
     margin-bottom: ${({ noMargin, half, marginBottom }) => noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => overflow ? overflow : overlayDesktop ? 'overlay' : 'visible'};
 }
+@media screen and (max-width: 600px){
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
 `;
 
 const SelectCard = styled.div`
@@ -203,6 +216,11 @@ const Grid2 = styled.div`
     grid-template-columns: 1fr 1fr;
     width: ${({ block }) => block ? '100%' : '80%'};
     margin: ${({ margin }) => margin ? margin : '75px 0px'};
+    @media screen and (max-width: 600px) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 `;
 
 const Grid3 = styled.div`
@@ -211,6 +229,11 @@ const Grid3 = styled.div`
     align-items: center;
     width: ${({ block, width }) => block ? '100%' : width ? width : '80%'};
     margin: ${({ margin }) => margin ? margin : '75px 0px'};
+    @media screen and (max-width: 600px) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 `;
 
 const Box = styled.div`
