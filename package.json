@@ -104,7 +104,7 @@
     "react-phone-number-input": "^3.2.13",
     "react-player": "^2.9.0",
     "react-redux": "^7.2.3",
-    "react-select": "^5.7.0",
+    "react-select": "^5.7.7",
     "react-spring": "^9.1.0",
     "react-stripe-checkout": "^2.6.3",
     "reactstrap": "^8.9.0",
@@ -115,7 +115,7 @@
     "sass": "^1.32.8",
     "sendgrid": "^5.2.3",
     "simplebar-react": "^2.3.3",
-    "stripe": "^8.142.0",
+    "stripe": "^8.222.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.6",
     "url-loader": "^4.1.1"

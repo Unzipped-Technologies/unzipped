@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import router from 'next/router';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+import styled from 'styled-components'
 import Nav from '../../components/unzipped/header';
 import ConversationContainer from '../../components/unzipped/ConversationContainer';
 import MessageContainer from '../../components/unzipped/MessageContainer';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'
 import {
     getConversationList,
-    sendMessage,
     selectConversation,
     getFreelancerById,
-    createTempFile
+    createTempFile,
+    updateChatStatus,
+    handleUnreadMessages,
 } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
-import styled from 'styled-components'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
-import ConversationContainerMobile from '../../components/unzipped/ConversationContainerMobile';
+import socket from '../../components/sockets/index'
 
 const MobileDisplayBox = styled.div`
     position: relative;
@@ -36,98 +38,101 @@ const Container = styled.div`
     grid-template-columns: 1fr 4fr;
     height: calc(100% - 127px);
     max-height: 100%;
-    @media(max-width: 680px) {
-        display: none;
-    }
 `;
 
 const Inbox = ({
     token,
     cookie,
     user,
-    // redux variables
     conversations,
+    selectedConversationId,
     selectedConversation,
-    // redux actions
+    messagesCount,
     getConversationList,
-    sendMessage,
     selectConversation,
     createTempFile,
+    updateChatStatus,
+    handleUnreadMessages,
 }) => {
+    const [onlineUsers, setOnlineUsers] = useState([])
     const access = token.access_token || cookie
     const [form, setForm] = useState({
         filter: {},
         skip: 0,
         take: 25
     })
-    const [marginBottom, setMarginBottom] = useState('0px');
-
-    const createNewFile = (data) => {
-        createTempFile(data, access)
-    }
-
-    const openConversation = (id) => {
-        selectConversation(id, access)
-    }
-
-    const sendMessageToUser = (form) => {
-        sendMessage({
-            sender: {
-                userId: form.senderId,
-                isInitiated: true
-            },
-            receiver: {
-                userId: form.receiverId
-            },
-            message: form.message,
-            attachment: form.attachment,
-            conversationId: selectedConversation._id || null
-        }, access)
-    }
+    const [messageLimit, setMessageLimit] = useState(0)
+    const [conversationId, setConversationId] = useState(selectedConversationId)
 
     useEffect(() => {
         if (!access) {
             router.push('/login')
         }
         getConversationList(form, access)
-
-        const handleResize = () => {
-            if (window.innerWidth < 680) {
-                setMarginBottom('98px');
+        socket.emit('userConnected', user._id);
+        socket.on('updateOnlineUsers', (onlineUsers) => {
+            setOnlineUsers(Object.keys(onlineUsers))
+        });
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                socket.emit('userConnected', user._id);
             } else {
-                setMarginBottom('128px');
+                socket.emit('updateOnlineUsers');
             }
         };
-
-        // Add an event listener for window resize
-        window.addEventListener('resize', handleResize);
-
-        // Initial call to set the marginBottom based on the current window width
-        handleResize();
-
-        // Remove the event listener when the component unmounts
+        document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => {
-            window.removeEventListener('resize', handleResize);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [])
 
+    const createNewFile = (data) => {
+        createTempFile(data, access)
+    }
 
+    const openConversation = (id) => {
+        setConversationId(id)
+        setMessageLimit(10)
+        selectConversation(id, access, 10)
+    }
 
+    const handleMute = (status) => {
+        updateChatStatus("isMute", status, selectedConversation._id, access)
+    }
+    const handleArchive = async (status) => {
+        updateChatStatus("isArchived", status, selectedConversation._id, access)
+    }
+
+    const handleUnreadCount = (selectedConversation) => {
+        handleUnreadMessages(selectedConversation)
+    }
+
+    const handleMessagesOnScroll = () => {
+        setMessageLimit(prevLimit => prevLimit + 10);
+        selectConversation(conversationId, access, +messageLimit + 10)
+    }
     return (
         <Page>
-            <Nav isSubMenu marginBottom={marginBottom} />
+            <Nav isSubMenu />
             <Container>
-                <ConversationContainer conversations={conversations} userEmail={user.email} openConversation={openConversation} />
+                <ConversationContainer conversations={conversations} userEmail={user.email} userId={user._id} openConversation={openConversation} />
                 <MessageContainer
                     data={selectedConversation}
                     userEmail={user.email}
                     userId={user._id}
-                    sendMessageToUser={sendMessageToUser}
                     createTempFile={createNewFile}
+                    handleChatArchive={handleArchive}
+                    handleChatMute={handleMute}
+                    access={access}
+                    socket={socket}
+                    onlineUsers={onlineUsers}
+                    handleUnreadCount={handleUnreadCount}
+                    messagesCount={messagesCount}
+                    messageLimit={messageLimit}
+                    handleMessagesOnScroll={handleMessagesOnScroll}
                 />
             </Container>
             <MobileDisplayBox>
-                <ConversationContainerMobile conversations={conversations} userEmail={user.email} openConversation={openConversation} />
                 <MobileFreelancerFooter defaultSelected="Messages" />
             </MobileDisplayBox>
         </Page>
@@ -136,7 +141,6 @@ const Inbox = ({
 
 Inbox.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-
     return {
         token: token && token,
     }
@@ -148,16 +152,19 @@ const mapStateToProps = (state) => {
         user: state.Auth?.user,
         conversations: state.Messages?.conversations,
         selectedConversation: state.Messages?.selectedConversation,
+        messagesCount: state.Messages?.messagesCount,
+        selectedConversationId: state.Messages?.conversationId,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getConversationList: bindActionCreators(getConversationList, dispatch),
-        sendMessage: bindActionCreators(sendMessage, dispatch),
         selectConversation: bindActionCreators(selectConversation, dispatch),
         getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
         createTempFile: bindActionCreators(createTempFile, dispatch),
+        updateChatStatus: bindActionCreators(updateChatStatus, dispatch),
+        handleUnreadMessages: bindActionCreators(handleUnreadMessages, dispatch)
     }
 }
 

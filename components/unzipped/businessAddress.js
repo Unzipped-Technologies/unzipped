@@ -62,7 +62,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                         noMargin
                         width="90%"
                         onChange={(e) => updateSubscription({ BusinessAddressLineCountry: e.target.value })}
-                        value={form.BusinessAddressLineCountry}
+                        value={form?.BusinessAddressLineCountry}
                     >
                         COUNTRY/REGION
                     </FormField>
@@ -74,7 +74,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                         noMargin
                         width="80%"
                         onChange={(e) => updateSubscription({ BusinessFirstName: e.target.value })}
-                        value={form.BusinessFirstName}
+                        value={form?.BusinessFirstName}
                     >
                         FIRST NAME
                     </FormField>
@@ -85,7 +85,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                         noMargin
                         width="80%"
                         onChange={(e) => updateSubscription({ BusinessLastName: e.target.value })}
-                        value={form.BusinessLastName}
+                        value={form?.BusinessLastName}
                     >
                         LAST NAME
                     </FormField>
@@ -97,7 +97,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                         noMargin
                         width="90%"
                         onChange={(e) => updateSubscription({ BusinessAddressLineOne: e.target.value })}
-                        value={form.BusinessAddressLineOne}
+                        value={form?.BusinessAddressLineOne}
                     >
                         ADDRESS
                     </FormField>
@@ -108,7 +108,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                         noMargin
                         width="90%"
                         onChange={(e) => updateSubscription({ BusinessAddressLineTwo: e.target.value })}
-                        value={form.BusinessAddressLineTwo}
+                        value={form?.BusinessAddressLineTwo}
                     >
                         APPARTMENT, SUITE, ETC.
                     </FormField>
@@ -120,7 +120,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                             noMargin
                             width="80%"
                             onChange={(e) => updateSubscription({ BusinessAddressCity: e.target.value })}
-                            value={form.BusinessAddressCity}
+                            value={form?.BusinessAddressCity}
                         >
                             CITY
                         </FormField>
@@ -131,7 +131,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                             noMargin
                             width="80%"
                             onChange={(e) => updateSubscription({ BusinessAddressState: e.target.value })}
-                            value={form.BusinessAddressState}
+                            value={form?.BusinessAddressState}
                         >
                             STATE
                         </FormField>
@@ -142,7 +142,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                             noMargin
                             width="70%"
                             onChange={(e) => updateSubscription({ BusinessAddressZip: e.target.value })}
-                            value={form.BusinessAddressZip}
+                            value={form?.BusinessAddressZip}
                         >
                             ZIP CODE
                         </FormField>
@@ -154,7 +154,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                         noMargin
                         width="90%"
                         onChange={(e) => updateSubscription({ BusinessAddressPhone: e.target.value })}
-                        value={form.BusinessAddressPhone}
+                        value={form?.BusinessAddressPhone}
                     >
                         PHONE
                     </FormField>

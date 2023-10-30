@@ -90,8 +90,8 @@ const Tasklist = ({
     }, [])
 
     return (
-        <React.Fragment>
-            <Nav isSubMenu/>
+        <>
+            <Nav marginBottom={'188px'} isSubMenu/>
             <ListPanel 
                 departments={departments} 
                 updateTasksOrder={updateTasksOrder} 
@@ -118,7 +118,7 @@ const Tasklist = ({
                 selectList={selectDepartment}
                 type="department"
             />
-        </React.Fragment>
+        </>
     )
 }
 
