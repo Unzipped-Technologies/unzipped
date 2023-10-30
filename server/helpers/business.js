@@ -19,14 +19,14 @@ const createBusiness = async (data, id) => {
     // create department management and assign main user to it
     const dep = await departmentHelper.addDepartmentToBusiness({
         name: 'Management',
-        businessId: newBusiness.id,
+        businessId: newBusiness._id,
         userId: id,
-        tags: await tags.find({ businessId: newBusiness.id })
+        tags: await tags.find({ businessId: newBusiness._id })
     })
     // associate department with business
-    await business.findByIdAndUpdate(newBusiness.id, {
-        departments: [await department.findById(dep.id)],
-        audience: await businessAudience.findById(audience.id)
+    await business.findByIdAndUpdate(newBusiness._id, {
+        // departments: [await department.findById(dep._id)],
+        audience: await businessAudience.findById(audience._id)
     })
     return { msg: 'business created successfully' }
 }
@@ -45,10 +45,24 @@ const deleteBusiness = async (id) => {
 
 const getBusinessById = async (id, sub) => {
     try {
-        await business.updateMany({ userId: sub }, { $set: { isSelected: false } })
-        const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } })
-        const getUsers = await user.find({ _id: { $in: getBusiness.employees.map(e => e.profile) } }).select('email FirstName LastName profileImage freelancers')
-        return { ...getBusiness._doc, employees: getUsers, isSelected: true }
+        await business.updateMany({ userId: sub }, { $set: { isSelected: false } });
+        const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } });
+        const populatedBusiness = await getBusiness
+            .populate({
+                path: 'employees',
+                model: 'contracts',
+                populate: {
+                    path: 'freelancerId',
+                    model: 'freelancers',
+                    populate: {
+                        path: 'userId',
+                        model: 'users',
+                        select: 'email FirstName LastName profileImage freelancers'
+                    }
+                }
+            })
+            .execPopulate();
+        return { getBusiness: populatedBusiness };
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     }

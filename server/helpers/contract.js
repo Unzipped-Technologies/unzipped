@@ -1,4 +1,4 @@
-const Contracts = require('../../models/Contract'); 
+const Contracts = require('../../models/Contract');
 const Business = require('../../models/Business');
 const ThirdPartyApplications = require('../../models/ThirdPartyApplications');
 const PaymentMethod = require('../../models/paymentMethod')
@@ -135,17 +135,18 @@ const updateContractByFreelancer = async ({ _id, freelancerId, newIsOfferAccepte
             { $set: { isOfferAccepted: newIsOfferAcceptedValue } },
             { new: true }
         );
-        const userId = updatedContract.userId
+        const { userId, businessId } = updatedContract
+        console.log(updatedContract,"updatedCont")
         const updatedBusiness = await Business.findOneAndUpdate(
-            { userId },
+            { _id: businessId },
             { $push: { employees: updatedContract?._id } },
             { new: true }
         );
-
+            console.log(updatedBusiness,"busi")
         if (!updatedContract) {
             throw Error('Contract not found')
         }
-        return { updatedContract, updatedBusiness };
+        return { updatedContract };
     } catch (e) {
         throw Error(`Could not update contract, error: ${e}`);
     }
@@ -158,7 +159,7 @@ const endContract = async (id) => {
             { $set: { isActive: false } },
             { new: true }
         );
-        if(!updatedContract){
+        if (!updatedContract) {
             throw Error('Contract not found')
         }
         return updatedContract;
