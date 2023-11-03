@@ -65,12 +65,34 @@ const Right = styled.div`
     background: ${({ selected }) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
 `;
 
-const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loading }) => {
+const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) => {
     const access = token?.access_token || cookie
     const [take, setTake] = useState(25)
     const [page, setPage] = useState(1)
-    const [selected, setSelected] = useState(role)
-    // const userRole = useRole();
+    const [selected, setSelected] = useState(null)
+
+    useEffect(() => {
+        if (role === accountTypeEnum.ADMIN) {
+            setSelected(accountTypeEnum.FOUNDER)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (selected == 0) {
+            getBusinessList({
+                take: take,
+                skip: (page - 1) * 25,
+            }, access, selected, _id)
+        }
+        else if (selected == 1) {
+            console.log("investor")
+            getBusinessList({
+                take: take,
+                skip: (page - 1) * 25,
+            }, access_token, selected, _id)
+        }
+    }, [selected])
+
     const toggleRole = () => {
         if (role === accountTypeEnum.ADMIN) {
             if (selected === accountTypeEnum.FOUNDER) {
@@ -81,16 +103,9 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
         }
     }
 
-    useEffect(() => {
-        getBusinessList({
-            take: take,
-            skip: (page - 1) * 25,
-        }, access)
-    }, [])
-
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'160px'}/>
+            <Nav isSubMenu marginBottom={'160px'} />
             <Desktop>
                 <Title>
                     <TitleText title>Projects</TitleText>
@@ -116,14 +131,16 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
 
 Projects.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-
     return {
         token: token && token,
     }
 }
 
 const mapStateToProps = (state) => {
+    console.log(state.Auth)
     return {
+        _id: state.Auth.user._id,
+        access_token: state.Auth.token,
         businesses: state.Business?.businesses,
         loading: state.Business?.loading,
         role: state.Auth.user.role,

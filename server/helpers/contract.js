@@ -4,6 +4,7 @@ const ThirdPartyApplications = require('../../models/ThirdPartyApplications');
 const PaymentMethod = require('../../models/paymentMethod')
 const mongoose = require('mongoose');
 const keys = require('../../config/keys');
+const Department = require('../../models/Department');
 const stripe = require('stripe')(`${keys.stripeSecretKey}`);
 
 const createContracts = async (data) => {
@@ -135,14 +136,20 @@ const updateContractByFreelancer = async ({ _id, freelancerId, newIsOfferAccepte
             { $set: { isOfferAccepted: newIsOfferAcceptedValue } },
             { new: true }
         );
-        const { userId, businessId } = updatedContract
-        console.log(updatedContract,"updatedCont")
-        const updatedBusiness = await Business.findOneAndUpdate(
+        const { departmentId, businessId } = updatedContract
+        await Business.findOneAndUpdate(
             { _id: businessId },
-            { $push: { employees: updatedContract?._id } },
+            { $addToSet: { employees: updatedContract?._id } },
             { new: true }
         );
-            console.log(updatedBusiness,"busi")
+
+        await Department.findOneAndUpdate(
+            { _id: departmentId },
+            { $addToSet: { employees: updatedContract?._id } },
+            { new: true }
+        );
+
+
         if (!updatedContract) {
             throw Error('Contract not found')
         }

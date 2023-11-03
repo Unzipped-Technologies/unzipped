@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const { softDeletePlugin } = require('soft-delete-plugin-mongoose');
 
 const taskHoursSchema = new Schema({
-  freelancerId: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: 'users',  
     required: true,
@@ -16,16 +17,16 @@ const taskHoursSchema = new Schema({
     type: Number,
     required: true,
   },
-  businessId: {
-    type: String,
-    required: true,
-  },
   departmentId: {
     type: String,
     required: true,
   },
+  updatedAt: {
+    type: Date,
+    default: new Date(),
+  }
 }, {
-  timestamps: true  
+  timestamps: { createdAt: true, updatedAt: false } 
 });
-
-module.exports = mongoose.model('taskhours', taskHoursSchema);
+taskHoursSchema.plugin(softDeletePlugin)
+module.exports  = mongoose.model('taskhours', taskHoursSchema);

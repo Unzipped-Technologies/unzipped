@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
@@ -21,13 +21,14 @@ import Dropdowns from '../../ui/Dropdowns'
 import Projects from '../../../pages/dashboard/projects'
 import { ValidationUtils } from '../../../utils'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { useRouter } from 'next/router';
 
 const Container = styled.div`
     position: relative;
     display: flex;
     flex-flow: column;
     border: 1px solid #D9D9D9;
-    background: ${({background}) => background ? background : '#D9D9D9'};
+    background: ${({ background }) => background ? background : '#D9D9D9'};
     width: 95%;
     max-height: 900px;
     padding: 20px 0px;
@@ -59,17 +60,17 @@ const Row = styled.div`
 
 const StoryTable = styled.div``;
 
-const Panel = ({list, selectedList, type, projects=[], businesses, loading, userType}) => {
+const Panel = ({ list, selectedList, type, projects = [], businesses, loading, userType }) => {
     const [menuOpen, setMenuOpen] = useState(false)
-
+    const router = useRouter();
     const setDropdowns = (item) => {
-        setTimeout(function() { 
+        setTimeout(function () {
             setMenuOpen(item)
         }, 500);
     }
 
     const setCloseDropdowns = (time) => {
-        setTimeout(function() { 
+        setTimeout(function () {
             setMenuOpen(false)
         }, (time || 500));
     }
@@ -86,15 +87,15 @@ const Panel = ({list, selectedList, type, projects=[], businesses, loading, user
                 <DarkText noMargin center bold>Deadline</DarkText>
                 <DarkText noMargin center bold>Actions</DarkText>
             </TableTitle>
-            <Underline color="#333" noMargin/>   
+            <Underline color="#333" noMargin />
             <StoryTable>
                 {businesses.length === 0 && loading && <Box><CircularProgress /></Box>}
                 {businesses.length === 0 && <Box>Start a project and you will see it here...</Box>}
                 {businesses.length > 0 && businesses.map((item, index) => (
                     <WhiteCard noMargin borderRadius="0px" row background={!ValidationUtils.checkNumberEven(index) ? "#F7F7F7" : "#fff"}>
-                            <Absolute width="45%" wideLeft textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
-                            <DarkText noMargin> </DarkText>
-                            <DarkText noMargin> </DarkText>
+                        <Absolute width="45%" wideLeft textOverflow="ellipsis"><DarkText textOverflow="ellipsis" noMargin>{item.name}</DarkText></Absolute>
+                        <DarkText noMargin> </DarkText>
+                        <DarkText noMargin> </DarkText>
                         <DarkText noMargin center>${(item.budget || 0).toLocaleString()}</DarkText>
                         <DarkText noMargin center>{item?.equity || 0}%</DarkText>
                         <DarkText noMargin center>27</DarkText>
@@ -102,47 +103,47 @@ const Panel = ({list, selectedList, type, projects=[], businesses, loading, user
                         <DarkText noMargin center>{(item?.deadline && ValidationUtils.formatDate(item?.deadline)) || ValidationUtils.formatDate(item?.updatedAt || item?.createdAt)}</DarkText>
                         <DarkText noMargin center></DarkText>
                         <Absolute>
-                        <Button
-                            icon="largeExpand"
-                            popoutWidth="150px"
-                            noBorder
-                            block
-                            type="lightgrey"
-                            fontSize="13px"
-                            popout=
-                            {userType == 1 ?
-                              [
-                                {
-                                    text: 'Details',
-                                    onClick: () => console.log('ITEM 1'),
-                                },
-                                {
-                                    text: 'Delete Job',
-                                    onClick: () => console.log('ITEM 2'),
-                                },
-                                {
-                                    text: 'Assign department',
-                                    onClick: () => console.log('ITEM 3'),
-                                },
-                              ] :
-                              [
-                                {
-                                    text: 'Log Time',
-                                    onClick: () => console.log('ITEM 1'),
-                                },
-                                {
-                                    text: 'view Project',
-                                    onClick: () => console.log('ITEM 2'),
-                                },
-                                {
-                                    text: 'View Work',
-                                    onClick: () => console.log('ITEM 3'),
-                                },
-                              ]
-                            }
-                            iconRight>
-                            Details
-                        </Button>
+                            <Button
+                                icon="largeExpand"
+                                popoutWidth="150px"
+                                noBorder
+                                block
+                                type="lightgrey"
+                                fontSize="13px"
+                                popout=
+                                {userType == 0 || userType == 2 ?
+                                    [
+                                        {
+                                            text: 'Details',
+                                            onClick: () => console.log('ITEM 1'),
+                                        },
+                                        {
+                                            text: 'Delete Job',
+                                            onClick: () => console.log('ITEM 2'),
+                                        },
+                                        {
+                                            text: 'Assign department',
+                                            onClick: () => console.log('ITEM 3'),
+                                        },
+                                    ] :
+                                    [
+                                        {
+                                            text: 'Log Time',
+                                            onClick: () => router.push(`projects/invoice/${item._id}`),
+                                        },
+                                        {
+                                            text: 'view Project',
+                                            onClick: () => console.log('ITEM 2'),
+                                        },
+                                        {
+                                            text: 'View Work',
+                                            onClick: () => console.log('ITEM 3'),
+                                        },
+                                    ]
+                                }
+                                iconRight>
+                                Details
+                            </Button>
                         </Absolute>
                     </WhiteCard>
                 ))}

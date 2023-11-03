@@ -1,33 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
     DarkText,
     Absolute,
-    WhiteCard,
-    Underline,
     Grid3,
 } from '../style'
 import { FaRegCheckCircle } from 'react-icons/fa';
-import StoryModal from '../StoryModal'
-import {
-    WorkIcon
-} from '../../../icons'
-import FreelancerCard from '../FreelancerCard'
-import Icon from '../../../ui/Icon'
 import Button from '../../../ui/Button'
 import FormField from '../../../ui/FormField'
 import Modal from '../../../ui/Modal'
-// import Image from '../../ui/Image'
-import Dropdowns from '../../../ui/Dropdowns'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-// import Projects from '../../../pages/dashboard/projects'
-import { ValidationUtils } from '../../../../utils'
 import AddInvoiceTask from '../../../ui/icons/addInvoiceTask'
-import TickCircleTask from '../../../ui/icons/tickCircleTask'
-
-// import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
 
 const Title = styled.div`
     display: flex;
@@ -45,18 +29,20 @@ const Toggle = styled.div`
     border-radius: 5px;
     overflow: hidden;
 `;
+
 const P = styled.p`
-font-size: ${({ fontSize }) => fontSize ? fontSize : '16px'};
-font-weight: ${({ fontWeight }) => fontWeight ? fontWeight : ''};
-color: ${({ color }) => color ? color : 'black'};
-background: ${({ background }) => background ? background : ''};
-padding: ${({ padding }) => padding ? padding : ''};
-margin: ${({ margin }) => margin ? margin : ''};
-text-align: ${({ align }) => align ? align : ''};
-border-bottom: ${({ borderBottom }) => borderBottom ? borderBottom : ''};
-right: ${({ right }) => right ? right : ''};
-width: ${({ width }) => width ? width : ''};
-`
+    font-size: ${({ fontSize }) => fontSize ? fontSize : '16px'};
+    font-weight: ${({ fontWeight }) => fontWeight ? fontWeight : ''};
+    color: ${({ color }) => color ? color : 'black'};
+    background: ${({ background }) => background ? background : ''};
+    padding: ${({ padding }) => padding ? padding : ''};
+    margin: ${({ margin }) => margin ? margin : ''};
+    text-align: ${({ align }) => align ? align : ''};
+    border-bottom: ${({ borderBottom }) => borderBottom ? borderBottom : ''};
+    right: ${({ right }) => right ? right : ''};
+    width: ${({ width }) => width ? width : ''};
+`;
+
 const Left = styled.div`
     display: flex;
     justify-content: center;
@@ -67,6 +53,7 @@ const Left = styled.div`
     width: 100%;
     background: ${({ displayFormat }) => !displayFormat ? '#5E99D4' : 'transparent'}
 `;
+
 const Right = styled.div`
     display: flex;
     justify-content: center;
@@ -84,220 +71,116 @@ const Container = styled.div`
     margin-bottom: 100px;
     background: ${({ background }) => background ? background : ''};
 `;
+
 const DragDiv = styled.div`
-width: 830px;
-align-self: center;
-border-right: 1px solid #D9D9D9; 
-border-left: 1px solid #D9D9D9; 
-`
-const NoUsersInList = styled.div`
-    display: flex;
-    flex-flow: column;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
+    width: 830px;
+    align-self: center;
+    border-right: 1px solid #D9D9D9; 
+    border-left: 1px solid #D9D9D9; 
 `;
 
-const UserContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-flow: column;
-`;
 const TableTop = styled.div`
-padding : 20px 30px;
-border-radius: 10px 10px 0 0;
-display:flex;
-border: 1px solid #D9D9D9;
+    padding : 20px 30px;
+    border-radius: 10px 10px 0 0;
+    display:flex;
+    border: 1px solid #D9D9D9;
     background-color: rgba(217, 217, 217, 0.36);
     justify-content: space-between;
     width: 830px;
     align-self: center;
 `;
-const Row = styled.div`
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    position: relative;
-`;
+
 const ButtonComp = styled.button`
-border:0;
-background:#1976D2;
-border-radius:5px;
-color:white;
-font-weight: 500;
-padding: 6px 22px;
-height: fit-content;
-align-self: center;
-`
-const Sign = styled.span`
-    margin-right:15px;
-    font-size:14px;
-    border: 1px solid;
-    padding: 4px 0px 3px 3.5px;
-    border-radius: 50%;
-    height: 16px;
-    display: flex;
-    width: 17px;
-    align-items: center;
-`
-
-const StoryTable = styled.div`
-border: 1px solid rgba(217, 217, 217, 0.25);
-    border-radius: 0px 0px 15px 15px;
-    background: rgba(217, 217, 217, 0.25);
-    padding-bottom: 10px;
+    border:0;
+    background:#1976D2;
+    border-radius:5px;
+    color:white;
+    font-weight: 500;
+    padding: 6px 22px;
+    height: fit-content;
+    align-self: center;
 `;
+
 const DaysDiv = styled.div`
-padding: 20px 30px;
-display: flex;
-border-bottom: 1px solid #D9D9D9;
-border-right: 1px solid #D9D9D9;
-background-color: #F7F7F7;
-justify-content: space-between;
-border-left: 1px solid #D9D9D9;
-`
-
-
-// const freelancer = [
-//     {
-//         name: 'James Cameron',
-//         type: 'Full Stack Web Developer',
-//         country: 'United States',
-//         skills: [
-//             'React',
-//             'Node.js',
-//             'Web 3',
-//             'AWS',
-//             'UI/UX'
-//         ],
-//         cover: `I have been a developer for over 20 years. I have worked on many
-//         large projects and I have contributed superior quality features and improved
-//         ROI for many developers.`,
-//         profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-//         isInvited: true,
-//     },
-//     {
-//         name: 'Stefano Campagna',
-//         type: 'Tutor',
-//         country: 'United States',
-//         skills: [
-//             'React',
-//             'Taking Calls',
-//             'Web 3',
-//             'AWS',
-//             'UI/UX'
-//         ],
-//         cover: `I have been a developer for over 20 years. I have worked on many
-//         large projects and I have contributed superior quality features and improved
-//         ROI for many developers.`,
-//         profilePic: '/img/testimonial_1.jpg',
-//         isInvited: false
-//     },
-//     {
-//         name: 'James Cameron',
-//         type: 'Full Stack Web Developer',
-//         country: 'United States',
-//         skills: [
-//             'React',
-//             'Node.js',
-//             'Web 3',
-//             'AWS',
-//             'UI/UX'
-//         ],
-//         cover: `I have been a developer for over 20 years. I have worked on many
-//         large projects and I have contributed superior quality features and improved
-//         ROI for many developers.`,
-//         profilePic: '/img/testimonial_12.jpg',
-//         isInvited: false
-//     },
-// ]
-
-// const setTagsAndStories = ({ tags = [], stories = [] }) => {
-//     const storyOrder = []
-//     const story = tags.map(item => {
-//         const orderStories = stories.filter(e => item._id === (e?.tag?._id || e?.tag)).sort((a, b) => a.order - b.order).map((e, index) => {
-//             return {
-//                 ...e,
-//                 order: index
-//             }
-//         })
-//         storyOrder.push(orderStories)
-//         return {
-//             tag: item,
-//             stories: orderStories
-//         }
-//     })
-//     return story
-// }
+    padding: 20px 30px;
+    display: flex;
+    border-bottom: 1px solid #D9D9D9;
+    border-right: 1px solid #D9D9D9;
+    background-color: #F7F7F7;
+    justify-content: space-between;
+    border-left: 1px solid #D9D9D9;
+`;
 
 const Templates = ({
-    list,
-    selectedList,
-    type,
-    projects = [],
-    tags = [],
-    stories = [],
-    reorderStories,
-    access,
-    updateTasksOrder,
-    onBack,
-    dropdownList = [],
-    loading = false,
-    user,
-    updateCreateStoryForm,
-    addCommentToStory,
-    createNewStory,
-    form,
-    weekOptions, sortedData, handleWeekChange, projectName, handleShowInvoice
+    weekOptions, invoiceTags, sortedData, handleWeekChange, projectName, handleShowInvoice, handleUpdatedAt, handleHours, handleTaskStatus, startDate, id, createTaskAndAddToTaskHours
 }) => {
-    // const [menuOpen, setMenuOpen] = useState(false)
-    // const [storyList, setStoryList] = useState([])
-    const [pointsDropdown, setPointsDropdown] = useState([1, 2, 3, 5, 8])
-    const [searchDropdown, setSearchDropdown] = useState([1, 2, 3, 5, 8])
-    // const [tagsDropdown, setTagsDropdown] = useState(tags);
     const [createTask, setCreateTask] = useState(false);
-
+    const [updatedTagsShow, setUpdatedTagsShow] = useState(false)
     const [data, setData] = useState({ ...sortedData })
     const [displayFormat, setDisplayFormat] = useState(false)
+    const [updateHoursShow, setUpdateHoursShow] = useState(false);
+    const [selectedTask, setSelectedTask] = useState({});
+    const [isCurrenWeek, setIsCurrentWeek] = useState(false)
+    const [taskForm, setTaskForm] = useState({
+        departmentId: "",
+        taskName: "",
+        storyPoints: null,
+        priority: null,
+        description: "",
+        tagName: "Select Tag",
+        tagId: "",
+        assigneeId: "",
+        updatedAt: "",
+        createdAt: "",
+        hours: null,
+    })
+    useEffect(() => {
+        if (startDate) {
+            const currentDate = new Date();
+            const startOfWeek = new Date(currentDate);
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+            const isStartOfWeek = startDate?.toDateString() === startOfWeek?.toDateString();
+            setIsCurrentWeek(isStartOfWeek)
+        }
+    }, [startDate])
+
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     useEffect(() => {
         setData(sortedData)
     }, [sortedData])
+
     const toggleDisplayFormat = () => {
         setDisplayFormat(!displayFormat)
     }
-    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     const onDragEnd = (result) => {
+        if (!isCurrenWeek) {
+            return
+        }
         if (!result.destination) {
             return;
         }
         const { source, destination, draggableId } = result;
         const sourceDay = source.droppableId;
         const destinationDay = destination.droppableId;
-
         const ifExists = data[destinationDay].find(obj => obj._id === draggableId)
         if (ifExists)
             return;
         const sourceDayIndex = daysOfWeek.indexOf(sourceDay);
         const destinationDayIndex = daysOfWeek.indexOf(destinationDay);
-
         const objectToMoveIndex = data[sourceDay].findIndex(obj => obj._id === result.draggableId);
         if (objectToMoveIndex !== -1) {
             const objectToMove = { ...data[sourceDay][objectToMoveIndex] };
-
             const daysDifference = destinationDayIndex - sourceDayIndex;
-
             const currentDate = new Date(objectToMove.updatedAt);
-
             currentDate.setDate(currentDate.getDate() + daysDifference);
             objectToMove.updatedAt = currentDate.toISOString();
             objectToMove.date = currentDate.toISOString();
-
+            handleUpdatedAt(objectToMove)
             const updatedSourceDay = [...data[sourceDay]];
             updatedSourceDay.splice(objectToMoveIndex, 1);
             const updatedDestinationDay = [...data[destinationDay], objectToMove];
-
             setData(prevData => ({
                 ...prevData,
                 [sourceDay]: updatedSourceDay,
@@ -306,16 +189,25 @@ const Templates = ({
         }
     };
 
-    const onSubmit = () => {
-        // createNewStory()
-        setCreateTask(false)
+    const handleAddModal = (day) => {
+        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const daysToAdd = daysOfWeek.indexOf(day.slice(0, 3));
+        if (daysToAdd !== -1) {
+            const date = new Date(startDate);
+            date.setDate(date.getDate() + daysToAdd);
+            const dateIso = new Date(date);
+            const isoString = dateIso.toISOString();
+            setTaskForm((prev) => ({
+                ...prev,
+                updatedAt: isoString,
+                createdAt: isoString,
+                departmentId: invoiceTags[0].departmentId,
+                assigneeId: id,
+            }));
+            setCreateTask(true);
+        }
     }
 
-    const [day, setDay] = useState()
-    const handleAddModal = (day) => {
-        setDay(day);
-        setCreateTask(true)
-    }
     return (
         <Container >
             <Title>
@@ -338,7 +230,7 @@ const Templates = ({
                         </option>
                     ))}
                 </select>
-                <ButtonComp onClick={()=>{handleShowInvoice(true)}}>SUBMIT</ButtonComp>
+                <ButtonComp onClick={() => { handleShowInvoice(true) }}>SUBMIT</ButtonComp>
             </TableTop>
             <DragDropContext onDragEnd={onDragEnd} >
                 <DragDiv>
@@ -349,7 +241,7 @@ const Templates = ({
                                     <P margin='0px' fontWeight='500' width={'20%'}> {day.toUpperCase()} </P>
                                     <P margin='0px' fontWeight='500' > TIME SPENT </P>
                                     <P margin='0px' fontWeight='500' > STORY POINTS </P>
-                                    <span onClick={() => (handleAddModal(day))} ><AddInvoiceTask /></span>
+                                    {isCurrenWeek ? <span onClick={() => (handleAddModal(day))} ><AddInvoiceTask /></span> : <span></span>}
                                 </DaysDiv>
                                 <Droppable droppableId={day} key={day}>
                                     {(provided, snapshot) => (
@@ -367,17 +259,51 @@ const Templates = ({
                                                         <div
                                                             style={{
                                                                 ...provided.draggableProps.style,
-                                                                background: snapshot.isDragging ? 'red' : 'white', 
+                                                                background: snapshot.isDragging ? 'red' : 'white',
+                                                                position: "relative"
                                                             }}
                                                             ref={provided.innerRef}
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
-                                                            className="d-flex align-items-center draggable-item border bg-white py-4 px-2"
+                                                            className="d-flex align-items-center draggable-item border bg-white py-3 px-2"
                                                         >
-                                                            <FaRegCheckCircle size={15} color="#D8D8D8" />
-                                                            <P margin='0px' padding='0 0 0 10px' width={'37%'} fontWeight='500'> {item.name} </P>
-                                                            <P margin='0px' width={'31%'} fontWeight='300'> {item.hours} HOURS</P>
-                                                            <P margin='0px' fontWeight='500'> 4</P>
+                                                            <FaRegCheckCircle size={15} color={item.tagName.includes('In') ? '#FFA500' : item.tagName.includes('Done') ? '#198754' : '#D8D8D8'} />
+                                                            <P margin='0px' padding='0 0 0 10px' width={'38%'} fontWeight='500'> {item.taskName} </P>
+                                                            <P margin='0px' width={'33%'} fontWeight='300'> {item.hours} HOURS</P>
+                                                            <P margin='0px' width={'15%'} fontWeight='500'> {item.storyPoints} </P>
+
+                                                            {isCurrenWeek && <Button
+                                                                icon="largeExpand"
+                                                                popoutWidth="150px"
+                                                                noBorder
+                                                                block
+                                                                type="lightgrey"
+                                                                fontSize="13px"
+                                                                popout=
+                                                                {
+                                                                    [
+                                                                        // {
+                                                                        //     text: 'Edit',
+                                                                        //     onClick: () => { },
+                                                                        // },
+                                                                        {
+                                                                            text: 'Update Hours',
+                                                                            onClick: () => { setSelectedTask(item); setUpdateHoursShow(true) },
+                                                                        },
+                                                                        {
+                                                                            text: 'Update Status',
+                                                                            onClick: () => { setSelectedTask(item); setUpdatedTagsShow(true) },
+                                                                        },
+                                                                        // {
+                                                                        //     text: 'Delete',
+                                                                        //     onClick: () => { setSelectedTask(item) },
+                                                                        // },
+                                                                    ]
+                                                                }
+                                                                iconRight>
+                                                                Edit
+                                                            </Button>}
+
                                                         </div>
                                                     )}
                                                 </Draggable>
@@ -392,16 +318,108 @@ const Templates = ({
                     )}
                 </DragDiv>
             </DragDropContext>
-            {createTask && (
-                <Modal onHide={() => setCreateTask(false)} height="450px" background="#D9D9D9">
+            {updatedTagsShow && (
+                <Modal onHide={() => setUpdatedTagsShow(false)} height="210px" background="#D9D9D9">
+                    <label className='display-5'><b>SELECT STATUS</b></label>
+                    <Button
+                        icon="largeExpand"
+                        popoutWidth="max-content"
+                        popoutMinWidth='max-content'
+                        noBorder
+                        block
+                        type="lightgrey"
+                        fontSize="13px"
+                        popout=
+                        {
+                            invoiceTags.map((tag) => ({
+                                text: tag.tagName,
+                                onClick: () => {
+                                    setSelectedTask((prev) => ({
+                                        ...prev,
+                                        tagName: tag.tagName,
+                                        tag: tag._id,
+                                    }));
+                                },
+                            }))
+                        }
+                        iconRight>
+                        {selectedTask.tagName}
+                    </Button>
+                    <Absolute bottom="20px">
+                        <Button oval extraWide type="outlineInverse" onClick={() => setUpdatedTagsShow(false)}>
+                            CANCEL
+                        </Button>
+                        <Button
+                            disabled={false}
+                            onClick={() => { handleTaskStatus(selectedTask); setUpdatedTagsShow(false) }}
+                            width="58.25px"
+                            oval
+                            extraWide
+                            margin="0px 37px 0px 20px"
+                            type="black"
+                        >
+                            SAVE
+                        </Button>
+                    </Absolute>
+                </Modal>
+            )}
+            {updateHoursShow && (
+                <Modal onHide={() => setUpdateHoursShow(false)} height="200px" background="#D9D9D9">
                     <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
                         width="95%"
-                    // onChange={(e) => updateCreateStoryForm({ taskName: e.target.value })}
-                    // value={form?.taskName}
+                        onChange={(e) => {
+                            const inputValue = e.target.value;
+                            const regex = /^([0-9]+)?$/;
+                            if (regex.test(inputValue)) {
+                                setSelectedTask((prev) => ({
+                                    ...prev,
+                                    hours: +inputValue
+                                }))
+                            }
+                        }}
+                        handleEnterKey={() => { }}
+                        value={selectedTask?.hours}
+                    >
+                        HOURS
+                    </FormField>
+                    <Absolute bottom="20px">
+                        <Button oval extraWide type="outlineInverse" onClick={() => setUpdateHoursShow(false)}>
+                            CANCEL
+                        </Button>
+                        <Button
+                            disabled={false}
+                            onClick={() => { handleHours(selectedTask); setUpdateHoursShow(false) }}
+                            width="58.25px"
+                            oval
+                            extraWide
+                            margin="0px 37px 0px 20px"
+                            type="black"
+                        >
+                            SAVE
+                        </Button>
+                    </Absolute>
+                </Modal>
+            )}
+            {createTask && (
+                <Modal onHide={() => setCreateTask(false)} height="550px" background="#D9D9D9">
+                    <FormField
+                        fieldType="input"
+                        margin
+                        fontSize='14px'
+                        noMargin
+                        width="95%"
+                        onChange={(e) => {
+                            setTaskForm((prev) => ({
+                                ...prev,
+                                taskName: e.target.value
+                            }));
+                        }}
+                        handleEnterKey={() => { }}
+                        value={taskForm?.taskName}
                     >
                         TASK NAME(REQUIRED)
                     </FormField>
@@ -412,11 +430,19 @@ const Templates = ({
                             fontSize='14px'
                             noMargin
                             width="95%"
-                        // dropdownList={tagsDropdown}
-                        // onChange={e => updateTagName(e)}
-                        // value={form?.tagName}
-                        // clickType="tagName"
-                        // onUpdate={updateCreateStoryForm}
+                            onChange={(e) => {
+                                e.persist();
+                                const inputValue = e.target.value;
+                                const regex = /^([0-9]+)?$/;
+                                if (regex.test(inputValue)) {
+                                    setTaskForm((prev) => ({
+                                        ...prev,
+                                        hours: +inputValue
+                                    }));
+                                }
+                            }}
+                            handleEnterKey={() => { }}
+                            value={taskForm?.hours}
                         >
                             HOURS
                         </FormField>
@@ -426,17 +452,79 @@ const Templates = ({
                             fontSize='14px'
                             noMargin
                             width="100%"
-                        // onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
-                        // value={form?.storyPoints}
-                        // dropdownList={pointsDropdown}
-                        // clickType="storyPoints"
-                        // onUpdate={updateCreateStoryForm}
+                            onChange={(e) => {
+                                e.persist();
+                                const inputValue = e.target.value;
+                                const regex = /^([0-9]+)?$/;
+                                if (regex.test(inputValue)) {
+                                    if (inputValue < 9) {
+                                        setTaskForm((prev) => ({
+                                            ...prev,
+                                            storyPoints: +inputValue
+                                        }))
+                                    }
+                                }
+                            }}
+                            handleEnterKey={() => { }}
+                            value={taskForm?.storyPoints}
                         >
                             STORY POINTS
                         </FormField>
-
                     </Grid3>
-
+                    <Grid3 margin="0px" width="95%" grid="2fr 2fr">
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width="95%"
+                            onChange={(e) => {
+                                e.persist();
+                                const inputValue = e.target.value;
+                                const regex = /^([0-9]+)?$/;
+                                if (regex.test(inputValue)) {
+                                    if (inputValue < 4) {
+                                        setTaskForm((prev) => ({
+                                            ...prev,
+                                            priority: +inputValue
+                                        }))
+                                    }
+                                }
+                            }}
+                            handleEnterKey={() => { }}
+                            value={taskForm?.priority}
+                        >
+                            PRIORITY
+                        </FormField>
+                        <div style={{ height: "-webkit-fill-available" }}>
+                            <label className='display-5 m-0'><b>SELECT STATUS</b></label>
+                            <Button
+                                icon="largeExpand"
+                                popoutWidth="max-content"
+                                popoutMinWidth='max-content'
+                                noBorder
+                                block
+                                height={'auto'}
+                                type="lightgrey"
+                                fontSize="13px"
+                                popout=
+                                {
+                                    invoiceTags.map((tag) => ({
+                                        text: tag.tagName,
+                                        onClick: () => {
+                                            setTaskForm((prev) => ({
+                                                ...prev,
+                                                tagName: tag.tagName,
+                                                tagId: tag._id,
+                                            }));
+                                        },
+                                    }))
+                                }
+                                iconRight>
+                                {taskForm.tagName}
+                            </Button>
+                        </div>
+                    </Grid3>
                     <FormField
                         fieldType="input"
                         margin
@@ -444,13 +532,19 @@ const Templates = ({
                         noMargin
                         height="150px"
                         textarea
-                    // onChange={(e) => updateCreateStoryForm({ description: e.target.value })}
-                    // value={form?.description}
+                        onChange={(e) => {
+                            setTaskForm((prev) => ({
+                                ...prev,
+                                description: e.target.value
+                            }));
+                        }}
+                        handleEnterKey={() => { }}
+                        value={taskForm?.description}
                     >
                         DESCRIPTION
                     </FormField>
                     <Absolute bottom="20px"><Button oval extraWide type="outlineInverse"
-                        onClick={() => setCreateTask(false)}>CANCEL</Button><Button disabled={false} onClick={() => onSubmit()} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">{!loading ? 'ADD TASK' : <CircularProgress size={18} />}</Button></Absolute>
+                        onClick={() => setCreateTask(false)}>CANCEL</Button><Button disabled={false} onClick={() => { createTaskAndAddToTaskHours(taskForm); setCreateTask(false) }} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">ADD TASK</Button></Absolute>
                 </Modal>
             )}
         </Container>
@@ -458,3 +552,10 @@ const Templates = ({
 }
 
 export default Templates;
+
+
+
+
+
+
+

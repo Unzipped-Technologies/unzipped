@@ -7,6 +7,7 @@ const user = require('../../models/User');
 const mongoose = require('mongoose');
 const { Users } = require('react-feather');
 const { Select } = require('@material-ui/core');
+const TaskHours = require('../../models/TaskHours');
 
 const createDepartments = async (data) => {
     return await department.create(data);
@@ -44,14 +45,14 @@ const addDepartmentToBusiness = async (data, id) => {
         for (const tag of initTags) {
             await tags.create(tag)
         }
-        // update business to have department
-        const updatedBusiness = await business.findByIdAndUpdate(data.businessId, {
-            departments: await department.find({ businessId: data.businessId })
-        });
         // update department with new tags
         await department.findByIdAndUpdate(Dept.id, {
             tags: await tags.find({ departmentId: Dept.id })
         })
+        // update business to have department
+        const updatedBusiness = await business.findByIdAndUpdate(data.businessId, {
+            departments: await department.find({ businessId: data.businessId })
+        });
 
         return { msg: `department created for ${data.businessId}` };
     } catch (e) {
@@ -134,11 +135,41 @@ const addTaskToDepartment = async (body, id) => {
         businessId: SelectedBusiness._id,
         assigneeId: body.assigneeId,
         assignee: await user.findById(body.assigneeId),
-        ticketCode: `${businessCode.replace(' ', '')}-${docCount}`
+        ticketCode: `${businessCode.replace(' ', '')}-${docCount}`,
+        updatedAt: body?.updatedAt || new Date(),
+        createdAt: body?.createdAt || new Date(),
     })
     await department.findByIdAndUpdate(body.departmentId, {
         tasks: await tasks.find({ departmentId: body.departmentId })
     })
+    if (body?.hours) {
+        const result = await TaskHours.create({
+            userId: body.assigneeId,
+            taskId: Task._id,
+            hours: body?.hours,
+            departmentId: Task?.departmentId,
+            updatedAt: body?.updatedAt || new Date(),
+            createdAt: body?.createdAt || new Date(),
+        });
+        const taskHour = await TaskHours.findOne({ _id: result._id })
+        .populate({
+            path: 'userId',
+            model: 'users',
+            select: '_id FirstName LastName profileImage'
+        })
+        .populate({
+            path: 'taskId',
+            model: 'tasks',
+            select: '_id taskName storyPoints tag',
+            populate: {
+                path: 'tag',
+                model: 'tags',
+                select: '_id tagName'
+            }
+        })
+        .exec();
+        return { Task: Task, result: taskHour }
+    }
     return Task
 }
 

@@ -148,8 +148,20 @@ const HoursDiv = styled.div`
 `;
 
 function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, handleFilter, projectName }) {
-  var id = 0
   const [displayFormat, setDisplayFormat] = useState(false)
+  const [rate, setRate] = useState(null);
+  const [totalHours, setTotalHours] = useState(null);
+  var id = 0;
+  useEffect(() => {
+    const rate = Object?.keys(sortedData)?.map((day) => {
+      return sortedData[day]?.length > 0 ? sortedData[day]?.map((item) => item.rate) : [];
+    }).flat().filter(item => item !== undefined);
+    setRate(rate)
+    const totalHours = Object.keys(sortedData).reduce((acc, day) => {
+      return acc + sortedData[day].reduce((dayAcc, obj) => dayAcc + obj.hours, 0);
+    }, 0);
+    setTotalHours(totalHours)
+  }, [sortedData])
 
   const toggleDisplayFormat = () => {
     setDisplayFormat(!displayFormat)
@@ -169,7 +181,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
         </Toggle>
       </Title>
       <SearchBar take={take} setTake={handletake} setFilter={handleFilter} />
-      <div style={{ position: "relative" }}>
+      <div className='mb-5'>
         <TableDiv >
           <TableTop>
             <P margin='0px' fontSize='24px' fontWeight='500'>{projectName.slice(0, 15)}{projectName?.length > 17 && '...'}</P>
@@ -207,10 +219,12 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
                       id = id + 1
                       return (
                         <tr key={itemIndex} className={displayFormat && id % 2 === 0 && 'bg-light'}>
-                          <td> <FaRegCheckCircle size={15} color="#D8D8D8" /> <span className='px-3'>{item.updatedAt}</span></td>
-                          <td>${item.rate}</td>
-                          <td>{item.hours}</td>
-                          <td>{item.name}</td>
+                          <td>
+                            <FaRegCheckCircle size={15} color={item.tagName.includes('In') ? '#FFA500' : item.tagName.includes('Done') ? '#198754' : '#D8D8D8'} />
+                            <span className='px-3'>{item?.taskName}</span></td>
+                          <td>${item?.rate}</td>
+                          <td>{item?.hours}</td>
+                          <td> <img src={item?.userId?.profileImage} style={{ width: "24px", height: "24px", borderRadius: "50%", marginRight: "6px" }} />{item?.userId?.FirstName + " " + item?.userId?.LastName}</td>
                         </tr>
                       )
                     }
@@ -230,23 +244,34 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
           }
           )
           }
+          <HoursDiv>
+            <div className='d-flex justify-content-between' style={{ borderBottom: "1px solid #777" }}>
+              <P fontWeight='500'>DAY</P>
+              <P fontWeight='500'>HOURS</P>
+            </div>
+            {sortedData && Object?.keys(sortedData)?.map((day, index) => {
+              return (
+                <div className='d-flex justify-content-between' >
+                  <P fontWeight='500'>{day}</P>
+                  <P fontWeight='500'>{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
+                </div>
+              )
+            })}
+            <div className='d-flex justify-content-between' style={{ borderTop: "1px solid #777" }} >
+              <P fontWeight='500'>RATE</P>
+              {rate && <P fontWeight='500'>${rate[0]} /HOUR</P>}
+            </div>
+            <div className='d-flex justify-content-between' >
+              <P fontWeight='500'>FEE</P>
+              <P fontWeight='500'>$120.00</P>
+            </div>
+            <div className='d-flex justify-content-between' >
+              <P fontWeight='500'>TOTAL</P>
+              {totalHours && <P fontWeight='500'>${(+totalHours * +rate[0]).toLocaleString()} </P>}
+            </div>
+          </HoursDiv>
         </TableDiv>
-        <HoursDiv>
-          <div className='d-flex justify-content-between' style={{ borderBottom: "1px solid #777" }}>
-            <P fontWeight='500'>DAY</P>
-            <P fontWeight='500'>HOURS</P>
-          </div>
-          {sortedData && Object?.keys(sortedData)?.map((day, index) => {
-            return (
-              <div className='d-flex justify-content-between' >
-                <P fontWeight='500'>{day}</P>
-                <P fontWeight='500'>{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
-              </div>
-            )
-          })}
-          <div style={{ borderTop: "1px solid #777" }} >
-          </div>
-        </HoursDiv>
+
       </div>
     </>
   )

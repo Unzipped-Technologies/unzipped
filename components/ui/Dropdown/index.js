@@ -34,7 +34,7 @@ DropdownOutline.displayName = 'DropdownOutline';
 
 const DropdownList = styled.ul`
     margin: 0;
-    min-width: 200px;
+    min-width:  ${({ minWidth }) => minWidth ? minWidth : '200px'};
     width: ${({ width }) => width};
     padding: 10px 15px 5px 15px;
     background: #F4F4F4;
@@ -84,14 +84,14 @@ const SimpleBar = styled.div`
 `;
 SimpleBar.displayName = 'SimpleBar';
 
-const DropdownItems = ({ links, width }) => {
+const DropdownItems = ({ links, width, minWidth }) => {
     return (
         <>
             {links.map((item, index) => {
                 const ItemContainer = item.onClick ? DivContainer : LinkContainer;
                 return (
                     <LinkWrapper key={item.text + index}>
-                        <ItemContainer to={item.to} onClick={item.onClick} width={width}>
+                        <ItemContainer to={item.to} onClick={item.onClick} width={width} minWidth={minWidth}>
                             {item.text}
                         </ItemContainer>
                     </LinkWrapper>
@@ -105,7 +105,7 @@ DropdownItems.displayName = 'DropdownItems';
 /**
  * Dropdown Component.
  */
-const Dropdown = ({ visible, links, dashboard, sidebar, btnDropdown, width, className, dropDownRight }) => {
+const Dropdown = ({ visible, links, dashboard, sidebar, btnDropdown, width, className, dropDownRight, minWidth }) => {
     const first10Ref = useRef();
     const [first10Height, setFirst10Height] = useState(0);
     const first10Items = links.filter((_, index) => index < 10);
@@ -129,11 +129,11 @@ const Dropdown = ({ visible, links, dashboard, sidebar, btnDropdown, width, clas
                 btnDropdown={btnDropdown}
                 dropDownRight={dropDownRight}
                 data-testid="dropdown">
-                <DropdownList width={width} sidebar={sidebar}>
+                <DropdownList width={width} sidebar={sidebar} minWidth={minWidth}>
                     <div ref={first10Ref}>
-                        <DropdownItems links={first10Items} width={width} />
+                        <DropdownItems links={first10Items} width={width} minWidth={minWidth}/>
                     </div>
-                    <DropdownItems links={itemsAfter10} width={width} />
+                    <DropdownItems links={itemsAfter10} width={width} minWidth={minWidth}/>
                 </DropdownList>
             </DropdownOutline>
         </Wrapper>

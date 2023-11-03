@@ -8,6 +8,9 @@ const tags = require('../../models/tags');
 const user = require('../../models/User');
 const mongoose = require('mongoose');
 const { likeEnum } = require('../enum/likeEnum');
+const Contracts = require('../../models/Contract');
+const Freelancer = require('../../models/Freelancer');
+const TaskHours = require('../../models/TaskHours');
 
 const createBusiness = async (data, id) => {
     // create business
@@ -71,7 +74,6 @@ const getBusinessById = async (id, sub) => {
 // list lists
 const listBusinesses = async ({ filter, take, skip }) => {
     try {
-        console.log('filters', filter)
         if (filter && filter.name) {
             filter = {
                 ...filter,
@@ -90,6 +92,72 @@ const listBusinesses = async ({ filter, take, skip }) => {
         return lists;
     } catch (e) {
         throw Error(`Could not find list, error: ${e}`);
+    }
+}
+
+const getBusinessByInvestor = async ({ businessId, id }) => {
+    try {
+        // Find freelancer by user id 
+        const freelancerIds = await Freelancer.findOne({ userId: id }, '_id');
+        const ContractRate = await Contracts.findOne({ freelancerId: freelancerIds._id, businessId: businessId }, 'hourlyRate')
+        const dep = await department.aggregate([
+            {
+                $match: {
+                    businessId: businessId
+                }
+            },
+            {
+                $lookup: {
+                    from: "contracts",
+                    localField: "employees",
+                    foreignField: "_id",
+                    as: "employeeDetails"
+                }
+            },
+            {
+                $match: {
+                    "employeeDetails.freelancerId": freelancerIds._id
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+
+                }
+            }
+        ]);
+        const taskHours = await TaskHours.find({ userId: id, departmentId: dep[0]._id }).populate({ path: 'userId', model: 'users', select: '_id FirstName LastName profileImage' }).populate({
+            path: 'taskId', model: 'tasks', select: '_id taskName storyPoints tag',
+            populate: {
+                path: 'tag',
+                model: 'tags',
+                select: '_id tagName'
+            }
+        }).exec()
+        const tag = await tags.find({ departmentId: dep[0]._id })
+        return { count: taskHours.length, taskHours: taskHours, ContractRate: ContractRate, tags: tag };
+
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
+    }
+}
+
+const getAllBusinessByInvestor = async (id) => {
+    try {
+        const freelancerIds = await Freelancer.findOne({ userId: id }, '_id');
+        const contracts = await Contracts.find({
+            freelancerId: { $in: freelancerIds._id },
+            isOfferAccepted: true
+        })
+            .select('businessId -_id')
+            .exec();
+        const idsToSearch = contracts.map(item => item.businessId);
+        const businesses = await business.find({
+            _id: { $in: idsToSearch }
+        }).exec();
+        return businesses;
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
     }
 }
 
@@ -123,12 +191,10 @@ const addLikeToBusiness = async (data, id) => {
             })
             return { likes: ids.length, msg: 'success' };
         }
-
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     }
 }
-
 
 module.exports = {
     createBusiness,
@@ -137,4 +203,6 @@ module.exports = {
     updateBusiness,
     deleteBusiness,
     addLikeToBusiness,
+    getAllBusinessByInvestor,
+    getBusinessByInvestor
 }
