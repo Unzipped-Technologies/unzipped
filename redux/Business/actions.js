@@ -145,7 +145,7 @@ export const updateTaskDate = (data, token) => async (dispatch, getState) => {
         payload: data,
     })
     await axios
-        .post(`/api/taskHours/time/${data._id}`, data, tokenConfig(token))
+        .patch(`/api/taskHours/time/${data._id}`, data, tokenConfig(token))
         .then()
         .catch(err => {
             dispatch({
