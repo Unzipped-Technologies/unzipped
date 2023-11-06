@@ -90,8 +90,13 @@ const listDepartments = async ({ filter, take, skip }) => {
     }
 }
 
-const updateDepartment = async (data) => {
-    return await department.findByIdAndUpdate(data.listId, { $set: { ...data } });
+const updateDepartment = async (id, data) => {
+
+    const uodatedDepartment = await department.findByIdAndUpdate(id, { $set: { ...data } }, { new: true });
+    await business.findByIdAndUpdate(data.businessId, {
+        departments: await department.find({ businessId: uodatedDepartment.businessId })
+    });
+    return updateDepartment
 }
 
 const deleteDepartment = async (id) => {
@@ -152,22 +157,22 @@ const addTaskToDepartment = async (body, id) => {
             createdAt: body?.createdAt || new Date(),
         });
         const taskHour = await TaskHours.findOne({ _id: result._id })
-        .populate({
-            path: 'userId',
-            model: 'users',
-            select: '_id FirstName LastName profileImage'
-        })
-        .populate({
-            path: 'taskId',
-            model: 'tasks',
-            select: '_id taskName storyPoints tag',
-            populate: {
-                path: 'tag',
-                model: 'tags',
-                select: '_id tagName'
-            }
-        })
-        .exec();
+            .populate({
+                path: 'userId',
+                model: 'users',
+                select: '_id FirstName LastName profileImage'
+            })
+            .populate({
+                path: 'taskId',
+                model: 'tasks',
+                select: '_id taskName storyPoints tag',
+                populate: {
+                    path: 'tag',
+                    model: 'tags',
+                    select: '_id tagName'
+                }
+            })
+            .exec();
         return { Task: Task, result: taskHour }
     }
     return Task
