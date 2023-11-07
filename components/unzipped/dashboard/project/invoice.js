@@ -251,7 +251,7 @@ console.log(sortedData,"s")
                             <span className='px-3'>{item?.taskName}</span></td>
                           <td>${item?.rate}</td>
                           <td>{item?.hours}</td>
-                          <td> <img src={item?.userId?.profileImage} style={{ width: "24px", height: "24px", borderRadius: "50%", marginRight: "6px" }} />{item?.userId?.FirstName + " " + item?.userId?.LastName}</td>
+                          <td> <img src={item?.userId?.profileImage} style={{ width: "24px", height: "24px", borderRadius: "50%", marginRight: "6px" }} />{item?.userId?.FirstName !== "" || item?.userId?.LastName !== "" ? item?.userId?.FirstName + " " + item?.userId?.LastName : "Anonymous"}</td>
                         </tr>
                       )
                     }
