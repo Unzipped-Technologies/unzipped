@@ -99,7 +99,7 @@ const getBusinessByInvestor = async ({ businessId, id }) => {
     try {
         // Find freelancer by user id 
         const freelancerIds = await Freelancer.findOne({ userId: id }, '_id');
-        const ContractRate = await Contracts.findOne({ freelancerId: freelancerIds._id, businessId: businessId }, 'hourlyRate')
+        const ContractRate = await Contracts.findOne({ freelancerId: freelancerIds._id, businessId: businessId }, 'hourlyRate businessId').populate({path: "businessId",model: "businesses",select:"name"})
         const dep = await department.aggregate([
             {
                 $match: {
@@ -139,6 +139,28 @@ const getBusinessByInvestor = async ({ businessId, id }) => {
 
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
+    }
+}
+
+
+const getBusinessByFounder = async (businessId) => {
+    try {
+        const businessDetails = await business.findById(businessId).populate({ path: "employees", model: "contracts", select: "departmentId hourlyRate", populate: { path: "freelancerId", model: "freelancers", select: 'userId' } }).select('name employees')
+        const taskHoursPromises = businessDetails.employees.map(employee => {
+            return TaskHours.find({ userId: employee.freelancerId.userId, departmentId: employee.departmentId }).populate({ path: 'userId', model: 'users', select: '_id FirstName LastName profileImage' }).populate({
+                path: 'taskId', model: 'tasks', select: '_id taskName storyPoints tag',
+                populate: {
+                    path: 'tag',
+                    model: 'tags',
+                    select: '_id tagName'
+                }
+            }).exec()
+        });
+
+        const results = await Promise.all(taskHoursPromises);
+        return { businessDetails: businessDetails, results: [].concat(...results) }
+    } catch (error) {
+
     }
 }
 
@@ -204,5 +226,6 @@ module.exports = {
     deleteBusiness,
     addLikeToBusiness,
     getAllBusinessByInvestor,
-    getBusinessByInvestor
+    getBusinessByInvestor,
+    getBusinessByFounder
 }

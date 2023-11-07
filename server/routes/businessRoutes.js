@@ -218,6 +218,17 @@ router.get('/investor/task/:businessId', requireLogin, permissionCheckHelper.has
     res.status(400).json({ msg: e.message })
   }
 });
+
+router.get('/founder/task/:businessId', requireLogin, permissionCheckHelper.hasPermission('removeComment'), async (req, res) => {
+  try {
+    businessId = req.params.businessId
+    const existingBusiness = await businessHelper.getBusinessByFounder( businessId )
+    if (!existingBusiness) throw Error('business does not exist')
+    res.json(existingBusiness)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+});
 module.exports = router;
 
 

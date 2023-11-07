@@ -112,7 +112,11 @@ const Panel = ({ list, selectedList, type, projects = [], businesses, loading, u
                                 fontSize="13px"
                                 popout=
                                 {userType == 0 || userType == 2 ?
-                                    [
+                                    [  
+                                        {
+                                            text: 'Invoice',
+                                            onClick: () => router.push(`projects/client/invoice/${item._id}`),
+                                        },
                                         {
                                             text: 'Details',
                                             onClick: () => console.log('ITEM 1'),

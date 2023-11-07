@@ -147,26 +147,53 @@ const HoursDiv = styled.div`
     padding: 24px 15px;
 `;
 
-function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, handleFilter, projectName }) {
+function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, handleFilter, projectName, userType }) {
   const [displayFormat, setDisplayFormat] = useState(false)
   const [rate, setRate] = useState(null);
   const [totalHours, setTotalHours] = useState(null);
+  const [founderInvoice, setFounderInvoice] = useState({})
   var id = 0;
+  var totalInvoiceOfFounder = 0;
   useEffect(() => {
-    const rate = Object?.keys(sortedData)?.map((day) => {
-      return sortedData[day]?.length > 0 ? sortedData[day]?.map((item) => item.rate) : [];
-    }).flat().filter(item => item !== undefined);
-    setRate(rate)
-    const totalHours = Object.keys(sortedData).reduce((acc, day) => {
-      return acc + sortedData[day].reduce((dayAcc, obj) => dayAcc + obj.hours, 0);
-    }, 0);
-    setTotalHours(totalHours)
+    if (userType === 'Investor') {
+      const rate = Object?.keys(sortedData)?.map((day) => {
+        return sortedData[day]?.length > 0 ? sortedData[day]?.map((item) => item.rate) : [];
+      }).flat().filter(item => item !== undefined);
+      setRate(rate)
+      const totalHours = Object.keys(sortedData).reduce((acc, day) => {
+        return acc + sortedData[day].reduce((dayAcc, obj) => dayAcc + obj.hours, 0);
+      }, 0);
+      setTotalHours(totalHours)
+    }
+    else if (userType === 'Founder') {
+      const result = {};
+      for (const day in sortedData) {
+        const dayData = sortedData[day];
+        for (const item of dayData) {
+          const userId = item.userId._id;
+          const rate = item.rate;
+          const hours = item.hours;
+          if (result[userId]) {
+            result[userId].rate = rate;
+            result[userId].totalHours += hours;
+            result[userId].name = item?.userId?.FirstName !== "" || item?.userId?.LastName !== "" ? item?.userId?.FirstName + " " + item?.userId?.LastName : "Anonymous";
+          } else {
+            result[userId] = {
+              rate: rate,
+              totalHours: hours,
+              name: item?.userId?.FirstName !== "" || item?.userId?.LastName !== "" ? item?.userId?.FirstName + " " + item?.userId?.LastName : "Anonymous",
+            };
+          }
+        }
+      }
+      setFounderInvoice(result)
+    }
   }, [sortedData])
 
   const toggleDisplayFormat = () => {
     setDisplayFormat(!displayFormat)
   }
-
+console.log(sortedData,"s")
   return (
     <>
       <Title>
@@ -184,7 +211,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
       <div className='mb-5'>
         <TableDiv >
           <TableTop>
-            <P margin='0px' fontSize='24px' fontWeight='500'>{projectName.slice(0, 15)}{projectName?.length > 17 && '...'}</P>
+            <P margin='0px' fontSize='24px' fontWeight='500'>{projectName?.slice(0, 15)}{projectName?.length > 17 && '...'}</P>
             <select onChange={handleWeekChange} style={{ display: "block", border: "0", width: "fit-content", backgroundColor: "transparent" }}>
               {weekOptions.map((week, index) => (
                 <option key={index} value={index}>
@@ -232,7 +259,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
                       <tr>
                         <td className='px-5'>No Records</td>
                       </tr>
-                      : index === +Object.keys(sortedData).length - 1 &&
+                      : index === +Object.keys(sortedData).length - 1 && id == 0 &&
                       <tr>
                         <td className='px-5'>No Records</td>
                       </tr>
@@ -244,7 +271,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
           }
           )
           }
-          <HoursDiv>
+          {userType === 'Investor' ? <HoursDiv>
             <div className='d-flex justify-content-between' style={{ borderBottom: "1px solid #777" }}>
               <P fontWeight='500'>DAY</P>
               <P fontWeight='500'>HOURS</P>
@@ -269,7 +296,35 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
               <P fontWeight='500'>TOTAL</P>
               {totalHours && <P fontWeight='500'>${(+totalHours * +rate[0]).toLocaleString()} </P>}
             </div>
-          </HoursDiv>
+          </HoursDiv> :
+            <HoursDiv>
+              <div className='d-flex justify-content-between' style={{ borderBottom: "1px solid #777" }}>
+                <P fontWeight='500'>Name</P>
+                <P fontWeight='500'>Amount</P>
+              </div>
+              {founderInvoice && Object?.values(founderInvoice)?.map((user, index) => {
+                totalInvoiceOfFounder += user?.rate * user?.totalHours;
+                return (
+                  <div className='d-flex justify-content-between' >
+                    <P fontWeight='500'>{user?.name}</P>
+                    <P fontWeight='500'>${user?.rate * user?.totalHours}</P>
+                  </div>
+                )
+              })}
+              <div className='d-flex justify-content-between' style={{ borderTop: "1px solid #777" }} >
+                <P fontWeight='500'>Subtotal</P>
+                {totalInvoiceOfFounder && <P fontWeight='500'>${totalInvoiceOfFounder.toLocaleString()}</P>}
+              </div>
+              <div className='d-flex justify-content-between' >
+                <P fontWeight='500'>FEE</P>
+                <P fontWeight='500'>$57.38</P>
+              </div>
+              <div className='d-flex justify-content-between' >
+                <P fontWeight='500'>TOTAL</P>
+                {totalInvoiceOfFounder && <P fontWeight='500'>${(57.38 + totalInvoiceOfFounder).toLocaleString()} </P>}
+              </div>
+            </HoursDiv>
+          }
         </TableDiv>
 
       </div>

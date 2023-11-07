@@ -19,7 +19,7 @@ const MobileDisplayBox = styled.div`
     }
 `;
 
-const YourComponent = ({ _id, invoiceTags, invoiceTaskHours, access_token, getBusinessTasksByInvestor, updateTaskDate, updateTaskHours, updateTaskHoursStatus, addTaskAndAddToTaskHours }) => {
+const YourComponent = ({ _id, projectName, invoiceTags, invoiceTaskHours, access_token, getBusinessTasksByInvestor, updateTaskDate, updateTaskHours, updateTaskHoursStatus, addTaskAndAddToTaskHours }) => {
   const router = useRouter();
 
   const { id } = router.query;
@@ -106,8 +106,8 @@ const YourComponent = ({ _id, invoiceTags, invoiceTaskHours, access_token, getBu
     <>
       <Nav isSubMenu marginBottom={'160px'} />
       <Desktop>
-        {showInvoice ? <Invoice weekOptions={weekOptions} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={'Build a self flying'} handletake={handletake} take={take} handleFilter={handleFilter} />
-          : <Templates id={_id} startDate={startDate} weekOptions={weekOptions} invoiceTags={invoiceTags} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={'Build a self flying'} handleShowInvoice={(value) => { handleShowInvoice(value) }} handleUpdatedAt={(tasks) => updateTaskDate(tasks, access_token)} handleHours={(hours) => { updateTaskHours(hours, access_token) }} handleTaskStatus={(status) => { updateTaskHoursStatus(status, access_token) }} createTaskAndAddToTaskHours={(task) => { addTaskAndAddToTaskHours(task, access_token) }} />}
+        {showInvoice ? <Invoice weekOptions={weekOptions} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handletake={handletake} take={take} handleFilter={handleFilter} userType={'Investor'}/>
+          : <Templates id={_id} startDate={startDate} weekOptions={weekOptions} invoiceTags={invoiceTags} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handleShowInvoice={(value) => { handleShowInvoice(value) }} handleUpdatedAt={(tasks) => updateTaskDate(tasks, access_token)} handleHours={(hours) => { updateTaskHours(hours, access_token) }} handleTaskStatus={(status) => { updateTaskHoursStatus(status, access_token) }} createTaskAndAddToTaskHours={(task) => { addTaskAndAddToTaskHours(task, access_token) }} />}
       </Desktop>
     </>
   );
@@ -121,7 +121,8 @@ const mapStateToProps = (state) => {
     role: state.Auth.user.role,
     cookie: state.Auth.token,
     invoiceTags: state.Business.invoiceTags,
-    invoiceTaskHours: state.Business.invoiceTaskHours
+    invoiceTaskHours: state.Business.invoiceTaskHours,
+    projectName: state.Business.projectName,
   }
 }
 
