@@ -282,13 +282,15 @@ export const getBusinessTasksByInvestor = ({ businessId, access_token }) => asyn
     
 }
 
+
+
 export const getBusinessTasksByFounder = ({ businessId, access_token }) => async (dispatch, getState) => {
 
     dispatch({ type: LOAD_STATE })
-    dispatch(startLoading());
     const headers = {
         access_token: access_token
     };
+    dispatch(startLoading());
     await axios
         .get(`/api/business/founder/task/${businessId}`, { headers })
         .then(res => dispatch({
@@ -302,26 +304,6 @@ export const getBusinessTasksByFounder = ({ businessId, access_token }) => async
             })
         })
         dispatch(stopLoading());
-}
-
-export const getBusinessTasksByFounder = ({ businessId, access_token }) => async (dispatch, getState) => {
-
-    dispatch({ type: LOAD_STATE })
-    const headers = {
-        access_token: access_token
-    };
-    await axios
-        .get(`/api/business/founder/task/${businessId}`, { headers })
-        .then(res => dispatch({
-            type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
-            payload: res.data,
-        }))
-        .catch(err => {
-            dispatch({
-                type: DEPARTMENT_ERROR,
-                payload: err.response
-            })
-        })
 }
 
 export const getBusinessList = (data, token, selected, _id) => async (dispatch, getState) => {
