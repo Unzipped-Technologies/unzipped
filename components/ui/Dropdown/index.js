@@ -36,7 +36,7 @@ const DropdownList = styled.ul`
     margin: 0;
     min-width:  ${({ minWidth }) => minWidth ? minWidth : '200px'};
     width: ${({ width }) => width};
-    padding: 10px 15px 5px 15px;
+    padding: 10px 10px 5px 10px !important;
     background: #F4F4F4;
     font-family: arial;
     overflow: hidden;
@@ -53,7 +53,9 @@ const LinkWrapper = styled.li`
     list-style-type: none;
     overflow-wrap: anywhere;
     &:hover {
-        color: #000;
+        color: white;
+        background: darkgrey;
+        text-decoration: underline;
     }
 `;
 

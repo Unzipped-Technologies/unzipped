@@ -124,16 +124,18 @@ const Templates = ({
     const [taskForm, setTaskForm] = useState({
         departmentId: "",
         taskName: "",
-        storyPoints: null,
-        priority: null,
+        storyPoints: NaN,
+        priority: NaN,
         description: "",
         tagName: "Select Tag",
         tagId: "",
         assigneeId: "",
         updatedAt: "",
         createdAt: "",
-        hours: null,
+        hours: NaN,
     })
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
     useEffect(() => {
         if (startDate) {
             const currentDate = new Date();
@@ -144,7 +146,6 @@ const Templates = ({
         }
     }, [startDate])
 
-    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     useEffect(() => {
         setData(sortedData)
@@ -190,7 +191,6 @@ const Templates = ({
     };
 
     const handleAddModal = (day) => {
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const daysToAdd = daysOfWeek.indexOf(day.slice(0, 3));
         if (daysToAdd !== -1) {
             const date = new Date(startDate);
@@ -207,11 +207,43 @@ const Templates = ({
             setCreateTask(true);
         }
     }
+    const handleSelectedtask = (feildName, e) => {
+        e.preventDefault();
+        const { value } = e.target
+        setSelectedTask((prev) => ({
+            ...prev,
+            [feildName]: +value
+        }))
+    }
 
+    const handleTaskForm = (feildName, e) => {
+        e.preventDefault();
+        var { type, value } = e.target
+        if (type === 'number') {
+            value = +value
+        }
+        setTaskForm({
+            ...taskForm,
+            [feildName]: value
+        })
+    }
+    const generateEditPopout = (item) => {
+            return [
+                {
+                    text: 'Update Hours',
+                    onClick: () => { setSelectedTask(item); setUpdateHoursShow(true) },
+                },
+                {
+                    text: 'Update Status',
+                    onClick: () => { setSelectedTask(item); setUpdatedTagsShow(true) },
+                },
+            ];
+       
+    }
     return (
         <Container >
             <Title>
-                <TitleText title>Timesheet</TitleText>
+                <TitleText title='true'>Timesheet</TitleText>
                 <Toggle>
                     <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                         <DarkText small>As Founder</DarkText>
@@ -279,27 +311,7 @@ const Templates = ({
                                                                 block
                                                                 type="lightgrey"
                                                                 fontSize="13px"
-                                                                popout=
-                                                                {
-                                                                    [
-                                                                        // {
-                                                                        //     text: 'Edit',
-                                                                        //     onClick: () => { },
-                                                                        // },
-                                                                        {
-                                                                            text: 'Update Hours',
-                                                                            onClick: () => { setSelectedTask(item); setUpdateHoursShow(true) },
-                                                                        },
-                                                                        {
-                                                                            text: 'Update Status',
-                                                                            onClick: () => { setSelectedTask(item); setUpdatedTagsShow(true) },
-                                                                        },
-                                                                        // {
-                                                                        //     text: 'Delete',
-                                                                        //     onClick: () => { setSelectedTask(item) },
-                                                                        // },
-                                                                    ]
-                                                                }
+                                                                popout={generateEditPopout(item)}
                                                                 iconRight>
                                                                 Edit
                                                             </Button>}
@@ -319,7 +331,7 @@ const Templates = ({
                 </DragDiv>
             </DragDropContext>
             {updatedTagsShow && (
-                <Modal onHide={() => setUpdatedTagsShow(false)} height="210px" background="#D9D9D9">
+                <Modal onHide={() => setUpdatedTagsShow(false)} height="210px" background="#D9D9D9 " width='370px'>
                     <label className='display-5'><b>SELECT STATUS</b></label>
                     <Button
                         icon="largeExpand"
@@ -364,23 +376,15 @@ const Templates = ({
                 </Modal>
             )}
             {updateHoursShow && (
-                <Modal onHide={() => setUpdateHoursShow(false)} height="200px" background="#D9D9D9">
+                <Modal onHide={() => setUpdateHoursShow(false)} height="200px" background="#D9D9D9" width='370px'>
                     <FormField
                         fieldType="input"
+                        inputType='number'
                         margin
                         fontSize='14px'
                         noMargin
                         width="95%"
-                        onChange={(e) => {
-                            const inputValue = e.target.value;
-                            const regex = /^([0-9]+)?$/;
-                            if (regex.test(inputValue)) {
-                                setSelectedTask((prev) => ({
-                                    ...prev,
-                                    hours: +inputValue
-                                }))
-                            }
-                        }}
+                        onChange={(e) => { handleSelectedtask('hours', e) }}
                         handleEnterKey={() => { }}
                         value={selectedTask?.hours}
                     >
@@ -405,7 +409,7 @@ const Templates = ({
                 </Modal>
             )}
             {createTask && (
-                <Modal onHide={() => setCreateTask(false)} height="550px" background="#D9D9D9">
+                <Modal onHide={() => setCreateTask(false)} height="550px" background="#D9D9D9" >
                     <FormField
                         fieldType="input"
                         margin
@@ -413,10 +417,7 @@ const Templates = ({
                         noMargin
                         width="95%"
                         onChange={(e) => {
-                            setTaskForm((prev) => ({
-                                ...prev,
-                                taskName: e.target.value
-                            }));
+                            handleTaskForm('taskName', e)
                         }}
                         handleEnterKey={() => { }}
                         value={taskForm?.taskName}
@@ -426,20 +427,13 @@ const Templates = ({
                     <Grid3 margin="0px" width="95%" grid="2fr 2fr">
                         <FormField
                             fieldType="input"
+                            inputType='number'
                             margin
                             fontSize='14px'
                             noMargin
                             width="95%"
                             onChange={(e) => {
-                                e.persist();
-                                const inputValue = e.target.value;
-                                const regex = /^([0-9]+)?$/;
-                                if (regex.test(inputValue)) {
-                                    setTaskForm((prev) => ({
-                                        ...prev,
-                                        hours: +inputValue
-                                    }));
-                                }
+                                handleTaskForm('hours', e)
                             }}
                             handleEnterKey={() => { }}
                             value={taskForm?.hours}
@@ -448,21 +442,14 @@ const Templates = ({
                         </FormField>
                         <FormField
                             fieldType="input"
+                            inputType='number'
                             margin
                             fontSize='14px'
                             noMargin
                             width="100%"
                             onChange={(e) => {
-                                e.persist();
-                                const inputValue = e.target.value;
-                                const regex = /^([0-9]+)?$/;
-                                if (regex.test(inputValue)) {
-                                    if (inputValue < 9) {
-                                        setTaskForm((prev) => ({
-                                            ...prev,
-                                            storyPoints: +inputValue
-                                        }))
-                                    }
+                                if (+e.target.value < 9) {
+                                    handleTaskForm('storyPoints', e)
                                 }
                             }}
                             handleEnterKey={() => { }}
@@ -474,21 +461,14 @@ const Templates = ({
                     <Grid3 margin="0px" width="95%" grid="2fr 2fr">
                         <FormField
                             fieldType="input"
+                            inputType='number'
                             margin
                             fontSize='14px'
                             noMargin
                             width="95%"
                             onChange={(e) => {
-                                e.persist();
-                                const inputValue = e.target.value;
-                                const regex = /^([0-9]+)?$/;
-                                if (regex.test(inputValue)) {
-                                    if (inputValue < 4) {
-                                        setTaskForm((prev) => ({
-                                            ...prev,
-                                            priority: +inputValue
-                                        }))
-                                    }
+                                if (+e.target.value < 4) {
+                                    handleTaskForm('priority', e)
                                 }
                             }}
                             handleEnterKey={() => { }}
@@ -533,10 +513,7 @@ const Templates = ({
                         height="150px"
                         textarea
                         onChange={(e) => {
-                            setTaskForm((prev) => ({
-                                ...prev,
-                                description: e.target.value
-                            }));
+                            handleTaskForm('description', e)
                         }}
                         handleEnterKey={() => { }}
                         value={taskForm?.description}

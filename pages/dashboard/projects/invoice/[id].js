@@ -74,7 +74,7 @@ const YourComponent = ({ _id, invoiceTags, invoiceTaskHours, access_token, getBu
 
   useEffect(() => {
     if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null) {
-      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]));
       filteredData.forEach((item) => {
         const itemDate = new Date(item.updatedAt);

@@ -105,7 +105,7 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
 
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'160px'} />
+            <Nav isSubMenu marginBottom={'192px'} />
             <Desktop>
                 <Title>
                     <TitleText title>Projects</TitleText>
@@ -118,7 +118,7 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
                         </Right>
                     </Toggle>
                 </Title>
-                <SearchBar take={take} setTake={setTake} />
+                <SearchBar theme={{tint3:'#C4C4C4'}} placeHolderColor={'#444444'} margin='0px' take={take} setTake={setTake} />
                 <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} userType={selected} />
             </Desktop>
             <MobileDisplayBox>

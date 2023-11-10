@@ -87,6 +87,7 @@ const Scroll = styled(SimpleBar)`
 const FormField = ({
   className,
   fieldType,
+  inputType,
   required,
   inline,
   error,
@@ -201,6 +202,7 @@ const FormField = ({
       <Control
         onBlur={handleBlur}
         error={currentError}
+        type={fieldType === 'input' && inputType}
         name={name}
         id={name}
         onKeyDown={handleEnter}

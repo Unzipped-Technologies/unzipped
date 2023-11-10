@@ -38,6 +38,7 @@ import {
 } from './constants';
 import axios from 'axios';
 import { tokenConfig } from '../../services/tokenConfig';
+import { startLoading, stopLoading } from '../Loading/actions';
 
 export const updateBusinessForm = (data, token) => async (dispatch, getState) => {
     dispatch({
@@ -138,12 +139,14 @@ export const addCommentToStory = (data, token) => async (dispatch, getState) => 
 }
 
 export const updateTaskDate = (data, token) => async (dispatch, getState) => {
-    
+
     dispatch({ type: LOAD_STATE })
+    dispatch(startLoading());
     dispatch({
         type: UPDATE_TASK_HOURS_DATE,
         payload: data,
     })
+    dispatch(stopLoading());
     await axios
         .patch(`/api/taskHours/time/${data._id}`, data, tokenConfig(token))
         .then()
@@ -158,27 +161,33 @@ export const updateTaskDate = (data, token) => async (dispatch, getState) => {
 export const addTaskAndAddToTaskHours = (data, token) => async (dispatch, getState) => {
 
     dispatch({ type: LOAD_STATE })
+    dispatch(startLoading());
     await axios
         .post(`/api/business/current/task/create`, data, tokenConfig(token))
-        .then((res) => {dispatch({
-            type: CREATE_TASK_AND_TASK_HOURS,
-            payload: res.data.result,
-        })})
+        .then((res) => {
+            dispatch({
+                type: CREATE_TASK_AND_TASK_HOURS,
+                payload: res.data.result,
+            })
+        })
         .catch(err => {
             dispatch({
                 type: DEPARTMENT_ERROR,
                 payload: err.response
             })
         })
+        dispatch(stopLoading());
 }
 
-export const  updateTaskHoursStatus = (data, token) => async (dispatch, getState) => {
+export const updateTaskHoursStatus = (data, token) => async (dispatch, getState) => {
 
     dispatch({ type: LOAD_STATE })
+    dispatch(startLoading());
     dispatch({
         type: UPDATE_TASK_STATUS,
         payload: data,
     })
+    dispatch(stopLoading());
     await axios
         .patch(`/api/taskHours/status/${data._id}`, data, tokenConfig(token))
         .then()
@@ -188,15 +197,19 @@ export const  updateTaskHoursStatus = (data, token) => async (dispatch, getState
                 payload: err.response
             })
         })
+       
+        
 }
 
 export const updateTaskHours = (data, token) => async (dispatch, getState) => {
 
     dispatch({ type: LOAD_STATE })
+    dispatch(startLoading());
     dispatch({
         type: UPDATE_TASK_HOURS,
         payload: data,
     })
+    dispatch(stopLoading());
     await axios
         .patch(`/api/taskHours/${data._id}`, data, tokenConfig(token))
         .then()
@@ -206,6 +219,7 @@ export const updateTaskHours = (data, token) => async (dispatch, getState) => {
                 payload: err.response
             })
         })
+        
 }
 
 export const removeCommentFromStory = (data, token) => async (dispatch, getState) => {
@@ -250,6 +264,7 @@ export const getBusinessTasksByInvestor = ({ businessId, access_token }) => asyn
     const headers = {
         access_token: access_token
     };
+    dispatch(startLoading());
     await axios
         .get(`/api/business/investor/task/${businessId}`, { headers })
         .then(res => dispatch({
@@ -262,6 +277,30 @@ export const getBusinessTasksByInvestor = ({ businessId, access_token }) => asyn
                 payload: err.response
             })
         })
+        dispatch(stopLoading());
+    
+}
+
+export const getBusinessTasksByFounder = ({ businessId, access_token }) => async (dispatch, getState) => {
+
+    dispatch({ type: LOAD_STATE })
+    dispatch(startLoading());
+    const headers = {
+        access_token: access_token
+    };
+    await axios
+        .get(`/api/business/founder/task/${businessId}`, { headers })
+        .then(res => dispatch({
+            type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
+        dispatch(stopLoading());
 }
 
 export const getBusinessList = (data, token, selected, _id) => async (dispatch, getState) => {
@@ -270,6 +309,7 @@ export const getBusinessList = (data, token, selected, _id) => async (dispatch, 
     const headers = {
         access_token: token
     };
+    dispatch(startLoading());
     if (selected == 1) {
         await axios
             .get(`/api/business/investor/${_id}`, {
@@ -301,6 +341,7 @@ export const getBusinessList = (data, token, selected, _id) => async (dispatch, 
                 })
             })
     }
+    dispatch(stopLoading());
 }
 
 export const getDepartmentsForBusiness = (data, token) => async (dispatch, getState) => {

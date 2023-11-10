@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import {
-    TitleText,
     DarkText,
     Absolute,
     WhiteCard,
@@ -10,15 +9,7 @@ import {
 import {
     TableTitle
 } from './tableStyle'
-import {
-    WorkIcon
-} from '../../icons'
-import FreelancerCard from './FreelancerCard'
-import Icon from '../../ui/Icon'
 import Button from '../../ui/Button'
-import Image from '../../ui/Image'
-import Dropdowns from '../../ui/Dropdowns'
-import Projects from '../../../pages/dashboard/projects'
 import { ValidationUtils } from '../../../utils'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useRouter } from 'next/router';
@@ -45,34 +36,48 @@ const Box = styled.div`
     align-items: center;
 `;
 
-const UserContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-flow: column;
-`;
-
-const Row = styled.div`
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    position: relative;
-`;
-
 const StoryTable = styled.div``;
 
-const Panel = ({ list, selectedList, type, projects = [], businesses, loading, userType }) => {
-    const [menuOpen, setMenuOpen] = useState(false)
-    const router = useRouter();
-    const setDropdowns = (item) => {
-        setTimeout(function () {
-            setMenuOpen(item)
-        }, 500);
-    }
+const Panel = ({ type, businesses, loading, userType }) => {
 
-    const setCloseDropdowns = (time) => {
-        setTimeout(function () {
-            setMenuOpen(false)
-        }, (time || 500));
+    const router = useRouter();
+
+    const generatePopout = (userType, item) => {
+        if (userType === 0 || userType === 2) {
+            return [
+                {
+                    text: 'Invoice',
+                    onClick: () => router.push(`projects/client/invoice/${item._id}`),
+                },
+                {
+                    text: 'Details',
+                    onClick: () => console.log('ITEM 1'),
+                },
+                {
+                    text: 'Delete Job',
+                    onClick: () => console.log('ITEM 2'),
+                },
+                {
+                    text: 'Assign department',
+                    onClick: () => console.log('ITEM 3'),
+                },
+            ];
+        } else {
+            return [
+                {
+                    text: 'Log Time',
+                    onClick: () => router.push(`projects/invoice/${item._id}`),
+                },
+                {
+                    text: 'View Project',
+                    onClick: () => console.log('ITEM 2'),
+                },
+                {
+                    text: 'View Work',
+                    onClick: () => console.log('ITEM 3'),
+                },
+            ];
+        }
     }
 
     return (
@@ -110,37 +115,7 @@ const Panel = ({ list, selectedList, type, projects = [], businesses, loading, u
                                 block
                                 type="lightgrey"
                                 fontSize="13px"
-                                popout=
-                                {userType == 0 || userType == 2 ?
-                                    [
-                                        {
-                                            text: 'Details',
-                                            onClick: () => console.log('ITEM 1'),
-                                        },
-                                        {
-                                            text: 'Delete Job',
-                                            onClick: () => console.log('ITEM 2'),
-                                        },
-                                        {
-                                            text: 'Assign department',
-                                            onClick: () => console.log('ITEM 3'),
-                                        },
-                                    ] :
-                                    [
-                                        {
-                                            text: 'Log Time',
-                                            onClick: () => router.push(`projects/invoice/${item._id}`),
-                                        },
-                                        {
-                                            text: 'view Project',
-                                            onClick: () => console.log('ITEM 2'),
-                                        },
-                                        {
-                                            text: 'View Work',
-                                            onClick: () => console.log('ITEM 3'),
-                                        },
-                                    ]
-                                }
+                                popout={generatePopout(userType, item)}
                                 iconRight>
                                 Details
                             </Button>
