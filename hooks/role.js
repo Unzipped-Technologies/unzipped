@@ -1,31 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { clearErrors, loadUser } from '../redux/actions'
+import { useSelector } from 'react-redux';
 
-const  Role = ({ role }) => {
-    if (role == 0) {
-        return 'FOUNDER'
-    }
-    else if (role == 1) {
-        return 'INVESTOR'
-    }
-    else if (role == 2) {
-        return 'ADMIN'
-    }
-}
+export const useRole = () => {
+    const role = useSelector(state => state.Auth.user.role);
 
-const mapStateToProps = state => {
-    return {
-        role: state.Auth.user.role
+    switch (role) {
+        case 0:
+            return { name: 'FOUNDER', id: role };
+        case 1:
+            return { name: 'INVESTOR', id: role };
+        case 2:
+            return { name: 'ADMIN', id: role };
+        default:
+            return { name: 'UNKNOWN', id: null };
     }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        loadUser: bindActionCreators(loadUser, dispatch),
-        clearErrors: bindActionCreators(clearErrors, dispatch)
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Role)
+};

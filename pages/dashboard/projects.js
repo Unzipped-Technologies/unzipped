@@ -85,7 +85,6 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
             }, access, selected, _id)
         }
         else if (selected == 1) {
-            console.log("investor")
             getBusinessList({
                 take: take,
                 skip: (page - 1) * 25,
@@ -137,7 +136,6 @@ Projects.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state.Auth)
     return {
         _id: state.Auth.user._id,
         access_token: state.Auth.token,

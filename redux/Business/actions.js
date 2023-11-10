@@ -35,6 +35,7 @@ import {
     UPDATE_TASK_STATUS,
     CREATE_TASK_AND_TASK_HOURS,
     UPDATE_TASK_HOURS_DATE,
+    GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER
 } from './constants';
 import axios from 'axios';
 import { tokenConfig } from '../../services/tokenConfig';
@@ -301,6 +302,26 @@ export const getBusinessTasksByFounder = ({ businessId, access_token }) => async
             })
         })
         dispatch(stopLoading());
+}
+
+export const getBusinessTasksByFounder = ({ businessId, access_token }) => async (dispatch, getState) => {
+
+    dispatch({ type: LOAD_STATE })
+    const headers = {
+        access_token: access_token
+    };
+    await axios
+        .get(`/api/business/founder/task/${businessId}`, { headers })
+        .then(res => dispatch({
+            type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: DEPARTMENT_ERROR,
+                payload: err.response
+            })
+        })
 }
 
 export const getBusinessList = (data, token, selected, _id) => async (dispatch, getState) => {

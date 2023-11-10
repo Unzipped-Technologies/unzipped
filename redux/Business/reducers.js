@@ -36,6 +36,7 @@ import {
     UPDATE_TASK_HOURS,
     UPDATE_TASK_STATUS,
     CREATE_TASK_AND_TASK_HOURS,
+    GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
     GET_PROJECT_Error
 } from './constants';
 
@@ -51,6 +52,7 @@ const INIT_STATE = {
     employees: [],
     invoiceTaskHours: [],
     invoiceTags: [],
+    projectName: "",
     businessForm: {
         name: "",
         isFirstBusiness: '',
@@ -231,6 +233,31 @@ const Business = (state = INIT_STATE, action = {}) => {
                 return updatedTask;
             });
             return { ...state, loading: false, invoiceTaskHours: updatedTasks };
+        case GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER:
+            const findEmployeeRate = (dep, user) => {
+                const employee = action.payload.businessDetails.employees.find(emp =>
+                    emp.departmentId === dep && emp.freelancerId.userId === user
+                );
+                return employee ? employee.hourlyRate : undefined;
+            }
+            const taskHoursByFounderBusiness = action?.payload?.results?.map(task => ({
+                updatedAt: task.updatedAt,
+                isDeleted: task.isDeleted,
+                deletedAt: task.deletedAt,
+                userId: task.userId,
+                storyPoints: task.taskId.storyPoints,
+                taskName: task.taskId.taskName,
+                tagName: task.taskId.tag.tagName,
+                tag: task.taskId.tag._id,
+                hours: task.hours,
+                departmentId: task.departmentId,
+                createdAt: task.createdAt,
+                rate: findEmployeeRate(task.departmentId, task.userId._id),
+                _id: task._id,
+
+            }))
+            const projectName = action.payload.businessDetails.name;
+            return { ...state, loading: false, invoiceTaskHours: taskHoursByFounderBusiness, projectName: projectName };
         case GET_TASK_HOURS_BY_BUSINESS:
             const invoiceTaskHour = action.payload.taskHours.map(task => ({
                 updatedAt: task.updatedAt,
@@ -247,7 +274,8 @@ const Business = (state = INIT_STATE, action = {}) => {
                 rate: action.payload.ContractRate.hourlyRate,
                 _id: task._id,
             }));
-            return { ...state, loading: false, invoiceTaskHours: invoiceTaskHour, invoiceTags: action.payload.tags };
+            const projName = action.payload?.ContractRate?.businessId?.name;
+            return { ...state, loading: false, invoiceTaskHours: invoiceTaskHour, invoiceTags: action.payload.tags, projectName: projName };
         default:
             return state;
     }
