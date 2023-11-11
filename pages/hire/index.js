@@ -8,11 +8,17 @@ const Container = styled.div`
     display: flex;
     flex-flow: column;
 `;
-
+const NavContainer = styled.div`
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
+`
 const HirePage = () => {
     return (
         <Container>
-            <Nav />
+            <NavContainer>
+                <Nav />
+            </NavContainer>
             <Head>
                 <title>Hire | Freelancer</title>
             </Head>

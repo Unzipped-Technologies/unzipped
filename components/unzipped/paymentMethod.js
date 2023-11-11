@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     DarkText,
     TitleText,
@@ -23,8 +23,9 @@ import {
     CardElement,
     useElements,
     useStripe,
-  } from "@stripe/react-stripe-js";
-  import { loadStripe } from "@stripe/stripe-js";
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import useWindowSize from '../ui/hooks/useWindowSize';
 
 const Container = styled.div`
     margin: 0px 10px 0px 0px;
@@ -53,42 +54,47 @@ const FormLabel = styled.label`
 `;
 
 const FormWrapper = styled.div`
-  width: ${({form}) => form ? '80%' : '90%'};
+  width: ${({ form }) => form ? '80%' : '90%'};
   height: 49px;
   align-items: center;
   padding: 15px;
   margin-bottom: 5px;
   border: 1px solid #D8D8D8;
   border-radius: 4px;
+  @media screen and (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
-const PaymentMethod = ({changeFocus, planCost, form, user, updateSubscription, onClick, loading}) => {
+const PaymentMethod = ({ changeFocus, planCost, form, user, updateSubscription, onClick, loading }) => {
     const stripe = loadStripe(
-      // `${process.env.STRIPE_PUBLISHABLE_KEY}`
-      'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog'
+        // `${process.env.STRIPE_PUBLISHABLE_KEY}`
+        'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog'
     );
     return (
-      <Elements stripe={stripe}>
-        <PaymentForm 
-            changeFocus={changeFocus} 
-            planCost={planCost} 
-            form={form} 
-            user={user} 
-            updateSubscription={updateSubscription} 
-            onClick={onClick} 
-            loading={loading}
-        />
-      </Elements>
+        <Elements stripe={stripe}>
+            <PaymentForm
+                changeFocus={changeFocus}
+                planCost={planCost}
+                form={form}
+                user={user}
+                updateSubscription={updateSubscription}
+                onClick={onClick}
+                loading={loading}
+            />
+        </Elements>
     );
-  };
+};
 
-const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading}) => {
+const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loading }) => {
     const [isPaymentForm, setIsPaymentForm] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isError, setIsError] = useState(null)
     const stripe = useStripe();
     const elements = useElements();
+    const [isSmallWindow, setIsSmallWindow] = useState(false)
+    const { width } = useWindowSize();
 
     const PaymentFormUpdate = () => {
         onClick && onClick()
@@ -100,9 +106,9 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
         // Block native form submission.
         event.preventDefault();
         if (!stripe || !elements) {
-          // Stripe.js has not loaded yet. Make sure to disable
-          // form submission until Stripe.js has loaded.
-          return;
+            // Stripe.js has not loaded yet. Make sure to disable
+            // form submission until Stripe.js has loaded.
+            return;
         }
         try {
             const name = `${document.getElementById("inputFirstName").value} ${document.getElementById("inputLastName").value}`
@@ -116,43 +122,43 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
             // each type of element.
             const cardElement = elements.getElement(CardNumberElement);
             console.log('cardElement', cardElement)
-            
+
             // Use your card Element with other Stripe.js APIs
-            const {error, paymentMethod} = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-            billing_details: {
-                name,
-                email: user?.email,
-                address: {
-                    line1,
-                    line2,
-                    city,
-                    state,
-                    postal_code,
-                },
-            }
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    name,
+                    email: user?.email,
+                    address: {
+                        line1,
+                        line2,
+                        city,
+                        state,
+                        postal_code,
+                    },
+                }
             })
             setIsLoading(true)
             PaymentFormUpdate()
             if (error) {
-            console.log('[error]', error);
-            setIsError(error?.message)
-            setIsLoading(false)
-            setIsPaymentForm(true)
-            } else {
-            console.log('[PaymentMethod]', paymentMethod);
-            updateSubscription({
-                paymentMethod: {
-                    ...form?.paymentMethod,
-                    card: {
-                        ...paymentMethod
-                    }
-                }
-            })
-            setTimeout(() => {
+                console.log('[error]', error);
+                setIsError(error?.message)
                 setIsLoading(false)
-            }, 1500)
+                setIsPaymentForm(true)
+            } else {
+                console.log('[PaymentMethod]', paymentMethod);
+                updateSubscription({
+                    paymentMethod: {
+                        ...form?.paymentMethod,
+                        card: {
+                            ...paymentMethod
+                        }
+                    }
+                })
+                setTimeout(() => {
+                    setIsLoading(false)
+                }, 1500)
             }
         } catch (e) {
             console.log(e)
@@ -163,8 +169,16 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
             }, 1000)
         }
 
-        
+
     };
+
+    useEffect(() => {
+        if (width <= 600) {
+            setIsSmallWindow(true)
+        } else {
+            setIsSmallWindow(false)
+        }
+    }, [width])
 
     return (
         <Container>
@@ -177,7 +191,7 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
                             {isError && <DarkText error>{isError}</DarkText>}
                             <FormLabel>CARD NUMBER</FormLabel>
                             <FormWrapper>
-                                <CardNumberElement 
+                                <CardNumberElement
                                     onBlur={() => setIsError(null)}
                                     options={{
                                         style: {
@@ -192,17 +206,17 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
                                             },
                                         },
                                     }}
-                                />  
+                                />
                             </FormWrapper>
                             <Grid2 margin="0px" block>
                                 <FormLabel>EXPIRES</FormLabel>
                                 <FormLabel>CVC</FormLabel>
                                 <FormWrapper form>
-                                    <CardExpiryElement 
+                                    <CardExpiryElement
                                         options={{
                                             style: {
                                                 fontSize: '16px',
-                                                width: '90%',
+                                                width: `${isSmallWindow ? '100%' : '90%'}`,
                                                 float: 'left',
                                                 '::placeholder': {
                                                     color: 'lightgrey',
@@ -212,15 +226,15 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
                                                 },
                                             },
                                         }}
-                                    /> 
+                                    />
                                 </FormWrapper>
 
                                 <FormWrapper form>
-                                    <CardCvcElement 
+                                    <CardCvcElement
                                         options={{
                                             style: {
                                                 fontSize: '16px',
-                                                width: '90%',
+                                                width: `${isSmallWindow ? '100%' : '90%'}`,
                                                 float: 'left',
                                                 '::placeholder': {
                                                     color: 'lightgrey',
@@ -230,113 +244,113 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
                                                 },
                                             },
                                         }}
-                                    /> 
+                                    />
                                 </FormWrapper>
 
                             </Grid2>
 
-                            <FormField 
+                            <FormField
                                 fieldType="input"
                                 margin
                                 fontSize='14px'
                                 required
                                 noMargin
-                                width="90%"
-                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressLineCountry: e.target.value }})}
+                                width={isSmallWindow ? "100%" : "90%"}
+                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressLineCountry: e.target.value } })}
                                 value={form?.paymentMethod?.BillingAddressLineCountry}
                             >
                                 COUNTRY/REGION
                             </FormField>
                             <Grid2 margin="0px" block>
-                            <FormField 
-                                fieldType="input"
-                                margin
-                                fontSize='14px'
-                                required
-                                noMargin
-                                width="80%"
-                                id="inputFirstName"
-                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingFirstName: e.target.value }})}
-                                value={form?.paymentMethod?.BillingFirstName}
-                            >
-                                FIRST NAME
-                            </FormField>
-                            <FormField 
-                                fieldType="input"
-                                margin
-                                fontSize='14px'
-                                required
-                                noMargin
-                                width="80%"
-                                id="inputLastName"
-                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingLastName: e.target.value }})}
-                                value={form?.paymentMethod?.BillingLastName}
-                            >
-                                LAST NAME
-                            </FormField>
+                                <FormField
+                                    fieldType="input"
+                                    margin
+                                    fontSize='14px'
+                                    required
+                                    noMargin
+                                    width={isSmallWindow ? "100%" : "80%"}
+                                    id="inputFirstName"
+                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingFirstName: e.target.value } })}
+                                    value={form?.paymentMethod?.BillingFirstName}
+                                >
+                                    FIRST NAME
+                                </FormField>
+                                <FormField
+                                    fieldType="input"
+                                    margin
+                                    fontSize='14px'
+                                    required
+                                    noMargin
+                                    width={isSmallWindow ? "100%" : "80%"}
+                                    id="inputLastName"
+                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingLastName: e.target.value } })}
+                                    value={form?.paymentMethod?.BillingLastName}
+                                >
+                                    LAST NAME
+                                </FormField>
                             </Grid2>
-                            <FormField 
+                            <FormField
                                 fieldType="input"
                                 margin
                                 fontSize='14px'
                                 noMargin
                                 required
-                                width="90%"
+                                width={isSmallWindow ? "100%" : "90%"}
                                 id="inputAddress"
-                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressLineOne: e.target.value }})}
+                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressLineOne: e.target.value } })}
                                 value={form?.paymentMethod?.BillingAddressLineOne}
                             >
                                 ADDRESS
                             </FormField>
-                            <FormField 
+                            <FormField
                                 fieldType="input"
                                 margin
                                 fontSize='14px'
                                 noMargin
                                 required
-                                width="90%"
+                                width={isSmallWindow ? "100%" : "90%"}
                                 id="inputAppartment"
-                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressLineTwo: e.target.value }})}
+                                onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressLineTwo: e.target.value } })}
                                 value={form?.paymentMethod?.BillingAddressLineTwo}
                             >
                                 APPARTMENT, SUITE, ETC.
                             </FormField>
                             <Grid3 margin="0px" block>
-                                <FormField 
+                                <FormField
                                     fieldType="input"
                                     margin
                                     fontSize='14px'
                                     noMargin
                                     required
-                                    width="80%"
+                                    width={isSmallWindow ? "100%" : "80%"}
                                     id="inputCity"
-                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressCity: e.target.value }})}
+                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressCity: e.target.value } })}
                                     value={form?.paymentMethod?.BillingAddressCity}
                                 >
                                     CITY
                                 </FormField>
-                                <FormField 
+                                <FormField
                                     fieldType="input"
                                     margin
                                     fontSize='14px'
                                     noMargin
-                                    width="80%"
+                                    width={isSmallWindow ? "100%" : "80%"}
                                     required
                                     id="inputState"
-                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressState: e.target.value }})}
+                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressState: e.target.value } })}
                                     value={form?.paymentMethod?.BillingAddressState}
                                 >
                                     STATE
                                 </FormField>
-                                <FormField 
+                                <FormField
                                     fieldType="input"
                                     margin
                                     fontSize='14px'
                                     noMargin
                                     required
-                                    width="70%"
+                                    width={isSmallWindow ? "100%" : "70%"}
                                     id="inputZip"
-                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressZip: e.target.value }})}
+                                    onChange={(e) => updateSubscription({ paymentMethod: { ...form?.paymentMethod, BillingAddressZip: e.target.value } })}
                                     value={form?.paymentMethod?.BillingAddressZip}
                                 >
                                     ZIP CODE
@@ -359,18 +373,18 @@ const PaymentForm = ({planCost, form, user, updateSubscription, onClick, loading
                             <CircularProgress size={24} />
                         )}
                         {isUpdated && !isLoading && (
-                            <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png" alt="success" height="34px" width="34px"/>
+                            <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png" alt="success" height="34px" width="34px" />
                         )}
                         {!isUpdated && (
                             <Button type='outlineInverse' small onClick={() => setIsPaymentForm(true)}>Add</Button>
                         )}
-                        
+
                     </Absolute>
                 </WhiteCard>
             )}
         </Container>
 
     )
-}   
+}
 
 export default PaymentMethod

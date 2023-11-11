@@ -13,11 +13,14 @@ const RecurringWrapper = styled.div`
 `;
 
 const Container = styled.div`
-    width: 1052px;
+    width: 1070px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const NotificationContainer = styled.div`
@@ -69,6 +72,10 @@ const PaymentDetailContainer = styled.div`
     border: 1px solid #D8D8D8;
     background: #FFF;
     height: 570px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        margin-top: 15px;
+    }
 `;
 
 const ChargeText = styled.span`
@@ -140,6 +147,9 @@ const TableCellStyled = styled(TableCell)`
     letter-spacing: 0.4px;
     text-transform: uppercase;
     padding-left: 3px;
+    @media screen and (max-width: 600px) {
+        font-size: 12px;
+    }
 `;
 
 const ConfirmAmountButton = styled.button`
@@ -227,6 +237,9 @@ const UpdatePaymentButton = styled.button`
     border: none;
     text-transform: uppercase;
     padding: 10px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
 `;
 const PaymentDetailNote = styled.div`
     color: #444;
@@ -273,6 +286,9 @@ const PaymentDivider = styled.div`
     width: 325px;
     background: #D8D8D8;
     height: 1px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
 `;
 
 const ConfirmationText = styled.p`
@@ -285,7 +301,16 @@ const ConfirmationText = styled.p`
     letter-spacing: 0.4px;
     text-transform: uppercase;
 `;
+// Responsive Layout Section Styling
 
+const ResponsiveContainer = styled.div`
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    @media screen and (min-width: 600px) {
+        display: block;
+    }
+`;
 export {
     RecurringWrapper,
     Container,
@@ -313,5 +338,6 @@ export {
     SpanText,
     BillingTextStyled,
     PaymentDivider,
-    ConfirmationText
+    ConfirmationText,
+    ResponsiveContainer
 }

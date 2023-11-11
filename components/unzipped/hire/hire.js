@@ -10,8 +10,9 @@ import { useRouter } from 'next/router';
 // import Select from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProjectsList } from '../../../redux/actions';
-
 import ProjectDropdown from './project-dropdown';
+import useWindowSize from '../../../hooks/windowWidth';
+import BackIcon from '../../ui/icons/back'
 
 const HireWrapper = styled.div`
     width: 100%;
@@ -30,11 +31,18 @@ const HireInputContainer = styled.div`
     padding-left: 50px;
     padding-bottom: 12px;
     margin-top: 50px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+    }
 `;
 
 const HeadingText = styled.h1`
     text-transform: uppercase;
     margin-bottom: 0;
+    margin-top: 0;
     ${getFontStyled(
     {
         color: COLORS.black,
@@ -82,6 +90,10 @@ const InputField = styled.input`
     border: 1px solid #000 !important;
     background: rgba(217, 217, 217, 0.15) !important;
     padding-left: 8px !important;
+    @media screen and (max-width: 600px) {
+        width: 100% !important;
+        padding-left: 0px !important;
+    }
 `;
 const TextareaField = styled.textarea`
     height: 121px !important;
@@ -90,6 +102,9 @@ const TextareaField = styled.textarea`
     border: 1px solid #000 !important;
     background: rgba(217, 217, 217, 0.15) !important;
     padding: 10px !important;
+    @media screen and (max-width: 600px) {
+        width: 100% !important;
+    }
 `;
 
 const HireButton = styled.button`
@@ -99,6 +114,9 @@ const HireButton = styled.button`
     border-radius: 5px;
     text-transform: uppercase;
     border: none;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
 `;
 
 const InputHourlyField = styled.input`
@@ -121,7 +139,9 @@ const TrackingField = styled.input`
     margin:0 ;
     border: none !important;
     background: rgba(217, 217, 217, 0.15) !important;
-    
+    @media screen and (max-width: 600px) {
+        width: 100% !important;
+    }
 `;
 
 const Span = styled.span`
@@ -154,6 +174,73 @@ const ButtonText = styled.span`
         letterSpacing: LETTER_SPACING,
     })}
 `;
+
+const ContentContainer = styled.div`
+    width: 488px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
+`;
+
+const HourlyRateStyled = styled.div`    
+    display: flex;
+    width: 488px;
+    gap: 20px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
+`;
+
+const HourlyInputContainer = styled.div`
+    border: 1px solid black;
+    @media screen and (max-width: 600px) {
+        border: none;
+    }
+`;
+
+const MiddleContent = styled.div`
+    display: flex; 
+    width: 353px; 
+    border: 1px solid black; 
+    justify-content: space-between; 
+    align-items: center;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
+`;
+
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: end;
+    padding-right: 4rem;
+    margin-top: 35px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        padding-left: 0px;
+        justify-content: center;
+    }
+`;
+const NotificationText = styled.p`
+    color: #000;
+    font-family: Roboto;
+    font-size: ${({ fontSize }) => fontSize ? fontSize : '12px'};
+    font-style: normal;
+    font-weight: {({ fontWeight }) => fontWeight ? fontWeight : '300'};
+    line-height: 19.5px;
+    letter-spacing: 0.15px;
+    text-transform: ${({ textTransform }) => textTransform ? textTransform : 'none'};
+    width: ${({ width }) => width ? width : '100%'};
+    text-align: ${({ textAlign }) => textAlign ? textAlign : 'left'};
+    margin-left: ${({ marginLeft }) => marginLeft ? marginLeft : '0'};
+`;
+const RecurringPaymentSmHeader = styled.div`
+    display: flex; 
+    flex-direction: row;
+    width: 100%; 
+    background: #FFF;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25); 
+    padding: 10px;
+`;
 const HireComp = () => {
     const dispatch = useDispatch();
     const projects = useSelector(state => state.Business.projectList);
@@ -163,6 +250,8 @@ const HireComp = () => {
     const [selectedVal, setSelectedVal] = useState('');
     const [selectCurrency, setSelectCurrency] = useState('USD');
     const [projectList, setProjectList] = useState([]);
+    const [isSmallWindow, setIsSmallWindow] = useState(false)
+    const { width } = useWindowSize();
 
     useEffect(() => {
         const project = projects.map(item => ({ value: item.name, label: item.name }));
@@ -172,6 +261,13 @@ const HireComp = () => {
     const handleSearchChangeEvent = (e) => {
         setSelectedVal(e);
     }
+    useEffect(() => {
+        if (width <= 600) {
+            setIsSmallWindow(true)
+        } else {
+            setIsSmallWindow(false)
+        }
+    }, [width])
 
     const handleSearch = (e) => {
         if (e.target.value.length >= 3) {
@@ -183,65 +279,30 @@ const HireComp = () => {
         <HireWrapper>
             <HireDivider title="Confirm Payment Details" />
             <HireInputContainer>
-                <div style={{ width: '488px'}}>
+                <ContentContainer >
                     <HeadingText>
                         Contact User About Your Job
                     </HeadingText>
                     <Text>Your subscription will be paid using your primary payment method.</Text>
                     <Label>Project Name</Label>
                     <ProjectDropdown />
-                        {/* <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            isDisabled={false}
-                            isClearable={true}
-                            isSearchable={true}
-                            name="color"
-                            options={projectList}
-                            onKeyDown={handleSearch}
-                            onChange={handleSearchChangeEvent}
-                            styles={{
-                                control: (provided, state) => ({
-                                    ...provided,
-                                    width: '470px',
-                                    border: '1px solid black',
-                                    borderRadius: 0,
-                                    boxShadow: state.isFocused ? null : null,
-                                    '&:hover': {
-                                        border: '1px solid black',
-                                    },
-                                    
-                                }),
-                            }}
-                        /> */}
-                    
-                    {/* <Select
-                        value={select}
-                        onChange={handleProjects}
-                        style={{ width: '470px', border: '1px solid black', paddingLeft: '8px' }}
-                    >
-                        <MenuItem value="Unzipped">Unzipped</MenuItem>
-                        <MenuItem value="Why">Find Talent</MenuItem>
-                        <MenuItem value="Client">Client</MenuItem>
-                        <MenuItem value="Freelancer">Freelancer</MenuItem>
-                    </Select> */}
                     <Label>Send a private message</Label>
                     <TextareaField rows={50} cols={100} />
                     <Label>job type</Label>
                     <InputField type='text' />
                     <Label>hourly rate (show budget if selected)</Label>
-                    <div style={{ display: 'flex', width: 488, gap: 20 }}>
-                        <div style={{ border: '1px solid black' }}>
+                    <HourlyRateStyled>
+                        <HourlyInputContainer >
                             <Span>$</Span>
                             <InputHourlyField value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} />
                             <Span>per hours</Span>
-                        </div>
+                        </HourlyInputContainer>
                         <div>
                             <Select
                                 value={selectCurrency}
                                 onChange={(e) => setSelectCurrency(e.target.value)}
                                 style={{
-                                    width: '77px',
+                                    width: `${isSmallWindow ? '100%' : '77px'}`,
                                     border: '1px solid black',
                                     paddingLeft: 5,
                                     paddingRight: 5,
@@ -254,10 +315,10 @@ const HireComp = () => {
                                 <MenuItem value="GBP">GBP</MenuItem>
                             </Select>
                         </div>
-                    </div>
+                    </HourlyRateStyled>
                     <Label>weekly tracking limit</Label>
 
-                    <div style={{ display: 'flex', width: 353, border: '1px solid black', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <MiddleContent>
                         <div>
                             <TrackingField value={weeklyTrackingLimit} onChange={(e) => setWeeklyTrackingLimit(e.target.value)} />
                         </div>
@@ -265,11 +326,11 @@ const HireComp = () => {
                             <Span>hours / week</Span>
                         </div>
 
-                    </div>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'end', paddingRight: '4rem', marginTop: 35 }}>
+                    </MiddleContent>
+                </ContentContainer>
+                <ButtonContainer >
                     <HireButton ><ButtonText onClick={() => router.push('/recurring-payment')} >Hire (user)</ButtonText></HireButton>
-                </div>
+                </ButtonContainer>
             </HireInputContainer>
         </HireWrapper>
     )
