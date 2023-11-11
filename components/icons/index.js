@@ -37,6 +37,7 @@ import Review from './reviews'
 import ReviewHalf from './reviewHalf'
 import ReviewSmall from './reviewSmall'
 import ReviewHalfSmall from './reviewHalfSmall'
+import UpArrow from './upArrow'
 import GoBack from './navback'
 
 export {
@@ -79,5 +80,6 @@ export {
     ReviewHalf,
     ReviewSmall,
     ReviewHalfSmall,
+    UpArrow,
     GoBack
 };

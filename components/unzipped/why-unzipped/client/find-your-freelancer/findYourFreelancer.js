@@ -8,18 +8,37 @@ const FindFreelancerSectionContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 2rem;
+    @media screen and (max-width: 600px){
+        width: 385px;
+        flex-direction: column;
+    }
 `;
 
 const ImageBox = styled.div`
     width: 560px;
     height: 390px;
     border-radius: 10px;
+    @media screen and (max-width: 600px){
+        display: none;
+    }
+`;
+
+const ImageBoxResp = styled.div`
+    width: 385px;
+    border-radius: 10px;
+    @media screen and (min-width: 600px){
+        display: none;
+    }
 `;
 
 const TextContainer = styled.div`
     width: 493px;
     height: 390px;
     border-radius: 10px;
+    @media screen and (max-width: 600px){
+        width: 385px;
+        height: auto;
+    }
 `;
 
 const SubHeadingStyled = styled.h1`
@@ -32,6 +51,10 @@ const SubHeadingStyled = styled.h1`
     lineHeight: FONT_SIZE.PX_23,
     letterSpacing: LETTER_SPACING
 })}
+    @media screen and (max-width: 600px){
+        font-size: 18px;
+        line-height: 23px;
+    }
 `;
 
 const HeadingStyled = styled.h1`
@@ -43,6 +66,11 @@ const HeadingStyled = styled.h1`
     lineHeight: FONT_SIZE.PX_23,
     letterSpacing: LETTER_SPACING
 })}
+
+    @media screen and (max-width: 600px){
+        font-size: 24px;
+        line-height: 23px;
+    }
 `;
 
 const ParagraphText = styled.p`
@@ -54,6 +82,11 @@ ${getFontStyled({
     lineHeight: FONT_SIZE.PX_22,
     letterSpacing: LETTER_SPACING
 })}
+
+    @media screen and (max-width: 600px){
+        font-size: 14px;
+        line-height: 22px;
+    }
 `;
 
 
@@ -65,6 +98,11 @@ const ButtonBox = styled.button`
     border: 1px solid rgba(196, 196, 196, 0.00);
     background: #8EDE64;
     margin-top: 1.85rem;
+    @media screen and (max-width: 600px){
+        width: 109px;
+        height: 38px;
+        border-radius: 24px;
+    }
 `;
 
 const ButtonText = styled.span`
@@ -75,6 +113,10 @@ const ButtonText = styled.span`
     font-weight: 400;
     line-height: 1.438rem;
     letter-spacing: 0.009rem;
+    @media screen and (max-width: 600px){
+        font-size: 12px;
+        line-height: 23px;
+    }
 `;
 
 const SkilledFreelancerSection = styled.div`
@@ -84,6 +126,10 @@ const SkilledFreelancerSection = styled.div`
     align-items: center;
     padding-left: 2rem;
     gap: 0.75rem;
+    @media screen and (max-width: 600px){
+        width: 385px;
+        flex-direction: column;
+    }
 `;
 
 const BrowseButtonBox = styled.button`
@@ -116,14 +162,26 @@ const SkilledParagraphSection = styled.div`
 const ImageBoxSkilledFreelancer = styled.div`
     width: 552px;
     height: 355px;
+    @media screen and (max-width: 600px){
+        display: none;
+    }
 
-`
+`;
+
+const ImageBoxSkilledFreelancerRes = styled.div`
+width: 385px;
+@media screen and (min-width: 600px){
+    display: none;
+}
+
+`;
 const FindYourFreelancer = () => {
     const router = useRouter();
     return (
         <>
             <FindFreelancerSectionContainer>
                 <ImageBox> <img src="/img/FindYourFreelancer.png" width="500" /> </ImageBox>
+                <ImageBoxResp> <img src="/img/FindYourPerfectFreelancerResponsive.png" width="375" /> </ImageBoxResp>
                 <TextContainer>
                     <HeadingStyled>Find Your Perfect Freelancer</HeadingStyled>
                     <SubHeadingStyled> Elevate your projects with the best talent in the Unzipped Marketplace.</SubHeadingStyled>
@@ -138,6 +196,9 @@ const FindYourFreelancer = () => {
             </FindFreelancerSectionContainer>
 
             <SkilledFreelancerSection>
+                <ImageBoxSkilledFreelancerRes>
+                    <img src="/img/PerfectFreelancer_2.png" width="385" />
+                </ImageBoxSkilledFreelancerRes>
                 <SkilledParagraphSection>
                     <LowerHeaderStyled>Direct Access to Skilled Freelancers</LowerHeaderStyled>
                     <SubHeadingStyled>Bypass the guesswork by directly connecting with proven freelancers.</SubHeadingStyled>
@@ -145,6 +206,7 @@ const FindYourFreelancer = () => {
                     <ParagraphText>With our platform, it's easy to set clear expectations right from the start.</ParagraphText>
                     <BrowseButtonBox> <ButtonText onClick={() => router.push('/freelancers')}>Browse Freelancers</ButtonText> </BrowseButtonBox>
                 </SkilledParagraphSection>
+
 
                 <ImageBoxSkilledFreelancer>
                     <img src="/img/SkilledFreelancer.png" width="530" height="354" />

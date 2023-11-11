@@ -6,6 +6,12 @@ const SecurityPrivacyContainer = styled.div`
     width: 65.75rem;
     gap: 5.5rem;
     margin-top: 8.125rem;
+    @media screen and (max-width: 600px){
+        flex-direction: column;
+        width: 385px;
+        gap: 5px;
+        margin-top: 10px
+    }
 `;
 
 const ImageBox = styled.div`
@@ -28,6 +34,9 @@ const Heading = styled.h1`
     letterSpacing: LETTER_SPACING,
 })
     }
+    @media screen and (max-width: 600px){
+        display: none;
+    }
 `;
 
 const SubHeading = styled.p`
@@ -39,6 +48,9 @@ const SubHeading = styled.p`
     lineHeight: 'normal',
     letterSpacing: LETTER_SPACING
 })
+    }
+    @media screen and (max-width: 600px){
+        margin-top: 40px;
     }
 `;
 
@@ -67,6 +79,22 @@ const SectionHeading = styled.h1`
 })
     }
 `;
+
+const HeadingResp = styled.h1`
+    margin-bottom: ${FONT_SIZE.PX_16};
+        ${getFontStyled({
+        color: COLORS.black,
+        fontSize: FONT_SIZE.PX_26,
+        fontWeight: 500,
+        fontStyle: 'normal',
+        lineHeight: FONT_SIZE.PX_23,
+        letterSpacing: LETTER_SPACING,
+    })
+    }
+    @media screen and (min-width: 600px){
+        display: none;
+    }
+`;
 export {
     SecurityPrivacyContainer,
     ImageBox,
@@ -74,5 +102,6 @@ export {
     Heading,
     SubHeading,
     SectionHeading,
-    Paragraph
+    Paragraph,
+    HeadingResp
 }

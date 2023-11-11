@@ -32,8 +32,12 @@ const LabelStyled = styled.p`
     text-transform: uppercase;
     opacity: 0.18;
     margin: 0;
+    @media screen and (max-width: 425px){
+        margin-top: 28px;
+    }
     @media screen and (max-width: 600px){
-        font-size: 15px;
+        font-size: 18px;
+        margin-top: 0;
     }
 `;
 
@@ -117,11 +121,19 @@ const ResponsiveImageContainer = styled.div`
     width: 94px;
     height: 94px;
     display: none;
+    @media screen and (max-width: 425px) {
+        display: block;
+        width: 56px;
+        height: 56px;
+        margin-top: 39px
+    }
     @media screen and (max-width: 600px){
         display: block;
         width: 56px;
         height: 56px;
+        margin-top: 11px;
     }
+
 `;
 
 const Input = styled.input`
@@ -136,6 +148,12 @@ const Input = styled.input`
         height: 35px !important;
         padding-left: 20px !important;
     }
+    @media screen and (max-width: 600px){
+        height: 35px !important;
+        padding: 5px !important;
+        margin-top: 0 !important;
+        border-radius: 4px !important;
+    }
 `;
 const NewsLetter = () => {
     return (
@@ -148,7 +166,7 @@ const NewsLetter = () => {
                                 <ImageContainer> <img src="/img/Newsletter.png" /> </ImageContainer>
                                 <ResponsiveImageContainer> <img src="/img/ResponsiveNewsletter.png" /> </ResponsiveImageContainer>
                                 <ParagrapContainerX>
-                                    <LabelStyled> News letter goes here </LabelStyled>
+                                    <LabelStyled> UNZIPPED News letter</LabelStyled>
                                     <InputStyledContainer >
                                         <Input placeholder="Email" type="text" />
                                     </InputStyledContainer>

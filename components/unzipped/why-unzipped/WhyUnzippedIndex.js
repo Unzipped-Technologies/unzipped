@@ -26,13 +26,25 @@ const TextBox = styled.div`
     width: 65.75rem; 
     padding: 0.938rem;
     margin-top: ${FONT_SIZE.PX_30};
-    &::after{
+    &:after{
         content : '';
         display : block;
         height : 2px;
         width : 65.25rem;
         background: #F3F6F3;
         margin-top: ${FONT_SIZE.PX_43};
+    }
+
+    @media screen and (max-width: 600px){
+        width: auto;
+        &:after{
+            content : '';
+            display : none;
+            height : 2px;
+            width : 0;
+            background: #F3F6F3;
+            margin-top: 0;
+        }
     }
 
 `;
@@ -65,8 +77,12 @@ const TalentText = styled.p`
 `;
 
 const TextBoxContent = styled.div`
-    width: ${FONT_SIZE.PX_600}
+    width: 500px;
+    @media screen and (max-width: 600px){
+        width: 375px;
+    }
 `;
+
 const HeadingStyled = styled.h1`
     padding-left: 2rem;
     ${getFontStyled({
@@ -77,6 +93,9 @@ const HeadingStyled = styled.h1`
     lineHeight: '1.438rem',
     letterSpacing: LETTER_SPACING
 })
+    }
+    @media screen and (max-width: 600px){
+        padding-left: 0;
     }
 `;
 
@@ -91,6 +110,18 @@ const SealOfApprovalContainer = styled.div`
         width: 1052px;
         background: ${COLORS.hrLineColor};
     }
+    @media screen and (max-width: 600px){
+        padding-left: 0;
+        width: 385px;
+        &::after{
+        margin-top: 29px;
+        content: '';
+        display: none;
+        height: 2px;
+        width: 1052px;
+        background: ${COLORS.hrLineColor};
+    }
+    }
 `;
 
 const WhyUnzippedComponent = () => {
@@ -99,7 +130,7 @@ const WhyUnzippedComponent = () => {
         <Wrapper>
             <ClientBanner />
             <TextBox>
-                <TextBoxContent style={{ width: 500 }}>
+                <TextBoxContent >
                     <HeaderTitle>Find Your Ideal Talent</HeaderTitle>
                     <TalentText>
                         Get work done efficiently and build lasting professional relationships on Unzipped,
