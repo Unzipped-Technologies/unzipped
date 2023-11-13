@@ -523,6 +523,7 @@ const GetCard = ({
               width="80%"
               onChange={e => updateForm({ name: e.target.value })}
               // onBlur={() => updateForm({ name: businessName })}
+              handleEnterKey={e => { }}
               value={name}>
               Business Name (you can change this later)
             </FormField>
@@ -556,6 +557,7 @@ const GetCard = ({
               fontSize="14px"
               onChange={e => updateForm({ businessAddressLineOne: e.target.value })}
               // onBlur={() => updateForm({ name: businessName })}
+              handleEnterKey={e => { }}
               value={businessAddressLineOne}>
               Address line 1
             </FormField>
@@ -566,6 +568,7 @@ const GetCard = ({
               noMargin
               onChange={e => updateForm({ businessAddressLineTwo: e.target.value })}
               // onBlur={() => updateForm({ name: businessName })}
+              handleEnterKey={e => { }}
               value={businessAddressLineTwo}>
               Address line 2
             </FormField>
@@ -577,6 +580,7 @@ const GetCard = ({
                 width="80%"
                 onChange={e => updateForm({ businessCity: e.target.value })}
                 // onBlur={() => updateForm({ name: businessName })}
+                handleEnterKey={e => { }}
                 value={businessCity}>
                 City
               </FormField>
@@ -587,6 +591,7 @@ const GetCard = ({
                 width="80%"
                 onChange={e => updateForm({ businessZip: e.target.value })}
                 // onBlur={() => updateForm({ name: businessName })}
+                handleEnterKey={e => { }}
                 value={businessZip}>
                 Zip Code
               </FormField>
@@ -596,6 +601,7 @@ const GetCard = ({
               fontSize="14px"
               width="80%"
               placeholder="Select Country"
+              handleEnterKey={e => { }}
               options={countriesList.map(country => {
                 const newCountry = {
                   ...country,
@@ -871,7 +877,8 @@ const CreateBusiness = ({
   isEquity,
   name,
   createBusiness,
-  token
+  token,
+  access_token
 }) => {
   const submitForm = step => {
     if (step < 13) {
@@ -902,7 +909,7 @@ const CreateBusiness = ({
           businessZip,
           businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
         },
-        token.access_token
+        access_token
       )
         .then(() => {
           router.push('/dashboard?success=true')
@@ -993,7 +1000,8 @@ const mapStateToProps = state => {
     description: state.Business?.businessForm.description,
     businessImage: state.Business?.businessForm.businessImage,
     stage: state.Business?.businessForm.stage,
-    loading: state.Business?.loading
+    loading: state.Business?.loading,
+    access_token: state.Auth.token
   }
 }
 

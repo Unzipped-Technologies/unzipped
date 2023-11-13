@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Nav from '../../components/unzipped/header';
+import Nav from "../../components/unzipped/header";
 import Image from '../../components/ui/Image'
 import SearchBar from '../../components/ui/SearchBar'
 import {
@@ -15,8 +15,7 @@ import styled from 'styled-components';
 import { accountTypeEnum } from '../../server/enum/accountTypeEnum'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
 import MobileProjects from '../../components/unzipped/dashboard/MobileProjects';
-
-
+import useRole from '../../hooks/role'
 const Desktop = styled.div`
 @media(max-width: 680px) {
     display: none;
@@ -66,11 +65,32 @@ const Right = styled.div`
     background: ${({ selected }) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
 `;
 
-const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loading }) => {
+const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) => {
     const access = token?.access_token || cookie
     const [take, setTake] = useState(25)
     const [page, setPage] = useState(1)
-    const [selected, setSelected] = useState(role)
+    const [selected, setSelected] = useState(null)
+
+    useEffect(() => {
+        if (role === accountTypeEnum.ADMIN) {
+            setSelected(accountTypeEnum.FOUNDER)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (selected == 0) {
+            getBusinessList({
+                take: take,
+                skip: (page - 1) * 25,
+            }, access, selected, _id)
+        }
+        else if (selected == 1) {
+            getBusinessList({
+                take: take,
+                skip: (page - 1) * 25,
+            }, access_token, selected, _id)
+        }
+    }, [selected])
 
     const toggleRole = () => {
         if (role === accountTypeEnum.ADMIN) {
@@ -82,16 +102,9 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
         }
     }
 
-    useEffect(() => {
-        getBusinessList({
-            take: take,
-            skip: (page - 1) * 25,
-        }, access)
-    }, [])
-
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'160px'}/>
+            <Nav isSubMenu marginBottom={'192px'} />
             <Desktop>
                 <Title>
                     <TitleText title>Projects</TitleText>
@@ -104,11 +117,11 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
                         </Right>
                     </Toggle>
                 </Title>
-                <SearchBar take={take} setTake={setTake} />
-                <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} />
+                <SearchBar theme={{tint3:'#C4C4C4'}} placeHolderColor={'#444444'} margin='0px' take={take} setTake={setTake} />
+                <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} userType={selected} />
             </Desktop>
             <MobileDisplayBox>
-                <MobileProjects/>
+                <MobileProjects />
                 <MobileFreelancerFooter defaultSelected="Projects" />
             </MobileDisplayBox>
         </React.Fragment>
@@ -117,7 +130,6 @@ const Projects = ({ token, cookie, businesses = [], getBusinessList, role, loadi
 
 Projects.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-
     return {
         token: token && token,
     }
@@ -125,6 +137,8 @@ Projects.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = (state) => {
     return {
+        _id: state.Auth.user._id,
+        access_token: state.Auth.token,
         businesses: state.Business?.businesses,
         loading: state.Business?.loading,
         role: state.Auth.user.role,

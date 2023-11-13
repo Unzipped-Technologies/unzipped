@@ -29,10 +29,10 @@ const Input = styled.input`
     background: transparent;
     outline: none;
     font-family: arial;
-    font-size: ${props => props.theme.fontSizeM};
+    font-size: ${props =>  props.theme.fontSizeM};
     color: ${props => props.theme.textSecondary};
     ::placeholder {
-        color: ${props => props.theme.tint2};
+        color: ${props => props.placeHolderColor ? props.placeHolderColor : props.theme.tint2};
     }
     @media (max-width: ${props => props.theme.mobileWidth}px) {
         font-size: ${props => props.theme.baseFontSize};
@@ -83,6 +83,8 @@ const Search = ({
     },
     keys = [],
     large = false,
+    placeHolderColor,
+    theme,
     onAction = () => { },
     onChange = () => { },
     placeholder = '',
@@ -96,6 +98,7 @@ const Search = ({
     const handleClearInput = () => {
         setInputValue('');
         onAction('');
+        onChange('');
     };
 
     const handleOnChange = e => {
@@ -105,11 +108,12 @@ const Search = ({
     };
 
     return (
-        <SearchContainer width={width} {...rest}>
+        <SearchContainer width={width} {...rest} theme={theme}>
             <SearchIcon onClick={handleSearch}>
                 <Icon name="search" />
             </SearchIcon>
             <Input
+                placeHolderColor={placeHolderColor}
                 data-testid="search-bar-input"
                 type="text"
                 placeholder={placeholder}
