@@ -1,9 +1,10 @@
-const Contracts = require('../../models/Contract'); 
+const Contracts = require('../../models/Contract');
 const Business = require('../../models/Business');
 const ThirdPartyApplications = require('../../models/ThirdPartyApplications');
 const PaymentMethod = require('../../models/paymentMethod')
 const mongoose = require('mongoose');
 const keys = require('../../config/keys');
+const Department = require('../../models/Department');
 const stripe = require('stripe')(`${keys.stripeSecretKey}`);
 
 const createContracts = async (data) => {
@@ -135,17 +136,24 @@ const updateContractByFreelancer = async ({ _id, freelancerId, newIsOfferAccepte
             { $set: { isOfferAccepted: newIsOfferAcceptedValue } },
             { new: true }
         );
-        const userId = updatedContract.userId
-        const updatedBusiness = await Business.findOneAndUpdate(
-            { userId },
-            { $push: { employees: updatedContract?._id } },
+        const { departmentId, businessId } = updatedContract
+        await Business.findOneAndUpdate(
+            { _id: businessId },
+            { $addToSet: { employees: updatedContract?._id } },
             { new: true }
         );
+
+        await Department.findOneAndUpdate(
+            { _id: departmentId },
+            { $addToSet: { employees: updatedContract?._id } },
+            { new: true }
+        );
+
 
         if (!updatedContract) {
             throw Error('Contract not found')
         }
-        return { updatedContract, updatedBusiness };
+        return { updatedContract };
     } catch (e) {
         throw Error(`Could not update contract, error: ${e}`);
     }
@@ -158,7 +166,7 @@ const endContract = async (id) => {
             { $set: { isActive: false } },
             { new: true }
         );
-        if(!updatedContract){
+        if (!updatedContract) {
             throw Error('Contract not found')
         }
         return updatedContract;

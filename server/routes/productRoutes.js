@@ -20,9 +20,7 @@ router.get('/retreive', async (req, res) => {
 });
 
 router.get('/getOrders', requireLogin, async (req, res) => {
-    console.log(req.user.sub)
     const Orders = await Order.find({user: req.user.sub});
-    console.log(Orders);
     res.send([...Orders]);
 });
 

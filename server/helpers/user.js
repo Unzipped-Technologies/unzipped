@@ -130,7 +130,7 @@ const listUsers = async ({ filter, take, skip }) => {
 
 const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, skill }) => {
     try {
-        const regexQuery = new RegExp(filter, 'i'); // Create a case-insensitive regex query
+        const regexQuery = new RegExp(filter, 'i');
 
         const aggregationPipeline = [
             {
@@ -142,7 +142,7 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
                 },
             },
             {
-                $unwind: '$user', // Unwind the 'user' array
+                $unwind: '$user', 
             },
             {
                 $lookup: {
