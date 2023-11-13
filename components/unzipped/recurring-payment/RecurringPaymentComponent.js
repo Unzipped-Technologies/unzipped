@@ -23,14 +23,15 @@ import {
     SpanText,
     BillingTextStyled,
     PaymentDivider,
-    ConfirmationText
+    ConfirmationText,
+    ResponsiveContainer
 } from './styled';
 import InfoIcon from '../../ui/icons/InfoIcon';
 import BusinessAddress from '../businessAddress';
 import HireDivider from '../hire/hire-divider/hireDivider';
 import PaymentDataTable from './PaymentDataTable';
 import PaymentMethod from '../paymentMethod';
-
+import RecurringPaymentResponsive from './RecurringPaymentResponsive';
 const RecurringPaymentComponent = () => {
     const currentEmployeeData = [
         {
@@ -48,7 +49,7 @@ const RecurringPaymentComponent = () => {
     ]
     return (
         <RecurringWrapper>
-            <Container style={{ width: '1070px', display: 'flex' }}>
+            <Container >
                 <HireDivider title="Confirm Recurring Payment" />
                 <NotificationContainer>
                     <NotificationContainerText>
@@ -138,6 +139,9 @@ const RecurringPaymentComponent = () => {
                 </ContentContainer>
 
             </Container>
+            <ResponsiveContainer>
+                <RecurringPaymentResponsive />
+            </ResponsiveContainer>
         </RecurringWrapper>
 
     )
