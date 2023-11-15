@@ -46,7 +46,9 @@ const INIT_STATE = {
     employees: [],
     businessForm: {
         name: "",
-        isFirstBusiness: '',
+        // isFirstBusiness: '',
+        isShortTermBusiness: '',
+        challenge: '',
         isExistingAudience: '',
         socialMediaPlatforms: [""],
         budget: 0,

@@ -3,9 +3,9 @@ import {Icon} from '../../';
 
 export const Tile = styled.div`
 
-    background: #D8D8D8;
-    border: 1px solid ${props => (props.selected ? props.theme.selectedText : 'transparent')};
-    border-radius: 4px;
+    background:  ${props => (props.selected ? '#8EDE64' : '#fff')}} ;
+    border:  ${props => (props.selected ? '4px solid #DE43DE' : '1px solid')};
+    border-radius: 10px;
     color: ${props => (props.selected ? props.theme.selectedText : props.theme.textSecondary)};
     margin: ${({margin}) => margin ? margin : '0'};
     width: ${({width}) => width ? width : '366px'};
@@ -41,12 +41,18 @@ export const OptionLabel = styled.label`
     @media (max-width: ${props => props.theme.tableMobileWidth}px) {
         font-size: ${props => props.theme.fontSizeXS};
     }
+    [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:after {
+    background-color: #DE43DE ;
+    border: 3px solid white;
+    outline: 3px solid #DE43DE;
+    }
 `;
 
 export const TextSpan = styled.span`
     text-transform: uppercase;
     line-height: ${props => props.theme.lineHeightXS};
-    color: #333;
+    color: ${props => (props.checked ? '#DE43DE' : '#333')};
+    
 `;
 
 export const SecondaryTextSpan = styled.span`

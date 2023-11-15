@@ -23,7 +23,7 @@ export const OptionTileList = styled.div`
 const OptionTileGroup = ({breakpoint, selectedValue, tileList, onChange, rest, margin, type}) => {
     return (
         <OptionTileList numTiles={tileList.length} breakpoint={breakpoint}>
-            {tileList.map(({iconName, label, subLabel, value}) => (
+            {tileList?.map(({iconName, label, subLabel, value}) => (
                 <OptionTile
                     key={value}
                     checked={selectedValue === value ? true : type==="check" ? selectedValue : false}

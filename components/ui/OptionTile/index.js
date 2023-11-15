@@ -9,11 +9,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 const OptionTile = ({checked, iconName, label, onChange, subLabel, value, margin, type, width}) => {
     return (
         <Tile selected={checked} margin={margin} width={width}>
-            <OptionLabel row small={type==="check"}>
+            <OptionLabel row small={type==="check" }>
                 {/* <StyledIcon name={iconName} width="32px" height="32px" /> */}
                 {type === 'radio' && <RadioInput value={value} onChange={onChange} checked={checked} />}
                 {type === 'check' && <Checkbox value={value} onChange={onChange} checked={checked?.find(i => i === value)} />}
-                <TextSpan>{label}</TextSpan>
+                <TextSpan checked={checked}>{label}</TextSpan>
                 {subLabel && <SecondaryTextSpan>{subLabel}</SecondaryTextSpan>}
             </OptionLabel>
         </Tile>

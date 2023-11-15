@@ -32,10 +32,13 @@ const FormFieldContainer = styled.div`
   max-width: ${props => props.maxWidth};
   margin: ${({ margin }) => (margin ? margin : 'unset')};
   padding-bottom: ${({ $bottom }) => $bottom};
+  borderradius: ${props => (props.borderRadius ? props.borderRadius : '0px')};
   position: relative;
   ::placeholder {
     font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
+    color: ${props => props.theme.textSecondary};
   }
+
   & > label:first-of-type {
     // Override menlo styling here, line 659
     // src/pages/Dashboard/index.scss
@@ -110,6 +113,10 @@ const FormField = ({
   clickType,
   fontSize = '',
   handleEnterKey,
+  handleInputFocusChange,
+  isFocused,
+  borderRadius,
+  height,
   ...rest
 }) => {
   const Control = types[fieldType]
@@ -117,6 +124,7 @@ const FormField = ({
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isClicked, setIsClicked] = useState(!!rest.value)
   const wrapperRef = useRef(null)
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -168,6 +176,26 @@ const FormField = ({
     return onFocus && onFocus(e)
   }
 
+  const handleInputFocus = value => {
+    if (handleInputFocusChange) {
+      handleInputFocusChange(value)
+    }
+  }
+
+  const handleHeight = () => {
+    if (height) {
+      return height
+    }else{
+      return 'auto'
+    }
+  }
+
+  const handleEnter = e => {
+    if(handleEnterKey){
+      handleEnterKey(e)
+    }
+  }
+
   useEffect(() => {
     setCurrentError(error)
   }, [error])
@@ -179,10 +207,6 @@ const FormField = ({
       setDropdownOpen(false)
     }
   }, [dropdownList])
-
-  const handleEnter = (e) => {
-    handleEnterKey(e)
-  }
 
   return (
     <FormFieldContainer
@@ -210,6 +234,10 @@ const FormField = ({
         currency={currency}
         onChange={fieldType === 'input' || fieldType === 'select' ? onInputChange : onChange}
         onFocus={handleFocus}
+        borderRadius={borderRadius}
+        handleInput={handleInputFocus}
+        isFocused={isFocused}
+        height={handleHeight}
         {...rest}
       />
       {dropdownList.length > 0 && dropdownOpen && (
@@ -299,7 +327,7 @@ FormField.defaultProps = {
   modalSelect: false,
   onChange: () => {},
   maxWidth: 'none',
-  onFocus: () => {}
+  onFocus: () => {},
 }
 
 export default FormField

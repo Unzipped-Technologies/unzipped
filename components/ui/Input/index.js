@@ -4,11 +4,12 @@ import PropTypes from 'prop-types'
 import theme from '../theme'
 import FormError from '../FormError'
 import CurrencyInput from 'react-currency-input-field'
+import { set } from 'react-ga'
 
 const ControlContainer = styled.div`
   position: relative;
   display: inline-block;
-  height: ${props => (props ? props.height : 'auto')};
+  height: ${props => (props.height ? props.height : 'auto')};
   min-width: ${props => {
     if (props.autosize) {
       return 'auto'
@@ -41,10 +42,11 @@ const InputContainer = styled.div`
 
 const inputContainerStyles = props => `
     background-color: ${props.disabled ? theme.tint4 : theme.tint5};
-    border-radius: 4px;
-    border: 2px solid ${props.border};
+    border-radius: ${props.borderRadius ? props.borderRadius : '4px'};   
     height: 100%;
     padding-left: ${({ message }) => (message ? '45px' : '10px')} !important;
+    -webkit-transition: border-color 0.15s;
+    border: ${props.isFocused ? '2px solid black !important' : '2px solid #CED4DA !important'};
 `
 
 const inputStyles = props => `
@@ -62,7 +64,7 @@ const inputStyles = props => `
     box-sizing: border-box;
     line-height: normal;
     &::placeholder {
-        color: ${props.theme.tint2};
+        color: #757575;
         font-size: ${props.fontSize ? props.fontSize : props.theme.baseFontSize};
     }
     &:focus {
@@ -81,7 +83,6 @@ const InputControl = styled.input`
   height: 100%;
   &:hover {
     border-bottom: none !important;
-    
   }
   &:focus {
     box-shadow: 0 0 0 0 #ffffff00 !important;
@@ -123,6 +124,10 @@ const Input = ({
   width,
   fontSize = '',
   borderColor = '',
+  onFocus,
+  handleInput,
+  isFocused,
+  borderRadius,
   ...rest
 }) => {
   const Control = textarea ? InputControlArea : currency ? CurrencyControl : InputControl
@@ -132,9 +137,21 @@ const Input = ({
   } else if (accepted) {
     border = theme.primary
   }
+  const handleFocus = value => {
+    if (handleInput) {
+      handleInput(value)
+    }
+  }
   return (
     <ControlContainer textarea={textarea} height={height} autosize={autosize} width={width}>
-      <InputContainer disabled={disabled} border={border} message={message}>
+      <InputContainer
+        disabled={disabled}
+        border={border}
+        borderRadius={borderRadius}
+        message={message}
+        isFocused={isFocused}
+        onFocus={() => handleFocus(true)}
+        onBlur={() => handleFocus(false)}>
         <Control fontSize={fontSize} type={type} accepted={accepted} disabled={disabled} {...rest} />
         {accepted && <Bullet border={border}>&bull;</Bullet>}
       </InputContainer>
@@ -166,7 +183,11 @@ Input.propTypes = {
   /** String to override the base font size */
   fontSize: PropTypes.string,
   /** String to override the border color */
-  borderColor: PropTypes.string
+  borderColor: PropTypes.string,
+  /** if Focused*/
+  isFocused: PropTypes.bool,
+  /** string to override the border radius*/
+  borderRadius: PropTypes.string
 }
 
 Input.defaultProps = {
@@ -178,7 +199,9 @@ Input.defaultProps = {
   autosize: null,
   currency: null,
   height: null,
-  width: null
+  width: null,
+  isFocused: false,
+  borderRadius: null
 }
 
 export default Input
