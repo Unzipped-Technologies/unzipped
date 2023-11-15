@@ -50,6 +50,8 @@ const userSchema = new Schema({
   dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
   notifications: { type: Schema.Types.Mixed, ref: 'notifications' },
   files: { type: Schema.Types.Mixed, ref: 'file' },
+  totalBalance: { type: Number, default: 0 }, 
+  totalPending: { type: Number, default: 0 }, 
 }, {
   timestamps: true
 });
