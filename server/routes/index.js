@@ -18,5 +18,6 @@ router.use('/file', require('./fileRoutes'));
 router.use('/profile', require('./profileRoutes'));
 router.use('/project', require('./projectRoutes'));
 router.use('/education', require('./educationRoutes'));
+router.use('/taskHours', require('./taskHoursRoutes'));
 
 module.exports = router;

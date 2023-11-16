@@ -40,17 +40,19 @@ const Item = styled.div`
     align-items: center;
 `;
 
-const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, width, handleSearch,setFilter}) => {
+const SearchBar = ({take, setTake, title, sort, placeHolderColor, theme, setSort, sortOptions, margin, width, handleSearch,setFilter}) => {
     return (
         <Container margin={margin}>
             {title && <TitleBlock><TitleText title large>{title}</TitleText></TitleBlock>}
             <Block $width={width}>
                 <Search 
+                    placeHolderColor={placeHolderColor}
                     handleSearch={handleSearch}
                     width="100%"
                     keys={['name']}
                     onChange={filteredResults => {setFilter(filteredResults)}}
                     placeholder={'Search'}
+                    theme={theme}
                 />
                 <Item>
                     {take && (

@@ -295,7 +295,7 @@ const Button = ({
           links={popout}
           dropDownRight={dropDownRight}
           btnDropdown={true}
-          width={popoutWidth}></DropDown>
+          width={popoutWidth} minWidth={popoutWidth}></DropDown>
       )}
     </ButtonContainer>
   )
