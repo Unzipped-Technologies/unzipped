@@ -105,7 +105,7 @@ const Absolute = styled.div`
     width: ${({ width }) => width ? width : 'unset'};
     top: ${({ top }) => top ? top : 'unset'};
     bottom: ${({ bottom }) => bottom ? bottom : 'unset'};
-    right: ${({ left, right }) => left ? 'unset' : right ? right : '10px'};
+    right: ${({ left, right }) => left ? 'unset' : right ? right : '15px'};
     left: ${({ left, wideLeft, smallLeft }) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
     z-index: ${({ zIndex }) => zIndex ? zIndex : 'inherit'};
     @media(max-width: ${({ hide }) => hide ? hide + 'px' : '0px'}) {
@@ -207,8 +207,10 @@ const Grid = styled.div`
     display: grid;
     justify-items: ${({ left }) => left ? 'left' : 'center'};
     align-items: center;
-    width: 100%;
-    margin: ${({ margin }) => margin ? margin : '75px 0px'};
+    margin: ${({ margin }) => margin ? margin : '35px 0px'};
+    @media screen and (max-width: 680px) {
+        
+    }
 `;
 
 const Grid2 = styled.div`

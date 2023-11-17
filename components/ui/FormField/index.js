@@ -21,7 +21,9 @@ const types = {
 
 const FormFieldContainer = styled.div`
   vertical-align: top;
-  width: 100%;
+  width: ${({width}) => width ? width : '100%'};
+  justify-self: ${({justifySelf}) => justifySelf ? justifySelf : 'auto'};
+  height: 100%;
   z-index: ${({ zIndex }) => (zIndex ? '1000' : '10')};
   color: ${props => props.theme.textSecondary};
   font-weight: 400;
@@ -109,6 +111,7 @@ const FormField = ({
   noMargin,
   dropdownList = [],
   margin,
+  display,
   onUpdate,
   clickType,
   fontSize = '',

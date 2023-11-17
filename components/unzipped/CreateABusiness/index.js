@@ -26,13 +26,13 @@ const CreateBusiness = ({title, loading, disabled, submit, skip, sub, children, 
         <Card noBorder borderRadius="25px">
           <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
           <ProgressBar value={progress} width={892} showValue bar="#37DEC5" />
-          <TitleText noMargin={noTitle}>{title}</TitleText>
+          <TitleText noMargin={noTitle} marginTop='40px'>{title}</TitleText>
           <DarkText noMargin={noMargin}>{sub}</DarkText>
           {children}
 
-          <Absolute>
+          <Absolute bottom='50px'>
             {stage > 1 ? (
-              <Button oval extraWide type="outlineInverse" onClick={onBack}>
+              <Button oval type="outlineInverse" onClick={onBack}>
                 'BACK'
               </Button>
             ) : null}
@@ -41,7 +41,6 @@ const CreateBusiness = ({title, loading, disabled, submit, skip, sub, children, 
               onClick={() => onSubmit(stage)}
               width="58.25px"
               oval
-              extraWide
               margin="0px 37px 0px 20px"
               type="black">
               {!loading ? skip ? 'SKIP' : submit ? 'SUBMIT' : 'Next' : <CircularProgress size={18} />}
