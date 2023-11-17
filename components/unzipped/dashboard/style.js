@@ -73,10 +73,11 @@ const DarkText = styled.div`
     white-space: ${({ textOverflow }) => textOverflow ? 'nowrap' : 'pre-line'};
     overflow: ${({ textOverflow }) => textOverflow ? 'hidden' : 'unset'};
     padding: ${({ padding }) => padding ? padding : ''};
-    width: 96%;
+    width: ${({ width }) => width ? width : '96%'};
     text-align-last:${({ textAlignLast }) => textAlignLast ? textAlignLast : ''};
     text-align: ${({ center, right }) => center ? 'center' : right ? 'right' : 'unset'};
     color: ${({ error, color }) => !error ? color ? color : theme.text2 : theme.error};
+    background: ${({ backgroundColor }) => backgroundColor ? backgroundColor : ''};
     &:hover {
         color: ${({ hover, color }) => hover ? theme.selectedText : color ? color : theme.text2}
     }

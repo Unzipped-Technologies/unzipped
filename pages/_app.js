@@ -42,7 +42,6 @@ function MyApp({ Component, pageProps }) {
     }
   }, [router.events])
   useEffect(() => {
-    console.log("in main file", isLoading);
     if (isLoading) {
       setLoading(true)
     }
