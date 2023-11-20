@@ -25,7 +25,7 @@ const CreateBusiness = ({title, loading, disabled, submit, skip, sub, children, 
       <CardContainer>
         <Card noBorder borderRadius="25px">
           <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
-          <ProgressBar value={progress} width={892} showValue bar="#37DEC5" />
+          <ProgressBar value={progress} width={990} showValue bar="#37DEC5" />
           <TitleText noMargin={noTitle} marginTop='40px'>{title}</TitleText>
           <DarkText noMargin={noMargin}>{sub}</DarkText>
           {children}

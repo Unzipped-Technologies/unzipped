@@ -105,7 +105,11 @@ const Bullet = styled.div`
     display: flex;
 `
 
-const InputControlArea = styled(InputControl).attrs({ as: 'textarea' })``
+const InputControlArea = styled(InputControl).attrs({ as: 'textarea' })`
+    margin: 8px 5px 0px 0px;
+    resize: vertical;
+    height: 120px;
+`
 
 /**
  * Form Input Component.

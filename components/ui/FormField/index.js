@@ -122,12 +122,14 @@ const FormField = ({
   height,
   ...rest
 }) => {
+  console.log('rest:', rest.value)
   const Control = types[fieldType]
   const [currentError, setCurrentError] = useState(error)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isClicked, setIsClicked] = useState(!!rest.value)
-  const wrapperRef = useRef(null)
+  console.log('isClicked:', isClicked)
 
+  const wrapperRef = useRef(null)
   useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {

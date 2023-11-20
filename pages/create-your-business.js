@@ -38,8 +38,8 @@ function handleGithub() {
 
 const GetCard = ({
   stage,
-  // isFirstBusiness,
   isShortTermBusiness,
+  name,
   challenge,
   role,
   objectives,
@@ -49,20 +49,20 @@ const GetCard = ({
   companyBackground,
   budget,
   questionsToAsk,
-  incomePlatform,
-  isExistingAudience,
-  socialMediaPlatforms = [],
-  numberOfSocialFollowing,
-  businessNiche,
-  name,
-  businessAddressLineOne,
-  businessAddressLineTwo,
-  businessCountry,
-  businessCity,
-  isEquity,
-  typesOfHires,
-  equity,
-  businessZip,
+  // isFirstBusiness,
+  // incomePlatform,
+  // isExistingAudience,
+  // socialMediaPlatforms = [],
+  // numberOfSocialFollowing,
+  // businessNiche,
+  // businessAddressLineOne,
+  // businessAddressLineTwo,
+  // businessCountry,
+  // businessCity,
+  // isEquity,
+  // typesOfHires,
+  // equity,
+  // businessZip,
   submitForm,
   updateForm,
   goBack,
@@ -95,12 +95,12 @@ const GetCard = ({
 
   const budgetOptions = () => {
     return [
-      'Basic ($7 - $14)',
-      'Standard ($15 - $25)',
-      'Skilled ($25 - $50)',
-      'Expert ($50 - $70)',
-      'More than a $70 per hour',
-      'Not Sure (See what my options are)'
+      {label:'Basic ($7 - $14)', value:'Basic ($7 - $14)'},
+      {label:'Standard ($15 - $25)', value:'Standard ($15 - $25)'},
+      {label:'Skilled ($25 - $50)', value:'Skilled ($25 - $50)'},
+      {label:'Expert ($50 - $70)', value:'Expert ($50 - $70)'},
+      {label:'More than a $70 per hour', value:'More than a $70 per hour'},
+      {label:'Not Sure (See what my options are)', value:'Not Sure (See what my options are)'}
     ]
   }
 
@@ -151,7 +151,7 @@ const GetCard = ({
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
               onChange={e => updateForm({ name: e.target.value })}
-              value={name}></FormField>
+              value={name}/>
           </Grid>
         </CreateABusiness>
       )
@@ -170,10 +170,10 @@ const GetCard = ({
             stage={stage}>
             <Grid>
               <FormField
+                textarea
                 fieldType="input"
                 fontSize="20px"
                 width="100%"
-                height="147px"
                 placeholder="Enter Project Summary..."
                 borderRadius="10px"
                 handleInputFocusChange={handleInputFocus}
@@ -188,7 +188,7 @@ const GetCard = ({
           <CreateABusiness
             title="Role Description"
             sub="Envision your ideal hire. What role will they play in your ongoing projects?"
-            disabled={role === undefined || role.length === 0}
+            disabled={role === undefined || role.length === 0 || role[0] === ``}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -196,10 +196,10 @@ const GetCard = ({
             stage={stage}>
             <Grid>
               <FormField
+                textarea
                 fieldType="input"
                 fontSize="20px"
                 width="100%"
-                height="147px"
                 borderRadius="10px"
                 handleInputFocusChange={handleInputFocus}
                 isFocused={isFocused}
@@ -216,7 +216,7 @@ const GetCard = ({
           <CreateABusiness
             title="Give us the map. "
             sub="What are the specific tasks and objectives for this project"
-            disabled={objectives?.length === 0 || objectives === undefined}
+            disabled={objectives?.length === 0 || objectives === undefined || objectives[0] === ``}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -246,7 +246,7 @@ const GetCard = ({
           <CreateABusiness
             title="Team Dynamics"
             sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
-            disabled={teamDynamics === undefined || teamDynamics.length === 0}
+            disabled={teamDynamics === undefined || teamDynamics.length === 0 || teamDynamics[0] === ``}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -265,10 +265,10 @@ const GetCard = ({
             </Button>
             <Grid>
               <FormField
+                textarea
                 fieldType="input"
                 fontSize="20px"
                 width="100%"
-                height="147px"
                 borderRadius="10px"
                 handleInputFocusChange={handleInputFocus}
                 isFocused={isFocused}
@@ -284,7 +284,7 @@ const GetCard = ({
         <CreateABusiness
           title="Required Expertise"
           sub="What skills should they have mastered? List the abilities your project or role demands."
-          disabled={requiredSkills?.length === 0 || requiredSkills === undefined}
+          disabled={requiredSkills?.length === 0 || requiredSkills === undefined || requiredSkills[0] === ``}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
@@ -314,7 +314,7 @@ const GetCard = ({
         <CreateABusiness
           title="Project Goals or Role Expectations"
           sub="Chart out the milestones. What achievements should be celebrated along the way?"
-          disabled={goals === undefined || goals.length === 0}
+          disabled={goals?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
@@ -333,10 +333,10 @@ const GetCard = ({
           </Button>
           <Grid>
             <FormField
+              textarea
               fieldType="input"
               fontSize="20px"
               width="100%"
-              height="147px"
               borderRadius="10px"
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
@@ -350,7 +350,7 @@ const GetCard = ({
         <CreateABusiness
           title="Company Background"
           sub="Every great story has a setting. What's the backdrop of your company or venture?"
-          disabled={companyBackground === undefined || companyBackground.length === 0}
+          disabled={companyBackground?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
@@ -369,15 +369,18 @@ const GetCard = ({
           </Button>
           <Grid>
             <FormField
+              textarea
               fieldType="input"
               fontSize="20px"
               width="100%"
-              height="147px"
               borderRadius="10px"
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
-              onChange={e => updateForm({ companyBackground: e.target.value })}
-              value={companyBackground}></FormField>
+              onChange={e => {
+                console.log('e company: ', e)
+                updateForm({ companyBackground: e.target.value })}}
+              value={companyBackground}                
+              />
           </Grid>
         </CreateABusiness>
       )
@@ -386,7 +389,7 @@ const GetCard = ({
         <CreateABusiness
           title="Budget"
           sub="What size budget are you comfortable with for this hire?"
-          disabled={budget === undefined || budget.length === 0}
+          disabled={budget?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
@@ -394,16 +397,21 @@ const GetCard = ({
           stage={stage}>
           <Grid>
             <FormField
-              dropdownList={budgetOptions()}
-              fieldType="input"
+              // required
+              // onBlur={()=>{}}
+              fieldType="select"
+              name="select"
+              options={budgetOptions()}
               placeholder="Select your budget"
               fontSize="20px"
               width="100%"
               borderRadius="10px"
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
-              onChange={e => updateForm({ budget: e.target.value })}
-              value={budget}></FormField>
+              onChange={e =>{
+                console.log('e budget: ', e)
+                updateForm({ budget: e.value })}}
+              value={budget}/>
           </Grid>
         </CreateABusiness>
       )
@@ -442,7 +450,7 @@ const GetCard = ({
         <CreateABusiness
           title="Questions for Potential Hires"
           sub="What questions do you have for potential hires? (max three)"
-          disabled={questionsToAsk?.length === 0 || questionsToAsk === undefined}
+          disabled={questionsToAsk?.length === 0 || questionsToAsk === undefined || questionsToAsk[0] === ``}
           onUpdate={updateForm}
           onBack={()=>goBack(isGithubConnected ? stage-1 : stage)}
           onSubmit={submitForm}
@@ -481,8 +489,8 @@ const GetCard = ({
 const CreateBusiness = ({
   stage,
   updateBusinessForm,
-  // isFirstBusiness,
   isShortTermBusiness,
+  name,
   challenge,
   role,
   objectives,
@@ -492,22 +500,22 @@ const CreateBusiness = ({
   companyBackground,
   budget,
   questionsToAsk,
-  incomePlatform,
-  isExistingAudience,
-  socialMediaPlatforms = [],
-  numberOfSocialFollowing,
-  businessAddressLineOne,
-  businessAddressLineTwo,
-  businessCountry,
-  businessCity,
-  equity,
+  // isFirstBusiness,
+  // incomePlatform,
+  // isExistingAudience,
+  // socialMediaPlatforms = [],
+  // numberOfSocialFollowing,
+  // businessAddressLineOne,
+  // businessAddressLineTwo,
+  // businessCountry,
+  // businessCity,
+  // equity,
+  // typesOfHires,
+  // businessState,
+  // businessZip,
+  // businessNiche,
+  // isEquity,
   loading,
-  typesOfHires,
-  businessState,
-  businessZip,
-  businessNiche,
-  isEquity,
-  name,
   createBusiness,
   token
 }) => {
@@ -521,9 +529,8 @@ const CreateBusiness = ({
     } else {
       createBusiness(
         {
-          name,
-          // isFirstBusiness,
           isShortTermBusiness,
+          name,
           challenge,
           role,
           objectives,
@@ -533,21 +540,22 @@ const CreateBusiness = ({
           companyBackground,
           budget,
           questionsToAsk,
-          isExistingAudience,
-          isEquity,
-          equity,
-          typesOfHires,
-          incomePlatform,
-          numberOfSocialFollowing,
-          socialMediaPlatforms,
-          businessNiche,
-          businessAddressLineOne,
-          businessAddressLineTwo,
-          businessCountry,
-          businessCity,
-          businessState,
-          businessZip,
-          businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+          // isFirstBusiness,
+          // isExistingAudience,
+          // isEquity,
+          // equity,
+          // typesOfHires,
+          // incomePlatform,
+          // numberOfSocialFollowing,
+          // socialMediaPlatforms,
+          // businessNiche,
+          // businessAddressLineOne,
+          // businessAddressLineTwo,
+          // businessCountry,
+          // businessCity,
+          // businessState,
+          // businessZip,
+          // businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
         },
         token.access_token
       )
@@ -562,6 +570,7 @@ const CreateBusiness = ({
 
   const updateForm = data => {
     // update form
+    console.log('data: ', data)
     updateBusinessForm({
       ...data
     })
@@ -587,8 +596,8 @@ const CreateBusiness = ({
         updateForm={updateForm}
         goBack={goBack}
         loading={loading}
-        // isFirstBusiness={isFirstBusiness}
         isShortTermBusiness={isShortTermBusiness}
+        name={name}
         challenge={challenge}
         role={role}
         objectives={objectives}
@@ -598,21 +607,21 @@ const CreateBusiness = ({
         companyBackground={companyBackground}
         budget={budget}
         questionsToAsk={questionsToAsk}
-        incomePlatform={incomePlatform}
-        equity={equity}
-        isExistingAudience={isExistingAudience}
-        socialMediaPlatforms={socialMediaPlatforms}
-        typesOfHires={typesOfHires}
-        numberOfSocialFollowing={numberOfSocialFollowing}
-        businessAddressLineOne={businessAddressLineOne}
-        businessAddressLineTwo={businessAddressLineTwo}
-        businessCountry={businessCountry}
-        businessCity={businessCity}
-        businessState={businessState}
-        businessZip={businessZip}
-        businessNiche={businessNiche}
-        isEquity={isEquity}
-        name={name}
+        // isFirstBusiness={isFirstBusiness}
+        // incomePlatform={incomePlatform}
+        // equity={equity}
+        // isExistingAudience={isExistingAudience}
+        // socialMediaPlatforms={socialMediaPlatforms}
+        // typesOfHires={typesOfHires}
+        // numberOfSocialFollowing={numberOfSocialFollowing}
+        // businessAddressLineOne={businessAddressLineOne}
+        // businessAddressLineTwo={businessAddressLineTwo}
+        // businessCountry={businessCountry}
+        // businessCity={businessCity}
+        // businessState={businessState}
+        // businessZip={businessZip}
+        // businessNiche={businessNiche}
+        // isEquity={isEquity}
       />
     </Container>
   )
@@ -629,7 +638,6 @@ CreateBusiness.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     name: state.Business?.businessForm.name,
-    // isFirstBusiness: state.Business?.businessForm.isFirstBusiness,
     isShortTermBusiness: state.Business?.businessForm.isShortTermBusiness,
     challenge: state.Business?.businessForm.challenge,
     role: state.Business?.businessForm.role,
@@ -640,23 +648,24 @@ const mapStateToProps = state => {
     companyBackground: state.Business?.businessForm.companyBackground,
     budget: state.Business?.businessForm.budget,
     questionsToAsk: state.Business?.businessForm.questionsToAsk,
-    isExistingAudience: state.Business?.businessForm.isExistingAudience,
-    isEquity: state.Business?.businessForm.isEquity,
-    equity: state.Business?.businessForm.equity,
-    deadline: state.Business?.businessForm.deadline,
-    typesOfHires: state.Business?.businessForm.typesOfHires,
-    incomePlatform: state.Business?.businessForm.incomePlatform,
-    numberOfSocialFollowing: state.Business?.businessForm.numberOfSocialFollowing,
-    socialMediaPlatforms: state.Business?.businessForm.socialMediaPlatforms,
-    businessNiche: state.Business?.businessForm.businessNiche,
-    businessAddressLineOne: state.Business?.businessForm.businessAddressLineOne,
-    businessAddressLineTwo: state.Business?.businessForm.businessAddressLineTwo,
-    businessCountry: state.Business?.businessForm.businessCountry,
-    businessCity: state.Business?.businessForm.businessCity,
-    businessState: state.Business?.businessForm.businessState,
-    businessZip: state.Business?.businessForm.businessZip,
-    description: state.Business?.businessForm.description,
-    businessImage: state.Business?.businessForm.businessImage,
+    // isFirstBusiness: state.Business?.businessForm.isFirstBusiness,
+    // isExistingAudience: state.Business?.businessForm.isExistingAudience,
+    // isEquity: state.Business?.businessForm.isEquity,
+    // equity: state.Business?.businessForm.equity,
+    // deadline: state.Business?.businessForm.deadline,
+    // typesOfHires: state.Business?.businessForm.typesOfHires,
+    // incomePlatform: state.Business?.businessForm.incomePlatform,
+    // numberOfSocialFollowing: state.Business?.businessForm.numberOfSocialFollowing,
+    // socialMediaPlatforms: state.Business?.businessForm.socialMediaPlatforms,
+    // businessNiche: state.Business?.businessForm.businessNiche,
+    // businessAddressLineOne: state.Business?.businessForm.businessAddressLineOne,
+    // businessAddressLineTwo: state.Business?.businessForm.businessAddressLineTwo,
+    // businessCountry: state.Business?.businessForm.businessCountry,
+    // businessCity: state.Business?.businessForm.businessCity,
+    // businessState: state.Business?.businessForm.businessState,
+    // businessZip: state.Business?.businessForm.businessZip,
+    // description: state.Business?.businessForm.description,
+    // businessImage: state.Business?.businessForm.businessImage,
     stage: state.Business?.businessForm.stage,
     loading: state.Business?.loading
   }
