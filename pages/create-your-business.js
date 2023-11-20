@@ -396,6 +396,7 @@ const GetCard = ({
             <FormField
               dropdownList={budgetOptions()}
               fieldType="input"
+              placeholder="Select your budget"
               fontSize="20px"
               width="100%"
               borderRadius="10px"
@@ -421,14 +422,15 @@ const GetCard = ({
           <Grid>
             <Button
               icon="github"
-              // extraTall
-              // extraWide
+              extraWide
               noBorder
               type="dark"
               normal
               onClick={handleGithub}
-              disabled={isGithubConnected}>
-              {isGithubConnected ? 'GITHUB CONNECTED' : 'CONNECT YOUR GITHUB ACCOUNT'}
+              // disabled={isGithubConnected}
+              >
+              {/* {isGithubConnected ? 'GITHUB CONNECTED' : 'CONNECT YOUR GITHUB ACCOUNT'} */}
+                CONNECT YOUR GITHUB ACCOUNT
             </Button>
           </Grid>
         </CreateABusiness>
@@ -436,7 +438,6 @@ const GetCard = ({
         handleSkip()
       }
     case 10:
-      console.log('questionsToAsk: ', questionsToAsk)
       return (
         <CreateABusiness
           title="Questions for Potential Hires"
@@ -445,6 +446,7 @@ const GetCard = ({
           onUpdate={updateForm}
           onBack={()=>goBack(isGithubConnected ? stage-1 : stage)}
           onSubmit={submitForm}
+          submit
           progress={stage}
           stage={stage}>
           <Grid>

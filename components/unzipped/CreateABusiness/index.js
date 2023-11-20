@@ -32,14 +32,15 @@ const CreateBusiness = ({title, loading, disabled, submit, skip, sub, children, 
 
           <Absolute bottom='50px'>
             {stage > 1 ? (
-              <Button oval type="outlineInverse" onClick={onBack}>
-                'BACK'
+              <Button oval extraWide type="outlineInverse2" onClick={onBack}>
+                BACK
               </Button>
             ) : null}
             <Button
               disabled={disabled || loading}
               onClick={() => onSubmit(stage)}
               width="58.25px"
+              extraWide
               oval
               margin="0px 37px 0px 20px"
               type="black">

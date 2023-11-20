@@ -28,10 +28,8 @@ const ButtonContainer = styled.button`
     color: ${({ colors }) => (colors ? colors.text : theme.text)};
     box-sizing: border-box;
     border-radius: ${({ oval }) => (oval ? '25px' : '10px')};
-    padding: ${ props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')}
-        ${props => (props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.extraWide ? '40px' : '15px')};
-        ${'' /* ${props => (props.noPadding ? ` 0px `: '15px')} */}
-        ${'' /* ${props => (props.noPadding ? '0px' : props.extraWide ? '40px' : props.small ? '10px' : props.extraTall ? '20px' : props.type==='green'?'':' 11px 25px 8px 25px')}; */}
+    padding: ${ props => (props.noPadding ? ` 0px `: props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.noPadding ? ` 0px `:props.extraWide ? '40px' : '15px')}
+        ${props => (props.noPadding ? ` 0px `: props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.noPadding ? ` 0px `: props.extraWide ? '40px' : '15px')};
     font-family: roboto;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : props.webKit ? '-webkit-fill-available' : 'auto')};
@@ -46,7 +44,7 @@ const ButtonContainer = styled.button`
     letter-spacing: 0.031rem;
     justify-content: center;
     white-space: nowrap;
-    margin: ${props => props.margin};
+    margin: ${props => props.margin? props.margin : '0px'};
     ${props =>
         props.popout &&
         `
@@ -185,6 +183,13 @@ const typeColors = {
         border: '#37DEC5',
         hover: '#8EDE64',
         hoverText: '#fff'
+    },
+    outlineInverse2: {
+        text: '#333',
+        background: '#fff',
+        border: '#37DEC5',
+        hover: '#8EDE64',
+        hoverText: '#fff',
     },
     outlineTransparent: {
         text: '#fff',
