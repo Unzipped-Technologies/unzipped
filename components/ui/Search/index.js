@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { get } from 'lodash';
@@ -106,17 +106,23 @@ const Search = ({
 }) => {
     const [inputValue, setInputValue] = useState(initialValue);
 
+    useEffect(() => {
+        if (!inputValue) {
+            handleSearch()
+        }
+    }, [inputValue])
+
     const handleClearInput = () => {
         setInputValue('');
         onAction('');
         onChange('');
-        handleSearch();
+        // handleSearch();
     };
 
-    
 
-   const handleSearchText = () =>{
-        if(inputValue){
+
+    const handleSearchText = () => {
+        if (inputValue) {
             handleSearch()
         }
     }
@@ -125,8 +131,8 @@ const Search = ({
         onAction(e.target.value);
         onChange(e.target.value);
     };
-    const handleEnter = (e) =>{
-        if(e.keyCode === 13){
+    const handleEnter = (e) => {
+        if (e.keyCode === 13) {
             handleSearchText()
         }
     }
