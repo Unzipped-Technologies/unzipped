@@ -32,6 +32,7 @@ const userSchema = new Schema({
   AddressLineCountry: { type: String, default: '' },
   FirstName: { type: String, default: '' },
   LastName: { type: String, default: '' },
+  FullName: { type: String, default: '' },
   AddressCity:  { type: String, default: '' },
   AddressState:  { type: String, default: '' },
   AddressZip:  { type: String, default: '' },
