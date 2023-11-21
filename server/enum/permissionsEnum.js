@@ -1,6 +1,9 @@
 const { accountTypeEnum } = require('./accountTypeEnum')
 
 const userPermissions = Object.freeze({
+    // invoice
+    invoice: "invoice",
+
     // users
     ListUsers: 'listAllUsers',
     UpdateAllUsers: 'updateAllUsers',
@@ -111,6 +114,9 @@ const accountTypePermissions = Object.freeze({
         userPermissions.ListTask,
         userPermissions.orderTasks,
 
+        // invoice
+        userPermissions.invoice,
+
         // task hours
         userPermissions.taskHours,
 
@@ -160,6 +166,8 @@ const accountTypePermissions = Object.freeze({
 
         // task hours
         userPermissions.taskHours,
+        // invoice
+        userPermissions.invoice,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
@@ -227,6 +235,8 @@ const accountTypePermissions = Object.freeze({
 
         // task hours
         userPermissions.taskHours,
+        // invoice
+        userPermissions.invoice,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,

@@ -2,7 +2,8 @@ const paymentTypeEnum = Object.freeze({
     SUBSCRIPTION: 0,
     PAYROLL: 1,
     INTERNAL: 2,
-  })
+    FREELANCER_PAYMENT: 3,
+})
 
 const paymentStatusEnum = Object.freeze({
   INITIATED: 0,
@@ -10,8 +11,8 @@ const paymentStatusEnum = Object.freeze({
   DECLINED: 2
 })
   
-  module.exports = {
+module.exports = {
     paymentTypeEnum,
     paymentStatusEnum
-  }
+}
   

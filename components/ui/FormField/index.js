@@ -182,7 +182,9 @@ const FormField = ({
   }, [dropdownList])
 
   const handleEnter = (e) => {
-    handleEnterKey(e)
+    if (handleEnterKey) {
+      handleEnterKey(e);
+    }
   }
 
   return (
@@ -299,9 +301,9 @@ FormField.defaultProps = {
   currency: false,
   bottom: '0px',
   modalSelect: false,
-  onChange: () => {},
+  onChange: () => { },
   maxWidth: 'none',
-  onFocus: () => {}
+  onFocus: () => { }
 }
 
 export default FormField

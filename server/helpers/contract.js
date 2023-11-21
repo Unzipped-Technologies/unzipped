@@ -1,7 +1,7 @@
 const Contracts = require('../../models/Contract');
 const Business = require('../../models/Business');
 const ThirdPartyApplications = require('../../models/ThirdPartyApplications');
-const PaymentMethod = require('../../models/paymentMethod')
+const PaymentMethod = require('../../models/PaymentMethod')
 const mongoose = require('mongoose');
 const keys = require('../../config/keys');
 const Department = require('../../models/Department');
@@ -32,32 +32,49 @@ const createContracts = async (data) => {
     }
 };
 
-const createStripeCustomer = async ({ businessId, userId, email, githubId, googleId, calendlyId }) => {
+const createStripeCustomer = async (data) => {
     const customer = await stripe.customers.create({
-        email: email,
+        email: data?.email || '',
     });
     const setupIntent = await stripe.setupIntents.create({
         customer: customer.id,
         payment_method_types: ["card"],
         usage: "off_session",
         metadata: {
-            customer: customer.id,
-            businessId: businessId,
-            userId: userId,
-            githubId: githubId,
-            stripeId: customer.id,
-            googleId: googleId,
-            calendlyId: calendlyId,
+            customer: customer.id || '',
+            businessId: data?.businessId || '',
+            userId: data?.userId || '',
+            githubId: data?.githubId || '',
+            stripeId: customer.id || '',
+            googleId: data?.googleId || '',
+            calendlyId: data?.calendlyId || '',
         },
     });
     return setupIntent
 }
 
-const createPaymentMethod = async ({ businessId, userId, githubId, stripeId, googleId, calendlyId, paymentMethod }) => {
+const createPaymentMethod = async (data) => {
+    let businessId = data?.data?.businessId;
+    let userId = data?.data?.userId;
+    const paymentMethod = data?.paymentMethod || '';
+    if (businessId === '') {
+        businessId = null;
+    }
+    if (userId === '') {
+        userId = null; 
+    }
+
     try {
-        const newThirdPartyApplication = new ThirdPartyApplications({ userId, githubId, stripeId, googleId, calendlyId });
+        const newThirdPartyApplication = new ThirdPartyApplications(data?.data);
         const savedThirdPartyApplication = await newThirdPartyApplication.save();
-        const newPaymentMethod = new PaymentMethod({ businessId, userId, paymentMethod });
+        const newPaymentMethodData = { paymentMethod };
+        if (businessId !== null) {
+            newPaymentMethodData.businessId = businessId;
+        }
+        if (userId !== null) {
+            newPaymentMethodData.userId = userId;
+        }
+        const newPaymentMethod = new PaymentMethod(newPaymentMethodData);
         const savedPaymentMethod = await newPaymentMethod.save();
         return { savedThirdPartyApplication, savedPaymentMethod };
     } catch (e) {
