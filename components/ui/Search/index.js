@@ -116,7 +116,6 @@ const Search = ({
         setInputValue('');
         onAction('');
         onChange('');
-        // handleSearch();
     };
 
 

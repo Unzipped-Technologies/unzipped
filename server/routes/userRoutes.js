@@ -45,6 +45,7 @@ router.get('/freelancer/:id', requireLogin, permissionCheckHelper.hasPermission(
 
 router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateAllUsers'), async (req, res) => {
   try {
+    if (!req.body.id) throw Error('user id does not exist')
     const updatedUser = await userHelper.updateUserByid(req.body.id, req.body)
     if (!updatedUser) throw Error('user does not exist')
     res.json(updatedUser)
@@ -60,7 +61,7 @@ router.post('/current/update', requireLogin, permissionCheckHelper.hasPermission
     if (!updatedUser) throw Error('user not updated')
     res.json(updatedUser)
   } catch (e) {
-    res.status(400).json({ msg: e.message + 'asdf' })
+    res.status(400).json({ msg: e.message })
   }
 });
 
