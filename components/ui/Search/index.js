@@ -107,7 +107,7 @@ const Search = ({
     const [inputValue, setInputValue] = useState(initialValue);
 
     useEffect(() => {
-        if (!inputValue) {
+        if (!inputValue && handleSearch) {
             handleSearch()
         }
     }, [inputValue])
