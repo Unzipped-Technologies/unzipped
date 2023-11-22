@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import Nav from '../components/unzipped/header'
 import HeroUnzipped from '../components/unzipped/heroUnzipped'
 import SectionOne from '../components/unzipped/sectionOne'
@@ -13,14 +13,14 @@ import Icon from '../components/ui/Icon'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { googleUser } from '../redux/actions'
-import { parseCookies } from "../services/cookieHelper"
+import { parseCookies } from '../services/cookieHelper'
 
 const Container = styled.div`
     display: flex;
     flex-flow: column;
     justify-content: center;
     align-items: center;
-`;
+`
 
 const UnderConstruction = styled.div`
     width: 100vw;
@@ -30,64 +30,64 @@ const UnderConstruction = styled.div`
     background: #111;
     align-items: center;
     font-family: arial;
-    color: #D8D8D8;
+    color: #d8d8d8;
     font-size: 18px;
     span {
         margin-left: 20px;
     }
-`;
+`
 
 const Mobile = styled.span`
     margin-left: 0px !important;
     position: relative;
     right: 4px;
-    @media(max-width: 868px) {
+    @media (max-width: 868px) {
         display: none;
     }
-`;
+`
 
 const Spacer = styled.p`
     width: 100%;
     height: 280px;
     z-index: 0;
     background: transparent;
-    @media(min-width: 982px) {
+    @media (min-width: 982px) {
         display: none;
     }
-    @media(max-width: 836px) {
+    @media (max-width: 836px) {
         height: 330px;
     }
-    @media(max-width: 726px) {
+    @media (max-width: 726px) {
         height: 360px;
     }
-    @media(max-width: 651px) {
+    @media (max-width: 651px) {
         height: 320px;
     }
-    @media(max-width: 521px) {
+    @media (max-width: 521px) {
         height: 360px;
     }
-    @media(max-width: 499px) {
+    @media (max-width: 499px) {
         height: 320px;
     }
-    @media(max-width: 395px) {
+    @media (max-width: 395px) {
         height: 290px;
     }
-`;
+`
 
 const NewsSpacer = styled.div`
-    @media(min-width: 768px) {
+    @media (min-width: 768px) {
         display: none;
     }
-    @media(max-width: 767px) {
+    @media (max-width: 767px) {
         height: 65px;
     }
-    @media(max-width: 767px) {
+    @media (max-width: 767px) {
         height: 85px;
     }
-    @media(max-width: 395px) {
+    @media (max-width: 395px) {
         height: 95px;
     }
-`;
+`
 
 const projects = [
     {
@@ -100,7 +100,8 @@ const projects = [
         totalTimeInvested: 236,
         likeTotal: 426276,
         id: 3333333333633,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047282/goaimly-potato-chips-bust_mnnb0r.png'
+        businessImage:
+            'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047282/goaimly-potato-chips-bust_mnnb0r.png'
     },
     {
         name: 'PEBBLE TIME',
@@ -148,15 +149,16 @@ const projects = [
         totalTimeInvested: 236,
         likeTotal: 426276,
         id: 3333333333333,
-        businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047282/goaimly-potato-chips-bust_mnnb0r.png'
-    },
+        businessImage:
+            'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670047282/goaimly-potato-chips-bust_mnnb0r.png'
+    }
 ]
- 
-const Home = ({token}) => {
+
+const Home = ({ token }) => {
     useEffect(() => {
         if (token?.access_token) {
             if (!user) {
-            googleUser(token?.access_token);
+                googleUser(token?.access_token)
             }
         }
     }, [])
@@ -164,13 +166,18 @@ const Home = ({token}) => {
     return (
         <Container>
             <UnderConstruction>
-                <Icon name="wrenchIcon" color="#D8D8D8"/>
-                <span><strong>Under construction</strong> <Mobile><strong>:</strong>{' '}sign up for our email list to be updated when service is available</Mobile></span>
+                <Icon name="wrenchIcon" color="#D8D8D8" />
+                <span>
+                    <strong>Under construction</strong>
+                    <Mobile>
+                        <strong>:</strong> sign up for our email list to be updated when service is available
+                    </Mobile>
+                </span>
             </UnderConstruction>
-            <Nav token={token} spacing={18}/>
+            <Nav token={token} spacing={18} marginBottom="18px" />
             <HeroUnzipped />
-            <SectionOne projects={projects}/>
-            <SectionOneMobile projects={projects}/>
+            <SectionOne projects={projects} />
+            <SectionOneMobile projects={projects} />
             <SectionTwo />
             <SectionThree />
             <Spacer />
@@ -184,24 +191,24 @@ const Home = ({token}) => {
 
 Home.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-      return {
-        token: token && token,
-      }
+    return {
+        token: token && token
     }
+}
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
     return {
         isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,
         loading: state.Auth.loading,
-        profilePic: state.Auth?.user?.profileImage,
-    }
-  }
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        googleUser: bindActionCreators(googleUser, dispatch),
+        profilePic: state.Auth?.user?.profileImage
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+const mapDispatchToProps = dispatch => {
+    return {
+        googleUser: bindActionCreators(googleUser, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

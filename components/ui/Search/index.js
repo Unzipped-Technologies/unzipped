@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { get } from 'lodash';
 import Icon from '../Icon';
+import { ifCondition } from '@cloudinary/url-gen/actions/conditional';
 
 const SearchContainer = styled.div`
     display: flex;
@@ -29,7 +30,7 @@ const Input = styled.input`
     background: transparent;
     outline: none;
     font-family: arial;
-    font-size: ${props =>  props.theme.fontSizeM};
+    font-size: ${props => props.theme.fontSizeM};
     color: ${props => props.theme.textSecondary};
     ::placeholder {
         color: ${props => props.placeHolderColor ? props.placeHolderColor : props.theme.tint2};
@@ -74,6 +75,15 @@ const SearchIcon = styled.span`
     }
 `;
 
+const Searchbutton = styled.button`
+border-radius: 4px;
+background: #1772EB;
+color: #FFF;
+padding: 8px 27px;
+border: 3.2px solid #1772EB;
+margin-left: 9px;
+`
+
 /**
  * Generic Search bar component, filters and returns filtered items in onChange
  */
@@ -91,6 +101,7 @@ const Search = ({
     width = '36.75rem',
     initialValue = '',
     handleSearch,
+    searchButton,
     ...rest
 }) => {
     const [inputValue, setInputValue] = useState(initialValue);
@@ -113,30 +124,49 @@ const Search = ({
         onChange('');
     };
 
+
+
+    const handleSearchText = () => {
+        if (inputValue) {
+            handleSearch()
+        }
+    }
     const handleOnChange = e => {
         setInputValue(e.target.value);
         onAction(e.target.value);
         onChange(e.target.value);
     };
+    const handleEnter = (e) => {
+        if (e.keyCode === 13) {
+            handleSearchText()
+        }
+    }
 
     return (
-        <SearchContainer width={width} {...rest} theme={theme}>
-            <SearchIcon onClick={handleSearch}>
-                <Icon name="search" />
-            </SearchIcon>
-            <Input
-                placeHolderColor={placeHolderColor}
-                data-testid="search-bar-input"
-                type="text"
-                placeholder={placeholder}
-                value={inputValue}
-                large={large}
-                onChange={handleOnChange}
-            />
-            <ClearIcon onClick={handleClearInput} $show={inputValue !== ''}>
-                <Icon name="closeBtn" />
-            </ClearIcon>
-        </SearchContainer>
+        <>
+            <SearchContainer width={width} {...rest} theme={theme}>
+                <SearchIcon onClick={handleSearchText}>
+                    <Icon name="search" />
+                </SearchIcon>
+                <Input
+                    placeHolderColor={placeHolderColor}
+                    data-testid="search-bar-input"
+                    type="text"
+                    placeholder={placeholder}
+                    value={inputValue}
+                    large={large}
+                    onChange={handleOnChange}
+                    onKeyDown={handleEnter}
+                />
+                <ClearIcon onClick={handleClearInput} $show={inputValue !== ''}>
+                    <Icon name="closeBtn" />
+                </ClearIcon>
+
+            </SearchContainer>
+            {searchButton && <Searchbutton onClick={handleSearchText}>
+                Search
+            </Searchbutton>}
+        </>
     );
 };
 

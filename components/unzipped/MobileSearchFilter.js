@@ -64,7 +64,6 @@ function MobileSearchFilter({ sortOptions, handleFilterOpenClose, sort, setSort,
             }
         }
         else if (name === 'max') {
-            console.log(value, typeof value)
             if (+value < +minRate && +minRate) {
                 setError((prev) => ({
                     ...prev,
@@ -117,7 +116,7 @@ function MobileSearchFilter({ sortOptions, handleFilterOpenClose, sort, setSort,
                 </select>
                 <div className='d-flex justify-content-between align-items-center pt-5'>
                     <p style={{ fontSize: "18px", fontWeight: "500", paddingLeft: "4px" }}>Hourly Rate</p>
-                    <p onClick={() => { setMaxRate(''); setMinRate('') }} style={{ fontSize: "14px", fontWeight: "500", color: "#0057FF" }}>Clear</p>
+                    <p onClick={() => { setMaxRate(''); setMinRate('') }} style={{ fontSize: "14px", fontWeight: "500", color: "#0057FF", cursor: 'pointer' }}>Clear</p>
                 </div>
                 <div className='d-flex justify-content-between' style={{ gap: "20px" }}>
                     <div>
@@ -144,7 +143,7 @@ function MobileSearchFilter({ sortOptions, handleFilterOpenClose, sort, setSort,
                 </div>
                 <div className='d-flex justify-content-between align-items-center pt-5'>
                     <p style={{ fontSize: "18px", fontWeight: "500", paddingLeft: "4px" }}>Skills</p>
-                    <p style={{ fontSize: "14px", fontWeight: "500", color: "#0057FF" }} onClick={() => {
+                    <p style={{ fontSize: "14px", fontWeight: "500", color: "#0057FF", cursor: 'pointer' }} onClick={() => {
                         setUniqueSkills(Object.values(
                             freelancerSkillsList.reduce((accumulator, skill) => {
                                 accumulator[skill.skill] = skill;

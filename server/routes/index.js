@@ -19,5 +19,7 @@ router.use('/profile', require('./profileRoutes'));
 router.use('/project', require('./projectRoutes'));
 router.use('/education', require('./educationRoutes'));
 router.use('/taskHours', require('./taskHoursRoutes'));
+router.use('/invoice', require('./invoiceRoutes'));
+
 
 module.exports = router;

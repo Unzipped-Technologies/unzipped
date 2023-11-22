@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const contractHelper = require('../helpers/contract'); // Import your contract helper functions here
+const contractHelper = require('../helpers/contract');  
 const requireLogin = require('../middlewares/requireLogin');
 
 // Create a new contract (POST)
@@ -26,7 +26,6 @@ router.get('/:id', requireLogin, async (req, res) => {
 });
 
 router.get('/freelancer/:id', requireLogin, async (req, res) => {
-    console.log(req.params.id, req.params)
     try {
         const getContract = await contractHelper.getContractByfreelacerId(req.params.id);
         if (!getContract) throw Error('Contract not found');
@@ -78,10 +77,10 @@ router.patch('/end-contract/:id', requireLogin, async (req, res) => {
     }
 });
 
-router.post('/create-stripe-customer', requireLogin, async (req, res) => {
-    const { businessId, userId, email, githubId, googleId, calendlyId } = req.body;
+router.post('/create-stripe-intent', requireLogin, async (req, res) => {
+    
     try {
-        const customer = await contractHelper.createStripeCustomer({ businessId, userId, email, githubId, googleId, calendlyId });
+        const customer = await contractHelper.createStripeCustomer(req.body);
         res.status(200).json({ clientSecret: customer.client_secret, intent: customer });
     } catch (e) {
         res.status(400).json({ msg: e.message });
@@ -90,10 +89,8 @@ router.post('/create-stripe-customer', requireLogin, async (req, res) => {
 
 
 router.post('/create-payment-method', requireLogin, async (req, res) => {
-    const { businessId, userId, githubId, stripeId, googleId, calendlyId } = req.body.data.metadata;
-    const {paymentMethod} = req.body
     try {
-        const customer = await contractHelper.createPaymentMethod({ businessId, userId, githubId, stripeId, googleId, calendlyId, paymentMethod });
+        const customer = await contractHelper.createPaymentMethod(req.body);
         if (customer?.savedPaymentMethod && customer?.savedThirdPartyApplication) {
             res.json({ msg: 'payment method created successfully' });
         }

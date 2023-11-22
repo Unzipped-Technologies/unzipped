@@ -32,6 +32,7 @@ const userSchema = new Schema({
   AddressLineCountry: { type: String, default: '' },
   FirstName: { type: String, default: '' },
   LastName: { type: String, default: '' },
+  FullName: { type: String, default: '' },
   AddressCity:  { type: String, default: '' },
   AddressState:  { type: String, default: '' },
   AddressZip:  { type: String, default: '' },
@@ -50,6 +51,8 @@ const userSchema = new Schema({
   dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
   notifications: { type: Schema.Types.Mixed, ref: 'notifications' },
   files: { type: Schema.Types.Mixed, ref: 'file' },
+  totalBalance: { type: Number, default: 0 }, 
+  totalPending: { type: Number, default: 0 }, 
 }, {
   timestamps: true
 });
