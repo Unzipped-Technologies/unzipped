@@ -207,7 +207,7 @@ const Grid = styled.div`
     display: grid;
     justify-items: ${({ left }) => left ? 'left' : 'center'};
     align-items: center;
-    margin: ${({ margin }) => margin ? margin : '35px 0px'};
+    margin: ${({ margin }) => margin ? margin : '30px 0px 0px'};
     @media screen and (max-width: 680px) {
         
     }
@@ -310,7 +310,42 @@ export const MinWidth = styled.span`
     min-width: 10%;
 `;
 
+export const ContentContainer = styled('div')`
+  max-height: 150px;
+  padding: ${({padding})=>padding?padding:'10px 20px'};
+  width: 90%;
+  overflow-y: scroll;
+  font-family: 'Roboto';
+  line-height: 25px;
+  font-weight: 500;
+  font-size: 16px;
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background: #cccccc;
+  }
+`
+
+export const ContainedSpan = styled.span`
+    border-radius: 4px;
+    background-color: #D9D9D9;
+    padding: 2px 10px 2px 2px;
+    margin-right: 10px;
+    text-wrap: nowrap;
+`
+
+
 module.exports = {
+    ContainedSpan,
+    ContentContainer,
     BlackCard,
     MinWidth,
     WhiteText,

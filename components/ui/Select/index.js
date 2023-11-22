@@ -39,7 +39,7 @@ const CheckboxStyled = styled(Checkbox)`
         align-items: center;
         font-size: ${props => props.theme.fontSizeS};
         height: auto;
-        min-height: 31px;
+        ${'' /* min-height: 31px; */}
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
@@ -85,8 +85,10 @@ const SelectInput = ({
     input,
     viewAll,
     width,
+    height,
     widthInModal,
     disabled,
+    borderRadius,
     dateTime = false,
 }) => {
     let border = theme.border;
@@ -119,19 +121,19 @@ const SelectInput = ({
             pointerEvents: 'auto',
             border: `2px solid ${border}`,
             borderRadius: '4px',
-            height: input ? '28px' : '100%',
+            height: height? height : input ? '28px' : '100%',
             width: width ? width : input ? '67px' : '360px',
             minWidth: `${getMinWidth(dateTime, small)}`,
-            maxWidth: `${small ? 225 : 800}px`,
+            maxWidth: `650px`,
             fontFamily: 'arial',
             fontSize: `${fontSize}`,
-            '@media (max-width: 495px)': {
-                ...styles['@media (max-width: 495px)'],
-                width: `100%`,
-            },
-            [`@media (max-width: ${theme.mobileWidth}px)`]: {
-                maxWidth: 'unset',
-            },
+            // '@media (max-width: 495px)': {
+            //     ...styles['@media (max-width: 495px)'],
+            //     width: `100%`,
+            // },
+            // [`@media (max-width: ${theme.mobileWidth}px)`]: {
+            //     maxWidth: 'unset',
+            // },
         }),
         control: defaultStyles => ({
             ...defaultStyles,
@@ -139,7 +141,7 @@ const SelectInput = ({
             boxShadow: 'none',
             margin: 0,
             padding: '0 0 0 10px',
-            borderRadius: '2px',
+            borderRadius: borderRadius? borderRadius :'2px',
             height: `${dateTime ? '100%' : small ? '40px' : '56px'}`,
             cursor: `${disabled ? 'not-allowed' : 'default'}`,
             svg: {
@@ -148,10 +150,12 @@ const SelectInput = ({
         }),
         option: (defaultStyles, state) => ({
             ...defaultStyles,
-            fontFamily: 'arial',
-            backgroundColor: state.isFocused ? theme.primary : state.isSelected ? theme.primary : 'white',
-            color: state.isFocused ? 'white' : state.isSelected ? 'white' : theme.textSecondary,
-            paddingLeft: '15px',
+            fontFamily: 'Roboto',
+            // height: '24px',
+            padding: '0px 22px',
+            backgroundColor: state.isFocused ? theme.backgorund3 : state.isSelected ? theme.backgorund3 : theme.text3,
+            color: state.isFocused ? theme.text3 : state.isSelected ? theme.text3 : theme.text2,
+            // paddingLeft: '22px'
         }),
         menu: (defaultStyles, state) => {
             const isTop = state.placement === 'top';
@@ -161,38 +165,42 @@ const SelectInput = ({
                 ...defaultStyles,
                 width: width ? (width === '100%' ? `calc(${width} + 4px)` : width) : '360px',
                 margin: '2px 0 0 -2px',
-                border: `2px solid ${border}`,
-                borderTop: isBottom ? 0 : 'unset',
-                borderTopLeftRadius: isBottom ? 0 : 'unset',
-                borderTopRightRadius: isBottom ? 0 : 'unset',
-                borderBottomLeftRadius: isTop ? 0 : 'unset',
-                borderBottomRightRadius: isTop ? 0 : 'unset',
-                boxShadow: 'none',
-                '@media (min-width: 1000px)': {
-                    maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                },
-                '@media (max-width: 789px)': {
-                    maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                },
-                '@media (max-width: 495px)': {
-                    width: '101.4%',
-                },
+                fontWeight: '600',
+                // border: `2px solid ${border}`,
+                // borderTop: isBottom ? 0 : 'unset',
+                // borderTopLeftRadius: isBottom ? 0 : 'unset',
+                // borderTopRightRadius: isBottom ? 0 : 'unset',
+                // borderBottomLeftRadius: isTop ? 0 : 'unset',
+                // borderBottomRightRadius: isTop ? 0 : 'unset',
+                borderRadius: borderRadius? borderRadius : '4px',
+                // '@media (min-width: 1000px)': {
+                    //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
+                // },
+                // '@media (max-width: 789px)': {
+                //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
+                // },
+                // '@media (max-width: 495px)': {
+                //     width: '101.4%',
+                // },
             };
         },
         menuList: (defaultStyles, state) => ({
             ...defaultStyles,
             padding: 0,
-            boxShadow: 'none',
-            '@media (min-width: 1000px)': {
-                maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-            },
-            '@media (max-width: 789px)': {
-                maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-            },
+            width: width ? width: 'auto',
+            borderRadius: borderRadius? borderRadius : '0',
+            boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.1)',
+            // boxShadow: 'none',
+            // '@media (min-width: 1000px)': {
+                //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
+                // },
+            // '@media (max-width: 789px)': {
+            //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
+            // },
 
-            '@media (max-width: 495px)': {
-                width: '101.4%',
-            },
+            // '@media (max-width: 495px)': {
+            //     width: '101.4%',
+            // },
         }),
         dropdownIndicator: defaultStyles => ({
             ...defaultStyles,
@@ -203,7 +211,7 @@ const SelectInput = ({
         }),
         placeholder: defaultStyles => ({
             ...defaultStyles,
-            color: theme.tint3,
+            color: '#757575'
         }),
     };
 
@@ -218,7 +226,6 @@ const SelectInput = ({
     );
 
     const IndicatorSeparator = () => null;
-
     return (
         <>
             <Select
@@ -230,17 +237,19 @@ const SelectInput = ({
                 name={name}
                 input={input}
                 onFocus={onFocus}
-                onBlur={() => onBlur(value)}
+                onBlur={() => onBlur(value)}                
                 menuIsOpen={menuIsOpen}
                 menuPlacement={$modalSelect ? 'bottom' : 'auto'}
                 options={options}
                 onChange={onChange}
+                borderRadius={borderRadius}
                 isSearchable={isSearchable}
                 filterOption={createFilter(filterConfig)}
                 widthInModal={widthInModal}
                 modalSelect={$modalSelect}
                 isDisabled={disabled}
                 components={isMulti ? {Option, IndicatorSeparator} : {IndicatorSeparator}}
+                height={height}
             />
             {error && <FormError>{error}</FormError>}
         </>
@@ -285,6 +294,10 @@ SelectInput.propTypes = {
     disabled: PropTypes.bool,
     /** Input is for Date Time Component */
     dateTime: PropTypes.bool,
+    /** Height of component */
+    height: PropTypes.string,
+    /** Border radius of component */
+    borderRadius: PropTypes.string,
 };
 
 SelectInput.defaultProps = {
@@ -305,6 +318,8 @@ SelectInput.defaultProps = {
     onFocus: () => {},
     width: '',
     disabled: false,
+    height: '',
+    borderRadius: '4px',
 };
 
 export default SelectInput;

@@ -6,7 +6,7 @@ import Button from '../components/ui/Button'
 import FormField from '../components/ui/FormField'
 import { ValidationUtils } from '../utils'
 import { countriesList } from '../utils/constants'
-import { Grid, Grid2 } from '../components/unzipped/dashboard/style'
+import { Grid, Grid2, ContentContainer, ContainedSpan } from '../components/unzipped/dashboard/style'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { updateBusinessForm, createBusiness } from '../redux/actions'
@@ -14,6 +14,8 @@ import router from 'next/router'
 import { parseCookies } from '../services/cookieHelper'
 import { nextPublicGithubClientId } from '../config/keys'
 import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
+import ClearSharpIcon from '@material-ui/icons/ClearSharp';
+
 
 const Container = styled.div`
   display: flex;
@@ -69,13 +71,29 @@ const GetCard = ({
   loading
 }) => {
   const [isFocused, setIsFocused] = useState(false)
+  const [inputValue,setInputValue]=useState('')
+
+  const handleInput=(value)=>{
+    setInputValue(value)
+  }
   
   const handleInputFocus = (value) => {
     setIsFocused(value)
   }
-
+  
   const handleSkip = () => {
     submitForm(stage)
+  }
+
+  const handleCancelIcon=(feildName,data,value)=>{
+    updateForm({ [feildName]: data.filter(val=>val!==value) })
+  }
+  
+  const handleEnterKey = (fieldName,data,e) => {
+    if(e.keyCode === 13 && e.shiftKey === false) {
+      updateForm({ [fieldName]: [...data, inputValue] })
+      handleInput('')
+    }
   }
 
   const tileOptions = () => {
@@ -95,12 +113,12 @@ const GetCard = ({
 
   const budgetOptions = () => {
     return [
-      {label:'Basic ($7 - $14)', value:'Basic ($7 - $14)'},
-      {label:'Standard ($15 - $25)', value:'Standard ($15 - $25)'},
-      {label:'Skilled ($25 - $50)', value:'Skilled ($25 - $50)'},
-      {label:'Expert ($50 - $70)', value:'Expert ($50 - $70)'},
-      {label:'More than a $70 per hour', value:'More than a $70 per hour'},
-      {label:'Not Sure (See what my options are)', value:'Not Sure (See what my options are)'}
+      { label: 'Basic ($7 - $14)', value: 'Basic ($7 - $14)' },
+      { label: 'Standard ($15 - $25)', value: 'Standard ($15 - $25)' },
+      { label: 'Skilled ($25 - $50)', value: 'Skilled ($25 - $50)' },
+      { label: 'Expert ($50 - $70)', value: 'Expert ($50 - $70)' },
+      { label: 'More than a $70 per hour', value: 'More than a $70 per hour' },
+      { label: 'Not Sure (See what my options are)', value: 'Not Sure (See what my options are)' }
     ]
   }
 
@@ -135,7 +153,7 @@ const GetCard = ({
         <CreateABusiness
           title="Project Name"
           sub="Describe your project in as few words as possible"
-          disabled={name.length === 0}
+          disabled={name?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
@@ -162,7 +180,7 @@ const GetCard = ({
           <CreateABusiness
             title="Describe the project"
             sub="What's the challenge you need to conquer? (in a sentence or two)"
-            disabled={challenge.length === 0}
+            disabled={challenge?.length === 0}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -188,7 +206,7 @@ const GetCard = ({
           <CreateABusiness
             title="Role Description"
             sub="Envision your ideal hire. What role will they play in your ongoing projects?"
-            disabled={role === undefined || role.length === 0 || role[0] === ``}
+            disabled={role?.length}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -216,7 +234,7 @@ const GetCard = ({
           <CreateABusiness
             title="Give us the map. "
             sub="What are the specific tasks and objectives for this project"
-            disabled={objectives?.length === 0 || objectives === undefined || objectives[0] === ``}
+            disabled={objectives?.length === 0}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -232,13 +250,37 @@ const GetCard = ({
                 borderRadius="10px"
                 handleInputFocusChange={handleInputFocus}
                 isFocused={isFocused}
-                onChange={e => updateForm({ objectives: e.target.value })}
-                value={objectives}
+                handleEnterKey={(e)=>inputValue !== '' && handleEnterKey('objectives',objectives,e)}
+                onChange={e => handleInput(e.target.value)}
+                value={inputValue}
               />
-              <Button position="absolute" right="50px" type="purple" buttonHeight="42px">
+              <Button
+                disabled={inputValue === ''}
+                position="absolute"
+                right="50px"
+                type="purple"
+                buttonHeight="42px"
+                zIndex={10}
+                onClick={() => {
+                  updateForm({ objectives: [...objectives, inputValue] })
+                  handleInput('')
+                }}>
                 Add
               </Button>
             </Grid>
+            <ContentContainer>
+              {objectives.map(obj => (
+                <div className="d-flex mb-3">
+                  <div>
+                    <ClearSharpIcon
+                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                      onClick={() => handleCancelIcon('objectives', objectives, obj)}
+                    />
+                  </div>
+                  <span>{obj}</span>
+                </div>
+              ))}
+            </ContentContainer>
           </CreateABusiness>
         )
       } else {
@@ -246,7 +288,7 @@ const GetCard = ({
           <CreateABusiness
             title="Team Dynamics"
             sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
-            disabled={teamDynamics === undefined || teamDynamics.length === 0 || teamDynamics[0] === ``}
+            disabled={teamDynamics?.length === 0}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -284,26 +326,47 @@ const GetCard = ({
         <CreateABusiness
           title="Required Expertise"
           sub="What skills should they have mastered? List the abilities your project or role demands."
-          disabled={requiredSkills?.length === 0 || requiredSkills === undefined || requiredSkills[0] === ``}
+          disabled={requiredSkills?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
-          <Grid>
+          {!!requiredSkills?.length && <ContentContainer padding='20px 5px 20px 10px '>
+            {requiredSkills?.map(skill => (
+              <ContainedSpan>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                    onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
+                  />{skill}
+              </ContainedSpan>
+            ))}
+          </ContentContainer>}
+          <Grid margin={requiredSkills?.length && '0'}>
             <FormField
               justifySelf="start"
               width="90%"
               fieldType="input"
               fontSize="20px"
-              placeholder="Type a task and hit enter..."
+              placeholder="Type a skill and hit enter..."
               borderRadius="10px"
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
-              onChange={e => updateForm({ requiredSkills: e.target.value })}
-              value={requiredSkills}
+              handleEnterKey={(e)=>inputValue !== '' && requiredSkills.length<15 && handleEnterKey('requiredSkills',requiredSkills,e)}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
             />
-            <Button position="absolute" right="50px" type="purple" buttonHeight="42px">
+            <Button
+              position="absolute"
+              right="50px"
+              type="purple"
+              buttonHeight="42px"
+              disabled={inputValue === '' || requiredSkills.length>=15}
+              zIndex={10}
+              onClick={() => {
+                updateForm({ requiredSkills: [...requiredSkills, inputValue] })
+                handleInput('')
+              }}>
               Add
             </Button>
           </Grid>
@@ -376,9 +439,7 @@ const GetCard = ({
               borderRadius="10px"
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
-              onChange={e => {
-                console.log('e company: ', e)
-                updateForm({ companyBackground: e.target.value })}}
+              onChange={e =>updateForm({ companyBackground: e.target.value })}
               value={companyBackground}                
               />
           </Grid>
@@ -397,20 +458,18 @@ const GetCard = ({
           stage={stage}>
           <Grid>
             <FormField
-              // required
-              // onBlur={()=>{}}
+              required
               fieldType="select"
+              isSearchable={false}
               name="select"
               options={budgetOptions()}
               placeholder="Select your budget"
               fontSize="20px"
               width="100%"
-              borderRadius="10px"
+              borderRadius="12px"
               handleInputFocusChange={handleInputFocus}
               isFocused={isFocused}
-              onChange={e =>{
-                console.log('e budget: ', e)
-                updateForm({ budget: e.value })}}
+              onChange={e =>updateForm({ budget: e })}
               value={budget}/>
           </Grid>
         </CreateABusiness>
@@ -450,9 +509,9 @@ const GetCard = ({
         <CreateABusiness
           title="Questions for Potential Hires"
           sub="What questions do you have for potential hires? (max three)"
-          disabled={questionsToAsk?.length === 0 || questionsToAsk === undefined || questionsToAsk[0] === ``}
+          disabled={questionsToAsk?.length === 0}
           onUpdate={updateForm}
-          onBack={()=>goBack(isGithubConnected ? stage-1 : stage)}
+          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
           onSubmit={submitForm}
           submit
           progress={stage}
@@ -465,20 +524,39 @@ const GetCard = ({
               fontSize="20px"
               placeholder="Type a question and hit enter..."
               borderRadius="10px"
+              handleEnterKey={(e)=>inputValue !== '' && questionsToAsk.length<3 && handleEnterKey('questionsToAsk',questionsToAsk,e)}
               handleInputFocusChange={handleInputFocus}
-              isFocused={isFocused}
-              onChange={e => updateForm({ questionsToAsk: e.target.value })}
-              value={questionsToAsk}
+              onFocus={isFocused}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
             />
             <Button
-              disabled={questionsToAsk.length > 3}
+              disabled={inputValue === '' || questionsToAsk.length >= 3}
+              zIndex={10}
               position="absolute"
               right="50px"
               type="purple"
-              buttonHeight="42px">
+              buttonHeight="42px"
+              onClick={() => {
+                updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+                handleInput('')
+              }}>
               Add
             </Button>
           </Grid>
+          <ContentContainer>
+            {questionsToAsk.map(question => (
+              <div className="d-flex mb-3">
+                <div>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                    onClick={() => handleCancelIcon('questionsToAsk',questionsToAsk,question)}
+                  />
+                </div>
+                <span>{question}</span>
+              </div>
+            ))}
+          </ContentContainer>
         </CreateABusiness>
       )
     default:
@@ -570,7 +648,6 @@ const CreateBusiness = ({
 
   const updateForm = data => {
     // update form
-    console.log('data: ', data)
     updateBusinessForm({
       ...data
     })

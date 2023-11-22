@@ -7,6 +7,7 @@ import OutsideAlerter from '../OutsideAlerter'
 import DropDown from '../Dropdown'
 
 const ButtonContainer = styled.button`
+    z-index: ${props => (props.zIndex ? props.zIndex : '0')};
     cursor: pointer;
     position: ${props => (props.position ? props.position : '')};
     right: ${props => (props.right ? props.right : 'auto')};
@@ -262,6 +263,7 @@ const Button = ({
     position,
     right,
     top,
+    zIndex,
     ...rest
 }) => {
     const colors = typeColors[type] ? typeColors[type] : typeColors.default
@@ -303,6 +305,7 @@ const Button = ({
             position={position}
             right={right}
             top={top}
+            zIndex={zIndex}
             {...rest}>
             {icon && (
                 <ButtonIconContainer colors={colors} popout={popout}>

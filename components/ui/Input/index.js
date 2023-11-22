@@ -141,6 +141,7 @@ const Input = ({
     } else if (accepted) {
         border = theme.primary
     }
+
     const handleFocus = value => {
         if (handleInput) {
             handleInput(value)
