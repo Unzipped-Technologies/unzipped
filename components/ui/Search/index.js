@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { get } from 'lodash';
@@ -94,6 +94,18 @@ const Search = ({
     ...rest
 }) => {
     const [inputValue, setInputValue] = useState(initialValue);
+
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        } else {
+            if (!inputValue && handleSearch) {
+                handleSearch();
+            }
+        }
+    }, [inputValue]);
 
     const handleClearInput = () => {
         setInputValue('');

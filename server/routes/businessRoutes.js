@@ -51,6 +51,7 @@ router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('use
   try {
     const { filter = {}, take = 25, skip = 0 } = req.body;
     filter.userId = req.user.sub
+
     const listBusinesses = await businessHelper.listBusinesses({ filter, take, skip })
     if (!listBusinesses) throw Error('could not find businesses')
     res.json(listBusinesses)
@@ -61,8 +62,10 @@ router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('use
 
 router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllBusinesses'), async (req, res) => {
   try {
-    const { filter = {}, take = 25, skip = 0 } = req.body;
-    const listBusinesses = await businessHelper.listBusinesses({ filter, take, skip })
+    // const { filter = {}, take = 25, skip = 0 } = req.body;
+    const { filter, take , skip , maxRate ,minRate, skill, type } = req.query; // Use req.query to access query parameters
+
+    const listBusinesses = await businessHelper.listBusinesses({ filter, take , skip , maxRate ,minRate, skill, type })
     if (!listBusinesses) throw Error('could not find businesses')
     res.json(listBusinesses)
   } catch (e) {

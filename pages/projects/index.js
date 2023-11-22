@@ -10,7 +10,6 @@ import {
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getProjectsList } from '../../redux/actions'
 import { getFreelancerList, clearSelectedFreelancer, getFreelancerSkillsList } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import MobileSearchBar from '../../components/ui/MobileSearchBar';
@@ -50,7 +49,7 @@ const DesktopDisplayBox = styled.div`
     display: none;
 }
 `
-const Freelancers = ({ freelancerList = [], getProjectsList, token, totalCount, clearSelectedFreelancer, getFreelancerSkillsList, freelancerSkillsList = [] }) => {
+const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount, clearSelectedFreelancer, getFreelancerSkillsList, freelancerSkillsList = [] }) => {
     const [take, setTake] = useState(15)
     const [skip] = useState(0);
     const [filter, setFilter] = useState('')
@@ -59,7 +58,6 @@ const Freelancers = ({ freelancerList = [], getProjectsList, token, totalCount, 
     const [maxRate, setMaxRate] = useState();
     const [skill, setSkill] = useState([])
     const [filterOpenClose, setFilterOpenClose] = useState(false);
-    const [type, setType] =useState('Fixed Price')
     const sortOptions = [
         {
             text: 'All Categories',
@@ -89,11 +87,11 @@ const Freelancers = ({ freelancerList = [], getProjectsList, token, totalCount, 
     useEffect(() => {
         getFreelancerSkillsList();
         if (!filterOpenClose) {
-            getProjectsList({
+            getFreelancerList({
                 filter,
                 take,
                 skip,
-                type,
+                sort,
                 minRate,
                 maxRate,
                 skill,
@@ -197,16 +195,13 @@ const mapStateToProps = (state) => {
     return {
         freelancerList: state.Freelancers?.freelancers,
         freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
-        totalCount: state.Freelancers?.totalCount[0]?.count,
-        
+        totalCount: state.Freelancers?.totalCount[0]?.count
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getFreelancerList: bindActionCreators(getFreelancerList, dispatch),
-
-        getProjectsList: bindActionCreators(getProjectsList, dispatch),
         clearSelectedFreelancer: bindActionCreators(clearSelectedFreelancer, dispatch),
         getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch),
     }

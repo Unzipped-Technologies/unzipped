@@ -130,6 +130,7 @@ const listUsers = async ({ filter, take, skip }) => {
 
 const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, skill }) => {
     try {
+        console.log(skill,"skill")
         const regexQuery = new RegExp(filter, 'i');
 
         const aggregationPipeline = [

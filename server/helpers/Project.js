@@ -2,7 +2,7 @@ const ProjectModel = require('../../models/Project');
 
 const getAllProjects = async () => {
     try {
-        const result = await ProjectModel.find({ isDeleted: false }).exec();
+        const result = await ProjectModel.find().exec();
         return result;
     } catch (e) {
         throw Error(`Error: Failed to load projects: ${e}`);
@@ -29,7 +29,8 @@ const updateProject = async (project) => {
 
 const deleteProject = async (projectId) => {
     try {
-        const result = await ProjectModel.findByIdAndUpdate(projectId, { $set: { isDeleted: true } });
+       
+        const result = await ProjectModel.softDelete({ _id: projectId });
         if (result) return { affected: 1, msg: 'Successfully deleted!' }
         return { affected: 0, msg: 'No record found!' }
     } catch (e) {
