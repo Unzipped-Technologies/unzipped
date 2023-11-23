@@ -296,7 +296,7 @@ export const DarkSpan = styled.span`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    font-size: ${({ large, small, medium }) => large ? '24px' : small ? '15px' : '18px'};
+    font-size: ${({ large, small, medium }) => large ? '24px' : small ? '15px' : medium ? '16px' : '18px'};
     padding-left: 3px;
     color: #333;
 `;

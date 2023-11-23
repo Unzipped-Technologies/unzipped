@@ -10,7 +10,6 @@ import {
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getProjectsList } from '../../redux/actions'
 import { getFreelancerList, clearSelectedFreelancer, getFreelancerSkillsList } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import MobileSearchBar from '../../components/ui/MobileSearchBar';
@@ -27,6 +26,7 @@ const Container = styled.div`
     background: #F7F8F9;
     padding-top: 21px;
     @media(max-width: 680px) {
+        padding-top: 0px;
         background-color: #F6F7F9;
         margin-bottom: 48px;
     }
@@ -63,7 +63,6 @@ const Freelancers = ({ freelancerList = [], getFreelancerList, access_token, tot
     const [skill, setSkill] = useState([]);
     const [isVisible, setIsVisible] = useState(false);
     const [filterOpenClose, setFilterOpenClose] = useState(false);
-    const [type, setType] =useState('Fixed Price')
     const sortOptions = [
         {
             text: 'All Categories',
@@ -286,8 +285,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getFreelancerList: bindActionCreators(getFreelancerList, dispatch),
-
-        getProjectsList: bindActionCreators(getProjectsList, dispatch),
         clearSelectedFreelancer: bindActionCreators(clearSelectedFreelancer, dispatch),
         getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch),
     }

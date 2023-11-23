@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Nav from '../../components/unzipped/header';
-import SearchBar from '../../components/ui/SearchBar'
-import FreelancerCard from '../../components/unzipped/dashboard/FreelancerCard'
 import Footer from '../../components/unzipped/Footer'
 import {
     DarkText,
@@ -10,34 +8,36 @@ import {
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
-import { getFreelancerList, clearSelectedFreelancer, getFreelancerSkillsList } from '../../redux/actions';
+import { getFreelancerSkillsList, getProjectsList } from '../../redux/actions';
 import { parseCookies } from "../../services/cookieHelper";
 import MobileSearchBar from '../../components/ui/MobileSearchBar';
-import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard';
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
-import MobileSearchFilter from '../../components/unzipped/MobileSearchFilter';
+import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects';
+import MobileSearchFilterProjects from '../../components/unzipped/MobileSearchFilterProjects';
+import ProjectDesktopCard from '../../components/unzipped/dashboard/ProjectsDesktopCard';
+import MobileProjectCard from '../../components/unzipped/dashboard/MobileProjectCard';
 
 const Container = styled.div`
     display: flex;
     flex-flow: column;
     width: 100%;
     justify-content: center;
+    background: #F7F8F9;
+    padding-top: 21px;
     @media(max-width: 680px) {
+        padding-top: 0px;
         background-color: #F6F7F9;
         margin-bottom: 48px;
     }
 `;
-
 const Box = styled.div`
     display: flex;
-    width: 80%;
-    max-width: 1100px;
-    align-self: center;
+    padding: 0px 67px;
+    gap: 21px;
+    overflow: overflow;
     @media(max-width: 680px) {
         display: none;
     }
 `;
-
 const MobileDisplayBox = styled.div`
     position: relative;
     @media(min-width: 680px) {
@@ -48,143 +48,179 @@ const DesktopDisplayBox = styled.div`
 @media(max-width: 680px) {
     display: none;
 }
-`
-const Freelancers = ({ freelancerList = [], getFreelancerList, token, totalCount, clearSelectedFreelancer, getFreelancerSkillsList, freelancerSkillsList = [] }) => {
-    const [take, setTake] = useState(15)
-    const [skip] = useState(0);
+`;
+const Projects = ({ projectList, access_token, totalCount, getFreelancerSkillsList, freelancerSkillsList = [], getProjectsList, id }) => {
+    const containerRef = useRef(null)
+
+    const [take, setTake] = useState(20)
+    const [skip, setSkip] = useState(0);
     const [filter, setFilter] = useState('')
-    const [sort, setSort] = useState('ALL CATEGORIES')
     const [minRate, setMinRate] = useState();
     const [maxRate, setMaxRate] = useState();
-    const [skill, setSkill] = useState([])
+    const [skill, setSkill] = useState([]);
+    const [isVisible, setIsVisible] = useState(false);
     const [filterOpenClose, setFilterOpenClose] = useState(false);
-    const sortOptions = [
-        {
-            text: 'All Categories',
-            onClick: () => setSort('ALL CATEGORIES'),
-        },
-        {
-            text: 'Most Relavent',
-            onClick: () => setSort('Most Relavent'),
-        },
-        {
-            text: 'Most reviews',
-            onClick: () => setSort('Most reviews'),
-        },
-        {
-            text: 'highest hourly rate',
-            onClick: () => setSort('highest hourly rate'),
-        },
-        {
-            text: 'lowest hourly rate',
-            onClick: () => setSort('lowest hourly rate'),
-        },
-        {
-            text: 'recomended',
-            onClick: () => setSort('recomended'),
-        },
-    ]
-    useEffect(() => {
+    const [type, setType] = useState('');
+    const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '245px')
+
+    useMemo(() => {
         getFreelancerSkillsList();
-        if (!filterOpenClose) {
-            getFreelancerList({
-                filter,
-                take,
-                skip,
-                sort,
-                minRate,
-                maxRate,
-                skill,
-            }, token.access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjYzOTY0MDhhNjNiMTQzMzk2MGEzOTgyMSIsImlhdCI6MTY5NDc5MTE4MCwiZXhwIjo0Mjg2NzkxMTgwfQ.26w-FzvkymHELA1re6Q5SgdqiumCpAsHfOR5d2JfiBQ')
+        getProjectsList({take,skip},access_token)
+    }, [])
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window && window.innerWidth < 680) {
+                setMarginBottom(undefined)
+            }
+            else
+                setMarginBottom('245px')
+        };
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (marginBottom) {
+            if (maxRate && minRate) {
+                if (+maxRate > +minRate)
+                    handleSearch()
+            }
+            else {
+                handleSearch()
+            }
         }
-    }, [take, sort, filter])
+    }, [type, minRate, maxRate, skill])
+
+    useEffect(() => {
+        if(skip){
+            const intersectionObserver = true
+            handleSearch(intersectionObserver)
+            setTake(+skip + 20)
+        }
+        setSkip(0);
+    },[skip])
+
+    const options = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 1.0
+    }
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(callbackFunction, options)
+        if (containerRef.current) observer.observe(containerRef.current)
+        return () => {
+            if (containerRef.current) observer.unobserve(containerRef.current)
+        }
+    }, [containerRef, options])
+
     const handleFilterOpenClose = (value) => {
         setFilterOpenClose(value)
     }
-    const handleSearch = () => {
-        getFreelancerList({
+
+    const handleSearch = (intersectionObserver) => {
+        getProjectsList({
+            intersectionObserver,
             filter,
             take,
             skip,
-            sort,
+            type,
             minRate,
             maxRate,
             skill,
-        }, token.access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjYzOTY0MDhhNjNiMTQzMzk2MGEzOTgyMSIsImlhdCI6MTY5NDc5MTE4MCwiZXhwIjo0Mjg2NzkxMTgwfQ.26w-FzvkymHELA1re6Q5SgdqiumCpAsHfOR5d2JfiBQ')
-
+        }, access_token)
     }
+  
+    const callbackFunction = (entries) => {
+        const [entry] = entries;
+        setIsVisible(entry.isIntersecting);
+        if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
+            if (take < totalCount) {
+                const total = +take;
+                setTake(20);
+                setSkip(total)
+            }
+        }
+    };
+
+    const getResultMessage = (freelancerList, skip, take, totalCount) => {
+        if (freelancerList?.length === 0) {
+            return "0 result";
+        } else if (freelancerList?.length === 1) {
+            return "1 result";
+        } else if (skip === 0) {
+            return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`
+                }`;
+        } else {
+            const start = (+skip * +take) + 1;
+            const end = Math.min((+skip * +take) + +take, totalCount);
+            return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`
+                }`;
+        }
+    }
+
     return (
-        <React.Fragment>
-            {!filterOpenClose && <Nav isSubMenu />}
-            <SearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} take={take} setTake={setTake} sort={sort} setSort={setSort} sortOptions={sortOptions} />
+        <div>
+            {!filterOpenClose && <Nav isSubMenu searchValue={filter} handleSearchValue={setFilter} handleSearch={handleSearch} searchButton margin={'0px'} marginBottom={marginBottom} />}
             {!filterOpenClose && <MobileDisplayBox><MobileSearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} handleFilterOpenClose={handleFilterOpenClose} /></MobileDisplayBox>}
             <Container>
                 {!filterOpenClose ? <MobileDisplayBox>
                     <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "10px" }}>
                         <b style={{ paddingRight: "20px" }}>Top Results</b>
-
-                        <small>
-                            {freelancerList?.length === 0 ? `0 results` :
-                                freelancerList?.length === 1 ? `1 results` :
-                                    skip === 0
-                                        ? `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
-                                        : `${(+skip * +take) + 1} - ${Math.min(
-                                            (+skip * +take) + +take,
-                                            totalCount
-                                        )} ${totalCount > (+take * +skip) ? `of ${totalCount} results` : `results`}  `}
-                        </small>
-
+                        <small>{getResultMessage(projectList, skip, take, totalCount)}</small>
                     </div>
                     <div style={{ margin: "0 5px", border: "2px solid #EFF1F4" }}></div>
                 </MobileDisplayBox> :
                     <MobileDisplayBox>
-                        <MobileSearchFilter maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} sort={sort} setSort={setSort} sortOptions={sortOptions} handleFilterOpenClose={handleFilterOpenClose} handleSearch={handleSearch} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill} />
+                        <MobileSearchFilterProjects handleProjectTypes={setType} maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} handleFilterOpenClose={handleFilterOpenClose} handleSearch={handleSearch} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill} />
                     </MobileDisplayBox>}
-                {freelancerList?.map(user => {
-                    const freelancer = {
-                        id: user._id,
-                        name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
-                        type: user.category,
-                        isPreferedFreelancer: user?.isPreferedFreelancer,
-                        country: user?.user?.AddressLineCountry || 'United States',
-                        skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
-                        cover: user?.cover || `I have been a ${user?.category || 'developer'} for over ${user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience || 1} years. schedule a meeting to check if I'm a good fit for your business.`,
-                        profilePic: user?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-                        rate: user?.rate,
-                        likes: user?.likeTotal
-                    }
-                    if (user?.user?.FirstName) {
-                        return (
-                            <>
-                                <Box>
-                                    <WhiteCard overlayDesktop cardHeightDesktop>
-                                        <FreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer} />
+                <Box >
+                    <DesktopSearchFilterProjects handleProjectTypes={setType} maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill} />
+                    <div className='overflow-auto'>
+                        <div className='d-flex align-items-baseline py-4 bg-white' >
+                            <h5 className='px-4'><b>Top Results</b></h5>
+                            <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+                        </div>
+                        {projectList?.length === 0 && (
+                            <DarkText fontSize='20px' padding="20px 40px" backgroundColor="white" width='-webkit-fill-available'>No freelancers found for this search</DarkText>
+                        )}
+                        {projectList?.map((project, index) => {
+                            return (
+                                <>
+                                    <WhiteCard noMargin overlayDesktop cardHeightDesktop key={index}>
+                                        <ProjectDesktopCard project={project} includeRate id={id}/>
                                     </WhiteCard>
-                                </Box>
-                                {!filterOpenClose && <MobileDisplayBox>
-                                    <MobileFreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer} />
-                                </MobileDisplayBox>}
-                            </>
-                        )
-                    }
-                })}
-                {freelancerList?.length === 0 && (
-                    <Box>
-                        <DarkText>0 Freelancers found for this search</DarkText>
-                    </Box>
+                                    {index === projectList.length - 1 && <div ref={containerRef} className='mb-2 p-2'></div>}
+                                </>
+                            )
+                        }
+                        )}
+                    </div>
+                </Box>
+                {projectList?.map((project, index) => {
+                    return (
+                        <>
+                            {!filterOpenClose && <MobileDisplayBox key={index}>
+                                <MobileProjectCard project={project} includeRate  />
+                            </MobileDisplayBox>}
+                            {index === projectList.length - 1 && <div ref={containerRef} className='p-1'></div>}
+                        </>
+                    )
+                }
                 )}
             </Container>
             <DesktopDisplayBox>
                 <Footer />
             </DesktopDisplayBox>
-            {!filterOpenClose && <MobileDisplayBox>
-                <MobileFreelancerFooter />
-            </MobileDisplayBox>}
-        </React.Fragment>
+
+        </div>
     )
 }
 
-Freelancers.getInitialProps = async ({ req, res }) => {
+Projects.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
     return {
         token: token && token,
@@ -193,18 +229,19 @@ Freelancers.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = (state) => {
     return {
-        freelancerList: state.Freelancers?.freelancers,
+        id: state.Auth.user._id,
         freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
-        totalCount: state.Freelancers?.totalCount[0]?.count
+        totalCount: state.Business.totalCount,
+        access_token: state.Auth.token,
+        projectList: state.Business.projectList,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getFreelancerList: bindActionCreators(getFreelancerList, dispatch),
-        clearSelectedFreelancer: bindActionCreators(clearSelectedFreelancer, dispatch),
+        getProjectsList: bindActionCreators(getProjectsList, dispatch),
         getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Freelancers);
+export default connect(mapStateToProps, mapDispatchToProps)(Projects);

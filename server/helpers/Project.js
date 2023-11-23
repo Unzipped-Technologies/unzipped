@@ -29,7 +29,6 @@ const updateProject = async (project) => {
 
 const deleteProject = async (projectId) => {
     try {
-       
         const result = await ProjectModel.softDelete({ _id: projectId });
         if (result) return { affected: 1, msg: 'Successfully deleted!' }
         return { affected: 0, msg: 'No record found!' }

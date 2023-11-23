@@ -73,7 +73,6 @@ const getBusinessById = async (id, sub) => {
 
 // list lists
 const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, type }) => {
-
     try {
         const existingNameIndex = await business.collection.indexes();
         const nameIndexExists = existingNameIndex.some((index) => index.name === 'name_1');
@@ -87,7 +86,6 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
 
         const regexQuery = new RegExp(filter, 'i');
         const regexType = new RegExp(type, 'i');
-        console.time("time end")
         const aggregationPipeline = [
             {
                 $match: {
@@ -109,12 +107,34 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
                 },
             },
             {
+                $lookup: {
+                    from: 'users', 
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userProfile'
+                }
+            },
+            {
+                $unwind: '$userProfile' 
+            },
+            {
                 $project: {
                     name: 1,
                     budget: 1,
                     projectType: 1,
                     requiredSkills: 1,
+                    applicants:1,
+                    description: 1,
+                    profileImage: '$userProfile.profileImage',
+                    country: '$userProfile.AddressLineCountry',
+                    likes: '$userProfile.likeTotal',
+                    createdAt: 1,
                 },
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                }
             },
             {
                 $facet: {
@@ -134,10 +154,9 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
                 }
             },
         ];
-        console.timeEnd("time end")
         const list = await business.aggregate(aggregationPipeline).exec();
         return list[0];
-        
+
     } catch (e) {
         throw Error(`Could not find list, error: ${e}`);
     }
