@@ -26,6 +26,7 @@ const Container = styled.div`
     background: #F7F8F9;
     padding-top: 21px;
     @media(max-width: 680px) {
+        padding-top: 0px;
         background-color: #F6F7F9;
         margin-bottom: 48px;
     }

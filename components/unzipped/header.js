@@ -230,7 +230,7 @@ const menuItems = [
         sub: [
             {
                 name: 'Browse Projects',
-                link: '/',
+                link: '/projects',
                 icon: <FolderIcon width={35} height={35} />
             },
             {

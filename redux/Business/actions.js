@@ -1,4 +1,5 @@
 import {
+    GET_PROJECT_LIST_AND_APPEND,
     CREATE_DEPARTMENT,
     UPDATE_DEPARTMENT,
     DELETE_DEPARTMENT,
@@ -177,7 +178,7 @@ export const addTaskAndAddToTaskHours = (data, token) => async (dispatch, getSta
                 payload: err.response
             })
         })
-        dispatch(stopLoading());
+    dispatch(stopLoading());
 }
 
 export const updateTaskHoursStatus = (data, token) => async (dispatch, getState) => {
@@ -198,8 +199,6 @@ export const updateTaskHoursStatus = (data, token) => async (dispatch, getState)
                 payload: err.response
             })
         })
-       
-        
 }
 
 export const updateTaskHours = (data, token) => async (dispatch, getState) => {
@@ -220,7 +219,6 @@ export const updateTaskHours = (data, token) => async (dispatch, getState) => {
                 payload: err.response
             })
         })
-        
 }
 
 export const removeCommentFromStory = (data, token) => async (dispatch, getState) => {
@@ -278,8 +276,7 @@ export const getBusinessTasksByInvestor = ({ businessId, access_token }) => asyn
                 payload: err.response
             })
         })
-        dispatch(stopLoading());
-    
+    dispatch(stopLoading());
 }
 
 
@@ -303,7 +300,7 @@ export const getBusinessTasksByFounder = ({ businessId, access_token }) => async
                 payload: err.response
             })
         })
-        dispatch(stopLoading());
+    dispatch(stopLoading());
 }
 
 export const getBusinessList = (data, token, selected, _id) => async (dispatch, getState) => {
@@ -481,21 +478,59 @@ export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
     //     })
 }
 
-export const getProjectsList = (data, token) => async (dispatch, getState) => {
-    //business list Loading
+export const getProjectsList = (queryParams, token) => async (dispatch, getState) => {
     dispatch({ type: LOAD_STATE })
-    // GET_PROJECT_SUCCESS
-
+    const headers = {
+        access_token: token
+    };
+    dispatch(startLoading());
     await axios
-        .post(`/api/business/list`, data, tokenConfig(token))
-        .then(res => dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data,
-        }))
+        .post(`/api/business/list`, tokenConfig(token), {
+            headers,
+            params: queryParams
+        })
+        .then(res => {
+            queryParams?.intersectionObserver ? dispatch({
+                type: GET_PROJECT_LIST_AND_APPEND,
+                payload: res.data,
+            })
+            :
+            dispatch({
+                type: GET_PROJECT_LIST,
+                payload: res.data,
+            })
+        }
+        )
         .catch(err => {
             dispatch({
                 type: GET_PROJECT_Error,
                 payload: err.response
             })
         })
+    dispatch(stopLoading());
 }
+
+export const getAllBusinesses = (queryParams, token) => async (dispatch, getState) => {
+    dispatch({
+        type: FREELANCER_LOADING
+    });
+    const headers = {
+        access_token: token
+    };
+
+    try {
+        const response = await axios.get(`/api/user/freelancer/list`, {
+            headers,
+            params: queryParams
+        });
+        dispatch({
+            type: GET_LIST_FREELANCERS,
+            payload: response.data
+        });
+    } catch (err) {
+        dispatch({
+            type: FREELANCER_ERROR,
+            payload: err.response
+        });
+    }
+};

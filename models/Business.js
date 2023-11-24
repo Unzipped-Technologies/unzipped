@@ -5,6 +5,17 @@ const businessSchema = new Schema({
   userId: String,
   name: String,
   budget: Number,
+  projectType: {
+    type: String,
+    enum: ['Hourly Rate', 'Fixed Price'],
+  },
+  applicants: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users' 
+    }
+  ],
+  requiredSkills: [{type: String}],
   totalSpent: { type: Number, default: 0 },
   isEquity: {type: Boolean, default: false},
   isBusinessUpdated: {type: Boolean, default: false},

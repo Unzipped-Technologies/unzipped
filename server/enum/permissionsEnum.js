@@ -87,6 +87,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userUpdateBusiness,
         userPermissions.userListBusinesses,
         userPermissions.getBusinessById,
+        userPermissions.listAllBusinesses,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -150,6 +151,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userUpdateBusiness,
         userPermissions.userListBusinesses,
         userPermissions.getBusinessByInvestor,
+        userPermissions.listAllBusinesses,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,

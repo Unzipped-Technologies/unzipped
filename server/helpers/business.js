@@ -72,24 +72,91 @@ const getBusinessById = async (id, sub) => {
 }
 
 // list lists
-const listBusinesses = async ({ filter, take, skip }) => {
+const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, type }) => {
     try {
-        if (filter && filter.name) {
-            filter = {
-                ...filter,
-                name: { $regex: filter.name, $options: 'i' }
-            }
+        const existingNameIndex = await business.collection.indexes();
+        const nameIndexExists = existingNameIndex.some((index) => index.name === 'name_1');
+
+        if (!nameIndexExists) {
+            await business.collection.createIndex({ name: 1 }, { name: 'name_1' });
+            await business.collection.createIndex({ projectType: 1 }, { name: 'projectType_1' });
+            await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' });
+            await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' });
         }
-        const query = filter ? business.find({ ...filter }) : business.find();
-        const lists = await query
-            .skip(skip)
-            .limit(take)
-            .populate({
-                path: 'listItems',
-                model: 'listItems'
-            })
-            .exec()
-        return lists;
+
+        const regexQuery = new RegExp(filter, 'i');
+        const regexType = new RegExp(type, 'i');
+        const aggregationPipeline = [
+            {
+                $match: {
+                    name: { $regex: regexQuery },
+                    ...(skill?.length > 0 ? {
+                        requiredSkills: {
+                            $all: skill,
+                        },
+                    } : {}),
+                    ...(type && {
+                        projectType: { $regex: regexType }
+                    }),
+                    ...(minRate && {
+                        budget: { $gte: +minRate },
+                    }),
+                    ...(maxRate && {
+                        budget: { $lte: +maxRate },
+                    })
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users', 
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userProfile'
+                }
+            },
+            {
+                $unwind: '$userProfile' 
+            },
+            {
+                $project: {
+                    name: 1,
+                    budget: 1,
+                    projectType: 1,
+                    requiredSkills: 1,
+                    applicants:1,
+                    description: 1,
+                    profileImage: '$userProfile.profileImage',
+                    country: '$userProfile.AddressLineCountry',
+                    likes: '$userProfile.likeTotal',
+                    createdAt: 1,
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                }
+            },
+            {
+                $facet: {
+                    limitedRecords: [
+                        {
+                            $skip: +skip,
+                        },
+                        {
+                            $limit: +take,
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: 'count',
+                        }
+                    ]
+                }
+            },
+        ];
+        const list = await business.aggregate(aggregationPipeline).exec();
+        return list[0];
+
     } catch (e) {
         throw Error(`Could not find list, error: ${e}`);
     }
@@ -99,7 +166,7 @@ const getBusinessByInvestor = async ({ businessId, id }) => {
     try {
         // Find freelancer by user id 
         const freelancerIds = await Freelancer.findOne({ userId: id }, '_id');
-        const ContractRate = await Contracts.findOne({ freelancerId: freelancerIds._id, businessId: businessId }, 'hourlyRate businessId').populate({path: "businessId",model: "businesses",select:"name"})
+        const ContractRate = await Contracts.findOne({ freelancerId: freelancerIds._id, businessId: businessId }, 'hourlyRate businessId').populate({ path: "businessId", model: "businesses", select: "name" })
         const dep = await department.aggregate([
             {
                 $match: {
