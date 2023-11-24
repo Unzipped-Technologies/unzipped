@@ -35,10 +35,10 @@ const TitleText = styled.div`
     font-style: normal;
     font-weight: ${({ light, lighter }) => light ? '400' : lighter ? '300' : '600'};
     cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
-    font-size: ${({ smallest, small, title, size }) => small ? '15px' : title ? '36px' : size ? size : '16px'};
+    font-size: ${({ smallest, small, title, size, mobile }) => mobile ? '22px' :small ? '15px' : title ? '36px' : size ? size : '16px'};
     line-height: ${({ lineHeight }) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
-    margin-bottom: ${({ noMargin, half, large }) => noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
+    margin-bottom: ${({ mobile, noMargin, half, large }) => mobile? '8px' : noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
     margin-left: ${({ paddingLeft }) => paddingLeft ? '20px' : '0px'};
     text-align: ${({ center }) => center ? 'center' : 'unset'};
     width: ${({ width }) => width ? width : '96%'};
@@ -55,6 +55,15 @@ const TitleText = styled.div`
     }
 `;
 
+const HeadingText = styled.div`
+    display: ${({ doubleScreenBottom }) => doubleScreenBottom ? 'none' : 'block'};
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    color: #000;
+`
+
 const DarkText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
@@ -65,7 +74,7 @@ const DarkText = styled.div`
     line-height: ${({ lineHeight, fontSize }) => lineHeight ? lineHeight : fontSize ? fontSize : '24px'};
     letter-spacing: 0.15008px;
     margin-top: ${({ topMargin }) => topMargin ? topMargin : 'unset'};
-    margin-bottom: ${({ noMargin, marginLarge, half }) => noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
+    margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) => bottomMargin? '22px' : noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
     margin-left: ${({ paddingLeft }) => paddingLeft ? '20px' : '0px'};
     margin-right: ${({ marginRight }) => marginRight ? marginRight : '0px'};
     padding-top: ${({ topPadding }) => topPadding ? '10px' : '0px'};
@@ -98,7 +107,7 @@ const DarkText = styled.div`
 
 const Absolute = styled.div`
     position: absolute;
-    display: flex;
+    display: ${({ doubleScreenTop }) => doubleScreenTop ? 'none' : 'flex'};
     flex-flow: row;
     align-items: center;
     text-overflow: ${({ textOverflow }) => textOverflow ? textOverflow : 'unset'};
@@ -108,11 +117,13 @@ const Absolute = styled.div`
     right: ${({ left, right }) => left ? 'unset' : right ? right : '15px'};
     left: ${({ left, wideLeft, smallLeft }) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
     z-index: ${({ zIndex }) => zIndex ? zIndex : 'inherit'};
+    margin-top: ${({ mobile }) => mobile ? '35px' : 'unset'};
+    gap: ${({ gap, mobile }) => mobile && gap ? '20px' : gap ? gap : 'unset'};
     @media(max-width: ${({ hide }) => hide ? hide + 'px' : '0px'}) {
         display: none;
     }
     @media (max-width: 681px) {
-        position: unset;
+        position: ${({ bottom }) => bottom ? 'absolute' : 'unset'};
         justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
     }
 
@@ -208,9 +219,6 @@ const Grid = styled.div`
     justify-items: ${({ left }) => left ? 'left' : 'center'};
     align-items: center;
     margin: ${({ margin }) => margin ? margin : '30px 0px 0px'};
-    @media screen and (max-width: 680px) {
-        
-    }
 `;
 
 const Grid2 = styled.div`
@@ -310,42 +318,8 @@ export const MinWidth = styled.span`
     min-width: 10%;
 `;
 
-export const ContentContainer = styled('div')`
-  max-height: 150px;
-  padding: ${({padding})=>padding?padding:'10px 20px'};
-  width: 90%;
-  overflow-y: scroll;
-  font-family: 'Roboto';
-  line-height: 25px;
-  font-weight: 500;
-  font-size: 16px;
-
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 7px;
-  }
-  ::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 7px;
-    background: #cccccc;
-  }
-`
-
-export const ContainedSpan = styled.span`
-    border-radius: 4px;
-    background-color: #D9D9D9;
-    padding: 2px 10px 2px 2px;
-    margin-right: 10px;
-    text-wrap: nowrap;
-`
-
-
 module.exports = {
-    ContainedSpan,
-    ContentContainer,
+    HeadingText,
     BlackCard,
     MinWidth,
     WhiteText,

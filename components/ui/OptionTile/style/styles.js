@@ -36,7 +36,7 @@ export const OptionLabel = styled.label`
     font-size: ${props => props.theme.fontSizeS};
     font-weight: 700;
     height: 100%;
-    padding: ${({small}) => small ? '20px' : '30px'};
+    padding: ${({small, mobile}) => mobile ? '30px 15px' : small ? '20px' : '30px'};
     width: 100%;
     @media (max-width: ${props => props.theme.tableMobileWidth}px) {
         font-size: ${props => props.theme.fontSizeXS};

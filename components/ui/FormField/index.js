@@ -90,6 +90,7 @@ const Scroll = styled(SimpleBar)`
  * Form Field Component. Handles the presentation of an entire form field, including label and the control. Holds error state of the field.
  */
 const FormField = ({
+  mobile,
   className,
   fieldType,
   required,
@@ -226,6 +227,7 @@ const FormField = ({
         </FormLabel>
       )}
       <Control
+        mobile={mobile}
         onBlur={handleBlur}
         error={currentError}
         name={name}

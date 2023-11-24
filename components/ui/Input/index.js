@@ -26,7 +26,7 @@ const ControlContainer = styled.div`
     }
     width: ${props => {
         if (props.textarea) {
-            return '95%'
+            return '100%'
         } else if (props.width) {
             return props.width
         } else {
@@ -59,7 +59,7 @@ const inputStyles = props => `
     color: ${props.disabled ? props.theme.tint2 : props.theme.textSecondary};
     font-weight: 400;
     font-size: ${props.fontSize ? props.fontSize : props.theme.baseFontSize};
-    padding: 0px 12px !important;
+    padding: ${props.mobile?'0px 2px !important':'0px 12px !important'};
     font-family: arial;
     box-sizing: border-box;
     line-height: normal;
@@ -106,7 +106,7 @@ const Bullet = styled.div`
 `
 
 const InputControlArea = styled(InputControl).attrs({ as: 'textarea' })`
-    margin: 8px 5px 0px 0px;
+    margin: ${props=>props.mobile?'5px 4px 0px 0px' : '8px 5px 0px 0px'};
     resize: vertical;
     height: 120px;
 `
@@ -115,6 +115,7 @@ const InputControlArea = styled(InputControl).attrs({ as: 'textarea' })`
  * Form Input Component.
  */
 const Input = ({
+    mobile,
     disabled,
     type,
     accepted,
@@ -148,7 +149,7 @@ const Input = ({
         }
     }
     return (
-        <ControlContainer textarea={textarea} height={height} autosize={autosize} width={width}>
+        <ControlContainer textarea={textarea} height={height} autosize={autosize} width={width} mobile={mobile}>
             <InputContainer
                 disabled={disabled}
                 border={border}
@@ -159,6 +160,7 @@ const Input = ({
                 onFocus={() => handleFocus(true)}
                 onBlur={() => handleFocus(false)}>
                 <Control
+                    mobile={mobile}
                     height={height}
                     fontSize={fontSize}
                     type={type}

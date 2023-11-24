@@ -9,10 +9,11 @@ const BadgeStyled = styled(Badge)`
 `;
 
 const ProgressBarContainer = styled.div`
+    display: ${({ doubleScreenBottom }) => doubleScreenBottom ? 'none' : 'block'};
     font-family: arial;
     font-weight: 600;
     font-size: ${props => (props.$tileView ? '1.5rem' : '1.625rem')};
-    padding: ${props => (props.$showValue ? '20px 0px' : ' 5px 20px')};
+    padding: ${props => (props.mobile? '15px 0px 32px' : props.$showValue ? '20px 0px' : ' 5px 20px')};
     color: ${props => (props.$tileView ? props.theme.secondary : '#fff')};
     height: auto;
     ${props =>
@@ -31,8 +32,8 @@ const ProgressBarContainer = styled.div`
 const ProgressBarBack = styled.div`
     background-color: #D2D2D2;
     width: 100%;
-    min-height: 15px;
-    height: 15px;
+    min-height: ${props => props.mobile ? '8px' : '15px'};
+    height: ${props => props.mobile ? '8px' : '15px'};
     position: relative;
     border-radius: 24px;
     overflow: hidden;
@@ -42,8 +43,8 @@ const ProgressBarBar = styled.div`
     background-color: ${({ bar }) => bar ? bar : '#fff'}  !important;
     background-image: ${({ bar }) => bar ? 'unset' : 'linear-gradient(45deg, #DE43DE, #CC4848)'};
     width: ${props => props.$width}% !important;
-    min-height: 15px;
-    height: 15px;
+    min-height: ${props => props.mobile ? '8px' : '15px'};;
+    height: ${props => props.mobile ? '8px' : '15px'};;
     position: absolute;
     border-radius: 24px;
     @media (min-width: 1266px) {
@@ -65,16 +66,16 @@ const Value = styled.span`
 /**
  * Progress Bar Component.
  */
-const ProgressBar = ({ tileView, showValue, status, value, width, bar }) => {
+const ProgressBar = ({ tileView, showValue, status, value, width, bar, mobile, doubleScreenBottom }) => {
     const barWidth = (width / 100) * value;
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;
 
     return (
-        <ProgressBarContainer $showValue={showValue} $tileView={tileView}>
+        <ProgressBarContainer doubleScreenBottom={doubleScreenBottom} $showValue={showValue} $tileView={tileView} mobile={mobile}>
             {showValue && (
-                <ProgressBarBack $width={width} $tileView={tileView}>
-                    <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} bar={bar} />
+                <ProgressBarBack $width={width} $tileView={tileView} mobile={mobile}>
+                    <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} bar={bar} mobile={mobile} />
                 </ProgressBarBack>
             )}
         </ProgressBarContainer>

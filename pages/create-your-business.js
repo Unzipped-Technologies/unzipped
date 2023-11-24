@@ -6,7 +6,7 @@ import Button from '../components/ui/Button'
 import FormField from '../components/ui/FormField'
 import { ValidationUtils } from '../utils'
 import { countriesList } from '../utils/constants'
-import { Grid, Grid2, ContentContainer, ContainedSpan } from '../components/unzipped/dashboard/style'
+import { Grid, Grid2 } from '../components/unzipped/dashboard/style'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { updateBusinessForm, createBusiness } from '../redux/actions'
@@ -24,12 +24,41 @@ const Container = styled.div`
   background: #d9d9d9;
   height: 100vh;
   width: 100vw;
+  @media (max-width: 680px) {
+    display: block;
+  }
 `
 
-const CardContainer = styled.div`
-  display: flex;
-  width: 952px;
-  height: 611px;
+const ContentContainer = styled('div')`
+  max-height: 150px;
+  padding: ${({padding})=>padding?padding:'10px 20px'};
+  width: 90%;
+  overflow-y: scroll;
+  font-family: 'Roboto';
+  line-height: 25px;
+  font-weight: 500;
+  font-size: 16px;
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background: #cccccc;
+  }
+`
+
+const ContainedSpan = styled.span`
+    border-radius: 4px;
+    background-color: #D9D9D9;
+    padding: 2px 10px 2px 2px;
+    margin-right: 10px;
+    text-wrap: nowrap;
 `
 
 function handleGithub() {
@@ -38,7 +67,7 @@ function handleGithub() {
   )
 }
 
-const GetCard = ({
+const GetCardDesktop = ({
   stage,
   isShortTermBusiness,
   name,
@@ -138,6 +167,7 @@ const GetCard = ({
           stage={stage}>
           <Grid>
             <OptionTileGroup
+              availableWidth
               selectedValue={isShortTermBusiness}
               type="radio"
               tileList={tileOptions()}
@@ -206,7 +236,7 @@ const GetCard = ({
           <CreateABusiness
             title="Role Description"
             sub="Envision your ideal hire. What role will they play in your ongoing projects?"
-            disabled={role?.length}
+            disabled={role?.length === 0}
             onUpdate={updateForm}
             onBack={goBack}
             onSubmit={submitForm}
@@ -283,6 +313,528 @@ const GetCard = ({
             </ContentContainer>
           </CreateABusiness>
         )
+      } else {
+        return (
+          <CreateABusiness
+            title="Team Dynamics"
+            sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
+            disabled={teamDynamics?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Button
+              type="transparent"
+              noUppercase
+              noPadding
+              position="absolute"
+              right="50px"
+              top="170px"
+              onClick={handleSkip}>
+              Skip
+              <SkipNextOutlinedIcon />
+            </Button>
+            <Grid>
+              <FormField
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                handleInputFocusChange={handleInputFocus}
+                isFocused={isFocused}
+                onChange={e => updateForm({ teamDynamics: e.target.value })}
+                value={teamDynamics}></FormField>
+            </Grid>
+          </CreateABusiness>
+        )
+      }
+
+    case 5:
+      return (
+        <CreateABusiness
+          title="Required Expertise"
+          sub="What skills should they have mastered? List the abilities your project or role demands."
+          disabled={requiredSkills?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          {!!requiredSkills?.length && <ContentContainer padding='20px 5px 20px 10px '>
+            {requiredSkills?.map(skill => (
+              <ContainedSpan>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                    onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
+                  />{skill}
+              </ContainedSpan>
+            ))}
+          </ContentContainer>}
+          <Grid margin={requiredSkills?.length && '0'}>
+            <FormField
+              justifySelf="start"
+              width="90%"
+              fieldType="input"
+              fontSize="20px"
+              placeholder="Type a skill and hit enter..."
+              borderRadius="10px"
+              handleInputFocusChange={handleInputFocus}
+              isFocused={isFocused}
+              handleEnterKey={(e)=>inputValue !== '' && requiredSkills.length<15 && handleEnterKey('requiredSkills',requiredSkills,e)}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
+            />
+            <Button
+              position="absolute"
+              right="50px"
+              type="purple"
+              buttonHeight="42px"
+              disabled={inputValue === '' || requiredSkills.length>=15}
+              zIndex={10}
+              onClick={() => {
+                updateForm({ requiredSkills: [...requiredSkills, inputValue] })
+                handleInput('')
+              }}>
+              Add
+            </Button>
+          </Grid>
+        </CreateABusiness>
+      )
+    case 6:
+      return (
+        <CreateABusiness
+          title="Project Goals or Role Expectations"
+          sub="Chart out the milestones. What achievements should be celebrated along the way?"
+          disabled={goals?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Button
+            type="transparent"
+            noUppercase
+            noPadding
+            position="absolute"
+            right="50px"
+            top="170px"
+            onClick={handleSkip}>
+            Skip
+            <SkipNextOutlinedIcon />
+          </Button>
+          <Grid>
+            <FormField
+              textarea
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              borderRadius="10px"
+              handleInputFocusChange={handleInputFocus}
+              isFocused={isFocused}
+              onChange={e => updateForm({ goals: e.target.value })}
+              value={goals}></FormField>
+          </Grid>
+        </CreateABusiness>
+      )
+    case 7:
+      return (
+        <CreateABusiness
+          title="Company Background"
+          sub="Every great story has a setting. What's the backdrop of your company or venture?"
+          disabled={companyBackground?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Button
+            type="transparent"
+            noUppercase
+            noPadding
+            position="absolute"
+            right="50px"
+            top="170px"
+            onClick={handleSkip}>
+            Skip
+            <SkipNextOutlinedIcon />
+          </Button>
+          <Grid>
+            <FormField
+              textarea
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              borderRadius="10px"
+              handleInputFocusChange={handleInputFocus}
+              isFocused={isFocused}
+              onChange={e =>updateForm({ companyBackground: e.target.value })}
+              value={companyBackground}                
+              />
+          </Grid>
+        </CreateABusiness>
+      )
+    case 8:
+      return (
+        <CreateABusiness
+          title="Budget"
+          sub="What size budget are you comfortable with for this hire?"
+          disabled={budget?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Grid>
+            <FormField
+              required
+              fieldType="select"
+              isSearchable={false}
+              name="select"
+              options={budgetOptions()}
+              placeholder="Select your budget"
+              fontSize="20px"
+              width="100%"
+              borderRadius="12px"
+              handleInputFocusChange={handleInputFocus}
+              isFocused={isFocused}
+              onChange={e =>updateForm({ budget: e })}
+              value={budget}/>
+          </Grid>
+        </CreateABusiness>
+      )
+    case 9:
+      if(!isGithubConnected){
+      return (
+        <CreateABusiness
+          title="Do you currently have a github account?"
+          sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}
+          skip={!isGithubConnected}>
+          <Grid>
+            <Button
+              icon="github"
+              extraWide
+              noBorder
+              type="dark"
+              normal
+              onClick={handleGithub}
+              // disabled={isGithubConnected}
+              >
+              {/* {isGithubConnected ? 'GITHUB CONNECTED' : 'CONNECT YOUR GITHUB ACCOUNT'} */}
+                CONNECT YOUR GITHUB ACCOUNT
+            </Button>
+          </Grid>
+        </CreateABusiness>
+      )}else{
+        handleSkip()
+      }
+    case 10:
+      return (
+        <CreateABusiness
+          title="Questions for Potential Hires"
+          sub="What questions do you have for potential hires? (max three)"
+          disabled={questionsToAsk?.length === 0}
+          onUpdate={updateForm}
+          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
+          onSubmit={submitForm}
+          submit
+          progress={stage}
+          stage={stage}>
+          <Grid>
+            <FormField
+              justifySelf="start"
+              width="90%"
+              fieldType="input"
+              fontSize="20px"
+              placeholder="Type a question and hit enter..."
+              borderRadius="10px"
+              handleEnterKey={(e)=>inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk',questionsToAsk,e)}
+              handleInputFocusChange={handleInputFocus}
+              onFocus={isFocused}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
+            />
+            <Button
+              disabled={inputValue === '' || questionsToAsk.length >= 3}
+              zIndex={10}
+              position="absolute"
+              right="50px"
+              type="purple"
+              buttonHeight="42px"
+              onClick={() => {
+                updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+                handleInput('')
+              }}>
+              Add
+            </Button>
+          </Grid>
+          <ContentContainer>
+            {questionsToAsk.map(question => (
+              <div className="d-flex mb-3">
+                <div>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                    onClick={() => handleCancelIcon('questionsToAsk',questionsToAsk,question)}
+                  />
+                </div>
+                <span>{question}</span>
+              </div>
+            ))}
+          </ContentContainer>
+        </CreateABusiness>
+      )
+    default:
+      return <></>
+  }
+}
+
+const GetCardMobile = ({
+  stage,
+  isShortTermBusiness,
+  name,
+  challenge,
+  role,
+  objectives,
+  teamDynamics,
+  requiredSkills,
+  goals,
+  companyBackground,
+  budget,
+  questionsToAsk,
+  submitForm,
+  updateForm,
+  goBack,
+  loading
+}) => {
+  const [isFocused, setIsFocused] = useState(false)
+  const [inputValue,setInputValue]=useState('')
+
+  const handleInput=(value)=>{
+    setInputValue(value)
+  }
+  
+  const handleInputFocus = (value) => {
+    setIsFocused(value)
+  }
+  
+  const handleSkip = () => {
+    submitForm(stage)
+  }
+
+  const handleCancelIcon=(feildName,data,value)=>{
+    updateForm({ [feildName]: data.filter(val=>val!==value) })
+  }
+  
+  const handleEnterKey = (fieldName,data,e) => {
+    if(e.keyCode === 13 && e.shiftKey === false) {
+      updateForm({ [fieldName]: [...data, inputValue] })
+      handleInput('')
+    }
+  }
+
+  const tileOptions = () => {
+    return [
+      {
+        label: `SHORT-TERM PROJECT`,
+        iconName: 'profileNew',
+        value: 'true'
+      },
+      {
+        label: `LONG-TERM COLLABORATION`,
+        iconName: 'desktop',
+        value: 'false'
+      }
+    ]
+  }
+
+  const budgetOptions = () => {
+    return [
+      { label: 'Basic ($7 - $14)', value: 'Basic ($7 - $14)' },
+      { label: 'Standard ($15 - $25)', value: 'Standard ($15 - $25)' },
+      { label: 'Skilled ($25 - $50)', value: 'Skilled ($25 - $50)' },
+      { label: 'Expert ($50 - $70)', value: 'Expert ($50 - $70)' },
+      { label: 'More than a $70 per hour', value: 'More than a $70 per hour' },
+      { label: 'Not Sure (See what my options are)', value: 'Not Sure (See what my options are)' }
+    ]
+  }
+
+  const isGithubConnected = !!router?.query?.['github-connect'] || false
+
+  switch (stage) {
+    case 1:
+      return (
+        <CreateABusiness
+          mobile
+          sub={`Are you looking to hire for a long term hire?`}
+          onUpdate={updateForm}
+          onBack={goBack}
+          disabled={isShortTermBusiness === ''}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Grid margin='0px'>
+            <OptionTileGroup
+              mobile
+              availableWidth
+              selectedValue={isShortTermBusiness}
+              type="radio"
+              tileList={tileOptions()}
+              onChange={e => updateForm({ isShortTermBusiness: e.target.value })}
+              stage={stage}
+            />
+          </Grid>
+        </CreateABusiness>
+      )
+
+    case 2:
+      return (
+        <CreateABusiness
+          mobile
+          title="Project Name"
+          sub="Describe your project in as few words as possible"
+          disabled={name?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Grid margin='0px'>
+            <FormField
+              textarea
+              mobile
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              placeholder="Describe your project here..."
+              borderRadius="10px"
+              handleInputFocusChange={handleInputFocus}
+              isFocused={isFocused}
+              onChange={e => updateForm({ name: e.target.value })}
+              value={name}/>
+          </Grid>
+        </CreateABusiness>
+      )
+
+    case 3:
+      if (isShortTermBusiness === 'true') {
+        return (
+          <>
+          <CreateABusiness
+            mobile
+            doubleScreenTop
+            title="Describe the project"
+            sub="What's the challenge you need to conquer? (in a sentence or two)"
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid>
+              <FormField
+                textarea
+                mobile
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                placeholder="Enter Project Summary..."
+                borderRadius="10px"
+                handleInputFocusChange={handleInputFocus}
+                isFocused={isFocused}
+                onChange={e => updateForm({ challenge: e.target.value })}
+                value={challenge}></FormField>
+            </Grid>
+          </CreateABusiness>
+          <CreateABusiness
+            mobile
+            doubleScreenBottom
+            sub="What are the specific tasks and objectives for this project"
+            disabled={objectives?.length === 0 || challenge?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid>
+              <FormField
+                mobile
+                justifySelf="start"
+                width="90%"
+                fieldType="input"
+                fontSize="20px"
+                placeholder="Type a task and hit enter..."
+                borderRadius="10px"
+                handleInputFocusChange={handleInputFocus}
+                isFocused={isFocused}
+                handleEnterKey={(e)=>inputValue !== '' && handleEnterKey('objectives',objectives,e)}
+                onChange={e => handleInput(e.target.value)}
+                value={inputValue}
+              />
+              <Button
+                disabled={inputValue === ''}
+                position="absolute"
+                right="50px"
+                type="purple"
+                buttonHeight="42px"
+                zIndex={10}
+                onClick={() => {
+                  updateForm({ objectives: [...objectives, inputValue] })
+                  handleInput('')
+                }}>
+                Add
+              </Button>
+            </Grid>
+            <ContentContainer>
+              {objectives.map(obj => (
+                <div className="d-flex mb-3">
+                  <div>
+                    <ClearSharpIcon
+                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                      onClick={() => handleCancelIcon('objectives', objectives, obj)}
+                    />
+                  </div>
+                  <span>{obj}</span>
+                </div>
+              ))}
+            </ContentContainer>
+          </CreateABusiness>
+          </>
+        )
+      } else {
+        return (
+          <CreateABusiness
+            title="Role Description"
+            sub="Envision your ideal hire. What role will they play in your ongoing projects?"
+            disabled={role?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid>
+              <FormField
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                handleInputFocusChange={handleInputFocus}
+                isFocused={isFocused}
+                onChange={e => updateForm({ role: e.target.value })}
+                value={role}></FormField>
+            </Grid>
+          </CreateABusiness>
+        )
+      }
+
+    case 4:
+      if (isShortTermBusiness === 'true') {
+        
       } else {
         return (
           <CreateABusiness
@@ -667,39 +1219,60 @@ const CreateBusiness = ({
 
   return (
     <Container>
-      <GetCard
-        stage={stage}
-        submitForm={submitForm}
-        updateForm={updateForm}
-        goBack={goBack}
-        loading={loading}
-        isShortTermBusiness={isShortTermBusiness}
-        name={name}
-        challenge={challenge}
-        role={role}
-        objectives={objectives}
-        teamDynamics={teamDynamics}
-        requiredSkills={requiredSkills}
-        goals={goals}
-        companyBackground={companyBackground}
-        budget={budget}
-        questionsToAsk={questionsToAsk}
-        // isFirstBusiness={isFirstBusiness}
-        // incomePlatform={incomePlatform}
-        // equity={equity}
-        // isExistingAudience={isExistingAudience}
-        // socialMediaPlatforms={socialMediaPlatforms}
-        // typesOfHires={typesOfHires}
-        // numberOfSocialFollowing={numberOfSocialFollowing}
-        // businessAddressLineOne={businessAddressLineOne}
-        // businessAddressLineTwo={businessAddressLineTwo}
-        // businessCountry={businessCountry}
-        // businessCity={businessCity}
-        // businessState={businessState}
-        // businessZip={businessZip}
-        // businessNiche={businessNiche}
-        // isEquity={isEquity}
-      />
+      {window.innerWidth > 680 ? (
+        <GetCardDesktop
+          stage={stage}
+          submitForm={submitForm}
+          updateForm={updateForm}
+          goBack={goBack}
+          loading={loading}
+          isShortTermBusiness={isShortTermBusiness}
+          name={name}
+          challenge={challenge}
+          role={role}
+          objectives={objectives}
+          teamDynamics={teamDynamics}
+          requiredSkills={requiredSkills}
+          goals={goals}
+          companyBackground={companyBackground}
+          budget={budget}
+          questionsToAsk={questionsToAsk}
+          // isFirstBusiness={isFirstBusiness}
+          // incomePlatform={incomePlatform}
+          // equity={equity}
+          // isExistingAudience={isExistingAudience}
+          // socialMediaPlatforms={socialMediaPlatforms}
+          // typesOfHires={typesOfHires}
+          // numberOfSocialFollowing={numberOfSocialFollowing}
+          // businessAddressLineOne={businessAddressLineOne}
+          // businessAddressLineTwo={businessAddressLineTwo}
+          // businessCountry={businessCountry}
+          // businessCity={businessCity}
+          // businessState={businessState}
+          // businessZip={businessZip}
+          // businessNiche={businessNiche}
+          // isEquity={isEquity}
+        />
+      ) : (
+        <GetCardMobile
+          stage={stage}
+          submitForm={submitForm}
+          updateForm={updateForm}
+          goBack={goBack}
+          loading={loading}
+          isShortTermBusiness={isShortTermBusiness}
+          name={name}
+          challenge={challenge}
+          role={role}
+          objectives={objectives}
+          teamDynamics={teamDynamics}
+          requiredSkills={requiredSkills}
+          goals={goals}
+          companyBackground={companyBackground}
+          budget={budget}
+          questionsToAsk={questionsToAsk}
+        />
+      )}
     </Container>
   )
 }
