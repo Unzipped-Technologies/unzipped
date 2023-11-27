@@ -69,7 +69,6 @@ const SimpleModal = ({open, setOpen, token}) => {
             role: select,
             hotel: hotelName,
         });
-        console.log(user);
         };
 
     const dispatch = useDispatch();
