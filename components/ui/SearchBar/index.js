@@ -6,7 +6,7 @@ import {TitleText} from '../../unzipped/dashboard/style'
 
 const Container = styled.div`
     display: flex;
-    align-items: center;
+    align-items: ${({alignItems}) => alignItems ? alignItems : 'center'}; ;
     justify-content: center;
     flex-flow: column;
     padding: ${({margin}) => margin ? margin : '45px 0px 0px 0px'};
@@ -40,17 +40,20 @@ const Item = styled.div`
     align-items: center;
 `;
 
-const SearchBar = ({take, setTake, title, sort, setSort, sortOptions, margin, width, handleSearch,setFilter}) => {
+const SearchBar = ({take, setTake, title, sort, placeHolderColor, theme, setSort, sortOptions, margin, alignItems, width, handleSearch,setFilter, searchButton}) => {
     return (
-        <Container margin={margin}>
+        <Container margin={margin} alignItems={alignItems}>
             {title && <TitleBlock><TitleText title large>{title}</TitleText></TitleBlock>}
             <Block $width={width}>
                 <Search 
+                    placeHolderColor={placeHolderColor}
                     handleSearch={handleSearch}
+                    searchButton={searchButton && searchButton}
                     width="100%"
                     keys={['name']}
                     onChange={filteredResults => {setFilter(filteredResults)}}
                     placeholder={'Search'}
+                    theme={theme}
                 />
                 <Item>
                     {take && (

@@ -8,11 +8,14 @@ import {
 import _ from 'lodash';
 import axios from 'axios';
 import {tokenConfig} from '../../services/tokenConfig';
+import { startLoading, stopLoading } from '../Loading/actions';
 
 export const getFreelancerList = (queryParams, token) => async (dispatch, getState) => {
     dispatch({
         type: FREELANCER_LOADING
     });
+    dispatch(startLoading());
+
     const headers = {
         access_token: token
     };
@@ -22,7 +25,6 @@ export const getFreelancerList = (queryParams, token) => async (dispatch, getSta
             headers,
             params: queryParams
         });
-        console.log(response)
         dispatch({
             type: GET_LIST_FREELANCERS,
             payload: response.data
@@ -33,6 +35,8 @@ export const getFreelancerList = (queryParams, token) => async (dispatch, getSta
             payload: err.response
         });
     }
+    dispatch(stopLoading());
+
 };
 
 export const getFreelancerById = (id, token) => async (dispatch, getState) => {

@@ -87,6 +87,7 @@ const Scroll = styled(SimpleBar)`
 const FormField = ({
   className,
   fieldType,
+  inputType,
   required,
   inline,
   error,
@@ -109,6 +110,7 @@ const FormField = ({
   onUpdate,
   clickType,
   fontSize = '',
+  handleEnterKey,
   ...rest
 }) => {
   const Control = types[fieldType]
@@ -179,6 +181,12 @@ const FormField = ({
     }
   }, [dropdownList])
 
+  const handleEnter = (e) => {
+    if (handleEnterKey) {
+      handleEnterKey(e);
+    }
+  }
+
   return (
     <FormFieldContainer
       zIndex={dropdownOpen}
@@ -196,8 +204,10 @@ const FormField = ({
       <Control
         onBlur={handleBlur}
         error={currentError}
+        type={fieldType === 'input' && inputType}
         name={name}
         id={name}
+        onKeyDown={handleEnter}
         fontSize={fontSize}
         disabled={disabled}
         $modalSelect={modalSelect}
@@ -291,9 +301,9 @@ FormField.defaultProps = {
   currency: false,
   bottom: '0px',
   modalSelect: false,
-  onChange: () => {},
+  onChange: () => { },
   maxWidth: 'none',
-  onFocus: () => {}
+  onFocus: () => { }
 }
 
 export default FormField

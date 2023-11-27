@@ -2,7 +2,8 @@ import {
     TextStyled,
     ImageContainer,
     TextContainer,
-    TrustedByContent
+    TrustedByContent,
+    ImageContainerResp
 } from "./styled";
 
 const Testimonials = () => {
@@ -11,6 +12,7 @@ const Testimonials = () => {
             <TrustedByContent>
                 <TextContainer> <TextStyled>Trusted By</TextStyled> </TextContainer>
                 <ImageContainer> <img src="/img/Testimonials.png" /></ImageContainer>
+                <ImageContainerResp> <img src="/img/TrustedByResp.png" /></ImageContainerResp>
             </TrustedByContent>
         </>
     )

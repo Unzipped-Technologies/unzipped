@@ -9,6 +9,8 @@ import Business from './Business/reducers';
 import Freelancers from './Freelancers/reducers';
 import Messages from './Messages/reducers';
 import FreelancerSkills from "./FreelancerSkills/reducers";
+import Loading from './Loading/reducers';
+import Stripe from './Stripe/reducers'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -20,6 +22,8 @@ const combinedReducer = combineReducers({
   Freelancers,
   Messages,
   FreelancerSkills,
+  Loading,
+  Stripe,
   // OTHER REDUCERS WILL BE ADDED HERE
 });
 
@@ -43,7 +47,7 @@ const makeStore = ({ isServer }) => {
 
     const persistConfig = {
       key: "nextjs",
-      whitelist: ["Auth", "Booking", "Vehicle", "Dashboard", "Business", "Freelancers", "Messages", "FreelancerSkills"], 
+      whitelist: ["Auth", "Booking", "Vehicle", "Dashboard", "Business", "Freelancers", "Messages", "FreelancerSkills", "Loading", 'Stripe'], 
       storage, // if needed, use a safer storage
     };
 

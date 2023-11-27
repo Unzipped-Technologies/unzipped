@@ -213,6 +213,7 @@ const typeColors = {
  * Button Component.
  */
 const Button = ({
+  dropDownRight,
   className,
   isAnimated,
   block,
@@ -292,8 +293,9 @@ const Button = ({
           key={popoutOpen}
           visible={popoutOpen}
           links={popout}
+          dropDownRight={dropDownRight}
           btnDropdown={true}
-          width={popoutWidth}></DropDown>
+          width={popoutWidth} minWidth={popoutWidth}></DropDown>
       )}
     </ButtonContainer>
   )

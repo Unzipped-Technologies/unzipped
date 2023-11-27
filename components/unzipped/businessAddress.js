@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     DarkText,
     TitleText,
@@ -13,9 +13,14 @@ import FormField from '../ui/FormField'
 import Button from '../ui/Button';
 import Image from '../ui/Image';
 import { CircularProgress } from '@material-ui/core';
+import useWindowSize from '../ui/hooks/useWindowSize';
 
 const Container = styled.div`
     margin: 0px 10px 0px 0px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        margin: 5px;
+    }
 `;
 
 const ButtonContainer = styled.div`
@@ -34,10 +39,12 @@ const Span = styled.div`
     width: 200px;
 `;
 
-const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, onClick, loading}) => {
+const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription, onClick, loading }) => {
     const [isBusinessAddress, setIsBusinessAddress] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const [isSmallWindow, setIsSmallWindow] = useState(false)
+    const { width } = useWindowSize();
 
     const businessAddressUpdate = () => {
         onClick && onClick()
@@ -49,112 +56,120 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
         }, 750)
     }
 
+    useEffect(() => {
+        if (width <= 600) {
+            setIsSmallWindow(true)
+        } else {
+            setIsSmallWindow(false)
+        }
+    }, [width])
+
     return (
         <Container>
             {isBusinessAddress ? (
                 <WhiteCard height="650px">
-                    <TitleText size="22px">Business address</TitleText>
+                    <TitleText size="22px">Business Address</TitleText>
                     <DarkText >Used on customer order confirmations and your Unzipped bill.</DarkText>
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
-                        width="90%"
+                        width= {isSmallWindow ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressLineCountry: e.target.value })}
-                        value={form.BusinessAddressLineCountry}
+                        value={form?.BusinessAddressLineCountry}
                     >
                         COUNTRY/REGION
                     </FormField>
                     <Grid2 margin="0px" block>
-                    <FormField 
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="80%"
-                        onChange={(e) => updateSubscription({ BusinessFirstName: e.target.value })}
-                        value={form.BusinessFirstName}
-                    >
-                        FIRST NAME
-                    </FormField>
-                    <FormField 
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="80%"
-                        onChange={(e) => updateSubscription({ BusinessLastName: e.target.value })}
-                        value={form.BusinessLastName}
-                    >
-                        LAST NAME
-                    </FormField>
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width={ width <= 600 ? "100%" : "80%"}
+                            onChange={(e) => updateSubscription({ BusinessFirstName: e.target.value })}
+                            value={form?.BusinessFirstName}
+                        >
+                            FIRST NAME
+                        </FormField>
+                        <FormField
+                            fieldType="input"
+                            margin
+                            fontSize='14px'
+                            noMargin
+                            width={ width <= 600 ? "100%" : "80%"}
+                            onChange={(e) => updateSubscription({ BusinessLastName: e.target.value })}
+                            value={form?.BusinessLastName}
+                        >
+                            LAST NAME
+                        </FormField>
                     </Grid2>
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
-                        width="90%"
+                        width={ width <= 600 ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressLineOne: e.target.value })}
-                        value={form.BusinessAddressLineOne}
+                        value={form?.BusinessAddressLineOne}
                     >
                         ADDRESS
                     </FormField>
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
-                        width="90%"
+                        width={ width <= 600 ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressLineTwo: e.target.value })}
-                        value={form.BusinessAddressLineTwo}
+                        value={form?.BusinessAddressLineTwo}
                     >
                         APPARTMENT, SUITE, ETC.
                     </FormField>
                     <Grid3 margin="0px" block>
-                        <FormField 
+                        <FormField
                             fieldType="input"
                             margin
                             fontSize='14px'
                             noMargin
-                            width="80%"
+                            width={ width <= 600 ? "100%" : "80%"}
                             onChange={(e) => updateSubscription({ BusinessAddressCity: e.target.value })}
-                            value={form.BusinessAddressCity}
+                            value={form?.BusinessAddressCity}
                         >
                             CITY
                         </FormField>
-                        <FormField 
+                        <FormField
                             fieldType="input"
                             margin
                             fontSize='14px'
                             noMargin
-                            width="80%"
+                            width={ width <= 600 ? "100%" : "80%"}
                             onChange={(e) => updateSubscription({ BusinessAddressState: e.target.value })}
-                            value={form.BusinessAddressState}
+                            value={form?.BusinessAddressState}
                         >
                             STATE
                         </FormField>
-                        <FormField 
+                        <FormField
                             fieldType="input"
                             margin
                             fontSize='14px'
                             noMargin
-                            width="70%"
+                            width={ width <= 600 ? "100%" : "70%"}
                             onChange={(e) => updateSubscription({ BusinessAddressZip: e.target.value })}
-                            value={form.BusinessAddressZip}
+                            value={form?.BusinessAddressZip}
                         >
                             ZIP CODE
                         </FormField>
                     </Grid3>
-                    <FormField 
+                    <FormField
                         fieldType="input"
                         margin
                         fontSize='14px'
                         noMargin
-                        width="90%"
+                        width={ width <= 600 ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressPhone: e.target.value })}
-                        value={form.BusinessAddressPhone}
+                        value={form?.BusinessAddressPhone}
                     >
                         PHONE
                     </FormField>
@@ -173,7 +188,7 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
                             <CircularProgress size={24} />
                         )}
                         {isUpdated && !isLoading && (
-                            <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png" alt="success" height="34px" width="34px"/>
+                            <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png" alt="success" height="34px" width="34px" />
                         )}
                         {!isUpdated && (
                             <Button type='outlineInverse' small onClick={() => setIsBusinessAddress(true)}>Add</Button>
@@ -184,6 +199,6 @@ const BusinessAddress = ({form, planCost, subscriptionForm, updateSubscription, 
         </Container>
 
     )
-}   
+}
 
 export default BusinessAddress

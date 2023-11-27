@@ -1,6 +1,9 @@
 const { accountTypeEnum } = require('./accountTypeEnum')
 
 const userPermissions = Object.freeze({
+    // invoice
+    invoice: "invoice",
+
     // users
     ListUsers: 'listAllUsers',
     UpdateAllUsers: 'updateAllUsers',
@@ -25,6 +28,7 @@ const userPermissions = Object.freeze({
     listAllBusinesses: 'listAllBusinesses',
     deleteBusiness: 'deleteBusiness',
     getBusinessById: 'getBusinessById',
+    getBusinessByInvestor: 'getBusinessByInvestor',
     // departments
     CreateDepartment: 'createDepartment',
     UpdateDepartment: 'updateDepartment',
@@ -51,6 +55,9 @@ const userPermissions = Object.freeze({
     DeleteTask: 'deleteTask',
     ListTask: 'listTasks',
     orderTasks: 'orderTasks',
+
+    // task hours
+    taskHours:'taskHours',
     // stories
     CreateStory: 'createStory',
     UpdateStory: 'updateStory',
@@ -60,6 +67,7 @@ const userPermissions = Object.freeze({
     // messages
     sendMessage: 'sendMessage',
     getMessagesById: 'getMessagesById',
+    UpdateMessage: 'UpdateMessage',
 })
 
 const accountTypePermissions = Object.freeze({
@@ -79,6 +87,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userUpdateBusiness,
         userPermissions.userListBusinesses,
         userPermissions.getBusinessById,
+        userPermissions.listAllBusinesses,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -105,6 +114,13 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteTask,
         userPermissions.ListTask,
         userPermissions.orderTasks,
+
+        // invoice
+        userPermissions.invoice,
+
+        // task hours
+        userPermissions.taskHours,
+
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
@@ -134,6 +150,8 @@ const accountTypePermissions = Object.freeze({
         userPermissions.userCreateBusiness,
         userPermissions.userUpdateBusiness,
         userPermissions.userListBusinesses,
+        userPermissions.getBusinessByInvestor,
+        userPermissions.listAllBusinesses,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -147,6 +165,11 @@ const accountTypePermissions = Object.freeze({
         userPermissions.orderTasks,
         userPermissions.addComment,
         userPermissions.removeComment,
+
+        // task hours
+        userPermissions.taskHours,
+        // invoice
+        userPermissions.invoice,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,
@@ -184,6 +207,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.listAllBusinesses,
         userPermissions.deleteBusiness,
         userPermissions.getBusinessById,
+        userPermissions.getBusinessByInvestor,
         // likes
         userPermissions.UserLike,
         userPermissions.ListLikesForUser,
@@ -210,6 +234,11 @@ const accountTypePermissions = Object.freeze({
         userPermissions.orderTasks,
         userPermissions.addComment,
         userPermissions.removeComment,
+
+        // task hours
+        userPermissions.taskHours,
+        // invoice
+        userPermissions.invoice,
         // stories
         userPermissions.CreateStory,
         userPermissions.UpdateStory,

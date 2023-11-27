@@ -11,6 +11,12 @@ const BannerContent = styled.div`
     border-radius: 0.625rem;
     background: rgba(142, 222, 100, 0.25);
     height: 24.55rem;
+    @media screen and (max-width: 600px){
+        width: 377px;
+        padding: 0;
+        background: none;
+        height: auto;
+    }
 `;
 // Textbox Section
 const TextBox = styled.div`
@@ -18,6 +24,12 @@ const TextBox = styled.div`
     display: flex;
     flex-direction: column;
     padding: 1.25rem;
+    @media screen and (max-width: 600px){
+        background: rgba(142, 222, 100, 0.25);
+        width: 377px;
+        // height: 440px;
+        // padding: 0;
+    }
 `;
 
 const Heading_1 = styled.h1`
@@ -28,6 +40,11 @@ const Heading_1 = styled.h1`
     line-height: 1.438rem; 
     letter-spacing: 0.009rem;
     margin: 0;
+    @media screen and (max-width: 600px){
+        font-size: 44px;
+        line-height: 50px; 
+
+    }
 `;
 
 const ParagraphBox = styled.span`
@@ -39,6 +56,9 @@ const ParagraphBox = styled.span`
     letter-spacing: 0.009rem;
     margin-top: 1.125rem;
     display: block;
+    @media screen and (max-width: 600px){
+        font-size: 17px;
+    }
 `;
 
 const ButtonBox = styled.button`
@@ -49,6 +69,12 @@ const ButtonBox = styled.button`
     border: 1px solid rgba(196, 196, 196, 0.00);
     background: #8EDE64;
     margin-top: 0.75rem;
+    @media screen and (max-width: 600px){
+        width: 186px;
+        height: 49px;
+        border-radius: 24px;
+        margin-top: 21px;
+    }
 `;
 
 const ButtonText = styled.span`
@@ -59,6 +85,9 @@ const ButtonText = styled.span`
     font-weight: 400;
     line-height: 1.438rem;
     letter-spacing: 0.009rem;
+    @media screen and (max-width: 600px){
+        font-size: 16px;
+    }
 `;
 
 const SignUpText = styled.span`
@@ -87,12 +116,31 @@ const TextContainer = styled.div`
     height: 100%;
 `;
 
-const TextContainerContent = styled.div``;
-const FooterTextContent = styled.div``;
+const TextContainerContent = styled.div`
+    // background: red;
+    @media screen and (max-width: 600px){
+        &:after{
+            content: '';
+            display: block;
+            width: 332px;
+            height: 1px;
+            background: #D8D8D8;
+            margin-top: 58px;
+        }
+    }
+`;
+const FooterTextContent = styled.div`
+    @media screen and (max-width: 600px){
+        margin-top: 56px;
+    }
+`;
 
 const ImageBox = styled.div`
     height: 23.125rem;
     margin: 0.625rem;
+    @media screen and (max-width: 600px){
+        display: none;
+    }
 `;
 
 const ClientBanner = () => {
@@ -110,7 +158,8 @@ const ClientBanner = () => {
                                 Get work done efficiently and build lasting professional relationships on Unzipped, the go-to platform for hourly, long-term contracts.
                             </ParagraphBox>
                             <ButtonBox> 
-                                <ButtonText onClick={() => router.push('/register')}>Create Profile</ButtonText> </ButtonBox>
+                                <ButtonText onClick={() => router.push('/register')}>Create Profile</ButtonText> 
+                            </ButtonBox>
                         </TextContainerContent>
                         <FooterTextContent>
                             <GetHiredText> Looking to get hired? </GetHiredText>

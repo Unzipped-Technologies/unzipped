@@ -2,6 +2,7 @@
 import { DownArrow } from '../../../icons';
 import useWindowWidthEventListener from '../../../../hooks/windowWidth';
 import { useState, useEffect } from 'react';
+import ExpandLessOutlinedIcon from '@material-ui/icons/ExpandLessOutlined';
 import {
     Heading_1,
     Heading_2,
@@ -79,7 +80,8 @@ const Faq = () => {
                                     </ParagraphTextStyled>
                                     {isSmallWindow && (
                                         <ReadMoreTextStyled onClick={() => toggleAnswer(index)}>
-                                            {expandedStates[index] ? 'Read Less' : 'Read More'}<DownArrow />
+                                            {expandedStates[index] ? 'Read Less' : 'Read More'}
+                                            {expandedStates[index] ? <ExpandLessOutlinedIcon /> : <DownArrow />}
                                         </ReadMoreTextStyled>
                                     )}
                                 </FaqStyled>

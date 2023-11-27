@@ -66,7 +66,10 @@ export const COLORS = {
     royalBlue: '#255EC6',
     hrLineColor: '#F3F6F3',
     brownishGray: '#7A765C',
-    faqColor: '#D5DFD5'
+    faqColor: '#D5DFD5',
+    hireDivider: '#555555',
+    white: '#fff',
+    hireButton: '#37DEC5'
 }
 
 export const FONT_SIZE = {

@@ -8,11 +8,8 @@ import {
     TitleText,
     DarkText,
     Absolute,
-    WhiteCard,
     DarkSpan,
-    Underline,
 } from './style'
-import IconComponent from '../../ui/icons/IconComponent';
 
 const Container = styled.div`
     display: flex;
@@ -36,14 +33,9 @@ const Flex = styled.div`
     flex-flow: row;
     justify-items: space-between;
 `;
-const inviteButton = {
-    height: "33px",
-    flexShrink: "0",
-}
-
-
 
 const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
+
     const router = useRouter()
     const redirectToProfile = () => {
         clearSelectedFreelancer()
@@ -58,7 +50,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                 <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
             <Right minWidth={width} includeRate={includeRate}>
-                <TitleText half color="blue" onClick={redirectToProfile}>{user.name}</TitleText>
+                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user.name}</TitleText>
                 <TitleText noMargin>{user.type}</TitleText>
                 {user?.country && <DarkText half>{user.country}</DarkText>}
                 {includeRate && (

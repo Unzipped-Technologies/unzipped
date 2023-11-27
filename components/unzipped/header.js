@@ -18,7 +18,7 @@ import Icon from '../ui/Icon'
 import { Absolute } from './dashboard/style'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
-import { Button as Buttons } from '../ui'
+import { Button as Buttons, SearchBar } from '../ui'
 import router, { useRouter } from 'next/router';
 import IconComponent from '../ui/icons/IconComponent';
 
@@ -148,21 +148,28 @@ const MenuIcon = styled.div`
 // sub menu styling
 
 const SubMenu = styled.div`
-    position: fixed;
-    top: 78px;
-    z-index: 1;
+
     display: flex;
     align-items: center;
     width: 100%;
-    height: 49px;
-    background: #0E1724;
-    color: #fff;
-    padding: 0px 15%;
+   padding: 15px 23px;
     @media(max-width: 680px) {
         display:none;
     }
 `;
 
+const SubMenTop = styled.div`
+    position: fixed;
+    top: 78px;
+    z-index: 1;
+    padding: 0px 15%;
+    @media(max-width: 680px) {
+        display:none;
+    }
+    width: 100%;
+    background: #0E1724;
+    color: #fff;
+`
 const SpanWhite = styled.div`
     display: flex;
     font-weight: 400;
@@ -223,7 +230,7 @@ const menuItems = [
         sub: [
             {
                 name: 'Browse Projects',
-                link: '/',
+                link: '/projects',
                 icon: <FolderIcon width={35} height={35} />
             },
             {
@@ -328,7 +335,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm, marginBottom }) => {
+const Nav = ({ isSubMenu, handleSearchValue, filter, handleSearch, searchButton, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm, marginBottom, margin }) => {
     const { pathname } = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
@@ -472,11 +479,19 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
                 </Right>
             </Container>
             {isSubMenu && (
-                <SubMenu>
-                    {subMenuItems.map((item, key) => (
-                        <Link href={item.link} key={key}><SpanWhite count={key} underline={pathname === item.link}><Sub>{item.name} </Sub></SpanWhite></Link>
-                    ))}
-                </SubMenu>
+                <SubMenTop>
+                    {handleSearch && 
+                    <>
+                    <h4>Browse</h4>
+                    <SearchBar handleSearch={handleSearch} filter={filter} setFilter={handleSearchValue} searchButton={searchButton} margin={margin} alignItems={'start'}/>
+                    </>
+                    }
+                    <SubMenu>
+                        {subMenuItems.map((item, key) => (
+                            <Link href={item.link} key={key}><SpanWhite count={key} underline={pathname === item.link}><Sub>{item.name} </Sub></SpanWhite></Link>
+                        ))}
+                    </SubMenu>
+                </SubMenTop>
             )}
         </Div>
     )

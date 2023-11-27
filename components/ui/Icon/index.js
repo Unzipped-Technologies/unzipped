@@ -103,6 +103,8 @@ import reviewIcon from '../../icons/reviews';
 import reviewHalf from '../../icons/reviewHalf';
 import reviewSmall from '../../icons/reviewSmall';
 import reviewHalfSmall from '../../icons/reviewHalfSmall';
+import upArrow from '../../icons/upArrow'
+import goBack from '../../icons/navback'
 
 const mapNameIcons = {
     alert: AlertIcon,
@@ -207,7 +209,9 @@ const mapNameIcons = {
     review: reviewIcon,
     reviewHalf: reviewHalf,
     reviewSmall: reviewSmall,
-    reviewHalfSmall: reviewHalfSmall
+    reviewHalfSmall: reviewHalfSmall,
+    upArrow: upArrow,
+    goBack: goBack
 };
 
 /**

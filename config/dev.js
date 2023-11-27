@@ -22,9 +22,9 @@ module.exports = {
     cookieKey: '1Xxp382GgnXxYz49528',
     //payment
     stripePublishableKey:
-      'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog',
+      'pk_test_51N8neBKbRhZhJxMgyOpWY0pyTFdJ9rb9mIIgjor3IaCfRwU5IGCP00Q9aWH629MCbML22vJg7AVOE3Etm9vk4lUs00cMojHSRC',
     stripeSecretKey:
-      'sk_test_51M4xI7HVpfsarZmB00kaNw3rrH722ddi84qWASUSAkFFM7ACHxhxAiQ8I3tzeOdwjSMI0oRxbLP5FGkFm9HnDwPX00pcXTtQB4',
+      'sk_test_51N8neBKbRhZhJxMgqn7xtwILzeKZPoobbygMQzxUeAFKi3D2ldnUXCsDiaGfdQOH4oALxxXcEIZXlQ3887et74cu00YBfjyyZM',
     sendGridKey: process.env.SEND_GRID_KEY,
     redirectDomain: 'http://localhost:3000',
     nextPublicGAID: 'UA-183226924-1',
@@ -36,4 +36,5 @@ module.exports = {
     nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || "509d38179ddfee75d61f",
     githubClientSecret: process.env.GITHUB_CLIENT_SECRET || "30a2ea2b0796b6092f825f80680a608ff57d5e9e",
     githubRedirectUrl: process.env.GITHUB_REDIRECT_URL || "http://localhost:3000/api/auth/github",
+    socketUrl: process.env.SOCKET_URL || "http://localhost:3000",
   };

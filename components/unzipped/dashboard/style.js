@@ -20,7 +20,6 @@ const BlackCard = styled.div`
     }
 `;
 
-
 const WhiteText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
@@ -28,7 +27,6 @@ const WhiteText = styled.div`
     font-size: 14px;
     line-height: 23px;
     letter-spacing: 0.15008px;
-
     color: ${theme.text};
 `;
 
@@ -49,7 +47,12 @@ const TitleText = styled.div`
     white-space: ${({ textOverflow }) => textOverflow ? 'nowrap' : 'unset'};
     overflow: ${({ textOverflow }) => textOverflow ? 'hidden' : 'unset'};
     color: ${({ color }) => color ? color : theme.text2};
-    margin-top: ${({ marginTop }) => marginTop ? marginTop : ''}
+    margin-top: ${({ marginTop }) => marginTop ? marginTop : ''};
+    padding-right: ${(paddingRight) => paddingRight ? paddingRight : ''}
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        display: flex;
+    }
 `;
 
 const DarkText = styled.div`
@@ -70,10 +73,11 @@ const DarkText = styled.div`
     white-space: ${({ textOverflow }) => textOverflow ? 'nowrap' : 'pre-line'};
     overflow: ${({ textOverflow }) => textOverflow ? 'hidden' : 'unset'};
     padding: ${({ padding }) => padding ? padding : ''};
-    width: 96%;
+    width: ${({ width }) => width ? width : '96%'};
     text-align-last:${({ textAlignLast }) => textAlignLast ? textAlignLast : ''};
     text-align: ${({ center, right }) => center ? 'center' : right ? 'right' : 'unset'};
     color: ${({ error, color }) => !error ? color ? color : theme.text2 : theme.error};
+    background: ${({ backgroundColor }) => backgroundColor ? backgroundColor : ''};
     &:hover {
         color: ${({ hover, color }) => hover ? theme.selectedText : color ? color : theme.text2}
     }
@@ -91,7 +95,7 @@ const DarkText = styled.div`
         font-size: ${({ small }) => small ? '12px' : '14px'};
         line-height: '16px';
     }
-`
+`;
 
 const Absolute = styled.div`
     position: absolute;
@@ -111,7 +115,10 @@ const Absolute = styled.div`
     @media (max-width: 681px) {
         position: unset;
         justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
+    }
 
+    @media screen and (max-width: 600px){
+        position: absolute;
     }
 `;
 
@@ -143,7 +150,7 @@ const WhiteCard = styled.div`
 }
 @media (max-width: 681px) {
     background: ${({ background }) => background ? background : '#fff'};
-    border:  ${({ borderColor,noBorder }) => noBorder? '' : borderColor ? borderColor : '1px #d8d8d8 solid'} ;
+    border:  ${({ borderColor, noBorder }) => noBorder ? '' : borderColor ? borderColor : '1px #d8d8d8 solid'} ;
     border-radius: ${({ borderRadius }) => borderRadius ? borderRadius : '5px'};
     max-width: ${({ maxWidth }) => maxWidth ? maxWidth : 'unset'};
     width: 100%;
@@ -160,7 +167,11 @@ const WhiteCard = styled.div`
     margin-bottom: ${({ noMargin, half, marginBottom }) => noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => overflow ? overflow : overlayDesktop ? 'overlay' : 'visible'};
 }
-    
+@media screen and (max-width: 600px){
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
 `;
 
 const SelectCard = styled.div`
@@ -206,6 +217,11 @@ const Grid2 = styled.div`
     grid-template-columns: 1fr 1fr;
     width: ${({ block }) => block ? '100%' : '80%'};
     margin: ${({ margin }) => margin ? margin : '75px 0px'};
+    @media screen and (max-width: 600px) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 `;
 
 const Grid3 = styled.div`
@@ -214,6 +230,11 @@ const Grid3 = styled.div`
     align-items: center;
     width: ${({ block, width }) => block ? '100%' : width ? width : '80%'};
     margin: ${({ margin }) => margin ? margin : '75px 0px'};
+    @media screen and (max-width: 600px) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 `;
 
 const Box = styled.div`
@@ -275,7 +296,7 @@ export const DarkSpan = styled.span`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    font-size: ${({ large, small, medium }) => large ? '24px' : small ? '15px' : '18px'};
+    font-size: ${({ large, small, medium }) => large ? '24px' : small ? '15px' : medium ? '16px' : '18px'};
     padding-left: 3px;
     color: #333;
 `;
@@ -287,8 +308,6 @@ export const PaddingLeft = styled.span`
 export const MinWidth = styled.span`
     min-width: 10%;
 `;
-
-
 
 module.exports = {
     BlackCard,

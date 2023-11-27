@@ -5,6 +5,17 @@ const businessSchema = new Schema({
   userId: String,
   name: String,
   budget: Number,
+  projectType: {
+    type: String,
+    enum: ['Hourly Rate', 'Fixed Price'],
+  },
+  applicants: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users' 
+    }
+  ],
+  requiredSkills: [{type: String}],
   totalSpent: { type: Number, default: 0 },
   isEquity: {type: Boolean, default: false},
   isBusinessUpdated: {type: Boolean, default: false},
@@ -44,11 +55,10 @@ const businessSchema = new Schema({
   isSelected: {type: Boolean, default: false},
   user: { type: Schema.Types.ObjectId, ref: 'users' },
   tags: { type: Schema.Types.Mixed, refs: 'tags'},
-  tasks: { type: Schema.Types.Mixed, ref: 'tasks' },
   audience: { type: Schema.Types.ObjectId, ref: 'businessAudiences' },
   invoices: { type: Schema.Types.Mixed, ref: 'invoices' },
   departments: { type: Schema.Types.Mixed, ref: 'departments' },
-  employees: { type: Schema.Types.Mixed, ref: 'businessAssociatesItems' },
+  employees: { type: Schema.Types.Mixed, ref: 'contracts' },
   // refer to other users likes of this business
   likeTotal: { type: Number, default: 0 },
   dislikeTotal: { type: Number, default: 0 },
