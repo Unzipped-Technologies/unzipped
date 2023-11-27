@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { registerUser } from '../redux/actions';
+import { verifyUser } from '../redux/actions';
 import { useRouter } from 'next/router';
 import Notification from '../components/animation/notifications';
 import styled from 'styled-components'
@@ -17,7 +17,7 @@ import {
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from 'next/link'
 import theme from '../components/ui/theme'
-import {ValidationUtils} from '../utils'
+import { ValidationUtils } from '../utils'
 
 const Container = styled.div`
     display: flex;
@@ -126,7 +126,7 @@ const Contain = styled.div`
     align-items: left;
 `;
 
-const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) => {
+const Register = ({ loading, PassError, verifyUser, isEmailSent, error }) => {
     const [emailAlert, setEmailAlert] = useState('');
     const [passwordAlert, setPasswordAlert] = useState('');
     const [email, setEmail] = useState('');
@@ -139,13 +139,12 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
     const [user, setUser] = useState({
         email: '',
         password: '',
-      });
-    console.log('error', error)
+    });
     const updateUser = () => {
         setUser({
             email: email.toLowerCase(),
             password: password,
-    });
+        });
     };
 
     const handleKeyDown = (event) => {
@@ -188,17 +187,17 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
         return error;
     }
 
-      ///Register
-  const RegisterUsers = async () => {
-    if (passwordAlert || emailAlert) {
-        return;
-    }
-    try {
-        await registerUser(user)
-    } catch (e) {
-        console.log('error:', e)
-    }
-  };
+    ///Register
+    const RegisterUsers = async () => {
+        if (passwordAlert || emailAlert) {
+            return;
+        }
+        try {
+            await verifyUser(user)
+        } catch (e) {
+
+        }
+    };
 
     const google = () => {
         router.push('/api/auth/google');
@@ -206,8 +205,8 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
 
     useEffect(() => {
         updateUser();
-      }, [email, password]);
-    
+    }, [email, password]);
+
     useEffect(() => {
         if (PassError === "Email and Password does not match") {
             setEmailVerify("inUse");
@@ -215,31 +214,29 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
     }, [PassError])
 
     useEffect(() => {
-        if (isAuthenticated) {
-            setNotifications('Register Successful')
-            setTimeout(() => { 
-                // TODO: redirect to confirm verify once email is back online
-                // router.push('/confirmVerify')
-                router.push('/dashboard')
+        if (isEmailSent) {
+            setNotifications('Email sent successfully.')
+            setTimeout(() => {
+                router.push('/verify-email')
             }, 2000);
         } else {
             if (error) {
                 setNotifications(error?.data)
-                setTimeout(() => {  
+                setTimeout(() => {
                     setNotifications('')
                 }, 1000);
             }
         }
-    }, [isAuthenticated, error])
+    }, [isEmailSent, error])
 
     return (
         <React.Fragment>
             <Head>
-            <link rel="preconnect" href="https://fonts.gstatic.com" />
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
-            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-            <title>Unzipped | Register</title>
-            <meta name="Unzipped | Register" content="Unzipped"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" />
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+                <title>Unzipped | Register</title>
+                <meta name="Unzipped | Register" content="Unzipped" />
             </Head>
             <Container>
                 <Box>
@@ -248,25 +245,25 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
                     <Google onClick={google}>REGISTER WITH GOOGLE<Abs><Icon name="googleCircle" /></Abs></Google>
                     <Hold><Or><Span>OR</Span>  </Or></Hold>
                     <Form>
-                    <FormField validate={validateEmail} error={emailAlert} placeholder="Email" name="email" type="email" fieldType="input" fontSize={'18px'} bottom="0px" onChange={updateEmail}>
-                    </FormField>
-                    <FormField validate={validatePassword} onKeyDown={handleKeyDown} error={passwordAlert} placeholder="Password" name="password" type="password" fieldType="input" fontSize={'18px'} bottom="0px" onChange={updatePassword}>
-                    </FormField>
-                    <TextBox>
-                    <Checkbox
-                        color="primary"
-                        checked={rememberMe}
-                        onClick={updateRememberMe}
-                        name="Remember Me"
-                        
-                    ></Checkbox>
-                    <Text>Remember Me</Text></TextBox>
-                    <Button noBorder background="#1890FF" block type="submit" onClick={RegisterUsers}>{loading ? <CircularProgress size={18} /> : 'Sign up'}</Button>
+                        <FormField validate={validateEmail} error={emailAlert} placeholder="Email" name="email" type="email" fieldType="input" fontSize={'18px'} bottom="0px" onChange={updateEmail}>
+                        </FormField>
+                        <FormField validate={validatePassword} onKeyDown={handleKeyDown} error={passwordAlert} placeholder="Password" name="password" type="password" fieldType="input" fontSize={'18px'} bottom="0px" onChange={updatePassword}>
+                        </FormField>
+                        <TextBox>
+                            <Checkbox
+                                color="primary"
+                                checked={rememberMe}
+                                onClick={updateRememberMe}
+                                name="Remember Me"
+
+                            ></Checkbox>
+                            <Text>Remember Me</Text></TextBox>
+                        <Button noBorder background="#1890FF" block type="submit" onClick={RegisterUsers}>{loading ? <CircularProgress size={18} /> : 'Sign up'}</Button>
                     </Form>
                     <Contain><Text> Or <Link href="/login">log in now!</Link></Text></Contain>
-                    <Notification error={notifications}/>
+                    <Notification error={notifications} />
                 </Box>
-                
+
             </Container>
         </React.Fragment>
     )
@@ -274,16 +271,16 @@ const Register = ({ loading, PassError, registerUser, isAuthenticated, error }) 
 
 const mapStateToProps = (state) => {
     return {
-        isAuthenticated: state.Auth.isAuthenticated,
         token: state.Auth.token,
         loading: state.Auth.loading,
-        error: state.Auth.error
+        error: state.Auth.error,
+        isEmailSent: state.Auth.isEmailSent,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        registerUser: bindActionCreators(registerUser, dispatch),
+        verifyUser: bindActionCreators(verifyUser, dispatch)
     }
 }
 

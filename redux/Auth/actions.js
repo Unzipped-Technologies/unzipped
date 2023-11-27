@@ -20,12 +20,15 @@ import {
     UPDATE_USER_SUCCESS,
     LOGGED_OUT,
     UPDATE_REGISTER_FORM,
+    UPDATE_REGISTER_CREDENTIALS,
     SELECT_A_PLAN,
+    VERIFY_USER,
     UPDATE_SUBSCRIPTION_FORM,
+    USER_CREDENTIALS,
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
-import {tokenConfig} from '../../services/tokenConfig';
+import { tokenConfig } from '../../services/tokenConfig';
 
 export const loginUser = async (dispatch) => {
     dispatch({ type: USER_LOADING })
@@ -48,7 +51,7 @@ export const logoutUser = (token) => async (dispatch, getState) => {
         .get(`/api/auth/logout`, tokenConfig(token))
         .then(res => dispatch({
             type: LOGOUT_USER,
-            })
+        })
         )
 };
 
@@ -61,7 +64,7 @@ export const signUpForNewsletter = (data) => async (dispatch, getState) => {
         .then(res => dispatch({
             type: SIGN_UP_FOR_NEWSLETTER,
             payload: res.data
-            })
+        })
         )
 };
 
@@ -69,18 +72,17 @@ export const userPayment = () => async (dispatch, getState) => {
     dispatch({
         type: CURRENT_USER,
         payload: getState().Booking.orderDetails,
-        })
+    })
 };
 
 export const selectAPlan = (data) => async (dispatch) => {
     dispatch({
         type: SELECT_A_PLAN,
         payload: data,
-        })
+    })
 };
 
 export const updateSubscriptionForm = (data) => async (dispatch) => {
-    console.log('data', data)
     dispatch({
         type: UPDATE_SUBSCRIPTION_FORM,
         payload: data,
@@ -100,6 +102,13 @@ export const updateRegisterForm = (data) => async (dispatch) => {
         payload: data,
     })
 };
+
+export const updateRegistrationCredentials = (email) => async (dispatch) => {
+    await dispatch({
+        type: UPDATE_REGISTER_CREDENTIALS,
+        payload: email,
+    })
+}
 
 export const resetRegisterForm = () => async (dispatch) => {
     await dispatch({
@@ -148,7 +157,7 @@ export const resendVerify = (user) => async (dispatch, getState) => {
 }
 //Check token & Load User
 export const googleUser = (token) => async (dispatch, getState) => {
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
 
     await axios
         .get(`/api/auth/current_user`, tokenConfig(token))
@@ -168,7 +177,7 @@ export const googleUser = (token) => async (dispatch, getState) => {
 //Check token & Load User
 export const loadUser = (user) => async (dispatch, getState) => {
     //User Loading
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
     await axios
         .post(`/api/auth/login`, user)
         .then(res => dispatch({
@@ -189,7 +198,7 @@ export const updateVehicle = (token, vehicle) => async (dispatch, getState) => {
 
 //Check token & Load User
 export const createSubscription = (data, token) => async (dispatch, getState) => {
-    dispatch({type: SET_LOADING});
+    dispatch({ type: SET_LOADING });
     await axios
         .post(`/api/payment/subscription/create`, data, tokenConfig(token))
         .then(res => dispatch({
@@ -197,7 +206,6 @@ export const createSubscription = (data, token) => async (dispatch, getState) =>
             payload: res.data,
         }))
         .catch(err => {
-            // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: AUTH_ERROR,
                 payload: err.response
@@ -214,7 +222,6 @@ export const decodeVehicle = (token, vehicle) => async (dispatch, getState) => {
             payload: res.data,
         }))
         .catch(err => {
-            // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: AUTH_ERROR,
                 payload: err.response.data
@@ -224,28 +231,48 @@ export const decodeVehicle = (token, vehicle) => async (dispatch, getState) => {
 
 export const registerUser = (user) => async (dispatch) => {
     //User Loading
-    // console.log(user);
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
 
     await axios
-        .post(`/api/auth/register`, user)
+        .post(`/api/auth/register`, { user })
         .then(res => dispatch({
             type: REGISTER_USER,
             payload: res.data,
         }))
         .catch(err => {
-            // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: AUTH_ERROR,
-                payload: {data: err.message}
+                payload: { data: err.response.data }
             })
         })
 }
 
+export const verifyUser = (user) => async (dispatch) => {
+    dispatch({ type: USER_LOADING })
+    dispatch({
+        type: USER_CREDENTIALS,
+        payload: user
+    })
+
+    await axios
+        .post(`/api/auth/verify`, user)
+        .then(res => {
+            dispatch({
+                type: VERIFY_USER,
+            })
+        })
+        .catch(err => {
+            dispatch({
+                type: AUTH_ERROR,
+                payload: { data: err.response.data.message }
+            })
+        })
+
+}
+
 export const forgotPassword = (user) => async (dispatch, getState) => {
     //User Loading
-    // console.log(user);
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
 
     await axios
         .post(`/api/auth/reset`, user)
@@ -264,8 +291,7 @@ export const forgotPassword = (user) => async (dispatch, getState) => {
 
 export const changePassword = (user, token) => async (dispatch, getState) => {
     //User Loading
-    // console.log(user);
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
 
     await axios
         .post(`/api/auth/password`, user, tokenConfig(token))
@@ -283,7 +309,7 @@ export const changePassword = (user, token) => async (dispatch, getState) => {
 }
 
 export const contactEmail = (contact) => async (dispatch, getState) => {
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
     await axios
         .post(`/api/auth/contact`, contact)
         .then(res => dispatch({
@@ -300,7 +326,7 @@ export const contactEmail = (contact) => async (dispatch, getState) => {
 }
 
 export const mailingList = (data) => async (dispatch, getState) => {
-    dispatch({type: USER_LOADING})
+    dispatch({ type: USER_LOADING })
     await axios
         .post(`/api/auth/addMailing`, data)
         .then(res => dispatch({

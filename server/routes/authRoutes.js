@@ -15,6 +15,7 @@ const verifyTemplate = require('../../services/emailTemplates/verify')
 const resetTemplate = require('../../services/emailTemplates/reset-password')
 const contact = require('../../services/emailTemplates/contact')
 const API = require('../helpers/axios')
+const User = require('../../models/User')
 
 router.get(
   '/google',
@@ -40,12 +41,16 @@ router.get('/google/callback', passport.authenticate('google'), (req, res) => {
 router.post(
   '/register',
   async (req, res, next) => {
-    const { email, password } = req.body
-    const data = req.body
+
+    const { user } = req.body
+    const decodedCredentials = Buffer.from(user, 'base64');
+    const decodedTokenString = decodedCredentials.toString('utf-8');
+    const parsedTokenString = JSON.parse(decodedTokenString);
+    const { email, password } = parsedTokenString
+    const data = parsedTokenString
+
     try {
-      //find user by email, if exists tell user to login
-      const existingUser = await user.findOne({ email })
-      //If a user exists check which signup method they used
+      const existingUser = await User.findOne({ email })
       if (existingUser) {
         if (existingUser.googleId) {
           return res.send('Login with Google')
@@ -53,48 +58,28 @@ router.post(
           throw Error('User with this email already exists')
         }
       } else {
-        //salt password
         const salt = await bcrypt.genSalt(10)
         if (!salt) throw Error('Something went wrong with bcrypt')
 
         const hash = await bcrypt.hash(password, salt)
         if (!hash) throw Error('Something went wrong hashing the password')
-        ///Create user and save to database
-        let newuser = await userHelper.createUser(data, hash)
-        const existingUsers = await user.findOne({ email }).select('-password')
 
-        // create notifications
+        data.isEmailVerified = true;
+        let newuser = await userHelper.createUser(data, hash)
+        const existingUsers = await User.findOne({ email }).select('-password')
+
         await userHelper.setUpNotificationsForUser()
 
-        //send verification email
-        const msg = {
-          //recipients: existingUsers.email,
-          id: newuser.id,
-          name: email,
-          recipients: [{ email }],
-          from: 'support@vohnt.com',
-          subject: 'Verify your email to start using',
-          text: 'and easy to do anywhere, even with Node.js',
-          html: '<strong>and easy to do anywhere, even with Node.js</strong>'
-        }
-        // const mailer = new Mailer(msg, verifyTemplate(msg));
-        // mailer.send();
-
         let t = token.signToken(newuser._id)
-        // await newuser.save()
+
         res.cookie('access_token', t, { httpOnly: true })
         res.send({ ...existingUsers._doc, cookie: t })
         next()
       }
     } catch (e) {
-      console.log('error error: ', e)
       res.status(400).send(e.message)
     }
   }
-  ////Log user into app and redirect to localhost:3000
-  // passport.authenticate('local', { failureRedirect: '/register' }),
-  // (req, res) => {
-  // if (req.isAuthenticated()) {
 )
 
 router.get('/verify/:id', async (req, res, next) => {
@@ -115,7 +100,6 @@ router.get('/reset/:id', async (req, res, next) => {
   await user.updateOne({ email: existingUser._doc.email }, { $set: { emailVerified: true } })
   const t = token.signToken(id)
   const existingUsers = await user.findById(id).select('-password')
-  // console.log(existingUsers)
   res.cookie('access_token', t, { httpOnly: true })
   res.redirect(`/change-password`)
 })
@@ -137,10 +121,20 @@ router.post('/password', requireLogin, async (req, res, next) => {
     res.cookie('access_token', t, { httpOnly: true })
     res.send({ ...existingUsers._doc, cookie: token })
   } catch {
-    console.log(e)
     res.status(400).send('Bad request')
   }
 })
+
+router.post('/verify', async (req, res) => {
+  try {
+    const send = await Mailer.sendVerificationMail(req.body)
+    if (send) {
+      res.send({ send: "Email sent successfully." });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
 router.post('/resend', requireLogin, async (req, res, next) => {
   const { email } = req.body
@@ -198,7 +192,6 @@ router.post('/reset', async (req, res, next) => {
 })
 
 router.post('/contact', async (req, res, next) => {
-  console.log(req.body.email)
   const msg = {
     recipients: [...req.body.email],
     name: req.body.name,
@@ -236,12 +229,10 @@ router.post('/login', async (req, res, next) => {
 
     let t = token.signToken(existingUser._id)
     if (!t) throw Error('Invalid Credentials')
-    console.log('cookie:' + t),
       res.cookie('access_token', t, { httpOnly: true }),
       res.json({ ...existingUsers._doc, msg: 'success', cookie: t }),
       next()
   } catch (e) {
-    console.log(e)
     res.status(400).send('Email and Password do not match')
   }
 })
@@ -279,7 +270,6 @@ router.post('/test', async (req, res) => {
   let { email, firstName, lastName } = req.body
   try {
     await emailList.create({ email, firstName, lastName })
-    console.log(keys.mongoURI)
     res.send({ message: keys.mongoURI })
   } catch (e) {
     res.status(400).send({ message: 'please try again' })
@@ -303,7 +293,6 @@ router.get('/github', async (req, res) => {
     const res = await API.POST('https://github.com/login/oauth/access_token', headers, body)
     githubToken = res?.access_token
   } catch (error) {
-    console.error(error)
     res.status(400).send({ message: 'Exception occured while parsing github token' })
   }
   // 2) use the github token to get user details
@@ -333,7 +322,6 @@ router.get('/github', async (req, res) => {
     await thirdPartyApplications.create({ userId: existingUser.id, payload: { ...res, githubToken } })
     res.redirect(`/create-your-business?github-connect=true`)
   } catch (error) {
-    console.error(error)
     res.status(400).send({ message: 'Exception occured when retrieving github user details' })
   }
 })

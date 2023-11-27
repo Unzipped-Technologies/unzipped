@@ -29,9 +29,8 @@ const notifications = [
     { type: "createBusiness" },
     { type: "faq" },
     { type: "updateBusiness" },
-    {type:'freeTrial'},
+    { type: 'freeTrial' },
     { type: "explore" },
-
 ]
 
 const MobileDisplayBox = styled.div`
@@ -45,14 +44,17 @@ const DesktopBox = styled.div`
 @media(max-width: 680px) {
     display: none;
 }
-`
+`;
+
 const MobileBox = styled.div`
 @media(min-width: 680px) {
     display: none;
 }
-`
-const Dashboard = ({ resetRegisterForm, token }) => {
+`;
+
+const Dashboard = ({ resetRegisterForm }) => {
     const router = useRouter()
+
     const user = [
         {
             text: 'Update account details',
@@ -75,23 +77,21 @@ const Dashboard = ({ resetRegisterForm, token }) => {
             onClick: () => router.push('/pick-a-plan')
         },
     ]
-
     return (
         <React.Fragment>
             <Nav isSubMenu />
             <DesktopBox>
                 <NotificationsPanel notifications={notifications} user={user} />
-
             </DesktopBox>
             <MobileBox>
                 <div><Panel user={user} />
-                <Notifications>
-                {notifications.map(item => (
-                    <Notification type={item.type}>
-                        {item.text}
-                    </Notification>
-                ))}
-            </Notifications>
+                    <Notifications>
+                        {notifications.map(item => (
+                            <Notification type={item.type}>
+                                {item.text}
+                            </Notification>
+                        ))}
+                    </Notifications>
                 </div>
                 <MobileDisplayBox>
                     <MobileFreelancerFooter defaultSelected="Dashboard" />
@@ -101,9 +101,8 @@ const Dashboard = ({ resetRegisterForm, token }) => {
     )
 }
 
-Dashboard.getInitialProps = async ({ req, res }) => {
+Dashboard.getInitialProps = async ({ req }) => {
     const token = parseCookies(req)
-
     return {
         token: token && token,
     }
