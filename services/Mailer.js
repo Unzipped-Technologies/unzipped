@@ -5,7 +5,7 @@ const path = require('path')
 const nodemailer = require('nodemailer')
 const fileService = require('./fileService')
 const keys = require('../config/keys');
-
+const User = require('../models/User');
 
 sgMail.setApiKey(keys.sendGridKey);
 sgClient.setApiKey(keys.sendGridKey);
@@ -58,7 +58,41 @@ sgClient.setApiKey(keys.sendGridKey);
       console.log('error', e)
     }
   }
+  const sendVerificationMail = async (data) => {
+    const {email} = data;
 
+    try {
+      const existingUser = await User.findOne({ email })
+      if (existingUser) {
+        if (existingUser.googleId) {
+          return res.send('Login with Google')
+        } else {
+          throw Error('User with this email already exists')
+        }
+      }
+
+      const token = Buffer.from(JSON.stringify(data)).toString('base64');
+      const subject = 'Unzipped Verification Link';
+      const msg = {
+        to: email,
+        from: {
+          name: keys.sendGridName,
+          email: keys.sendGridEmail,
+        },
+        subject,
+        templateId: 'd-22eb3cf8b01a431ca20ee4a42ec349ad',
+        dynamicTemplateData: {
+          subject,
+          link: `${keys.redirectDomain}/verified/${token}`,
+        },
+      };
+      
+      return await sgMail.send(msg);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  
   const randNum = () => {
     return Math.floor(Math.random() * 90000) + 10000;
   }
@@ -95,4 +129,5 @@ module.exports = {
   randNum,
   addContact,
   getCustomFieldID,
+  sendVerificationMail
 };

@@ -353,7 +353,7 @@ const Nav = ({ isSubMenu, handleSearchValue, filter, handleSearch, searchButton,
 
     const signOut = () => {
         logoutUser()
-        router.push('/')
+        router.push('/login')
     }
 
     const profileItems = [
@@ -386,7 +386,7 @@ const Nav = ({ isSubMenu, handleSearchValue, filter, handleSearch, searchButton,
         {
             name: 'Sign out',
             onClick: () => signOut(),
-            link: '',
+            link: '/',
             icon: <LightIcon width={35} height={35} />
         },
         {

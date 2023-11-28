@@ -16,7 +16,7 @@ const AdminNav = ({isAuthenticated, userType}) => {
         dispatch(clearCart())
         dispatch(clearVehicle())
         dispatch(logoutUser()) 
-        router.push('/')
+        router.push('/login')
     }
 
     const MenuItems = () => {

@@ -26,11 +26,11 @@ const notifications = [
         type: 'blue',
         text: 'Update types of professionals you are seeking for your business'
     },
-    { type: 'createBusiness' },
-    { type: 'faq' },
-    { type: 'updateBusiness' },
+    { type: "createBusiness" },
+    { type: "faq" },
+    { type: "updateBusiness" },
     { type: 'freeTrial' },
-    { type: 'explore' }
+    { type: "explore" },
 ]
 
 const MobileDisplayBox = styled.div`
@@ -41,17 +41,20 @@ const MobileDisplayBox = styled.div`
 `
 
 const DesktopBox = styled.div`
-    @media (max-width: 680px) {
-        display: none;
-    }
-`
+@media(max-width: 680px) {
+    display: none;
+}
+`;
+
 const MobileBox = styled.div`
-    @media (min-width: 680px) {
-        display: none;
-    }
-`
-const Dashboard = ({ resetRegisterForm, token }) => {
+@media(min-width: 680px) {
+    display: none;
+}
+`;
+
+const Dashboard = ({ resetRegisterForm }) => {
     const router = useRouter()
+
     const user = [
         {
             text: 'Update account details',
@@ -80,7 +83,6 @@ const Dashboard = ({ resetRegisterForm, token }) => {
             onClick: () => router.push('/pick-a-plan')
         }
     ]
-
     return (
         <React.Fragment>
             <Nav isSubMenu />
@@ -88,11 +90,12 @@ const Dashboard = ({ resetRegisterForm, token }) => {
                 <NotificationsPanel notifications={notifications} user={user} />
             </DesktopBox>
             <MobileBox>
-                <div>
-                    <Panel user={user} />
+                <div><Panel user={user} />
                     <Notifications>
                         {notifications.map(item => (
-                            <Notification type={item.type}>{item.text}</Notification>
+                            <Notification type={item.type}>
+                                {item.text}
+                            </Notification>
                         ))}
                     </Notifications>
                 </div>
@@ -104,9 +107,8 @@ const Dashboard = ({ resetRegisterForm, token }) => {
     )
 }
 
-Dashboard.getInitialProps = async ({ req, res }) => {
+Dashboard.getInitialProps = async ({ req }) => {
     const token = parseCookies(req)
-
     return {
         token: token && token
     }
