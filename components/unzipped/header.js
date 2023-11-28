@@ -24,10 +24,11 @@ import IconComponent from '../ui/icons/IconComponent';
 
 const Div = styled.div`
     width: 100%;
-    margin-bottom:  ${({ marginBottom }) => marginBottom ? marginBottom : '128px'};;
+    margin-bottom:  ${({ marginBottom }) => marginBottom ? marginBottom : '128px'};
 `;
 
 const Container = styled.div`
+    position: fixed;
     display: flex;
     flex-flow: row;
     align-items: center;
@@ -40,6 +41,8 @@ const Container = styled.div`
     min-height: 77px;
     border-bottom: solid 1px #d8d8d8;
     width: 100%;
+    top:0;
+    z-index: ${({ zIndex }) => zIndex ? zIndex : '2'};
 `;
 
 const Logo = styled.img`
@@ -328,7 +331,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm, marginBottom }) => {
+const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetBusinessForm, marginBottom, zIndex }) => {
     const { pathname } = useRouter();
     const [menuOpen, setMenuOpen] = useState(false)
     const classes = useStyles();
@@ -421,7 +424,7 @@ const Nav = ({ isSubMenu, isAuthenticated, profilePic, token, logoutUser, resetB
 
     return (
         <Div marginBottom={marginBottom && marginBottom}>
-            <Container style={{ position: 'fixed', top: "0", zIndex: "2" }}>
+            <Container zIndex={zIndex}>
                 <Link href="/" ><Logo src='/img/Unzipped-Primary-Logo.png' alt='logo' /></Link>
                 <Menu>
                     {menuItems && menuItems.map((item, index) => {

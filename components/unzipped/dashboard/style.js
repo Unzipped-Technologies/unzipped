@@ -35,7 +35,7 @@ const TitleText = styled.div`
     font-style: normal;
     font-weight: ${({ light, lighter }) => light ? '400' : lighter ? '300' : '600'};
     cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
-    font-size: ${({ smallest, small, title, size, mobile }) => mobile ? '22px' :small ? '15px' : title ? '36px' : size ? size : '16px'};
+    font-size: ${({ titleFontSize, smallest, small, title, size, mobile }) => titleFontSize? titleFontSize :mobile ? '22px' :small ? '15px' : title ? '36px' : size ? size : '16px'};
     line-height: ${({ lineHeight }) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
     margin-bottom: ${({ mobile, noMargin, half, large }) => mobile? '8px' : noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
@@ -117,7 +117,6 @@ const Absolute = styled.div`
     right: ${({ left, right }) => left ? 'unset' : right ? right : '15px'};
     left: ${({ left, wideLeft, smallLeft }) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
     z-index: ${({ zIndex }) => zIndex ? zIndex : 'inherit'};
-    margin-top: ${({ mobile }) => mobile ? '35px' : 'unset'};
     gap: ${({ gap, mobile }) => mobile && gap ? '20px' : gap ? gap : 'unset'};
     @media(max-width: ${({ hide }) => hide ? hide + 'px' : '0px'}) {
         display: none;

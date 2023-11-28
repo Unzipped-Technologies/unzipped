@@ -67,7 +67,7 @@ const Value = styled.span`
  * Progress Bar Component.
  */
 const ProgressBar = ({ tileView, showValue, status, value, width, bar, mobile, doubleScreenBottom }) => {
-    const barWidth = (width / 100) * value;
+    const barWidth = (width / ( mobile ? 7 : 10 )) * value;
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;
 

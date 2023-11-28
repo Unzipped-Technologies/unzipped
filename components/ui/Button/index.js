@@ -13,6 +13,7 @@ const ButtonContainer = styled.button`
     right: ${props => (props.right ? props.right : 'auto')};
     top: ${props => (props.top ? props.top : 'auto')};
     outline: none !important;
+    margin: ${porps => porps.margin? porps.margin : '0px'};
     &:focus {
         outline: ${({ popout }) => (popout ? 'none' : 'inherit')};
         background: ${({ background, colors }) =>
@@ -29,8 +30,8 @@ const ButtonContainer = styled.button`
     color: ${({ colors }) => (colors ? colors.text : theme.text)};
     box-sizing: border-box;
     border-radius: ${({ oval }) => (oval ? '25px' : '10px')};
-    padding: ${ props => (props.noPadding ? ` 0px `: props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.noPadding ? ` 0px `:props.extraWide ? '40px' : '15px')}
-        ${props => (props.noPadding ? ` 0px `: props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.noPadding ? ` 0px `: props.extraWide ? '40px' : '15px')};
+    padding: ${ props => (props.mobile? '9px' :props.noPadding ? ` 0px `: props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.mobile? '22px' : props.noPadding ? ` 0px `:props.extraWide ? '40px' : '15px')}
+        ${props => (props.mobile? '6px' : props.noPadding ? ` 0px `: props.small ? '10px' : props.extraTall ? '20px' : '15px')} ${props => (props.mobile? '22px' : props.noPadding ? ` 0px `: props.extraWide ? '40px' : '15px')};
     font-family: roboto;
     text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
     width: ${props => (props.block ? '100%' : props.webKit ? '-webkit-fill-available' : 'auto')};
@@ -264,6 +265,7 @@ const Button = ({
     right,
     top,
     zIndex,
+    mobile,
     ...rest
 }) => {
     const colors = typeColors[type] ? typeColors[type] : typeColors.default
@@ -299,6 +301,7 @@ const Button = ({
             noBorder={noBorder}
             noUppercase={noUppercase}
             oval={oval}
+            mobile={mobile}
             noPadding={noPadding}
             height={height}
             buttonHeight={buttonHeight}

@@ -7,8 +7,8 @@ const CardContainer = styled.div`
   border: 2px solid ${props => (props.noBorder ? 'transparent' : props.theme.border)};
   box-sizing: border-box;
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '4px')};
-  padding: ${({ doubleScreenTop, doubleScreenBottom, mobile }) =>
-    doubleScreenTop ? '90px 10px 0px' : doubleScreenBottom ? '0px 10px 90px' : mobile ? '90px 10px' : '30px 50px'};
+  padding: ${({ doubleScreenTop, doubleScreenBottom, mobile }) => 
+    doubleScreenTop ? '115px 10px 0px' : doubleScreenBottom ? '0px 10px 115px' : mobile ? '115px 10px' : '30px 50px'};
   font-family: arial;
   width: 100%;
   height: 100%;

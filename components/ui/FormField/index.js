@@ -24,7 +24,7 @@ const FormFieldContainer = styled.div`
   width: ${({width}) => width ? width : '100%'};
   justify-self: ${({justifySelf}) => justifySelf ? justifySelf : 'auto'};
   height: 100%;
-  z-index: ${({ zIndex }) => (zIndex ? '1000' : '10')};
+  z-index: ${({ zIndex, zIndexUnset }) => (zIndexUnset ? '0' : zIndex ? '1000' : '10')};
   color: ${props => props.theme.textSecondary};
   font-weight: 400;
   font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
@@ -91,6 +91,7 @@ const Scroll = styled(SimpleBar)`
  */
 const FormField = ({
   mobile,
+  zIndexUnset,
   className,
   fieldType,
   required,
@@ -117,8 +118,6 @@ const FormField = ({
   clickType,
   fontSize = '',
   handleEnterKey,
-  handleInputFocusChange,
-  isFocused,
   borderRadius,
   height,
   ...rest
@@ -180,12 +179,6 @@ const FormField = ({
     return onFocus && onFocus(e)
   }
 
-  const handleInputFocus = value => {
-    if (handleInputFocusChange) {
-      handleInputFocusChange(value)
-    }
-  }
-
   const handleHeight = () => {
     if (height) {
       return height
@@ -214,6 +207,7 @@ const FormField = ({
 
   return (
     <FormFieldContainer
+      zIndexUnset={zIndexUnset}
       zIndex={dropdownOpen}
       className={className}
       $inline={inline}
@@ -240,8 +234,6 @@ const FormField = ({
         onChange={fieldType === 'input' || fieldType === 'select' ? onInputChange : onChange}
         onFocus={handleFocus}
         borderRadius={borderRadius}
-        handleInput={handleInputFocus}
-        isFocused={isFocused}
         height={handleHeight}
         {...rest}
       />

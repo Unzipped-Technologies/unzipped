@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import theme from '../theme'
@@ -58,14 +58,14 @@ const inputStyles = props => `
     outline: none;
     color: ${props.disabled ? props.theme.tint2 : props.theme.textSecondary};
     font-weight: 400;
-    font-size: ${props.fontSize ? props.fontSize : props.theme.baseFontSize};
-    padding: ${props.mobile?'0px 2px !important':'0px 12px !important'};
+    font-size: ${props.mobile ? '16px' : props.fontSize ? props.fontSize : props.theme.baseFontSize};
+    padding: ${props.mobile?'0px 8px !important':'0px 12px !important'};
     font-family: arial;
     box-sizing: border-box;
     line-height: normal;
     &::placeholder {
         color: #757575;
-        font-size: ${props.fontSize ? props.fontSize : props.theme.baseFontSize};
+        font-size: ${props.mobile ? '16px' : props.fontSize ? props.fontSize : props.theme.baseFontSize};
     }
     &:focus {
         border: none !important; // Overriding global css
@@ -108,7 +108,6 @@ const Bullet = styled.div`
 const InputControlArea = styled(InputControl).attrs({ as: 'textarea' })`
     margin: ${props=>props.mobile?'5px 4px 0px 0px' : '8px 5px 0px 0px'};
     resize: vertical;
-    height: 120px;
 `
 
 /**
@@ -130,11 +129,11 @@ const Input = ({
     fontSize = '',
     borderColor = '',
     onFocus,
-    handleInput,
-    isFocused,
     borderRadius,
     ...rest
 }) => {
+    const [isFocused,setIsFocused] = useState(false);
+
     const Control = textarea ? InputControlArea : currency ? CurrencyControl : InputControl
     let border = borderColor ? theme[borderColor] : theme.tint3
     if (error) {
@@ -142,12 +141,7 @@ const Input = ({
     } else if (accepted) {
         border = theme.primary
     }
-
-    const handleFocus = value => {
-        if (handleInput) {
-            handleInput(value)
-        }
-    }
+    
     return (
         <ControlContainer textarea={textarea} height={height} autosize={autosize} width={width} mobile={mobile}>
             <InputContainer
@@ -157,9 +151,10 @@ const Input = ({
                 message={message}
                 isFocused={isFocused}
                 height={height}
-                onFocus={() => handleFocus(true)}
-                onBlur={() => handleFocus(false)}>
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}>
                 <Control
+                    rows='6'
                     mobile={mobile}
                     height={height}
                     fontSize={fontSize}
@@ -199,8 +194,6 @@ Input.propTypes = {
     fontSize: PropTypes.string,
     /** String to override the border color */
     borderColor: PropTypes.string,
-    /** if Focused*/
-    isFocused: PropTypes.bool,
     /** string to override the border radius*/
     borderRadius: PropTypes.string,
     /** string to override the height*/
@@ -217,7 +210,6 @@ Input.defaultProps = {
     currency: null,
     height: null,
     width: null,
-    isFocused: false,
     borderRadius: null,
     height: 'auto'
 }

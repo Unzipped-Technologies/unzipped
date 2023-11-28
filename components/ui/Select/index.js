@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import theme from '../theme';
 import Select, {createFilter} from 'react-select';
@@ -66,6 +66,7 @@ const CheckboxStyled = styled(Checkbox)`
 `;
 
 const SelectInput = ({
+    mobile,
     placeholder,
     name,
     fontSize,
@@ -91,6 +92,8 @@ const SelectInput = ({
     borderRadius,
     dateTime = false,
 }) => {
+    const [isFocused, setIsFocused] = useState(false);
+
     let border = theme.border;
     if (error) {
         border = theme.error;
@@ -119,28 +122,20 @@ const SelectInput = ({
         container: defaultStyles => ({
             ...defaultStyles,
             pointerEvents: 'auto',
-            border: `2px solid ${border}`,
+            border: `2px solid ${isFocused ? 'black' : border}`,
             borderRadius: '4px',
             height: height? height : input ? '28px' : '100%',
             width: width ? width : input ? '67px' : '360px',
             minWidth: `${getMinWidth(dateTime, small)}`,
             maxWidth: `650px`,
             fontFamily: 'arial',
-            fontSize: `${fontSize}`,
-            // '@media (max-width: 495px)': {
-            //     ...styles['@media (max-width: 495px)'],
-            //     width: `100%`,
-            // },
-            // [`@media (max-width: ${theme.mobileWidth}px)`]: {
-            //     maxWidth: 'unset',
-            // },
+            fontSize: `${mobile ? '16px' : fontSize}`,
         }),
         control: defaultStyles => ({
             ...defaultStyles,
             border: 0,
             boxShadow: 'none',
             margin: 0,
-            padding: '0 0 0 10px',
             borderRadius: borderRadius? borderRadius :'2px',
             height: `${dateTime ? '100%' : small ? '40px' : '56px'}`,
             cursor: `${disabled ? 'not-allowed' : 'default'}`,
@@ -151,11 +146,9 @@ const SelectInput = ({
         option: (defaultStyles, state) => ({
             ...defaultStyles,
             fontFamily: 'Roboto',
-            // height: '24px',
             padding: '0px 22px',
             backgroundColor: state.isFocused ? theme.backgorund3 : state.isSelected ? theme.backgorund3 : theme.text3,
             color: state.isFocused ? theme.text3 : state.isSelected ? theme.text3 : theme.text2,
-            // paddingLeft: '22px'
         }),
         menu: (defaultStyles, state) => {
             const isTop = state.placement === 'top';
@@ -166,22 +159,7 @@ const SelectInput = ({
                 width: width ? (width === '100%' ? `calc(${width} + 4px)` : width) : '360px',
                 margin: '2px 0 0 -2px',
                 fontWeight: '600',
-                // border: `2px solid ${border}`,
-                // borderTop: isBottom ? 0 : 'unset',
-                // borderTopLeftRadius: isBottom ? 0 : 'unset',
-                // borderTopRightRadius: isBottom ? 0 : 'unset',
-                // borderBottomLeftRadius: isTop ? 0 : 'unset',
-                // borderBottomRightRadius: isTop ? 0 : 'unset',
                 borderRadius: borderRadius? borderRadius : '4px',
-                // '@media (min-width: 1000px)': {
-                    //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                // },
-                // '@media (max-width: 789px)': {
-                //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                // },
-                // '@media (max-width: 495px)': {
-                //     width: '101.4%',
-                // },
             };
         },
         menuList: (defaultStyles, state) => ({
@@ -190,17 +168,6 @@ const SelectInput = ({
             width: width ? width: 'auto',
             borderRadius: borderRadius? borderRadius : '0',
             boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.1)',
-            // boxShadow: 'none',
-            // '@media (min-width: 1000px)': {
-                //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                // },
-            // '@media (max-width: 789px)': {
-            //     maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-            // },
-
-            // '@media (max-width: 495px)': {
-            //     width: '101.4%',
-            // },
         }),
         dropdownIndicator: defaultStyles => ({
             ...defaultStyles,
@@ -236,8 +203,8 @@ const SelectInput = ({
                 value={value}
                 name={name}
                 input={input}
-                onFocus={onFocus}
-                onBlur={() => onBlur(value)}                
+                onFocus={()=> setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}                
                 menuIsOpen={menuIsOpen}
                 menuPlacement={$modalSelect ? 'bottom' : 'auto'}
                 options={options}
