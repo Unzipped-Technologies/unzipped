@@ -110,20 +110,6 @@ const GetCardDesktop = ({
   companyBackground,
   budget,
   questionsToAsk,
-  // isFirstBusiness,
-  // incomePlatform,
-  // isExistingAudience,
-  // socialMediaPlatforms = [],
-  // numberOfSocialFollowing,
-  // businessNiche,
-  // businessAddressLineOne,
-  // businessAddressLineTwo,
-  // businessCountry,
-  // businessCity,
-  // isEquity,
-  // typesOfHires,
-  // equity,
-  // businessZip,
   submitForm,
   updateForm,
   goBack,
@@ -1037,22 +1023,6 @@ const CreateBusiness = ({
           companyBackground,
           budget,
           questionsToAsk,
-          // isFirstBusiness,
-          // isExistingAudience,
-          // isEquity,
-          // equity,
-          // typesOfHires,
-          // incomePlatform,
-          // numberOfSocialFollowing,
-          // socialMediaPlatforms,
-          // businessNiche,
-          // businessAddressLineOne,
-          // businessAddressLineTwo,
-          // businessCountry,
-          // businessCity,
-          // businessState,
-          // businessZip,
-          // businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
         },
         token.access_token
       )
@@ -1133,21 +1103,6 @@ const CreateBusiness = ({
           companyBackground={companyBackground}
           budget={budget}
           questionsToAsk={questionsToAsk}
-          // isFirstBusiness={isFirstBusiness}
-          // incomePlatform={incomePlatform}
-          // equity={equity}
-          // isExistingAudience={isExistingAudience}
-          // socialMediaPlatforms={socialMediaPlatforms}
-          // typesOfHires={typesOfHires}
-          // numberOfSocialFollowing={numberOfSocialFollowing}
-          // businessAddressLineOne={businessAddressLineOne}
-          // businessAddressLineTwo={businessAddressLineTwo}
-          // businessCountry={businessCountry}
-          // businessCity={businessCity}
-          // businessState={businessState}
-          // businessZip={businessZip}
-          // businessNiche={businessNiche}
-          // isEquity={isEquity}
         />
       ) : (
         <>
@@ -1204,24 +1159,6 @@ const mapStateToProps = state => {
     companyBackground: state.Business?.businessForm.companyBackground,
     budget: state.Business?.businessForm.budget,
     questionsToAsk: state.Business?.businessForm.questionsToAsk,
-    // isFirstBusiness: state.Business?.businessForm.isFirstBusiness,
-    // isExistingAudience: state.Business?.businessForm.isExistingAudience,
-    // isEquity: state.Business?.businessForm.isEquity,
-    // equity: state.Business?.businessForm.equity,
-    // deadline: state.Business?.businessForm.deadline,
-    // typesOfHires: state.Business?.businessForm.typesOfHires,
-    // incomePlatform: state.Business?.businessForm.incomePlatform,
-    // numberOfSocialFollowing: state.Business?.businessForm.numberOfSocialFollowing,
-    // socialMediaPlatforms: state.Business?.businessForm.socialMediaPlatforms,
-    // businessNiche: state.Business?.businessForm.businessNiche,
-    // businessAddressLineOne: state.Business?.businessForm.businessAddressLineOne,
-    // businessAddressLineTwo: state.Business?.businessForm.businessAddressLineTwo,
-    // businessCountry: state.Business?.businessForm.businessCountry,
-    // businessCity: state.Business?.businessForm.businessCity,
-    // businessState: state.Business?.businessForm.businessState,
-    // businessZip: state.Business?.businessForm.businessZip,
-    // description: state.Business?.businessForm.description,
-    // businessImage: state.Business?.businessForm.businessImage,
     stage: state.Business?.businessForm.stage,
     loading: state.Business?.loading
   }
