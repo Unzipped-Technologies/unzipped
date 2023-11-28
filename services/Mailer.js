@@ -76,8 +76,8 @@ sgClient.setApiKey(keys.sendGridKey);
       const msg = {
         to: email,
         from: {
-          name: 'Unzipped',
-          email: 'Jason@unzipped.io',
+          name: keys.sendGridName,
+          email: keys.sendGridEmail,
         },
         subject,
         templateId: 'd-22eb3cf8b01a431ca20ee4a42ec349ad',

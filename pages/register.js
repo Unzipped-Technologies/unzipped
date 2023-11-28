@@ -192,11 +192,7 @@ const Register = ({ loading, PassError, verifyUser, isEmailSent, error }) => {
         if (passwordAlert || emailAlert) {
             return;
         }
-        try {
-            await verifyUser(user)
-        } catch (e) {
-
-        }
+        await verifyUser(user);
     };
 
     const google = () => {

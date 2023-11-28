@@ -26,6 +26,8 @@ module.exports = {
     stripeSecretKey:
       'sk_test_51N8neBKbRhZhJxMgqn7xtwILzeKZPoobbygMQzxUeAFKi3D2ldnUXCsDiaGfdQOH4oALxxXcEIZXlQ3887et74cu00YBfjyyZM',
     sendGridKey: process.env.SEND_GRID_KEY,
+    sendGridName: 'Unzipped',
+    sendGridEmail: 'Jason@unzipped.io',
     redirectDomain: 'http://localhost:3000',
     nextPublicGAID: 'UA-183226924-1',
     carsXe: 'b4pbu5nbd_te7e4y4dl_zlbdt9z1u',
