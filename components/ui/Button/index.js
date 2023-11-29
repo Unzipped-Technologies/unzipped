@@ -301,9 +301,9 @@ const Button = ({
             noBorder={noBorder}
             noUppercase={noUppercase}
             oval={oval}
-            mobile={mobile}
             noPadding={noPadding}
             height={height}
+            mobile={mobile}
             buttonHeight={buttonHeight}
             position={position}
             right={right}
@@ -328,7 +328,7 @@ const Button = ({
                     links={popout}
                     dropDownRight={dropDownRight}
                     btnDropdown={true}
-                    width={popoutWidth}></DropDown>
+                    width={popoutWidth} minWidth={popoutWidth}></DropDown>
             )}
         </ButtonContainer>
     )

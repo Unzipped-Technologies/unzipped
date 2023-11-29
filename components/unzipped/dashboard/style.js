@@ -6,7 +6,7 @@ const BlackCard = styled.div`
     border-radius: 5px;
     width: 100%;
     display: flex;
-    flex-flow: row;
+    flex-direction: column;
     min-height: 87px;
     align-items: center;
     padding: 0px 40px;
@@ -82,10 +82,11 @@ const DarkText = styled.div`
     white-space: ${({ textOverflow }) => textOverflow ? 'nowrap' : 'pre-line'};
     overflow: ${({ textOverflow }) => textOverflow ? 'hidden' : 'unset'};
     padding: ${({ padding }) => padding ? padding : ''};
-    width: 96%;
+    width: ${({ width }) => width ? width : '96%'};
     text-align-last:${({ textAlignLast }) => textAlignLast ? textAlignLast : ''};
     text-align: ${({ center, right }) => center ? 'center' : right ? 'right' : 'unset'};
     color: ${({ error, color }) => !error ? color ? color : theme.text2 : theme.error};
+    background: ${({ backgroundColor }) => backgroundColor ? backgroundColor : ''};
     &:hover {
         color: ${({ hover, color }) => hover ? theme.selectedText : color ? color : theme.text2}
     }
@@ -304,7 +305,7 @@ export const DarkSpan = styled.span`
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    font-size: ${({ large, small, medium }) => large ? '24px' : small ? '15px' : '18px'};
+    font-size: ${({ large, small, medium }) => large ? '24px' : small ? '15px' : medium ? '16px' : '18px'};
     padding-left: 3px;
     color: #333;
 `;

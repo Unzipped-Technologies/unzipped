@@ -14,7 +14,6 @@ const departmentSchema = new Schema({
   isEquity: { type: Boolean, default: false },
   tags: { type: [Schema.Types.Mixed], ref: 'tags' },
   tasks: { type: Schema.Types.Mixed, ref: 'tasks' },
-  employees: { type: Schema.Types.ObjectId, ref: 'users' },
   business: { type: Schema.Types.ObjectId, ref: 'businesses' },
   employees: { type: Schema.Types.Mixed, ref: 'contracts' },
 }, {

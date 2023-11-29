@@ -31,8 +31,16 @@ const taskSchema = new Schema({
   tag: { type: Schema.Types.ObjectId, ref: 'tags' },
   department: { type: Schema.Types.ObjectId, ref: 'department' },
   assignee: { type: Schema.Types.ObjectId, ref: 'users' },
+  updatedAt: {
+    type: Date,
+    default: new Date(),
+  },
+  createdAt: {
+    type: Date,
+    default: new Date(),
+  }
 }, {
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = mongoose.model('tasks', taskSchema);

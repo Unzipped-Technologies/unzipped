@@ -11,7 +11,6 @@ export const tokenConfig = (token) => {
       method: 'GET',
       credentials: 'include',
     };
-
     // let authCookie;
     // if (typeof localStorage !== "undefined") {
     //   authCookie = getCookie('access_token');

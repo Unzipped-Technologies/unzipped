@@ -31,7 +31,14 @@ import {
     UPDATE_CREATE_STORY,
     GET_PROJECT_LIST,
     GET_PROJECT_SUCCESS,
-    GET_PROJECT_Error
+    GET_TASK_HOURS_BY_BUSINESS,
+    UPDATE_TASK_HOURS_DATE,
+    UPDATE_TASK_HOURS,
+    UPDATE_TASK_STATUS,
+    CREATE_TASK_AND_TASK_HOURS,
+    GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
+    GET_PROJECT_Error,
+    GET_PROJECT_LIST_AND_APPEND
 } from './constants';
 
 const INIT_STATE = {
@@ -44,6 +51,11 @@ const INIT_STATE = {
     selectedDepartment: 0,
     selectedBusiness: {},
     employees: [],
+    invoiceTaskHours: [],
+    invoiceTags: [],
+    projectName: "",
+    projectList: [],
+    totalCount: 0,
     businessForm: {
         isShortTermBusiness: '',
         name: '',
@@ -144,7 +156,6 @@ const Business = (state = INIT_STATE, action = {}) => {
         case SELECT_DEPARTMENT:
             return { ...state, loading: false, selectedDepartment: action.payload.selected, stories: [...action.payload.stories] };
         case DEPARTMENT_ERROR:
-            console.log('error failed')
             return { ...state, loading: false, error: action.payload };
         case UPDATE_BUSINESS_FORM:
             return { ...state, loading: false, businessForm: { ...state.businessForm, ...action.payload } };
@@ -157,9 +168,120 @@ const Business = (state = INIT_STATE, action = {}) => {
         case LOAD_STATE:
             return { ...state, loading: true };
         case GET_PROJECT_LIST:
-            return { ...state, loading: false, projectList: action.payload };
+            return {
+                ...state,
+                loading: false,
+                projectList: action.payload.limitedRecords,
+                totalCount: action.payload.totalCount[0]?.count,
+              };
+        case GET_PROJECT_LIST_AND_APPEND:
+            return {
+                ...state,
+                loading: false,
+                projectList: [...state.projectList, ...action.payload.limitedRecords],
+                totalCount: action.payload.totalCount[0]?.count,
+              };
         case GET_PROJECT_Error:
             return { ...state, loading: false, error: action.payload };
+        case CREATE_TASK_AND_TASK_HOURS:
+            const createdTask = {
+                updatedAt: action.payload.updatedAt,
+                isDeleted: action.payload.isDeleted,
+                deletedAt: action.payload.deletedAt,
+                userId: action.payload.userId,
+                storyPoints: action.payload.taskId.storyPoints,
+                taskName: action.payload.taskId.taskName,
+                tagName: action.payload.taskId.tag.tagName,
+                tag: action.payload.taskId.tag._id,
+                hours: action.payload.hours,
+                departmentId: action.payload.departmentId,
+                createdAt: action.payload.createdAt,
+                _id: action.payload._id,
+            }
+            return { ...state, loading: false, invoiceTaskHours: [...state.invoiceTaskHours, createdTask] };
+        case UPDATE_TASK_STATUS:
+            const updatedStatus = state.invoiceTaskHours.map(task => {
+                const updatedTask = {
+                    ...task
+                };
+
+                if (task._id === action.payload._id) {
+                    updatedTask.tagName = action.payload.tagName;
+                    updatedTask.tag = action.payload.tag;
+                }
+
+                return updatedTask;
+            });
+            return { ...state, loading: false, invoiceTaskHours: updatedStatus };
+        case UPDATE_TASK_HOURS:
+            const updatedHours = state.invoiceTaskHours.map(task => {
+                const updatedTask = {
+                    ...task
+                };
+
+                if (task._id === action.payload._id) {
+                    updatedTask.hours = action.payload.hours;
+                }
+
+                return updatedTask;
+            });
+            return { ...state, loading: false, invoiceTaskHours: updatedHours };
+        case UPDATE_TASK_HOURS_DATE:
+            const updatedTasks = state.invoiceTaskHours.map(task => {
+                const updatedTask = {
+                    ...task
+                };
+
+                if (task._id === action.payload._id) {
+                    updatedTask.updatedAt = action.payload.updatedAt;
+                }
+
+                return updatedTask;
+            });
+            return { ...state, loading: false, invoiceTaskHours: updatedTasks };
+        case GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER:
+            const findEmployeeRate = (dep, user) => {
+                const employee = action.payload.businessDetails.employees.find(emp =>
+                    emp.departmentId === dep && emp.freelancerId.userId === user
+                );
+                return employee ? employee.hourlyRate : undefined;
+            }
+            const taskHoursByFounderBusiness = action?.payload?.results?.map(task => ({
+                updatedAt: task.updatedAt,
+                isDeleted: task.isDeleted,
+                deletedAt: task.deletedAt,
+                userId: task.userId,
+                storyPoints: task.taskId.storyPoints,
+                taskName: task.taskId.taskName,
+                tagName: task.taskId.tag.tagName,
+                tag: task.taskId.tag._id,
+                hours: task.hours,
+                departmentId: task.departmentId,
+                createdAt: task.createdAt,
+                rate: findEmployeeRate(task.departmentId, task.userId._id),
+                _id: task._id,
+
+            }))
+            const projectName = action.payload.businessDetails.name;
+            return { ...state, loading: false, invoiceTaskHours: taskHoursByFounderBusiness, projectName: projectName };
+        case GET_TASK_HOURS_BY_BUSINESS:
+            const invoiceTaskHour = action.payload.taskHours.map(task => ({
+                updatedAt: task.updatedAt,
+                isDeleted: task.isDeleted,
+                deletedAt: task.deletedAt,
+                userId: task.userId,
+                storyPoints: task.taskId.storyPoints,
+                taskName: task.taskId.taskName,
+                tagName: task.taskId.tag.tagName,
+                tag: task.taskId.tag._id,
+                hours: task.hours,
+                departmentId: task.departmentId,
+                createdAt: task.createdAt,
+                rate: action.payload.ContractRate.hourlyRate,
+                _id: task._id,
+            }));
+            const projName = action.payload?.ContractRate?.businessId?.name;
+            return { ...state, loading: false, invoiceTaskHours: invoiceTaskHour, invoiceTags: action.payload.tags, projectName: projName };
         default:
             return state;
     }

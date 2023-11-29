@@ -20,9 +20,9 @@ import Loading from '../components/loading'
 function MyApp({ Component, pageProps }) {
   const store = useStore(state => state)
   const token = useSelector(state => state.Auth.token)
+  const isLoading = useSelector(state => state.Loading.loading)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-
   useEffect(() => {
     const start = () => setLoading(true)
     const end = () =>
@@ -41,7 +41,14 @@ function MyApp({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events])
-
+  useEffect(() => {
+    if (isLoading) {
+      setLoading(true)
+    }
+    else {
+      setLoading(false)
+    }
+  }, [isLoading])
   // useEffect(() => {
   //   if (isProtected(router.route) && !token) {
   //     router.push('/login')

@@ -13,6 +13,7 @@ import {
 } from './style'
 
 import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 const help = [
     {
@@ -53,16 +54,46 @@ const help = [
     },
 ]
 
+const InnerCard = styled.div`
+border-radius: 10px 10px 0px 0px;
+border-bottom: 1px solid #D8D8D8;
+background: #F1F0F0;
+box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+display: flex;
+width: 100%;
+align-items: center;
+color: #fff;
+border-radius: 5px;
+margin-bottom: 2px; 
+`
 const Notification = ({ type, children, noButton }) => {
     const router = useRouter()
     switch (type) {
         case 'plan':
             return (
-                <BlackCard display='block'>
-                    <WhiteText>Build your dream business, grow your following, and collaborate with other professionals to <br />
-                        make your vision a reality. Start your free trial now.</WhiteText>
-                    <Absolute justifyContent='end' ><Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>PICK A PLAN</Button></Absolute>
-                </BlackCard>
+                <InnerCard style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    alignItems: 'end',
+                    background: '#000',
+                    color: '#fff',
+                    borderRadius: '5px',
+                    marginTop: '20px'
+                }}>
+                    <div style={{ padding: '10px' }}>
+                        Build your dream business, grow your following, and collaborate with other professionals to
+                        make your vision a reality. Start your free trial now.
+                    </div>
+                    <div>
+                        <Button style={{ margin: '5px' }} noBorder type="black" onClick={() => router.push('/pick-a-plan')}>PICK A PLAN</Button>
+                    </div>
+                </InnerCard>
+                // <BlackCard display='flex'>
+                //     <WhiteText>Build your dream business, grow your following, and collaborate with other professionals to <br />
+                //         make your vision a reality. Start your free trial now.</WhiteText>
+                //     <Absolute justifyContent='end' ><Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>PICK A PLAN</Button></Absolute>
+                // </BlackCard>
             )
         case 'github':
             return (
@@ -81,22 +112,46 @@ const Notification = ({ type, children, noButton }) => {
             )
         case 'dismiss':
             return (
-                <WhiteCard row display='block'>
-                    <DarkText noMargin>{children}</DarkText>
-                    <Absolute justifyContent='end' >
+                <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', border: '1px solid #D8D8D8', borderRadius:5, padding: 10, marginBottom: 20 }}>
+                    <div>
+                        <DarkText noMargin>{children}</DarkText>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
                         <Dismiss>Dismiss</Dismiss>
-                        <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
-                </WhiteCard>
+                        <Button noBorder type="default" normal small>UPDATE</Button>
+                    </div>
+                </div>
+                // <WhiteCard row display='block'>
+                //     <DarkText noMargin>{children}</DarkText>
+                //     <Absolute justifyContent='end' >
+                //         <Dismiss>Dismiss</Dismiss>
+                //         <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
+                // </WhiteCard>
             )
         case 'faq':
             return (
-                <WhiteCard row display='block'>
-                    <DarkText noMargin>Investors are asking about your businss. Update Frequently asked
-                        questions now.</DarkText>
-                    <Absolute justifyContent='end'>
-                        <Dismiss>Dismiss</Dismiss>
-                        <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
-                </WhiteCard>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    border: '1px solid #d8d8d8',
+                    padding: '5px',
+                    borderRadius: '5px',
+                    marginBottom: '5px'
+                }}>
+                    <div>
+                        <DarkText noMargin>Investors are asking about your businss. Update Frequently asked  questions now.</DarkText>
+                    </div>
+                    <div>
+                        <Button noBorder type="default" normal small>UPDATE</Button>
+                    </div>
+                </div>
+                // <WhiteCard row display='block'>
+                //     <DarkText noMargin>Investors are asking about your businss. Update Frequently asked  questions now.</DarkText>
+                //     <Absolute justifyContent='end'>
+                //         <Dismiss>Dismiss</Dismiss>
+                //         <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
+                // </WhiteCard>
             )
         case 'freeTrial':
             return (
@@ -130,17 +185,27 @@ const Notification = ({ type, children, noButton }) => {
         //     )
         case 'explore':
             return (
-                <WhiteCard marginBottom='70px' size="extraLarge">
-                    <TitleText noMargin>Explore more support</TitleText>
+                <WhiteCard padding="20px 3px" marginBottom='70px' size="extraLarge" background="#FAFAFA">
+                    <TitleText noMargin paddingLeft="8px" marginLeft="0">Explore more support</TitleText>
                     <DarkText>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
                     {help.map((item, index) => (
-                        <WhiteCard display='-webkit-box' gap='7px' shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
-                            <Absolute left top="17px"><Icon name={item.icon} /></Absolute>
-                            <div style={{width:"95%"}}>
-                            <TitleText noMargin small >{item.name}</TitleText>
-                            <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
+                        // <div style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 5, background: "#EAEAEA", padding: 5, borderRadius: 5 }}>
+                        <InnerCard style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 15, background: "#EAEAEA", padding: 15 }}>
+                            <div>
+                                <Icon name={item.icon} />
                             </div>
-                        </WhiteCard>
+                            <div>
+                                <TitleText noMargin small >{item.name}</TitleText>
+                                <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
+                            </div>
+                        </InnerCard>
+                        // <WhiteCard display='-webkit-box' gap='7px' shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
+                        //     <Absolute left top="17px"><Icon name={item.icon} /></Absolute>
+                        //     <div style={{ width: "95%" }}>
+                        //         <TitleText noMargin small >{item.name}</TitleText>
+                        //         <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
+                        //     </div>
+                        // </WhiteCard>
                     ))}
                 </WhiteCard>
             )

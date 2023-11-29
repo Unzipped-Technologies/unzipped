@@ -140,17 +140,20 @@ const MessageContainer = ({
     }, [typing])
 
     useEffect(() => {
-        if (messages[messages?.length - 1]?.isSingle === true) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+        if (messages && messages.length > 0) {
+            if (messages[messages.length - 1]?.isSingle === true) {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+            } else if (messages.length < 11) {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+            } else {
+                const scroll = document.getElementById('topScroll');
+                if (scroll) {
+                    scroll.scrollTop = top;
+                }
+            }
         }
-        else if (messages.length < 11) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
-        }
-        else {
-            const scroll = document.getElementById('topScroll');
-            scroll.scrollTop = top
-        }
-    }, [messages])
+    }, [messages]);
+    
 
     useEffect(() => {
         setMessages(data?.messages?.slice().reverse());

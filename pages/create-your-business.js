@@ -998,7 +998,8 @@ const CreateBusiness = ({
   // isEquity,
   loading,
   createBusiness,
-  token
+  token,
+  access_token
 }) => {
   const screenWidth = window.innerWidth > 680;
 
@@ -1024,7 +1025,7 @@ const CreateBusiness = ({
           budget,
           questionsToAsk,
         },
-        token.access_token
+        access_token
       )
         .then(() => {
           router.push('/dashboard?success=true')
@@ -1160,7 +1161,8 @@ const mapStateToProps = state => {
     budget: state.Business?.businessForm.budget,
     questionsToAsk: state.Business?.businessForm.questionsToAsk,
     stage: state.Business?.businessForm.stage,
-    loading: state.Business?.loading
+    loading: state.Business?.loading,
+    access_token: state.Auth.token
   }
 }
 

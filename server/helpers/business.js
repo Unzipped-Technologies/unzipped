@@ -8,6 +8,9 @@ const tags = require('../../models/tags');
 const user = require('../../models/User');
 const mongoose = require('mongoose');
 const { likeEnum } = require('../enum/likeEnum');
+const Contracts = require('../../models/Contract');
+const Freelancer = require('../../models/Freelancer');
+const TaskHours = require('../../models/TaskHours');
 
 const createBusiness = async (data, id) => {
     // create business
@@ -19,14 +22,14 @@ const createBusiness = async (data, id) => {
     // create department management and assign main user to it
     const dep = await departmentHelper.addDepartmentToBusiness({
         name: 'Management',
-        businessId: newBusiness.id,
+        businessId: newBusiness._id,
         userId: id,
-        tags: await tags.find({ businessId: newBusiness.id })
+        tags: await tags.find({ businessId: newBusiness._id })
     })
     // associate department with business
-    await business.findByIdAndUpdate(newBusiness.id, {
-        departments: [await department.findById(dep.id)],
-        audience: await businessAudience.findById(audience.id)
+    await business.findByIdAndUpdate(newBusiness._id, {
+        // departments: [await department.findById(dep._id)],
+        audience: await businessAudience.findById(audience._id)
     })
     return { msg: 'business created successfully' }
 }
@@ -45,37 +48,205 @@ const deleteBusiness = async (id) => {
 
 const getBusinessById = async (id, sub) => {
     try {
-        await business.updateMany({ userId: sub }, { $set: { isSelected: false } })
-        const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } })
-        const getUsers = await user.find({ _id: { $in: getBusiness.employees.map(e => e.profile) } }).select('email FirstName LastName profileImage freelancers')
-        return { ...getBusiness._doc, employees: getUsers, isSelected: true }
+        await business.updateMany({ userId: sub }, { $set: { isSelected: false } });
+        const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } });
+        const populatedBusiness = await getBusiness
+            .populate({
+                path: 'employees',
+                model: 'contracts',
+                populate: {
+                    path: 'freelancerId',
+                    model: 'freelancers',
+                    populate: {
+                        path: 'userId',
+                        model: 'users',
+                        select: 'email FirstName LastName profileImage freelancers'
+                    }
+                }
+            })
+            .execPopulate();
+        return { getBusiness: populatedBusiness };
     } catch (e) {
         throw Error(`Could not find user, error: ${e}`);
     }
 }
 
 // list lists
-const listBusinesses = async ({ filter, take, skip }) => {
+const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, type }) => {
     try {
-        console.log('filters', filter)
-        if (filter && filter.name) {
-            filter = {
-                ...filter,
-                name: { $regex: filter.name, $options: 'i' }
-            }
+        const existingNameIndex = await business.collection.indexes();
+        const nameIndexExists = existingNameIndex.some((index) => index.name === 'name_1');
+
+        if (!nameIndexExists) {
+            await business.collection.createIndex({ name: 1 }, { name: 'name_1' });
+            await business.collection.createIndex({ projectType: 1 }, { name: 'projectType_1' });
+            await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' });
+            await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' });
         }
-        const query = filter ? business.find({ ...filter }) : business.find();
-        const lists = await query
-            .skip(skip)
-            .limit(take)
-            .populate({
-                path: 'listItems',
-                model: 'listItems'
-            })
-            .exec()
-        return lists;
+
+        const regexQuery = new RegExp(filter, 'i');
+        const regexType = new RegExp(type, 'i');
+        const aggregationPipeline = [
+            {
+                $match: {
+                    name: { $regex: regexQuery },
+                    ...(skill?.length > 0 ? {
+                        requiredSkills: {
+                            $all: skill,
+                        },
+                    } : {}),
+                    ...(type && {
+                        projectType: { $regex: regexType }
+                    }),
+                    ...(minRate && {
+                        budget: { $gte: +minRate },
+                    }),
+                    ...(maxRate && {
+                        budget: { $lte: +maxRate },
+                    })
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users', 
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userProfile'
+                }
+            },
+            {
+                $unwind: '$userProfile' 
+            },
+            {
+                $project: {
+                    name: 1,
+                    budget: 1,
+                    projectType: 1,
+                    requiredSkills: 1,
+                    applicants:1,
+                    description: 1,
+                    profileImage: '$userProfile.profileImage',
+                    country: '$userProfile.AddressLineCountry',
+                    likes: '$userProfile.likeTotal',
+                    createdAt: 1,
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                }
+            },
+            {
+                $facet: {
+                    limitedRecords: [
+                        {
+                            $skip: +skip,
+                        },
+                        {
+                            $limit: +take,
+                        }
+                    ],
+                    totalCount: [
+                        {
+                            $count: 'count',
+                        }
+                    ]
+                }
+            },
+        ];
+        const list = await business.aggregate(aggregationPipeline).exec();
+        return list[0];
+
     } catch (e) {
         throw Error(`Could not find list, error: ${e}`);
+    }
+}
+
+const getBusinessByInvestor = async ({ businessId, id }) => {
+    try {
+        // Find freelancer by user id 
+        const freelancerIds = await Freelancer.findOne({ userId: id }, '_id');
+        const ContractRate = await Contracts.findOne({ freelancerId: freelancerIds._id, businessId: businessId }, 'hourlyRate businessId').populate({ path: "businessId", model: "businesses", select: "name" })
+        const dep = await department.aggregate([
+            {
+                $match: {
+                    businessId: businessId
+                }
+            },
+            {
+                $lookup: {
+                    from: "contracts",
+                    localField: "employees",
+                    foreignField: "_id",
+                    as: "employeeDetails"
+                }
+            },
+            {
+                $match: {
+                    "employeeDetails.freelancerId": freelancerIds._id
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+
+                }
+            }
+        ]);
+        const taskHours = await TaskHours.find({ userId: id, departmentId: dep[0]._id }).populate({ path: 'userId', model: 'users', select: '_id FirstName LastName profileImage' }).populate({
+            path: 'taskId', model: 'tasks', select: '_id taskName storyPoints tag',
+            populate: {
+                path: 'tag',
+                model: 'tags',
+                select: '_id tagName'
+            }
+        }).exec()
+        const tag = await tags.find({ departmentId: dep[0]._id })
+        return { count: taskHours.length, taskHours: taskHours, ContractRate: ContractRate, tags: tag };
+
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
+    }
+}
+
+
+const getBusinessByFounder = async (businessId) => {
+    try {
+        const businessDetails = await business.findById(businessId).populate({ path: "employees", model: "contracts", select: "departmentId hourlyRate", populate: { path: "freelancerId", model: "freelancers", select: 'userId' } }).select('name employees')
+        const taskHoursPromises = businessDetails.employees.map(employee => {
+            return TaskHours.find({ userId: employee.freelancerId.userId, departmentId: employee.departmentId }).populate({ path: 'userId', model: 'users', select: '_id FirstName LastName profileImage' }).populate({
+                path: 'taskId', model: 'tasks', select: '_id taskName storyPoints tag',
+                populate: {
+                    path: 'tag',
+                    model: 'tags',
+                    select: '_id tagName'
+                }
+            }).exec()
+        });
+
+        const results = await Promise.all(taskHoursPromises);
+        return { businessDetails: businessDetails, results: [].concat(...results) }
+    } catch (error) {
+
+    }
+}
+
+const getAllBusinessByInvestor = async (id) => {
+    try {
+        const freelancerIds = await Freelancer.findOne({ userId: id }, '_id');
+        const contracts = await Contracts.find({
+            freelancerId: { $in: freelancerIds._id },
+            isOfferAccepted: true
+        })
+            .select('businessId -_id')
+            .exec();
+        const idsToSearch = contracts.map(item => item.businessId);
+        const businesses = await business.find({
+            _id: { $in: idsToSearch }
+        }).exec();
+        return businesses;
+    } catch (e) {
+        throw Error(`Something went wrong ${e}`);
     }
 }
 
@@ -109,12 +280,10 @@ const addLikeToBusiness = async (data, id) => {
             })
             return { likes: ids.length, msg: 'success' };
         }
-
     } catch (e) {
         throw Error(`Something went wrong ${e}`);
     }
 }
-
 
 module.exports = {
     createBusiness,
@@ -123,4 +292,7 @@ module.exports = {
     updateBusiness,
     deleteBusiness,
     addLikeToBusiness,
+    getAllBusinessByInvestor,
+    getBusinessByInvestor,
+    getBusinessByFounder
 }

@@ -1,14 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import {
-    Title
+import { 
+    Title 
 } from './textStyles'
-import {
-    WhiteCard,
-    DarkText
+import { 
+    WhiteCard, 
+    DarkText 
 } from './dashboard/style'
-import {
-    StarIcon
+import { 
+    StarIcon 
 } from '../icons'
 import Button from '../ui/Button';
 import Buttons from '../ui/Buttons';
@@ -127,7 +127,7 @@ const List = styled.div`
     display: flex;
     flex-flow: column;
     justify-content: left;
-    padding: 20px 5vw;
+    padding: 20px 1vw;
     @media (max-width: 1515px) {
         padding: 0px 4vw;
     }
@@ -146,15 +146,15 @@ const items = [
     },
     {
         text: 'Any business you can possibly think of',
-        icon: <StarIcon /> 
+        icon: <StarIcon />
     },
     {
         text: 'Share the risk of starting a new business',
-        icon: <StarIcon /> 
+        icon: <StarIcon />
     },
     {
         text: `Pay only when you're 100% happy`,
-        icon: <StarIcon /> 
+        icon: <StarIcon />
     },
 ]
 
@@ -181,8 +181,8 @@ const HeroUnzipped = () => {
                     ))}
                 </List>
                 <Buttons flush mobileCenter mobileAbsolute>
+                    <Button extraTall extraWide noBorderWorlds largest freelance marketplace noBorder>HIRE A FREELANCER</Button>
                     <Button extraTall extraWide type="outlineTransparent">EARN MONEY FREELANCING</Button>
-                    <Button extraTall extraWide noBorder>HIRE A FREELANCER</Button>
                 </Buttons>
             </Content>
         </Container>

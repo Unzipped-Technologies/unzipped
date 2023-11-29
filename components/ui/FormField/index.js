@@ -94,6 +94,7 @@ const FormField = ({
   zIndexUnset,
   className,
   fieldType,
+  inputType,
   required,
   inline,
   error,
@@ -224,6 +225,7 @@ const FormField = ({
         mobile={mobile}
         onBlur={handleBlur}
         error={currentError}
+        type={fieldType === 'input' && inputType}
         name={name}
         id={name}
         onKeyDown={handleEnter}
@@ -322,9 +324,9 @@ FormField.defaultProps = {
   currency: false,
   bottom: '0px',
   modalSelect: false,
-  onChange: () => {},
+  onChange: () => { },
   maxWidth: 'none',
-  onFocus: () => {},
+  onFocus: () => { }
 }
 
 export default FormField
