@@ -12,7 +12,7 @@ import styled from 'styled-components'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 import Panel from '../../components/unzipped/dashboard/UserSetupPanelMobile'
 import Notification from '../../components/unzipped/dashboard/MobileNotification'
-import Footer from '../../components/unzipped/footer'
+import Footer from '../../components/unzipped/Footer'
 
 const Notifications = styled.div`
     padding: 0px 15px;
