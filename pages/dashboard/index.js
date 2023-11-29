@@ -12,6 +12,7 @@ import styled from 'styled-components'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 import Panel from '../../components/unzipped/dashboard/UserSetupPanelMobile'
 import Notification from '../../components/unzipped/dashboard/MobileNotification'
+import Footer from '../../components/unzipped/footer'
 
 const Notifications = styled.div`
     padding: 0px 15px;
@@ -96,10 +97,12 @@ const Dashboard = ({ resetRegisterForm, token }) => {
                         ))}
                     </Notifications>
                 </div>
-                <MobileDisplayBox>
+                {/* <MobileDisplayBox>
                     <MobileFreelancerFooter defaultSelected="Dashboard" />
-                </MobileDisplayBox>
+                </MobileDisplayBox> */}
             </MobileBox>
+            <Footer />
+
         </React.Fragment>
     )
 }
