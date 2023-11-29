@@ -21,8 +21,10 @@ const types = {
 
 const FormFieldContainer = styled.div`
   vertical-align: top;
-  width: 100%;
-  z-index: ${({ zIndex }) => (zIndex ? '1000' : '10')};
+  width: ${({width}) => width ? width : '100%'};
+  justify-self: ${({justifySelf}) => justifySelf ? justifySelf : 'auto'};
+  height: 100%;
+  z-index: ${({ zIndex, zIndexUnset }) => (zIndexUnset ? '0' : zIndex ? '1000' : '10')};
   color: ${props => props.theme.textSecondary};
   font-weight: 400;
   font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
@@ -32,10 +34,13 @@ const FormFieldContainer = styled.div`
   max-width: ${props => props.maxWidth};
   margin: ${({ margin }) => (margin ? margin : 'unset')};
   padding-bottom: ${({ $bottom }) => $bottom};
+  borderradius: ${props => (props.borderRadius ? props.borderRadius : '0px')};
   position: relative;
   ::placeholder {
     font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
+    color: ${props => props.theme.textSecondary};
   }
+
   & > label:first-of-type {
     // Override menlo styling here, line 659
     // src/pages/Dashboard/index.scss
@@ -85,6 +90,8 @@ const Scroll = styled(SimpleBar)`
  * Form Field Component. Handles the presentation of an entire form field, including label and the control. Holds error state of the field.
  */
 const FormField = ({
+  mobile,
+  zIndexUnset,
   className,
   fieldType,
   inputType,
@@ -107,16 +114,20 @@ const FormField = ({
   noMargin,
   dropdownList = [],
   margin,
+  display,
   onUpdate,
   clickType,
   fontSize = '',
   handleEnterKey,
+  borderRadius,
+  height,
   ...rest
 }) => {
   const Control = types[fieldType]
   const [currentError, setCurrentError] = useState(error)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isClicked, setIsClicked] = useState(!!rest.value)
+  
   const wrapperRef = useRef(null)
   useEffect(() => {
     function handleClickOutside(event) {
@@ -169,6 +180,20 @@ const FormField = ({
     return onFocus && onFocus(e)
   }
 
+  const handleHeight = () => {
+    if (height) {
+      return height
+    }else{
+      return 'auto'
+    }
+  }
+
+  const handleEnter = e => {
+    if(handleEnterKey){
+      handleEnterKey(e)
+    }
+  }
+
   useEffect(() => {
     setCurrentError(error)
   }, [error])
@@ -181,14 +206,9 @@ const FormField = ({
     }
   }, [dropdownList])
 
-  const handleEnter = (e) => {
-    if (handleEnterKey) {
-      handleEnterKey(e);
-    }
-  }
-
   return (
     <FormFieldContainer
+      zIndexUnset={zIndexUnset}
       zIndex={dropdownOpen}
       className={className}
       $inline={inline}
@@ -202,6 +222,7 @@ const FormField = ({
         </FormLabel>
       )}
       <Control
+        mobile={mobile}
         onBlur={handleBlur}
         error={currentError}
         type={fieldType === 'input' && inputType}
@@ -214,6 +235,8 @@ const FormField = ({
         currency={currency}
         onChange={fieldType === 'input' || fieldType === 'select' ? onInputChange : onChange}
         onFocus={handleFocus}
+        borderRadius={borderRadius}
+        height={handleHeight}
         {...rest}
       />
       {dropdownList.length > 0 && dropdownOpen && (

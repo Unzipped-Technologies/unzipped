@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import theme from '../theme';
 import Select, {createFilter} from 'react-select';
@@ -39,7 +39,7 @@ const CheckboxStyled = styled(Checkbox)`
         align-items: center;
         font-size: ${props => props.theme.fontSizeS};
         height: auto;
-        min-height: 31px;
+        ${'' /* min-height: 31px; */}
         display: flex;
         flex-flow: row nowrap;
         justify-content: space-between;
@@ -66,6 +66,7 @@ const CheckboxStyled = styled(Checkbox)`
 `;
 
 const SelectInput = ({
+    mobile,
     placeholder,
     name,
     fontSize,
@@ -85,10 +86,14 @@ const SelectInput = ({
     input,
     viewAll,
     width,
+    height,
     widthInModal,
     disabled,
+    borderRadius,
     dateTime = false,
 }) => {
+    const [isFocused, setIsFocused] = useState(false);
+
     let border = theme.border;
     if (error) {
         border = theme.error;
@@ -117,29 +122,21 @@ const SelectInput = ({
         container: defaultStyles => ({
             ...defaultStyles,
             pointerEvents: 'auto',
-            border: `2px solid ${border}`,
+            border: `2px solid ${isFocused ? 'black' : border}`,
             borderRadius: '4px',
-            height: input ? '28px' : '100%',
+            height: height? height : input ? '28px' : '100%',
             width: width ? width : input ? '67px' : '360px',
             minWidth: `${getMinWidth(dateTime, small)}`,
-            maxWidth: `${small ? 225 : 800}px`,
+            maxWidth: `650px`,
             fontFamily: 'arial',
-            fontSize: `${fontSize}`,
-            '@media (max-width: 495px)': {
-                ...styles['@media (max-width: 495px)'],
-                width: `100%`,
-            },
-            [`@media (max-width: ${theme.mobileWidth}px)`]: {
-                maxWidth: 'unset',
-            },
+            fontSize: `${mobile ? '16px' : fontSize}`,
         }),
         control: defaultStyles => ({
             ...defaultStyles,
             border: 0,
             boxShadow: 'none',
             margin: 0,
-            padding: '0 0 0 10px',
-            borderRadius: '2px',
+            borderRadius: borderRadius? borderRadius :'2px',
             height: `${dateTime ? '100%' : small ? '40px' : '56px'}`,
             cursor: `${disabled ? 'not-allowed' : 'default'}`,
             svg: {
@@ -148,10 +145,10 @@ const SelectInput = ({
         }),
         option: (defaultStyles, state) => ({
             ...defaultStyles,
-            fontFamily: 'arial',
-            backgroundColor: state.isFocused ? theme.primary : state.isSelected ? theme.primary : 'white',
-            color: state.isFocused ? 'white' : state.isSelected ? 'white' : theme.textSecondary,
-            paddingLeft: '15px',
+            fontFamily: 'Roboto',
+            padding: '0px 22px',
+            backgroundColor: state.isFocused ? theme.backgorund3 : state.isSelected ? theme.backgorund3 : theme.text3,
+            color: state.isFocused ? theme.text3 : state.isSelected ? theme.text3 : theme.text2,
         }),
         menu: (defaultStyles, state) => {
             const isTop = state.placement === 'top';
@@ -161,38 +158,16 @@ const SelectInput = ({
                 ...defaultStyles,
                 width: width ? (width === '100%' ? `calc(${width} + 4px)` : width) : '360px',
                 margin: '2px 0 0 -2px',
-                border: `2px solid ${border}`,
-                borderTop: isBottom ? 0 : 'unset',
-                borderTopLeftRadius: isBottom ? 0 : 'unset',
-                borderTopRightRadius: isBottom ? 0 : 'unset',
-                borderBottomLeftRadius: isTop ? 0 : 'unset',
-                borderBottomRightRadius: isTop ? 0 : 'unset',
-                boxShadow: 'none',
-                '@media (min-width: 1000px)': {
-                    maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                },
-                '@media (max-width: 789px)': {
-                    maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-                },
-                '@media (max-width: 495px)': {
-                    width: '101.4%',
-                },
+                fontWeight: '600',
+                borderRadius: borderRadius? borderRadius : '4px',
             };
         },
         menuList: (defaultStyles, state) => ({
             ...defaultStyles,
             padding: 0,
-            boxShadow: 'none',
-            '@media (min-width: 1000px)': {
-                maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-            },
-            '@media (max-width: 789px)': {
-                maxWidth: state.selectProps.widthInModal ? '360px' : `225px`,
-            },
-
-            '@media (max-width: 495px)': {
-                width: '101.4%',
-            },
+            width: width ? width: 'auto',
+            borderRadius: borderRadius? borderRadius : '0',
+            boxShadow: '2px 2px 0px 0px rgba(0, 0, 0, 0.1)',
         }),
         dropdownIndicator: defaultStyles => ({
             ...defaultStyles,
@@ -203,7 +178,7 @@ const SelectInput = ({
         }),
         placeholder: defaultStyles => ({
             ...defaultStyles,
-            color: theme.tint3,
+            color: '#757575'
         }),
     };
 
@@ -218,7 +193,6 @@ const SelectInput = ({
     );
 
     const IndicatorSeparator = () => null;
-
     return (
         <>
             <Select
@@ -229,18 +203,20 @@ const SelectInput = ({
                 value={value}
                 name={name}
                 input={input}
-                onFocus={onFocus}
-                onBlur={() => onBlur(value)}
+                onFocus={()=> setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}                
                 menuIsOpen={menuIsOpen}
                 menuPlacement={$modalSelect ? 'bottom' : 'auto'}
                 options={options}
                 onChange={onChange}
+                borderRadius={borderRadius}
                 isSearchable={isSearchable}
                 filterOption={createFilter(filterConfig)}
                 widthInModal={widthInModal}
                 modalSelect={$modalSelect}
                 isDisabled={disabled}
                 components={isMulti ? {Option, IndicatorSeparator} : {IndicatorSeparator}}
+                height={height}
             />
             {error && <FormError>{error}</FormError>}
         </>
@@ -285,6 +261,10 @@ SelectInput.propTypes = {
     disabled: PropTypes.bool,
     /** Input is for Date Time Component */
     dateTime: PropTypes.bool,
+    /** Height of component */
+    height: PropTypes.string,
+    /** Border radius of component */
+    borderRadius: PropTypes.string,
 };
 
 SelectInput.defaultProps = {
@@ -305,6 +285,8 @@ SelectInput.defaultProps = {
     onFocus: () => {},
     width: '',
     disabled: false,
+    height: '',
+    borderRadius: '4px',
 };
 
 export default SelectInput;

@@ -55,8 +55,10 @@ const theme = {
   // colors
   background: '#37DEC5',
   background2: '#8EDE64',
+  backgorund3: 'rgba(5, 0, 255, 0.58)',
   text: '#FDFDFD',
   text2: '#333',
+  text3: '#fff',
   authInput: '#AEC0E2'
 }
 

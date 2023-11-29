@@ -6,14 +6,14 @@ import Checkbox from '@material-ui/core/Checkbox';
  * OptionTile is a modified radio button to allow the user to select one out of multiple options.
  * This component should be used within OptionTileGroup.
  */
-const OptionTile = ({checked, iconName, label, onChange, subLabel, value, margin, type, width}) => {
+const OptionTile = ({checked, iconName, label, onChange, subLabel, value, margin, type, width, mobile}) => {
     return (
         <Tile selected={checked} margin={margin} width={width}>
-            <OptionLabel row small={type==="check"}>
+            <OptionLabel row small={type==="check" } mobile={mobile}>
                 {/* <StyledIcon name={iconName} width="32px" height="32px" /> */}
                 {type === 'radio' && <RadioInput value={value} onChange={onChange} checked={checked} />}
                 {type === 'check' && <Checkbox value={value} onChange={onChange} checked={checked?.find(i => i === value)} />}
-                <TextSpan>{label}</TextSpan>
+                <TextSpan checked={checked}>{label}</TextSpan>
                 {subLabel && <SecondaryTextSpan>{subLabel}</SecondaryTextSpan>}
             </OptionLabel>
         </Tile>

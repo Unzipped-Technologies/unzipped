@@ -35,10 +35,10 @@ const TitleText = styled.div`
     font-style: normal;
     font-weight: ${({ light, lighter }) => light ? '400' : lighter ? '300' : '600'};
     cursor: ${({ clickable }) => clickable ? 'pointer' : 'default'};
-    font-size: ${({ smallest, small, title, size }) => small ? '15px' : title ? '36px' : size ? size : '16px'};
+    font-size: ${({ titleFontSize, smallest, small, title, size, mobile }) => titleFontSize? titleFontSize :mobile ? '22px' :small ? '15px' : title ? '36px' : size ? size : '16px'};
     line-height: ${({ lineHeight }) => lineHeight ? lineHeight : '24px'};
     letter-spacing: 0.15008px;
-    margin-bottom: ${({ noMargin, half, large }) => noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
+    margin-bottom: ${({ mobile, noMargin, half, large }) => mobile? '8px' : noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
     margin-left: ${({ paddingLeft }) => paddingLeft ? '20px' : '0px'};
     text-align: ${({ center }) => center ? 'center' : 'unset'};
     width: ${({ width }) => width ? width : '96%'};
@@ -55,6 +55,15 @@ const TitleText = styled.div`
     }
 `;
 
+const HeadingText = styled.div`
+    display: ${({ doubleScreenBottom }) => doubleScreenBottom ? 'none' : 'block'};
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    color: #000;
+`
+
 const DarkText = styled.div`
     font-family: 'Roboto';
     font-style: normal;
@@ -65,7 +74,7 @@ const DarkText = styled.div`
     line-height: ${({ lineHeight, fontSize }) => lineHeight ? lineHeight : fontSize ? fontSize : '24px'};
     letter-spacing: 0.15008px;
     margin-top: ${({ topMargin }) => topMargin ? topMargin : 'unset'};
-    margin-bottom: ${({ noMargin, marginLarge, half }) => noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
+    margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) => bottomMargin? '22px' : noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
     margin-left: ${({ paddingLeft }) => paddingLeft ? '20px' : '0px'};
     margin-right: ${({ marginRight }) => marginRight ? marginRight : '0px'};
     padding-top: ${({ topPadding }) => topPadding ? '10px' : '0px'};
@@ -99,21 +108,22 @@ const DarkText = styled.div`
 
 const Absolute = styled.div`
     position: absolute;
-    display: flex;
+    display: ${({ doubleScreenTop }) => doubleScreenTop ? 'none' : 'flex'};
     flex-flow: row;
     align-items: center;
     text-overflow: ${({ textOverflow }) => textOverflow ? textOverflow : 'unset'};
     width: ${({ width }) => width ? width : 'unset'};
     top: ${({ top }) => top ? top : 'unset'};
     bottom: ${({ bottom }) => bottom ? bottom : 'unset'};
-    right: ${({ left, right }) => left ? 'unset' : right ? right : '10px'};
+    right: ${({ left, right }) => left ? 'unset' : right ? right : '15px'};
     left: ${({ left, wideLeft, smallLeft }) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
     z-index: ${({ zIndex }) => zIndex ? zIndex : 'inherit'};
+    gap: ${({ gap, mobile }) => mobile && gap ? '20px' : gap ? gap : 'unset'};
     @media(max-width: ${({ hide }) => hide ? hide + 'px' : '0px'}) {
         display: none;
     }
     @media (max-width: 681px) {
-        position: unset;
+        position: ${({ bottom }) => bottom ? 'absolute' : 'unset'};
         justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
     }
 
@@ -208,8 +218,7 @@ const Grid = styled.div`
     display: grid;
     justify-items: ${({ left }) => left ? 'left' : 'center'};
     align-items: center;
-    width: 100%;
-    margin: ${({ margin }) => margin ? margin : '75px 0px'};
+    margin: ${({ margin }) => margin ? margin : '30px 0px 0px'};
 `;
 
 const Grid2 = styled.div`
@@ -310,6 +319,7 @@ export const MinWidth = styled.span`
 `;
 
 module.exports = {
+    HeadingText,
     BlackCard,
     MinWidth,
     WhiteText,

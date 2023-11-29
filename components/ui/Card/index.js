@@ -3,18 +3,19 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 const CardContainer = styled.div`
-    background: #fff;
-    border: 2px solid ${props => props.noBorder ? 'transparent' : props.theme.border};
-    box-sizing: border-box;
-    border-radius: ${({borderRadius}) => borderRadius ? borderRadius : '4px'};
-    padding: 30px 50px;
-    font-family: arial;
-    width: 100%;
-    height: 100%;
-    margin: ${props => (props.margin ? '20px 0 0 0' : '10px 0 0 0')};
-    display: ${props => (props.inline ? 'inline-block' : 'block')};
-    position: relative;
-`;
+  background: #fff;
+  border: 2px solid ${props => (props.noBorder ? 'transparent' : props.theme.border)};
+  box-sizing: border-box;
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '4px')};
+  padding: ${({ doubleScreenTop, doubleScreenBottom, mobile }) => 
+    doubleScreenTop ? '115px 10px 0px' : doubleScreenBottom ? '0px 10px 115px' : mobile ? '115px 10px' : '30px 50px'};
+  font-family: arial;
+  width: 100%;
+  height: 100%;
+  margin: ${props => (props.margin ? '20px 0 0 0' : '0')};
+  display: ${props => (props.inline ? 'inline-block' : 'block')};
+  position: relative;
+`
 
 const ActionContainer = styled.div`
     float: right;
@@ -32,13 +33,35 @@ const CardTitle = styled.h2`
 /**
  * Base Card Component.
  */
-const Card = ({children, inline, action, className, testId, title, margin, noBorder, borderRadius}) => (
-    <CardContainer noBorder inline={inline} borderRadius={borderRadius} margin={margin} className={className} data-testid={testId}>
-        {title && <CardTitle>{title}</CardTitle>}
-        {action && <ActionContainer>{action}</ActionContainer>}
-        {children}
-    </CardContainer>
-);
+const Card = ({
+  doubleScreenTop,
+  doubleScreenBottom,
+  children,
+  inline,
+  action,
+  className,
+  testId,
+  title,
+  margin,
+  noBorder,
+  borderRadius,
+  mobile
+}) => (
+  <CardContainer
+    mobile={mobile}
+    doubleScreenTop={doubleScreenTop}
+    doubleScreenBottom={doubleScreenBottom}
+    noBorder
+    inline={inline}
+    borderRadius={borderRadius}
+    margin={margin}
+    className={className}
+    data-testid={testId}>
+    {title && <CardTitle>{title}</CardTitle>}
+    {action && <ActionContainer>{action}</ActionContainer>}
+    {children}
+  </CardContainer>
+)
 
 Card.propTypes = {
     /** Children the component contains */

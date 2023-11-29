@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import Nav from '../components/unzipped/header';
 import OptionTileGroup from '../components/ui/OptionTileGroup'
 import CreateABusiness from '../components/unzipped/CreateABusiness'
 import Button from '../components/ui/Button'
@@ -13,6 +14,10 @@ import { updateBusinessForm, createBusiness } from '../redux/actions'
 import router from 'next/router'
 import { parseCookies } from '../services/cookieHelper'
 import { nextPublicGithubClientId } from '../config/keys'
+import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
+import ClearSharpIcon from '@material-ui/icons/ClearSharp';
+import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter';
+
 
 const Container = styled.div`
   display: flex;
@@ -21,12 +26,43 @@ const Container = styled.div`
   background: #d9d9d9;
   height: 100vh;
   width: 100vw;
+  @media (max-width: 680px) {
+    display: block;
+    height: auto;
+  }
 `
 
-const CardContainer = styled.div`
-  display: flex;
-  width: 952px;
-  height: 611px;
+const ContentContainer = styled('div')`
+  max-height: 150px;
+  padding: ${({padding})=>padding?padding:'10px 20px'};
+  width: ${({width})=>width?width:'90%'};
+  margin-bottom: ${({marginBottom})=>marginBottom?marginBottom:'0px'};
+  overflow-y: scroll;
+  font-family: 'Roboto';
+  line-height: 25px;
+  font-weight: 500;
+  font-size: 16px;
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background: #cccccc;
+  }
+`
+
+const ContainedSpan = styled.span`
+    border-radius: 4px;
+    background-color: #D9D9D9;
+    padding: 2px 10px 2px 2px;
+    margin-right: 10px;
+    text-wrap: nowrap;
 `
 
 function handleGithub() {
@@ -35,820 +71,896 @@ function handleGithub() {
   )
 }
 
-const GetCard = ({
+const tileOptions = () => {
+  return [
+    {
+      label: `SHORT-TERM PROJECT`,
+      iconName: 'profileNew',
+      value: 'true'
+    },
+    {
+      label: `LONG-TERM COLLABORATION`,
+      iconName: 'desktop',
+      value: 'false'
+    }
+  ]
+}
+
+const budgetOptions = () => {
+  return [
+    { label: 'Basic ($7 - $14)', value: 'Basic ($7 - $14)' },
+    { label: 'Standard ($15 - $25)', value: 'Standard ($15 - $25)' },
+    { label: 'Skilled ($25 - $50)', value: 'Skilled ($25 - $50)' },
+    { label: 'Expert ($50 - $70)', value: 'Expert ($50 - $70)' },
+    { label: 'More than a $70 per hour', value: 'More than a $70 per hour' },
+    { label: 'Not Sure (See what my options are)', value: 'Not Sure (See what my options are)' }
+  ]
+}
+
+const GetCardDesktop = ({
   stage,
-  isFirstBusiness,
-  incomePlatform,
-  isExistingAudience,
-  socialMediaPlatforms = [],
-  numberOfSocialFollowing,
-  businessNiche,
+  isShortTermBusiness,
   name,
-  businessAddressLineOne,
-  businessAddressLineTwo,
-  businessCountry,
-  businessCity,
-  isEquity,
-  typesOfHires,
-  equity,
+  challenge,
+  role,
+  objectives,
+  teamDynamics,
+  requiredSkills,
+  goals,
+  companyBackground,
   budget,
-  businessZip,
+  questionsToAsk,
   submitForm,
   updateForm,
   goBack,
+  inputValue,
+  isGithubConnected,
+  handleInput,
+  handleSkip,
+  handleCancelIcon,
+  handleEnterKey,
   loading
 }) => {
-  const isGithubConnected = !!router?.query?.['github-connect'] || false
+
   switch (stage) {
     case 1:
       return (
         <CreateABusiness
-          title={`Let’s get started. Which of these best describes this business?`}
+          title={`Are you looking to hire for a long term hire?`}
           sub={`We’ll help you get started based on your business needs.`}
           onUpdate={updateForm}
           onBack={goBack}
-          disabled={isFirstBusiness === ''}
+          disabled={isShortTermBusiness === ''}
           onSubmit={submitForm}
-          progress={stage * 7.15}
+          progress={stage}
           stage={stage}>
           <Grid>
             <OptionTileGroup
-              selectedValue={isFirstBusiness}
+              availableWidth
+              selectedValue={isShortTermBusiness}
               type="radio"
-              tileList={[
-                {
-                  label: `I'M JUST STARTING`,
-                  iconName: 'profileNew',
-                  value: 'true'
-                },
-                {
-                  label: `I already have a business`,
-                  iconName: 'desktop',
-                  value: 'false'
-                }
-              ]}
-              onChange={e => updateForm({ isFirstBusiness: e.target.value })}
+              tileList={tileOptions()}
+              onChange={e => updateForm({ isShortTermBusiness: e.target.value })}
               stage={stage}
             />
           </Grid>
         </CreateABusiness>
       )
+
     case 2:
       return (
         <CreateABusiness
-          title="Let’s get started. Which of these best describes this business?"
-          sub="We’ll help you get started based on your business needs."
-          onBack={goBack}
-          onSubmit={submitForm}
-          disabled={incomePlatform.length === 1}
-          noMargin
-          progress={stage * 7.15}
-          stage={stage}>
-          <Grid margin="10px 0px">
-            <OptionTileGroup
-              selectedValue={[...incomePlatform]}
-              type="check"
-              tileList={[
-                {
-                  label: `An online store`,
-                  sub: `Build a fully customizable website`,
-                  iconName: 'profileNew',
-                  value: 'An online store'
-                },
-                {
-                  label: `An existing website or blog`,
-                  sub: `Add a Buy Button to your website`,
-                  iconName: 'desktop',
-                  value: `An existing website or blog`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  incomePlatform: incomePlatform.find(i => i === e.target.value)
-                    ? incomePlatform.filter(i => i !== e.target.value)
-                    : [...incomePlatform, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={[...incomePlatform]}
-              type="check"
-              tileList={[
-                {
-                  label: `Social Media`,
-                  sub: `Reach customers through Facebook, TikTok and more`,
-                  iconName: 'profileNew',
-                  value: 'Social Media'
-                },
-                {
-                  label: `Online marketplaces`,
-                  sub: `List products on google, Amazon, and more`,
-                  iconName: 'desktop',
-                  value: `Online marketplaces`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e => {
-                updateForm({
-                  incomePlatform: incomePlatform.find(i => i === e.target.value)
-                    ? incomePlatform.filter(i => i !== e.target.value)
-                    : [...incomePlatform, e.target.value]
-                })
-              }}
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={incomePlatform}
-              type="check"
-              tileList={[
-                {
-                  label: `In person`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'In person'
-                },
-                {
-                  label: `I’m not sure`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `I’m not sure`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  incomePlatform: incomePlatform.find(i => i === e.target.value)
-                    ? incomePlatform.filter(i => i !== e.target.value)
-                    : [...incomePlatform, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-          </Grid>
-        </CreateABusiness>
-      )
-    case 3:
-      return (
-        <CreateABusiness
-          title="Do you have an online audience or following?"
-          sub="If you’re engaging with an audience on online platforms like YouTube, Instagram, Twitter, Substack, Patreon,
-                    or elsewhere, we can set you up to sell to them."
+          title="Project Name"
+          sub="Describe your project in as few words as possible"
+          disabled={name?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
-          disabled={isExistingAudience === ''}
           onSubmit={submitForm}
-          progress={stage * 7.15}
-          stage={isExistingAudience !== 'true' ? stage + 2 : stage}>
+          progress={stage}
+          stage={stage}>
           <Grid>
-            <OptionTileGroup
-              selectedValue={isExistingAudience}
-              type="radio"
-              tileList={[
-                {
-                  label: `YES`,
-                  iconName: 'profileNew',
-                  value: 'true'
-                },
-                {
-                  label: `NO`,
-                  iconName: 'desktop',
-                  value: 'false'
-                }
-              ]}
-              onChange={e => updateForm({ isExistingAudience: e.target.value })}
-              stage={stage}
-            />
+            <FormField
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              placeholder="Describe your project here..."
+              borderRadius="10px"
+              onChange={e => updateForm({ name: e.target.value })}
+              value={name}/>
           </Grid>
         </CreateABusiness>
       )
+
+    case 3:
+      if (isShortTermBusiness === 'true') {
+        return (
+          <CreateABusiness
+            title="Describe the project"
+            sub="What's the challenge you need to conquer? (in a sentence or two)"
+            disabled={challenge?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid>
+              <FormField
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                placeholder="Enter Project Summary..."
+                borderRadius="10px"
+                onChange={e => updateForm({ challenge: e.target.value })}
+                value={challenge}/>
+            </Grid>
+          </CreateABusiness>
+        )
+      } else {
+        return (
+          <CreateABusiness
+            title="Role Description"
+            sub="Envision your ideal hire. What role will they play in your ongoing projects?"
+            disabled={role?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid>
+              <FormField
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ role: e.target.value })}
+                value={role}/>
+            </Grid>
+          </CreateABusiness>
+        )
+      }
+
     case 4:
-      return (
-        <CreateABusiness
-          title="Where is your existing audience?"
-          sub="Choose all online platforms that apply."
-          onUpdate={updateForm}
-          onBack={() => goBack()}
-          onSubmit={submitForm}
-          disabled={socialMediaPlatforms.length <= 1}
-          progress={stage * 7.15}
-          stage={stage}>
-          <Grid margin="10px 0px">
-            <OptionTileGroup
-              selectedValue={socialMediaPlatforms}
-              type="check"
-              tileList={[
-                {
-                  label: `FACEBOOK`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'FACEBOOK'
-                },
-                {
-                  label: `YOUTUBE`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `YOUTUBE`
-                },
-                {
-                  label: `INSTAGRAM`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `INSTAGRAM`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  socialMediaPlatforms: socialMediaPlatforms.find(i => i === e.target.value)
-                    ? socialMediaPlatforms.filter(i => i !== e.target.value)
-                    : [...socialMediaPlatforms, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={socialMediaPlatforms}
-              type="check"
-              tileList={[
-                {
-                  label: `TIKTOK`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'TIKTOK'
-                },
-                {
-                  label: `SNAPCHAT`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `SNAPCHAT`
-                },
-                {
-                  label: `PINTEREST`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `PINTEREST`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  socialMediaPlatforms: socialMediaPlatforms.find(i => i === e.target.value)
-                    ? socialMediaPlatforms.filter(i => i !== e.target.value)
-                    : [...socialMediaPlatforms, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={socialMediaPlatforms}
-              type="check"
-              tileList={[
-                {
-                  label: `TWITTER`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'TWITTER'
-                },
-                {
-                  label: `LINKEDIN`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `LINKEDIN`
-                },
-                {
-                  label: `EMAIL LIST`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `EMAIL LIST`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  socialMediaPlatforms: socialMediaPlatforms.find(i => i === e.target.value)
-                    ? socialMediaPlatforms.filter(i => i !== e.target.value)
-                    : [...socialMediaPlatforms, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-          </Grid>
-        </CreateABusiness>
-      )
+      if (isShortTermBusiness === 'true') {
+        return (
+          <CreateABusiness
+            title="Give us the map. "
+            sub="What are the specific tasks and objectives for this project"
+            disabled={objectives?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid>
+              <FormField
+                justifySelf="start"
+                width="90%"
+                fieldType="input"
+                fontSize="20px"
+                placeholder="Type a task and hit enter..."
+                borderRadius="10px"
+                handleEnterKey={(e)=>inputValue !== '' && handleEnterKey('objectives',objectives,e)}
+                onChange={e => handleInput(e.target.value)}
+                value={inputValue}
+              />
+              <Button
+                disabled={inputValue === ''}
+                position="absolute"
+                right="50px"
+                type="purple"
+                buttonHeight="42px"
+                zIndex={10}
+                onClick={() => {
+                  updateForm({ objectives: [...objectives, inputValue] })
+                  handleInput('')
+                }}>
+                Add
+              </Button>
+            </Grid>
+            <ContentContainer>
+              {objectives.map(obj => (
+                <div className="d-flex mb-3">
+                  <div>
+                    <ClearSharpIcon
+                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                      onClick={() => handleCancelIcon('objectives', objectives, obj)}
+                    />
+                  </div>
+                  <span>{obj}</span>
+                </div>
+              ))}
+            </ContentContainer>
+          </CreateABusiness>
+        )
+      } else {
+        return (
+          <CreateABusiness
+            title="Team Dynamics"
+            sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
+            disabled={teamDynamics?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Button
+              type="transparent"
+              noUppercase
+              noPadding
+              position="absolute"
+              right="50px"
+              top="170px"
+              onClick={handleSkip}>
+              Skip
+              <SkipNextOutlinedIcon />
+            </Button>
+            <Grid>
+              <FormField
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ teamDynamics: e.target.value })}
+                value={teamDynamics}/>
+            </Grid>
+          </CreateABusiness>
+        )
+      }
+
     case 5:
       return (
         <CreateABusiness
-          title="Let’s get started. Which of these best describes your business?"
-          sub="We’ll help you get started based on your business needs."
+          title="Required Expertise"
+          sub="What skills should they have mastered? List the abilities your project or role demands."
+          disabled={requiredSkills?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
-          disabled={numberOfSocialFollowing.length <= 1}
           onSubmit={submitForm}
-          progress={stage * 7.15}
+          progress={stage}
           stage={stage}>
-          <Grid margin="10px 0px">
-            <OptionTileGroup
-              selectedValue={numberOfSocialFollowing}
-              type="radio"
-              margin="5px"
-              tileList={[
-                {
-                  label: `1-1,000`,
-                  iconName: 'profileNew',
-                  value: '1-1,000'
-                },
-                {
-                  label: `1,001-10,000`,
-                  iconName: 'desktop',
-                  value: '1,001-10,000'
-                }
-              ]}
-              onChange={e => updateForm({ numberOfSocialFollowing: e.target.value })}
-              stage={stage}
+          {!!requiredSkills?.length && <ContentContainer padding='20px 5px 20px 10px '>
+            {requiredSkills?.map(skill => (
+              <ContainedSpan>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                    onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
+                  />{skill}
+              </ContainedSpan>
+            ))}
+          </ContentContainer>}
+          <Grid margin={requiredSkills?.length && '0'}>
+            <FormField
+              justifySelf="start"
+              width="90%"
+              fieldType="input"
+              fontSize="20px"
+              placeholder="Type a skill and hit enter..."
+              borderRadius="10px"
+              handleEnterKey={(e)=>inputValue !== '' && requiredSkills.length<15 && handleEnterKey('requiredSkills',requiredSkills,e)}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
             />
-            <OptionTileGroup
-              selectedValue={numberOfSocialFollowing}
-              type="radio"
-              margin="5px"
-              tileList={[
-                {
-                  label: `10,001-100,000`,
-                  iconName: 'profileNew',
-                  value: '10,001-100,000'
-                },
-                {
-                  label: `100,001-1 MILLION`,
-                  iconName: 'desktop',
-                  value: '100,001-1 MILLION'
-                }
-              ]}
-              onChange={e => updateForm({ numberOfSocialFollowing: e.target.value })}
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={numberOfSocialFollowing}
-              type="radio"
-              margin="5px"
-              tileList={[
-                {
-                  label: `1 MILLION OR MORE`,
-                  iconName: 'profileNew',
-                  value: '1 MILLION OR MORE'
-                },
-                {
-                  label: `I'M NOT SURE`,
-                  iconName: 'desktop',
-                  value: `I'M NOT SURE`
-                }
-              ]}
-              onChange={e => updateForm({ numberOfSocialFollowing: e.target.value })}
-              stage={stage}
-            />
+            <Button
+              position="absolute"
+              right="50px"
+              type="purple"
+              buttonHeight="42px"
+              disabled={inputValue === '' || requiredSkills.length>=15}
+              zIndex={10}
+              onClick={() => {
+                updateForm({ requiredSkills: [...requiredSkills, inputValue] })
+                handleInput('')
+              }}>
+              Add
+            </Button>
           </Grid>
         </CreateABusiness>
       )
     case 6:
       return (
         <CreateABusiness
-          title="Which of the following best describes your content niche or field?"
-          sub="Choose all that apply, and we’ll use this information to identify features to tailor your experience to your niche."
+          title="Project Goals or Role Expectations"
+          sub="Chart out the milestones. What achievements should be celebrated along the way?"
+          disabled={goals?.length === 0}
           onUpdate={updateForm}
-          onBack={() => goBack(isExistingAudience !== 'true' ? stage - 2 : stage)}
+          onBack={goBack}
           onSubmit={submitForm}
-          progress={stage * 7.15}
-          disabled={businessNiche.length <= 1}
+          progress={stage}
           stage={stage}>
-          <Grid margin="10px 0px">
-            <OptionTileGroup
-              selectedValue={businessNiche}
-              type="radio"
-              tileList={[
-                {
-                  label: `BEAUTY`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'BEAUTY'
-                },
-                {
-                  label: `FASHION`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `FASHION`
-                },
-                {
-                  label: `HOME`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `HOME`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e => updateForm({ businessNiche: e.target.value })}
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={businessNiche}
-              type="radio"
-              tileList={[
-                {
-                  label: `ANIMALS & PETS`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'ANIMALS & PETS'
-                },
-                {
-                  label: `ARTS & ENTETAINMENT`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `ARTS & ENTETAINMENT`
-                },
-                {
-                  label: `CAREER & ENTREPRENEURSHIP`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `CAREER & ENTREPRENEURSHIP`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e => updateForm({ businessNiche: e.target.value })}
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={businessNiche}
-              type="radio"
-              tileList={[
-                {
-                  label: `CRAFTS & DIY`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'CRAFTS & DIY'
-                },
-                {
-                  label: `ELECTRONICS`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `ELECTRONICS`
-                },
-                {
-                  label: `FINANCE`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `FINANCE`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e => updateForm({ businessNiche: e.target.value })}
-              stage={stage}
-            />
+          <Button
+            type="transparent"
+            noUppercase
+            noPadding
+            position="absolute"
+            right="50px"
+            top="170px"
+            onClick={handleSkip}>
+            Skip
+            <SkipNextOutlinedIcon />
+          </Button>
+          <Grid>
+            <FormField
+              textarea
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              borderRadius="10px"
+              onChange={e => updateForm({ goals: e.target.value })}
+              value={goals}/>
           </Grid>
         </CreateABusiness>
       )
     case 7:
       return (
         <CreateABusiness
-          title="What would you like to name your business?"
-          sub="You can skip this for now if you’re still working on it."
-          disabled={name.length === 0}
+          title="Company Background"
+          sub="Every great story has a setting. What's the backdrop of your company or venture?"
+          disabled={companyBackground?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
-          progress={stage * 7.15}
+          progress={stage}
           stage={stage}>
+          <Button
+            type="transparent"
+            noUppercase
+            noPadding
+            position="absolute"
+            right="50px"
+            top="170px"
+            onClick={handleSkip}>
+            Skip
+            <SkipNextOutlinedIcon />
+          </Button>
           <Grid>
             <FormField
+              textarea
               fieldType="input"
               fontSize="20px"
-              width="80%"
-              onChange={e => updateForm({ name: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
-              handleEnterKey={e => { }}
-              value={name}>
-              Business Name (you can change this later)
-            </FormField>
+              width="100%"
+              borderRadius="10px"
+              onChange={e =>updateForm({ companyBackground: e.target.value })}
+              value={companyBackground}/>
           </Grid>
         </CreateABusiness>
       )
     case 8:
       return (
         <CreateABusiness
-          title="Where is your business located?"
-          sub="We’ll use your location to help ensure you are compliant 
-                    with any local regulations."
-          disabled={
-            !(
-              businessAddressLineOne.length > 0 &&
-              businessCity.length > 0 &&
-              businessZip.length > 0 &&
-              businessCountry.length > 0
-            )
-          }
+          title="Budget"
+          sub="What size budget are you comfortable with for this hire?"
+          disabled={budget?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
-          progress={stage * 7.15}
+          progress={stage}
           stage={stage}>
-          <Grid margin="0px 0px 20px 0px" left>
+          <Grid>
             <FormField
-              fieldType="input"
-              width="80%"
-              noMargin
-              fontSize="14px"
-              onChange={e => updateForm({ businessAddressLineOne: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
-              handleEnterKey={e => { }}
-              value={businessAddressLineOne}>
-              Address line 1
-            </FormField>
-            <FormField
-              fieldType="input"
-              fontSize="14px"
-              width="80%"
-              noMargin
-              onChange={e => updateForm({ businessAddressLineTwo: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
-              handleEnterKey={e => { }}
-              value={businessAddressLineTwo}>
-              Address line 2
-            </FormField>
-            <Grid2 margin="0px">
-              <FormField
-                fieldType="input"
-                fontSize="14px"
-                noMargin
-                width="80%"
-                onChange={e => updateForm({ businessCity: e.target.value })}
-                // onBlur={() => updateForm({ name: businessName })}
-                handleEnterKey={e => { }}
-                value={businessCity}>
-                City
-              </FormField>
-              <FormField
-                fieldType="input"
-                fontSize="14px"
-                noMargin
-                width="80%"
-                onChange={e => updateForm({ businessZip: e.target.value })}
-                // onBlur={() => updateForm({ name: businessName })}
-                handleEnterKey={e => { }}
-                value={businessZip}>
-                Zip Code
-              </FormField>
-            </Grid2>
-            <FormField
-              fieldType="input"
-              fontSize="14px"
-              width="80%"
-              placeholder="Select Country"
-              handleEnterKey={e => { }}
-              options={countriesList.map(country => {
-                const newCountry = {
-                  ...country,
-                  label: country.name,
-                  value: country.name
-                }
-
-                return newCountry
-              })}
-              noMargin
-              onChange={e => updateForm({ businessCountry: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
-              value={businessCountry}>
-              Country/Region
-            </FormField>
+              required
+              fieldType="select"
+              isSearchable={false}
+              name="select"
+              options={budgetOptions()}
+              placeholder="Select your budget"
+              fontSize="20px"
+              width="100%"
+              borderRadius="12px"
+              onChange={e =>updateForm({ budget: e })}
+              value={budget}/>
           </Grid>
         </CreateABusiness>
       )
     case 9:
-      return (
-        <CreateABusiness
-          title="Will this business participate in equity sharing?"
-          sub="If you want to compensate your employees with equity in the company, select yes to 
-                    continue set up of this feature."
-          onUpdate={updateForm}
-          disabled={isEquity.length === 0}
-          onBack={goBack}
-          onSubmit={submitForm}
-          progress={stage * 7.15}
-          stage={isEquity !== 'true' ? stage + 1 : stage}>
-          <Grid>
-            <OptionTileGroup
-              selectedValue={isEquity}
-              type="radio"
-              tileList={[
-                {
-                  label: `YES`,
-                  iconName: 'profileNew',
-                  value: 'true'
-                },
-                {
-                  label: `NO`,
-                  iconName: 'desktop',
-                  value: 'false'
-                }
-              ]}
-              onChange={e => updateForm({ isEquity: e.target.value })}
-              stage={stage}
-            />
-          </Grid>
-        </CreateABusiness>
-      )
-    case 10:
-      return (
-        <CreateABusiness
-          title="What percent of equity would you like to spend distribute?"
-          sub="You can skip this for now if you’re still working on it. Select a percentage between 1
-                    and 100 of your company that will be distributed to your employees after MVP releases. "
-          onUpdate={updateForm}
-          disabled={equity === 0}
-          onBack={goBack}
-          onSubmit={submitForm}
-          progress={stage * 7.15}
-          stage={stage}>
-          <Grid>
-            <FormField
-              fieldType="input"
-              fontSize="20px"
-              width="80%"
-              onChange={e => {
-                e.target.value >= 100
-                ValidationUtils._percentValidate(e.target.value) && updateForm({ equity: e.target.value })
-              }}
-              value={equity}>
-              Business Equity (1 - 100%)
-            </FormField>
-          </Grid>
-        </CreateABusiness>
-      )
-    case 11:
-      return (
-        <CreateABusiness
-          title="What is your total budget on this project?"
-          sub="How much do you plan to spend on building this project? The higher your budget, 
-                    the more likely you are to attract top talent on the site. "
-          onUpdate={updateForm}
-          onBack={() => goBack(isExistingAudience !== 'true' ? stage - 1 : stage)}
-          onSubmit={submitForm}
-          progress={stage * 7.15}
-          stage={stage}>
-          <Grid>
-            <FormField
-              fieldType="input"
-              fontSize="20px"
-              width="80%"
-              // currency
-              onChange={e => {
-                ValidationUtils._isNumber(e.target.value.replace(',', '').replace('$', '')) &&
-                  updateForm({ budget: e.target.value.replace('$', '').replace(',', '') })
-              }}
-              value={'$' + budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}>
-              Budget (in USD)
-            </FormField>
-          </Grid>
-        </CreateABusiness>
-      )
-    case 12:
+      if(!isGithubConnected){
       return (
         <CreateABusiness
           title="Do you currently have a github account?"
           sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
           onUpdate={updateForm}
-          onBack={() => goBack(isExistingAudience !== 'true' ? stage - 1 : stage)}
+          onBack={goBack}
           onSubmit={submitForm}
-          progress={stage * 7.15}
+          progress={stage}
           stage={stage}
-          skip={!isGithubConnected}>
+          skip>
           <Grid>
             <Button
               icon="github"
-              extraTall
               extraWide
               noBorder
               type="dark"
               normal
               onClick={handleGithub}
-              disabled={isGithubConnected}>
-              {isGithubConnected ? 'GITHUB CONNECTED' : 'CONNECT YOUR GITHUB ACCOUNT'}
+              >
+                CONNECT YOUR GITHUB ACCOUNT
+            </Button>
+          </Grid>
+        </CreateABusiness>
+      )}else{
+        handleSkip()
+      }
+    case 10:
+      return (
+        <CreateABusiness
+          title="Questions for Potential Hires"
+          sub="What questions do you have for potential hires? (max three)"
+          disabled={questionsToAsk?.length === 0}
+          onUpdate={updateForm}
+          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
+          onSubmit={submitForm}
+          submit
+          progress={stage}
+          stage={stage}>
+          <Grid>
+            <FormField
+              justifySelf="start"
+              width="90%"
+              fieldType="input"
+              fontSize="20px"
+              placeholder="Type a question and hit enter..."
+              borderRadius="10px"
+              handleEnterKey={(e)=>inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk',questionsToAsk,e)}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}/>
+            <Button
+              disabled={inputValue === '' || questionsToAsk.length >= 3}
+              zIndex={10}
+              position="absolute"
+              right="50px"
+              type="purple"
+              buttonHeight="42px"
+              onClick={() => {
+                updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+                handleInput('')
+              }}>
+              Add
+            </Button>
+          </Grid>
+          <ContentContainer>
+            {questionsToAsk.map(question => (
+              <div className="d-flex mb-3">
+                <div>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                    onClick={() => handleCancelIcon('questionsToAsk',questionsToAsk,question)}
+                  />
+                </div>
+                <span>{question}</span>
+              </div>
+            ))}
+          </ContentContainer>
+        </CreateABusiness>
+      )
+    default:
+      return <></>
+  }
+}
+
+const GetCardMobile = ({
+  stage,
+  isShortTermBusiness,
+  name,
+  challenge,
+  role,
+  objectives,
+  teamDynamics,
+  requiredSkills,
+  goals,
+  companyBackground,
+  budget,
+  questionsToAsk,
+  submitForm,
+  updateForm,
+  goBack,
+  inputValue,
+  isGithubConnected,
+  handleInput,
+  handleSkip,
+  handleCancelIcon,
+  handleEnterKey,
+  loading
+}) => {
+
+  switch (stage) {
+    case 1:
+      return (
+        <CreateABusiness
+          mobile
+          sub={`Are you looking to hire for a long term hire?`}
+          onUpdate={updateForm}
+          onBack={goBack}
+          disabled={isShortTermBusiness === ''}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Grid margin='0px 0px 50px 0px'>
+            <OptionTileGroup
+              mobile
+              availableWidth
+              selectedValue={isShortTermBusiness}
+              type="radio"
+              tileList={tileOptions()}
+              onChange={e => updateForm({ isShortTermBusiness: e.target.value })}
+              stage={stage}
+            />
+          </Grid>
+        </CreateABusiness>
+      )
+
+    case 2:
+      return (
+        <CreateABusiness
+          mobile
+          title="Project Name"
+          sub="Describe your project in as few words as possible"
+          disabled={name?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Grid margin='0px 0px 50px 0px'>
+            <FormField
+              textarea
+              mobile
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              placeholder="Describe your project here..."
+              borderRadius="10px"
+              onChange={e => updateForm({ name: e.target.value })}
+              value={name}/>
+          </Grid>
+        </CreateABusiness>
+      )
+
+    case 3:
+      if (isShortTermBusiness === 'true') {
+        return (
+          <>
+            <CreateABusiness
+              mobile
+              doubleScreenTop
+              title="Describe the project"
+              sub="What's the challenge you need to conquer? (in a sentence or two)"
+              onUpdate={updateForm}
+              onBack={goBack}
+              onSubmit={submitForm}
+              progress={stage}
+              stage={stage}>
+              <Grid margin='0px 0px 25px 0px'>
+                <FormField
+                  textarea
+                  mobile
+                  fieldType="input"
+                  fontSize="20px"
+                  width="100%"
+                  placeholder="Enter Project Summary..."
+                  borderRadius="10px"
+                  onChange={e => updateForm({ challenge: e.target.value })}
+                  value={challenge}/>
+              </Grid>
+            </CreateABusiness>
+            <CreateABusiness
+              mobile
+              doubleScreenBottom
+              sub="What are the specific tasks and objectives for this project"
+              disabled={objectives?.length === 0 || challenge?.length === 0}
+              onUpdate={updateForm}
+              onBack={goBack}
+              onSubmit={submitForm}
+              stage={stage}>
+              <Grid margin='0px'>
+                <FormField
+                  mobile
+                  justifySelf="start"
+                  width="100%"
+                  fieldType="input"
+                  fontSize="20px"
+                  placeholder="Type a task and hit enter..."
+                  borderRadius="10px"
+                  handleEnterKey={e => inputValue !== '' && handleEnterKey('objectives', objectives, e)}
+                  onChange={e => handleInput(e.target.value)}
+                  value={inputValue}
+                />
+                <Button
+                  margin='8px 0px'
+                  block
+                  disabled={inputValue === ''}
+                  type="purple"
+                  buttonHeight="42px"
+                  zIndex={10}
+                  onClick={() => {
+                    updateForm({ objectives: [...objectives, inputValue] })
+                    handleInput('')
+                  }}>
+                  Add
+                </Button>
+              </Grid>
+              <ContentContainer width='100%' padding='10px 0px'>
+                {objectives.map(obj => (
+                  <div className="d-flex mb-3">
+                    <div>
+                      <ClearSharpIcon
+                        style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                        onClick={() => handleCancelIcon('objectives', objectives, obj)}
+                      />
+                    </div>
+                    <span>{obj}</span>
+                  </div>
+                ))}
+              </ContentContainer>
+            </CreateABusiness>
+          </>
+        )
+      } else {
+        return (
+          <>
+          <CreateABusiness
+            mobile
+            doubleScreenTop
+            title="Role Description"
+            sub="Envision your ideal hire. What role will they play in your ongoing projects?"
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}>
+            <Grid margin='0px 0px 35px 0px'>
+              <FormField
+                textarea
+                mobile
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ role: e.target.value })}
+                value={role}/>
+            </Grid>
+          </CreateABusiness>
+          <CreateABusiness
+            mobile
+            doubleScreenBottom
+            title="Team Dynamics"
+            sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
+            disabled={teamDynamics?.length === 0 || role?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            stage={stage}>
+            <Grid margin='0px 0px 50px 0px'>
+              <FormField
+                textarea
+                mobile
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ teamDynamics: e.target.value })}
+                value={teamDynamics}/>
+            </Grid>
+          </CreateABusiness>
+          </>
+        )
+      }
+
+    case 4:
+      return (
+        <CreateABusiness
+          mobile
+          title="Required Expertise"
+          sub="What skills should they have mastered? List the abilities your project or role demands."
+          disabled={requiredSkills?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          {!!requiredSkills?.length && <ContentContainer width='100%' padding='5px 0px' marginBottom='10px'>
+            {requiredSkills?.map(skill => (
+              <ContainedSpan>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                    onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
+                  />{skill}
+              </ContainedSpan>
+            ))}
+          </ContentContainer>}
+          <Grid margin='0px 0px 35px 0px'>
+            <FormField
+              mobile
+              justifySelf="start"
+              width="100%"
+              fieldType="input"
+              fontSize="20px"
+              placeholder="Type a skill and hit enter..."
+              borderRadius="10px"
+              handleEnterKey={(e)=>inputValue !== '' && requiredSkills.length<15 && handleEnterKey('requiredSkills',requiredSkills,e)}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
+            />
+            <Button
+              margin='8px 0px'
+              block
+              type="purple"
+              buttonHeight="42px"
+              disabled={inputValue === '' || requiredSkills.length>=15}
+              onClick={() => {
+                updateForm({ requiredSkills: [...requiredSkills, inputValue] })
+                handleInput('')
+              }}>
+              Add
             </Button>
           </Grid>
         </CreateABusiness>
       )
-    case 13:
+    case 5:
       return (
+        <>
         <CreateABusiness
-          title="What type of talent do you plan to hire?"
-          sub="Choose all that apply, and we’ll use this information to identify features to tailor your store to your niche."
+          mobile
+          doubleScreenTop
+          titleFontSize='16px'
+          title="Project Goals or Role Expectations"
+          sub="Chart out the milestones. What achievements should be celebrated along the way?"
           onUpdate={updateForm}
-          onBack={() => goBack()}
-          submit
-          loading={loading}
-          disabled={typesOfHires.length === 1}
+          onBack={goBack}
           onSubmit={submitForm}
-          progress={stage * 7.15}
+          progress={stage}
           stage={stage}>
-          <Grid margin="10px 0px">
-            <OptionTileGroup
-              selectedValue={typesOfHires}
-              type="check"
-              tileList={[
-                {
-                  label: `DEVELOPER`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'DEVELOPER'
-                },
-                {
-                  label: `SALES`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `SALES`
-                },
-                {
-                  label: `CONTENT WRITER`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `CONTENT WRITER`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  typesOfHires: typesOfHires.find(i => i === e.target.value)
-                    ? typesOfHires.filter(i => i !== e.target.value)
-                    : [...typesOfHires, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={typesOfHires}
-              type="check"
-              tileList={[
-                {
-                  label: `LEGAL`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'LEGAL'
-                },
-                {
-                  label: `MARKETING`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `MARKETING`
-                },
-                {
-                  label: `ACCOUNTING`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `ACCOUNTING`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  typesOfHires: typesOfHires.find(i => i === e.target.value)
-                    ? typesOfHires.filter(i => i !== e.target.value)
-                    : [...typesOfHires, e.target.value]
-                })
-              }
-              stage={stage}
-            />
-            <OptionTileGroup
-              selectedValue={typesOfHires}
-              type="check"
-              tileList={[
-                {
-                  label: `RESEARCH`,
-                  sub: `Pick as many as you like – you can always change these later.`,
-                  iconName: 'profileNew',
-                  value: 'RESEARCH'
-                },
-                {
-                  label: `GRAPHIC DESIGN`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `GRAPHIC DESIGN`
-                },
-                {
-                  label: `ENGINEERING`,
-                  sub: '',
-                  iconName: 'desktop',
-                  value: `ENGINEERING`
-                }
-              ]}
-              margin="5px 0px"
-              onChange={e =>
-                updateForm({
-                  typesOfHires: typesOfHires.find(i => i === e.target.value)
-                    ? typesOfHires.filter(i => i !== e.target.value)
-                    : [...typesOfHires, e.target.value]
-                })
-              }
-              stage={stage}
-            />
+          <Grid margin='0px 0px 35px 0px'>
+            <FormField
+              mobile
+              textarea
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              borderRadius="10px"
+              onChange={e => updateForm({ goals: e.target.value })}
+              value={goals}/>
           </Grid>
         </CreateABusiness>
+        <CreateABusiness
+          mobile
+          doubleScreenBottom
+          title="Company Background"
+          titleFontSize='16px'
+          sub="Every great story has a setting. What's the backdrop of your company or venture?"
+          disabled={companyBackground?.length === 0 || goals?.length === 0}
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          stage={stage}>
+          <Grid margin='0px 0px 50px 0px'>
+            <FormField
+              mobile
+              textarea
+              fieldType="input"
+              fontSize="20px"
+              width="100%"
+              borderRadius="10px"
+              onChange={e =>updateForm({ companyBackground: e.target.value })}
+              value={companyBackground}                
+              />
+          </Grid>
+        </CreateABusiness>
+        </>
+      )
+    case 6:
+      if(!isGithubConnected){
+      return (
+        <CreateABusiness
+          mobile
+          titleFontSize='16px'
+          title="Do you currently have a github account?"
+          sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}
+          skip>
+          <Grid margin='50px 0px 100px 0px'>
+            <Button
+              icon="github"
+              noBorder
+              type="dark"
+              normal
+              onClick={handleGithub}
+              >
+                CONNECT YOUR GITHUB ACCOUNT
+            </Button>
+          </Grid>
+        </CreateABusiness>
+      )}else{
+        handleSkip()
+    }
+    case 7:
+      return (
+        <>
+        <CreateABusiness
+          mobile
+          doubleScreenTop
+          title="Budget"
+          sub="What size budget are you comfortable with for this hire?"
+          onUpdate={updateForm}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}>
+          <Grid margin='0px 0px 40px 0px'>
+            <FormField
+              mobile
+              required
+              height='45px'
+              fieldType="select"
+              isSearchable={false}
+              name="select"
+              options={budgetOptions()}
+              placeholder="Select your budget"
+              fontSize="20px"
+              width="100%"
+              borderRadius="12px"
+              onChange={e =>updateForm({ budget: e })}
+              value={budget}/>
+          </Grid>
+        </CreateABusiness>
+        <CreateABusiness
+          mobile
+          doubleScreenBottom
+          title="Questions for Potential Hires"
+          titleFontSize='16px'
+          sub="What questions do you have for potential hires? (max three)"
+          disabled={questionsToAsk?.length === 0 || budget?.length === 0}
+          onUpdate={updateForm}
+          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
+          onSubmit={submitForm}
+          submit
+          stage={stage}>
+          <Grid margin='0px'>
+            <FormField
+              mobile
+              zIndexUnset
+              justifySelf="start"
+              width="100%"
+              fieldType="input"
+              fontSize="20px"
+              placeholder="Type a question and hit enter..."
+              borderRadius="10px"
+              handleEnterKey={(e)=>inputValue !== '' && questionsToAsk.length<3 && handleEnterKey('questionsToAsk',questionsToAsk,e)}
+              onChange={e => handleInput(e.target.value)}
+              value={inputValue}
+            />
+            <Button
+              margin='8px 0px'
+              block
+              disabled={inputValue === '' || questionsToAsk.length >= 3}
+              type="purple"
+              buttonHeight="42px"
+              onClick={() => {
+                updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+                handleInput('')
+              }}>
+              Add
+            </Button>
+          </Grid>
+          <ContentContainer width='100%' padding='5px 0px' marginBottom='10px'>
+            {questionsToAsk.map(question => (
+              <div className="d-flex mb-3">
+                <div>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                    onClick={() => handleCancelIcon('questionsToAsk',questionsToAsk,question)}
+                  />
+                </div>
+                <span>{question}</span>
+              </div>
+            ))}
+          </ContentContainer>
+        </CreateABusiness>
+        </>
       )
     default:
       return <></>
@@ -858,30 +970,41 @@ const GetCard = ({
 const CreateBusiness = ({
   stage,
   updateBusinessForm,
-  isFirstBusiness,
-  incomePlatform,
-  isExistingAudience,
-  socialMediaPlatforms = [],
-  numberOfSocialFollowing,
-  businessAddressLineOne,
-  businessAddressLineTwo,
-  businessCountry,
-  businessCity,
-  equity,
-  loading,
-  budget,
-  typesOfHires,
-  businessState,
-  businessZip,
-  businessNiche,
-  isEquity,
+  isShortTermBusiness,
   name,
+  challenge,
+  role,
+  objectives,
+  teamDynamics,
+  requiredSkills,
+  goals,
+  companyBackground,
+  budget,
+  questionsToAsk,
+  // isFirstBusiness,
+  // incomePlatform,
+  // isExistingAudience,
+  // socialMediaPlatforms = [],
+  // numberOfSocialFollowing,
+  // businessAddressLineOne,
+  // businessAddressLineTwo,
+  // businessCountry,
+  // businessCity,
+  // equity,
+  // typesOfHires,
+  // businessState,
+  // businessZip,
+  // businessNiche,
+  // isEquity,
+  loading,
   createBusiness,
   token,
   access_token
 }) => {
+  const screenWidth = window.innerWidth > 680;
+
   const submitForm = step => {
-    if (step < 13) {
+    if (screenWidth && step < 10 || step < 7) {
       // submit form
       // if step is true then go forward 1 step
       updateBusinessForm({
@@ -890,24 +1013,17 @@ const CreateBusiness = ({
     } else {
       createBusiness(
         {
+          isShortTermBusiness,
           name,
-          isFirstBusiness,
+          challenge,
+          role,
+          objectives,
+          teamDynamics,
+          requiredSkills,
+          goals,
+          companyBackground,
           budget,
-          isExistingAudience,
-          isEquity,
-          equity,
-          typesOfHires,
-          incomePlatform,
-          numberOfSocialFollowing,
-          socialMediaPlatforms,
-          businessNiche,
-          businessAddressLineOne,
-          businessAddressLineTwo,
-          businessCountry,
-          businessCity,
-          businessState,
-          businessZip,
-          businessImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+          questionsToAsk,
         },
         access_token
       )
@@ -939,32 +1055,86 @@ const CreateBusiness = ({
     }
   }
 
+  const isGithubConnected = !!router?.query?.['github-connect'] || false
+
+  const [inputValue,setInputValue]=useState('')
+
+  const handleInput=(value)=>{
+    setInputValue(value)
+  }
+  
+  const handleSkip = () => {
+    submitForm(stage)
+  }
+
+  const handleCancelIcon=(feildName,data,value)=>{
+    updateForm({ [feildName]: data.filter(val=>val!==value) })
+  }
+  
+  const handleEnterKey = (fieldName,data,e) => {
+    if(e.keyCode === 13 && e.shiftKey === false) {
+      updateForm({ [fieldName]: [...data, inputValue] })
+      handleInput('')
+    }
+  }
+
   return (
     <Container>
-      <GetCard
-        stage={stage}
-        submitForm={submitForm}
-        updateForm={updateForm}
-        goBack={goBack}
-        loading={loading}
-        isFirstBusiness={isFirstBusiness}
-        incomePlatform={incomePlatform}
-        equity={equity}
-        budget={budget}
-        isExistingAudience={isExistingAudience}
-        socialMediaPlatforms={socialMediaPlatforms}
-        typesOfHires={typesOfHires}
-        numberOfSocialFollowing={numberOfSocialFollowing}
-        businessAddressLineOne={businessAddressLineOne}
-        businessAddressLineTwo={businessAddressLineTwo}
-        businessCountry={businessCountry}
-        businessCity={businessCity}
-        businessState={businessState}
-        businessZip={businessZip}
-        businessNiche={businessNiche}
-        isEquity={isEquity}
-        name={name}
-      />
+      {screenWidth ? (
+        <GetCardDesktop
+          stage={stage}
+          submitForm={submitForm}
+          updateForm={updateForm}
+          goBack={goBack}
+          inputValue={inputValue}
+          isGithubConnected={isGithubConnected}
+          handleInput={handleInput}
+          handleSkip={handleSkip}
+          handleCancelIcon={handleCancelIcon}
+          handleEnterKey={handleEnterKey}
+          loading={loading}
+          isShortTermBusiness={isShortTermBusiness}
+          name={name}
+          challenge={challenge}
+          role={role}
+          objectives={objectives}
+          teamDynamics={teamDynamics}
+          requiredSkills={requiredSkills}
+          goals={goals}
+          companyBackground={companyBackground}
+          budget={budget}
+          questionsToAsk={questionsToAsk}
+        />
+      ) : (
+        <>
+          <Nav isSubMenu marginBottom={'0px'} zIndex={20} />
+          <GetCardMobile
+            stage={stage}
+            submitForm={submitForm}
+            updateForm={updateForm}
+            goBack={goBack}
+            inputValue={inputValue}
+            isGithubConnected={isGithubConnected}
+            handleInput={handleInput}
+            handleSkip={handleSkip}
+            handleCancelIcon={handleCancelIcon}
+            handleEnterKey={handleEnterKey}
+            loading={loading}
+            isShortTermBusiness={isShortTermBusiness}
+            name={name}
+            challenge={challenge}
+            role={role}
+            objectives={objectives}
+            teamDynamics={teamDynamics}
+            requiredSkills={requiredSkills}
+            goals={goals}
+            companyBackground={companyBackground}
+            budget={budget}
+            questionsToAsk={questionsToAsk}
+          />
+          <MobileFreelancerFooter defaultSelected='Create'/>
+        </>
+      )}
     </Container>
   )
 }
@@ -980,25 +1150,16 @@ CreateBusiness.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     name: state.Business?.businessForm.name,
-    isFirstBusiness: state.Business?.businessForm.isFirstBusiness,
+    isShortTermBusiness: state.Business?.businessForm.isShortTermBusiness,
+    challenge: state.Business?.businessForm.challenge,
+    role: state.Business?.businessForm.role,
+    objectives: state.Business?.businessForm.objectives,
+    teamDynamics: state.Business?.businessForm.teamDynamics,
+    requiredSkills: state.Business?.businessForm.requiredSkills,
+    goals: state.Business?.businessForm.goals,
+    companyBackground: state.Business?.businessForm.companyBackground,
     budget: state.Business?.businessForm.budget,
-    isExistingAudience: state.Business?.businessForm.isExistingAudience,
-    isEquity: state.Business?.businessForm.isEquity,
-    equity: state.Business?.businessForm.equity,
-    deadline: state.Business?.businessForm.deadline,
-    typesOfHires: state.Business?.businessForm.typesOfHires,
-    incomePlatform: state.Business?.businessForm.incomePlatform,
-    numberOfSocialFollowing: state.Business?.businessForm.numberOfSocialFollowing,
-    socialMediaPlatforms: state.Business?.businessForm.socialMediaPlatforms,
-    businessNiche: state.Business?.businessForm.businessNiche,
-    businessAddressLineOne: state.Business?.businessForm.businessAddressLineOne,
-    businessAddressLineTwo: state.Business?.businessForm.businessAddressLineTwo,
-    businessCountry: state.Business?.businessForm.businessCountry,
-    businessCity: state.Business?.businessForm.businessCity,
-    businessState: state.Business?.businessForm.businessState,
-    businessZip: state.Business?.businessForm.businessZip,
-    description: state.Business?.businessForm.description,
-    businessImage: state.Business?.businessForm.businessImage,
+    questionsToAsk: state.Business?.businessForm.questionsToAsk,
     stage: state.Business?.businessForm.stage,
     loading: state.Business?.loading,
     access_token: state.Auth.token
