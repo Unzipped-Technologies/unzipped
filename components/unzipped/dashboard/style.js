@@ -6,7 +6,7 @@ const BlackCard = styled.div`
     border-radius: 5px;
     width: 100%;
     display: flex;
-    flex-flow: row;
+    flex-direction: column;
     min-height: 87px;
     align-items: center;
     padding: 0px 40px;

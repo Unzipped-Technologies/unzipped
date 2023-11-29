@@ -8,18 +8,210 @@ import {
 } from './style'
 import Link from 'next/link'
 import ProgressBar from '../../ui/ProgressBar'
-
+import UpdateUserIcon from '../../icons/updateUser'
+// import UserInstallmentPlanIcon from '../../icons/userInstallmentPlan'
+import { useRouter } from 'next/router';
+import Dropzone from 'react-dropzone';
+import { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 const Container = styled.div`
     display: flex;
     flex-flow: column;
     width: 100%;
-    padding: 0px 40px;
+    padding: 0px 15px;
 `;
 
-const Panel = ({ user }) => {
+
+// const Container = styled.div`
+//     position: relative;
+//     display: flex;
+//     flex-flow: column;
+//     border: 1px solid #D9D9D9;
+//     width: 100%;
+//     min-height: 435px;
+//     max-height: 900px;
+//     padding: 20px;
+//     margin-left: 10px;
+// `;
+
+const ProgressBarContainer = styled.div`
+    width: 100%;
+    displa: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E0E0E0;
+    border-radius: 20px;
+    padding: 0px;
+}`;
+
+const ProgressBarFiller = styled.div`
+    height: 100%;
+    width: ${props => props.percentage}%;
+    display: flex;
+    background-color: #FF4081;
+    padding:  ${({ padding }) => padding ? padding : '0px'};
+    border-radius: 20px;
+    text-align: center;
+    justify-content: center;
+    margin: 3px;
+`;
+
+const AccountSetupContainer = styled.div`
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin-top: 20px;
+`;
+
+const AccountSetup = styled.div`
+    width: 100%;
+    display: flex;
+`;
+
+const AccountIcon = styled.div`
+    width: 25px;
+    display: flex;
+`;
+
+const Text = styled.p`
+    font-family: Arial;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    color: ${({ color }) => color ? color : '#000'};
+    margin: ${({ margin }) => margin ? margin : '0'};
+    line-height: ${({ lineHeight }) => lineHeight ? lineHeight : '40px'};
+`;
+
+const CompleteSetupButton = styled.button`
+    border: 0;
+    width: 100%;
+    height: 40px;
+    display: inline-flex;
+    padding: 11px 100px 11px 138px;
+    align-items: center;
+    color: #fff;
+    font-family: Arial;
+
+    border-radius: 20px;
+    background: #FF4081;
+`;
+const Panel = ({ user: userProps }) => {
+    const { user } = useSelector(state => state.Auth);
+
+    const [isDropzoneVisible, setIsDropzoneVisible] = useState(false);
+    const [trackProgress, setTrackProgress] = useState(0);
+    const [hasUserInfo, setHasUserInfo] = useState(false);
+    const dropzoneRef = useRef(null);
+
+    console.log('user_auth', user)
+
+    useEffect(() => {
+        if (user.role != "0" && user.FirstName && user.AddressCity) {
+            setHasUserInfo(true)
+        } else {
+            setHasUserInfo(false)
+        }
+    }), [user]
+
+    useEffect(() => {
+        if (user && trackProgress < 100) {
+            let incrementalProgress = 0;
+
+            if (user.role != 0 && user.FirstName && user.AddressCity) {
+                incrementalProgress += 25;
+            }
+            if (user.profileImage) {
+                incrementalProgress += 25;
+            }
+            if (user.plan > 0) {
+                incrementalProgress += 25;
+            }
+
+            setTrackProgress(trackProgress + incrementalProgress);
+        }
+    }, [user])
+
+    const openDropzone = () => {
+        if (dropzoneRef.current) {
+            dropzoneRef.current.open();
+        }
+    };
+
+    const closeDropzone = () => {
+        setIsDropzoneVisible(false);
+    };
+
+    const handleDrop = (acceptedFiles) => {
+        console.log(acceptedFiles);
+        closeDropzone();
+    };
+
+    const router = useRouter()
     return (
         <Container>
-            <div style={{ backgroundColor: "#D9D9D9" }} className='px-2 pt-2 pb-4'>
+            <TitleText size={18}>Set up your account</TitleText>
+            <ProgressBarContainer>
+                <ProgressBarFiller percentage={trackProgress} padding={'0px'}>
+                    <Text size={18} color="#FFF" lineHeight={'30px'}>{trackProgress}%</Text>
+                </ProgressBarFiller>
+            </ProgressBarContainer>
+            {!hasUserInfo && (
+                <AccountSetupContainer>
+                    <UpdateUserIcon />
+                    <AccountSetup>
+                        <Text onClick={() => { router.push('/signup') }}>
+                            Update account details
+                        </Text>
+                    </AccountSetup>
+                </AccountSetupContainer>
+            )}
+
+            {!user?.profileImage && (
+                <AccountSetupContainer>
+                    <img
+                        style={{ borderRadius: '100%' }}
+                        width='30'
+                        height='30'
+                        src='https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+                        alt='installment plan' />
+
+                    <AccountSetup>
+                        <Text onClick={openDropzone}>
+                            Upload a profile picture
+                        </Text>
+                    </AccountSetup>
+                    <Dropzone
+                        ref={dropzoneRef}
+                        onDrop={handleDrop}
+                        noClick={true}
+                    >
+                        {({ getRootProps, getInputProps }) => (
+                            <div className="dropzone" {...getRootProps()}>
+                                <input {...getInputProps()} />
+                            </div>
+                        )}
+                    </Dropzone>
+                </AccountSetupContainer>
+            )}
+
+            {user?.plan == 0 && (
+                <AccountSetupContainer>
+                    <img width='30' height='30' src='/img/InstallmentPlan.png' alt='installment plan' />
+                    <AccountSetup>
+                        <Text onClick={() => { router.push('/pick-a-plan') }}>
+                            Select a plan for your account
+                        </Text>
+                    </AccountSetup>
+                </AccountSetupContainer>
+            )}
+
+            <AccountSetupContainer>
+                <AccountSetup>
+                    <CompleteSetupButton >Complete Setup</CompleteSetupButton>
+                </AccountSetup>
+            </AccountSetupContainer>
+            {/* <div style={{ backgroundColor: "#D9D9D9" }} className='px-2 pt-2 pb-4'>
                 <div className='d-flex justify-content-between'>
                     <TitleText>Set up your account</TitleText>
                     <DarkText textAlignLast='end'>75%</DarkText>
@@ -36,7 +228,7 @@ const Panel = ({ user }) => {
                         </WhiteCard>
                     ))}
                 </WhiteCard>
-            </div>
+            </div> */}
         </Container >
     )
 }
