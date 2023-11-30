@@ -3,14 +3,44 @@ const { Schema } = mongoose;
 
 const businessSchema = new Schema({
   userId: String,
+  name: String,
+  projectBudgetType: {
+    type: String,
+    enum: ['Hourly Rate', 'Fixed Price'],
+  },
+  applicants: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users' 
+    }
+  ],
+  isFirstBusiness: {type: Boolean, default: true},
+  incomePlatform: [String],
+  isExistingAudience: {type: Boolean, default: false},
+  numberOfSocialFollowing: String,
+  socialMediaPlatforms: [String],
+  typesOfHires: [String],
+  businessNiche: String,
+  businessAddressLineOne: { type: String, default: '' },
+  businessAddressLineTwo: { type: String, default: '' },
+  businessCountry: { type: String, default: '' },
+  businessFirstName: { type: String, default: '' },
+  businessLastName: { type: String, default: '' },
+  businessCity:  { type: String, default: '' },
+  businessState:  { type: String, default: '' },
+  businessZip:  { type: String, default: '' },
+  description: { type: String, default: '' },
+
   totalSpent: { type: Number, default: 0 },
   isEquity: {type: Boolean, default: false},
   isBusinessUpdated: {type: Boolean, default: false},
   equity: Number,
   valueEstimate: Number,
   deadline: Date,
-  isShortTermBusiness: {type: Boolean, default: true},
-  name: String,
+  projectType: {
+    type: String, 
+    enum: ['Short Term Business', 'Long Term Collaboration'],
+  },
   challenge: String,
   role: String,
   objectives: [String],
@@ -38,6 +68,7 @@ const businessSchema = new Schema({
   isSelected: {type: Boolean, default: false},
   user: { type: Schema.Types.ObjectId, ref: 'users' },
   tags: { type: Schema.Types.Mixed, refs: 'tags'},
+  tasks: { type: Schema.Types.Mixed, ref: 'tasks' },
   audience: { type: Schema.Types.ObjectId, ref: 'businessAudiences' },
   invoices: { type: Schema.Types.Mixed, ref: 'invoices' },
   departments: { type: Schema.Types.Mixed, ref: 'departments' },
