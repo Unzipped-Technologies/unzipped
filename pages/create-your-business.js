@@ -71,17 +71,15 @@ function handleGithub() {
   )
 }
 
-const tileOptions = () => {
+const projectTypeOptions = () => {
   return [
     {
       label: `SHORT-TERM PROJECT`,
-      iconName: 'profileNew',
-      value: 'true'
+      value: 'Short Term Business'
     },
     {
       label: `LONG-TERM COLLABORATION`,
-      iconName: 'desktop',
-      value: 'false'
+      value: 'Long Term Collaboration'
     }
   ]
 }
@@ -99,7 +97,7 @@ const budgetOptions = () => {
 
 const GetCardDesktop = ({
   stage,
-  isShortTermBusiness,
+  projectType,
   name,
   challenge,
   role,
@@ -130,17 +128,17 @@ const GetCardDesktop = ({
           sub={`We’ll help you get started based on your business needs.`}
           onUpdate={updateForm}
           onBack={goBack}
-          disabled={isShortTermBusiness === ''}
+          disabled={projectType === ''}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
           <Grid>
             <OptionTileGroup
               availableWidth
-              selectedValue={isShortTermBusiness}
+              selectedValue={projectType}
               type="radio"
-              tileList={tileOptions()}
-              onChange={e => updateForm({ isShortTermBusiness: e.target.value })}
+              tileList={projectTypeOptions()}
+              onChange={e => updateForm({ projectType: e.target.value })}
               stage={stage}
             />
           </Grid>
@@ -172,7 +170,7 @@ const GetCardDesktop = ({
       )
 
     case 3:
-      if (isShortTermBusiness === 'true') {
+      if (projectType === 'Short Term Business') {
         return (
           <CreateABusiness
             title="Describe the project"
@@ -222,7 +220,7 @@ const GetCardDesktop = ({
       }
 
     case 4:
-      if (isShortTermBusiness === 'true') {
+      if (projectType === 'Short Term Business') {
         return (
           <CreateABusiness
             title="Give us the map. "
@@ -541,7 +539,7 @@ const GetCardDesktop = ({
 
 const GetCardMobile = ({
   stage,
-  isShortTermBusiness,
+  projectType,
   name,
   challenge,
   role,
@@ -572,7 +570,7 @@ const GetCardMobile = ({
           sub={`Are you looking to hire for a long term hire?`}
           onUpdate={updateForm}
           onBack={goBack}
-          disabled={isShortTermBusiness === ''}
+          disabled={projectType === ''}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
@@ -580,10 +578,10 @@ const GetCardMobile = ({
             <OptionTileGroup
               mobile
               availableWidth
-              selectedValue={isShortTermBusiness}
+              selectedValue={projectType}
               type="radio"
-              tileList={tileOptions()}
-              onChange={e => updateForm({ isShortTermBusiness: e.target.value })}
+              tileList={projectTypeOptions()}
+              onChange={e => updateForm({ projectType: e.target.value })}
               stage={stage}
             />
           </Grid>
@@ -618,7 +616,7 @@ const GetCardMobile = ({
       )
 
     case 3:
-      if (isShortTermBusiness === 'true') {
+      if (projectType === 'Short Term Business') {
         return (
           <>
             <CreateABusiness
@@ -970,7 +968,7 @@ const GetCardMobile = ({
 const CreateBusiness = ({
   stage,
   updateBusinessForm,
-  isShortTermBusiness,
+  projectType,
   name,
   challenge,
   role,
@@ -981,21 +979,6 @@ const CreateBusiness = ({
   companyBackground,
   budget,
   questionsToAsk,
-  // isFirstBusiness,
-  // incomePlatform,
-  // isExistingAudience,
-  // socialMediaPlatforms = [],
-  // numberOfSocialFollowing,
-  // businessAddressLineOne,
-  // businessAddressLineTwo,
-  // businessCountry,
-  // businessCity,
-  // equity,
-  // typesOfHires,
-  // businessState,
-  // businessZip,
-  // businessNiche,
-  // isEquity,
   loading,
   createBusiness,
   token,
@@ -1013,7 +996,7 @@ const CreateBusiness = ({
     } else {
       createBusiness(
         {
-          isShortTermBusiness,
+          projectType,
           name,
           challenge,
           role,
@@ -1093,7 +1076,7 @@ const CreateBusiness = ({
           handleCancelIcon={handleCancelIcon}
           handleEnterKey={handleEnterKey}
           loading={loading}
-          isShortTermBusiness={isShortTermBusiness}
+          projectType={projectType}
           name={name}
           challenge={challenge}
           role={role}
@@ -1120,7 +1103,7 @@ const CreateBusiness = ({
             handleCancelIcon={handleCancelIcon}
             handleEnterKey={handleEnterKey}
             loading={loading}
-            isShortTermBusiness={isShortTermBusiness}
+            projectType={projectType}
             name={name}
             challenge={challenge}
             role={role}
@@ -1150,7 +1133,7 @@ CreateBusiness.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     name: state.Business?.businessForm.name,
-    isShortTermBusiness: state.Business?.businessForm.isShortTermBusiness,
+    projectType: state.Business?.businessForm.projectType,
     challenge: state.Business?.businessForm.challenge,
     role: state.Business?.businessForm.role,
     objectives: state.Business?.businessForm.objectives,
