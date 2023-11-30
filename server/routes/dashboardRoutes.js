@@ -11,13 +11,11 @@ const Hotels = require('../../models/hotels');
 const promo = require('../../models/Promo');
 const Order = require('../../models/Orders');
 const Garage = require('../../models/Garages');
+// Refactor
+const OrderService = require('../../services/order-service/OrderService');
 
-router.get('/users/:number', requireLogin, async (req, res) => {
-    console.log(req.params.number)
-    let limit = 20;
-    let number = req.params.number * limit;
-
-    const allUsers = await user.find().skip( number ).limit( limit );
+router.get('/users/:number',  async (req, res) => {    
+    const allUsers = await OrderService.getAllUsers( req.params.number);
     res.send(allUsers)
 })
 
