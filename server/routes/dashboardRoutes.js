@@ -14,69 +14,23 @@ const Garage = require('../../models/Garages');
 // Refactor
 const OrderService = require('../../services/order-service/OrderService');
 
-router.get('/users/:number',  async (req, res) => {    
+router.get('/users/:number',   async (req, res) => {
+    console.log('request:',req.params.number)
     const allUsers = await OrderService.getAllUsers( req.params.number);
     res.send(allUsers)
 })
 
-router.get('/orders/:number', requireLogin, async (req, res) => {
-    console.log(req.params.number)
-    let limit = 20;
-    let number = req.params.number * limit;
-
-    const allUsers = await Order.find().sort({_id: -1}).skip( number ).limit( limit );
-    res.send(allUsers)
+router.get('/orders/:number',  async (req, res) => {
+    console.log('request:',req.params.number)
+    const allOrders = await OrderService.getAllOrders( req.params.number);
+    res.send(allOrders)
 })
 
-router.post('/orders/create', requireLogin, async (req, res) => {
-    let number = 0;
-    let limit = 20;
-    let total = req.body.total;
-    let {email} = req.body;
-    let orderNum = req.body.order;
-    let vehicle = req.body.vehicle;
-    let service = req.body.cart;
-    let time = req.body.time;
-    let date = req.body.date;
-    let location = req.body.location;
-    let hotel = req.body.hotel;
-    let roomNumber = req.body.roomNumber;
-    let transmission = req.body.transmission;
-    let valetNumber = req.body.valetNumber;
-    var month = new Array(12);
-    month[0] = "Jan.";
-    month[1] = "Feb.";
-    month[2] = "March";
-    month[3] = "April";
-    month[4] = "May";
-    month[5] = "June";
-    month[6] = "July";
-    month[7] = "Aug.";
-    month[8] = "Sept.";
-    month[9] = "Oct.";
-    month[10] = "Nov.";
-    month[11] = "Dec.";
-    let orderDate = `${month[new Date().getMonth()]} ${new Date().getDate()} ${new Date().getFullYear()}`
-    date = `${month[new Date(date).getMonth()]} ${new Date(date).getDate() + 1} ${new Date(date).getFullYear()}`
+router.post('/orders/create',  async (req, res) => {
+    console.log('request:',req.body)
+    console.log('request:',req.user)
     try {
-      await Order.create({
-        user: req.user.sub, 
-        email: email, 
-        services: [...service], 
-        total: total, 
-        orderNumber: orderNum, 
-        Vehicle: vehicle,
-        location: location,
-        roomNumber: roomNumber,
-        valetNumber: valetNumber,
-        time: time,
-        date: date,
-        transmission: transmission,
-        hotel: hotel,
-        orderDate: orderDate,
-      })
-      const allOrders = await Order.find().sort({_id: -1}).skip( number ).limit( limit );
-      console.log(allOrders);
+      const allOrders = await OrderService.createOrder( req.body, req.user.sub );
       res.send(allOrders);
     } catch (error) {
       res.send({
@@ -86,292 +40,142 @@ router.post('/orders/create', requireLogin, async (req, res) => {
     }
 })
 
-router.get('/garage/:number', requireLogin, async (req, res) => {
-    console.log(req.params.number)
-    let limit = 20;
-    let number = req.params.number * limit;
-
-    const allGarages = await Garage.find().sort({_id: -1}).skip( number ).limit( limit );
+router.get('/garage/:number',  async (req, res) => {
+    console.log('request:',req.params.number)
+    const allGarages = await OrderService.getAllGarages( req.params.number );
     res.send(allGarages)
 })
 
-router.get('/map/:number', async (req, res) => {
-    console.log(req.params.number)
-    let limit = 20;
-    let number = req.params.number * limit;
-
-    const allGarages = await Garage.find().sort({_id: -1}).skip( number ).limit( limit );
+router.get('/map/:number',  async (req, res) => {
+    console.log('request:',req.params.number)
+    const allGarages = await OrderService.getAllGarages( req.params.number );
     res.send(allGarages)
 })
 
-router.get('/orders/:user', requireLogin, async (req, res) => {
-    console.log(req.params.user)
-    let limit = 20;
-    const allUsers = await Order.find({user: user}).sort('-date').limit( limit );
-    res.send(allUsers)
+router.get('/orders-by-user/:user',  async (req, res) => {
+    console.log('request',req.params.user)
+    const allOrders = await OrderService.getOrdersByUser(req.params.user);
+    res.send(allOrders)
 })
 
-router.post('/orders/date', requireLogin, async (req, res) => {
-    const allUsers = await Order.find({date: req.body.date});
-    res.send(allUsers)
+router.post('/orders/date',  async (req, res) => {
+    console.log('request:',req.body)
+    const allOrders = await OrderService.getOrdersByDate(req.body.date);
+    res.send(allOrders)
 })
 
-router.post('/garage/add', requireLogin, async (req, res) => {
-    let limit = 20;
-    await Garage.create({...req.body});
-    const allGarages = await Garage.find().limit( limit );
+router.post('/garage/add',  async (req, res) => {
+    console.log('request:',req.body)
+    const allGarages = await OrderService.createGarage( req.body );
     res.send(allGarages);
 })
 
-router.post('/garage/delete', requireLogin, async (req, res) => {
-    let limit = 20;
+router.post('/garage/delete', async (req, res) => {
+    console.log('request:',req.body)
     try {
-        let list = req.body;
-        await Promise.all(list.map( async (item) => {
-            const existingGarage = await Garage.find({_id: item._id});
-            if (existingGarage) {
-                await Garage.deleteOne({_id: item._id});
-            } else {
-                res.status(400).send("Garage not found");
-            }
-        }))
-        const allGarages = await Garage.find().limit( limit );
-        console.log(allGarages);
+        const allGarages = await OrderService.deleteGarage( req.body );
         res.send(allGarages);
     } catch {
         res.status(400).send("Garage not found");
     }
 })
 
-router.post('/user/delete', requireLogin, async (req, res) => {
-    let limit = 20;
+router.post('/user/delete',  async (req, res) => {
+    console.log('request:',req.body)
     try {
-        let list = req.body;
-        await Promise.all(list.map( async (item) => {
-            const existingUser = await user.find({_id: item._id});
-            if (existingUser) {
-                await user.deleteOne({_id: item._id});
-            } else {
-                res.status(400).send("User not found");
-            }
-        }))
-        const allUsers = await user.find().limit( limit );
-        console.log(allUsers);
+        const allUsers = await OrderService.deleteUser( req.body );
         res.send(allUsers);
     } catch {
         res.status(400).send("User not found");
     }
 })
 
-router.post('/garage/update', requireLogin, async (req, res) => {
-    let limit = 20;
+router.post('/garage/update',  async (req, res) => {
+    console.log('request:',req.body) 
     try {
-        const existingGarage = await Garage.find({_id: req.body._id});
-        if (existingGarage) {
-            await Garage.updateOne({_id: req.body._id}, {$set:{...req.body}});
-            const allGarages = await Garage.find().limit( limit );
-            res.send(allGarages);
-        } else {
-            res.status(400).send("Garage not found");
-        }
+        const allGarages= await OrderService.updateGarage( req.body );
+        res.send(allGarages);    
     } catch {
         res.status(400).send("Garage not found");
     }
 })
 
-router.get('/promos/:number', requireLogin, async (req, res) => {
+router.get('/promos/:number',  async (req, res) => {
     console.log(req.params.number)
-    let limit = 20;
-    let number = req.params.number * limit;
-
-    const allPromos = await promo.find().skip( number ).limit( limit );
+    const allPromos = await OrderService.getAllPromos( req.params.number );
     res.send(allPromos)
 })
 
-router.post('/promos/add', requireLogin, async (req, res) => {
-    let limit = 20;
-    await promo.create({...req.body});
-    const allPromos = await promo.find().limit( limit );
+router.post('/promos/add',  async (req, res) => {
+    console.log('request:',req.body)
+    const allPromos = await OrderService.createPromo( req.body );
     res.send(allPromos)
 })
 
-router.post('/promos/delete', requireLogin, async (req, res) => {
-    let limit = 20;
+router.post('/promos/delete',  async (req, res) => {
+    console.log('request:',req.body) 
     try {
-        let list = req.body;
-        await Promise.all(list.map( async (item) => {
-            await promo.deleteOne({_id: item._id});
-        }))
-        const allPromos = await promo.find().limit( limit );
+        const allPromos = await OrderService.deletePromo( req.body );
         res.send(allPromos)
     } catch {
         res.status(400).send("Promo code not found");
     }
 })
 
-router.post('/user/add', requireLogin, async (req, res) => {
-    let limit = 20;
-    let type;
-    let {email, password, name, role, hotel} = req.body
-    let dateCreated = new Date()
-    if (role === 'Hotel') {
-        type = {isHotel: true}
-    } else if (role === "Admin") {
-        type = {isAdmin: true}
-    } else { type = {} }
-    const existingUser = await user.findOne({ email });
-    if (!existingUser) {
-        try {
-            //salt password
-            const salt = await bcrypt.genSalt(10);
-            if (!salt) throw Error('Something went wrong with bcrypt');
-            const hash = await bcrypt.hash(password, salt);
-            if (!hash) throw Error('Something went wrong hashing the password');
-            ///Create user and save to database
-            await user.create({ email, password: hash, name: name, userType: role, hotel: hotel, dateCreated: dateCreated, ...type });
-            const allUsers = await user.find().limit( limit );
-            console.log(allUsers)
-            res.send(allUsers)
-        } catch {
-            res.status(400).send("User not created");
-        }
-    } else {
-        res.status(400).send('user already exists')
-    }
-})
-
-router.post('/user/edit', requireLogin, async (req, res) => {
-    let limit = 20;
-    let type;
-    let {id, name, role} = req.body
-    let emails = req.body.email
-    if (role === 'Hotel') {
-        type = {isHotel: true}
-    } else if (role === "Admin") {
-        type = {isAdmin: true}
-    } else { type = {} }
-    const existingUser = await user.findOne({ _id: id });
-    if (existingUser) {
-        try {
-            await user.updateOne({ _id: id}, {$set:{name: name, email: emails, userType: role, ...type }});
-            const allUsers = await user.find().limit( limit );
-            console.log(allUsers)
-            res.send(allUsers)
-        } catch {
-            res.status(400).send("User not created");
-        }
-    } else {
-        res.status(400).send('User Not Found')
-    }
-})
-
-router.post('/user/update', requireLogin, async (req, res) => {
-    let limit = 20;
+router.post('/user/add',  async (req, res) => {
+    console.log('request:',req.body) 
     try {
-        await user.updateOne({_id: req.body._id}, {$set:{...req.body}});
-        const existingUser = await user.findOne({_id: req.body._id});
+        const allUsers = await OrderService.createUser( req.body );
+        res.send(allUsers)
+    } catch {
+        res.status(400).send(error.message)
+    }
+})
+
+router.post('/user/edit', async (req, res) => {
+    console.log('request:', req.body)
+    try {
+        const allUsers = await OrderService.editUser(req.body)
+        res.send(allUsers)
+    } catch {
+        res.status(400).send(error.message)
+    }
+})
+
+router.post('/user/update', async (req, res) => {
+    console.log('request:', req.body)
+    try {
+        const existingUser = await OrderService.updateUser(req.body)
         res.send(existingUser)
     } catch {
-        res.status(400).send("User not found");
+        res.status(400).send('User not found')
     }
 })
 
-router.post('/order/refund', requireLogin, async (req, res) => {
-    let lists = req.body;
-    let limit = 20;
+router.post('/order/refund',  async (req, res) => {
+    console.log('request:',req.body)
     try {
-        await Promise.all(lists.map( async (item) => {
-            const existingOrder = await Order.findOne({_id: item._id});
-            // console.log(req.body)
-            console.log(existingOrder)
-
-            let refunds;
-            let amount = item.total * 100;
-            if (amount > (existingOrder.total * 100) - 1) {
-                refunds = "Refunded"
-            } else { refunds = "Partial Refund" }
-            console.log(existingOrder.refundId)
-            const refund = await stripe.refunds.create({
-                charge: existingOrder.refundId,
-                amount: amount,
-              });
-            await Order.updateOne({_id: existingOrder._doc._id}, {$set:{status: refunds}})
-        }))
-        const allOrders = await Order.find().limit( limit );
+        const allOrders = await OrderService.refundOrders( req.body );
         res.send(allOrders);
     } catch {
         res.status(400).send("Refund order failed");
     }
 })
 
-router.post('/status', requireLogin, async (req, res) => {
+router.post('/status',  async (req, res) => {
+    console.log('request:',req.body)
     try {
-        await Order.updateOne({_id: req.body.order}, {$set:{status: req.body.status}});
-        let limit = 20;
-        const allOrders = await Order.find().sort({_id: -1}).limit( limit );
+        const allOrders = await OrderService.updateOrderStatus( req.body );
         res.send(allOrders);
     } catch {
         res.status(400).send("Update status failed");
     }
 })
 
-const calcTotals = async (item, month) => {
-    let newTotal = 0;
-    let newQuantity = 0;
-    await Order.find({ $and: [{"date" : {$regex : `.*${month}.*`}}, {location: item}]})
-        .then(resp => {
-            resp.forEach((order) => {
-                newTotal = order.total + newTotal;
-                newQuantity = newQuantity + 1;
-            })
-        })
-    return {
-        name: item.name,
-        total: newTotal,
-        quantity: newQuantity
-    }
-}
-
-const calcHotelTotals = async (item, month) => {
-    let newTotal = 0;
-    let newQuantity = 0;
-    await Order.find({ $and: [{"date" : {$regex : `.*${month}.*`}}, {hotel: item}]})
-        .then(resp => {
-            resp.forEach((order) => {
-                newTotal = order.total + newTotal;
-                newQuantity = newQuantity + 1;
-            })
-        })
-    return {
-        name: item,
-        total: newTotal,
-        quantity: newQuantity
-    }
-}
-
-const calcHotelOwed = async (item, month) => {
-    let newTotal = 0;
-    let newQuantity = 0;
-    await Order.find({ $and: [{"date" : {$regex : `.*${month}.*`}}, {hotel: item}, {time: "Overnight"}]})
-        .then(resp => {
-            resp.forEach((order) => {
-                newTotal = order.total + newTotal;
-                newQuantity = newQuantity + 1;
-            })
-        })
-    return {
-        name: item,
-        total: newTotal,
-        quantity: newQuantity
-    }
-}
-
-router.post('/garageOrders', requireLogin, async (req, res) => {
-    let {month} = req.body
+router.post('/garageOrders',  async (req, res) => {
+    console.log('request:',req.body)
     try {
-        const LocationMonth = await Order.distinct("location", {"date" : {$regex : `.*${month}.*`}});
-        const LocationObj = await Promise.all(LocationMonth.map((item) => calcTotals(item, month)));
-        console.log(LocationObj);
+        const LocationObj = await OrderService.getGarageOrders( req.body.month );
         res.send(LocationObj);
     } catch {
         res.status(400).send("No Garages Found");
@@ -379,16 +183,16 @@ router.post('/garageOrders', requireLogin, async (req, res) => {
 })
 
 router.post('/hotelorders', requireLogin, async (req, res) => {
-    let {month} = req.body
-    try {
-        const HotelMonth = await Order.distinct("hotel", {"date" : {$regex : `.*${month}.*`}});
-        const HotelObj = await Promise.all(HotelMonth.map((item) => calcHotelTotals(item, month)));
-        console.log(HotelObj);
+    cconsole.log('request:',req.body)
+    try {        
+        const HotelObj = await OrderService.getHotelOrders( req.body.month );
         res.send(HotelObj);
     } catch {
         res.status(400).send("No Hotels Found");
     }
 })
+
+/////////////////////////////////////////////////
 
 router.post('/hotelowed', requireLogin, async (req, res) => {
     let {month} = req.body
