@@ -57,7 +57,7 @@ const INIT_STATE = {
     projectList: [],
     totalCount: 0,
     businessForm: {
-        isShortTermBusiness: '',
+        projectType: '',
         name: '',
         challenge: '',
         role: '',
