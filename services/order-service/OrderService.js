@@ -2,6 +2,12 @@ const UserModel = require('../../models/User')
 const OrderModel = require('../../models/Orders')
 const GarageModel = require('../../models/Garages')
 const PromoModel = require('../../models/Promo')
+const HotelModel = require('../../models/hotels');
+const pdfMake = require('../../services/pdfmaker/pdfmake');
+const pdfFonts = require("../../services/pdfmaker/vfs_fonts");
+const keys = require('../../config/keys');
+const stripe = require('stripe')(keys.stripeSecretKey);
+const bcrypt = require('bcryptjs');
 
 const getAllUsers = async skip => {
     try {
@@ -343,9 +349,1081 @@ const getGarageOrders = async month => {
 }
 
 const getHotelOrders = async month => {
-    const HotelMonth = await Order.distinct("hotel", {"date" : {$regex : `.*${month}.*`}});
+    const HotelMonth = await OrderModel.distinct("hotel", {"date" : {$regex : `.*${month}.*`}});
     const HotelObj = await Promise.all(HotelMonth.map((item) => calcHotelTotals(item, month)));
     return HotelObj;
+}
+
+const getHotelOwed = async month => {
+    const HotelMonth = await OrderModel.distinct("hotel", {"date" : {$regex : `.*${month}.*`}});
+    const HotelObj = await Promise.all(HotelMonth.map((item) => calcHotelOwed(item, month)));
+    return HotelObj;
+}
+
+const createHotel = async hotel => {
+    let {name, address} = hotel;
+    let existingHotel = await HotelModel.findOne({name: name});
+    console.log('existing hotel:',existingHotel);
+    if (!existingHotel) {
+        await HotelModel.create({name, address})
+        return 'Success'
+    }
+    return 'Hotel already exists'
+}
+
+const createHotelPayment = async obj => {
+    let {email, vehicle, hotel, date, roomNumber, valetNumber} = obj.body;
+    let total = 150;
+    let name = obj.body.hotel;
+    let promo = {error: '', id: '', code: '', description: '', userType: 'any', discount: 1};
+    let service = [{name: "Exterior & Interior Detail Package"}];
+    let userHotel = await HotelModel.findOne({name: hotel});
+    let location = {name: hotel, address: userHotel.address }
+    var month = new Array(12);
+    month[0] = "Jan.";
+    month[1] = "Feb.";
+    month[2] = "March";
+    month[3] = "April";
+    month[4] = "May";
+    month[5] = "June";
+    month[6] = "July";
+    month[7] = "Aug.";
+    month[8] = "Sept.";
+    month[9] = "Oct.";
+    month[10] = "Nov.";
+    month[11] = "Dec.";
+    let orderDate = `${month[new Date().getMonth()]} ${new Date().getDate()} ${new Date().getFullYear()}`
+    const OrderNum = Math.round(Math.random() * 1000000)
+
+    await OrderModel.create({
+        user: obj.user.sub, 
+        name,
+        email, 
+        services: [...service], 
+        total, 
+        orderNumber: OrderNum, 
+        Vehicle: vehicle,
+        location: hotel,
+        promo,
+        roomNumber,
+        valetNumber,
+        time: "Overnight",
+        date,
+        hotel,
+        orderDate,
+      })
+
+    return 'Success'
+}
+
+const createHotelPDF = async obj => {
+    let { month, hotel } = obj.body
+    let price = 0
+    const HotelMonth = await OrderModel.find({ date: { $regex: `.*${month}.*` }, hotel: hotel })
+    console.log(HotelMonth)
+    price = HotelMonth.reduce((acc, curr) => acc + curr.total, 0)
+    var myPDF = {
+        content: [
+            {
+                text: 'Unzipped - Invoice w1570',
+                style: 'header'
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'subheader',
+                columns: [
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Unzipped - Carcare Services',
+                                style: 'stacks'
+                            },
+                            {
+                                text: '139 E Main St',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Columbus OH',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'United States',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'schedule@Unzipped.com',
+                                style: 'stacks'
+                            }
+                        ]
+                    },
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Le-Meridien',
+                                style: 'stacks'
+                            },
+                            {
+                                text: '620 N High St',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Columbus, OH 43215',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'United States',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'frontoffice@lemeridiencolumbus.com',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                    // {
+                    //     width: "*",
+                    //     image: 'sampleImage.jpg',
+                    //     fit: [100, 100],
+                    // },
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'secheader',
+                columns: [
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Invoice date: 06/30/2021',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Invoice reference: w1570',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Customer reference: 1040',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'triheader',
+                columns: [
+                    {
+                        width: 290,
+                        text: 'Order'
+                    },
+                    {
+                        width: '*',
+                        text: 'Order #'
+                    },
+                    {
+                        width: '*',
+                        text: 'Price'
+                    },
+                    {
+                        width: '*',
+                        text: 'Total'
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            ////insert here
+            HotelMonth.map(item => {
+                return {
+                    alignment: 'justify',
+                    style: 'triheader',
+                    columns: [
+                        {
+                            width: 30,
+                            text: `x1`
+                        },
+                        {
+                            width: 240,
+                            stack: [
+                                'Exterior & Interior Detail Package',
+                                {
+                                    text: `${item.orderDate}`,
+                                    style: 'stacks1'
+                                }
+                            ]
+                        },
+                        {
+                            width: '*',
+                            text: `#${item.orderNumber}`
+                        },
+                        {
+                            width: '*',
+                            text: `$${item.total.toFixed(2)}`
+                        },
+                        {
+                            width: '*',
+                            text: `$${item.total.toFixed(2)}`
+                        }
+                    ]
+                }
+            }),
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, margin: [0, 25, 0, 0] }] },
+            {
+                alignment: 'justify',
+                style: 'simheader',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'Sub. total price:'
+                    },
+                    {
+                        width: '*',
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            },
+            {
+                alignment: 'justify',
+                style: 'simheader1',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: '*',
+                        text: '$0.00'
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'simheader3',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: '*',
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 15]
+            },
+            subheader: {
+                margin: [0, 25, 0, 25]
+            },
+            secheader: {
+                margin: [0, 10, 0, 10]
+            },
+            triheader: {
+                margin: [0, 30, 0, 15]
+            },
+            simheader: {
+                margin: [0, 15, 0, 5]
+            },
+            simheader1: {
+                margin: [0, 0, 0, 15]
+            },
+            simheader3: {
+                margin: [0, 15, 0, 20]
+            },
+            simheader4: {
+                margin: [0, 5, 0, 0]
+            },
+            stacks: {
+                margin: [0, 2, 0, 2]
+            },
+            stacks1: {
+                margin: [0, 2, 0, 2],
+                fontSize: 11
+            },
+            center: {
+                textAlign: 'center'
+            },
+            quote: {
+                italics: true
+            },
+            small: {
+                fontSize: 8
+            }
+        }
+    }
+    pdfMake.vfs = pdfFonts.pdfMake.vfs
+    const pdfDoc = pdfMake.createPdf(myPDF)
+    return pdfDoc
+}
+
+const createGaragePDF = async obj => {
+    let { month, garage } = obj.body
+    console.log(garage)
+    console.log(month)
+    let price = 0
+    let GarageMonth = await OrderModel.find({ date: { $regex: `.*${month}.*` } })
+    GarageMonth = GarageMonth.filter(item => item.location.name === garage)
+    price = GarageMonth.reduce((acc, curr) => acc + curr.total, 0)
+    var myPDF = {
+        content: [
+            {
+                text: 'Unzipped - Invoice w1570',
+                style: 'header'
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'subheader',
+                columns: [
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Unzipped - Carcare Services',
+                                style: 'stacks'
+                            },
+                            {
+                                text: '139 E Main St',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Columbus OH',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'United States',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'schedule@Unzipped.com',
+                                style: 'stacks'
+                            }
+                        ]
+                    },
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Le-Meridien',
+                                style: 'stacks'
+                            },
+                            {
+                                text: '620 N High St',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Columbus, OH 43215',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'United States',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'frontoffice@lemeridiencolumbus.com',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                    // {
+                    //     width: "*",
+                    //     image: 'sampleImage.jpg',
+                    //     fit: [100, 100],
+                    // },
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'secheader',
+                columns: [
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Invoice date: 06/30/2021',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Invoice reference: w1570',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Customer reference: 1040',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'triheader',
+                columns: [
+                    {
+                        width: 290,
+                        text: 'Order'
+                    },
+                    {
+                        width: '*',
+                        text: 'Order #'
+                    },
+                    {
+                        width: '*',
+                        text: 'Price'
+                    },
+                    {
+                        width: '*',
+                        text: 'Total'
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            ////insert here
+            GarageMonth.map(item => {
+                return {
+                    alignment: 'justify',
+                    style: 'triheader',
+                    columns: [
+                        {
+                            width: 30,
+                            text: `x1`
+                        },
+                        {
+                            width: 240,
+                            stack: [
+                                'Exterior & Interior Detail Package',
+                                {
+                                    text: `${item.orderDate}`,
+                                    style: 'stacks1'
+                                }
+                            ]
+                        },
+                        {
+                            width: '*',
+                            text: `#${item.orderNumber}`
+                        },
+                        {
+                            width: '*',
+                            text: `$${item.total.toFixed(2)}`
+                        },
+                        {
+                            width: '*',
+                            text: `$${item.total.toFixed(2)}`
+                        }
+                    ]
+                }
+            }),
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, margin: [0, 25, 0, 0] }] },
+            {
+                alignment: 'justify',
+                style: 'simheader',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'Sub. total price:'
+                    },
+                    {
+                        width: '*',
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            },
+            {
+                alignment: 'justify',
+                style: 'simheader1',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: '*',
+                        text: '$0.00'
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'simheader3',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: '*',
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 15]
+            },
+            subheader: {
+                margin: [0, 25, 0, 25]
+            },
+            secheader: {
+                margin: [0, 10, 0, 10]
+            },
+            triheader: {
+                margin: [0, 30, 0, 15]
+            },
+            simheader: {
+                margin: [0, 15, 0, 5]
+            },
+            simheader1: {
+                margin: [0, 0, 0, 15]
+            },
+            simheader3: {
+                margin: [0, 15, 0, 20]
+            },
+            simheader4: {
+                margin: [0, 5, 0, 0]
+            },
+            stacks: {
+                margin: [0, 2, 0, 2]
+            },
+            stacks1: {
+                margin: [0, 2, 0, 2],
+                fontSize: 11
+            },
+            center: {
+                textAlign: 'center'
+            },
+            quote: {
+                italics: true
+            },
+            small: {
+                fontSize: 8
+            }
+        }
+    }
+    pdfMake.vfs = pdfFonts.pdfMake.vfs
+    const pdfDoc = pdfMake.createPdf(myPDF)
+    return pdfDoc
+}
+
+const createHotelOrdersPDF = async obj => {
+    let { hotel } = obj.body
+    let price = 0
+    const HotelOrders = await OrderModel.find({ status: 'PENDING', hotel: hotel })
+    price = HotelOrders.reduce((acc, curr) => acc + curr.total, 0)
+    var myPDF = {
+        content: [
+            {
+                text: 'Unzipped - Pending Orders',
+                style: 'header'
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'subheader',
+                columns: [
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Unzipped - Carcare Services',
+                                style: 'stacks'
+                            },
+                            {
+                                text: '139 E Main St',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Columbus OH',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'United States',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'schedule@Unzipped.com',
+                                style: 'stacks'
+                            }
+                        ]
+                    },
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Le-Meridien',
+                                style: 'stacks'
+                            },
+                            {
+                                text: '620 N High St',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Columbus, OH 43215',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'United States',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'frontoffice@lemeridiencolumbus.com',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                    // {
+                    //     width: "*",
+                    //     image: 'sampleImage.jpg',
+                    //     fit: [100, 100],
+                    // },
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'secheader',
+                columns: [
+                    {
+                        width: '*',
+                        stack: [
+                            {
+                                text: 'Invoice date: 06/30/2021',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Invoice reference: w1570',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Customer reference: 1040',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'triheader',
+                columns: [
+                    {
+                        width: 290,
+                        text: 'Order'
+                    },
+                    {
+                        width: '*',
+                        text: 'Order #'
+                    },
+                    {
+                        width: '*',
+                        text: 'Price'
+                    },
+                    {
+                        width: '*',
+                        text: 'Total'
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            ////insert here
+            HotelOrders.map(item => {
+                return {
+                    alignment: 'justify',
+                    style: 'triheader',
+                    columns: [
+                        {
+                            width: 30,
+                            text: `x1`
+                        },
+                        {
+                            width: 240,
+                            stack: [
+                                'Exterior & Interior Detail Package',
+                                {
+                                    text: `${item.orderDate}`,
+                                    style: 'stacks1'
+                                }
+                            ]
+                        },
+                        {
+                            width: '*',
+                            text: `#${item.orderNumber}`
+                        },
+                        {
+                            width: '*',
+                            text: `$${item.total.toFixed(2)}`
+                        },
+                        {
+                            width: '*',
+                            text: `$${item.total.toFixed(2)}`
+                        }
+                    ]
+                }
+            }),
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, margin: [0, 25, 0, 0] }] },
+            {
+                alignment: 'justify',
+                style: 'simheader',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'Sub. total price:'
+                    },
+                    {
+                        width: '*',
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            },
+            {
+                alignment: 'justify',
+                style: 'simheader1',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: '*',
+                        text: '$0.00'
+                    }
+                ]
+            },
+            { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+            {
+                alignment: 'justify',
+                style: 'simheader3',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: '*',
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 15]
+            },
+            subheader: {
+                margin: [0, 25, 0, 25]
+            },
+            secheader: {
+                margin: [0, 10, 0, 10]
+            },
+            triheader: {
+                margin: [0, 30, 0, 15]
+            },
+            simheader: {
+                margin: [0, 15, 0, 5]
+            },
+            simheader1: {
+                margin: [0, 0, 0, 15]
+            },
+            simheader3: {
+                margin: [0, 15, 0, 20]
+            },
+            simheader4: {
+                margin: [0, 5, 0, 0]
+            },
+            stacks: {
+                margin: [0, 2, 0, 2]
+            },
+            stacks1: {
+                margin: [0, 2, 0, 2],
+                fontSize: 11
+            },
+            center: {
+                textAlign: 'center'
+            },
+            quote: {
+                italics: true
+            },
+            small: {
+                fontSize: 8
+            }
+        }
+    }
+    pdfMake.vfs = pdfFonts.pdfMake.vfs
+    const pdfDoc = pdfMake.createPdf(myPDF)
+    return pdfDoc
+}
+
+const createOrdersPDF = async obj => {
+    let {status} = obj.body;
+    let price = 0;
+    let datetime = new Date();
+    const PendingOrders = await OrderModel.find({"status": status});
+    price = PendingOrders.reduce((acc, curr) => acc + curr.total, 0);
+    var myPDF = {
+        content: [		
+            {
+                text: 'Unzipped - Pending Orders',
+                style: 'header'
+            },
+            {canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 } ]},
+            {
+                alignment: 'justify',
+                style: 'subheader',
+                columns: [
+                    {
+                        width: "*",
+                        stack: [
+                                {
+                                    text: 'Unzipped - Carcare Services',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text:'139 E Main St',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: 'Columbus OH',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: 'United States',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: 'schedule@Unzipped.com',
+                                    style: 'stacks'
+                                },
+                            ]
+                    },
+                    {   
+                        width: "*",
+                        stack: [
+                                {
+                                    text: '',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: '',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: '',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: '',
+                                    style: 'stacks'
+                                },
+                                {
+                                    text: '',
+                                    style: 'stacks'
+                                },
+                            ]
+                    },
+                    // {   
+                    //     width: "*",
+                    //     image: 'sampleImage.jpg',
+                    //     fit: [100, 100],
+                    // },
+                ]
+            },
+            {canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 } ]},
+            {
+                alignment: 'justify',
+                style: 'secheader',
+                columns: [
+                    {
+                        width: "*",
+                        stack: [
+                            {
+                                text: `Invoice date: ${datetime.getMonth()}/${datetime.getDate()}/${datetime.getFullYear()}`,
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Invoice reference: w1570',
+                                style: 'stacks'
+                            },
+                            {
+                                text: 'Customer reference: Admin',
+                                style: 'stacks'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 } ]},
+            {
+                alignment: 'justify',
+                style: 'triheader',
+                columns: [
+                    {
+                        width: 290,
+                        text: 'Order'
+                    },
+                    {
+                        width: "*",
+                        text: 'Order #'
+                    },
+                    {
+                        width: "*",
+                        text: 'Price'
+                    },
+                    {
+                        width: "*",
+                        text: 'Total'
+                    }
+                ]
+            },
+            {canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 } ]},
+            ////insert here
+            PendingOrders.map((item) => {
+                return  (
+                    {
+                    alignment: 'justify',
+                    style: 'triheader',
+                    columns: [
+                        {
+                            width: 30,
+                            text: `x1`
+                        },
+                        {
+                            width: 240,
+                            stack: [
+                                'Exterior & Interior Detail Package',
+                                {
+                                    text: `${item.orderDate}`,
+                                    style: 'stacks1'
+                                }
+                               ]
+                        },
+                        {
+                            width: "*",
+                            text: `#${item.orderNumber}`
+                        },
+                        {
+                            width: "*",
+                            text: `$${item.total.toFixed(2)}`
+                        },
+                        {
+                            width: "*",
+                            text: `$${item.total.toFixed(2)}`
+                        }
+                    ]
+                })
+            }),
+            {canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, margin: [0,25,0,0] } ]},
+            {
+                alignment: 'justify',
+                style: 'simheader',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'Sub. total price:'
+                    },
+                    {
+                        width: "*",
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            },
+            {
+                alignment: 'justify',
+                style: 'simheader1',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: "*",
+                        text: '$0.00'
+                    }
+                ]
+            },
+            {canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 } ]},
+            {
+                alignment: 'justify',
+                style: 'simheader3',
+                columns: [
+                    {
+                        width: 435,
+                        text: 'tax:'
+                    },
+                    {
+                        width: "*",
+                        text: `$${price.toFixed(2)}`
+                    }
+                ]
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 15]
+            },
+            subheader: {
+                margin: [0, 25, 0, 25]
+            },
+            secheader: {
+                margin: [0, 10, 0, 10]
+            },
+            triheader: {
+                margin: [0, 30, 0, 15]
+            },
+            simheader: {
+                margin: [0, 15, 0, 5]
+            },
+            simheader1: {
+                margin: [0, 0, 0, 15]
+            },
+            simheader3: {
+                margin: [0, 15, 0, 20]
+            },
+            simheader4: {
+                margin: [0, 5, 0, 0]
+            },
+            stacks: {
+                margin: [0, 2, 0, 2]
+            },
+            stacks1: {
+                margin: [0, 2, 0, 2],
+                fontSize: 11
+            },
+            center: {
+              textAlign: 'center'
+            },
+            quote: {
+                italics: true
+            },
+            small: {
+                fontSize: 8
+            }
+        }
+    } 
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    const pdfDoc = pdfMake.createPdf(myPDF);
+    return pdfDoc;
 }
 
 module.exports = {
@@ -369,4 +1447,11 @@ module.exports = {
     updateOrderStatus,
     getGarageOrders,
     getHotelOrders,
+    getHotelOwed,
+    createHotel,
+    createHotelPayment,
+    createHotelPDF,
+    createGaragePDF,
+    createHotelOrdersPDF,
+    createOrdersPDF
 }
