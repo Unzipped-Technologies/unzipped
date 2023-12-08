@@ -52,13 +52,13 @@ const SimpleModal = ({open, setOpen, token}) => {
     const [email, setEmail] = useState('');
     const [focus, setFocus] = useState(false);
     const [password, setPassword] = useState('');
-    const [hotelName, setHotelName] = useState('Select a hotel...');
+    // const [hotelName, setHotelName] = useState('Select a hotel...');
     const [user, setUser] = useState({
         name: '',
         password: '',
         email: '',
         role: '',
-        hotel: '',
+        // hotel: '',
     });
 
     const updateUser = () => {
@@ -67,7 +67,7 @@ const SimpleModal = ({open, setOpen, token}) => {
             password: password,
             name: name,
             role: select,
-            hotel: hotelName,
+            // hotel: hotelName,
         });
         };
 
@@ -101,10 +101,10 @@ const SimpleModal = ({open, setOpen, token}) => {
         setName(value);
     };
 
-    const handleHotelNameChange = (e) => {
-        const { name, value } = e.target;
-        setHotelName(value);
-    };
+    // const handleHotelNameChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setHotelName(value);
+    // };
 
     const addNewUser = () => {
         dispatch(addCustomer(user, token));
@@ -113,7 +113,7 @@ const SimpleModal = ({open, setOpen, token}) => {
     useEffect(() => {
         updateUser()
         console.log(user)
-    }, [email, password, name, select, hotelName])
+    }, [email, password, name, select])
 
     return (
         <div>
@@ -133,7 +133,7 @@ const SimpleModal = ({open, setOpen, token}) => {
                             placeholder="Name" 
                             required  
                             value={name}
-                            onChange={(e) => user.name = e.target.value} 
+                            // onChange={(e) => user.name = e.target.value} 
                             className={classes.input}
                             onChange={handleNameChange}
                             onFocus={handleNameFocus}
@@ -174,13 +174,13 @@ const SimpleModal = ({open, setOpen, token}) => {
                                 style={{width: '100%'}} 
                             >
                                 <MenuItem value="Customer">Customer</MenuItem>
-                                <MenuItem value="Hotel">Hotel</MenuItem>
+                                {/* <MenuItem value="Hotel">Hotel</MenuItem> */}
                                 <MenuItem value="Admin">Admin</MenuItem>
-                                <MenuItem value="Driver">Driver</MenuItem>
+                                {/* <MenuItem value="Driver">Driver</MenuItem> */}
                             </Select>
                         </FormControl>
                         </div>
-                        {select === 'Hotel' &&
+                        {/* {select === 'Hotel' &&
                         <div className="user-role-select">
                         <FormControl 
                             style={{width: '100%', 
@@ -199,7 +199,7 @@ const SimpleModal = ({open, setOpen, token}) => {
                             </Select>
                         </FormControl>
                         </div>
-                        }
+                        } */}
                         <div className="bottom-buttons-customer">
                             <button type="submit" className="customer-btn"><i className="fa fa-plus" style={{fontStyle: 'normal', marginRight: '7px', color: '#fff', fontWeight: '200'}}/>Add</button>
                             <button onClick={() => handleClose()} style={{fontStyle: 'normal', marginLeft: '10px', color: '#000', height: '32px'}}>Cancel</button>

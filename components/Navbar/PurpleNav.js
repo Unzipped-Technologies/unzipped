@@ -12,11 +12,11 @@ const NoLogo = () => {
     const logo = '/img/cursive-logo-purple.png';
     const router = useRouter();
 
-    const WWDItems = [
-        { names: `Car Wash ${'&'} Detail`, links: `/car-wash-detail` },
-        { names: `Car Services`, links: `/car-services` },
-        { names: `Car Repair`, links: `/car-repair` }, 
-    ]
+    // const WWDItems = [
+    //     { names: `Car Wash ${'&'} Detail`, links: `/car-wash-detail` },
+    //     { names: `Car Services`, links: `/car-services` },
+    //     { names: `Car Repair`, links: `/car-repair` }, 
+    // ]
 
     useEffect(() => {
         /**
@@ -58,7 +58,7 @@ const NoLogo = () => {
                                 </div>
                                 {focus === 'dropdown' &&
                                     <div ref={wrapperRef} className="nav-right-wwd" id="position-menu-drop-nl">
-                                        <MenuDropdown MenuItems={WWDItems} />
+                                        {/* <MenuDropdown MenuItems={WWDItems} /> */}
                                     </div>
                                 }
                             </li>
