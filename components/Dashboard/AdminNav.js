@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Icon from "@material-ui/core/Icon";
 import Link from 'next/link';
 import { connect, useDispatch } from 'react-redux';
-import { logoutUser, clearCart, clearVehicle } from '../../redux/actions';
+import { logoutUser, clearCart } from '../../redux/actions';
 import { useRouter } from 'next/router';
 
 const AdminNav = ({isAuthenticated, userType}) => {
@@ -14,7 +14,6 @@ const AdminNav = ({isAuthenticated, userType}) => {
 
     const signOut = () => {
         dispatch(clearCart())
-        dispatch(clearVehicle())
         dispatch(logoutUser()) 
         router.push('/login')
     }
@@ -26,53 +25,53 @@ const AdminNav = ({isAuthenticated, userType}) => {
                     [
                         { names: "Home", links: `/`},
                         { names: "Sign out", links: `/api/auth/logout`},
-                        { names: "Dashboard", links: `/dashboard/calendar`},
-                        { names: "Schedule", links: `/calendar/driver`},
-                        { names: "Orders", links: `/receipt`},
+                        // { names: "Dashboard", links: `/dashboard/calendar`},
+                        // { names: "Schedule", links: `/calendar/driver`},
+                        // { names: "Orders", links: `/receipt`},
                         { names: "<hr />", links: ''},
-                        { names: "Calendar", links: `/dashboard/calendar`},
-                        { names: "Orders", links: `/dashboard/orders`},
+                        // { names: "Calendar", links: `/dashboard/calendar`},
+                        // { names: "Orders", links: `/dashboard/orders`},
                         { names: "Customers", links: `/dashboard/customers`},
-                        { names: "Garages", links: `/dashboard/garages`},
-                        { names: "Promos", links: `/dashboard/promos`},
+                        // { names: "Garages", links: `/dashboard/garages`},
+                        // { names: "Promos", links: `/dashboard/promos`},
                         { names: "Admin", links: `/dashboard/admin`}
                     ]
                 )
             }
-            if (userType === "Driver") {
-                return (
-                    [
-                        { names: "Home", links: `/`},
-                        { names: "Sign out", links: `/api/auth/logout`},
-                        { names: "Dashboard", links: `/calendar/driver`},
-                        { names: "Orders", links: `/receipt`},
-                        { names: "<hr />", links: ''},
-                        { names: "Schedule an appointment", links: `/schedule`},
-                        { names: "Become a partner", links: `/partners` },
-                        { names: "Help", links: `/faqs`},
-                    ]
-                )
-            }
-            if (userType === "Hotel") {
-                return (
-                    [
-                        { names: "Home", links: `/`},
-                        { names: "Sign out", links: `/api/auth/logout`},
-                        { names: "Dashboard", links: `/dashboard/hotel/calendar`},
-                        { names: "Orders", links: `/receipt`},
-                        { names: "<hr />", links: ''},
-                        { names: "Calendar", links: `/dashboard/hotel/calendar`},
-                        { names: "Orders", links: `/dashboard/hotel/orders`},
-                        { names: "Total", links: `/dashboard/hotel/total`},
-                    ]
-                )
-            }
+            // if (userType === "Driver") {
+            //     return (
+            //         [
+            //             { names: "Home", links: `/`},
+            //             { names: "Sign out", links: `/api/auth/logout`},
+            //             { names: "Dashboard", links: `/calendar/driver`},
+            //             { names: "Orders", links: `/receipt`},
+            //             { names: "<hr />", links: ''},
+            //             { names: "Schedule an appointment", links: `/schedule`},
+            //             { names: "Become a partner", links: `/partners` },
+            //             { names: "Help", links: `/faqs`},
+            //         ]
+            //     )
+            // }
+            // if (userType === "Hotel") {
+            //     return (
+            //         [
+            //             { names: "Home", links: `/`},
+            //             { names: "Sign out", links: `/api/auth/logout`},
+            //             { names: "Dashboard", links: `/dashboard/hotel/calendar`},
+            //             { names: "Orders", links: `/receipt`},
+            //             { names: "<hr />", links: ''},
+            //             { names: "Calendar", links: `/dashboard/hotel/calendar`},
+            //             { names: "Orders", links: `/dashboard/hotel/orders`},
+            //             { names: "Total", links: `/dashboard/hotel/total`},
+            //         ]
+            //     )
+            // }
             return (
                 [
                     { names: "Home", links: `/`},
                     { names: "Sign out", links: `/api/auth/logout`},
                     { names: "Membership", links: `/register`},
-                    { names: "Orders", links: `/receipt`},
+                    // { names: "Orders", links: `/receipt`},
                     { names: "<hr />", links: ''},
                     { names: "Schedule an appointment", links: `/schedule`},
                     { names: "Become a partner", links: `/partners` },
@@ -171,4 +170,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, { logoutUser, clearCart, clearVehicle })(AdminNav);
+export default connect(mapStateToProps, { logoutUser, clearCart })(AdminNav);

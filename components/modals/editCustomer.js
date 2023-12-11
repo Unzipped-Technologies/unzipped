@@ -128,7 +128,7 @@ const SimpleModal = ({open, setOpen, token, edits, loading}) => {
                             placeholder="Name" 
                             required  
                             value={name}
-                            onChange={(e) => user.name = e.target.value} 
+                            // onChange={(e) => user.name = e.target.value} 
                             className={classes.input}
                             onChange={handleNameChange}
                             onFocus={handleNameFocus}
@@ -159,9 +159,9 @@ const SimpleModal = ({open, setOpen, token, edits, loading}) => {
                                 style={{width: '100%'}} 
                             >
                                 <MenuItem value="Customer">Customer</MenuItem>
-                                <MenuItem value="Hotel">Hotel</MenuItem>
+                                {/* <MenuItem value="Hotel">Hotel</MenuItem> */}
                                 <MenuItem value="Admin">Admin</MenuItem>
-                                <MenuItem value="Driver">Driver</MenuItem>
+                                {/* <MenuItem value="Driver">Driver</MenuItem> */}
                             </Select>
                         </FormControl>
                         </div>

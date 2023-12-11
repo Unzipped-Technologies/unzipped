@@ -14,7 +14,7 @@ import {
     FORGET_PASSWORD,
     FORGET_PASSWORD_SUCCESS,
     CLEAR_ERRORS,
-    SET_DEFAULT_VEHICLE,
+    // SET_DEFAULT_VEHICLE,
     SET_LOADING,
     SUBSCRIPTION_CREATED,
     UPDATE_USER_SUCCESS,
@@ -193,8 +193,8 @@ export const loadUser = (user) => async (dispatch, getState) => {
 }
 
 //Check token & Load User
-export const updateVehicle = (token, vehicle) => async (dispatch, getState) => {
-}
+// export const updateVehicle = (token, vehicle) => async (dispatch, getState) => {
+// }
 
 //Check token & Load User
 export const createSubscription = (data, token) => async (dispatch, getState) => {
@@ -214,20 +214,20 @@ export const createSubscription = (data, token) => async (dispatch, getState) =>
 }
 
 //Check token & Load User
-export const decodeVehicle = (token, vehicle) => async (dispatch, getState) => {
-    await axios
-        .post(`/api/vehicle/decode`, vehicle, tokenConfig(token))
-        .then(res => dispatch({
-            type: SET_DEFAULT_VEHICLE,
-            payload: res.data,
-        }))
-        .catch(err => {
-            dispatch({
-                type: AUTH_ERROR,
-                payload: err.response.data
-            })
-        })
-}
+// export const decodeVehicle = (token, vehicle) => async (dispatch, getState) => {
+//     await axios
+//         .post(`/api/vehicle/decode`, vehicle, tokenConfig(token))
+//         .then(res => dispatch({
+//             type: SET_DEFAULT_VEHICLE,
+//             payload: res.data,
+//         }))
+//         .catch(err => {
+//             dispatch({
+//                 type: AUTH_ERROR,
+//                 payload: err.response.data
+//             })
+//         })
+// }
 
 export const registerUser = (user) => async (dispatch) => {
     //User Loading
