@@ -52,13 +52,11 @@ const SimpleModal = ({open, setOpen, token}) => {
     const [email, setEmail] = useState('');
     const [focus, setFocus] = useState(false);
     const [password, setPassword] = useState('');
-    // const [hotelName, setHotelName] = useState('Select a hotel...');
     const [user, setUser] = useState({
         name: '',
         password: '',
         email: '',
         role: '',
-        // hotel: '',
     });
 
     const updateUser = () => {
@@ -67,7 +65,6 @@ const SimpleModal = ({open, setOpen, token}) => {
             password: password,
             name: name,
             role: select,
-            // hotel: hotelName,
         });
         };
 
@@ -100,11 +97,6 @@ const SimpleModal = ({open, setOpen, token}) => {
         const { name, value } = e.target;
         setName(value);
     };
-
-    // const handleHotelNameChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setHotelName(value);
-    // };
 
     const addNewUser = () => {
         dispatch(addCustomer(user, token));
@@ -174,32 +166,10 @@ const SimpleModal = ({open, setOpen, token}) => {
                                 style={{width: '100%'}} 
                             >
                                 <MenuItem value="Customer">Customer</MenuItem>
-                                {/* <MenuItem value="Hotel">Hotel</MenuItem> */}
                                 <MenuItem value="Admin">Admin</MenuItem>
-                                {/* <MenuItem value="Driver">Driver</MenuItem> */}
                             </Select>
                         </FormControl>
                         </div>
-                        {/* {select === 'Hotel' &&
-                        <div className="user-role-select">
-                        <FormControl 
-                            style={{width: '100%', 
-                            height: '130%', 
-                            paddingLeft: '4px', 
-                            position: 'relative', 
-                            top: '5px'}} 
-                        >
-                            <Select 
-                                value={hotelName} 
-                                onChange={handleHotelNameChange} 
-                                style={{width: '100%'}} 
-                            >
-                                <MenuItem value="Select a hotel...">Select a hotel...</MenuItem>
-                                <MenuItem value="Le-Meridien">Le Meridien The Joseph</MenuItem>
-                            </Select>
-                        </FormControl>
-                        </div>
-                        } */}
                         <div className="bottom-buttons-customer">
                             <button type="submit" className="customer-btn"><i className="fa fa-plus" style={{fontStyle: 'normal', marginRight: '7px', color: '#fff', fontWeight: '200'}}/>Add</button>
                             <button onClick={() => handleClose()} style={{fontStyle: 'normal', marginLeft: '10px', color: '#000', height: '32px'}}>Cancel</button>
