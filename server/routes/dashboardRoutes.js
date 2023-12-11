@@ -11,64 +11,36 @@ router.get('/users/:number', requireLogin, async (req, res) => {
     res.send(allUsers)
 })
 
-// router.get('/orders/:number', requireLogin, async (req, res) => {
-//     console.log('request:',req.params.number)
-//     const allOrders = await DashboardServices.getAllOrders( req.params.number);
-//     res.send(allOrders)
-// })
+router.get('/orders/:number', requireLogin, async (req, res) => {
+    console.log('request:',req.params.number)
+    const allOrders = await DashboardServices.getAllOrders( req.params.number);
+    res.send(allOrders)
+})
 
-// router.post('/orders/create', requireLogin, async (req, res) => {
-//     console.log('request body:',req.body)
-//     try {
-//       const allOrders = await DashboardServices.createOrder( req.body, req.user.sub );
-//       res.send(allOrders);
-//     } catch (error) {
-//       res.send({
-//         message: "Order Failed",
-//         success: false,
-//       });
-//     }
-// })
+router.post('/orders/create', requireLogin, async (req, res) => {
+    console.log('request body:',req.body)
+    try {
+      const allOrders = await DashboardServices.createOrder( req.body, req.user.sub );
+      res.send(allOrders);
+    } catch (error) {
+      res.send({
+        message: "Order Failed",
+        success: false,
+      });
+    }
+})
 
-// router.get('/garage/:number', requireLogin, async (req, res) => {
-//     console.log('request:',req.params.number)
-//     const allGarages = await DashboardServices.getAllGarages( req.params.number );
-//     res.send(allGarages)
-// })
+router.get('/orders-by-user/:user', requireLogin, async (req, res) => {
+    console.log('request',req.params.user)
+    const allOrders = await DashboardServices.getOrdersByUser(req.params.user);
+    res.send(allOrders)
+})
 
-// router.get('/map/:number', requireLogin, async (req, res) => {
-//     console.log('request:',req.params.number)
-//     const allGarages = await DashboardServices.getAllGarages( req.params.number );
-//     res.send(allGarages)
-// })
-
-// router.get('/orders-by-user/:user', requireLogin, async (req, res) => {
-//     console.log('request',req.params.user)
-//     const allOrders = await DashboardServices.getOrdersByUser(req.params.user);
-//     res.send(allOrders)
-// })
-
-// router.post('/orders/date', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     const allOrders = await DashboardServices.getOrdersByDate(req.body.date);
-//     res.send(allOrders)
-// })
-
-// router.post('/garage/add', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     const allGarages = await DashboardServices.createGarage( req.body );
-//     res.send(allGarages);
-// })
-
-// router.post('/garage/delete', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const allGarages = await DashboardServices.deleteGarage( req.body );
-//         res.send(allGarages);
-//     } catch {
-//         res.status(400).send("Garage not found");
-//     }
-// })
+router.post('/orders/date', requireLogin, async (req, res) => {
+    console.log('request:',req.body)
+    const allOrders = await DashboardServices.getOrdersByDate(req.body.date);
+    res.send(allOrders)
+})
 
 router.post('/user/delete', requireLogin, async (req, res) => {
     console.log('request:',req.body)
@@ -79,16 +51,6 @@ router.post('/user/delete', requireLogin, async (req, res) => {
         res.status(400).send("User not found");
     }
 })
-
-// router.post('/garage/update', requireLogin, async (req, res) => {
-//     console.log('request:',req.body) 
-//     try {
-//         const allGarages= await DashboardServices.updateGarage( req.body );
-//         res.send(allGarages);    
-//     } catch {
-//         res.status(400).send("Garage not found");
-//     }
-// })
 
 router.get('/promos/:number', requireLogin, async (req, res) => {
     console.log(req.params.number)
@@ -142,154 +104,43 @@ router.post('/user/update', requireLogin, async (req, res) => {
     }
 })
 
-// router.post('/order/refund', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const allOrders = await DashboardServices.refundOrders( req.body );
-//         res.send(allOrders);
-//     } catch {
-//         res.status(400).send("Refund order failed");
-//     }
-// })
+router.post('/order/refund', requireLogin, async (req, res) => {
+    console.log('request:',req.body)
+    try {
+        const allOrders = await DashboardServices.refundOrders( req.body );
+        res.send(allOrders);
+    } catch {
+        res.status(400).send("Refund order failed");
+    }
+})
 
-// router.post('/status', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const allOrders = await DashboardServices.updateOrderStatus( req.body );
-//         res.send(allOrders);
-//     } catch {
-//         res.status(400).send("Update status failed");
-//     }
-// })
+router.post('/status', requireLogin, async (req, res) => {
+    console.log('request:',req.body)
+    try {
+        const allOrders = await DashboardServices.updateOrderStatus( req.body );
+        res.send(allOrders);
+    } catch {
+        res.status(400).send("Update status failed");
+    }
+})
 
-// router.post('/garageOrders', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const LocationObj = await DashboardServices.getGarageOrders( req.body.month );
-//         res.send(LocationObj);
-//     } catch {
-//         res.status(400).send("No Garages Found");
-//     }
-// })
-
-// router.post('/hotelorders', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {        
-//         const HotelObj = await DashboardServices.getHotelOrders( req.body.month );
-//         res.send(HotelObj);
-//     } catch {
-//         res.status(400).send("No Hotels Found");
-//     }
-// })
-
-// router.post('/hotelowed', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const HotelObj = await DashboardServices.getHotelOwed( req.body.month );
-//         res.send(HotelObj);
-//     } catch {
-//         res.status(400).send("No Hotels Found");
-//     }
-// })
-
-// router.post('/hotel/add', requireLogin, async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const HotelObj = await DashboardServices.createHotel( req.body );
-//         res.send(HotelObj);
-//     } catch {
-//         res.status(400).send('Error')
-//     }
-// })
-
-// router.post('/hotel/payment', requireLogin, async (req, res) => {
-//     console.log(req.body)
-//     try {
-//         const HotelObj = await DashboardServices.createHotelPayment( req.body );
-//         res.send(HotelObj);
-//     } catch (error) {
-//         res.json({
-//             message: "Failed"
-//         });
-//     }
-//   });
-
-
-// router.post('/hotel/pdf', async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const pdfDoc= await DashboardServices.createHotelPDF( req );
-//         pdfDoc.getBase64((data) => {
-//             res.writeHead(200,
-//                 {
-//                     'Content-Type': 'application/pdf',
-//                     'Content-Disposition': `attachment;filename="${month}-orders.pdf"`
-//                 });
-//             const download = Buffer.from(data.toString('utf-8'), 'base64');
-//             console.log(download)
-//             res.end(download);
-//         })
-//     } catch {
-//         res.status(400).send("No Hotels Found");
-//     }
-// })
-
-// router.post('/garage/pdf', async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const pdfDoc = await DashboardServices.createGaragePDF( req );
-//         pdfDoc.getBase64((data) => {
-//             res.writeHead(200,
-//                 {
-//                     'Content-Type': 'application/pdf',
-//                     'Content-Disposition': `attachment;filename="${month}-orders.pdf"`
-//                 });
-//             const download = Buffer.from(data.toString('utf-8'), 'base64');
-//             console.log(download)
-//             res.end(download);
-//         })
-//     } catch {
-//         res.status(400).send("No Orders Found");
-//     }
-// })
-
-// router.post('/hotel/orders/pdf', async (req, res) => {
-//     console.log('request:',req.body)
-//     try {
-//         const pdfDoc = await DashboardServices.createHotelOrdersPDF( req );
-//         pdfDoc.getBase64((data) => {
-//             res.writeHead(200,
-//                 {
-//                     'Content-Type': 'application/pdf',
-//                     'Content-Disposition': `attachment;filename="pending-orders.pdf"`
-//                 });
-//             const download = Buffer.from(data.toString('utf-8'), 'base64');
-//             console.log(download)
-//             res.end(download);
-//         })
-//     } catch {
-//         res.status(400).send("No Hotels Found");
-//     }
-// })
-
-//   router.post('/orders/pdf', async (req, res) => { 
-//     console.log('request:',req.body)
-//     try {
-//         const pdfDoc = await DashboardServices.createOrdersPDF( req );
-//         pdfDoc.getBase64((data) => {
-//             res.writeHead(200,
-//                 {
-//                     'Content-Type': 'application/pdf',
-//                     'Content-Disposition': `attachment;filename="pending-orders.pdf"`
-//                 });
-//             const download = Buffer.from(data.toString('utf-8'), 'base64');
-//             console.log(download)
-//             res.end(download);
-//         })
-//     } catch {
-//         res.status(400).send("No Hotels Found");
-//     }
-// })
-
+  router.post('/orders/pdf', async (req, res) => { 
+    console.log('request:',req.body)
+    try {
+        const pdfDoc = await DashboardServices.createOrdersPDF( req );
+        pdfDoc.getBase64((data) => {
+            res.writeHead(200,
+                {
+                    'Content-Type': 'application/pdf',
+                    'Content-Disposition': `attachment;filename="pending-orders.pdf"`
+                });
+            const download = Buffer.from(data.toString('utf-8'), 'base64');
+            console.log(download)
+            res.end(download);
+        })
+    } catch {
+        res.status(400).send("No Hotels Found");
+    }
+})
 
 module.exports = router;
