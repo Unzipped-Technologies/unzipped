@@ -52,7 +52,7 @@ const Left = styled.div`
     padding-top: 5px;
     height: 100%;
     width: 100%;
-    background: ${({ selected }) => selected === accountTypeEnum.INVESTOR ? '#5E99D4' : 'transparent'}
+    background: ${({ selected }) => selected === accountTypeEnum.FREELANCER ? '#5E99D4' : 'transparent'}
 `;
 const Right = styled.div`
     display: flex;
@@ -62,7 +62,7 @@ const Right = styled.div`
     padding-top: 5px;
     height: 100%;
     width: 100%;
-    background: ${({ selected }) => (selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
+    background: ${({ selected }) => (selected === accountTypeEnum.CLIENT || selected === accountTypeEnum.ADMIN) ? '#5E99D4' : 'transparent'}
 `;
 
 const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) => {
@@ -73,7 +73,7 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
 
     useEffect(() => {
         if (role === accountTypeEnum.ADMIN) {
-            setSelected(accountTypeEnum.FOUNDER)
+            setSelected(accountTypeEnum.CLIENT)
         }
     }, [])
 
@@ -94,10 +94,10 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
 
     const toggleRole = () => {
         if (role === accountTypeEnum.ADMIN) {
-            if (selected === accountTypeEnum.FOUNDER) {
-                setSelected(accountTypeEnum.INVESTOR)
+            if (selected === accountTypeEnum.CLIENT) {
+                setSelected(accountTypeEnum.FREELANCER)
             } else {
-                setSelected(accountTypeEnum.FOUNDER)
+                setSelected(accountTypeEnum.CLIENT)
             }
         }
     }
@@ -110,10 +110,10 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
                     <TitleText title>Projects</TitleText>
                     <Toggle>
                         <Left selected={selected} onClick={toggleRole}>
-                            <DarkText small>AS INVESTOR</DarkText>
+                            <DarkText small>AS Freelancer</DarkText>
                         </Left>
                         <Right selected={selected} onClick={toggleRole}>
-                            <DarkText small>AS FOUNDER</DarkText>
+                            <DarkText small>AS Client</DarkText>
                         </Right>
                     </Toggle>
                 </Title>

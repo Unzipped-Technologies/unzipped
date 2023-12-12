@@ -65,12 +65,12 @@ const GetCard = ({
                             {
                                 label: `I am a client, hiring for a project`,
                                 iconName: 'profileNew',
-                                value: `${accountTypeEnum.FOUNDER}`,
+                                value: `${accountTypeEnum.CLIENT}`,
                             },
                             {
                                 label: `I'm a freelancer, looking for work`,
                                 iconName: 'desktop',
-                                value: `${accountTypeEnum.INVESTOR}`,
+                                value: `${accountTypeEnum.FREELANCER}`,
                             },
                         ]}
                         onChange={e => updateForm({ role: e.target.value})}
@@ -168,7 +168,7 @@ const GetCard = ({
                         // onBlur={() => updateForm({ name: businessName })}
                         value={socialSecurityNumber || taxEIN}
                     >
-                        {role === accountTypeEnum.INVESTOR ? 'Social Security Number' : 'Tax EIN or Social security Number'}
+                        {role === accountTypeEnum.FREELANCER ? 'Social Security Number' : 'Tax EIN or Social security Number'}
                     </FormField>
                 </Grid>
             </CreateABusiness>

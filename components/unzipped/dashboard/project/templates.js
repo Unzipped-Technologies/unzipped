@@ -246,10 +246,10 @@ const Templates = ({
                 <TitleText title='true'>Timesheet</TitleText>
                 <Toggle>
                     <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-                        <DarkText small>As Founder</DarkText>
+                        <DarkText small>As Client</DarkText>
                     </Left>
                     <Right displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-                        <DarkText small>As Investor</DarkText>
+                        <DarkText small>As Freelancer</DarkText>
                     </Right>
                 </Toggle>
             </Title>

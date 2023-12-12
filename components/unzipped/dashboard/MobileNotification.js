@@ -140,7 +140,7 @@ const Notification = ({ type, children, noButton }) => {
                     marginBottom: '5px'
                 }}>
                     <div>
-                        <DarkText noMargin>Investors are asking about your businss. Update Frequently asked  questions now.</DarkText>
+                        <DarkText noMargin>People are asking about your businss. Update Frequently asked  questions now.</DarkText>
                     </div>
                     <div>
                         <Button noBorder type="default" normal small>UPDATE</Button>

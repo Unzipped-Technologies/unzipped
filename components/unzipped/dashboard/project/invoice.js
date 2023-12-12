@@ -6,6 +6,7 @@ import {
 import { SearchBar } from '../../../ui';
 import styled, { css } from 'styled-components';
 import { FaRegCheckCircle } from 'react-icons/fa';
+import { accountTypeEnum } from '../../../../server/enum/accountTypeEnum';
 
 const Title = styled.div`
     display: flex;
@@ -163,7 +164,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
   var totalInvoiceOfFounder = 0;
   const shippingFee = 68.35;
   useEffect(() => {
-    if (userType === 'Investor') {
+    if (userType === accountTypeEnum.FREELANCER) {
       const rate = Object?.keys(sortedData)?.map((day) => {
         return sortedData[day]?.length > 0 ? sortedData[day]?.map((item) => item.rate) : [];
       }).flat().filter(item => item !== undefined);
@@ -173,7 +174,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
       }, 0);
       setTotalHours(totalHours)
     }
-    else if (userType === 'Founder') {
+    else if (userType === accountTypeEnum.CLIENT) {
       const result = {};
       for (const day in sortedData) {
         const dayData = sortedData[day];
@@ -289,7 +290,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
           }
           )
           }
-          {userType === 'Investor' ? <HoursDiv>
+          {userType === accountTypeEnum.FREELANCER ? <HoursDiv>
             <div className='d-flex justify-content-between' style={{ borderBottom: "1px solid #777" }}>
               <P fontWeight='500'>DAY</P>
               <P fontWeight='500'>HOURS</P>

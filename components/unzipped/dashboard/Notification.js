@@ -91,7 +91,7 @@ const Notification = ({type, children, noButton}) => {
         case 'faq':
             return (
                 <WhiteCard row>
-                    <DarkText noMargin>Investors are asking about your businss. Update Frequently asked 
+                    <DarkText noMargin>People are asking about your businss. Update Frequently asked 
                     questions now.</DarkText>
                     <Absolute>
                     <Dismiss>Dismiss</Dismiss>

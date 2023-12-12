@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { addTaskAndAddToTaskHours, getBusinessTasksByInvestor, updateTaskDate, updateTaskHours, updateTaskHoursStatus } from "../../../../redux/actions";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
+import { accountTypeEnum } from '../../../../server/enum/accountTypeEnum';
 
 const Desktop = styled.div`
 @media(max-width: 680px) {
@@ -106,7 +107,7 @@ const YourComponent = ({ _id, projectName, invoiceTags, invoiceTaskHours, access
     <>
       <Nav isSubMenu marginBottom={'160px'} />
       <Desktop>
-        {showInvoice ? <Invoice weekOptions={weekOptions} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handletake={handletake} take={take} handleFilter={handleFilter} userType={'Investor'}/>
+        {showInvoice ? <Invoice weekOptions={weekOptions} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handletake={handletake} take={take} handleFilter={handleFilter} userType={accountTypeEnum.FREELANCER}/>
           : <Templates id={_id} startDate={startDate} weekOptions={weekOptions} invoiceTags={invoiceTags} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handleShowInvoice={(value) => { handleShowInvoice(value) }} handleUpdatedAt={(tasks) => updateTaskDate(tasks, access_token)} handleHours={(hours) => { updateTaskHours(hours, access_token) }} handleTaskStatus={(status) => { updateTaskHoursStatus(status, access_token) }} createTaskAndAddToTaskHours={(task) => { addTaskAndAddToTaskHours(task, access_token) }} />}
       </Desktop>
     </>

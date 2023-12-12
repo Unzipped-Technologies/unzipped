@@ -27,7 +27,7 @@ const createUser = async (data, hash) => {
         plan: planEnum.UNSUBSCRIBED
     });
     // create favorites and recently viewed list
-    if (accountTypeEnum.FOUNDER === data.role || accountTypeEnum.ADMIN === data.role) {
+    if (accountTypeEnum.CLIENT === data.role || accountTypeEnum.ADMIN === data.role) {
         const listsToCreate = [
             {
                 name: 'Favorites',
@@ -60,7 +60,7 @@ const createUser = async (data, hash) => {
 
     // create 3rd party application row with googleId if have it
     thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
-    if (accountTypeEnum.INVESTOR === data.role) {
+    if (accountTypeEnum.FREELANCER === data.role) {
         createFreelanceAccount({
             isAcceptEquity: data.isAcceptEquity,
             rate: data.rate,

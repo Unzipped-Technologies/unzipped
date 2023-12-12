@@ -1,6 +1,6 @@
 const accountTypeEnum = Object.freeze({
-    FOUNDER: 0,
-    INVESTOR: 1,
+    CLIENT: 0,
+    FREELANCER: 1,
     ADMIN: 2
   })
   

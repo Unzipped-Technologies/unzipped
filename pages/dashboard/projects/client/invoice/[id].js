@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { getBusinessTasksByFounder } from "../../../../../redux/actions";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
+import { accountTypeEnum } from '../../../../../server/enum/accountTypeEnum';
 
 const Desktop = styled.div`
 @media(max-width: 680px) {
@@ -96,7 +97,7 @@ const FounderInvoice = ({ projectName, invoiceTaskHours, access_token, getBusine
         <>
             <Nav isSubMenu marginBottom={'160px'} />
             <Desktop>
-                <Invoice weekOptions={weekOptions} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handletake={handletake} take={take} handleFilter={handleFilter} userType={'Founder'}/>
+                <Invoice weekOptions={weekOptions} handleWeekChange={handleWeekChange} sortedData={sortedData} projectName={projectName} handletake={handletake} take={take} handleFilter={handleFilter} userType={accountTypeEnum.CLIENT}/>
             </Desktop>
         </>
     );

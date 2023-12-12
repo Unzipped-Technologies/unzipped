@@ -412,8 +412,8 @@ const Panel = ({
                 <NoUsersInList>
                     <WorkIcon width={200} height={200} />
                     <TitleText center noMargin size="24px">This list is empty</TitleText>
-                    <DarkText center>Add investors to your list to quickly find them later. </DarkText>
-                    <div><Button noBorder oval style={{ color: "black" }}>BROWSE INVESTORS</Button></div>
+                    <DarkText center>Add freelancers to your list to quickly find them later. </DarkText>
+                    <div><Button noBorder oval style={{ color: "black" }}>BROWSE FreelancerS</Button></div>
                 </NoUsersInList>
             )}
             <UserContainer>

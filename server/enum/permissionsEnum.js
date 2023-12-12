@@ -71,7 +71,7 @@ const userPermissions = Object.freeze({
 })
 
 const accountTypePermissions = Object.freeze({
-    [accountTypeEnum.FOUNDER]: [
+    [accountTypeEnum.CLIENT]: [
         // users
         userPermissions.UpdateCurrentUsers,
         userPermissions.ListFreelancers,
@@ -134,7 +134,7 @@ const accountTypePermissions = Object.freeze({
         userPermissions.DeleteMessage,
         userPermissions.getMessagesById,
     ],
-    [accountTypeEnum.INVESTOR]: [
+    [accountTypeEnum.FREELANCER]: [
         // users
         userPermissions.UpdateCurrentUsers,
         userPermissions.AddSkill,
