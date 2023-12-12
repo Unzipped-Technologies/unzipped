@@ -6,7 +6,7 @@ import Icon from "@material-ui/core/Icon";
 import { useRouter } from 'next/router'
 import MenuDropdown from '../Custom/MenuDropdown';
 import { connect, useDispatch } from 'react-redux';
-import { logoutUser, clearCart, clearVehicle, reloadLogout } from '../../redux/actions';
+import { logoutUser, reloadLogout } from '../../redux/actions';
 // import logo from '../../public/img/vohnt-cursive-logo.png'
 // import logo from '../../assets/img/vohnt-cursive-logo.png';
 
@@ -25,8 +25,6 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
     // ]
 
     const signOut = () => {
-        dispatch(clearCart())
-        dispatch(clearVehicle())
         dispatch(logoutUser()) 
     }
 
@@ -37,7 +35,6 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
                     [
                         { names: "Sign out", links: `/api/auth/logout`},
                         { names: "Dashboard", links: `/dashboard/calendar`},
-                        { names: "Schedule", links: `/calendar/driver`},
                         { names: "Orders", links: `/receipt`},
                         { names: "<hr />", links: ''},
                         { names: "Schedule an appointment", links: `/schedule`},
@@ -209,4 +206,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {logoutUser, clearCart, reloadLogout, clearVehicle})(ColorNav);
+export default connect(mapStateToProps, {logoutUser, reloadLogout})(ColorNav);

@@ -139,7 +139,7 @@ router.post('/status', requireLogin, async (req, res) => {
             res.end(download);
         })
     } catch {
-        res.status(400).send("No Hotels Found");
+        res.status(400).send("No Orders Found");
     }
 })
 

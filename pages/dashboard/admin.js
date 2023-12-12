@@ -176,12 +176,7 @@ const mapStateToProps = (state) => {
     return {
         loading: state.Dashboard.loading,
         cookies: state.Auth.token,
-        // garageOrders: state.Dashboard.garageOrders,
-        // hotelOrders: state.Dashboard.hotelOrders,
-        // hotelOwed: state.Dashboard.hotelOwed
     }
 }
 
-export default connect(mapStateToProps, 
-    // {getGarageOrders, getHotelOrders, getHotelOwed}
-    )(Dashboard);
+export default connect(mapStateToProps, {})(Dashboard);

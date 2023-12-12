@@ -32,15 +32,15 @@ router.post('/stripe', requireLogin, async (req, res) => {
   let { email } = req.body;
   let promo = req.body.promo;
   let promoCount;
-  let orderNum = req.body.order;
-  let service = req.body.cart;
+  // let orderNum = req.body.order;
+  // let service = req.body.cart;
   let time = req.body.time;
   let date = req.body.date;
   let transmission = req.body.transmission;
-  let location = req.body.location;
-  let hotel = req.body.hotel;
-  let roomNumber = req.body.roomNumber;
-  let valetNumber = req.body.valetNumber;
+  // let location = req.body.location;
+  // let hotel = req.body.hotel;
+  // let roomNumber = req.body.roomNumber;
+  // let valetNumber = req.body.valetNumber;
   var month = new Array(12);
   month[0] = "Jan.";
   month[1] = "Feb.";
@@ -85,7 +85,7 @@ router.post('/stripe', requireLogin, async (req, res) => {
     const payment = await stripe.paymentIntents.create({
       amount: amount,
       currency: "USD",
-      description: "Vohnt Car Car",
+      description: "Unzipped payment",
       customer: existinguser2.stripeId,
       payment_method: id,
       confirm: true,
@@ -94,19 +94,19 @@ router.post('/stripe', requireLogin, async (req, res) => {
       user: req.user.sub,
       name: name,
       email: email,
-      services: [...service],
+      // services: [...service],
       total: total,
       orderNumber: orderNum,
-      Vehicle: existinguser2._doc.defaultVehicle,
-      location: location,
+      // Vehicle: existinguser2._doc.defaultVehicle,
+      // location: location,
       refundId: payment.charges.data[0].id,
       phone: phone,
-      roomNumber: roomNumber,
-      valetNumber: valetNumber,
+      // roomNumber: roomNumber,
+      // valetNumber: valetNumber,
       time: time,
       transmission: transmission,
       date: date,
-      hotel: hotel,
+      // hotel: hotel,
       orderDate: orderDate,
       promo: promo,
     })
@@ -164,8 +164,8 @@ router.post('/receipt', requireLogin, async (req, res) => {
   let order = req.body.order;
   let date = req.body.date;
   let time = req.body.time;
-  let location = req.body.location;
-  let service = req.body.cart.map(({ name }) => name);
+  // let location = req.body.location;
+  // let service = req.body.cart.map(({ name }) => name);
   let price = req.body.cart.map(({ price }) => price);
   let quantity = req.body.cart.map(({ quantity }) => quantity);
   let total = req.body.total;
@@ -180,13 +180,13 @@ router.post('/receipt', requireLogin, async (req, res) => {
     order: order,
     date: date,
     time: time,
-    location: location,
-    service: service,
+    // location: location,
+    // service: service,
     price: price,
     total: total,
     // recipients: [{email: "noreplyvohnt@gmail.com"}],
     from: "schedule@vohnt.com",
-    subject: `Your Vohnt Order receipt from ${currentDate}`,
+    subject: `Your Unzipped Order receipt from ${currentDate}`,
   };
   const mailer = new Mailer(msg, receiptTemplate(msg));
   mailer.send();
