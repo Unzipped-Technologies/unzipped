@@ -1,29 +1,35 @@
-const multer = require("multer");
-const path = require("path");
+const multer = require('multer')
+const path = require('path')
 
-const fileTypes = [
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".doc",
-  ".xls",
-  ".csv",
-  ".zip",
-  ".bmp",
-  ".gif",
-  ".pdf",
-  ".xlsx",
-  ".xlsx",
-]
-// Multer config
-module.exports = multer({
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.doc',
+    '.xls',
+    '.csv',
+    '.zip',
+    '.bmp',
+    '.gif',
+    '.pdf',
+    '.xlsx',
+    '.xlsx'
+  ]
+  const ext = path.extname(file.originalname)
+
+  if (allowedFileTypes.includes(ext)) {
+    cb(null, true)
+  } else {
+    cb(new Error('Unsupported file type!'), false)
+  }
+}
+
+const upload = multer({
   storage: multer.diskStorage({}),
-  fileFilter: (req, file, cb) => {
-    let ext = path.extname(file.originalname);
-    if (!fileTypes.includes(ext)) {
-      cb(new Error("Unsupported file type!"), false);
-      return;
-    }
-    cb(null, true);
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB file size limit
   },
-});
+  fileFilter: fileFilter
+})
+module.exports = upload
