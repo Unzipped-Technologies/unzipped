@@ -478,7 +478,6 @@ const handleWebhookEvent = event => {
 
     case 'payment_intent.canceled':
       const paymentIntentCanceled = event.data.object
-      paymentIntentFailed(paymentIntentCanceled)
       console.log('PaymentIntent canceled:', paymentIntentCanceled)
       break
 
