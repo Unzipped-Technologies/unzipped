@@ -20,6 +20,11 @@ const ControlContainer = styled.div`
         }
     }};
     max-width: ${props => (props.autosize ? 'none' : '850px')};
+
+    @media (max-width: 850px) and (min-width: 680px) {
+        width: 87%
+    }
+
     @media (max-width: ${props => props.theme.mobileWidth}px) {
         width: 100%;
         min-width: ${props => (props.autosize ? 'auto' : '280px')};

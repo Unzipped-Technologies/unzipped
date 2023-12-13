@@ -123,12 +123,7 @@ const Absolute = styled.div`
         display: none;
     }
     @media (max-width: 681px) {
-        position: ${({ bottom }) => bottom ? 'absolute' : 'unset'};
         justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
-    }
-
-    @media screen and (max-width: 600px){
-        position: absolute;
     }
 `;
 
