@@ -159,9 +159,7 @@ const SimpleModal = ({open, setOpen, token, edits, loading}) => {
                                 style={{width: '100%'}} 
                             >
                                 <MenuItem value="Customer">Customer</MenuItem>
-                                {/* <MenuItem value="Hotel">Hotel</MenuItem> */}
                                 <MenuItem value="Admin">Admin</MenuItem>
-                                {/* <MenuItem value="Driver">Driver</MenuItem> */}
                             </Select>
                         </FormControl>
                         </div>
