@@ -20,12 +20,7 @@ function getModalStyle() {
 }
 
 const useStyles = makeStyles(theme => ({
-    modal: {
-        // display: 'grid',
-        // gridTemplateColumns: '1fr',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-    },
+    modal: {},
     paper: {
         position: 'absolute',
         marginLeft: '0vw',

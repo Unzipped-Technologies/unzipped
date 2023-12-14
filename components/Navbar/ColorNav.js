@@ -7,8 +7,6 @@ import { useRouter } from 'next/router'
 import MenuDropdown from '../Custom/MenuDropdown';
 import { connect, useDispatch } from 'react-redux';
 import { logoutUser, reloadLogout } from '../../redux/actions';
-// import logo from '../../public/img/vohnt-cursive-logo.png'
-// import logo from '../../assets/img/vohnt-cursive-logo.png';
 
 
 const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
@@ -18,11 +16,6 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
     const router = useRouter()
     const dispatch = useDispatch();
 
-    // const WWDItems = [
-    //     { names: `Car Wash ${'&'} Detail`, links: `/car-wash-detail` },
-    //     { names: `Car Services`, links: `/car-services` },
-    //     { names: `Car Repair`, links: `/car-repair` }, 
-    // ]
 
     const signOut = () => {
         dispatch(logoutUser()) 
@@ -141,7 +134,6 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
                         }
                         {focus === "WWD" && 
                             <div onBlur={() => setFocus(false)} ref={wrapperRef} className={popBox === 'home' ? "nav-right-wwd" : "nav-right-service"}>
-                            {/* <MenuDropdown MenuItems={WWDItems} /> */}
                             </div>
                         }
                     </Col>

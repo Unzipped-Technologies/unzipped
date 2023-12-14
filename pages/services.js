@@ -10,15 +10,6 @@ import { parseCookies } from "../services/cookieHelper";
 const Services = ({user, token}) => {
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     dispatch(stopAppScreen());
-    //     if (token?.access_token) {
-    //         if (!user) {
-    //         dispatch(googleUser(token?.access_token));
-    //         }
-    //     }
-    // }, [])
-
     return (
         <React.Fragment>
             <div className="services-page">

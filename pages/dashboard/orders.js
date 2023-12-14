@@ -105,8 +105,6 @@ const Orders = ({token, cookies, orders, loading, hasMoreOrders, userType, users
         let start = index;
         let deleteCount = 0;
         list.splice(start, deleteCount, update);
-        // temporarychecked[index][whichvalue] = true;
-        // console.log(temporarychecked)
         setChecked([...list]);
       };
 
