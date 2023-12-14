@@ -14,7 +14,7 @@ import {
   FORGET_PASSWORD,
   SET_LOADING,
   FORGET_PASSWORD_SUCCESS,
-  SET_DEFAULT_VEHICLE,
+  // SET_DEFAULT_VEHICLE,
   UPDATE_REGISTER_FORM,
   LOGGED_OUT,
   RESET_REGISTER_FORM,
@@ -249,8 +249,8 @@ const Auth = (state = INIT_STATE, action) => {
       return { ...state, error: action.payload, loading: false, isAuthenticated: false, isEmailSent: false }
     case CLEAR_ERRORS:
       return { ...state, error: { data: '' }, loading: false, isAuthenticated: false, isEmailSent: false }
-    case SET_DEFAULT_VEHICLE:
-      return { ...state, user: action.payload, loading: false, error: { data: '' } }
+    // case SET_DEFAULT_VEHICLE:
+    //   return { ...state, user: action.payload, loading: false, error: { data: '' } }
     case FORGET_PASSWORD:
       return { ...state, token: action.payload, loading: false }
     case UPDATE_REGISTER_FORM:

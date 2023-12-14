@@ -15,7 +15,8 @@ import {
 
 const CardContainer = styled.div`
     display: flex;
-    width: 952px;
+    width: 90vw;
+    max-width: 952px;
     height: 611px;
 
     @media (max-width: 680px) {

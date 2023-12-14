@@ -26,16 +26,16 @@ app
     .prepare()
     .then(() => {
         const server = express();
-    const httpServer = http.createServer(server);
+        const httpServer = http.createServer(server);
 
-    createSocket(httpServer);
+        createSocket(httpServer);
 
         if (!dev) {
-      server.use(function (req, res, next) {
+            server.use(function (req, res, next) {
               var proto = req.headers["x-forwarded-proto"];
               if (proto === "https") {
                 res.set({
-            'Strict-Transport-Security': 'max-age=31557600' 
+                    'Strict-Transport-Security': 'max-age=31557600' 
                 });
                 return next();
               }
@@ -43,12 +43,12 @@ app
             });
           }
 
-    server.use(bodyParser.json({ limit: '50mb' }));
+        server.use(bodyParser.json({ limit: '50mb' }));
         server.use(
-        cookieSession({
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-            keys: [keys.cookieKey]
-        })
+            cookieSession({
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                keys: [keys.cookieKey]
+            })
         );
 
         server.use(passport.initialize());
@@ -68,15 +68,15 @@ app
             return handle(req, res);
         })
 
-    // server.listen(PORT, err => {
-    //   if (err) throw err;
-    //   console.log(`> Ready on ${PORT}`);
-    // })
+        // server.listen(PORT, err => {
+        //   if (err) throw err;
+        //   console.log(`> Ready on ${PORT}`);
+        // })
 
-    httpServer.listen(PORT, err => {
+        httpServer.listen(PORT, err => {
             if (err) throw err;
             console.log(`> Ready on ${PORT}`);
-    });
+        });
 
     })
     .catch(ex => {

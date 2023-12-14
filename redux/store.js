@@ -2,8 +2,7 @@ import { createStore, applyMiddleware, combineReducers } from "redux";
 import { createWrapper, HYDRATE } from "next-redux-wrapper";
 import thunkMiddleware from "redux-thunk";
 import Auth from "./Auth/reducers";
-import Booking from './booking/reducers';
-import Vehicle from './Vehicle/reducers';
+// import Booking from './booking/reducers';
 import Dashboard from './Dashboard/reducers';
 import Business from './Business/reducers';
 import Freelancers from './Freelancers/reducers';
@@ -15,8 +14,7 @@ import Stripe from './Stripe/reducers'
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
   Auth,
-  Booking,
-  Vehicle,
+  // Booking,
   Dashboard,
   Business,
   Freelancers,
@@ -47,7 +45,9 @@ const makeStore = ({ isServer }) => {
 
     const persistConfig = {
       key: "nextjs",
-      whitelist: ["Auth", "Booking", "Vehicle", "Dashboard", "Business", "Freelancers", "Messages", "FreelancerSkills", "Loading", 'Stripe'], 
+      whitelist: ["Auth",
+      //  "Booking",
+        "Dashboard", "Business", "Freelancers", "Messages", "FreelancerSkills", "Loading", 'Stripe'], 
       storage, // if needed, use a safer storage
     };
 

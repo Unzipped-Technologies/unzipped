@@ -6,13 +6,17 @@ import 'simplebar/dist/simplebar.min.css';
 import {connect, useDispatch} from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { parseCookies } from "../../services/cookieHelper";
-import {getGarageOrders, getHotelOrders, getHotelOwed} from '../../redux/actions';
+// import {getGarageOrders, getHotelOrders, getHotelOwed} from '../../redux/actions';
 import Axios from 'axios';
 import fileDownload from 'js-file-download';
 import { colors } from '@material-ui/core';
 
 
-const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwed}) => {
+const Dashboard = ({loading, token, cookies, 
+    // garageOrders, 
+    // hotelOrders, 
+    // hotelOwed
+    }) => {
     const [month, setMonth] = useState([]);
     const [selected, setSelected] = useState(2);
     const dispatch = useDispatch();
@@ -44,21 +48,21 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
     }
 
     
-    const printPdf = (hotel) => {
-        const printPdf = Axios
-            .post(`/api/dashboard/hotel/pdf`, {hotel, month: month[selected]}, { responseType: 'blob' })
-            .then((res) => {
-                fileDownload(res.data, `${month[selected]}-orders.pdf`)
-            })
-    }
+    // const printPdf = (hotel) => {
+    //     const printPdf = Axios
+    //         .post(`/api/dashboard/hotel/pdf`, {hotel, month: month[selected]}, { responseType: 'blob' })
+    //         .then((res) => {
+    //             fileDownload(res.data, `${month[selected]}-orders.pdf`)
+    //         })
+    // }
     
-    const garagePdf = (garage) => {
-        const printPdf = Axios
-            .post(`/api/dashboard/garage/pdf`, {garage, month: month[selected]}, { responseType: 'blob' })
-            .then((res) => {
-                fileDownload(res.data, `${garage}-orders.pdf`)
-            })
-    }
+    // const garagePdf = (garage) => {
+    //     const printPdf = Axios
+    //         .post(`/api/dashboard/garage/pdf`, {garage, month: month[selected]}, { responseType: 'blob' })
+    //         .then((res) => {
+    //             fileDownload(res.data, `${garage}-orders.pdf`)
+    //         })
+    // }
 
     const updateMonth = () => {
         
@@ -68,44 +72,44 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
         setMonth(newMonth)
     }
 
-    const selectAMonth = (index) => {
-        setSelected(index);
-        let cookie;
-        if (token?.access_token) {
-            cookie = token?.access_token
-        } else { cookie = cookies}
-        dispatch(getGarageOrders(month[index], cookie));
-        dispatch(getHotelOrders(month[index], cookie));
-        dispatch(getHotelOwed(month[index], cookie));
-    }
+    // const selectAMonth = (index) => {
+    //     setSelected(index);
+    //     let cookie;
+    //     if (token?.access_token) {
+    //         cookie = token?.access_token
+    //     } else { cookie = cookies}
+    //     dispatch(getGarageOrders(month[index], cookie));
+    //     dispatch(getHotelOrders(month[index], cookie));
+    //     dispatch(getHotelOwed(month[index], cookie));
+    // }
 
     useEffect(() => {
         updateMonth();
     }, [])
 
-    useEffect(() => {
-        let cookie;
-        if (token.access_token) {
-            cookie = token.access_token
-        } else { cookie = cookies}
-        dispatch(getGarageOrders(month[selected], cookie));
-    }, [month])
+    // useEffect(() => {
+    //     let cookie;
+    //     if (token.access_token) {
+    //         cookie = token.access_token
+    //     } else { cookie = cookies}
+    //     dispatch(getGarageOrders(month[selected], cookie));
+    // }, [month])
 
-    useEffect(() => {
-        let cookie;
-        if (token.access_token) {
-            cookie = token.access_token
-        } else { cookie = cookies}
-        dispatch(getHotelOrders(month[selected], cookie));
-    }, [month])
+    // useEffect(() => {
+    //     let cookie;
+    //     if (token.access_token) {
+    //         cookie = token.access_token
+    //     } else { cookie = cookies}
+    //     dispatch(getHotelOrders(month[selected], cookie));
+    // }, [month])
 
-    useEffect(() => {
-        let cookie;
-        if (token.access_token) {
-            cookie = token.access_token
-        } else { cookie = cookies}
-        dispatch(getHotelOwed(month[selected], cookie));
-    }, [month])
+    // useEffect(() => {
+    //     let cookie;
+    //     if (token.access_token) {
+    //         cookie = token.access_token
+    //     } else { cookie = cookies}
+    //     dispatch(getHotelOwed(month[selected], cookie));
+    // }, [month])
     return (
         <React.Fragment>
             <div className="main-dashboard">
@@ -140,7 +144,7 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
                                     <CircularProgress />
                                 :
                                 <>
-                                {garageOrders.map((item, index) => {
+                                {/* {garageOrders.map((item, index) => {
                                     return (
                                         <div className="line-admin" key={index}>
                                             <p>{item.name}</p>
@@ -160,7 +164,7 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
                                             >Print</button>
                                         </div>
                                     )
-                                })}
+                                })} */}
                                 </>
                                 }
                             </div>
@@ -190,7 +194,7 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
                                     <CircularProgress />
                                 :
                                 <>
-                                {hotelOrders.map((item, index) => {
+                                {/* {hotelOrders.map((item, index) => {
                                     return (
                                         <div className="line-admin" key={index}>
                                             <p>{item.name}</p>
@@ -198,7 +202,7 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
                                             <p className="admin-subtext">{item.quantity}</p>
                                         </div>
                                     )
-                                })}
+                                })} */}
                                 </>
                                 }
                             </div>
@@ -228,7 +232,7 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
                                     <CircularProgress />
                                 :
                                 <>
-                                {hotelOwed.map((item, index) => {
+                                {/* {hotelOwed.map((item, index) => {
                                     return (
                                         <div className="line-admin" key={index}>
                                             <p>{item.name}</p>
@@ -248,7 +252,7 @@ const Dashboard = ({loading, token, cookies, garageOrders, hotelOrders, hotelOwe
                                             >Print</button>
                                         </div>
                                     )
-                                })}
+                                })} */}
                                 </>
                                 }
                             </div>
@@ -276,10 +280,12 @@ const mapStateToProps = (state) => {
     return {
         loading: state.Dashboard.loading,
         cookies: state.Auth.token,
-        garageOrders: state.Dashboard.garageOrders,
-        hotelOrders: state.Dashboard.hotelOrders,
-        hotelOwed: state.Dashboard.hotelOwed
+        // garageOrders: state.Dashboard.garageOrders,
+        // hotelOrders: state.Dashboard.hotelOrders,
+        // hotelOwed: state.Dashboard.hotelOwed
     }
 }
 
-export default connect(mapStateToProps, {getGarageOrders, getHotelOrders, getHotelOwed})(Dashboard);
+export default connect(mapStateToProps, 
+    // {getGarageOrders, getHotelOrders, getHotelOwed}
+    )(Dashboard);

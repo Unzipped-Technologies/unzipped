@@ -32,6 +32,18 @@ const Container = styled.div`
   }
 `
 
+const MobileBox = styled.div`
+@media (min-width: 680px) {
+  display:none
+}`
+
+const DesktopBox = styled.div`
+@media (max-width: 680px) {
+  display:none;
+}
+`
+
+
 const ContentContainer = styled('div')`
   max-height: 150px;
   padding: ${({padding})=>padding?padding:'10px 20px'};
@@ -164,7 +176,8 @@ const GetCardDesktop = ({
               placeholder="Describe your project here..."
               borderRadius="10px"
               onChange={e => updateForm({ name: e.target.value })}
-              value={name}/>
+              value={name}
+            />
           </Grid>
         </CreateABusiness>
       )
@@ -190,7 +203,8 @@ const GetCardDesktop = ({
                 placeholder="Enter Project Summary..."
                 borderRadius="10px"
                 onChange={e => updateForm({ challenge: e.target.value })}
-                value={challenge}/>
+                value={challenge}
+              />
             </Grid>
           </CreateABusiness>
         )
@@ -213,7 +227,8 @@ const GetCardDesktop = ({
                 width="100%"
                 borderRadius="10px"
                 onChange={e => updateForm({ role: e.target.value })}
-                value={role}/>
+                value={role}
+              />
             </Grid>
           </CreateABusiness>
         )
@@ -239,7 +254,7 @@ const GetCardDesktop = ({
                 fontSize="20px"
                 placeholder="Type a task and hit enter..."
                 borderRadius="10px"
-                handleEnterKey={(e)=>inputValue !== '' && handleEnterKey('objectives',objectives,e)}
+                handleEnterKey={e => inputValue !== '' && handleEnterKey('objectives', objectives, e)}
                 onChange={e => handleInput(e.target.value)}
                 value={inputValue}
               />
@@ -302,7 +317,8 @@ const GetCardDesktop = ({
                 width="100%"
                 borderRadius="10px"
                 onChange={e => updateForm({ teamDynamics: e.target.value })}
-                value={teamDynamics}/>
+                value={teamDynamics}
+              />
             </Grid>
           </CreateABusiness>
         )
@@ -319,16 +335,19 @@ const GetCardDesktop = ({
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
-          {!!requiredSkills?.length && <ContentContainer padding='20px 5px 20px 10px '>
-            {requiredSkills?.map(skill => (
-              <ContainedSpan>
+          {!!requiredSkills?.length && (
+            <ContentContainer padding="20px 5px 20px 10px ">
+              {requiredSkills?.map(skill => (
+                <ContainedSpan>
                   <ClearSharpIcon
                     style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
                     onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
-                  />{skill}
-              </ContainedSpan>
-            ))}
-          </ContentContainer>}
+                  />
+                  {skill}
+                </ContainedSpan>
+              ))}
+            </ContentContainer>
+          )}
           <Grid margin={requiredSkills?.length && '0'}>
             <FormField
               justifySelf="start"
@@ -337,7 +356,9 @@ const GetCardDesktop = ({
               fontSize="20px"
               placeholder="Type a skill and hit enter..."
               borderRadius="10px"
-              handleEnterKey={(e)=>inputValue !== '' && requiredSkills.length<15 && handleEnterKey('requiredSkills',requiredSkills,e)}
+              handleEnterKey={e =>
+                inputValue !== '' && requiredSkills.length < 15 && handleEnterKey('requiredSkills', requiredSkills, e)
+              }
               onChange={e => handleInput(e.target.value)}
               value={inputValue}
             />
@@ -346,7 +367,7 @@ const GetCardDesktop = ({
               right="50px"
               type="purple"
               buttonHeight="42px"
-              disabled={inputValue === '' || requiredSkills.length>=15}
+              disabled={inputValue === '' || requiredSkills.length >= 15}
               zIndex={10}
               onClick={() => {
                 updateForm({ requiredSkills: [...requiredSkills, inputValue] })
@@ -387,7 +408,8 @@ const GetCardDesktop = ({
               width="100%"
               borderRadius="10px"
               onChange={e => updateForm({ goals: e.target.value })}
-              value={goals}/>
+              value={goals}
+            />
           </Grid>
         </CreateABusiness>
       )
@@ -420,19 +442,42 @@ const GetCardDesktop = ({
               fontSize="20px"
               width="100%"
               borderRadius="10px"
-              onChange={e =>updateForm({ companyBackground: e.target.value })}
-              value={companyBackground}/>
+              onChange={e => updateForm({ companyBackground: e.target.value })}
+              value={companyBackground}
+            />
           </Grid>
         </CreateABusiness>
       )
     case 8:
+      if (!isGithubConnected) {
+        return (
+          <CreateABusiness
+            title="Do you currently have a github account?"
+            sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage}
+            stage={stage}
+            skip>
+            <Grid>
+              <Button icon="github" extraWide noBorder type="dark" normal onClick={handleGithub}>
+                CONNECT YOUR GITHUB ACCOUNT
+              </Button>
+            </Grid>
+          </CreateABusiness>
+        )
+      } else {
+        handleSkip()
+      }
+    case 9:
       return (
         <CreateABusiness
           title="Budget"
           sub="What size budget are you comfortable with for this hire?"
           disabled={budget?.length === 0}
           onUpdate={updateForm}
-          onBack={goBack}
+          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
@@ -447,39 +492,12 @@ const GetCardDesktop = ({
               fontSize="20px"
               width="100%"
               borderRadius="12px"
-              onChange={e =>updateForm({ budget: e })}
-              value={budget}/>
+              onChange={e => updateForm({ budget: e.value })}
+              value={{label: budget}}
+            />
           </Grid>
         </CreateABusiness>
       )
-    case 9:
-      if(!isGithubConnected){
-      return (
-        <CreateABusiness
-          title="Do you currently have a github account?"
-          sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
-          onUpdate={updateForm}
-          onBack={goBack}
-          onSubmit={submitForm}
-          progress={stage}
-          stage={stage}
-          skip>
-          <Grid>
-            <Button
-              icon="github"
-              extraWide
-              noBorder
-              type="dark"
-              normal
-              onClick={handleGithub}
-              >
-                CONNECT YOUR GITHUB ACCOUNT
-            </Button>
-          </Grid>
-        </CreateABusiness>
-      )}else{
-        handleSkip()
-      }
     case 10:
       return (
         <CreateABusiness
@@ -487,7 +505,7 @@ const GetCardDesktop = ({
           sub="What questions do you have for potential hires? (max three)"
           disabled={questionsToAsk?.length === 0}
           onUpdate={updateForm}
-          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
+          onBack={goBack}
           onSubmit={submitForm}
           submit
           progress={stage}
@@ -500,9 +518,12 @@ const GetCardDesktop = ({
               fontSize="20px"
               placeholder="Type a question and hit enter..."
               borderRadius="10px"
-              handleEnterKey={(e)=>inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk',questionsToAsk,e)}
+              handleEnterKey={e =>
+                inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk', questionsToAsk, e)
+              }
               onChange={e => handleInput(e.target.value)}
-              value={inputValue}/>
+              value={inputValue}
+            />
             <Button
               disabled={inputValue === '' || questionsToAsk.length >= 3}
               zIndex={10}
@@ -523,7 +544,7 @@ const GetCardDesktop = ({
                 <div>
                   <ClearSharpIcon
                     style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
-                    onClick={() => handleCancelIcon('questionsToAsk',questionsToAsk,question)}
+                    onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
                   />
                 </div>
                 <span>{question}</span>
@@ -574,7 +595,7 @@ const GetCardMobile = ({
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
-          <Grid margin='0px 0px 50px 0px'>
+          <Grid margin="0px 0px 50px 0px">
             <OptionTileGroup
               mobile
               availableWidth
@@ -600,7 +621,7 @@ const GetCardMobile = ({
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
-          <Grid margin='0px 0px 50px 0px'>
+          <Grid margin="0px 0px 50px 0px">
             <FormField
               textarea
               mobile
@@ -610,7 +631,8 @@ const GetCardMobile = ({
               placeholder="Describe your project here..."
               borderRadius="10px"
               onChange={e => updateForm({ name: e.target.value })}
-              value={name}/>
+              value={name}
+            />
           </Grid>
         </CreateABusiness>
       )
@@ -629,7 +651,7 @@ const GetCardMobile = ({
               onSubmit={submitForm}
               progress={stage}
               stage={stage}>
-              <Grid margin='0px 0px 25px 0px'>
+              <Grid margin="0px 0px 25px 0px">
                 <FormField
                   textarea
                   mobile
@@ -639,7 +661,8 @@ const GetCardMobile = ({
                   placeholder="Enter Project Summary..."
                   borderRadius="10px"
                   onChange={e => updateForm({ challenge: e.target.value })}
-                  value={challenge}/>
+                  value={challenge}
+                />
               </Grid>
             </CreateABusiness>
             <CreateABusiness
@@ -650,8 +673,8 @@ const GetCardMobile = ({
               onUpdate={updateForm}
               onBack={goBack}
               onSubmit={submitForm}
-              stage={stage}>
-              <Grid margin='0px'>
+              stage={stage + 1}>
+              <Grid margin="0px">
                 <FormField
                   mobile
                   justifySelf="start"
@@ -665,7 +688,7 @@ const GetCardMobile = ({
                   value={inputValue}
                 />
                 <Button
-                  margin='8px 0px'
+                  margin="8px 0px"
                   block
                   disabled={inputValue === ''}
                   type="purple"
@@ -678,7 +701,7 @@ const GetCardMobile = ({
                   Add
                 </Button>
               </Grid>
-              <ContentContainer width='100%' padding='10px 0px'>
+              <ContentContainer width="100%" padding="10px 0px">
                 {objectives.map(obj => (
                   <div className="d-flex mb-3">
                     <div>
@@ -697,55 +720,190 @@ const GetCardMobile = ({
       } else {
         return (
           <>
-          <CreateABusiness
-            mobile
-            doubleScreenTop
-            title="Role Description"
-            sub="Envision your ideal hire. What role will they play in your ongoing projects?"
-            onUpdate={updateForm}
-            onBack={goBack}
-            onSubmit={submitForm}
-            progress={stage}
-            stage={stage}>
-            <Grid margin='0px 0px 35px 0px'>
-              <FormField
-                textarea
-                mobile
-                fieldType="input"
-                fontSize="20px"
-                width="100%"
-                borderRadius="10px"
-                onChange={e => updateForm({ role: e.target.value })}
-                value={role}/>
-            </Grid>
-          </CreateABusiness>
-          <CreateABusiness
-            mobile
-            doubleScreenBottom
-            title="Team Dynamics"
-            sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
-            disabled={teamDynamics?.length === 0 || role?.length === 0}
-            onUpdate={updateForm}
-            onBack={goBack}
-            onSubmit={submitForm}
-            stage={stage}>
-            <Grid margin='0px 0px 50px 0px'>
-              <FormField
-                textarea
-                mobile
-                fieldType="input"
-                fontSize="20px"
-                width="100%"
-                borderRadius="10px"
-                onChange={e => updateForm({ teamDynamics: e.target.value })}
-                value={teamDynamics}/>
-            </Grid>
-          </CreateABusiness>
+            <CreateABusiness
+              mobile
+              doubleScreenTop
+              title="Role Description"
+              sub="Envision your ideal hire. What role will they play in your ongoing projects?"
+              onUpdate={updateForm}
+              onBack={goBack}
+              onSubmit={submitForm}
+              progress={stage}
+              stage={stage}>
+              <Grid margin="0px 0px 35px 0px">
+                <FormField
+                  textarea
+                  mobile
+                  fieldType="input"
+                  fontSize="20px"
+                  width="100%"
+                  borderRadius="10px"
+                  onChange={e => updateForm({ role: e.target.value })}
+                  value={role}
+                />
+              </Grid>
+            </CreateABusiness>
+            <CreateABusiness
+              mobile
+              doubleScreenBottom
+              title="Team Dynamics"
+              sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
+              disabled={teamDynamics?.length === 0 || role?.length === 0}
+              onUpdate={updateForm}
+              onBack={goBack}
+              onSubmit={submitForm}
+              stage={stage + 1}>
+              <Grid margin="0px 0px 50px 0px">
+                <FormField
+                  textarea
+                  mobile
+                  fieldType="input"
+                  fontSize="20px"
+                  width="100%"
+                  borderRadius="10px"
+                  onChange={e => updateForm({ teamDynamics: e.target.value })}
+                  value={teamDynamics}
+                />
+              </Grid>
+            </CreateABusiness>
           </>
         )
       }
 
     case 4:
+      if (projectType === 'Short Term Business') {
+        return (
+          <>
+            <CreateABusiness
+              mobile
+              doubleScreenTop
+              title="Describe the project"
+              sub="What's the challenge you need to conquer? (in a sentence or two)"
+              onUpdate={updateForm}
+              onBack={goBack}
+              onSubmit={submitForm}
+              progress={stage - 1}
+              stage={stage}>
+              <Grid margin="0px 0px 25px 0px">
+                <FormField
+                  textarea
+                  mobile
+                  fieldType="input"
+                  fontSize="20px"
+                  width="100%"
+                  placeholder="Enter Project Summary..."
+                  borderRadius="10px"
+                  onChange={e => updateForm({ challenge: e.target.value })}
+                  value={challenge}
+                />
+              </Grid>
+            </CreateABusiness>
+            <CreateABusiness
+              mobile
+              doubleScreenBottom
+              sub="What are the specific tasks and objectives for this project"
+              disabled={objectives?.length === 0 || challenge?.length === 0}
+              onUpdate={updateForm}
+              onBack={()=>goBack(stage-1)}
+              onSubmit={submitForm}
+              stage={stage}>
+              <Grid margin="0px">
+                <FormField
+                  mobile
+                  justifySelf="start"
+                  width="100%"
+                  fieldType="input"
+                  fontSize="20px"
+                  placeholder="Type a task and hit enter..."
+                  borderRadius="10px"
+                  handleEnterKey={e => inputValue !== '' && handleEnterKey('objectives', objectives, e)}
+                  onChange={e => handleInput(e.target.value)}
+                  value={inputValue}
+                />
+                <Button
+                  margin="8px 0px"
+                  block
+                  disabled={inputValue === ''}
+                  type="purple"
+                  buttonHeight="42px"
+                  zIndex={10}
+                  onClick={() => {
+                    updateForm({ objectives: [...objectives, inputValue] })
+                    handleInput('')
+                  }}>
+                  Add
+                </Button>
+              </Grid>
+              <ContentContainer width="100%" padding="10px 0px">
+                {objectives.map(obj => (
+                  <div className="d-flex mb-3">
+                    <div>
+                      <ClearSharpIcon
+                        style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                        onClick={() => handleCancelIcon('objectives', objectives, obj)}
+                      />
+                    </div>
+                    <span>{obj}</span>
+                  </div>
+                ))}
+              </ContentContainer>
+            </CreateABusiness>
+          </>
+        )
+      } else {
+        return (
+          <>
+            <CreateABusiness
+              mobile
+              doubleScreenTop
+              title="Role Description"
+              sub="Envision your ideal hire. What role will they play in your ongoing projects?"
+              onUpdate={updateForm}
+              onBack={goBack}
+              onSubmit={submitForm}
+              progress={stage - 1}
+              stage={stage}>
+              <Grid margin="0px 0px 35px 0px">
+                <FormField
+                  textarea
+                  mobile
+                  fieldType="input"
+                  fontSize="20px"
+                  width="100%"
+                  borderRadius="10px"
+                  onChange={e => updateForm({ role: e.target.value })}
+                  value={role}
+                />
+              </Grid>
+            </CreateABusiness>
+            <CreateABusiness
+              mobile
+              doubleScreenBottom
+              title="Team Dynamics"
+              sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
+              disabled={teamDynamics?.length === 0 || role?.length === 0}
+              onUpdate={updateForm}
+              onBack={()=>goBack(stage-1)}
+              onSubmit={submitForm}
+              stage={stage}>
+              <Grid margin="0px 0px 50px 0px">
+                <FormField
+                  textarea
+                  mobile
+                  fieldType="input"
+                  fontSize="20px"
+                  width="100%"
+                  borderRadius="10px"
+                  onChange={e => updateForm({ teamDynamics: e.target.value })}
+                  value={teamDynamics}
+                />
+              </Grid>
+            </CreateABusiness>
+          </>
+        )
+      }
+
+    case 5:
       return (
         <CreateABusiness
           mobile
@@ -755,19 +913,22 @@ const GetCardMobile = ({
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
-          progress={stage}
+          progress={stage - 1}
           stage={stage}>
-          {!!requiredSkills?.length && <ContentContainer width='100%' padding='5px 0px' marginBottom='10px'>
-            {requiredSkills?.map(skill => (
-              <ContainedSpan>
+          {!!requiredSkills?.length && (
+            <ContentContainer width="100%" padding="5px 0px" marginBottom="10px">
+              {requiredSkills?.map(skill => (
+                <ContainedSpan>
                   <ClearSharpIcon
                     style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
                     onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
-                  />{skill}
-              </ContainedSpan>
-            ))}
-          </ContentContainer>}
-          <Grid margin='0px 0px 35px 0px'>
+                  />
+                  {skill}
+                </ContainedSpan>
+              ))}
+            </ContentContainer>
+          )}
+          <Grid margin="0px 0px 35px 0px">
             <FormField
               mobile
               justifySelf="start"
@@ -776,16 +937,18 @@ const GetCardMobile = ({
               fontSize="20px"
               placeholder="Type a skill and hit enter..."
               borderRadius="10px"
-              handleEnterKey={(e)=>inputValue !== '' && requiredSkills.length<15 && handleEnterKey('requiredSkills',requiredSkills,e)}
+              handleEnterKey={e =>
+                inputValue !== '' && requiredSkills.length < 15 && handleEnterKey('requiredSkills', requiredSkills, e)
+              }
               onChange={e => handleInput(e.target.value)}
               value={inputValue}
             />
             <Button
-              margin='8px 0px'
+              margin="8px 0px"
               block
               type="purple"
               buttonHeight="42px"
-              disabled={inputValue === '' || requiredSkills.length>=15}
+              disabled={inputValue === '' || requiredSkills.length >= 15}
               onClick={() => {
                 updateForm({ requiredSkills: [...requiredSkills, inputValue] })
                 handleInput('')
@@ -795,169 +958,308 @@ const GetCardMobile = ({
           </Grid>
         </CreateABusiness>
       )
-    case 5:
+    case 6:
       return (
         <>
-        <CreateABusiness
-          mobile
-          doubleScreenTop
-          titleFontSize='16px'
-          title="Project Goals or Role Expectations"
-          sub="Chart out the milestones. What achievements should be celebrated along the way?"
-          onUpdate={updateForm}
-          onBack={goBack}
-          onSubmit={submitForm}
-          progress={stage}
-          stage={stage}>
-          <Grid margin='0px 0px 35px 0px'>
-            <FormField
-              mobile
-              textarea
-              fieldType="input"
-              fontSize="20px"
-              width="100%"
-              borderRadius="10px"
-              onChange={e => updateForm({ goals: e.target.value })}
-              value={goals}/>
-          </Grid>
-        </CreateABusiness>
-        <CreateABusiness
-          mobile
-          doubleScreenBottom
-          title="Company Background"
-          titleFontSize='16px'
-          sub="Every great story has a setting. What's the backdrop of your company or venture?"
-          disabled={companyBackground?.length === 0 || goals?.length === 0}
-          onUpdate={updateForm}
-          onBack={goBack}
-          onSubmit={submitForm}
-          stage={stage}>
-          <Grid margin='0px 0px 50px 0px'>
-            <FormField
-              mobile
-              textarea
-              fieldType="input"
-              fontSize="20px"
-              width="100%"
-              borderRadius="10px"
-              onChange={e =>updateForm({ companyBackground: e.target.value })}
-              value={companyBackground}                
+          <CreateABusiness
+            mobile
+            doubleScreenTop
+            titleFontSize="16px"
+            title="Project Goals or Role Expectations"
+            sub="Chart out the milestones. What achievements should be celebrated along the way?"
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage - 1}
+            stage={stage}>
+            <Grid margin="0px 0px 35px 0px">
+              <FormField
+                mobile
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ goals: e.target.value })}
+                value={goals}
               />
-          </Grid>
-        </CreateABusiness>
+            </Grid>
+          </CreateABusiness>
+          <CreateABusiness
+            mobile
+            doubleScreenBottom
+            title="Company Background"
+            titleFontSize="16px"
+            sub="Every great story has a setting. What's the backdrop of your company or venture?"
+            disabled={companyBackground?.length === 0 || goals?.length === 0}
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            stage={stage + 1}>
+            <Grid margin="0px 0px 50px 0px">
+              <FormField
+                mobile
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ companyBackground: e.target.value })}
+                value={companyBackground}
+              />
+            </Grid>
+          </CreateABusiness>
         </>
       )
-    case 6:
-      if(!isGithubConnected){
-      return (
-        <CreateABusiness
-          mobile
-          titleFontSize='16px'
-          title="Do you currently have a github account?"
-          sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
-          onUpdate={updateForm}
-          onBack={goBack}
-          onSubmit={submitForm}
-          progress={stage}
-          stage={stage}
-          skip>
-          <Grid margin='50px 0px 100px 0px'>
-            <Button
-              icon="github"
-              noBorder
-              type="dark"
-              normal
-              onClick={handleGithub}
-              >
-                CONNECT YOUR GITHUB ACCOUNT
-            </Button>
-          </Grid>
-        </CreateABusiness>
-      )}else{
-        handleSkip()
-    }
     case 7:
       return (
         <>
-        <CreateABusiness
-          mobile
-          doubleScreenTop
-          title="Budget"
-          sub="What size budget are you comfortable with for this hire?"
-          onUpdate={updateForm}
-          onSubmit={submitForm}
-          progress={stage}
-          stage={stage}>
-          <Grid margin='0px 0px 40px 0px'>
-            <FormField
-              mobile
-              required
-              height='45px'
-              fieldType="select"
-              isSearchable={false}
-              name="select"
-              options={budgetOptions()}
-              placeholder="Select your budget"
-              fontSize="20px"
-              width="100%"
-              borderRadius="12px"
-              onChange={e =>updateForm({ budget: e })}
-              value={budget}/>
-          </Grid>
-        </CreateABusiness>
-        <CreateABusiness
-          mobile
-          doubleScreenBottom
-          title="Questions for Potential Hires"
-          titleFontSize='16px'
-          sub="What questions do you have for potential hires? (max three)"
-          disabled={questionsToAsk?.length === 0 || budget?.length === 0}
-          onUpdate={updateForm}
-          onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
-          onSubmit={submitForm}
-          submit
-          stage={stage}>
-          <Grid margin='0px'>
-            <FormField
-              mobile
-              zIndexUnset
-              justifySelf="start"
-              width="100%"
-              fieldType="input"
-              fontSize="20px"
-              placeholder="Type a question and hit enter..."
-              borderRadius="10px"
-              handleEnterKey={(e)=>inputValue !== '' && questionsToAsk.length<3 && handleEnterKey('questionsToAsk',questionsToAsk,e)}
-              onChange={e => handleInput(e.target.value)}
-              value={inputValue}
-            />
-            <Button
-              margin='8px 0px'
-              block
-              disabled={inputValue === '' || questionsToAsk.length >= 3}
-              type="purple"
-              buttonHeight="42px"
-              onClick={() => {
-                updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
-                handleInput('')
-              }}>
-              Add
-            </Button>
-          </Grid>
-          <ContentContainer width='100%' padding='5px 0px' marginBottom='10px'>
-            {questionsToAsk.map(question => (
-              <div className="d-flex mb-3">
-                <div>
-                  <ClearSharpIcon
-                    style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
-                    onClick={() => handleCancelIcon('questionsToAsk',questionsToAsk,question)}
-                  />
+          <CreateABusiness
+            mobile
+            doubleScreenTop
+            titleFontSize="16px"
+            title="Project Goals or Role Expectations"
+            sub="Chart out the milestones. What achievements should be celebrated along the way?"
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage - 2}
+            stage={stage}>
+            <Grid margin="0px 0px 35px 0px">
+              <FormField
+                mobile
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ goals: e.target.value })}
+                value={goals}
+              />
+            </Grid>
+          </CreateABusiness>
+          <CreateABusiness
+            mobile
+            doubleScreenBottom
+            title="Company Background"
+            titleFontSize="16px"
+            sub="Every great story has a setting. What's the backdrop of your company or venture?"
+            disabled={companyBackground?.length === 0 || goals?.length === 0}
+            onUpdate={updateForm}
+            onBack={()=>goBack(stage-1)}
+            onSubmit={submitForm}
+            stage={stage}>
+            <Grid margin="0px 0px 50px 0px">
+              <FormField
+                mobile
+                textarea
+                fieldType="input"
+                fontSize="20px"
+                width="100%"
+                borderRadius="10px"
+                onChange={e => updateForm({ companyBackground: e.target.value })}
+                value={companyBackground}
+              />
+            </Grid>
+          </CreateABusiness>
+        </>
+      )
+    case 8:
+      if (!isGithubConnected) {
+        return (
+          <CreateABusiness
+            mobile
+            titleFontSize="16px"
+            title="Do you currently have a github account?"
+            sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
+            onUpdate={updateForm}
+            onBack={goBack}
+            onSubmit={submitForm}
+            progress={stage - 2}
+            stage={stage}
+            skip>
+            <Grid margin="50px 0px 100px 0px">
+              <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
+                CONNECT YOUR GITHUB ACCOUNT
+              </Button>
+            </Grid>
+          </CreateABusiness>
+        )
+      } else {
+        handleSkip()
+      }
+    case 9:
+      return (
+        <>
+          <CreateABusiness
+            mobile
+            doubleScreenTop
+            title="Budget"
+            sub="What size budget are you comfortable with for this hire?"
+            onUpdate={updateForm}
+            onSubmit={submitForm}
+            progress={stage - 2}
+            stage={stage}>
+            <Grid margin="0px 0px 40px 0px">
+              <FormField
+                mobile
+                required
+                height="45px"
+                fieldType="select"
+                isSearchable={false}
+                name="select"
+                options={budgetOptions()}
+                placeholder="Select your budget"
+                fontSize="20px"
+                width="100%"
+                borderRadius="12px"
+                onChange={e => updateForm({ budget: e.value })}
+                value={{label: budget}}
+              />
+            </Grid>
+          </CreateABusiness>
+          <CreateABusiness
+            mobile
+            doubleScreenBottom
+            title="Questions for Potential Hires"
+            titleFontSize="16px"
+            sub="What questions do you have for potential hires? (max three)"
+            disabled={questionsToAsk?.length === 0 || budget?.length === 0}
+            onUpdate={updateForm}
+            onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
+            onSubmit={submitForm}
+            submit
+            stage={stage + 1}>
+            <Grid margin="0px">
+              <FormField
+                mobile
+                zIndexUnset
+                justifySelf="start"
+                width="100%"
+                fieldType="input"
+                fontSize="20px"
+                placeholder="Type a question and hit enter..."
+                borderRadius="10px"
+                handleEnterKey={e =>
+                  inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk', questionsToAsk, e)
+                }
+                onChange={e => handleInput(e.target.value)}
+                value={inputValue}
+              />
+              <Button
+                margin="8px 0px"
+                block
+                disabled={inputValue === '' || questionsToAsk.length >= 3}
+                type="purple"
+                buttonHeight="42px"
+                onClick={() => {
+                  updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+                  handleInput('')
+                }}>
+                Add
+              </Button>
+            </Grid>
+            <ContentContainer width="100%" padding="5px 0px" marginBottom="10px">
+              {questionsToAsk.map(question => (
+                <div className="d-flex mb-3">
+                  <div>
+                    <ClearSharpIcon
+                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                      onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
+                    />
+                  </div>
+                  <span>{question}</span>
                 </div>
-                <span>{question}</span>
-              </div>
-            ))}
-          </ContentContainer>
-        </CreateABusiness>
+              ))}
+            </ContentContainer>
+          </CreateABusiness>
+        </>
+      )
+    case 10:
+      return (
+        <>
+          <CreateABusiness
+            mobile
+            doubleScreenTop
+            title="Budget"
+            sub="What size budget are you comfortable with for this hire?"
+            onUpdate={updateForm}
+            onSubmit={submitForm}
+            progress={stage - 3}
+            stage={stage}>
+            <Grid margin="0px 0px 40px 0px">
+              <FormField
+                mobile
+                required
+                height="45px"
+                fieldType="select"
+                isSearchable={false}
+                name="select"
+                options={budgetOptions()}
+                placeholder="Select your budget"
+                fontSize="20px"
+                width="100%"
+                borderRadius="12px"
+                onChange={e => updateForm({ budget: e.value })}
+                value={{label: budget}}
+              />
+            </Grid>
+          </CreateABusiness>
+          <CreateABusiness
+            mobile
+            doubleScreenBottom
+            title="Questions for Potential Hires"
+            titleFontSize="16px"
+            sub="What questions do you have for potential hires? (max three)"
+            disabled={questionsToAsk?.length === 0 || budget?.length === 0}
+            onUpdate={updateForm}
+            onBack={() => goBack((isGithubConnected ? stage - 1 : stage)-1)}
+            onSubmit={submitForm}
+            submit
+            stage={stage}>
+            <Grid margin="0px">
+              <FormField
+                mobile
+                zIndexUnset
+                justifySelf="start"
+                width="100%"
+                fieldType="input"
+                fontSize="20px"
+                placeholder="Type a question and hit enter..."
+                borderRadius="10px"
+                handleEnterKey={e =>
+                  inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk', questionsToAsk, e)
+                }
+                onChange={e => handleInput(e.target.value)}
+                value={inputValue}
+              />
+              <Button
+                margin="8px 0px"
+                block
+                disabled={inputValue === '' || questionsToAsk.length >= 3}
+                type="purple"
+                buttonHeight="42px"
+                onClick={() => {
+                  updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+                  handleInput('')
+                }}>
+                Add
+              </Button>
+            </Grid>
+            <ContentContainer width="100%" padding="5px 0px" marginBottom="10px">
+              {questionsToAsk.map(question => (
+                <div className="d-flex mb-3">
+                  <div>
+                    <ClearSharpIcon
+                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                      onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
+                    />
+                  </div>
+                  <span>{question}</span>
+                </div>
+              ))}
+            </ContentContainer>
+          </CreateABusiness>
         </>
       )
     default:
@@ -984,10 +1286,9 @@ const CreateBusiness = ({
   token,
   access_token
 }) => {
-  const screenWidth = window.innerWidth > 680;
 
   const submitForm = step => {
-    if (screenWidth && step < 10 || step < 7) {
+    if (step < 10) {
       // submit form
       // if step is true then go forward 1 step
       updateBusinessForm({
@@ -1006,7 +1307,7 @@ const CreateBusiness = ({
           goals,
           companyBackground,
           budget,
-          questionsToAsk,
+          questionsToAsk
         },
         access_token
       )
@@ -1063,7 +1364,8 @@ const CreateBusiness = ({
 
   return (
     <Container>
-      {screenWidth ? (
+      
+        <DesktopBox>
         <GetCardDesktop
           stage={stage}
           submitForm={submitForm}
@@ -1088,8 +1390,9 @@ const CreateBusiness = ({
           budget={budget}
           questionsToAsk={questionsToAsk}
         />
-      ) : (
-        <>
+        </DesktopBox>
+      
+        <MobileBox>
           <Nav isSubMenu marginBottom={'0px'} zIndex={20} />
           <GetCardMobile
             stage={stage}
@@ -1116,8 +1419,8 @@ const CreateBusiness = ({
             questionsToAsk={questionsToAsk}
           />
           <MobileFreelancerFooter defaultSelected='Create'/>
-        </>
-      )}
+        </MobileBox>
+      
     </Container>
   )
 }
