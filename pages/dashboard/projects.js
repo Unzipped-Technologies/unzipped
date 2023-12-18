@@ -105,7 +105,6 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
 
     return (
         <React.Fragment>
-            {/* <Nav isSubMenu marginBottom={'192px'} /> */}
             <Nav isSubMenu marginBottom={'86px'} />
             <Desktop>
                 <Title>
