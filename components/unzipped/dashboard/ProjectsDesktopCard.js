@@ -45,6 +45,7 @@ const Flex = styled.div`
 `;
 
 const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
+    console.log(project)
     return (
         <Container includeRate={includeRate}>
             <Left>
@@ -56,7 +57,7 @@ const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
                 {includeRate && (
                     <Flex>
                         <DarkText half>{project?.country}</DarkText>
-                        <DarkText small half bold><DarkSpan medium>{project?.projectType.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText>
+                        {/* <DarkText small half bold><DarkSpan medium>{project?.projectType?.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText> */}
                     </Flex>
                 )}
                 <div className='d-flex justify-content-between'>
