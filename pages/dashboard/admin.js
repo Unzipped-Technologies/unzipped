@@ -6,17 +6,12 @@ import 'simplebar/dist/simplebar.min.css';
 import {connect, useDispatch} from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { parseCookies } from "../../services/cookieHelper";
-// import {getGarageOrders, getHotelOrders, getHotelOwed} from '../../redux/actions';
 import Axios from 'axios';
 import fileDownload from 'js-file-download';
 import { colors } from '@material-ui/core';
 
 
-const Dashboard = ({loading, token, cookies, 
-    // garageOrders, 
-    // hotelOrders, 
-    // hotelOwed
-    }) => {
+const Dashboard = ({loading, token, cookies}) => {
     const [month, setMonth] = useState([]);
     const [selected, setSelected] = useState(2);
     const dispatch = useDispatch();
@@ -47,23 +42,6 @@ const Dashboard = ({loading, token, cookies,
         return month[num];
     }
 
-    
-    // const printPdf = (hotel) => {
-    //     const printPdf = Axios
-    //         .post(`/api/dashboard/hotel/pdf`, {hotel, month: month[selected]}, { responseType: 'blob' })
-    //         .then((res) => {
-    //             fileDownload(res.data, `${month[selected]}-orders.pdf`)
-    //         })
-    // }
-    
-    // const garagePdf = (garage) => {
-    //     const printPdf = Axios
-    //         .post(`/api/dashboard/garage/pdf`, {garage, month: month[selected]}, { responseType: 'blob' })
-    //         .then((res) => {
-    //             fileDownload(res.data, `${garage}-orders.pdf`)
-    //         })
-    // }
-
     const updateMonth = () => {
         
         let dates = [-2, -1, 0, 1, 2]
@@ -72,44 +50,10 @@ const Dashboard = ({loading, token, cookies,
         setMonth(newMonth)
     }
 
-    // const selectAMonth = (index) => {
-    //     setSelected(index);
-    //     let cookie;
-    //     if (token?.access_token) {
-    //         cookie = token?.access_token
-    //     } else { cookie = cookies}
-    //     dispatch(getGarageOrders(month[index], cookie));
-    //     dispatch(getHotelOrders(month[index], cookie));
-    //     dispatch(getHotelOwed(month[index], cookie));
-    // }
-
     useEffect(() => {
         updateMonth();
     }, [])
 
-    // useEffect(() => {
-    //     let cookie;
-    //     if (token.access_token) {
-    //         cookie = token.access_token
-    //     } else { cookie = cookies}
-    //     dispatch(getGarageOrders(month[selected], cookie));
-    // }, [month])
-
-    // useEffect(() => {
-    //     let cookie;
-    //     if (token.access_token) {
-    //         cookie = token.access_token
-    //     } else { cookie = cookies}
-    //     dispatch(getHotelOrders(month[selected], cookie));
-    // }, [month])
-
-    // useEffect(() => {
-    //     let cookie;
-    //     if (token.access_token) {
-    //         cookie = token.access_token
-    //     } else { cookie = cookies}
-    //     dispatch(getHotelOwed(month[selected], cookie));
-    // }, [month])
     return (
         <React.Fragment>
             <div className="main-dashboard">
@@ -144,27 +88,7 @@ const Dashboard = ({loading, token, cookies,
                                     <CircularProgress />
                                 :
                                 <>
-                                {/* {garageOrders.map((item, index) => {
-                                    return (
-                                        <div className="line-admin" key={index}>
-                                            <p>{item.name}</p>
-                                            <p className="admin-subtext">${item.total.toFixed(2)}</p>
-                                            <p className="admin-subtext">{item.quantity}</p>
-                                            <button 
-                                                style={{
-                                                    position: 'absolute', 
-                                                    right: '15px', 
-                                                    top: '15px', 
-                                                    border: 'none', 
-                                                    outline: 'none', 
-                                                    backgroundColor: 'transparent',
-                                                    color: 'blue'
-                                                    }}
-                                                onClick={() => garagePdf(item.name)}
-                                            >Print</button>
-                                        </div>
-                                    )
-                                })} */}
+
                                 </>
                                 }
                             </div>
@@ -194,15 +118,7 @@ const Dashboard = ({loading, token, cookies,
                                     <CircularProgress />
                                 :
                                 <>
-                                {/* {hotelOrders.map((item, index) => {
-                                    return (
-                                        <div className="line-admin" key={index}>
-                                            <p>{item.name}</p>
-                                            <p className="admin-subtext">${item.total.toFixed(2)}</p>
-                                            <p className="admin-subtext">{item.quantity}</p>
-                                        </div>
-                                    )
-                                })} */}
+
                                 </>
                                 }
                             </div>
@@ -232,27 +148,7 @@ const Dashboard = ({loading, token, cookies,
                                     <CircularProgress />
                                 :
                                 <>
-                                {/* {hotelOwed.map((item, index) => {
-                                    return (
-                                        <div className="line-admin" key={index}>
-                                            <p>{item.name}</p>
-                                            <p className="admin-subtext">${item.total.toFixed(2)}</p>
-                                            <p className="admin-subtext">{item.quantity}</p>
-                                            <button 
-                                                style={{
-                                                    position: 'absolute', 
-                                                    right: '15px', 
-                                                    top: '15px', 
-                                                    border: 'none', 
-                                                    outline: 'none', 
-                                                    backgroundColor: 'transparent',
-                                                    color: 'blue'
-                                                    }}
-                                                onClick={() => printPdf(item.name)}
-                                            >Print</button>
-                                        </div>
-                                    )
-                                })} */}
+                                
                                 </>
                                 }
                             </div>
@@ -280,12 +176,7 @@ const mapStateToProps = (state) => {
     return {
         loading: state.Dashboard.loading,
         cookies: state.Auth.token,
-        // garageOrders: state.Dashboard.garageOrders,
-        // hotelOrders: state.Dashboard.hotelOrders,
-        // hotelOwed: state.Dashboard.hotelOwed
     }
 }
 
-export default connect(mapStateToProps, 
-    // {getGarageOrders, getHotelOrders, getHotelOwed}
-    )(Dashboard);
+export default connect(mapStateToProps, {})(Dashboard);

@@ -136,9 +136,6 @@ Verify.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = (state) => {
     return {
-        location: state.Booking.location,
-        date: state.Booking.date,
-        count: state.Booking.count,
         isAuthenticated: state.Auth.isAuthenticated,
         auth: state.Auth.user,
         token: state.Auth.token,

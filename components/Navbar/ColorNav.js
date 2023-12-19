@@ -6,9 +6,7 @@ import Icon from "@material-ui/core/Icon";
 import { useRouter } from 'next/router'
 import MenuDropdown from '../Custom/MenuDropdown';
 import { connect, useDispatch } from 'react-redux';
-import { logoutUser, clearCart, clearVehicle, reloadLogout } from '../../redux/actions';
-// import logo from '../../public/img/vohnt-cursive-logo.png'
-// import logo from '../../assets/img/vohnt-cursive-logo.png';
+import { logoutUser, reloadLogout } from '../../redux/actions';
 
 
 const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
@@ -18,15 +16,8 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
     const router = useRouter()
     const dispatch = useDispatch();
 
-    const WWDItems = [
-        { names: `Car Wash ${'&'} Detail`, links: `/car-wash-detail` },
-        { names: `Car Services`, links: `/car-services` },
-        { names: `Car Repair`, links: `/car-repair` }, 
-    ]
 
     const signOut = () => {
-        dispatch(clearCart())
-        dispatch(clearVehicle())
         dispatch(logoutUser()) 
     }
 
@@ -37,33 +28,6 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
                     [
                         { names: "Sign out", links: `/api/auth/logout`},
                         { names: "Dashboard", links: `/dashboard/calendar`},
-                        { names: "Schedule", links: `/calendar/driver`},
-                        { names: "Orders", links: `/receipt`},
-                        { names: "<hr />", links: ''},
-                        { names: "Schedule an appointment", links: `/schedule`},
-                        { names: "Become a partner", links: `/partners` },
-                        { names: "Help", links: `/faqs`},
-                    ]
-                )
-            }
-            if (userType === "Driver") {
-                return (
-                    [
-                        { names: "Sign out", links: `/api/auth/logout`},
-                        { names: "Dashboard", links: `/calendar/driver`},
-                        { names: "Orders", links: `/receipt`},
-                        { names: "<hr />", links: ''},
-                        { names: "Schedule an appointment", links: `/schedule`},
-                        { names: "Become a partner", links: `/partners` },
-                        { names: "Help", links: `/faqs`},
-                    ]
-                )
-            }
-            if (userType === "Hotel") {
-                return (
-                    [
-                        { names: "Sign out", links: `/api/auth/logout`},
-                        { names: "Dashboard", links: `/dashboard/hotel/calendar`},
                         { names: "Orders", links: `/receipt`},
                         { names: "<hr />", links: ''},
                         { names: "Schedule an appointment", links: `/schedule`},
@@ -170,7 +134,6 @@ const ColorNav = ({ popBox, isAuthenticated, loggedOut, userType }) => {
                         }
                         {focus === "WWD" && 
                             <div onBlur={() => setFocus(false)} ref={wrapperRef} className={popBox === 'home' ? "nav-right-wwd" : "nav-right-service"}>
-                            <MenuDropdown MenuItems={WWDItems} />
                             </div>
                         }
                     </Col>
@@ -235,4 +198,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {logoutUser, clearCart, reloadLogout, clearVehicle})(ColorNav);
+export default connect(mapStateToProps, {logoutUser, reloadLogout})(ColorNav);

@@ -4,20 +4,12 @@ import Link from 'next/link';
 const Admin = ({page}) => {
     const menu = [
         {
-            name:"Calendar", 
-            link: "/calendar"
-        },
-        {
             name: "Customers", 
             link: "/customers", 
         },
         {
             name: "Orders",
             link: "/orders",
-        },
-        {
-            name: "Garages", 
-            link: "/garages", 
         },
         {
             name: "Promos", 
@@ -41,16 +33,16 @@ const Admin = ({page}) => {
                         <p id="title-one">Dashboard</p>
                     </div>
                     {menu.map((item, index) => {
-                        // return (
-                        //     <Link href={`/dashboard${item.link}`} key={index}>
-                        //         <div className={index !== page ? "item-outer-container" : "item-outer-container-2"}>
-                        //             <div className="item-container" key={index}>
-                        //                 {/* icon */}
-                        //                 <p style={{cursor: 'default'}}>{item.name}</p>
-                        //             </div>
-                        //         </div>
-                        //     </Link>
-                        // )
+                        return (
+                            <Link href={`/dashboard${item.link}`} key={index}>
+                                <div className={index !== page ? "item-outer-container" : "item-outer-container-2"}>
+                                    <div className="item-container" key={index}>
+                                        {/* icon */}
+                                        <p style={{cursor: 'default'}}>{item.name}</p>
+                                    </div>
+                                </div>
+                            </Link>
+                        )
                     })}
                 </div>
             </div>
