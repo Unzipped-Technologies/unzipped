@@ -458,17 +458,10 @@ const Nav = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollPos = window.pageYOffset;
+      const scrollPosition = window.scrollY;
+      const isScrollingDown = scrollPosition > (60);
 
-      if (prevScrollPos < currentScrollPos && !isHidden) {
-        setIsHidden(true);
-      }
-
-      else if (prevScrollPos > currentScrollPos && isHidden && currentScrollPos === 0) {
-        setIsHidden(false);
-      }
-
-      setPrevScrollPos(currentScrollPos);
+      setIsHidden(isScrollingDown);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -476,6 +469,7 @@ const Nav = ({
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
+
   }, [prevScrollPos, isHidden]);
 
 
@@ -540,11 +534,15 @@ const Nav = ({
         </Right>
       </Container>
       {isSubMenu && (
-        <SubMenTop>
+        <SubMenTop
+          style={{
+            transition: 'transform 0.3s ease-in-out',
+            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)',
+          }}
+        >
           {handleSearch &&
             <>
-              <div style={{ display: isHidden ? 'none' : 'block', transition: 'opacity 0.3s' }}>
-
+              <div>
                 <h4>Browse</h4>
                 <SearchBar
                   handleSearch={handleSearch}
