@@ -1,12 +1,11 @@
 import React from 'react'
 
-const alertDoneIcon = ({width, height, color="#E25050"}) => {
-    return (
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M56 5.3042H7.99999C5.06666 5.3042 2.66666 7.69108 2.66666 10.6084V42.4335C2.66666 45.3508 5.06666 47.7377 7.99999 47.7377H26.6667V53.0419H21.3333V58.3461H42.6667V53.0419H37.3333V47.7377H56C58.9333 47.7377 61.3333 45.3508 61.3333 42.4335V10.6084C61.3333 7.69108 58.9333 5.3042 56 5.3042ZM56 42.4335H7.99999V10.6084H56V42.4335Z" fill="currentColor"/>
-        </svg>
-    )
+const DesktopWindowIcon = ({ width, height, color = '#E25050' }) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+      <path d="M320-120v-80h80v-80H160q-33 0-56.5-23.5T80-360v-400q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v400q0 33-23.5 56.5T800-280H560v80h80v80H320ZM160-360h640v-400H160v400Zm0 0v-400 400Z" />
+    </svg>
+  )
 }
 
-export default alertDoneIcon
-
+export default DesktopWindowIcon

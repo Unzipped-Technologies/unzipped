@@ -77,7 +77,7 @@ const DarkText = styled.div`
   margin-top: ${({ topMargin }) => (topMargin ? topMargin : 'unset')};
   margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) =>
     bottomMargin ? '22px' : noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
-  margin-left: ${({ paddingLeft }) => (paddingLeft ? '20px' : '0px')};
+  margin-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
   margin-right: ${({ marginRight }) => (marginRight ? marginRight : '0px')};
   padding-top: ${({ topPadding }) => (topPadding ? '10px' : '0px')};
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
@@ -119,25 +119,25 @@ const DarkText = styled.div`
 `
 
 const Absolute = styled.div`
-    position: absolute;
-    display: ${({ doubleScreenTop }) => doubleScreenTop ? 'none' : 'flex'};
-    flex-flow: row;
-    align-items: center;
-    text-overflow: ${({ textOverflow }) => textOverflow ? textOverflow : 'unset'};
-    width: ${({ width }) => width ? width : 'unset'};
-    top: ${({ top }) => top ? top : 'unset'};
-    bottom: ${({ bottom }) => bottom ? bottom : 'unset'};
-    right: ${({ left, right }) => left ? 'unset' : right ? right : '15px'};
-    left: ${({ left, wideLeft, smallLeft }) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
-    z-index: ${({ zIndex }) => zIndex ? zIndex : 'inherit'};
-    gap: ${({ gap, mobile }) => mobile && gap ? '20px' : gap ? gap : 'unset'};
-    @media(max-width: ${({ hide }) => hide ? hide + 'px' : '0px'}) {
-        display: none;
-    }
-    @media (max-width: 681px) {
-        justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
-    }
-`;
+  //   position: absolute;
+  display: ${({ doubleScreenTop }) => (doubleScreenTop ? 'none' : 'flex')};
+  flex-flow: row;
+  align-items: center;
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  width: ${({ width }) => (width ? width : 'unset')};
+  top: ${({ top }) => (top ? top : 'unset')};
+  bottom: ${({ bottom }) => (bottom ? bottom : 'unset')};
+  right: ${({ left, right }) => (left ? 'unset' : right ? right : '15px')};
+  left: ${({ left, wideLeft, smallLeft }) => (left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset')};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 'inherit')};
+  gap: ${({ gap, mobile }) => (mobile && gap ? '20px' : gap ? gap : 'unset')};
+  @media (max-width: ${({ hide }) => (hide ? hide + 'px' : '0px')}) {
+    display: none;
+  }
+  @media (max-width: 681px) {
+    justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : '')};
+  }
+`
 
 const Underline = styled.div`
   border-bottom: solid 1px ${({ color }) => (color ? color : '#d8d8d8')};

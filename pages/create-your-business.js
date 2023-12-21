@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import Nav from '../components/unzipped/header';
+import Nav from '../components/unzipped/header'
 import OptionTileGroup from '../components/ui/OptionTileGroup'
 import CreateABusiness from '../components/unzipped/CreateABusiness'
 import Button from '../components/ui/Button'
@@ -14,10 +14,9 @@ import { updateBusinessForm, createBusiness } from '../redux/actions'
 import router from 'next/router'
 import { parseCookies } from '../services/cookieHelper'
 import { nextPublicGithubClientId } from '../config/keys'
-import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
-import ClearSharpIcon from '@material-ui/icons/ClearSharp';
-import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter';
-
+import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined'
+import ClearSharpIcon from '@material-ui/icons/ClearSharp'
+import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 
 const Container = styled.div`
   display: flex;
@@ -46,9 +45,9 @@ const DesktopBox = styled.div`
 
 const ContentContainer = styled('div')`
   max-height: 150px;
-  padding: ${({padding})=>padding?padding:'10px 20px'};
-  width: ${({width})=>width?width:'90%'};
-  margin-bottom: ${({marginBottom})=>marginBottom?marginBottom:'0px'};
+  padding: ${({ padding }) => (padding ? padding : '10px 20px')};
+  width: ${({ width }) => (width ? width : '90%')};
+  margin-bottom: ${({ marginBottom }) => (marginBottom ? marginBottom : '0px')};
   overflow-y: scroll;
   font-family: 'Roboto';
   line-height: 25px;
@@ -70,17 +69,15 @@ const ContentContainer = styled('div')`
 `
 
 const ContainedSpan = styled.span`
-    border-radius: 4px;
-    background-color: #D9D9D9;
-    padding: 2px 10px 2px 2px;
-    margin-right: 10px;
-    text-wrap: nowrap;
+  border-radius: 4px;
+  background-color: #d9d9d9;
+  padding: 2px 10px 2px 2px;
+  margin-right: 10px;
+  text-wrap: nowrap;
 `
 
 function handleGithub() {
-  router.push(
-    `https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`
-  )
+  router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
 }
 
 const projectTypeOptions = () => {
@@ -131,7 +128,6 @@ const GetCardDesktop = ({
   handleEnterKey,
   loading
 }) => {
-
   switch (stage) {
     case 1:
       return (
@@ -582,7 +578,6 @@ const GetCardMobile = ({
   handleEnterKey,
   loading
 }) => {
-
   switch (stage) {
     case 1:
       return (
@@ -1341,22 +1336,22 @@ const CreateBusiness = ({
 
   const isGithubConnected = !!router?.query?.['github-connect'] || false
 
-  const [inputValue,setInputValue]=useState('')
+  const [inputValue, setInputValue] = useState('')
 
-  const handleInput=(value)=>{
+  const handleInput = value => {
     setInputValue(value)
   }
-  
+
   const handleSkip = () => {
     submitForm(stage)
   }
 
-  const handleCancelIcon=(feildName,data,value)=>{
-    updateForm({ [feildName]: data.filter(val=>val!==value) })
+  const handleCancelIcon = (feildName, data, value) => {
+    updateForm({ [feildName]: data.filter(val => val !== value) })
   }
-  
-  const handleEnterKey = (fieldName,data,e) => {
-    if(e.keyCode === 13 && e.shiftKey === false) {
+
+  const handleEnterKey = (fieldName, data, e) => {
+    if (e.keyCode === 13 && e.shiftKey === false) {
       updateForm({ [fieldName]: [...data, inputValue] })
       handleInput('')
     }

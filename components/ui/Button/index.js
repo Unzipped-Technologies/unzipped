@@ -7,7 +7,7 @@ import OutsideAlerter from '../OutsideAlerter'
 import DropDown from '../Dropdown'
 
 const ButtonContainer = styled.button`
-  z-index: ${props => (props.zIndex ? props.zIndex : '0')};
+  // z-index: ${props => (props.zIndex ? props.zIndex : '0')};
   cursor: pointer;
   position: ${props => (props.position ? props.position : '')};
   right: ${props => (props.right ? props.right : 'auto')};
