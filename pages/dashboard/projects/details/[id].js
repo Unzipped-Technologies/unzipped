@@ -127,8 +127,8 @@ const Tabs = styled.div`
   border-bottom: 1px solid #bcc5d3;
   margin-bottom: 1px;
   display: flex;
-  justify-content: space-around;
   @media (max-width: 680px) {
+    justify-content: space-around;
     display: flex;
     overflow-x: auto;
   }
