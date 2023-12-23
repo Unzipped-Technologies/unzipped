@@ -66,6 +66,9 @@ const XContainer = styled.div`
     padding-left: 27px;
     padding-top: 17px;
     margin-top: 13px;
+    &:hover {
+        background-color: rgba(142, 222, 100, 0.25);
+    }
 `;
 const ZippedContentContainer = styled.div`
     display:flex;
@@ -126,6 +129,14 @@ const ResourcesContainer = styled.div`
 const IconStyled = styled.div`
     padding-left: 13px;
 `;
+const ContainerForLink = styled.div`
+    padding: ${({index}) => index < 2 ? '2' : '0'}px 0px;
+    padding-left: ${({index}) => index < 2 ? '8' : '0'}px;
+    border-radius: ${({index}) => index < 2 ? '12' : '0'}px;
+    &:hover {
+        background-color: ${({index}) => index < 2 ? 'rgba(142, 222, 100, 0.25)' : 'transparent'};
+    }
+`;
 
 
 const HR = styled.hr``;
@@ -172,6 +183,7 @@ const Dropdown = ({ items, ref, onClose, token, right, top, isUnzipped }) => {
                                             e?.onClick ? e?.onClick(token)
                                                 : () => { }}
                                     >
+                                        <ContainerForLink index={index}>
                                         {e.icon}{e?.link ?
                                             <Link href={e.link}>
                                                 <LinkStyled>{e.name}</LinkStyled>
@@ -203,6 +215,7 @@ const Dropdown = ({ items, ref, onClose, token, right, top, isUnzipped }) => {
                                             </>
                                         )}
                                         <TextDescriptionStyled>{e?.description}</TextDescriptionStyled>
+                                        </ContainerForLink>
                                     </UnzippedNavItem>
                                 )
                             })}
