@@ -45,7 +45,7 @@ const HeaderDetail = styled.header`
   right: 0px;
   top: 10px;
   width: 100%;
-  padding: 0 24px 15px;
+  padding: 0px 0px 24px 15px;
   @media (max-width: 680px) {
     width: 100%;
     top: 0;
@@ -54,12 +54,15 @@ const HeaderDetail = styled.header`
 `
 
 const ProjectName = styled.div`
+  width: 70%;
+  display: flex;
+  flex-wrap: wrap;
   color: #000;
   font-family: Roboto;
   font-size: 36px;
   font-style: normal;
   font-weight: 700;
-  line-height: 24.5px; /* 68.056% */
+  line-height: 40.5px; /* 68.056% */
   letter-spacing: 0.4px;
   text-transform: uppercase;
   @media (max-width: 680px) {
@@ -135,11 +138,11 @@ const Tabs = styled.div`
 `
 
 const TabButton = styled.button`
-  padding: 5px 5px 20px 15px;
+  padding: 5px 5px 10px 0px;
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  margin-right: 10px;
+  margin-right: 30px;
   font-family: Roboto;
   font-size: 18px;
   font-style: normal;
@@ -175,6 +178,7 @@ const TabContent = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  padding-bottom: 50px;
 `
 
 const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
@@ -206,7 +210,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       <Desktop>
         <HeaderDetail>
           <Header>
-            <ProjectName>{selectedTab === 3 ? 'Invoice History' : `${projectDetails?.name}`}</ProjectName>
+            <ProjectName>{selectedTab === 3 ? 'Invoice History' : `PROJECT`}</ProjectName>
             <Toggle>
               <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                 <DarkText small>{selectedTab === 0 ? 'As Client' : 'As Founder'}</DarkText>
@@ -216,7 +220,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
               </Right>
             </Toggle>
           </Header>
-          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.businessNiche}</ProjectSubHeading>}
+          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
         </HeaderDetail>
 
         <Tabs>
@@ -251,68 +255,70 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
           />
         )}
         {selectedTab === 2 && (
-          <div style={{ marginTop: '10px' }}>
-            <HiringTable
-              data={[{ name: 'jason', rate: '10', points: '10', department: 'test', hireDate: '2012-12-12' }]}
-            />
-          </div>
+          <HiringTable
+            data={[
+              { name: 'jason', rate: '10', points: '10', department: 'Development', hireDate: '2012-12-12' },
+              { name: 'Warner', rate: '13', points: '9', department: 'QA', hireDate: '2023-08-23' },
+              { name: 'Wade', rate: '6', points: '7', department: 'Marketing', hireDate: '2021-09-18' },
+              { name: 'Smith', rate: '8', points: '11', department: 'SEO', hireDate: '2019-03-06' },
+              { name: 'Jhonson', rate: '3', points: '9', department: 'Development', hireDate: '2018-06-29' }
+            ]}
+          />
         )}
         {selectedTab === 3 && (
-          <div style={{ marginTop: '10px' }}>
-            <InvoicesTable
-              data={[
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Submitted',
-                  hireDate: '2012-12-12'
-                },
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Submitted',
-                  hireDate: '2012-12-12'
-                },
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Approved',
-                  hireDate: '2012-12-12'
-                },
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Archived',
-                  hireDate: '2012-12-12'
-                },
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Submitted',
-                  hireDate: '2012-12-12'
-                },
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Approved',
-                  hireDate: '2012-12-12'
-                },
-                {
-                  name: 'jason',
-                  dates: '2012-12-12 - 2012-12-12',
-                  hours: 40,
-                  status: 'Approved',
-                  hireDate: '2012-12-12'
-                }
-              ]}
-            />
-          </div>
+          <InvoicesTable
+            data={[
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Submitted',
+                hireDate: '2012-12-12'
+              },
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Submitted',
+                hireDate: '2012-12-12'
+              },
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Approved',
+                hireDate: '2012-12-12'
+              },
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Archived',
+                hireDate: '2012-12-12'
+              },
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Submitted',
+                hireDate: '2012-12-12'
+              },
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Approved',
+                hireDate: '2012-12-12'
+              },
+              {
+                name: 'jason',
+                dates: '2012-12-12 - 2012-12-12',
+                hours: 40,
+                status: 'Approved',
+                hireDate: '2012-12-12'
+              }
+            ]}
+          />
         )}
       </TabContent>
       <TabContent active={selectedTab === 1}></TabContent>

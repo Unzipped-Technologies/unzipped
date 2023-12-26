@@ -14,6 +14,7 @@ import { getBusinessList } from '../../../../redux/actions'
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
+  margin-bottom: 50px;
   @media (min-width: 680px) {
     display: none;
   }
@@ -65,14 +66,15 @@ const Tabs = styled.div`
   gap: 20px;
   border-bottom: 1px solid #bcc5d3;
   margin-bottom: 1px;
+  margin-left: 10px;
 `
 
 const TabButton = styled.button`
-  padding: 5px 5px 20px 15px;
+  padding: 5px 5px 10px 0px;
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  margin-right: 10px;
+  margin-right: 30px;
   font-family: Roboto;
   font-size: 14px;
   font-style: normal;
@@ -251,6 +253,7 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
                       <ProjectDate>10/26/2024</ProjectDate>
                       <Absolute
                         buttonHeight="33px"
+                        position="none"
                         style={{
                           width: '90%',
                           border: '0.25px solid #000',

@@ -22,7 +22,8 @@ const StyledTableCell = withStyles(theme => ({
     color: theme.palette.common.white
   },
   body: {
-    fontSize: 14
+    fontSize: 14,
+    margin: '0px 10px 0px 0px'
   }
 }))(TableCell)
 
@@ -47,6 +48,7 @@ const Desktop = styled.div`
   width: 80%;
   margin: auto;
   display: flex;
+  margin-top: 10px;
   flex-direction: row;
   @media (max-width: 680px) {
     display: none;
@@ -91,17 +93,19 @@ const HiringTable = ({ data, loading, user }) => {
           <Table className={classes.table} aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <StyledTableCell class="muiTableHeader">Name</StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="center">
+                <StyledTableCell class="muiTableHeader" align="left" style={{ padding: '0px 0px 0px 15px' }}>
+                  Name
+                </StyledTableCell>
+                <StyledTableCell class="muiTableHeader" align="left">
                   Dates
                 </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="center">
+                <StyledTableCell class="muiTableHeader" align="left">
                   Hours
                 </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="center">
+                <StyledTableCell class="muiTableHeader" align="left">
                   Status
                 </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="center">
+                <StyledTableCell class="muiTableHeader" align="left">
                   Hire Date
                 </StyledTableCell>
                 <StyledTableCell class="muiTableHeader muiTableActionsHeading">ACTIONS</StyledTableCell>
@@ -117,13 +121,11 @@ const HiringTable = ({ data, loading, user }) => {
               {data?.length > 0 &&
                 data?.map((row, index) => (
                   <StyledTableRow key={`${row.name}_${index}`}>
-                    <StyledTableCell component="th" scope="row">
-                      {row.name}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">{row.dates}</StyledTableCell>
-                    <StyledTableCell align="center">{row.hours}</StyledTableCell>
-                    <StyledTableCell align="center">{row.status}</StyledTableCell>
-                    <StyledTableCell align="center">{row.hireDate}</StyledTableCell>
+                    <StyledTableCell align="left">{row.name}</StyledTableCell>
+                    <StyledTableCell align="left">{row.dates}</StyledTableCell>
+                    <StyledTableCell align="left">{row.hours}</StyledTableCell>
+                    <StyledTableCell align="left">{row.status}</StyledTableCell>
+                    <StyledTableCell align="left">{row.hireDate}</StyledTableCell>
                     <StyledTableCell
                       align="inherit"
                       style={{

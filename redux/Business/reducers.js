@@ -89,8 +89,7 @@ const Business = (state = INIT_STATE, action = {}) => {
       return {
         ...state,
         loading: false,
-        businesses: [...state.businesses, action.payload],
-        selectedBusiness: action.payload
+        businesses: [...state.businesses]
       }
     case UPDATE_BUSINESS:
       const RemoveUpdateBusiness = state.businesses.filter(item => item.id !== action.payload.id)
@@ -99,8 +98,15 @@ const Business = (state = INIT_STATE, action = {}) => {
       let newListBusinesses = state.businesses.filter(item => action.payload.id !== item.id)
       return { ...state, loading: false, business: [...newListBusinesses] }
     case GET_BUSINESSES:
-      const selectedBusiness = action.payload.find(e => e.isSelected) || action.payload[0]
-      return { ...state, loading: false, businesses: action.payload, selectedBusiness }
+      const selectedBusiness =
+        action.payload?.limitedRecords.find(e => e.isSelected) || action.payload?.limitedRecords[0]
+      return {
+        ...state,
+        loading: false,
+        businesses: action.payload.limitedRecords,
+        selectedBusiness,
+        totalCount: action.payload.totalCount[0]?.count
+      }
     case SELECT_BUSINESS:
       return {
         ...state,

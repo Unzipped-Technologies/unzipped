@@ -14,8 +14,9 @@ const DesktopContainer = styled.div`
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  width: 100%;
   height: 262px;
+  width: 80%;
+  margin: auto;
   border-radius: 5px;
   border: 1px solid #d9d9d9;
   @media (max-width: 680px) {

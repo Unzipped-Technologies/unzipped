@@ -119,7 +119,7 @@ const DarkText = styled.div`
 `
 
 const Absolute = styled.div`
-  //   position: absolute;
+  position: ${({ position }) => (position ? position : 'absolute')};
   display: ${({ doubleScreenTop }) => (doubleScreenTop ? 'none' : 'flex')};
   flex-flow: row;
   align-items: center;

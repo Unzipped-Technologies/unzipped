@@ -10,16 +10,51 @@ import { updateBusiness } from '../../../redux/Business/actions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import Paper from '@material-ui/core/Paper'
+import { withStyles, makeStyles } from '@material-ui/core/styles'
+
+const StyledTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white
+  },
+  body: {
+    fontSize: 14,
+    margin: '0px 10px 0px 0px'
+  }
+}))(TableCell)
+
+const StyledTableRow = withStyles(theme => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover
+    },
+    margin: '0px 10px 0px 0px'
+  }
+}))(TableRow)
+
+const useStyles = makeStyles({
+  table: {
+    minWidth: '1150px',
+    borderRadius: '10px',
+    border: '1px solid #D9D9D9',
+    background: 'rgba(255, 255, 255, 0.36)'
+  }
+})
+
 const Container = styled.div`
   position: relative;
   display: flex;
-  flex-flow: column;
   border: 1px solid #d9d9d9;
   background: ${({ background }) => (background ? background : '#D9D9D9')};
-  width: 95%;
-  max-height: 900px;
-  padding: 20px 0px;
-  margin-left: 34px;
+  width: 77%;
+  margin: auto;
   border-radius: 10px;
 `
 
@@ -37,6 +72,7 @@ import Swal from 'sweetalert2'
 
 const Panel = ({ type, businesses, loading, userType, updateBusiness }) => {
   const router = useRouter()
+  const classes = useStyles()
 
   const archivedProject = async projectID => {
     await Swal.fire({
@@ -107,7 +143,70 @@ const Panel = ({ type, businesses, loading, userType, updateBusiness }) => {
 
   return (
     <Container background={type === 'department' ? '#FDFDFD' : ''}>
-      <TableTitle paddingLeft half row>
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="sticky table">
+          <TableHead className={classes.head}>
+            <TableRow>
+              <StyledTableCell class="muiTableHeader" align="left !important" style={{ padding: '0px 0px 0px 15px' }}>
+                Project Name
+              </StyledTableCell>
+              <StyledTableCell class="muiTableHeader" align="left">
+                Budget
+              </StyledTableCell>
+              <StyledTableCell class="muiTableHeader" align="left">
+                Equity
+              </StyledTableCell>
+              <StyledTableCell class="muiTableHeader" align="left">
+                Points
+              </StyledTableCell>
+              <StyledTableCell class="muiTableHeader" align="left">
+                Value Estimate
+              </StyledTableCell>
+              <StyledTableCell class="muiTableHeader" align="left">
+                Deadline
+              </StyledTableCell>
+              <StyledTableCell class="muiTableHeader" align="center">
+                ACTIONS
+              </StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {businesses?.length === 0 && <Box>Start a project and you will see it here...</Box>}
+            {businesses?.length > 0 &&
+              businesses?.map((row, index) => (
+                <StyledTableRow key={`${row.name}_${index}`}>
+                  <StyledTableCell align="left">{row.name}</StyledTableCell>
+                  <StyledTableCell align="left">{row.budget || 0}</StyledTableCell>
+                  <StyledTableCell align="left">{row.equity || 0}</StyledTableCell>
+                  <StyledTableCell align="left">27</StyledTableCell>
+                  <StyledTableCell align="left">{row.valueEstimate || 'N/A'}</StyledTableCell>
+                  <StyledTableCell align="left">
+                    {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
+                      ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
+                  </StyledTableCell>
+                  <StyledTableCell
+                    align="inherit"
+                    style={{
+                      display: 'inline-block'
+                    }}>
+                    <Button
+                      icon="largeExpand"
+                      popoutWidth="180px"
+                      noBorder
+                      block
+                      type="lightgrey"
+                      fontSize="12px"
+                      popout={generatePopout(userType, row)}
+                      iconRight>
+                      Details
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {/* <TableTitle paddingLeft half row>
         <DarkText noMargin bold>
           Project Name
         </DarkText>
@@ -185,7 +284,7 @@ const Panel = ({ type, businesses, loading, userType, updateBusiness }) => {
               </Absolute>
             </WhiteCard>
           ))}
-      </StoryTable>
+      </StoryTable> */}
     </Container>
   )
 }

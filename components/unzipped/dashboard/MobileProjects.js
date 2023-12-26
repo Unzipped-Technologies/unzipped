@@ -142,7 +142,7 @@ const mapStateToProps = state => {
   return {
     _id: state.Auth.user._id,
     access_token: state.Auth.token,
-    businesses: state.Business?.projectList,
+    businesses: state.Business?.businesses,
     loading: state.Business?.loading,
     role: state.Auth.user.role,
     cookie: state.Auth.token

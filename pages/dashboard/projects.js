@@ -14,8 +14,8 @@ import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFo
 import MobileProjects from '../../components/unzipped/dashboard/MobileProjects'
 import useRole from '../../hooks/role'
 const Desktop = styled.div`
-margin-top: 192px;
-@media(max-width: 680px) {
+  margin-top: 192px;
+  @media (max-width: 680px) {
     display: none;
   }
 `
@@ -69,6 +69,7 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
   const [take, setTake] = useState(25)
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState(null)
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
 
   useEffect(() => {
     if (role === accountTypeEnum.ADMIN) {
@@ -110,30 +111,47 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
     }
   }
 
-    return (
-        <React.Fragment>
-            <Nav isSubMenu marginBottom={'86px'} />
-            <Desktop>
-                <Title>
-                    <TitleText title>Projects</TitleText>
-                    <Toggle>
-                        <Left selected={selected} onClick={toggleRole}>
-                            <DarkText small>AS INVESTOR</DarkText>
-                        </Left>
-                        <Right selected={selected} onClick={toggleRole}>
-                            <DarkText small>AS FOUNDER</DarkText>
-                        </Right>
-                    </Toggle>
-                </Title>
-                <SearchBar theme={{tint3:'#C4C4C4'}} placeHolderColor={'#444444'} margin='0px' take={take} setTake={setTake} />
-                <ProjectsContainer type='projects' businesses={businesses} setPage={setPage} page={page} loading={loading} userType={selected} />
-            </Desktop>
-            <MobileDisplayBox>
-                <MobileProjects />
-                <MobileFreelancerFooter defaultSelected="Projects" />
-            </MobileDisplayBox>
-        </React.Fragment>
-    )
+  return (
+    <React.Fragment>
+      <Nav isSubMenu marginBottom={'86px'} />
+      {screenWidth > 680 && (
+        <Desktop>
+          <Title>
+            <TitleText title>Projects</TitleText>
+            <Toggle>
+              <Left selected={selected} onClick={toggleRole}>
+                <DarkText small>AS INVESTOR</DarkText>
+              </Left>
+              <Right selected={selected} onClick={toggleRole}>
+                <DarkText small>AS FOUNDER</DarkText>
+              </Right>
+            </Toggle>
+          </Title>
+          <SearchBar
+            theme={{ tint3: '#C4C4C4' }}
+            placeHolderColor={'#444444'}
+            margin="0px"
+            take={take}
+            setTake={setTake}
+          />
+          <ProjectsContainer
+            type="projects"
+            businesses={businesses}
+            setPage={setPage}
+            page={page}
+            loading={loading}
+            userType={selected}
+          />
+        </Desktop>
+      )}
+      {screenWidth < 680 && (
+        <MobileDisplayBox>
+          <MobileProjects />
+          <MobileFreelancerFooter defaultSelected="Projects" />
+        </MobileDisplayBox>
+      )}
+    </React.Fragment>
+  )
 }
 
 Projects.getInitialProps = async ({ req, res }) => {
@@ -147,7 +165,7 @@ const mapStateToProps = state => {
   return {
     _id: state.Auth.user._id,
     access_token: state.Auth.token,
-    businesses: state.Business?.projectList,
+    businesses: state.Business?.businesses,
     loading: state.Business?.loading,
     role: state.Auth.user.role,
     cookie: state.Auth.token
