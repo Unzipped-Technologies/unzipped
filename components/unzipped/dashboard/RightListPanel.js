@@ -352,7 +352,7 @@ const Panel = ({
                 if (form?.assignee === '') {
                     return false;
                 }
-                if (`${element?.FirstName} ${element?.LastName}`.toLowerCase().includes(form?.assignee.toLowerCase()) || element?.FirstName.toLowerCase().includes(form?.assignee.toLowerCase()) || element?.LastName.toLowerCase().includes(form?.assignee.toLowerCase())) {
+                if (`${element?.FirstName} ${element?.LastName}`.toLowerCase().includes(`${form?.assignee}`.toLowerCase()) || `${element?.FirstName}`.toLowerCase().includes(`${form?.assignee}`.toLowerCase()) || `${element?.LastName}`.toLowerCase().includes(`${form?.assignee}`.toLowerCase())) {
                     return true;
                 }
             })
