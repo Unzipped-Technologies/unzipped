@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
 import Search from './input'
@@ -344,13 +344,21 @@ const Nav = ({
   margin,
   zIndex
 }) => {
-  const { pathname } = useRouter()
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
   const classes = useStyles()
   const wrapperRef = useRef(null)
   const dropdownRef = useRef(null)
   const [highlightColor, setHighlightColor] = useState('#333333')
   const [highlightedIndex, setHighlightedIndex] = useState(false)
+
+  const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+
+  useEffect(() => {
+    setIsProjectMenuEnabled(router.pathname === '/projects');
+  }, [router.pathname]);
 
   const setDropdowns = item => {
     setTimeout(function () {
@@ -448,6 +456,23 @@ const Nav = ({
     }
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const isScrollingDown = scrollPosition > (60);
+
+      setIsHidden(isScrollingDown);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+
+  }, [prevScrollPos, isHidden]);
+
+
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
@@ -509,16 +534,51 @@ const Nav = ({
         </Right>
       </Container>
       {isSubMenu && (
-        <SubMenTop>
-          <SubMenu>
-            {subMenuItems.map((item, key) => (
-              <Link href={item.link} key={key}>
-                <SpanWhite count={key} underline={pathname === item.link}>
-                  <Sub>{item.name} </Sub>
-                </SpanWhite>
-              </Link>
-            ))}
-          </SubMenu>
+        <SubMenTop
+          style={{
+            transition: 'transform 0.3s ease-in-out',
+            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)',
+          }}
+        >
+          {handleSearch &&
+            <>
+              <div>
+                <h4>Browse</h4>
+                <SearchBar
+                  handleSearch={handleSearch}
+                  filter={filter}
+                  setFilter={handleSearchValue}
+                  searchButton={searchButton}
+                  margin={margin}
+                  alignItems={'start'}
+                />
+              </div>
+            </>
+          }
+          {
+            ((isProjectMenuEnabled && token) ? (
+              <SubMenu>
+                {subMenuItems.map((item, key) => (
+                  <Link href={item.link} key={key}>
+                    <SpanWhite count={key} underline={router.pathname === item.link}>
+                      <Sub>{item.name} </Sub>
+                    </SpanWhite>
+                  </Link>
+                ))}
+              </SubMenu>
+            ) : ((isProjectMenuEnabled) ? <></> : (
+              <SubMenu>
+                {subMenuItems.map((item, key) => (
+                  <Link href={item.link} key={key}>
+                    <SpanWhite count={key} underline={router.pathname === item.link}>
+                      <Sub>{item.name} </Sub>
+                    </SpanWhite>
+                  </Link>
+                ))}
+              </SubMenu>
+            )))
+          }
+
         </SubMenTop>
       )}
     </Div>
@@ -542,3 +602,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav)
+
