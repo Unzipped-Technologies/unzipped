@@ -45,7 +45,7 @@ const help = [
   }
 ]
 
-const Notification = ({ type, children, noButton }) => {
+const Notification = ({ type, children, noButton, handleClick }) => {
   const router = useRouter()
   switch (type) {
     case 'plan':
@@ -91,7 +91,16 @@ const Notification = ({ type, children, noButton }) => {
           <DarkText noMargin>{children}</DarkText>
           <Absolute>
             <Dismiss>Dismiss</Dismiss>
-            <Button noBorder type="default" normal small>
+            <Button
+              noBorder
+              type="default"
+              normal
+              small
+              onClick={() => {
+                if (handleClick) {
+                  handleClick()
+                }
+              }}>
               UPDATE
             </Button>
           </Absolute>
@@ -119,7 +128,16 @@ const Notification = ({ type, children, noButton }) => {
           {!noButton && (
             <Absolute>
               <Dismiss>Dismiss</Dismiss>
-              <Button noBorder type="default" normal small>
+              <Button
+                noBorder
+                type="default"
+                normal
+                small
+                onClick={() => {
+                  if (handleClick) {
+                    handleClick()
+                  }
+                }}>
                 UPDATE
               </Button>
             </Absolute>

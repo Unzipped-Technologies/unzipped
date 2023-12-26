@@ -9,7 +9,7 @@ import { CookiesProvider } from 'react-cookie'
 import { PersistGate } from 'redux-persist/integration/react'
 import * as gtag from '../lib/gtag'
 import { isProtected } from '../utils/protectedRoutes'
-
+import { ModalProvider } from '../components/ui/hooks/useModals'
 ///styles
 import '../styles/App.scss'
 import 'materialize-css/dist/css/materialize.min.css'
@@ -44,8 +44,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (isLoading) {
       setLoading(true)
-    }
-    else {
+    } else {
       setLoading(false)
     }
   }, [isLoading])
@@ -72,7 +71,9 @@ function MyApp({ Component, pageProps }) {
     <PersistGate persistor={store.__persistor} loading={''}>
       <CookiesProvider>
         {loading && <Loading />}
-        <Component {...pageProps} />
+        <ModalProvider>
+          <Component {...pageProps} />
+        </ModalProvider>
       </CookiesProvider>
     </PersistGate>
   )

@@ -18,7 +18,9 @@ const NotificationsPanel = ({ notifications, user }) => {
     <Container>
       <Notifications>
         {notifications.map(item => (
-          <Notification type={item.type}>{item.text}</Notification>
+          <Notification type={item.type} handleClick={item?.onClick}>
+            {item.text}
+          </Notification>
         ))}
       </Notifications>
       <Panel user={user} />

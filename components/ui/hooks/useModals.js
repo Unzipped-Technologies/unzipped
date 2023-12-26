@@ -1,29 +1,29 @@
-import React, {createContext, isValidElement, useEffect, useState} from 'react';
-import {useHistory} from 'next/router';
+import { createContext, useState, useContext } from 'react'
 
-const ModalContext = createContext();
+const ModalContext = createContext({
+  isModalOpen: false,
+  rowId: undefined,
+  openModal: () => {},
+  closeModal: () => {}
+})
 
-const ModalContextProvider = ({children}) => {
-    const {
-        location: {pathname},
-    } = useHistory();
-    const [modals, setModals] = useState([]);
+export const ModalProvider = ({ children }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-    useEffect(() => {
-        setModals([]);
-    }, [pathname]);
+  const openModal = id => {
+    setIsModalOpen(true)
+  }
+  const closeModal = () => setIsModalOpen(false)
 
-    return (
-        <ModalContext.Provider
-            value={{
-                setModals,
-            }}>
-            {children}
-            {modals.filter(modal => isValidElement(modal))}
-        </ModalContext.Provider>
-    );
-};
+  return <ModalContext.Provider value={{ isModalOpen, openModal, closeModal }}>{children}</ModalContext.Provider>
+}
 
-export default ModalContext;
+const useModal = () => {
+  const context = useContext(ModalContext)
+  if (!context) {
+    throw new Error('useModal must be used within a ModalProvider')
+  }
+  return context
+}
 
-export {ModalContextProvider};
+export default useModal

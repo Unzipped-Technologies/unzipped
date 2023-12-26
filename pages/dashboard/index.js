@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Nav from '../../components/unzipped/header'
 import Image from '../../components/ui/Image'
 import Icon from '../../components/ui/Icon'
@@ -13,26 +13,11 @@ import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFo
 import Panel from '../../components/unzipped/dashboard/UserSetupPanelMobile'
 import Notification from '../../components/unzipped/dashboard/MobileNotification'
 import Footer from '../../components/unzipped/Footer'
-
+import AvailabilitySchedule from '../../components/unzipped/AvailabilitySchedule'
+import useModal from '../../components/ui/hooks/useModals'
 const Notifications = styled.div`
   padding: 0px 15px;
 `
-
-const notifications = [
-  { type: 'plan' },
-  { type: 'github' },
-  { type: 'browse' },
-  { type: 'dismiss', text: 'Update types of professionals you are seeking for your business' },
-  {
-    type: 'blue',
-    text: 'Update types of professionals you are seeking for your business'
-  },
-  { type: 'createBusiness' },
-  { type: 'faq' },
-  { type: 'updateBusiness' },
-  { type: 'freeTrial' },
-  { type: 'explore' }
-]
 
 const MobileDisplayBox = styled.div`
   position: relative;
@@ -55,6 +40,33 @@ const MobileBox = styled.div`
 
 const Dashboard = ({ resetRegisterForm }) => {
   const router = useRouter()
+  const { isModalOpen, openModal, closeModal } = useModal()
+
+  const notifications = [
+    { type: 'plan' },
+    { type: 'github' },
+    { type: 'browse' },
+    {
+      type: 'dismiss',
+      text: 'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.',
+      onClick: () => {
+        // Replace 'YourModalComponent' with the actual component you want to show as a modal
+        openModal()
+        console.log('clicked')
+      }
+    },
+    { type: 'dismiss', text: 'Update types of professionals you are seeking for your business' },
+    {
+      type: 'blue',
+      text: 'Update types of professionals you are seeking for your business'
+    },
+
+    { type: 'createBusiness' },
+    { type: 'faq' },
+    { type: 'updateBusiness' },
+    { type: 'freeTrial' },
+    { type: 'explore' }
+  ]
 
   const user = [
     {
@@ -88,6 +100,7 @@ const Dashboard = ({ resetRegisterForm }) => {
     <React.Fragment>
       <Nav isSubMenu />
       <DesktopBox>
+        <AvailabilitySchedule isModalOpen={isModalOpen} closeModal={closeModal} />
         <NotificationsPanel notifications={notifications} user={user} />
       </DesktopBox>
       <MobileBox>
