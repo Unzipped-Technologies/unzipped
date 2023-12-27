@@ -76,6 +76,9 @@ const Item = styled.div`
   font-family: roboto;
   color: #333;
   margin: 0px 10px;
+  @media (min-width: 680px) {
+    display: ${({isMobileOnly}) => isMobileOnly ? 'none' : 'block'}
+  }
 `
 
 const Span = styled.span`
@@ -286,7 +289,8 @@ const menuItems = [
     name: 'Get Ideas',
     link: '/projects',
     icon: <LightIcon width={35} height={35} />
-  }
+  },
+  { name: '<hr />', link: '/', mobileOnly: true }
 ]
 
 const subMenuItems = [
@@ -472,6 +476,24 @@ const Nav = ({
 
   }, [prevScrollPos, isHidden]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      menuItems.push({
+        name: 'Sign out',
+        onClick: () => signOut(),
+        link: '/',
+        icon: <LightIcon width={35} height={35} />,
+        mobileOnly: true
+      })
+    } else {
+      menuItems.push({
+        name: 'Log in',
+        link: '/login',
+        icon: <LightIcon width={35} height={35} />,
+        mobileOnly: true
+      })
+    }
+  }, [isAuthenticated])
 
   return (
     <Div marginBottom={marginBottom && marginBottom}>
@@ -486,6 +508,7 @@ const Nav = ({
 
               return (
                 <Item
+                  isMobileOnly={item.mobileOnly}
                   onMouseEnter={() => {
                     setHighlightColor(true)
                     setDropdowns(item.name)

@@ -81,6 +81,7 @@ const NarrowImage = styled.img`
     width: 100vw;
     position: relative;
     min-height: 50vh;
+    max-height: 89vh;
     @media(min-width: 379px) {
         display: none;
     }
