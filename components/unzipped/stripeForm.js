@@ -10,7 +10,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import {connect, useDispatch} from 'react-redux';
-import { orderDetail } from '../../redux/actions';
+// import { orderDetail } from '../../redux/actions';
 import { loadStripe } from "@stripe/stripe-js";
 // import "./StripeForm.scss";
 
@@ -67,9 +67,9 @@ function CheckoutForm({changeFocus}) {
           changeFocus('credit')
         } else {
           console.log('[PaymentMethod]', paymentMethod);
-          dispatch(orderDetail({
-              ...paymentMethod
-          }))
+        //   dispatch(orderDetail({
+        //       ...paymentMethod
+        //   }))
           changeFocus('verified')
         }
       };
