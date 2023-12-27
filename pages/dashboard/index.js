@@ -112,9 +112,9 @@ const Dashboard = ({ resetRegisterForm }) => {
             ))}
           </Notifications>
         </div>
-        {/* <MobileDisplayBox>
-                    <MobileFreelancerFooter defaultSelected="Dashboard" />
-                </MobileDisplayBox> */}
+        <MobileDisplayBox>
+          <MobileFreelancerFooter defaultSelected="Dashboard" />
+        </MobileDisplayBox>
       </MobileBox>
       <Footer />
     </React.Fragment>

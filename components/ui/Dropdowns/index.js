@@ -145,18 +145,36 @@ const Dropdown = ({ items, ref, onClose, token, right, top, isUnzipped }) => {
     const profileRef = useRef(null);
 
     useEffect(() => {
+        let mouseMoveTimer;
+    
+        function handleClose() {
+            onClose(false);
+        }
+    
+        function handleMouseMove() {
+            clearTimeout(mouseMoveTimer);
+            mouseMoveTimer = setTimeout(handleClose, 3000);
+        }
+    
         function handleClickOutside(event) {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
-                onClose(false);
+                handleClose();
             }
         }
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickOutside);
+    
+        if (profileRef.current) {
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+    
         return () => {
-            // Unbind the event listener on clean up
+            if (profileRef.current) {
+                profileRef.current.removeEventListener("mousemove", handleMouseMove);
+            }
             document.removeEventListener("mousedown", handleClickOutside);
+            clearTimeout(mouseMoveTimer);
         };
-    }, [profileRef]);
+    }, [profileRef, onClose]);
 
     return (
         <>
