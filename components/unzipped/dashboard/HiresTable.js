@@ -194,7 +194,7 @@ const HiringTable = ({ data, loading, user }) => {
           </TableContainer>
         </Container>
       </Desktop>
-      <MobileProjectHires />
+      <MobileProjectHires data={data} />
     </>
   )
 }

@@ -69,6 +69,8 @@ const ProjectName = styled.div`
     font-weight: 300;
     font-size: 18px;
     line-height: 12.5px; /* 68.056% */
+    width: 100%;
+    justify-content: center;
   }
 `
 
@@ -134,6 +136,7 @@ const Tabs = styled.div`
     justify-content: space-around;
     display: flex;
     overflow-x: auto;
+    margin-left: 10px;
   }
 `
 
@@ -182,6 +185,8 @@ const TabContent = styled.div`
 `
 
 const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+
   const projectTabs = ['Details', 'Applications', 'Hires', 'Invoices']
   const router = useRouter()
   const { id } = router.query
@@ -210,7 +215,9 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       <Desktop>
         <HeaderDetail>
           <Header>
-            <ProjectName>{selectedTab === 3 ? 'Invoice History' : `PROJECT`}</ProjectName>
+            <ProjectName>
+              {selectedTab === 3 ? 'Invoice History' : screenWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT'}
+            </ProjectName>
             <Toggle>
               <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                 <DarkText small>{selectedTab === 0 ? 'As Client' : 'As Founder'}</DarkText>
@@ -220,7 +227,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
               </Right>
             </Toggle>
           </Header>
-          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
+          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}sasas</ProjectSubHeading>}
         </HeaderDetail>
 
         <Tabs>

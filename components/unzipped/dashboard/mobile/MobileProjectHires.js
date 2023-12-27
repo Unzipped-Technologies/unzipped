@@ -68,7 +68,7 @@ const ProjectDate = styled.div`
   padding-left: 18px;
 `
 
-const MobileProjectHires = ({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) => {
+const MobileProjectHires = ({ _id, token, cookie, data = [], getBusinessList, role, loading, access_token }) => {
   const access = token?.access_token || cookie
   const router = useRouter()
 
@@ -120,17 +120,18 @@ const MobileProjectHires = ({ _id, token, cookie, businesses = [], getBusinessLi
   return (
     <MobileDisplayBox>
       <ProjectsList>
-        {businesses?.map(business => {
+        {data?.map(user => {
           return (
             <ProjectCard>
               <ProjectDate>10/26/2024</ProjectDate>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <ProjectName>{business?.name}</ProjectName>
+                <ProjectName>{user?.name}</ProjectName>
                 <div style={{ paddingRight: '15px' }}>$ 35 / hour</div>
               </div>
               <UserCategory>Software Engineer</UserCategory>
               <Absolute
                 buttonHeight="33px"
+                position="none"
                 style={{
                   width: '90%',
                   border: '0.25px solid #000',
@@ -146,7 +147,7 @@ const MobileProjectHires = ({ _id, token, cookie, businesses = [], getBusinessLi
                   popout={[
                     {
                       text: 'Revoke Access',
-                      onClick: () => router.push(`details/${business._id}`)
+                      onClick: () => router.push(`details/${user._id}`)
                     },
                     {
                       text: 'View Profile',
