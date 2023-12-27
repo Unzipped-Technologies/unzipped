@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Nav from '../components/Navbar/ColorNav';
-import Selector from '../components/Custom/Presentation/MapSelector';
-import Footer from '../components/Footer/alt-footer';
 import { connect, useDispatch } from 'react-redux';
 import { registerUser } from '../redux/actions';
 import { tokenConfig } from '../services/tokenConfig';

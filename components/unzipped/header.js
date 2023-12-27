@@ -76,6 +76,9 @@ const Item = styled.div`
   font-family: roboto;
   color: #333;
   margin: 0px 10px;
+  @media (min-width: 680px) {
+    display: ${({isMobileOnly}) => isMobileOnly ? 'none' : 'block'}
+  }
 `
 
 const Span = styled.span`
@@ -231,12 +234,12 @@ const menuItems = [
       },
       {
         name: 'Search By Founders',
-        link: '/',
+        link: '/projects',
         icon: <WorkIcon width={35} height={35} />
       },
       {
         name: 'Get Ideas',
-        link: '/',
+        link: '/projects',
         icon: <LightIcon width={35} height={35} />
       }
     ],
@@ -284,9 +287,10 @@ const menuItems = [
   },
   {
     name: 'Get Ideas',
-    link: '/',
+    link: '/projects',
     icon: <LightIcon width={35} height={35} />
-  }
+  },
+  { name: '<hr />', link: '/', mobileOnly: true }
 ]
 
 const subMenuItems = [
@@ -379,22 +383,22 @@ const Nav = ({
     },
     {
       name: 'Membership',
-      link: '/',
+      link: '/pick-a-plan',
       icon: <FolderIcon width={35} height={35} />
     },
     {
       name: 'Hire a freelancer',
-      link: '/',
+      link: '/freelancers',
       icon: <WorkIcon width={35} height={35} />
     },
     {
       name: 'Work with us',
-      link: '/',
+      link: '/how-it-works/client',
       icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
     },
     {
       name: 'Get Ideas',
-      link: '/',
+      link: '/projects',
       icon: <LightIcon width={35} height={35} />
     },
     { name: '<hr />', link: '/' },
@@ -406,7 +410,7 @@ const Nav = ({
     },
     {
       name: 'Help',
-      link: '/',
+      link: '/wiki',
       icon: <LightIcon width={35} height={35} />
     }
   ]
@@ -472,6 +476,39 @@ const Nav = ({
 
   }, [prevScrollPos, isHidden]);
 
+  useEffect(() => {
+    // Function to remove existing 'Log in' or 'Sign out' item
+    const removeAuthItem = () => {
+      const authItemIndex = menuItems.findIndex(item => 
+        item.name === 'Log in' || item.name === 'Sign out'
+      );
+      if (authItemIndex !== -1) {
+        menuItems.splice(authItemIndex, 1);
+      }
+    };
+  
+    // Remove the existing authentication-related menu item
+    removeAuthItem();
+  
+    // Add the appropriate item based on authentication status
+    if (isAuthenticated) {
+      menuItems.push({
+        name: 'Sign out',
+        onClick: () => signOut(),
+        link: '/',
+        icon: <LightIcon width={35} height={35} />,
+        mobileOnly: true
+      });
+    } else {
+      menuItems.push({
+        name: 'Log in',
+        link: '/login',
+        icon: <LightIcon width={35} height={35} />,
+        mobileOnly: true
+      });
+    }
+  }, [isAuthenticated]);
+  
 
   return (
     <Div marginBottom={marginBottom && marginBottom}>
@@ -486,6 +523,7 @@ const Nav = ({
 
               return (
                 <Item
+                  isMobileOnly={item.mobileOnly}
                   onMouseEnter={() => {
                     setHighlightColor(true)
                     setDropdowns(item.name)
