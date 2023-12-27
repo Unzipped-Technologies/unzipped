@@ -196,4 +196,4 @@ function CheckoutForm({changeFocus}) {
 //     }
 // }
 
-export default connect(null, { orderDetail })(StripeForm);
+export default connect(null)(StripeForm);
