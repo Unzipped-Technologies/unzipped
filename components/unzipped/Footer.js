@@ -76,11 +76,11 @@ const Footer = () => {
             <Links>
                 <Text color={theme.text}> <Icon name="copywrite"/> 2022 UNZIPPED</Text>
                 <ValueList>
-                    <Link href="/"><Text color={theme.text}>FIND WORK</Text></Link>
-                    <Link href="/"><Text color={theme.text}>FIND TALENT</Text></Link>
-                    <Link href="/"><Text color={theme.text}>HELP AND SUPPORT</Text></Link>
+                    <Link href="/projects"><Text color={theme.text}>FIND WORK</Text></Link>
+                    <Link href="/freelancers"><Text color={theme.text}>FIND TALENT</Text></Link>
+                    <Link href="/wiki/getting-started"><Text color={theme.text}>HELP AND SUPPORT</Text></Link>
                     <Link href="/"><Text color={theme.text}>CAREERS</Text></Link>
-                    <Link href="/"><Text color={theme.text}>CONTACT US</Text></Link>
+                    <Link href="/newsletter"><Text color={theme.text}>CONTACT US</Text></Link>
                     <Link href="/newsletter"><Text color={theme.text}>PRESS</Text></Link>
                 </ValueList>
             </Links>

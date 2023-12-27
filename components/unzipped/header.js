@@ -231,12 +231,12 @@ const menuItems = [
       },
       {
         name: 'Search By Founders',
-        link: '/',
+        link: '/projects',
         icon: <WorkIcon width={35} height={35} />
       },
       {
         name: 'Get Ideas',
-        link: '/',
+        link: '/projects',
         icon: <LightIcon width={35} height={35} />
       }
     ],
@@ -284,7 +284,7 @@ const menuItems = [
   },
   {
     name: 'Get Ideas',
-    link: '/',
+    link: '/projects',
     icon: <LightIcon width={35} height={35} />
   }
 ]
@@ -379,22 +379,22 @@ const Nav = ({
     },
     {
       name: 'Membership',
-      link: '/',
+      link: '/pick-a-plan',
       icon: <FolderIcon width={35} height={35} />
     },
     {
       name: 'Hire a freelancer',
-      link: '/',
+      link: '/freelancers',
       icon: <WorkIcon width={35} height={35} />
     },
     {
       name: 'Work with us',
-      link: '/',
+      link: '/how-it-works/client',
       icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
     },
     {
       name: 'Get Ideas',
-      link: '/',
+      link: '/projects',
       icon: <LightIcon width={35} height={35} />
     },
     { name: '<hr />', link: '/' },
@@ -406,7 +406,7 @@ const Nav = ({
     },
     {
       name: 'Help',
-      link: '/',
+      link: '/wiki',
       icon: <LightIcon width={35} height={35} />
     }
   ]
