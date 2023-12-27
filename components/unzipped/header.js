@@ -477,6 +477,20 @@ const Nav = ({
   }, [prevScrollPos, isHidden]);
 
   useEffect(() => {
+    // Function to remove existing 'Log in' or 'Sign out' item
+    const removeAuthItem = () => {
+      const authItemIndex = menuItems.findIndex(item => 
+        item.name === 'Log in' || item.name === 'Sign out'
+      );
+      if (authItemIndex !== -1) {
+        menuItems.splice(authItemIndex, 1);
+      }
+    };
+  
+    // Remove the existing authentication-related menu item
+    removeAuthItem();
+  
+    // Add the appropriate item based on authentication status
     if (isAuthenticated) {
       menuItems.push({
         name: 'Sign out',
@@ -484,16 +498,17 @@ const Nav = ({
         link: '/',
         icon: <LightIcon width={35} height={35} />,
         mobileOnly: true
-      })
+      });
     } else {
       menuItems.push({
         name: 'Log in',
         link: '/login',
         icon: <LightIcon width={35} height={35} />,
         mobileOnly: true
-      })
+      });
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
+  
 
   return (
     <Div marginBottom={marginBottom && marginBottom}>
