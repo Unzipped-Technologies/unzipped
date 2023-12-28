@@ -21,12 +21,12 @@ const types = {
 
 const FormFieldContainer = styled.div`
   vertical-align: top;
-  width: ${({width}) => width ? width : '100%'};
-  justify-self: ${({justifySelf}) => justifySelf ? justifySelf : 'auto'};
+  width: ${({ width }) => (width ? width : '100%')};
+  justify-self: ${({ justifySelf }) => (justifySelf ? justifySelf : 'auto')};
   height: 100%;
   z-index: ${({ zIndex, zIndexUnset }) => (zIndexUnset ? '0' : zIndex ? '1000' : '10')};
-  color: ${props => props.theme.textSecondary};
-  font-weight: 400;
+  color: '#333';
+  font-weight: ${props => (props.fontWeight ? props.fontWeight : '400')};
   font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
   line-height: ${props => props.theme.baseLineHeight};
   font-family: arial;
@@ -127,7 +127,7 @@ const FormField = ({
   const [currentError, setCurrentError] = useState(error)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isClicked, setIsClicked] = useState(!!rest.value)
-  
+
   const wrapperRef = useRef(null)
   useEffect(() => {
     function handleClickOutside(event) {
@@ -183,13 +183,13 @@ const FormField = ({
   const handleHeight = () => {
     if (height) {
       return height
-    }else{
+    } else {
       return 'auto'
     }
   }
 
   const handleEnter = e => {
-    if(handleEnterKey){
+    if (handleEnterKey) {
       handleEnterKey(e)
     }
   }
@@ -324,9 +324,9 @@ FormField.defaultProps = {
   currency: false,
   bottom: '0px',
   modalSelect: false,
-  onChange: () => { },
+  onChange: () => {},
   maxWidth: 'none',
-  onFocus: () => { }
+  onFocus: () => {}
 }
 
 export default FormField

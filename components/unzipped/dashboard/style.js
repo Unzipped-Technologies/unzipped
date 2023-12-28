@@ -119,25 +119,25 @@ const DarkText = styled.div`
 `
 
 const Absolute = styled.div`
-    position: absolute;
-    display: ${({ doubleScreenTop }) => doubleScreenTop ? 'none' : 'flex'};
-    flex-flow: row;
-    align-items: center;
-    text-overflow: ${({ textOverflow }) => textOverflow ? textOverflow : 'unset'};
-    width: ${({ width }) => width ? width : 'unset'};
-    top: ${({ top }) => top ? top : 'unset'};
-    bottom: ${({ bottom }) => bottom ? bottom : 'unset'};
-    right: ${({ left, right }) => left ? 'unset' : right ? right : '15px'};
-    left: ${({ left, wideLeft, smallLeft }) => left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset'};
-    z-index: ${({ zIndex }) => zIndex ? zIndex : 'inherit'};
-    gap: ${({ gap, mobile }) => mobile && gap ? '20px' : gap ? gap : 'unset'};
-    @media(max-width: ${({ hide }) => hide ? hide + 'px' : '0px'}) {
-        display: none;
-    }
-    @media (max-width: 681px) {
-        justify-content:${({ justifyContent }) => justifyContent ? justifyContent : ''};
-    }
-`;
+  position: absolute;
+  display: ${({ doubleScreenTop }) => (doubleScreenTop ? 'none' : 'flex')};
+  flex-flow: row;
+  align-items: center;
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  width: ${({ width }) => (width ? width : 'unset')};
+  top: ${({ top }) => (top ? top : 'unset')};
+  bottom: ${({ bottom }) => (bottom ? bottom : 'unset')};
+  right: ${({ left, right }) => (left ? 'unset' : right ? right : '15px')};
+  left: ${({ left, wideLeft, smallLeft }) => (left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset')};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 'inherit')};
+  gap: ${({ gap, mobile }) => (mobile && gap ? '20px' : gap ? gap : 'unset')};
+  @media (max-width: ${({ hide }) => (hide ? hide + 'px' : '0px')}) {
+    display: none;
+  }
+  @media (max-width: 681px) {
+    justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : '')};
+  }
+`
 
 const Underline = styled.div`
   border-bottom: solid 1px ${({ color }) => (color ? color : '#d8d8d8')};
@@ -255,12 +255,11 @@ const Grid = styled.div`
 const Grid2 = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: ${({ block }) => (block ? '100%' : '80%')};
+  // width: ${({ block }) => (block ? '100%' : '80%')};
   margin: ${({ margin }) => (margin ? margin : '75px 0px')};
   @media screen and (max-width: 600px) {
     display: flex;
-    flex-direction: column;
-    width: 100%;
+    flex-direction: row;
   }
 `
 
@@ -272,7 +271,7 @@ const Grid3 = styled.div`
   margin: ${({ margin }) => (margin ? margin : '75px 0px')};
   @media screen and (max-width: 600px) {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
   }
 `
