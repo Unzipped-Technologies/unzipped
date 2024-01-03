@@ -8,7 +8,17 @@ const listSchema = new Schema({
   isActive: { type: Boolean, default: true },
   user: { type: Schema.Types.ObjectId, ref: 'users' },
   freelancer: { type: Schema.Types.ObjectId, ref: 'freelancers' },
-  listItems: { type: Schema.Types.Mixed, refs: 'listItems'},
+  listItems: { type: Schema.Types.Mixed, refs: 'listItems' },
+  listEntries: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'listEntries'
+    }
+  ],
+  isDefault: {
+    type: Boolean
+  },
+  isPrivate: { type: Boolean }
 }, {
   timestamps: true
 });

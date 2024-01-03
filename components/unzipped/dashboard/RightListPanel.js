@@ -22,6 +22,14 @@ import Dropdowns from '../../ui/Dropdowns'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Projects from '../../../pages/dashboard/projects'
 import { ValidationUtils } from '../../../utils'
+import FreelancerNotFound from '../../icons/freelancernotfound'
+import UserNotFound from '../../icons/usernotfound'
+import ListManagementPanel from './ListManagementPanel'
+import { Grid } from '../../../components/unzipped/dashboard/style'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserLists } from '../../../redux/ListEntries/action'
+import { deleteList } from '../../../redux/Lists/ListsAction'
+
 
 const Container = styled.div`
     position: relative;
@@ -80,60 +88,24 @@ border: 1px solid rgba(217, 217, 217, 0.25);
     padding-bottom: 10px;
 `;
 
-const freelancer = [
-    {
-        name: 'James Cameron',
-        type: 'Full Stack Web Developer',
-        country: 'United States',
-        skills: [
-            'React',
-            'Node.js',
-            'Web 3',
-            'AWS',
-            'UI/UX'
-        ],
-        cover: `I have been a developer for over 20 years. I have worked on many
-        large projects and I have contributed superior quality features and improved
-        ROI for many developers.`,
-        profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-        isInvited: true,
-    },
-    {
-        name: 'Stefano Campagna',
-        type: 'Tutor',
-        country: 'United States',
-        skills: [
-            'React',
-            'Taking Calls',
-            'Web 3',
-            'AWS',
-            'UI/UX'
-        ],
-        cover: `I have been a developer for over 20 years. I have worked on many
-        large projects and I have contributed superior quality features and improved
-        ROI for many developers.`,
-        profilePic: '/img/testimonial_1.jpg',
-        isInvited: false
-    },
-    {
-        name: 'James Cameron',
-        type: 'Full Stack Web Developer',
-        country: 'United States',
-        skills: [
-            'React',
-            'Node.js',
-            'Web 3',
-            'AWS',
-            'UI/UX'
-        ],
-        cover: `I have been a developer for over 20 years. I have worked on many
-        large projects and I have contributed superior quality features and improved
-        ROI for many developers.`,
-        profilePic: '/img/testimonial_12.jpg',
-        isInvited: false
-    },
-]
 
+const SelectInputStyled = styled.select`
+    border-radius: 3px;
+    border: 0.25px solid #000;
+    background: rgba(217, 217, 217, 0.28);
+    display: block;
+    padding: 5px;
+    width: 100px;
+    height: 35px;
+    font-size: 15px;
+`
+const favouriteDropdownOpt = () => {
+    return [
+        { label: 'CREATE', value: 'CREATE' },
+        { label: 'EDIT', value: 'EDIT' },
+        { label: 'DELETE', value: 'DELETE' }
+    ]
+}
 const setTagsAndStories = ({ tags = [], stories = [] }) => {
     const storyOrder = []
     const story = tags.map(item => {
@@ -169,8 +141,15 @@ const Panel = ({
     updateCreateStoryForm,
     addCommentToStory,
     createNewStory,
-    form
+    form,
+    isMyTeam,
+    isFavourite,
+    isRecentlyViewed,
+    listInfo
 }) => {
+    const dragItem = useRef();
+    const dragOverItem = useRef();
+    const dispatch = useDispatch();
     const [menuOpen, setMenuOpen] = useState(false)
     const [storyList, setStoryList] = useState([])
     const [pointsDropdown, setPointsDropdown] = useState([1, 2, 3, 5, 8])
@@ -179,8 +158,20 @@ const Panel = ({
     const [createAStory, setCreateAStory] = useState(false);
     const [storyModal, setStoryModal] = useState(false);
     const [selectedStory, setSelectedStory] = useState(null);
-    const dragItem = useRef();
-    const dragOverItem = useRef();
+    const [freelancer, setFreelancerList] = useState([]);
+    const [selectedValue, setSelectedValue] = useState("0");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const favouritesList = useSelector(state => state.ListEntries.listEntries);
+    const userInfo = useSelector(selector => selector.Auth.user._id);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const usersListEntriesDetails = useSelector(state => state.ListEntries);
+    const [myListTracker, setMyListTracker] = useState([])
+    const teamMembers = useSelector(state => state.ListEntries.teamMembers)
+    const [teamMemberList, setTeamMembers] = useState([]);
+    const isFavLoading = useSelector(state => state.ListEntries.loading);
+    const recentlyViewedItems = useSelector(state => state.ListEntries.recentlyViewedList);
+    const [recentlyViewedList, setIsRecentlyViewedList] = useState([]);
+
     const setDropdowns = (item) => {
         setTimeout(function () {
             setMenuOpen(item)
@@ -310,6 +301,20 @@ const Panel = ({
         }, access)
     }
 
+    const handleSelectChange = (event) => {
+        const value = event.target.value;
+        setSelectedValue(value);
+        if (value == "CREATE" || value == "EDIT") {
+            setIsModalOpen(true);
+        }
+        if (value == "EDIT") {
+            setIsEditMode(true)
+        }
+        if (value == "DELETE") {
+            dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
+        }
+    };
+
     useEffect(() => {
         const storyList = []
         for (const tag of tags) {
@@ -370,11 +375,106 @@ const Panel = ({
         )
     }, [form?.tagName])
 
+    useEffect(() => {
+        setMyListTracker(favouritesList);
+    }, [favouritesList])
+
+    const getFreelancerCardData = (favouritesList) => {
+        const freelancerTransformedArr = favouritesList.map(item => {
+            return {
+                id: item?.freelancerId?._id,
+                name: `${item?.userId?.FirstName} ${item?.userId?.LastName}`,
+                skills: (item?.freelancerId?.freelancerSkills.length > 0) ?
+                    item?.freelancerId?.freelancerSkills?.map((skill) => skill.skill) : [],
+                cover:
+                    item?.userId?.cover ||
+                    `I have been a ${item?.freelancerId?.category || 'developer'} for over ${(item?.freelancerId && item?.freelancerId?.freelancerSkills && item?.freelancerId?.freelancerSkills[0]?.yearsExperience) || 1
+                    } years. schedule a meeting to check if I'm a good fit for your business.`,
+                profilePic:
+                    item?.userId?.profileImage ||
+                    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                rate: item?.freelancerId?.rate,
+                likes: item?.freelancerId?.likeTotal,
+                country: item?.userId?.AddressLineCountry
+            }
+
+        });
+        setFreelancerList(freelancerTransformedArr)
+    }
+
+    useEffect(() => {
+        if (favouritesList.length > 0) {
+            getFreelancerCardData(favouritesList)
+        }
+    }, [favouritesList]);
+
+    const populateFreelancerCard = () => {
+        const freelancerTransformedArr = teamMembers.map(item => {
+            return {
+                id: item?.freelancerId?._id,
+                name: `${item?.freelancerId?.user?.FirstName} ${item?.freelancerId?.user?.LastName}`,
+                skills: (item?.freelancerId?.freelancerSkills?.length > 0) ?
+                    item?.freelancerId?.freelancerSkills?.map((skill) => skill.skill) : [],
+                cover:
+                    item?.freelancerId?.user?.cover ||
+                    `I have been a ${item?.freelancerId?.category || 'developer'} for over ${(item?.freelancerId && item?.freelancerId?.freelancerSkills && item?.freelancerId?.freelancerSkills[0]?.yearsExperience) || 1
+                    } years. schedule a meeting to check if I'm a good fit for your business.`,
+                profilePic:
+                    item?.freelancerId?.user?.profileImage ||
+                    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                rate: item?.freelancerId?.rate,
+                likes: item?.freelancerId?.likeTotal || 0,
+                country: item?.freelancerId?.user?.AddressLineCountry
+            }
+
+        });
+        setTeamMembers(freelancerTransformedArr)
+    }
+
+    useEffect(() => {
+        if (recentlyViewedItems && recentlyViewedItems.length > 0) {
+            const viewedItemsTransformed = recentlyViewedItems.map(item => {
+                return {
+                    id: item?.freelancerId?._id,
+                    name: `${item?.userId?.FirstName} ${item?.userId?.LastName}`,
+                    skills: (item?.freelancerId?.freelancerSkills.length > 0) ?
+                        item?.freelancerId?.freelancerSkills?.map((skill) => skill.skill) : [],
+                    cover:
+                        item?.userId?.cover ||
+                        `I have been a ${item?.freelancerId?.category || 'developer'} for over ${(item?.freelancerId && item?.freelancerId?.freelancerSkills && item?.freelancerId?.freelancerSkills[0]?.yearsExperience) || 1
+                        } years. schedule a meeting to check if I'm a good fit for your business.`,
+                    profilePic:
+                        item?.userId?.profileImage ||
+                        'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                    rate: item?.freelancerId?.rate,
+                    likes: item?.freelancerId?.likeTotal,
+                    country: item?.userId?.AddressLineCountry
+                }
+
+            });
+            setIsRecentlyViewedList(viewedItemsTransformed);
+        }
+    }, [recentlyViewedItems]);
+
+    useEffect(() => {
+        if (teamMembers && teamMembers.length > 0) {
+            getFreelancerCardData(teamMembers)
+        }
+    }, [teamMembers])
+
+    useEffect(() => {
+        populateFreelancerCard(teamMembers)
+    }, [teamMembers]);
+
+    useEffect(() => {
+        getFreelancerCardData(favouritesList)
+    }, [isRecentlyViewed, favouritesList]);
+
     return (
         <Container background={type === 'department' ? '#FDFDFD' : ''}>
             <div className='d-flex align-items-center justify-content-between pb-3 px-3'>
-                <div className='d-flex align-items-center '>
-                    <TitleText width='max-content' noMargin size="24px" paddingRight='20px'>{selectedList}</TitleText>
+                <div className='d-flex align-items-center'>
+                    <TitleText width='max-content' noMargin size="24px" paddingRight='20px'>{listInfo.listTitle}</TitleText>
                     {type === "department" && (<Button
                         className="bg-transparent text-dark"
                         popoutWidth="150px"
@@ -404,7 +504,21 @@ const Panel = ({
                         <Icon name="actionIcon" color="#333" />
                     </Button>)}
                 </div>
-                <ButtonComp>+ADD</ButtonComp>
+                {/*(isFavourite || isMyTeam || isRecentlyViewed) ? ( */}
+                    {/* <> */}
+                        <div>
+                            <SelectInputStyled value={selectedValue} onChange={handleSelectChange}>
+                                <option value="0">Details</option>
+                                <option value="CREATE">CREATE</option>
+                                <option value="EDIT">EDIT</option>
+                                <option value="DELETE">DELETE</option>
+                            </SelectInputStyled>
+                        </div>
+
+                    {/* </> */}
+                 
+                {/*): (<ButtonComp>+ADD</ButtonComp>)}*/}
+
             </div>
             <Underline color="#333" noMargin={type === 'department'} />
             {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top />}
@@ -416,12 +530,154 @@ const Panel = ({
                     <div><Button noBorder oval style={{ color: "black" }}>BROWSE INVESTORS</Button></div>
                 </NoUsersInList>
             )}
-            <UserContainer>
-                {type === 'list' && freelancer.map(user => (
-                    <FreelancerCard user={user} width={'650px'} />
-                ))}
-            </UserContainer>
-            <StoryTable>
+
+            {/* <UserContainer> {type === 'list' && freelancer.map(user => ( <FreelancerCard user={user} width={'650px'} /> ))} </UserContainer> */}
+
+            {!isFavLoading ? (isFavourite && freelancer.length > 0) ? (
+                <UserContainer>
+                    {freelancer.map((item, index) => (
+                        <FreelancerCard user={item} width={'650px'} key={index} />
+                    ))}
+                </UserContainer>
+            ) : (
+                ((isFavourite && freelancer.length < 1) ? (
+                    <>
+                        {/* <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            paddingBottom: '15px'
+                        }}>
+                            <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                            <FreelancerNotFound />
+                            <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                            <p>Add freelancer to your list to quickly find them later. </p>
+                            <Button style={{
+                                background: '#37DEC5',
+                                color: '#363636',
+                                lineHeight: '24.5px',
+                                fontSize: '15px',
+                                fontFamily: 'Roboto',
+                                border: '0',
+                                borderRadius: '32px'
+                            }}>
+                                Browse Investors
+                            </Button>
+                        </div> */}
+                    </>
+                ) : (<></>))
+            ) : (<></>)
+            }
+            {/* {(isFavourite || isMyTeam || isRecentlyViewed) && ( */}
+            <ListManagementPanel
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                listInfo={listInfo}
+                isEditMode={isEditMode}
+                setIsEditMode={setIsEditMode}
+                userId={userInfo}
+            />
+            {/* )}*/}
+            {(isRecentlyViewed && recentlyViewedList.length > 0) ? (
+                <UserContainer>
+                    {recentlyViewedList.map((item, index) => (
+                        <FreelancerCard user={item} width={'650px'} key={index} />
+                    ))}
+                </UserContainer>
+            ) : (
+                ((isRecentlyViewed && recentlyViewedList.length < 1) ? (
+                    <>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            paddingBottom: '15px'
+                        }}>
+                            <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                            <FreelancerNotFound />
+                            <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                            <p>Add freelancer to your list to quickly find them later. </p>
+                            <Button style={{
+                                background: '#37DEC5',
+                                color: '#363636',
+                                lineHeight: '24.5px',
+                                fontSize: '15px',
+                                fontFamily: 'Roboto',
+                                border: '0',
+                                borderRadius: '32px'
+                            }}>
+                                Browse Investors
+                            </Button>
+                        </div>
+                    </>
+                ) : (<></>))
+            )}
+
+            {(isMyTeam && teamMemberList.length > 0) ? (
+                <UserContainer>
+                    {teamMemberList.map((item, index) => (
+                        <FreelancerCard user={item} width={'650px'} key={index} />
+                    ))}
+                </UserContainer>
+            ) : (
+                ((isMyTeam && teamMemberList.length < 1) ? (
+                    <>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            paddingBottom: '15px'
+                        }}>
+                            <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                            <FreelancerNotFound />
+                            <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                            <p>Add freelancer to your list to quickly find them later. </p>
+                            <Button style={{
+                                background: '#37DEC5',
+                                color: '#363636',
+                                lineHeight: '24.5px',
+                                fontSize: '15px',
+                                fontFamily: 'Roboto',
+                                border: '0',
+                                borderRadius: '32px'
+                            }}>
+                                Browse Investors
+                            </Button>
+                        </div>
+                    </>
+                ) : (<></>))
+            )}
+            {((favouritesList && favouritesList.length < 1) && (!isMyTeam && !isFavourite && !isRecentlyViewed)) && (
+                <>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        paddingBottom: '15px'
+                    }}>
+                        <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                        <FreelancerNotFound />
+                        <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                        <p>Add freelancer to your list to quickly find them later. </p>
+                        <Button style={{
+                            background: '#37DEC5',
+                            color: '#363636',
+                            lineHeight: '24.5px',
+                            fontSize: '15px',
+                            fontFamily: 'Roboto',
+                            border: '0',
+                            borderRadius: '32px'
+                        }}>
+                            Browse Investors
+                        </Button>
+                    </div>
+                </>
+            )}
+            < StoryTable >
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => {
                         return (
@@ -508,96 +764,100 @@ const Panel = ({
                     </>
                 )}
             </StoryTable>
-            {storyModal && (
-                <StoryModal user={user} content={{ ...selectedStory, department: selectedList }} submitComments={submitComments} onHide={setStoryModal} />
-            )}
-            {createAStory && (
-                <Modal onHide={() => setCreateAStory(false)} height="520px" background="#D9D9D9">
-                    <FormField
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        width="95%"
-                        onChange={(e) => updateCreateStoryForm({ taskName: e.target.value })}
-                        value={form?.taskName}
-                    >
-                        TASK NAME(REQUIRED)
-                    </FormField>
-                    <Grid3 margin="0px" width="95%" grid="2fr 2fr">
+            {
+                storyModal && (
+                    <StoryModal user={user} content={{ ...selectedStory, department: selectedList }} submitComments={submitComments} onHide={setStoryModal} />
+                )
+            }
+            {
+                createAStory && (
+                    <Modal onHide={() => setCreateAStory(false)} height="520px" background="#D9D9D9">
                         <FormField
                             fieldType="input"
                             margin
                             fontSize='14px'
                             noMargin
                             width="95%"
-                            dropdownList={tagsDropdown}
-                            onChange={e => updateTagName(e)}
-                            value={form?.tagName}
-                            clickType="tagName"
-                            onUpdate={updateCreateStoryForm}
+                            onChange={(e) => updateCreateStoryForm({ taskName: e.target.value })}
+                            value={form?.taskName}
                         >
-                            Tag
+                            TASK NAME(REQUIRED)
                         </FormField>
-                        <FormField
-                            fieldType="input"
-                            margin
-                            fontSize='14px'
-                            noMargin
-                            width="100%"
-                            onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
-                            value={form?.priority}
-                        >
-                            PRIORITY
-                        </FormField>
+                        <Grid3 margin="0px" width="95%" grid="2fr 2fr">
+                            <FormField
+                                fieldType="input"
+                                margin
+                                fontSize='14px'
+                                noMargin
+                                width="95%"
+                                dropdownList={tagsDropdown}
+                                onChange={e => updateTagName(e)}
+                                value={form?.tagName}
+                                clickType="tagName"
+                                onUpdate={updateCreateStoryForm}
+                            >
+                                Tag
+                            </FormField>
+                            <FormField
+                                fieldType="input"
+                                margin
+                                fontSize='14px'
+                                noMargin
+                                width="100%"
+                                onChange={(e) => updateCreateStoryForm({ priority: e.target.value })}
+                                value={form?.priority}
+                            >
+                                PRIORITY
+                            </FormField>
 
-                    </Grid3>
-                    <Grid3 margin="0px" width="95%" grid="2fr 2fr">
+                        </Grid3>
+                        <Grid3 margin="0px" width="95%" grid="2fr 2fr">
+                            <FormField
+                                fieldType="input"
+                                margin
+                                fontSize='14px'
+                                noMargin
+                                width="95%"
+                                dropdownList={searchDropdown}
+                                onChange={e => updateAssigee(e)}
+                                value={form?.assignee}
+                                clickType="assignee"
+                                onUpdate={updateCreateStoryForm}
+                            >
+                                ASSIGN TO
+                            </FormField>
+                            <FormField
+                                fieldType="input"
+                                margin
+                                fontSize='14px'
+                                noMargin
+                                width="100%"
+                                onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
+                                value={form?.storyPoints}
+                                dropdownList={pointsDropdown}
+                                clickType="storyPoints"
+                                onUpdate={updateCreateStoryForm}
+                            >
+                                STORY POINTS
+                            </FormField>
+                        </Grid3>
                         <FormField
                             fieldType="input"
                             margin
                             fontSize='14px'
                             noMargin
-                            width="95%"
-                            dropdownList={searchDropdown}
-                            onChange={e => updateAssigee(e)}
-                            value={form?.assignee}
-                            clickType="assignee"
-                            onUpdate={updateCreateStoryForm}
+                            height="150px"
+                            textarea
+                            onChange={(e) => updateCreateStoryForm({ description: e.target.value })}
+                            value={form?.description}
                         >
-                            ASSIGN TO
+                            DESCRIPTION
                         </FormField>
-                        <FormField
-                            fieldType="input"
-                            margin
-                            fontSize='14px'
-                            noMargin
-                            width="100%"
-                            onChange={(e) => updateCreateStoryForm({ storyPoints: e.target.value })}
-                            value={form?.storyPoints}
-                            dropdownList={pointsDropdown}
-                            clickType="storyPoints"
-                            onUpdate={updateCreateStoryForm}
-                        >
-                            STORY POINTS
-                        </FormField>
-                    </Grid3>
-                    <FormField
-                        fieldType="input"
-                        margin
-                        fontSize='14px'
-                        noMargin
-                        height="150px"
-                        textarea
-                        onChange={(e) => updateCreateStoryForm({ description: e.target.value })}
-                        value={form?.description}
-                    >
-                        DESCRIPTION
-                    </FormField>
-                    <Absolute bottom="20px"><Button oval extraWide type="outlineInverse" onClick={() => setCreateAStory(false)}>CANCEL</Button><Button disabled={false} onClick={() => onSubmit()} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">{!loading ? 'ADD TASK' : <CircularProgress size={18} />}</Button></Absolute>
-                </Modal>
-            )}
-        </Container>
+                        <Absolute bottom="20px"><Button oval extraWide type="outlineInverse" onClick={() => setCreateAStory(false)}>CANCEL</Button><Button disabled={false} onClick={() => onSubmit()} width="58.25px" oval extraWide margin="0px 37px 0px 20px" type="black">{!loading ? 'ADD TASK' : <CircularProgress size={18} />}</Button></Absolute>
+                    </Modal>
+                )
+            }
+        </Container >
     )
 }
 

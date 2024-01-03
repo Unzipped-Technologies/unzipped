@@ -19,6 +19,7 @@ router.use('/project', require('./projectRoutes'));
 router.use('/education', require('./educationRoutes'));
 router.use('/taskHours', require('./taskHoursRoutes'));
 router.use('/invoice', require('./invoiceRoutes'));
+router.use('/list-entries', require('./listEntriesRoute'));
 
 
 module.exports = router;

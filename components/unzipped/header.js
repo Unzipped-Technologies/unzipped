@@ -15,6 +15,7 @@ import Dropdowns from '../ui/Dropdowns'
 import { Button as Buttons, SearchBar } from '../ui'
 import router, { useRouter } from 'next/router'
 import IconComponent from '../ui/icons/IconComponent'
+import BackArrow from '../../components/icons/backArrow'
 
 const Div = styled.div`
   width: 100%;
@@ -342,7 +343,17 @@ const Nav = ({
   resetBusinessForm,
   marginBottom,
   margin,
-  zIndex
+  zIndex,
+  isLogoHidden,
+  setIsViewable,
+  listName,
+  setListName,
+  setIsLogoHidden,
+  isListViewable,
+  setIsListViewable,
+  isViewable,
+  isExpanded,
+  setIsExpanded
 }) => {
   const { pathname } = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -414,6 +425,7 @@ const Nav = ({
     router.push('/create-your-business')
   }
 
+
   const getButtons = () => {
     if (isAuthenticated) {
       return (
@@ -448,12 +460,60 @@ const Nav = ({
     }
   }
 
+
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
-        <Link href="/">
+        {!isLogoHidden && !isListViewable && (<Link href="/">
           <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
-        </Link>
+        </Link>)}
+
+        {(isListViewable) && (<>
+          <div style={{ marginLeft: 15 }}
+            onClick={() => {
+              setIsViewable(false)
+              setListName('')
+              setIsLogoHidden(false)
+              setIsListViewable(false)
+              setIsExpanded(false);
+            }
+            }
+          >
+            <BackArrow />
+            <span style={{
+              marginLeft: 10,
+              fontSize: 20,
+              fontWeight: 600,
+              letterSpacing: '0.15px',
+              lineHeight: '19.5px'
+            }}>
+              Lists
+            </span>
+          </div>
+        </>)}
+
+        {isLogoHidden && (<>
+          <div style={{ marginLeft: 15 }}
+            onClick={() => {
+              setIsViewable(false)
+              setListName('')
+              setIsLogoHidden(false)
+            }
+            }
+          >
+            <BackArrow />
+            <span style={{
+              marginLeft: 10,
+              fontSize: 20,
+              fontWeight: 600,
+              letterSpacing: '0.15px',
+              lineHeight: '19.5px'
+            }}>
+              {listName ? listName : ''}
+            </span>
+          </div>
+        </>)}
+
         <Menu>
           {menuItems &&
             menuItems.map((item, index) => {

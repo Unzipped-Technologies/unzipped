@@ -69,58 +69,65 @@ const FooterLink = styled.a`
   height: 100%;
 `;
 
+const Container = styled.div`
+    @media screen and (min-width: 600px){
+        display: none;
+    }
+`;
+
 function MobileFreelancerFooter({ defaultSelected = 'footerHome' }) {
   const [selected, setSelected] = useState(defaultSelected);
   const [showPopup, setShowPopup] = useState(false);
 
-    const footerOptions = [
-        { name: 'Dashboard', icon: 'footerHome', link: '/dashboard' },
-        { name: 'Browse', icon: 'footerSearch', link: '/browse' },
-        { name: 'Projects', icon: 'footerBag', link: '/dashboard/projects' },
-        { name: 'Messages', icon: 'footerPeople', link: '/dashboard/inbox' },
-        { name: 'Create', icon: 'footerPlus', link: '' },
-        { name: 'Account', icon: 'footerMenu', link: '/dashboard/account' }
-    ];
+  const footerOptions = [
+    { name: 'Dashboard', icon: 'footerHome', link: '/dashboard' },
+    { name: 'Browse', icon: 'footerSearch', link: '/browse' },
+    { name: 'Projects', icon: 'footerBag', link: '/dashboard/projects' },
+    { name: 'Messages', icon: 'footerPeople', link: '/dashboard/inbox' },
+    { name: 'Create', icon: 'footerPlus', link: '' },
+    { name: 'Account', icon: 'footerMenu', link: '/dashboard/account' }
+  ];
 
-    const handleIconClick = (e, option) => {
-        if (option.name === 'Create') {
-            e.preventDefault();
-            setShowPopup(true);
-        }
-        setSelected(option.name);
+  const handleIconClick = (e, option) => {
+    if (option.name === 'Create') {
+      e.preventDefault();
+      setShowPopup(true);
     }
+    setSelected(option.name);
+  }
 
-    return (
-        <>
-          <DarkOverlay show={showPopup} onClick={() => setShowPopup(false)}>
-            <PopupContainer>
-              <StyledButton1>Post a Project</StyledButton1>
-              <StyledButton2>Quote</StyledButton2>
-            </PopupContainer>
-          </DarkOverlay>
-    
-          <FooterContainer>
-            {
-              footerOptions.map((option, index) => (
-                <Link key={index} href={option.link} passHref>
-                  <FooterLink 
-                    isSelected={option.name === selected}
-                    onClick={(e) => handleIconClick(e, option)}>
-                <IconComponent
+  return (
+    <>
+      <Container>
+        <DarkOverlay show={showPopup} onClick={() => setShowPopup(false)}>
+          <PopupContainer>
+            <StyledButton1>Post a Project</StyledButton1>
+            <StyledButton2>Quote</StyledButton2>
+          </PopupContainer>
+        </DarkOverlay>
+
+        <FooterContainer>
+          {
+            footerOptions.map((option, index) => (
+              <Link key={index} href={option.link} passHref>
+                <FooterLink
+                  isSelected={option.name === selected}
+                  onClick={(e) => handleIconClick(e, option)}>
+                  <IconComponent
                     name={option.icon}
                     width={option.icon === 'footerMenu' ? "30" : "24"}
                     height="20"
                     viewBox={`0 0 ${option.icon === 'footerMenu' ? "30" : "24"} 20`}
                     fill={option.name === selected ? "#0057FF" : "black"}
-                />
+                  />
                 </FooterLink>
-                </Link>
-                ))
-                }
-            </FooterContainer>
-        </>
-    );
+              </Link>
+            ))
+          }
+        </FooterContainer>
+      </Container>
+    </>
+  );
 }
-            
+
 export default MobileFreelancerFooter;
-                         

@@ -30,7 +30,7 @@ function MobileProjectCard({ project }) {
         <div className='d-flex justify-content-between align-items-center'>
             <p className='mb-0'>{project?.country}</p>
             <div className='d-flex'>
-          <span style={{ fontSize: "24px" }}>${project?.budget} <span style={{ fontSize: "15px" }}>{project?.projectType.includes('Hourly Rate') ? '/ hour ' : 'fixed rate '}</span></span>
+          {/* <span style={{ fontSize: "24px" }}>${project?.budget} <span style={{ fontSize: "15px" }}>{project?.projectType.includes('Hourly Rate') ? '/ hour ' : 'fixed rate '}</span></span> */}
           <div className='d-flex align-items-center ps-3'>
             <IconComponent name='thumbUp' width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
             <span style={{ fontSize: "16px", paddingLeft: "3px" }}>{project?.likes}</span>

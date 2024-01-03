@@ -9,6 +9,7 @@ import Messages from './Messages/reducers';
 import FreelancerSkills from "./FreelancerSkills/reducers";
 import Loading from './Loading/reducers';
 import Stripe from './Stripe/reducers'
+import ListEntries from './ListEntries/reducers'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -20,6 +21,7 @@ const combinedReducer = combineReducers({
   FreelancerSkills,
   Loading,
   Stripe,
+  ListEntries
   // OTHER REDUCERS WILL BE ADDED HERE
 });
 

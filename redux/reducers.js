@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import Auth from './Auth/reducers';
 import Dashboard from './Dashboard/reducers';
 import Business from './Business/reducers';
@@ -6,7 +6,8 @@ import Freelancers from './Freelancers/reducers';
 import Messages from './Messages/reducers';
 import FreelancerSkills from './FreelancerSkills/reducers';
 import Loading from './Loading/reducers';
-import Stripe from './Stripe/reducers'
+import Stripe from './Stripe/reducers';
+import ListEntries from './ListEntries/reducers'
 
 const rootReducer = combineReducers({
     // counter: counterReducer
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
     Messages,
     FreelancerSkills,
     Loading,
-    Stripe
+    Stripe,
+    ListEntries
 });
 
 export default rootReducer;

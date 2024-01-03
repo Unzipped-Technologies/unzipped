@@ -49,14 +49,14 @@ const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
         <Container includeRate={includeRate}>
             <Left>
                 <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
-                <Button margin="20px 0px" type={!project.applicants.includes(id) ? "default" : "grey"} noBorder>Applied</Button>
+                {/* <Button margin="20px 0px" type={!project.applicants.includes(id) ? "default" : "grey"} noBorder>Applied</Button> */}
             </Left>
             <Right minWidth={width} includeRate={includeRate}>
                 <TitleText half color="#0057FF" >{project?.name}</TitleText>
                 {includeRate && (
                     <Flex>
                         <DarkText half>{project?.country}</DarkText>
-                        <DarkText small half bold><DarkSpan medium>{project?.projectType.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText>
+                        {/* <DarkText small half bold><DarkSpan medium>{project?.projectType.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText> */}
                     </Flex>
                 )}
                 <div className='d-flex justify-content-between'>
