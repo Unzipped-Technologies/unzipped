@@ -191,7 +191,7 @@ const FindYourFreelancer = () => {
                     <ParagraphText>
                         You can review profiles, portfolios, and client feedback to make an informed decision.
                     </ParagraphText>
-                    <ButtonBox> <ButtonText>Find Talent</ButtonText> </ButtonBox>
+                    <ButtonBox onClick={() => router.push('/freelancers')}> <ButtonText>Find Talent</ButtonText> </ButtonBox>
                 </TextContainer>
             </FindFreelancerSectionContainer>
 

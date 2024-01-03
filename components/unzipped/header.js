@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
 import Search from './input'
@@ -77,6 +77,9 @@ const Item = styled.div`
   font-family: roboto;
   color: #333;
   margin: 0px 10px;
+  @media (min-width: 680px) {
+    display: ${({isMobileOnly}) => isMobileOnly ? 'none' : 'block'}
+  }
 `
 
 const Span = styled.span`
@@ -232,12 +235,12 @@ const menuItems = [
       },
       {
         name: 'Search By Founders',
-        link: '/',
+        link: '/projects',
         icon: <WorkIcon width={35} height={35} />
       },
       {
         name: 'Get Ideas',
-        link: '/',
+        link: '/projects',
         icon: <LightIcon width={35} height={35} />
       }
     ],
@@ -285,9 +288,10 @@ const menuItems = [
   },
   {
     name: 'Get Ideas',
-    link: '/',
+    link: '/projects',
     icon: <LightIcon width={35} height={35} />
-  }
+  },
+  { name: '<hr />', link: '/', mobileOnly: true }
 ]
 
 const subMenuItems = [
@@ -355,13 +359,21 @@ const Nav = ({
   isExpanded,
   setIsExpanded
 }) => {
-  const { pathname } = useRouter()
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
   const classes = useStyles()
   const wrapperRef = useRef(null)
   const dropdownRef = useRef(null)
   const [highlightColor, setHighlightColor] = useState('#333333')
   const [highlightedIndex, setHighlightedIndex] = useState(false)
+
+  const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+
+  useEffect(() => {
+    setIsProjectMenuEnabled(router.pathname === '/projects');
+  }, [router.pathname]);
 
   const setDropdowns = item => {
     setTimeout(function () {
@@ -382,22 +394,22 @@ const Nav = ({
     },
     {
       name: 'Membership',
-      link: '/',
+      link: '/pick-a-plan',
       icon: <FolderIcon width={35} height={35} />
     },
     {
       name: 'Hire a freelancer',
-      link: '/',
+      link: '/freelancers',
       icon: <WorkIcon width={35} height={35} />
     },
     {
       name: 'Work with us',
-      link: '/',
+      link: '/how-it-works/client',
       icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
     },
     {
       name: 'Get Ideas',
-      link: '/',
+      link: '/projects',
       icon: <LightIcon width={35} height={35} />
     },
     { name: '<hr />', link: '/' },
@@ -409,7 +421,7 @@ const Nav = ({
     },
     {
       name: 'Help',
-      link: '/',
+      link: '/wiki',
       icon: <LightIcon width={35} height={35} />
     }
   ]
@@ -460,6 +472,55 @@ const Nav = ({
     }
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const isScrollingDown = scrollPosition > (60);
+
+      setIsHidden(isScrollingDown);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+
+  }, [prevScrollPos, isHidden]);
+
+  useEffect(() => {
+    // Function to remove existing 'Log in' or 'Sign out' item
+    const removeAuthItem = () => {
+      const authItemIndex = menuItems.findIndex(item => 
+        item.name === 'Log in' || item.name === 'Sign out'
+      );
+      if (authItemIndex !== -1) {
+        menuItems.splice(authItemIndex, 1);
+      }
+    };
+  
+    // Remove the existing authentication-related menu item
+    removeAuthItem();
+  
+    // Add the appropriate item based on authentication status
+    if (isAuthenticated) {
+      menuItems.push({
+        name: 'Sign out',
+        onClick: () => signOut(),
+        link: '/',
+        icon: <LightIcon width={35} height={35} />,
+        mobileOnly: true
+      });
+    } else {
+      menuItems.push({
+        name: 'Log in',
+        link: '/login',
+        icon: <LightIcon width={35} height={35} />,
+        mobileOnly: true
+      });
+    }
+  }, [isAuthenticated]);
+  
 
   return (
     <Div marginBottom={marginBottom && marginBottom}>
@@ -521,6 +582,7 @@ const Nav = ({
 
               return (
                 <Item
+                  isMobileOnly={item.mobileOnly}
                   onMouseEnter={() => {
                     setHighlightColor(true)
                     setDropdowns(item.name)
@@ -569,16 +631,51 @@ const Nav = ({
         </Right>
       </Container>
       {isSubMenu && (
-        <SubMenTop>
-          <SubMenu>
-            {subMenuItems.map((item, key) => (
-              <Link href={item.link} key={key}>
-                <SpanWhite count={key} underline={pathname === item.link}>
-                  <Sub>{item.name} </Sub>
-                </SpanWhite>
-              </Link>
-            ))}
-          </SubMenu>
+        <SubMenTop
+          style={{
+            transition: 'transform 0.3s ease-in-out',
+            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)',
+          }}
+        >
+          {handleSearch &&
+            <>
+              <div>
+                <h4>Browse</h4>
+                <SearchBar
+                  handleSearch={handleSearch}
+                  filter={filter}
+                  setFilter={handleSearchValue}
+                  searchButton={searchButton}
+                  margin={margin}
+                  alignItems={'start'}
+                />
+              </div>
+            </>
+          }
+          {
+            ((isProjectMenuEnabled && token) ? (
+              <SubMenu>
+                {subMenuItems.map((item, key) => (
+                  <Link href={item.link} key={key}>
+                    <SpanWhite count={key} underline={router.pathname === item.link}>
+                      <Sub>{item.name} </Sub>
+                    </SpanWhite>
+                  </Link>
+                ))}
+              </SubMenu>
+            ) : ((isProjectMenuEnabled) ? <></> : (
+              <SubMenu>
+                {subMenuItems.map((item, key) => (
+                  <Link href={item.link} key={key}>
+                    <SpanWhite count={key} underline={router.pathname === item.link}>
+                      <Sub>{item.name} </Sub>
+                    </SpanWhite>
+                  </Link>
+                ))}
+              </SubMenu>
+            )))
+          }
+
         </SubMenTop>
       )}
     </Div>
@@ -602,3 +699,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav)
+

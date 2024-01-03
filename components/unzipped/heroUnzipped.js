@@ -12,6 +12,7 @@ import {
 } from '../icons'
 import Button from '../ui/Button';
 import Buttons from '../ui/Buttons';
+import {useRouter} from 'next/router';
 
 const Container = styled.div`
     display: flex;
@@ -80,6 +81,7 @@ const NarrowImage = styled.img`
     width: 100vw;
     position: relative;
     min-height: 50vh;
+    max-height: 89vh;
     @media(min-width: 379px) {
         display: none;
     }
@@ -159,6 +161,7 @@ const items = [
 ]
 
 const HeroUnzipped = () => {
+    const router = useRouter();
     return (
         <Container>
             <Image src="/img/header-unzipped-paparclip.png" />
@@ -181,8 +184,8 @@ const HeroUnzipped = () => {
                     ))}
                 </List>
                 <Buttons flush mobileCenter mobileAbsolute>
-                    <Button extraTall extraWide noBorderWorlds largest freelance marketplace noBorder>HIRE A FREELANCER</Button>
-                    <Button extraTall extraWide type="outlineTransparent">EARN MONEY FREELANCING</Button>
+                    <Button onClick={() => router.push("/how-it-works/client")} extraTall extraWide noBorderWorlds largest freelance marketplace noBorder>HIRE A FREELANCER</Button>
+                    <Button onClick={() => router.push("/how-it-works/freelancer")} extraTall extraWide type="outlineTransparent">EARN MONEY FREELANCING</Button>
                 </Buttons>
             </Content>
         </Container>

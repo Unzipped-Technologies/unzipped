@@ -17,6 +17,7 @@ import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFo
 import MobileProjects from '../../components/unzipped/dashboard/MobileProjects';
 import useRole from '../../hooks/role'
 const Desktop = styled.div`
+margin-top: 192px;
 @media(max-width: 680px) {
     display: none;
 }
@@ -104,7 +105,7 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
 
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'192px'} />
+            <Nav isSubMenu marginBottom={'86px'} />
             <Desktop>
                 <Title>
                     <TitleText title>Projects</TitleText>
