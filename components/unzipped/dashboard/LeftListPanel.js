@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
     TitleText,
@@ -48,6 +48,7 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
     const userId = useSelector(state => state.Auth?.user?._id);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [selectedMenuOption, setSelectedMenuOption] = useState({ name: '', icon: '', _id: null });
 
     const handleListChangeEv = (item) => {
         let isDefaultListItem = false;
@@ -75,7 +76,7 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
         }
 
         setListTitle({ listId: item._id, listTitle: item.name, listIcon: item.icon });
-        if(!isDefaultListItem){
+        if (!isDefaultListItem) {
             setIsMyTeam(false)
             setIsRecentlyViewed(false);
             setIsFavourite(false);
@@ -83,7 +84,18 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
         }
 
     }
-
+    useEffect(() => {
+        if (userListItems && userListItems.length > 0) {
+            const selectedItem = userListItems.find(list => list.name.toLowerCase().includes("favorites"));
+            if (selectedItem) {
+                setSelectedMenuOption(selectedItem)
+            }
+        }
+    }, [userListItems])
+    // borderLeft={selectedMenuOption === index ? "#1976D2" : "transparent"}
+    // borderRadius={selectedMenuOption === index ? "0" : ""}
+    const store = useSelector(state => state);
+    console.log('store', store)
     return (
         <Container>
             <TitleText paddingLeft clickable>
@@ -100,15 +112,41 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
                 </Absolute>
             </TitleText>
             <Underline />
-            {userListItems.filter(item => isDepartment ? item.tags.length > 0 : true).map(item => (
-                <WhiteCard borderColor="transparent" height="30px" row noMargin clickable >
-                    {item.icon && (<IconPickerItem icon={item.icon} size={24} color="#e25050" />)}
+            {userListItems.filter(item => isDepartment ? item.tags.length > 0 : true).map((item, index) => (
+                <WhiteCard
+                    borderColor="transparent"
+                    padding="5px"
+                    height="30px"
+                    paddingLeft="15px"
+                    row
+                    noMargin
+                    clickable
+
+                    borderLeft={selectedMenuOption?.name == item.name ? "#1976D2" : "transparent"}
+                    borderRadius={selectedMenuOption?.name == item.name ? "0" : ""}
+                    key={index}
+                >
+                    {(item?.isDefault && item.icon == 'FaEye') && (
+                        <IconPickerItem icon={item.icon} size={24} color="#8EDE64" />
+                    )}
+
+                    {(item?.isDefault && item.icon == 'FaRegHeart') && (
+                        <IconPickerItem icon={item.icon} size={24} color="#FA00FF" />
+                    )}
+                    {(item?.isDefault && item.icon == 'FaUsers') && (
+                        <IconPickerItem icon={item.icon} size={24} color="#FFC24E" />
+                    )}
+                    {!item?.isDefault && (<IconPickerItem icon={item.icon} size={24} color="#e25050" />)}
                     <DarkText
                         clickable
                         noMargin
                         paddingLeft
                         hover
-                        onClick={() => handleListChangeEv(item)}
+                        onClick={() => {
+                            handleListChangeEv(item)
+                            setSelectedMenuOption(item)
+                        }
+                        }
                     >
                         {item.name}
                     </DarkText>

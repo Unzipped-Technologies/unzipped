@@ -79,7 +79,26 @@ const deleteListEntry = async (listId) => {
     }
 }
 
-const updateUserLists = async (params) => await ListModel.find({ userId: params }).sort({ createdAt: 1 });
+const updateUserLists = async (params) => {
+    const listItems = await ListModel.find({ userId: params }).sort({ createdAt: -1 });
+    const priorityNames = ["favorites", "my team", "recently viewed"];
+
+    const transformedListItems = listItems.sort((a, b) => {
+        const aPriority = priorityNames.indexOf(a.name.toLowerCase());
+        const bPriority = priorityNames.indexOf(b.name.toLowerCase());
+
+        if (aPriority > -1 && bPriority > -1) {
+            return aPriority - bPriority;
+        } else if (aPriority > -1) {
+            return -1;
+        } else if (bPriority > -1) {
+            return 1;
+        }
+
+        return 0;
+    });
+    return transformedListItems;
+}
 
 const isDefaultList = async (params) => {
     return await ListModel.find({ _id: params });
@@ -87,7 +106,7 @@ const isDefaultList = async (params) => {
 
 
 const findListEntriesById = async (id) => {
-    const entries = await ListEntriesModel.find(
+    let entries = await ListEntriesModel.find(
         { listId: id }
     )
         .populate(
@@ -107,7 +126,7 @@ const findListEntriesById = async (id) => {
             path: 'userId',
             model: 'users',
             select: 'FirstName LastName profileImage AddressLineCountry'
-        });
+        }).sort({ createdAt: -1 })
 
     return entries;
 }

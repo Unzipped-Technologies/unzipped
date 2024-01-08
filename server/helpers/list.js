@@ -74,6 +74,7 @@ const listLists = async ({ filter, take, skip }) => {
                 model: 'listItems'
             })
             .exec()
+        console.log('gettingListon listHeler #77', lists)
         return lists;
     } catch (e) {
         throw Error(`Could not find list, error: ${e}`);

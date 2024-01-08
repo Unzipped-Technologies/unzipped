@@ -130,7 +130,8 @@ const ListManagementPanel = ({
     listInfo,
     isEditMode,
     setIsEditMode,
-    userId
+    userId,
+    setSelectedValue
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
@@ -180,6 +181,7 @@ const ListManagementPanel = ({
         setListIcon('');
         setIsModalOpen(false);
         setIsEditMode(false);
+        setSelectedValue("Details");
     };
     const [windowSize, setWindowsize] = useState('100%');
 

@@ -29,6 +29,9 @@ import { Grid } from '../../../components/unzipped/dashboard/style'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserLists } from '../../../redux/ListEntries/action'
 import { deleteList } from '../../../redux/Lists/ListsAction'
+import router, { useRouter } from 'next/router'
+import FreelancerListingCard from './FreelancersListingCard'
+import DownArrow from '../../../components/icons/downArrow'
 
 
 const Container = styled.div`
@@ -91,14 +94,63 @@ border: 1px solid rgba(217, 217, 217, 0.25);
 
 const SelectInputStyled = styled.select`
     border-radius: 3px;
-    border: 0.25px solid #000;
+    border: 0.25px solid #D9D9D947;
     background: rgba(217, 217, 217, 0.28);
     display: block;
+    padding: 10px;
+    width: 150px;
+    font-size: 15px;
+`;
+
+const SelectionContainer = styled.div`
+    position: relative;
+    display: inline-block;
+    border: 1px solid #D9D9D9;
+    background: rgba(217, 217, 217, 0.28);
+    border-radius: 3px;
     padding: 5px;
     width: 100px;
-    height: 35px;
-    font-size: 15px;
+    margin-left: auto;
+`;
+
+const SelectionButton = styled.div`
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    outline: none;
+    border-radius: 3px;
+    border: 0.25px solid #D9D9D947;
+    background: #D9D9D9;
+    
+    // &::after{
+    //     content : '\2304';
+    //     display : block;
+    // }
+
+`;
+
+const DropdownContainer = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 2px;
+    
 `
+
+const DropdownItems = styled.div`
+    padding: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 24.5px;
+    text-transform: uppercase;
+    font-wight: 500;
+    margin-top: 5px;
+`;
+
 const favouriteDropdownOpt = () => {
     return [
         { label: 'CREATE', value: 'CREATE' },
@@ -171,6 +223,7 @@ const Panel = ({
     const isFavLoading = useSelector(state => state.ListEntries.loading);
     const recentlyViewedItems = useSelector(state => state.ListEntries.recentlyViewedList);
     const [recentlyViewedList, setIsRecentlyViewedList] = useState([]);
+    const dropdownRef = useRef(null);
 
     const setDropdowns = (item) => {
         setTimeout(function () {
@@ -302,7 +355,7 @@ const Panel = ({
     }
 
     const handleSelectChange = (event) => {
-        const value = event.target.value;
+        const value = event?.target?.value || event;
         setSelectedValue(value);
         if (value == "CREATE" || value == "EDIT") {
             setIsModalOpen(true);
@@ -312,6 +365,7 @@ const Panel = ({
         }
         if (value == "DELETE") {
             dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
+            setSelectedValue("Details")
         }
     };
 
@@ -395,7 +449,8 @@ const Panel = ({
                     'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
                 rate: item?.freelancerId?.rate,
                 likes: item?.freelancerId?.likeTotal,
-                country: item?.userId?.AddressLineCountry
+                country: item?.userId?.AddressLineCountry,
+                category: item?.freelancerId?.category
             }
 
         });
@@ -424,7 +479,8 @@ const Panel = ({
                     'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
                 rate: item?.freelancerId?.rate,
                 likes: item?.freelancerId?.likeTotal || 0,
-                country: item?.freelancerId?.user?.AddressLineCountry
+                country: item?.freelancerId?.user?.AddressLineCountry,
+                category: item?.freelancerId?.category
             }
 
         });
@@ -448,7 +504,8 @@ const Panel = ({
                         'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
                     rate: item?.freelancerId?.rate,
                     likes: item?.freelancerId?.likeTotal,
-                    country: item?.userId?.AddressLineCountry
+                    country: item?.userId?.AddressLineCountry,
+                    category: item?.freelancerId?.category
                 }
 
             });
@@ -466,14 +523,55 @@ const Panel = ({
         populateFreelancerCard(teamMembers)
     }, [teamMembers]);
 
+    const router = useRouter();
+
     useEffect(() => {
         getFreelancerCardData(favouritesList)
+        setSelectedValue("Details")
     }, [isRecentlyViewed, favouritesList]);
 
+    const userActions = [
+        'Details',
+        'EDIT',
+        'DELETE'
+    ]
+    const hanleFreelancersBrowsing = () => router.push('/freelancers')
+
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDropdown = (e) => {
+        setIsOpen(!isOpen)
+    };
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
+
+    console.log('favouritesList', favouritesList)
+
     return (
-        <Container background={type === 'department' ? '#FDFDFD' : ''}>
-            <div className='d-flex align-items-center justify-content-between pb-3 px-3'>
-                <div className='d-flex align-items-center'>
+        <Container background={type === 'department' ? '#FDFDFD' : '#fff'}>
+            <div className='d-flex align-items-center justify-content-between pb-3 px-3'
+                style={{
+                    width: '100%',
+                    borderRadius: '5px',
+                    padding: '10px',
+                    borderRadius: '8px 8px 0px 0px',
+                    background: ' rgba(255, 255, 255, 0.64)',
+                    boxShadow: ' 0px 4px 8px 0px rgba(0, 0, 0, 0.10)'
+                }}
+            >
+                <div className='d-flex align-items-center'                >
                     <TitleText width='max-content' noMargin size="24px" paddingRight='20px'>{listInfo.listTitle}</TitleText>
                     {type === "department" && (<Button
                         className="bg-transparent text-dark"
@@ -505,44 +603,108 @@ const Panel = ({
                     </Button>)}
                 </div>
                 {/*(isFavourite || isMyTeam || isRecentlyViewed) ? ( */}
-                    {/* <> */}
-                        <div>
-                            <SelectInputStyled value={selectedValue} onChange={handleSelectChange}>
-                                <option value="0">Details</option>
-                                <option value="CREATE">CREATE</option>
-                                <option value="EDIT">EDIT</option>
-                                <option value="DELETE">DELETE</option>
-                            </SelectInputStyled>
+                {/* <> */}
+                <SelectionContainer ref={dropdownRef}>
+                    <SelectionButton onClick={toggleDropdown}>
+                        <div style={{ display: 'flex' }}>
+                            <div> Details </div>
+                            <div style={{ marginLeft: 'auto' }}>
+                                <DownArrow color="#444444" />
+                            </div>
                         </div>
+                    </SelectionButton>
+                    {isOpen && (
+                        <DropdownContainer >
+                            <DropdownItems onClick={() => {
+                                handleSelectChange('CREATE');
+                                setIsOpen(false);
+                            }
+                            }>Create</DropdownItems>
+                            <DropdownItems onClick={() => {
+                                handleSelectChange('EDIT');
+                                setIsOpen(false);
+                            }
+                            }>Edit</DropdownItems>
+                            <DropdownItems onClick={() => {
+                                handleSelectChange('DELETE');
+                                setIsOpen(false);
+                            }
+                            }>
+                                Delete
+                            </DropdownItems>
+                        </DropdownContainer>
+                    )}
+                </SelectionContainer>
+                {/* <div style={styles.container}>
+                    <button onClick={toggleDropdown} style={styles.button}>
+                        Details <DownArrow color="#444444" />
+                    </button>
+                    {isOpen && (
+                        <div style={styles.dropdown}>
+                            <div style={styles.item}>Create</div>
+                            <div style={styles.item}>Edit</div>
+                            <div style={styles.lastItem}>Delete</div>
+                        </div>
+                    )}
+                </div> */}
+                <div>
+                    {/* {userActions.map((item) => { */}
+                    {/* <Absolute>
+                        <Button
+                            icon="largeExpand"
+                            popoutWidth="150px"
+                            noBorder
+                            block
+                            type="lightgrey"
+                            fontSize="13px"
+                            popout={generatePopout()}
+                            iconRight>
+                            Details
+                        </Button>
+                    </Absolute> */}
+                    {/* })} 
+                    <SelectInputStyled value={selectedValue} onChange={handleSelectChange}>
+                        <option value="Details">Details</option>
+                        <option value="CREATE">CREATE</option>
+                        <option value="EDIT">EDIT</option>
+                        <option value="DELETE">DELETE</option>
+                    </SelectInputStyled>*/}
+                </div>
 
-                    {/* </> */}
-                 
+                {/* </> */}
+
                 {/*): (<ButtonComp>+ADD</ButtonComp>)}*/}
 
             </div>
-            <Underline color="#333" noMargin={type === 'department'} />
+
             {menuOpen === 'profile' && <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} right top />}
-            {!freelancer && (
-                <NoUsersInList>
-                    <WorkIcon width={200} height={200} />
-                    <TitleText center noMargin size="24px">This list is empty</TitleText>
-                    <DarkText center>Add investors to your list to quickly find them later. </DarkText>
-                    <div><Button noBorder oval style={{ color: "black" }}>BROWSE INVESTORS</Button></div>
-                </NoUsersInList>
-            )}
+            {
+                !freelancer && (
+                    <NoUsersInList>
+                        <WorkIcon width={200} height={200} />
+                        <TitleText center noMargin size="24px">This list is empty</TitleText>
+                        <DarkText center>Add investors to your list to quickly find them later. </DarkText>
+                        <div><Button noBorder oval style={{ color: "black" }} onClick={hanleFreelancersBrowsing}>BROWSE FREELANCERS</Button></div>
+                    </NoUsersInList>
+                )
+            }
 
             {/* <UserContainer> {type === 'list' && freelancer.map(user => ( <FreelancerCard user={user} width={'650px'} /> ))} </UserContainer> */}
 
-            {!isFavLoading ? (isFavourite && freelancer.length > 0) ? (
-                <UserContainer>
-                    {freelancer.map((item, index) => (
-                        <FreelancerCard user={item} width={'650px'} key={index} />
-                    ))}
-                </UserContainer>
-            ) : (
-                ((isFavourite && freelancer.length < 1) ? (
-                    <>
-                        {/* <div style={{
+            {/* <UserContainer> */}
+            {/* </UserContainer> <FreelancerCard user={item} width={'650px'} key={index} includeRate={10}/> */}
+            {
+                !isFavLoading ? (isFavourite && freelancer.length > 0) ? (
+                    <>{
+                        freelancer.map((item, index) => (
+                            <FreelancerListingCard user={item} width={'650px'} key={index} includeRate={10} />
+                        ))
+                    }
+                    </>
+                ) : (
+                    ((isFavourite && freelancer.length < 1) ? (
+                        <>
+                            {/* <div style={{
                             display: 'flex',
                             justifyContent: 'center',
                             flexDirection: 'column',
@@ -553,7 +715,7 @@ const Panel = ({
                             <FreelancerNotFound />
                             <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
                             <p>Add freelancer to your list to quickly find them later. </p>
-                            <Button style={{
+                            <Button onClick={hanleFreelancersBrowsing} style={{
                                 background: '#37DEC5',
                                 color: '#363636',
                                 lineHeight: '24.5px',
@@ -562,12 +724,12 @@ const Panel = ({
                                 border: '0',
                                 borderRadius: '32px'
                             }}>
-                                Browse Investors
+                                Browse Freelancers
                             </Button>
                         </div> */}
-                    </>
-                ) : (<></>))
-            ) : (<></>)
+                        </>
+                    ) : (<></>))
+                ) : (<></>)
             }
             {/* {(isFavourite || isMyTeam || isRecentlyViewed) && ( */}
             <ListManagementPanel
@@ -577,52 +739,90 @@ const Panel = ({
                 isEditMode={isEditMode}
                 setIsEditMode={setIsEditMode}
                 userId={userInfo}
+                setSelectedValue={setSelectedValue}
             />
             {/* )}*/}
-            {(isRecentlyViewed && recentlyViewedList.length > 0) ? (
-                <UserContainer>
-                    {recentlyViewedList.map((item, index) => (
-                        <FreelancerCard user={item} width={'650px'} key={index} />
-                    ))}
-                </UserContainer>
-            ) : (
-                ((isRecentlyViewed && recentlyViewedList.length < 1) ? (
-                    <>
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            paddingBottom: '15px'
-                        }}>
-                            <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
-                            <FreelancerNotFound />
-                            <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
-                            <p>Add freelancer to your list to quickly find them later. </p>
-                            <Button style={{
-                                background: '#37DEC5',
-                                color: '#363636',
-                                lineHeight: '24.5px',
-                                fontSize: '15px',
-                                fontFamily: 'Roboto',
-                                border: '0',
-                                borderRadius: '32px'
+            {
+                (isRecentlyViewed && recentlyViewedList.length > 0) ? (
+                    <UserContainer>
+                        {recentlyViewedList.map((item, index) => (
+                            <FreelancerListingCard user={item} width={'650px'} key={index} includeRate={10} />
+                        ))}
+                    </UserContainer>
+                ) : (
+                    ((isRecentlyViewed && recentlyViewedList.length < 1) ? (
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                paddingBottom: '15px'
                             }}>
-                                Browse Investors
-                            </Button>
-                        </div>
-                    </>
-                ) : (<></>))
-            )}
+                                <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                                <FreelancerNotFound />
+                                <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                                <p>Add freelancer to your list to quickly find them later. </p>
+                                <Button
+                                    onClick={hanleFreelancersBrowsing}
+                                    style={{
+                                        background: '#37DEC5',
+                                        color: '#363636',
+                                        lineHeight: '24.5px',
+                                        fontSize: '15px',
+                                        fontFamily: 'Roboto',
+                                        border: '0',
+                                        borderRadius: '32px'
+                                    }}>
+                                    Browse Freelancers
+                                </Button>
+                            </div>
+                        </>
+                    ) : (<></>))
+                )
+            }
 
-            {(isMyTeam && teamMemberList.length > 0) ? (
-                <UserContainer>
-                    {teamMemberList.map((item, index) => (
-                        <FreelancerCard user={item} width={'650px'} key={index} />
-                    ))}
-                </UserContainer>
-            ) : (
-                ((isMyTeam && teamMemberList.length < 1) ? (
+            {
+                (isMyTeam && teamMemberList.length > 0) ? (
+                    <UserContainer>
+                        {teamMemberList.map((item, index) => (
+                            <FreelancerListingCard user={item} width={'650px'} key={index} includeRate={10} />
+                        ))}
+                    </UserContainer>
+                ) : (
+                    ((isMyTeam && teamMemberList.length < 1) ? (
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                paddingBottom: '15px'
+                            }}>
+                                <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                                <FreelancerNotFound />
+                                <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                                <p>Add freelancer to your list to quickly find them later. </p>
+                                <Button
+                                    onClick={hanleFreelancersBrowsing}
+                                    style={{
+                                        background: '#37DEC5',
+                                        color: '#363636',
+                                        lineHeight: '24.5px',
+                                        fontSize: '15px',
+                                        fontFamily: 'Roboto',
+                                        border: '0',
+                                        borderRadius: '32px'
+                                    }}>
+                                    Browse Freelancers
+                                </Button>
+                            </div>
+                        </>
+                    ) : (<></>))
+                )
+            }
+            {
+                ((favouritesList && favouritesList.length < 1) && (!isMyTeam && !isFavourite && !isRecentlyViewed)) && (
                     <>
                         <div style={{
                             display: 'flex',
@@ -635,48 +835,23 @@ const Panel = ({
                             <FreelancerNotFound />
                             <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
                             <p>Add freelancer to your list to quickly find them later. </p>
-                            <Button style={{
-                                background: '#37DEC5',
-                                color: '#363636',
-                                lineHeight: '24.5px',
-                                fontSize: '15px',
-                                fontFamily: 'Roboto',
-                                border: '0',
-                                borderRadius: '32px'
-                            }}>
-                                Browse Investors
+                            <Button
+                                onClick={hanleFreelancersBrowsing}
+                                style={{
+                                    background: '#37DEC5',
+                                    color: '#363636',
+                                    lineHeight: '24.5px',
+                                    fontSize: '15px',
+                                    fontFamily: 'Roboto',
+                                    border: '0',
+                                    borderRadius: '32px'
+                                }}>
+                                Browse Freelancers
                             </Button>
                         </div>
                     </>
-                ) : (<></>))
-            )}
-            {((favouritesList && favouritesList.length < 1) && (!isMyTeam && !isFavourite && !isRecentlyViewed)) && (
-                <>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        paddingBottom: '15px'
-                    }}>
-                        <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
-                        <FreelancerNotFound />
-                        <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
-                        <p>Add freelancer to your list to quickly find them later. </p>
-                        <Button style={{
-                            background: '#37DEC5',
-                            color: '#363636',
-                            lineHeight: '24.5px',
-                            fontSize: '15px',
-                            fontFamily: 'Roboto',
-                            border: '0',
-                            borderRadius: '32px'
-                        }}>
-                            Browse Investors
-                        </Button>
-                    </div>
-                </>
-            )}
+                )
+            }
             < StoryTable >
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     {type === 'department' && storyList.sort((a, b) => a.tag.order - b.tag.order).map((tag, count) => {

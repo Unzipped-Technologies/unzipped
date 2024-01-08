@@ -38,6 +38,7 @@ const Flex = styled.div`
 `;
 
 const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
+    console.log('users', user)
 
     const userLists = useSelector(state => state.ListEntries.userLists);
     const userId = useSelector(state => state.Auth.user._id);
@@ -66,7 +67,12 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                 {includeRate && (
                     <Flex>
                         <DarkText small half><DarkSpan large>${user?.rate}</DarkSpan > / hour</DarkText>
-                        {user?.likes > 0 && <DarkText right color='#000' fontSize='15px' noMargin>{user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} UPVOTES BY CLIENTS</DarkText>}
+                        {user?.likes > 0 && (
+                            <DarkText right color='#000' fontSize='15px' noMargin> 
+                                {`${user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}  UPVOTES BY CLIENTS `}
+                                
+                            </DarkText>)
+                        }
                     </Flex>
                 )}
                 {user.skills?.length > 0 && user.skills.map((item, index) => (
