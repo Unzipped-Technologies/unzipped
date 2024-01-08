@@ -41,7 +41,7 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
   return (
     <>
       <Container>
-        <Nav />
+        <Nav marginBottom={'0px'} />
         <div style={{ overflow: 'overlay' }}>
           <ProfileCard user={selectedFreelancer} />
         </div>

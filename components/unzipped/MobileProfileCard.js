@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
+
 import { ValidationUtils } from '../../utils'
 import IconComponent from '../ui/icons/IconComponent'
 import Link from 'next/link'
@@ -39,6 +41,8 @@ const ProjectCard = styled.div`
 
 function MobileProfileCard({ user, handleProfilePage }) {
   const [selected, setSelected] = useState(0)
+  const router = useRouter()
+
   function formatDate(inputDate) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' }
     return new Date(inputDate).toLocaleDateString(undefined, options)
@@ -57,23 +61,25 @@ function MobileProfileCard({ user, handleProfilePage }) {
             width: '-webkit-fill-available',
             zIndex: '2'
           }}>
-          <Link href="/freelancers">
-            <span onClick={() => {}} style={{ cursor: 'pointer' }}>
-              <IconComponent name="backArrow" width="20" height="20" viewBox="0 0 20 20" fill="black" />
-            </span>
-          </Link>
+          <span
+            onClick={() => {
+              router.back()
+            }}
+            style={{ cursor: 'pointer' }}>
+            <IconComponent name="backArrow" width="20" height="20" viewBox="0 0 20 20" fill="black" />
+          </span>
           <span style={{ fontWeight: '500', fontSize: '16px' }}>Profile</span>
         </div>
         <div style={{ padding: '75px 16px 16px 16px' }}>
           <img
-            src={user?.user?.profileImage}
+            src={user?.userId?.profileImage}
             width={125}
             height={125}
             alt="Picture of the author"
             style={{ borderRadius: '15px' }}
           />
           <P fontSize="26px" margin="0">
-            {user?.user?.FirstName || '' + ' ' + user?.user?.LastName || ''}
+            {user?.userId?.FirstName || '' + ' ' + user?.userId?.LastName || ''}
           </P>
           <P fontSize="15px" fontWeight="400" margin="0">
             {user?.category}
@@ -86,7 +92,7 @@ function MobileProfileCard({ user, handleProfilePage }) {
               </div>
             )}
             <P fontSize="14px" fontWeight="300">
-              {user?.user?.AddressLineCountry || 'United States'}
+              {user?.userId?.AddressLineCountry || 'N/A'}
             </P>
           </div>
           <P fontSize="22px" fontWeight="600">

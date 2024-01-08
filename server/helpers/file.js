@@ -23,8 +23,15 @@ const createFile = async (file, userId) => {
       cloudinaryId: result.public_id,
       userId
     })
+    const userData = await user.findById(userId).select('files')
+
+    if (userData?.files) {
+      userData.files.push(newFile.id)
+    } else {
+      userData['files'] = [response.id]
+    }
     await user.findByIdAndUpdate(userId, {
-      files: await FileModel.find({ userId })
+      files: userData.files
     })
     return newFile
   } catch (err) {

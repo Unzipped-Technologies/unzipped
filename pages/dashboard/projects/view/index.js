@@ -156,34 +156,11 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
   const projectTabs = ['Open Projects', 'Invoices', 'Hires']
 
   useEffect(() => {
-    if (role === accountTypeEnum.ADMIN) {
-      setSelected(accountTypeEnum.FOUNDER)
-    }
+    getBusinessList({
+      take: take,
+      skip: (page - 1) * 25
+    })
   }, [])
-
-  useEffect(() => {
-    if (selected == 0) {
-      getBusinessList(
-        {
-          take: take,
-          skip: (page - 1) * 25
-        },
-        access,
-        selected,
-        _id
-      )
-    } else if (selected == 1) {
-      getBusinessList(
-        {
-          take: take,
-          skip: (page - 1) * 25
-        },
-        access_token,
-        selected,
-        _id
-      )
-    }
-  }, [selected])
 
   const toggleRole = () => {
     if (role === accountTypeEnum.ADMIN) {
@@ -213,14 +190,14 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
         />
       )}
       <Header>
-        <Toggle>
+        {/* <Toggle>
           <Right selected={selected} onClick={toggleRole}>
             <DarkText small>AS CLIENT</DarkText>
           </Right>
           <Left selected={selected} onClick={toggleRole}>
             <DarkText small>AS FREELANCER</DarkText>
           </Left>
-        </Toggle>
+        </Toggle> */}
       </Header>
       <Projects>
         <Tabs>
@@ -273,7 +250,9 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
                             },
                             {
                               text: 'Invoices',
-                              onClick: () => {}
+                              onClick: () => {
+                                router.push(`client/invoice/${business._id}`)
+                              }
                             },
                             {
                               text: 'Assign Department',
@@ -312,7 +291,7 @@ const mapStateToProps = state => {
   return {
     _id: state.Auth.user._id,
     access_token: state.Auth.token,
-    businesses: state.Business?.projectList,
+    businesses: state.Business?.businesses,
     loading: state.Business?.loading,
     role: state.Auth.user.role,
     cookie: state.Auth.token

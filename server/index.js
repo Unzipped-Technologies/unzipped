@@ -47,7 +47,9 @@ app
       })
     }
 
-    server.use(bodyParser.json({ limit: '50mb' }))
+    // server.use(bodyParser.json({ limit: '50mb' }))
+    server.use(express.json()) // for json
+    server.use(express.urlencoded({ extended: true }))
     server.use(
       cookieSession({
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -72,10 +74,10 @@ app
       return handle(req, res)
     })
 
-        // server.listen(PORT, err => {
-        //   if (err) throw err;
-        //   console.log(`> Ready on ${PORT}`);
-        // })
+    // server.listen(PORT, err => {
+    //   if (err) throw err;
+    //   console.log(`> Ready on ${PORT}`);
+    // })
 
     httpServer.listen(PORT, err => {
       if (err) throw err

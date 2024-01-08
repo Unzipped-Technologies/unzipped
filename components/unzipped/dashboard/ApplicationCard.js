@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
@@ -8,17 +8,29 @@ import { TitleText, DarkText, Absolute, DarkSpan } from './style'
 import { MdVerifiedUser } from 'react-icons/md'
 import MobileApplicationCard from './mobile/MobileApplicationsView'
 
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { getProjectApplications } from '../../../redux/actions'
+import { ConverterUtils } from '../../../utils'
+
 const DesktopContainer = styled.div`
+  @media (max-width: 680px) {
+    display: none;
+  }
+`
+
+const ProjectApplications = styled.div`
   display: flex;
   flex-flow: row;
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  height: 262px;
-  width: 80%;
-  margin: auto;
+  height: 270px;
+  width: 984px;
+  margin-left: 150px;
   border-radius: 5px;
   border: 1px solid #d9d9d9;
+  margin-top: 10px;
   @media (max-width: 680px) {
     display: none;
   }
@@ -52,8 +64,8 @@ const UserInfo = styled.div`
   display: flex;
   flex-flow: column;
   width: 600px;
-  margin-top: 30px;
-  margin-left: 20px;
+  margin-top: 20px;
+  margin-left: 10px;
 `
 
 const UserName = styled.span`
@@ -92,10 +104,8 @@ const UserRate = styled.span`
   padding-top: 5px;
 `
 const Skills = styled.div`
-  display: flex;
-  flex-direction: row;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 `
 
 const CoverLetter = styled.span`
@@ -105,6 +115,7 @@ const CoverLetter = styled.span`
   line-height: 21px; /* 161.538% */
   letter-spacing: 0.4px;
   padding-left: 3px;
+  padding-bottom: 15px;
 `
 
 const ViewProfile = styled.div`
@@ -123,83 +134,168 @@ const ViewProfileButton = styled.button`
   background: #8ede64;
 `
 
-const ApplicationCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
+const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
   const router = useRouter()
-  const redirectToProfile = () => {
-    if (clearSelectedFreelancer) clearSelectedFreelancer()
-    if (user?.id) {
-      router.push(`/freelancers/${user.id}`)
+  const { id } = router.query
+
+  const redirectToProfile = freelancerId => {
+    if (freelancerId) {
+      router.push(`/freelancers/${freelancerId}`)
     }
   }
+
+  useEffect(() => {
+    // Below we are only sending pagination data, Other data we are using from redux store.
+    getProjectApplications({
+      projectId: id,
+      limit: 'all',
+      page: 1
+    })
+  }, [])
+
+  console.log('projectApplications', projectApplications)
+
   return (
     <>
       <DesktopContainer>
-        <ProfileImage>
-          <Image src={user?.profilePic} alt={user?.name + ' profile'} height="102px" width="102px" radius="50%" />
-          <InviteButton>{user?.isInvited ? 'Invited' : 'Invite'}</InviteButton>
-        </ProfileImage>
-        <UserInfo>
-          <div style={{ display: 'flex' }}>
-            <UserName>James Cameron</UserName>
-            <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
-              <MdVerifiedUser />
-            </div>
-          </div>
+        {projectApplications?.length ? (
+          projectApplications.map(application => {
+            return (
+              <ProjectApplications key={application._id}>
+                <ProfileImage>
+                  {application?.freelancerId?.userId?.profileImage ? (
+                    <Image
+                      src={application?.freelancerId?.userId?.profileImage}
+                      alt={
+                        application?.freelancerId?.userId?.FirstName + application?.freelancerId?.userId?.LastName ||
+                        application._id
+                      }
+                      height="102px"
+                      width="102px"
+                      radius="50%"
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexFlow: 'column',
+                        alignItems: 'center',
+                        margin: '20px 20px',
+                        height: '102px',
+                        width: '102px',
+                        borderRadius: '50%',
+                        color: 'white',
+                        backgroundColor: '#0e1724',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                      {application?.freelancerId?.userId?.FirstName[0] ||
+                        application?.freelancerId?.userId?.LastName[0]}
+                    </div>
+                  )}
 
-          <UserCategory>Full stack web developer</UserCategory>
-          <UserCountry>United States</UserCountry>
-          <UserRate>
-            $27{' '}
-            <span
-              style={{
-                fontWeight: '100',
-                color: ' #000',
-                fontSize: '15px',
-                fontWeight: '300',
-                letterSpacing: '0.4px',
-                marginTop: '-100px'
-              }}>
-              / hour
-            </span>
-          </UserRate>
-          <Skills>
-            <Badge>React</Badge>
-            <Badge>Node</Badge>
-            <Badge>MongoDB</Badge>
-            <Badge>Express</Badge>
-            <Badge>UI/UX</Badge>
-          </Skills>
-          <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-            <p>
-              <b style={{ fontSize: '11px' }}>cover letter:</b>
-              <CoverLetter>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim...
-                <a style={{ textDecoration: 'underline' }}>Read More</a>
-              </CoverLetter>
-            </p>
-          </div>
-        </UserInfo>
-        <ViewProfile>
-          <ViewProfileButton onClick={redirectToProfile}>View Profile</ViewProfileButton>
-          <span
+                  {/* <InviteButton>{user?.isInvited ? 'Invited' : 'Invite'}</InviteButton> */}
+                </ProfileImage>
+                <UserInfo>
+                  <div style={{ display: 'flex' }}>
+                    <UserName>
+                      {ConverterUtils.capitalize(
+                        `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
+                      )}
+                    </UserName>
+                    <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
+                      <MdVerifiedUser />
+                    </div>
+                  </div>
+
+                  <UserCategory>{application?.freelancerId?.category}</UserCategory>
+                  <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                  <UserRate>
+                    ${application?.freelancerId?.rate || 0}{' '}
+                    <span
+                      style={{
+                        fontWeight: '100',
+                        color: ' #000',
+                        fontSize: '15px',
+                        fontWeight: '300',
+                        letterSpacing: '0.4px',
+                        marginTop: '-100px'
+                      }}>
+                      / hour
+                    </span>
+                  </UserRate>
+                  <Skills>
+                    {application?.freelancerId?.freelancerSkills?.length
+                      ? application?.freelancerId?.freelancerSkills.map(skill => {
+                          return <Badge key={skill._id}>{skill?.skill}</Badge>
+                        })
+                      : 'N/A'}
+                  </Skills>
+                  <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                    <p>
+                      <b style={{ fontSize: '11px' }}>cover letter:</b>
+                      <CoverLetter>
+                        {ConverterUtils.truncateString(application?.coverLetter, 150)}
+                        {application?.coverLetter?.length > 150 && (
+                          <a style={{ textDecoration: 'underline' }}>Read More</a>
+                        )}
+                      </CoverLetter>
+                    </p>
+                  </div>
+                </UserInfo>
+                <ViewProfile>
+                  <ViewProfileButton
+                    onClick={() => {
+                      redirectToProfile(application?.freelancerId?._id)
+                    }}>
+                    View Profile
+                  </ViewProfileButton>
+                  <span
+                    style={{
+                      color: ' #000',
+                      fontFamily: 'Roboto',
+                      fontSize: '15px',
+                      fontStyle: 'normal',
+                      fontWeight: '400',
+                      lineHeight: '24.5px' /* 163.333% */,
+                      letterSpacing: '0.4px',
+                      marginTop: '50px'
+                    }}>
+                    {application?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
+                  </span>
+                </ViewProfile>
+              </ProjectApplications>
+            )
+          })
+        ) : (
+          <div
             style={{
-              color: ' #000',
-              fontFamily: 'Roboto',
-              fontSize: '15px',
-              fontStyle: 'normal',
-              fontWeight: '400',
-              lineHeight: '24.5px' /* 163.333% */,
-              letterSpacing: '0.4px',
-              marginTop: '50px'
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: '200px'
             }}>
-            200 UPVOTES BY CLIENTS
-          </span>
-        </ViewProfile>
+            <p>N/A</p>
+          </div>
+        )}
       </DesktopContainer>
-      <MobileApplicationCard></MobileApplicationCard>
+      <MobileApplicationCard projectApplications={projectApplications}></MobileApplicationCard>
     </>
   )
 }
 
-export default ApplicationCard
+const mapStateToProps = state => {
+  console.log('state', state)
+  return {
+    projectApplications: state.ProjectApplications.projectApplications
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getProjectApplications: bindActionCreators(getProjectApplications, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicationCard)
+// export default ApplicationCard

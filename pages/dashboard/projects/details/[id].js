@@ -6,7 +6,6 @@ import React, { useState, useEffect, useMemo } from 'react'
 
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
-import { accountTypeEnum } from '../../../../server/enum/accountTypeEnum'
 import { DarkText } from '../../../../components/unzipped/dashboard/style'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
@@ -162,6 +161,7 @@ const TabButton = styled.button`
     font-weight: 500;
     line-height: 23px; /* 164.286% */
     letter-spacing: 0.15px;
+    margin-right: 0px;
   }
 
   ${({ active }) =>
@@ -178,24 +178,104 @@ const TabButton = styled.button`
 `
 
 const TabContent = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: block;
+  // flex-direction: row;
+  // flex-wrap: wrap;
   padding-bottom: 50px;
+`
+
+const Select = styled.select`
+  display: block;
+  border: 0;
+  width: fit-content;
+  background-color: transparent;
+  color: #222;
+  font-family: Roboto;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 19.5px; /* 121.875% */
+  letter-spacing: 0.15px;
+  margin-top: -20px;
+  margin-bottom: -10px !important;
+  margin-right: 10px;
 `
 
 const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+  const [weekOptions, setWeekOptions] = useState([])
+  const [selectedWeek, setSelectedWeek] = useState(null)
+  const [data, setData] = useState([])
+  const [filteredData, setFilteredData] = useState([])
 
-  const projectTabs = ['Details', 'Applications', 'Hires', 'Invoices']
   const router = useRouter()
   const { id } = router.query
+  const { tab } = router.query
 
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)
 
   const [displayFormat, setDisplayFormat] = useState(false)
+
+  let projectTabs = []
+
+  switch (role) {
+    case 1:
+      projectTabs = [
+        { name: 'Details', index: 0 },
+        { name: 'Invoices', index: 3 }
+      ]
+      break
+    default:
+      projectTabs = [
+        { name: 'Details', index: 0 },
+        { name: 'Applications', index: 1 },
+        { name: 'Hires', index: 2 },
+        { name: 'Invoices', index: 3 }
+      ]
+  }
+
+  useEffect(() => {
+    switch (tab) {
+      case 'invoices':
+        setSelectedTab(3)
+        break
+      default:
+        setSelectedTab(0)
+    }
+  }, [])
+
+  useEffect(() => {
+    const options = []
+    const currentDate = new Date()
+    for (let i = 10; i >= 0; i--) {
+      const startOfWeek = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() - currentDate.getDay() - i * 7
+      )
+      startOfWeek.setHours(0, 0, 0, 0)
+      const endOfWeek = new Date(startOfWeek)
+      endOfWeek.setDate(endOfWeek.getDate() + 6)
+      endOfWeek.setHours(23, 59, 59, 999)
+      options.unshift({ startOfWeek, endOfWeek })
+    }
+    setWeekOptions(options)
+    setSelectedWeek(0)
+  }, [])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined) {
+      const filteredItems = data?.filter(item => {
+        const itemDate = new Date(item.updatedAt)
+        const startOfWeek = weekOptions[selectedWeek].startOfWeek
+        const endOfWeek = weekOptions[selectedWeek].endOfWeek
+        return itemDate >= startOfWeek && itemDate <= endOfWeek
+      })
+      setFilteredData(filteredItems)
+    }
+  }, [selectedWeek, data, weekOptions])
 
   useMemo(() => {
     if (id !== undefined) {
@@ -216,25 +296,40 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         <HeaderDetail>
           <Header>
             <ProjectName>
-              {selectedTab === 3 ? 'Invoice History' : screenWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT'}
+              {selectedTab !== 3 ? (screenWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
+              {selectedTab === 3 && screenWidth > 680 ? 'Invoice History' : ''}
             </ProjectName>
-            <Toggle>
+            {(selectedTab === 3) & (screenWidth < 680) ? (
+              <Select onChange={() => {}}>
+                {weekOptions.map((week, index) => (
+                  <option key={index} value={index}>
+                    Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              ''
+            )}
+            {/* <Toggle>
               <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                 <DarkText small>{selectedTab === 0 ? 'As Client' : 'As Founder'}</DarkText>
               </Left>
               <Right displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                 <DarkText small>{selectedTab === 0 ? 'As Freelancer' : 'As Investor'}</DarkText>
               </Right>
-            </Toggle>
+            </Toggle> */}
           </Header>
-          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}sasas</ProjectSubHeading>}
+          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
         </HeaderDetail>
 
         <Tabs>
           {projectTabs.map((tab, index) => {
             return (
-              <TabButton onClick={() => handleClick(index)} active={selectedTab === index} key={`${tab}_${index}`}>
-                {tab}
+              <TabButton
+                onClick={() => handleClick(tab.index)}
+                active={selectedTab === tab.index}
+                key={`${tab.name}_${index}`}>
+                {tab.name}
               </TabButton>
             )
           })}
@@ -243,32 +338,56 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
 
       <TabContent>
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
-        {selectedTab === 1 && (
-          <ApplicationCard
-            user={{
-              id: '1',
-              name: `Mathew Hadden`,
-              type: 'Category',
-              isPreferedFreelancer: true,
-              country: 'United States',
-              skills: ['MERN'],
-              cover: `I have been a MERN stacl 'developer'} for over 2 years. schedule a meeting to check if I'm a good fit for your business.`,
-              profilePic: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-              rate: '20',
-              likes: 200
-            }}
-            includeRate
-            clearSelectedFreelancer={() => {}}
-          />
-        )}
+        {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
         {selectedTab === 2 && (
           <HiringTable
+            // data={projectDetails?.applicants || []}
             data={[
-              { name: 'jason', rate: '10', points: '10', department: 'Development', hireDate: '2012-12-12' },
-              { name: 'Warner', rate: '13', points: '9', department: 'QA', hireDate: '2023-08-23' },
-              { name: 'Wade', rate: '6', points: '7', department: 'Marketing', hireDate: '2021-09-18' },
-              { name: 'Smith', rate: '8', points: '11', department: 'SEO', hireDate: '2019-03-06' },
-              { name: 'Jhonson', rate: '3', points: '9', department: 'Development', hireDate: '2018-06-29' }
+              {
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'jason',
+                lastName: 'maynard',
+                rate: '10',
+                points: '10',
+                department: 'Development',
+                hireDate: '11-27-2013'
+              },
+              {
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Warner',
+                lastName: 'short',
+                rate: '13',
+                points: '9',
+                department: 'QA',
+                hireDate: '11-27-2013'
+              },
+              {
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Wade',
+                lastName: 'smith',
+                rate: '6',
+                points: '7',
+                department: 'Marketing',
+                hireDate: '11-27-2013'
+              },
+              {
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Smith',
+                lastName: 'staturt',
+                rate: '8',
+                points: '11',
+                department: 'SEO',
+                hireDate: '11-27-2013'
+              },
+              {
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Jhonson',
+                lastName: 'charles',
+                rate: '3',
+                points: '9',
+                department: 'Development',
+                hireDate: '11-27-2013'
+              }
             ]}
           />
         )}
@@ -276,53 +395,67 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
           <InvoicesTable
             data={[
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'jason',
+                lastName: 'maynard',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Submitted',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               },
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Warner',
+                lastName: 'short',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Submitted',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               },
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Wade',
+                lastName: 'smith',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Approved',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               },
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Smith',
+                lastName: 'staturt',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Archived',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               },
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'Jhonson',
+                lastName: 'charles',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Submitted',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               },
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'alex',
+                lastName: 'carey',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Approved',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               },
               {
-                name: 'jason',
-                dates: '2012-12-12 - 2012-12-12',
+                _id: Math.random().toFixed(4) * 10000,
+                firstName: 'david',
+                lastName: 'warner',
+                dates: '12-13-2012 - 09-28-2012',
                 hours: 40,
                 status: 'Approved',
-                hireDate: '2012-12-12'
+                hireDate: '11-27-2013'
               }
             ]}
           />

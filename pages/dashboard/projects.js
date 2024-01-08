@@ -68,48 +68,25 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
   const access = token?.access_token || cookie
   const [take, setTake] = useState(25)
   const [page, setPage] = useState(1)
-  const [selected, setSelected] = useState(null)
   const [screenWidth, setScreenWidth] = useState(window.innerWidth)
 
   useEffect(() => {
-    if (role === accountTypeEnum.ADMIN) {
-      setSelected(accountTypeEnum.FOUNDER)
-    }
-  }, [])
+    // Below we are only sending pagination data, Other data we are using from redux store.
+    getBusinessList({
+      take: take,
+      skip: (page - 1) * 25
+    })
+  }, [take])
 
-  useEffect(() => {
-    if (selected == 0) {
-      getBusinessList(
-        {
-          take: take,
-          skip: (page - 1) * 25
-        },
-        access,
-        selected,
-        _id
-      )
-    } else if (selected == 1) {
-      getBusinessList(
-        {
-          take: take,
-          skip: (page - 1) * 25
-        },
-        access_token,
-        selected,
-        _id
-      )
-    }
-  }, [selected])
-
-  const toggleRole = () => {
-    if (role === accountTypeEnum.ADMIN) {
-      if (selected === accountTypeEnum.FOUNDER) {
-        setSelected(accountTypeEnum.INVESTOR)
-      } else {
-        setSelected(accountTypeEnum.FOUNDER)
-      }
-    }
-  }
+  // const toggleRole = () => {
+  //   if (role === accountTypeEnum.ADMIN) {
+  //     if (selected === accountTypeEnum.FOUNDER) {
+  //       setSelected(accountTypeEnum.INVESTOR)
+  //     } else {
+  //       setSelected(accountTypeEnum.FOUNDER)
+  //     }
+  //   }
+  // }
 
   return (
     <React.Fragment>
@@ -118,14 +95,14 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
         <Desktop>
           <Title>
             <TitleText title>Projects</TitleText>
-            <Toggle>
+            {/* <Toggle>
               <Left selected={selected} onClick={toggleRole}>
                 <DarkText small>AS INVESTOR</DarkText>
               </Left>
               <Right selected={selected} onClick={toggleRole}>
                 <DarkText small>AS FOUNDER</DarkText>
               </Right>
-            </Toggle>
+            </Toggle> */}
           </Title>
           <SearchBar
             theme={{ tint3: '#C4C4C4' }}
@@ -140,7 +117,7 @@ const Projects = ({ _id, token, cookie, businesses = [], getBusinessList, role, 
             setPage={setPage}
             page={page}
             loading={loading}
-            userType={selected}
+            userType={role}
           />
         </Desktop>
       )}

@@ -152,7 +152,8 @@ const WhiteCard = styled.div`
     border: 1px ${({ borderColor }) => (borderColor ? borderColor : '#d8d8d8')} solid;
     border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '5px')};
     max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : 'unset')};
-    width: 100%;
+    width: ${({ width }) => (width ? width : '100%')};
+    // width: 100%;
     display: flex;
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
@@ -349,6 +350,30 @@ export const MinWidth = styled.span`
   min-width: 10%;
 `
 
+const TableHeading = styled.th`
+  color: ${({ $color }) => ($color ? $color : '#000')};
+  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
+  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : 'Roboto')};
+  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
+  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
+  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '500')};
+  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
+  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
+  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+`
+
+const TableData = styled.td`
+  color: ${({ $color }) => ($color ? $color : '#000')};
+  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
+  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : '')};
+  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
+  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
+  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '400')};
+  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
+  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
+  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+`
+
 module.exports = {
   HeadingText,
   BlackCard,
@@ -369,5 +394,7 @@ module.exports = {
   Span,
   Box,
   PaddingLeft,
-  Title
+  Title,
+  TableHeading,
+  TableData
 }

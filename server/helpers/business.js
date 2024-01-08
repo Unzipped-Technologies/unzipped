@@ -11,6 +11,7 @@ const { likeEnum } = require('../enum/likeEnum')
 const Contracts = require('../../models/Contract')
 const Freelancer = require('../../models/Freelancer')
 const TaskHours = require('../../models/TaskHours')
+const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
 const createBusiness = async (data, id) => {
   // create business
@@ -72,18 +73,38 @@ const getBusinessById = async (id, sub) => {
         path: 'userId',
         model: 'users',
         select:
-          'email FirstName LastName profileImage freelancers isIdentityVerified stripeId stripeSubscription createdAt'
+          'email FirstName LastName profileImage freelancers isIdentityVerified stripeId stripeSubscription createdAt freelancerSkills',
+        populate: [
+          {
+            path: 'freelancerSkills',
+            model: 'freelancerskills',
+            select: 'skill yearsExperience'
+          }
+        ]
       })
       .populate({
         path: 'applicants',
-        model: 'users',
-        select:
-          'email FirstName LastName profileImage freelancers isIdentityVerified rate createdAt stripeId stripeSubscription  freelancerSkills likeTotal dislikeTotal',
-        populate: {
-          path: 'freelancerSkills',
-          model: 'freelancerSkills',
-          select: 'skill yearsExperience profileId'
-        }
+        model: 'projectapplications',
+        select: 'freelancerId projectId coverLetter resume isDeleted',
+        populate: [
+          {
+            path: 'freelancerId',
+            model: 'freelancers',
+            select: 'rate freelancerSkills',
+            populate: [
+              {
+                path: 'freelancerSkills',
+                model: 'freelancerskills',
+                select: 'skill yearsExperience'
+              }
+            ]
+          },
+          {
+            path: 'freelancerId.freelancerSkills',
+            model: 'freelancerskills',
+            select: 'skill yearsExperience'
+          }
+        ]
       })
       .execPopulate()
     return { getBusiness: populatedBusiness }
@@ -151,7 +172,9 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
           profileImage: '$userProfile.profileImage',
           country: '$userProfile.AddressLineCountry',
           likes: '$userProfile.likeTotal',
-          createdAt: 1
+          createdAt: 1,
+          updatedAt: 1,
+          valueEstimate: 1
         }
       },
       {
@@ -237,6 +260,15 @@ const getBusinessByInvestor = async ({ businessId, id }) => {
   }
 }
 
+const getBusinessWithoutPopulate = async (businessId, selectedFields) => {
+  try {
+    const businessData = await business.findOne({ _id: businessId }).select(selectedFields)
+    return businessData
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
 const getBusinessByFounder = async businessId => {
   try {
     const businessDetails = await business
@@ -269,25 +301,51 @@ const getBusinessByFounder = async businessId => {
   } catch (error) {}
 }
 
-const getAllBusinessByInvestor = async id => {
+const getAllBusinessByInvestor = async (id, query) => {
   try {
+    const options = pick(query, ['limit', 'page'])
+    const limit = pageLimit(options)
+
+    const page = currentPage(options)
+    const skip = (page - 1) * limit
     const freelancerIds = await Freelancer.findOne({ userId: id }, '_id')
+    if (!freelancerIds) return 'No freelancer profile exist'
+    const total = await countContracts({
+      freelancerId: { $in: freelancerIds._id },
+      isOfferAccepted: true
+    })
+
     const contracts = await Contracts.find({
       freelancerId: { $in: freelancerIds._id },
       isOfferAccepted: true
     })
-      .select('businessId -_id')
+      .select('businessId _id')
+      .skip(skip)
+      .limit(limit)
       .exec()
     const idsToSearch = contracts.map(item => item.businessId)
     const businesses = await business
       .find({
         _id: { $in: idsToSearch }
       })
-      .exec()
-    return businesses
+      .select('name budget equity valueEstimate deadline createdAt updatedAt')
+    const totalPages = Math.ceil(total / limit)
+
+    const result = {
+      limitedRecords: businesses,
+      currentPage: page,
+      limit,
+      totalPages,
+      totalCount: total
+    }
+    return result
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
   }
+}
+
+const countContracts = async filter => {
+  return await Contracts.countDocuments(filter)
 }
 
 // add like to business
@@ -337,5 +395,6 @@ module.exports = {
   addLikeToBusiness,
   getAllBusinessByInvestor,
   getBusinessByInvestor,
-  getBusinessByFounder
+  getBusinessByFounder,
+  getBusinessWithoutPopulate
 }

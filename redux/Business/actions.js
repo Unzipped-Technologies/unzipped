@@ -318,16 +318,16 @@ export const getBusinessTasksByFounder =
     dispatch(stopLoading())
   }
 
-export const getBusinessList = (data, token, selected, _id) => async (dispatch, getState) => {
+export const getBusinessList = data => async (dispatch, getState) => {
   //business list Loading
   dispatch({ type: LOAD_STATE })
   const headers = {
-    access_token: token
+    access_token: getState()?.Auth.token
   }
   dispatch(startLoading())
-  if (selected == 1) {
+  if (getState()?.Auth.user.role == 1) {
     await axios
-      .get(`/api/business/investor/${_id}`, {
+      .get(`/api/business/investor/${getState()?.Auth.user._id}`, {
         data,
         headers
       })
@@ -345,7 +345,7 @@ export const getBusinessList = (data, token, selected, _id) => async (dispatch, 
       })
   } else {
     await axios
-      .post(`/api/business/user/list`, data, tokenConfig(token))
+      .post(`/api/business/user/list`, data, tokenConfig(getState()?.Auth.token))
       .then(res => {
         dispatch({
           type: GET_BUSINESSES,

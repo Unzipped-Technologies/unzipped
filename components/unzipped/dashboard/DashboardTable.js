@@ -18,6 +18,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
+import { TableHeading, TableData } from './style'
 
 const StyledTableCell = withStyles(theme => ({
   head: {
@@ -131,7 +132,7 @@ const Panel = ({ type, businesses, loading, userType, updateBusiness }) => {
         },
         {
           text: 'View Project',
-          onClick: () => console.log('ITEM 2')
+          onClick: () => router.push(`projects/details/${item._id}`)
         },
         {
           text: 'View Work',
@@ -142,149 +143,66 @@ const Panel = ({ type, businesses, loading, userType, updateBusiness }) => {
   }
 
   return (
-    <Container background={type === 'department' ? '#FDFDFD' : ''}>
-      <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="sticky table">
-          <TableHead className={classes.head}>
-            <TableRow>
-              <StyledTableCell class="muiTableHeader" align="left !important" style={{ padding: '0px 0px 0px 15px' }}>
-                Project Name
-              </StyledTableCell>
-              <StyledTableCell class="muiTableHeader" align="left">
-                Budget
-              </StyledTableCell>
-              <StyledTableCell class="muiTableHeader" align="left">
-                Equity
-              </StyledTableCell>
-              <StyledTableCell class="muiTableHeader" align="left">
-                Points
-              </StyledTableCell>
-              <StyledTableCell class="muiTableHeader" align="left">
-                Value Estimate
-              </StyledTableCell>
-              <StyledTableCell class="muiTableHeader" align="left">
-                Deadline
-              </StyledTableCell>
-              <StyledTableCell class="muiTableHeader" align="center">
-                ACTIONS
-              </StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {businesses?.length === 0 && <Box>Start a project and you will see it here...</Box>}
-            {businesses?.length > 0 &&
-              businesses?.map((row, index) => (
-                <StyledTableRow key={`${row.name}_${index}`}>
-                  <StyledTableCell align="left">{row.name}</StyledTableCell>
-                  <StyledTableCell align="left">{row.budget || 0}</StyledTableCell>
-                  <StyledTableCell align="left">{row.equity || 0}</StyledTableCell>
-                  <StyledTableCell align="left">27</StyledTableCell>
-                  <StyledTableCell align="left">{row.valueEstimate || 'N/A'}</StyledTableCell>
-                  <StyledTableCell align="left">
-                    {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
-                      ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
-                  </StyledTableCell>
-                  <StyledTableCell
-                    align="inherit"
+    <Container background={'#FDFDFD'}>
+      <table>
+        <thead>
+          <tr style={{}}>
+            <TableHeading>Project Name</TableHeading>
+            <TableHeading>Budget</TableHeading>
+            <TableHeading>Equity</TableHeading>
+            <TableHeading>Points</TableHeading>
+            <TableHeading>Value Estimate</TableHeading>
+            <TableHeading>Deadline</TableHeading>
+            <TableHeading>ACTIONS</TableHeading>
+          </tr>
+        </thead>
+        <tbody>
+          {businesses?.length > 0 &&
+            businesses?.map(row => (
+              <tr key={row._id}>
+                <TableData>{row.name}</TableData>
+                <TableData>{row.budget || 0}</TableData>
+                <TableData>{row.equity || 0}</TableData>
+                <TableData>27</TableData>
+                <TableData>{row.valueEstimate || 'N/A'}</TableData>
+                <TableData>
+                  {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
+                    ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
+                </TableData>
+
+                <TableData
+                  textTransform="lowercase"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginRight: '10px',
+                    textTransform: 'lowercase'
+                  }}>
+                  <Button
+                    icon="largeExpand"
+                    popoutWidth="220px"
+                    noBorder
+                    noUppercase
+                    block
+                    type="lightgrey"
+                    fontSize="16px"
+                    dropDownRight="-104px"
+                    background="red"
+                    popout={generatePopout(userType, row)}
                     style={{
-                      display: 'inline-block'
-                    }}>
-                    <Button
-                      icon="largeExpand"
-                      popoutWidth="180px"
-                      noBorder
-                      block
-                      type="lightgrey"
-                      fontSize="12px"
-                      popout={generatePopout(userType, row)}
-                      iconRight>
-                      Details
-                    </Button>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {/* <TableTitle paddingLeft half row>
-        <DarkText noMargin bold>
-          Project Name
-        </DarkText>
-        <DarkText noMargin> </DarkText>
-        <DarkText noMargin center bold>
-          Budget
-        </DarkText>
-        <DarkText noMargin center bold>
-          Equity
-        </DarkText>
-        <DarkText noMargin center bold>
-          Points
-        </DarkText>
-        <DarkText noMargin center bold>
-          Value Estimate
-        </DarkText>
-        <DarkText noMargin center bold>
-          Deadline
-        </DarkText>
-        <DarkText noMargin center bold>
-          Actions
-        </DarkText>
-      </TableTitle>
-      <Underline color="#333" noMargin />
-      <StoryTable>
-        {businesses.length === 0 && loading && (
-          <Box>
-            <CircularProgress />
-          </Box>
-        )}
-        {businesses.length === 0 && <Box>Start a project and you will see it here...</Box>}
-        {businesses.length > 0 &&
-          businesses.map((item, index) => (
-            <WhiteCard
-              noMargin
-              borderRadius="0px"
-              row
-              background={!ValidationUtils.checkNumberEven(index) ? '#F7F7F7' : '#fff'}>
-              <Absolute width="45%" wideLeft textOverflow="ellipsis">
-                <DarkText textOverflow="ellipsis" noMargin>
-                  {item.name}
-                </DarkText>
-              </Absolute>
-              <DarkText noMargin> </DarkText>
-              <DarkText noMargin> </DarkText>
-              <DarkText noMargin center>
-                ${(item.budget || 0).toLocaleString()}
-              </DarkText>
-              <DarkText noMargin center>
-                {item?.equity || 0}%
-              </DarkText>
-              <DarkText noMargin center>
-                27
-              </DarkText>
-              <DarkText noMargin center>
-                {item?.valueEstimate || 'N/A'}
-              </DarkText>
-              <DarkText noMargin center>
-                {(item?.deadline && ValidationUtils.formatDate(item?.deadline)) ||
-                  ValidationUtils.formatDate(item?.updatedAt || item?.createdAt)}
-              </DarkText>
-              <DarkText noMargin center></DarkText>
-              <Absolute>
-                <Button
-                  icon="largeExpand"
-                  popoutWidth="150px"
-                  noBorder
-                  block
-                  type="lightgrey"
-                  fontSize="13px"
-                  popout={generatePopout(userType, item)}
-                  iconRight>
-                  Details
-                </Button>
-              </Absolute>
-            </WhiteCard>
-          ))}
-      </StoryTable> */}
+                      borderRadius: '3px',
+                      border: '0.25px solid #000',
+                      background: 'rgba(217, 217, 217, 0.28)',
+                      zIndex: 'auto'
+                    }}
+                    iconRight>
+                    Details
+                  </Button>
+                </TableData>
+              </tr>
+            ))}
+        </tbody>
+      </table>
     </Container>
   )
 }

@@ -33,42 +33,17 @@ const Heading = styled.div`
 function MobileProjects({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) {
   const access = token?.access_token || cookie
 
-  const [selected, setSelected] = useState(null)
-
   const [take, setTake] = useState(3)
   const [page, setPage] = useState(1)
 
   const limitedProjects = useMemo(() => businesses.slice(0, 3), [businesses])
 
   useEffect(() => {
-    if (role === accountTypeEnum.ADMIN) {
-      setSelected(accountTypeEnum.FOUNDER)
-    }
+    getBusinessList({
+      take: take,
+      skip: (page - 1) * 25
+    })
   }, [])
-
-  useEffect(() => {
-    if (selected == 0) {
-      getBusinessList(
-        {
-          take: take,
-          skip: (page - 1) * 25
-        },
-        access,
-        selected,
-        _id
-      )
-    } else if (selected == 1) {
-      getBusinessList(
-        {
-          take: take,
-          skip: (page - 1) * 25
-        },
-        access_token,
-        selected,
-        _id
-      )
-    }
-  }, [selected])
 
   return (
     <div className="px-4 mb-5 pb-4">

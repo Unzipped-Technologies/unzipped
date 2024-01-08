@@ -6,8 +6,15 @@ import Badge from '../../../ui/Badge'
 import { useRouter } from 'next/router'
 import { MdVerifiedUser, MdOutlineThumbUpAlt } from 'react-icons/md'
 import IconComponent from '../../../ui/icons/IconComponent'
+import { ConverterUtils } from '../../../../utils'
 
 const Container = styled.div`
+  @media (min-width: 680px) {
+    display: none;
+  }
+`
+
+const ApplicationView = styled.div`
   display: flex;
   flex-direction: column;
   background: rgba(240, 240, 240, 0);
@@ -15,9 +22,6 @@ const Container = styled.div`
   border: 1px solid #d9d9d9;
   flex-wrap: wrap;
   padding-bottom: 10px;
-  @media (min-width: 680px) {
-    display: none;
-  }
 `
 
 const PersonalInfo = styled.div`
@@ -134,102 +138,130 @@ const ViewProfileButton = styled.button`
   margin: auto;
 `
 
-const MobileApplicationCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
+const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSelectedFreelancer, width }) => {
   const router = useRouter()
-  const redirectToProfile = () => {
-    if (clearSelectedFreelancer) clearSelectedFreelancer()
-    if (user?.id) {
-      router.push(`/freelancers/${user.id}`)
-    }
+  const redirectToProfile = freelancerId => {
+    router.push(`/freelancers/${freelancerId}`)
   }
   return (
     <>
       <Container>
-        <PersonalInfo>
-          <ProfileImage>
-            <Image
-              src={'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'}
-              alt={user?.name + ' profile'}
-              height="65px"
-              width="65px"
-            />
-          </ProfileImage>
-          <UserInfo>
-            <div style={{ display: 'flex' }}>
-              <UserName>James Cameron</UserName>
-              <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
-                <MdVerifiedUser />
-              </div>
-            </div>
+        {projectApplications?.length ? (
+          projectApplications.map(application => {
+            return (
+              <ApplicationView key={application._id}>
+                <PersonalInfo>
+                  <ProfileImage>
+                    <Image
+                      src={application?.freelancerId?.userId?.profileImage}
+                      alt={
+                        application?.freelancerId?.userId?.FirstName + application?.freelancerId?.userId?.LastName ||
+                        application._id
+                      }
+                      height="65px"
+                      width="65px"
+                    />
+                  </ProfileImage>
+                  <UserInfo>
+                    <div style={{ display: 'flex' }}>
+                      <UserName>
+                        {ConverterUtils.capitalize(
+                          `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
+                        )}
+                      </UserName>
+                      <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
+                        <MdVerifiedUser />
+                      </div>
+                    </div>
 
-            <UserCategory>Full stack web developer</UserCategory>
-            <UserCountry>United States</UserCountry>
-          </UserInfo>
-        </PersonalInfo>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            margin: '0px 20px 0px 20px'
-          }}>
-          <UserRate>
-            <Rate>$2&nbsp;</Rate>
-            <small
-              style={{
-                fontWeight: '100',
-                color: ' #000',
-                fontSize: '15px',
-                fontWeight: '500',
-                letterSpacing: '0.4px',
-                marginTop: '8px'
-              }}>
-              /&nbsp;hour
-            </small>
-          </UserRate>
-          <Likes>
-            <IconComponent name="thumbUp" width="14" height="14" viewBox="0 0 14 14" fill="#0057FF" />
+                    <UserCategory>{application?.freelancerId?.category}</UserCategory>
+                    <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                  </UserInfo>
+                </PersonalInfo>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    margin: '0px 20px 0px 20px'
+                  }}>
+                  <UserRate>
+                    <Rate>${application?.freelancerId?.rate || 0}&nbsp;</Rate>
+                    <small
+                      style={{
+                        fontWeight: '100',
+                        color: ' #000',
+                        fontSize: '15px',
+                        fontWeight: '500',
+                        letterSpacing: '0.4px',
+                        marginTop: '8px'
+                      }}>
+                      /&nbsp;hour
+                    </small>
+                  </UserRate>
+                  <Likes>
+                    <IconComponent name="thumbUp" width="14" height="14" viewBox="0 0 14 14" fill="#0057FF" />
 
-            <TotlaLikes>106</TotlaLikes>
-          </Likes>
-        </div>
-        <Skills>
-          <Badge small>React</Badge>
-          <Badge>Node</Badge>
-          <Badge>MongoDB</Badge>
-          <Badge>Express</Badge>
-          <Badge>UI/UX</Badge>
-        </Skills>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            margin: '0px 20px 0px 20px',
-            textAlign: 'justify'
-          }}>
-          <p>
-            <b>cover letter:</b>
-            <CoverLetter>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim...{' '}
-              <a
-                style={{
-                  textDecoration: 'underline',
-                  color: '#0057FF',
-                  fontFamily: 'Roboto',
-                  fontSize: '13px',
-                  fontStyle: 'normal',
-                  fontWeight: '300',
-                  lineHeight: '17.5px',
-                  letterSpacing: '0.4px'
-                }}>
-                More
-              </a>
-            </CoverLetter>
-          </p>
-        </div>
-        <ViewProfileButton onClick={redirectToProfile}>View Profile</ViewProfileButton>
+                    <TotlaLikes>{application?.freelancerId?.likeTotal || 0}</TotlaLikes>
+                  </Likes>
+                </div>
+                <Skills>
+                  {application?.freelancerId?.freelancerSkills?.length
+                    ? application?.freelancerId?.freelancerSkills.map(skill => {
+                        return <Badge key={skill._id}>{skill?.skill}</Badge>
+                      })
+                    : 'N/A'}
+                </Skills>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    margin: '0px 20px 0px 20px',
+                    textAlign: 'justify'
+                  }}>
+                  <p>
+                    <b>cover letter:</b>
+                    <CoverLetter>
+                      {ConverterUtils.truncateString(application?.coverLetter, 150)}
+                      {application?.coverLetter?.length > 150 && (
+                        <a
+                          style={{
+                            textDecoration: 'underline',
+                            color: '#0057FF',
+                            fontFamily: 'Roboto',
+                            fontSize: '13px',
+                            fontStyle: 'normal',
+                            fontWeight: '300',
+                            lineHeight: '17.5px',
+                            letterSpacing: '0.4px'
+                          }}>
+                          More
+                        </a>
+                      )}
+                    </CoverLetter>
+                  </p>
+                </div>
+                <ViewProfileButton
+                  onClick={() => {
+                    redirectToProfile(application?.freelancerId?._id)
+                  }}>
+                  View Profile
+                </ViewProfileButton>
+              </ApplicationView>
+            )
+          })
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: '200px'
+            }}>
+            <p>N/A</p>
+          </div>
+        )}
       </Container>
     </>
   )

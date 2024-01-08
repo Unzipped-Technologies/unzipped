@@ -248,16 +248,22 @@ router.post(
   }
 )
 
-router.get('/investor/:id', requireLogin, permissionCheckHelper.hasPermission('removeComment'), async (req, res) => {
-  try {
-    id = req.user.sub || req.params.id
-    const existingBusiness = await businessHelper.getAllBusinessByInvestor(id)
-    if (!existingBusiness) throw Error('business does not exist')
-    res.json(existingBusiness)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
+router.get(
+  '/investor/:id',
+  requireLogin,
+  permissionCheckHelper.hasPermission('getBusinessByInvestor'),
+  async (req, res) => {
+    try {
+      id = req.user.sub
+      const existingBusiness = await businessHelper.getAllBusinessByInvestor(id, req?.query)
+      if (!existingBusiness) throw Error('business does not exist')
+      res.json(existingBusiness)
+    } catch (e) {
+      console.log('e', e)
+      res.status(400).json({ msg: e.message })
+    }
   }
-})
+)
 
 router.get(
   '/investor/task/:businessId',

@@ -11,6 +11,7 @@ import Button from '../../../ui/Button'
 import MobileFreelancerFooter from '../../../unzipped/MobileFreelancerFooter'
 
 import { getBusinessList } from '../../../../redux/actions'
+import { ConverterUtils, ValidationUtils } from '../../../../utils'
 
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
@@ -66,6 +67,7 @@ const ProjectDate = styled.div`
   line-height: 23px; /* 176.923% */
   letter-spacing: 0.15px;
   padding-left: 18px;
+  padding-top: 10px;
 `
 
 const MobileProjectHires = ({ _id, token, cookie, data = [], getBusinessList, role, loading, access_token }) => {
@@ -120,66 +122,87 @@ const MobileProjectHires = ({ _id, token, cookie, data = [], getBusinessList, ro
   return (
     <MobileDisplayBox>
       <ProjectsList>
-        {data?.map(user => {
-          return (
-            <ProjectCard>
-              <ProjectDate>10/26/2024</ProjectDate>
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <ProjectName>{user?.name}</ProjectName>
-                <div style={{ paddingRight: '15px' }}>$ 35 / hour</div>
-              </div>
-              <UserCategory>Software Engineer</UserCategory>
-              <Absolute
-                buttonHeight="33px"
-                position="none"
-                style={{
-                  width: '90%',
-                  border: '0.25px solid #000',
-                  margin: '20px auto 20px auto',
-                  background: 'rgba(217, 217, 217, 0.28)'
-                }}>
-                <Button
-                  icon="largeExpand"
-                  popoutWidth="324px"
-                  noBorder
-                  type="lightgrey"
-                  fontSize="13px"
-                  popout={[
-                    {
-                      text: 'Revoke Access',
-                      onClick: () => router.push(`details/${user._id}`)
-                    },
-                    {
-                      text: 'View Profile',
-                      onClick: () => {}
-                    },
-                    {
-                      text: 'Assign Work',
-                      onClick: () => {}
-                    },
-                    {
-                      text: 'View Invoices',
-                      onClick: () => {}
-                    },
-                    {
-                      text: 'Assign Department',
-                      onClick: () => {}
-                    }
-                  ]}
-                  iconRight
-                  colors={{
-                    hover: 'none',
-                    background: 'none'
-                  }}
+        {data?.length ? (
+          data?.map(row => {
+            return (
+              <ProjectCard key={row._id}>
+                <ProjectDate>
+                  {(row?.createdAt && ValidationUtils.formatDate(row?.createdAt)) ||
+                    ValidationUtils.formatDate(row?.updatedAt || row?.updatedAt)}
+                </ProjectDate>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <ProjectName>
+                    {ConverterUtils.capitalize(
+                      `${row?.freelancerId?.userId.FirstName} ${row?.freelancerId?.userId.LastName}`
+                    )}
+                  </ProjectName>
+                  <div style={{ paddingRight: '15px' }}>$ {row.hourlyRate || 0} / hour</div>
+                </div>
+                <UserCategory>{row?.freelancerId?.category || 'N/A'}</UserCategory>
+                <Absolute
+                  buttonHeight="33px"
+                  position="none"
                   style={{
-                    width: '324px'
+                    width: '90%',
+                    border: '0.25px solid #000',
+                    margin: '20px auto 20px auto',
+                    background: 'rgba(217, 217, 217, 0.28)'
                   }}>
-                  Details
-                </Button>
-              </Absolute>
-            </ProjectCard>
-          )
-        })}
+                  <Button
+                    icon="largeExpand"
+                    popoutWidth="324px"
+                    noBorder
+                    type="lightgrey"
+                    fontSize="13px"
+                    popout={[
+                      {
+                        text: 'Revoke Access',
+                        onClick: () => console.log('revoke')
+                      },
+                      {
+                        text: 'View Profile',
+                        onClick: () => {
+                          router.push(`/freelancers/${row?.freelancerId?._id}`)
+                        }
+                      },
+                      {
+                        text: 'Assign Work',
+                        onClick: () => {}
+                      },
+                      {
+                        text: 'View Invoices',
+                        onClick: () => {}
+                      },
+                      {
+                        text: 'Assign Department',
+                        onClick: () => {}
+                      }
+                    ]}
+                    iconRight
+                    colors={{
+                      hover: 'none',
+                      background: 'none'
+                    }}
+                    style={{
+                      width: '324px'
+                    }}>
+                    Details
+                  </Button>
+                </Absolute>
+              </ProjectCard>
+            )
+          })
+        ) : (
+          <div
+            style={{
+              marginLeft: '50%',
+              textAlign: 'center',
+              paddingTop: '40px',
+              paddingBottom: '40px'
+            }}>
+            <p>N/A</p>
+          </div>
+        )}
       </ProjectsList>
       <MobileFreelancerFooter defaultSelected="Projects" />
     </MobileDisplayBox>

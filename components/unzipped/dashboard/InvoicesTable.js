@@ -1,48 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { useRouter } from 'next/router'
 import { updateBusiness } from '../../../redux/Business/actions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { withStyles, makeStyles } from '@material-ui/core/styles'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Paper from '@material-ui/core/Paper'
 import Button from '../../ui/Button'
 import Invoices from './mobile/Invoices'
-
-const StyledTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white
-  },
-  body: {
-    fontSize: 14,
-    margin: '0px 10px 0px 0px'
-  }
-}))(TableCell)
-
-const StyledTableRow = withStyles(theme => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover
-    }
-  }
-}))(TableRow)
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: '1150px',
-    borderRadius: '10px',
-    border: '1px solid #D9D9D9',
-    background: 'rgba(255, 255, 255, 0.36)'
-  }
-})
+import { ConverterUtils } from '../../../utils'
+import { TableHeading, TableData } from '../dashboard/style'
 
 const Desktop = styled.div`
   width: 80%;
@@ -55,18 +19,7 @@ const Desktop = styled.div`
   }
 `
 
-const Box = styled.div`
-  display: flex;
-  flex-flow: column;
-  width: 100%;
-  min-height: 100px;
-  justify-content: center;
-  align-items: center;
-`
-
 const HiringTable = ({ data, loading, user }) => {
-  const classes = useStyles()
-
   const menus = [
     {
       text: 'Approve Invoice',
@@ -89,66 +42,75 @@ const HiringTable = ({ data, loading, user }) => {
   return (
     <>
       <Desktop>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell class="muiTableHeader" align="left" style={{ padding: '0px 0px 0px 15px' }}>
-                  Name
-                </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="left">
-                  Dates
-                </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="left">
-                  Hours
-                </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="left">
-                  Status
-                </StyledTableCell>
-                <StyledTableCell class="muiTableHeader" align="left">
-                  Hire Date
-                </StyledTableCell>
-                <StyledTableCell class="muiTableHeader muiTableActionsHeading">ACTIONS</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.length === 0 && loading && (
-                <Box>
-                  <CircularProgress />
-                </Box>
-              )}
-              {data?.length === 0 && <Box>Start a project and you will see it here...</Box>}
-              {data?.length > 0 &&
-                data?.map((row, index) => (
-                  <StyledTableRow key={`${row.name}_${index}`}>
-                    <StyledTableCell align="left">{row.name}</StyledTableCell>
-                    <StyledTableCell align="left">{row.dates}</StyledTableCell>
-                    <StyledTableCell align="left">{row.hours}</StyledTableCell>
-                    <StyledTableCell align="left">{row.status}</StyledTableCell>
-                    <StyledTableCell align="left">{row.hireDate}</StyledTableCell>
-                    <StyledTableCell
-                      align="inherit"
+        <table
+          style={{
+            borderRadius: '10px',
+            border: '1px solid #D9D9D9',
+            background: 'rgba(255, 255, 255, 0.36)'
+          }}>
+          <thead>
+            <tr style={{}}>
+              <TableHeading
+                style={{
+                  color: '#000',
+                  textAlign: 'center',
+                  fontFamily: 'Roboto',
+                  fontSize: '16px',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  lineHeight: '24.5px' /* 153.125% */,
+                  letterSpacing: '0.4px',
+                  textTransform: 'uppercase'
+                }}>
+                Name
+              </TableHeading>
+              <TableHeading>Dates</TableHeading>
+              <TableHeading>Hours</TableHeading>
+              <TableHeading>Status</TableHeading>
+              <TableHeading>HIRE DATE</TableHeading>
+              <TableHeading style={{ textAlign: 'right', paddingRight: '50px' }}>ACTIONS</TableHeading>
+            </tr>
+          </thead>
+          <tbody>
+            {data?.length > 0 &&
+              data?.map(row => (
+                <tr key={row._id}>
+                  <TableData>{ConverterUtils.capitalize(`${row.firstName} ${row.lastName}`)}</TableData>
+                  <TableData>{row.dates}</TableData>
+                  <TableData>{row.hours}</TableData>
+                  <TableData>{row.status}</TableData>
+                  <TableData>{row.hireDate}</TableData>
+                  <td
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      marginRight: '10px',
+                      textTransform: 'lowercase'
+                    }}>
+                    <Button
+                      icon="largeExpand"
+                      popoutWidth="220px"
+                      noBorder
+                      noUppercase
+                      block
+                      type="lightgrey"
+                      fontSize="16px"
+                      dropDownRight="-103px"
+                      popout={menus}
                       style={{
-                        display: 'inline-block',
-                        float: 'right'
-                      }}>
-                      <Button
-                        icon="largeExpand"
-                        popoutWidth="150px"
-                        noBorder
-                        block
-                        type="lightgrey"
-                        fontSize="13px"
-                        popout={menus}
-                        iconRight>
-                        Details
-                      </Button>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                        borderRadius: '3px',
+                        border: '0.25px solid #000',
+                        background: 'rgba(217, 217, 217, 0.28)',
+                        zIndex: 'auto'
+                      }}
+                      iconRight>
+                      Details
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
       </Desktop>
       <Invoices />
     </>

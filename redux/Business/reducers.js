@@ -105,7 +105,7 @@ const Business = (state = INIT_STATE, action = {}) => {
         loading: false,
         businesses: action.payload.limitedRecords,
         selectedBusiness,
-        totalCount: action.payload.totalCount[0]?.count
+        totalCount: action.payload.totalCount
       }
     case SELECT_BUSINESS:
       return {

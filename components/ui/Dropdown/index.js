@@ -18,8 +18,10 @@ const DropdownOutline = styled.div`
   position: ${({ btnDropdown }) => (btnDropdown ? 'absolute' : 'fixed')};
   z-index: 9999;
   bottom: ${props => (props.sidebar && !props.dashboard ? '20px' : null)};
-  border: 0px solid ${props => props.theme.border};
-  border-radius: 12px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  background: #fff;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
   @media (max-width: ${props => props.theme.phoneWidth}px) {
     margin-left: ${props => (props.sidebar && !props.dashboard ? '-80px' : '0')};
   }
@@ -37,7 +39,10 @@ const DropdownList = styled.ul`
   min-width: ${({ minWidth }) => (minWidth ? minWidth : '200px')};
   width: ${({ width }) => width};
   padding: 10px 10px 5px 10px !important;
-  background: #f4f4f4;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  background: #fff;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
   font-family: arial;
   overflow: hidden;
   @media (max-width: ${props => props.theme.phoneWidth}px) {
@@ -54,7 +59,7 @@ const LinkWrapper = styled.li`
   overflow-wrap: anywhere;
   &:hover {
     color: white;
-    background: darkgrey;
+    background: transparent !important;
     text-decoration: underline;
   }
 `
@@ -63,7 +68,15 @@ const LinkContainer = styled(Link)`
   color: ${props => props.theme.primary};
   text-decoration: none;
   font-size: ${props => props.theme.fontSizeXS};
-  font-weight: bold;
+  color: #000;
+  text-align: left;
+  font-family: Roboto;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24.5px; /* 153.125% */
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
   letter-spacing: 0.031rem;
 `
 
