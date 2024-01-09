@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-
+import * as moment from 'moment'
 import { makeStyles } from '@material-ui/core/styles'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
@@ -10,7 +10,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { MdCheckCircle } from 'react-icons/md'
 import MobileInvoiceDetail from './MobileInvoiceDetail'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
-import SingleInvoiceView from './SingleInvoiceView'
+import SingleWeekInvoiceView from './SingleWeekInvoiceView'
 import ClientInvoices from './ClientInvoiceView'
 
 const MobileView = styled.div`
@@ -88,13 +88,34 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const Invoices = () => {
+const MobileInvoicesView = ({ role, invoices, selectedWeek }) => {
   const classes = useStyles()
+  const [weekInvoice, setWeekInvoice] = useState({})
+  const [weekInvoices, setWeekInvoices] = useState([])
+
+  useEffect(() => {
+    const currentWeek = JSON.parse(selectedWeek)
+    setWeekInvoice({})
+    setWeekInvoices([])
+    const newInvoices = []
+
+    for (var invoice of invoices) {
+      if (moment(invoice?.createdAt).isBetween(currentWeek.startOfWeek, currentWeek.endOfWeek, null, '[]')) {
+        if (role === 1) {
+          setWeekInvoice(invoice)
+          break
+        } else {
+          newInvoices.push(invoice)
+        }
+      }
+    }
+    setWeekInvoices(newInvoices)
+  }, [selectedWeek, invoices])
 
   return (
     <MobileView>
-      {/* <ClientInvoices /> */}
-      <SingleInvoiceView />
+      {role !== 1 && <ClientInvoices weekInvoices={weekInvoices} />}
+      {role === 1 && <SingleWeekInvoiceView weekInvoice={weekInvoice} />}
       {/* <div className={classes.root}>
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
@@ -147,4 +168,4 @@ const Invoices = () => {
     </MobileView>
   )
 }
-export default Invoices
+export default MobileInvoicesView

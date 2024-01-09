@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import * as moment from 'moment'
 import styled from 'styled-components'
-import { updateBusiness } from '../../../redux/Business/actions'
+import { getInvoices, updateInvoice } from '../../../redux/Invoices/actions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Button from '../../ui/Button'
-import Invoices from './mobile/Invoices'
-import { ConverterUtils } from '../../../utils'
+import MobileInvoicesView from './mobile/MobileInvoicesView'
+import { ConverterUtils, ValidationUtils } from '../../../utils'
 import { TableHeading, TableData } from '../dashboard/style'
 
 const Desktop = styled.div`
@@ -19,25 +21,62 @@ const Desktop = styled.div`
   }
 `
 
-const HiringTable = ({ data, loading, user }) => {
-  const menus = [
-    {
-      text: 'Approve Invoice',
-      onClick: () => {}
-    },
-    {
-      text: 'View Details',
-      onClick: () => {}
-    },
-    {
-      text: 'View Profile',
-      onClick: () => {}
-    },
-    {
-      text: 'Archive Invoice',
-      onClick: () => {}
+const InvoicesTable = ({ invoices, getInvoices, updateInvoice, role, selectedWeek }) => {
+  console.log('selectedWeekselectedWeek', selectedWeek)
+  const router = useRouter()
+  const { id } = router.query
+
+  const approveInvoice = async invoiceId => {
+    await updateInvoice(invoiceId, { isApproved: true })
+  }
+
+  const archiveapproveInvoice = async invoiceId => {
+    await updateInvoice(invoiceId, { isArchived: true })
+  }
+
+  const menus = rowData => {
+    if (role === 1) {
+      return [
+        {
+          text: 'View Details',
+          onClick: () => {
+            router.push(`/dashboard/projects/client/invoice/${rowData.businessId}`)
+          }
+        }
+      ]
+    } else {
+      return [
+        {
+          text: 'Approve Invoice',
+          onClick: () => {
+            approveInvoice(rowData._id)
+          }
+        },
+        {
+          text: 'View Details',
+          onClick: () => {
+            router.push(`/dashboard/projects/client/invoice/${rowData.businessId}`)
+          }
+        },
+        {
+          text: 'View Profile',
+          onClick: () => {
+            if (rowData?.freelancerId) router.push(`/freelancers/${rowData.freelancerId}`)
+          }
+        },
+        {
+          text: 'Archive Invoice',
+          onClick: () => {
+            archiveapproveInvoice(rowData._id)
+          }
+        }
+      ]
     }
-  ]
+  }
+
+  useEffect(() => {
+    getInvoices({ businessId: id, limit: 'all', page: 1 })
+  }, [])
 
   return (
     <>
@@ -50,36 +89,71 @@ const HiringTable = ({ data, loading, user }) => {
           }}>
           <thead>
             <tr style={{}}>
-              <TableHeading
-                style={{
-                  color: '#000',
-                  textAlign: 'center',
-                  fontFamily: 'Roboto',
-                  fontSize: '16px',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  lineHeight: '24.5px' /* 153.125% */,
-                  letterSpacing: '0.4px',
-                  textTransform: 'uppercase'
-                }}>
-                Name
-              </TableHeading>
+              {role !== 1 && (
+                <TableHeading
+                  style={{
+                    color: '#000',
+                    textAlign: 'center',
+                    fontFamily: 'Roboto',
+                    fontSize: '16px',
+                    fontStyle: 'normal',
+                    fontWeight: 500,
+                    lineHeight: '24.5px' /* 153.125% */,
+                    letterSpacing: '0.4px',
+                    textTransform: 'uppercase'
+                  }}>
+                  NAME
+                </TableHeading>
+              )}
               <TableHeading>Dates</TableHeading>
-              <TableHeading>Hours</TableHeading>
-              <TableHeading>Status</TableHeading>
+              {role === 1 && (
+                <TableHeading
+                  style={{
+                    color: '#000',
+                    textAlign: 'center',
+                    fontFamily: 'Roboto',
+                    fontSize: '16px',
+                    fontStyle: 'normal',
+                    fontWeight: 500,
+                    lineHeight: '24.5px' /* 153.125% */,
+                    letterSpacing: '0.4px',
+                    textTransform: 'uppercase'
+                  }}>
+                  PROJECT
+                </TableHeading>
+              )}
+              <TableHeading>HOURS</TableHeading>
+              <TableHeading>STATUS</TableHeading>
               <TableHeading>HIRE DATE</TableHeading>
               <TableHeading style={{ textAlign: 'right', paddingRight: '50px' }}>ACTIONS</TableHeading>
             </tr>
           </thead>
           <tbody>
-            {data?.length > 0 &&
-              data?.map(row => (
+            {invoices?.length > 0 &&
+              invoices?.map(row => (
                 <tr key={row._id}>
-                  <TableData>{ConverterUtils.capitalize(`${row.firstName} ${row.lastName}`)}</TableData>
-                  <TableData>{row.dates}</TableData>
-                  <TableData>{row.hours}</TableData>
-                  <TableData>{row.status}</TableData>
-                  <TableData>{row.hireDate}</TableData>
+                  {role !== 1 && (
+                    <TableData>
+                      {ConverterUtils.capitalize(`${row?.user?.FirstName} ${row?.user?.LastName}`) ||
+                        row?.user?.FullName}
+                    </TableData>
+                  )}
+                  <TableData>
+                    {' '}
+                    {moment(moment(row?.contract?.[0]?.createdAt).startOf('isoWeek')).format('MM-DD-YYYY')} -{' '}
+                    {moment(moment(row?.contract?.[0]?.createdAt).endOf('isoWeek')).format('MM-DD-YYYY')}
+                  </TableData>
+                  {role === 1 && (
+                    <TableData>{ConverterUtils.capitalize(`${row?.businesses?.name}`) || 'Project Name'}</TableData>
+                  )}
+                  <TableData>{row.hoursWorked}</TableData>
+                  <TableData>
+                    {row.isPaid ? 'Paid' : row.isApproved ? 'Approved' : row.isActive ? 'Active' : 'Pending'}
+                  </TableData>
+                  <TableData>
+                    {(row?.contract?.[0]?.createdAt && ValidationUtils.formatDate(row?.contract?.[0]?.createdAt)) ||
+                      ValidationUtils.formatDate(row?.contract?.[0]?.updatedAt || row?.contract?.[0]?.updatedAt)}
+                  </TableData>
                   <td
                     style={{
                       display: 'flex',
@@ -96,7 +170,7 @@ const HiringTable = ({ data, loading, user }) => {
                       type="lightgrey"
                       fontSize="16px"
                       dropDownRight="-103px"
-                      popout={menus}
+                      popout={menus(row)}
                       style={{
                         borderRadius: '3px',
                         border: '0.25px solid #000',
@@ -112,15 +186,23 @@ const HiringTable = ({ data, loading, user }) => {
           </tbody>
         </table>
       </Desktop>
-      <Invoices />
+      <MobileInvoicesView role={role} invoices={invoices} selectedWeek={selectedWeek} />
     </>
   )
 }
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
   return {
-    updateBusiness: bindActionCreators(updateBusiness, dispatch)
+    invoices: state.Invoices.invoices,
+    role: state.Auth.user.role
   }
 }
 
-export default connect(null, mapDispatchToProps)(HiringTable)
+const mapDispatchToProps = dispatch => {
+  return {
+    getInvoices: bindActionCreators(getInvoices, dispatch),
+    updateInvoice: bindActionCreators(updateInvoice, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(InvoicesTable)

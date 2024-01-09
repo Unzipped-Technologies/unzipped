@@ -179,8 +179,6 @@ const TabButton = styled.button`
 
 const TabContent = styled.div`
   display: block;
-  // flex-direction: row;
-  // flex-wrap: wrap;
   padding-bottom: 50px;
 `
 
@@ -204,7 +202,7 @@ const Select = styled.select`
 const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth)
   const [weekOptions, setWeekOptions] = useState([])
-  const [selectedWeek, setSelectedWeek] = useState(null)
+  const [selectedWeek, setSelectedWeek] = useState({})
   const [data, setData] = useState([])
   const [filteredData, setFilteredData] = useState([])
 
@@ -262,7 +260,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       options.unshift({ startOfWeek, endOfWeek })
     }
     setWeekOptions(options)
-    setSelectedWeek(0)
+    setSelectedWeek(JSON.stringify(options[0]))
   }, [])
 
   useEffect(() => {
@@ -300,9 +298,13 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
               {selectedTab === 3 && screenWidth > 680 ? 'Invoice History' : ''}
             </ProjectName>
             {(selectedTab === 3) & (screenWidth < 680) ? (
-              <Select onChange={() => {}}>
+              <Select
+                onChange={e => {
+                  setSelectedWeek(e.target.value)
+                }}
+                value={selectedWeek}>
                 {weekOptions.map((week, index) => (
-                  <option key={index} value={index}>
+                  <option key={index} value={JSON.stringify(week)} style={{ fontSize: '4px' }}>
                     Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
                   </option>
                 ))}
@@ -339,127 +341,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       <TabContent>
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
         {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
-        {selectedTab === 2 && (
-          <HiringTable
-            // data={projectDetails?.applicants || []}
-            data={[
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'jason',
-                lastName: 'maynard',
-                rate: '10',
-                points: '10',
-                department: 'Development',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Warner',
-                lastName: 'short',
-                rate: '13',
-                points: '9',
-                department: 'QA',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Wade',
-                lastName: 'smith',
-                rate: '6',
-                points: '7',
-                department: 'Marketing',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Smith',
-                lastName: 'staturt',
-                rate: '8',
-                points: '11',
-                department: 'SEO',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Jhonson',
-                lastName: 'charles',
-                rate: '3',
-                points: '9',
-                department: 'Development',
-                hireDate: '11-27-2013'
-              }
-            ]}
-          />
-        )}
-        {selectedTab === 3 && (
-          <InvoicesTable
-            data={[
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'jason',
-                lastName: 'maynard',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Submitted',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Warner',
-                lastName: 'short',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Submitted',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Wade',
-                lastName: 'smith',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Approved',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Smith',
-                lastName: 'staturt',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Archived',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'Jhonson',
-                lastName: 'charles',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Submitted',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'alex',
-                lastName: 'carey',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Approved',
-                hireDate: '11-27-2013'
-              },
-              {
-                _id: Math.random().toFixed(4) * 10000,
-                firstName: 'david',
-                lastName: 'warner',
-                dates: '12-13-2012 - 09-28-2012',
-                hours: 40,
-                status: 'Approved',
-                hireDate: '11-27-2013'
-              }
-            ]}
-          />
-        )}
+        {selectedTab === 2 && <HiringTable />}
+        {selectedTab === 3 && <InvoicesTable selectedWeek={selectedWeek} />}
       </TabContent>
       <TabContent active={selectedTab === 1}></TabContent>
     </>

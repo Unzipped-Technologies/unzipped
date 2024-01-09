@@ -11,6 +11,7 @@ import Loading from './Loading/reducers'
 import Stripe from './Stripe/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'
+import Invoices from './Invoices/reducers'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -23,7 +24,8 @@ const combinedReducer = combineReducers({
   Loading,
   Stripe,
   ProjectApplications,
-  Contracts
+  Contracts,
+  Invoices
   // OTHER REDUCERS WILL BE ADDED HERE
 })
 
@@ -58,7 +60,8 @@ const makeStore = ({ isServer }) => {
         'Loading',
         'Stripe',
         'ProjectApplications',
-        'Contracts'
+        'Contracts',
+        'Invoices'
       ],
       storage // if needed, use a safer storage
     }

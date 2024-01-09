@@ -8,7 +8,10 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { MdCheckCircle } from 'react-icons/md'
+import { updateInvoice } from '../../../../redux/actions'
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import Button from '../../../ui/Button'
 
 const InvoiceOverView = styled.div`
@@ -54,7 +57,7 @@ const TableHeading = styled.th`
 `
 
 const TableData = styled.td`
-  overflow: scroll;
+  word-break: ${({ wordBreak }) => (wordBreak ? 'break-word' : '')};
   white-space: nowrap;
   text-overflow: ellipsis;
   color: #000;
@@ -77,7 +80,7 @@ const VerticalLine = styled.div`
 `
 
 const InvoiceAmount = styled.div`
-  margin-top: 55px;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   padding-left: 10px;
@@ -186,7 +189,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const SingleInvoiceView = () => {
+const SingleWeekInvoiceView = ({ role, updateInvoice, weekInvoice }) => {
   const classes = useStyles()
 
   return (
@@ -223,29 +226,21 @@ const SingleInvoiceView = () => {
                 <TableData>Friday</TableData>
                 <TableData textAlign="center">8</TableData>
               </TableRow>
-              {/* <tr>
-                <TableData>Saturday</TableData>
-                <TableData textAlign="center">8</TableData>
-              </tr>
-              <tr>
-                <TableData>Sunday</TableData>
-                <TableData textAlign="center">8</TableData>
-              </tr> */}
             </tbody>
           </Table>
           <VerticalLine></VerticalLine>
           <InvoiceAmount>
             <Payment>
               <PaymentHeading>Hours</PaymentHeading>
-              <PaymentAmount>40 Hours</PaymentAmount>
+              <PaymentAmount>{weekInvoice?.hoursWorked || 0} Hours</PaymentAmount>
             </Payment>
             <Payment>
               <PaymentHeading>Fee</PaymentHeading>
-              <PaymentAmount>$120.00</PaymentAmount>
+              <PaymentAmount>${weekInvoice?.hoursWorked * weekInvoice?.hourlyRate * 0.05 || 0}</PaymentAmount>
             </Payment>
             <Payment>
               <PaymentHeading>Total</PaymentHeading>
-              <PaymentAmount>$2,520.00</PaymentAmount>
+              <PaymentAmount>${weekInvoice?.hoursWorked * weekInvoice?.hourlyRate || 0}</PaymentAmount>
             </Payment>
           </InvoiceAmount>
         </InvoiceTable>
@@ -312,8 +307,109 @@ const SingleInvoiceView = () => {
             </div>
           </CustomAccordionDetails>
         </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
+            <Typography className={classes.heading}>Wednesday - 8 Hours</Typography>
+          </AccordionSummary>
+          <CustomAccordionDetails>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Tasks>
+                <TaskIcon>
+                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
+                </TaskIcon>
+                <TaskName>Project I'm Hired For</TaskName>
+                <TaskHours>View Invoice</TaskHours>
+              </Tasks>
+              <Tasks>
+                <TaskIcon>
+                  <MdCheckCircle />
+                </TaskIcon>
+                <TaskName>Project I'm Hired For</TaskName>
+                <TaskHours>View Invoice</TaskHours>
+              </Tasks>
+            </div>
+          </CustomAccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
+            <Typography className={classes.heading}>Thursday - 8 Hours</Typography>
+          </AccordionSummary>
+          <CustomAccordionDetails>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Tasks>
+                <TaskIcon>
+                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
+                </TaskIcon>
+                <TaskName>Project I'm Hired For</TaskName>
+                <TaskHours>View Invoice</TaskHours>
+              </Tasks>
+              <Tasks>
+                <TaskIcon>
+                  <MdCheckCircle />
+                </TaskIcon>
+                <TaskName>Project I'm Hired For</TaskName>
+                <TaskHours>View Invoice</TaskHours>
+              </Tasks>
+            </div>
+          </CustomAccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
+            <Typography className={classes.heading}>Friday - 8 Hours</Typography>
+          </AccordionSummary>
+          <CustomAccordionDetails>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <Tasks>
+                <TaskIcon>
+                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
+                </TaskIcon>
+                <TaskName>Project I'm Hired For</TaskName>
+                <TaskHours>View Invoice</TaskHours>
+              </Tasks>
+              <Tasks>
+                <TaskIcon>
+                  <MdCheckCircle />
+                </TaskIcon>
+                <TaskName>Project I'm Hired For</TaskName>
+                <TaskHours>View Invoice</TaskHours>
+              </Tasks>
+            </div>
+          </CustomAccordionDetails>
+        </Accordion>
+        {role !== 1 && (
+          <div style={{ width: '100%', margin: '0px auto' }}>
+            <Button
+              background="#1976D2"
+              noBorder
+              margin="5px 0px 5px 0px"
+              buttonHeight="35px"
+              webKit
+              colors={{
+                background: '#1976D2',
+                text: '#FFF'
+              }}
+              onClick={async () => {
+                await updateInvoice(weekInvoice._id, { isApproved: true })
+              }}>
+              APPROVE
+            </Button>
+          </div>
+        )}
       </InvoiceOverView>
     </>
   )
 }
-export default SingleInvoiceView
+
+const mapStateToProps = state => {
+  return {
+    role: state.Auth.user.role
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updateInvoice: bindActionCreators(updateInvoice, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SingleWeekInvoiceView)

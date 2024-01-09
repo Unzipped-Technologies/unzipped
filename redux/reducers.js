@@ -9,6 +9,7 @@ import Loading from './Loading/reducers'
 import Stripe from './Stripe/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'
+import Invoices from './Invoices/reducers'
 
 const rootReducer = combineReducers({
   // counter: counterReducer
@@ -21,7 +22,8 @@ const rootReducer = combineReducers({
   Loading,
   Stripe,
   ProjectApplications,
-  Contracts
+  Contracts,
+  Invoices
 })
 
 export default rootReducer

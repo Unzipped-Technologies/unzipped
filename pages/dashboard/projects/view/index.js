@@ -176,6 +176,44 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
     setFilterOpenClose(value)
   }
 
+  const generatePopout = business => {
+    if (role !== 1) {
+      return [
+        {
+          text: 'Invoice',
+          onClick: () => router.push(`projects/client/invoice/${business._id}`)
+        },
+        {
+          text: 'View details',
+          onClick: () => router.push(`/dashboard/projects/details/${business._id}`)
+        },
+        {
+          text: 'Close project',
+          onClick: () => archivedProject(business._id)
+        },
+        {
+          text: 'Assign department',
+          onClick: () => console.log('ITEM 3')
+        }
+      ]
+    } else {
+      return [
+        {
+          text: 'Log Time',
+          onClick: () => router.push(`projects/invoice/${business._id}`)
+        },
+        {
+          text: 'View Project',
+          onClick: () => router.push(`/dashboard/projects/details/${business._id}`)
+        },
+        {
+          text: 'View Work',
+          onClick: () => console.log('ITEM 3')
+        }
+      ]
+    }
+  }
+
   return (
     <MobileDisplayBox>
       {!filterOpenClose && (
@@ -186,7 +224,7 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
           handleSearch={() => {}}
           searchButton
           margin={'0px'}
-          marginBottom={'60px'}
+          marginBottom={'78px'}
         />
       )}
       <Header>
@@ -243,26 +281,7 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
                           noBorder
                           type="lightgrey"
                           fontSize="13px"
-                          popout={[
-                            {
-                              text: 'View Details',
-                              onClick: () => router.push(`details/${business._id}`)
-                            },
-                            {
-                              text: 'Invoices',
-                              onClick: () => {
-                                router.push(`client/invoice/${business._id}`)
-                              }
-                            },
-                            {
-                              text: 'Assign Department',
-                              onClick: () => {}
-                            },
-                            {
-                              text: 'Close Project',
-                              onClick: () => {}
-                            }
-                          ]}
+                          popout={generatePopout(business)}
                           iconRight
                           colors={{
                             hover: 'none',

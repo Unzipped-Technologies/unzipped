@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-
 import { makeStyles } from '@material-ui/core/styles'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
@@ -8,8 +7,10 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { MdCheckCircle } from 'react-icons/md'
+import SingleWeekInvoiceView from './SingleWeekInvoiceView'
 
 import Button from '../../../ui/Button'
+import { ConverterUtils, ValidationUtils } from '../../../../utils'
 
 const InvoiceOverView = styled.div`
   width: 96%;
@@ -28,6 +29,7 @@ const InvoiceTable = styled.div`
   padding-top: 10px;
   display: flex;
   flex-direction: row;
+  margin-bottom: 20px;
 `
 const Table = styled.div`
   width: 50%;
@@ -67,7 +69,7 @@ const TableRow = styled.div`
 
 const TableData = styled.div`
   white-space: normal;
-  word-break: break-word; /* Allow long words to break and wrap */
+  word-break: ${({ wordBreak }) => (wordBreak ? 'break-word' : '')};
   color: #000;
   text-align: left;
   font-family: Roboto;
@@ -203,152 +205,137 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const ClientInvoices = () => {
+const ClientInvoices = ({ weekInvoices }) => {
   const classes = useStyles()
+
+  const [freelancerInvoice, setFreelancerInvoice] = useState({})
+  const [showSingleInvoice, setShowInvoice] = useState(false)
+  const [freelancerId, setFreelancerId] = useState('')
+
+  useEffect(() => {
+    setFreelancerInvoice({})
+    for (var invoice of weekInvoices) {
+      if (invoice?.freelancerId === freelancerId) {
+        setFreelancerInvoice(invoice)
+      }
+    }
+  }, [showSingleInvoice, weekInvoices])
 
   return (
     <>
-      <InvoiceOverView>
-        <InvoiceTable>
-          <Table>
-            <TableHeader style={{}}>
-              <TableHeading width="90%" textAlign="left">
-                Name
-              </TableHeading>
-              <TableHeading width="10%" textAlign="right">
-                Hours
-              </TableHeading>
-            </TableHeader>
-            <div
-              style={{
-                position: 'absolute',
-                borderBottom: '1px solid #777',
-                width: '160px'
-              }}></div>
-            <TableBody>
-              <TableRow>
-                <TableData width="96%">Jason Maynard</TableData>
-                <TableData width="4%" textAlign="right" padding="0px 0px 0px 5px">
-                  8
-                </TableData>
-              </TableRow>
-              <TableRow>
-                <TableData width="96%">Jessie Blie</TableData>
-                <TableData width="4%" textAlign="right" padding="0px 0px 0px 5px">
-                  8
-                </TableData>
-              </TableRow>
-              <TableRow>
-                <TableData width="96%">Jack Reacher</TableData>
-                <TableData width="4%" textAlign="right" padding="0px 0px 0px 5px">
-                  8
-                </TableData>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <VerticalLine></VerticalLine>
-          <InvoiceAmount>
-            <Payment>
-              <PaymentHeading>Hours</PaymentHeading>
-              <PaymentAmount>40 Hours</PaymentAmount>
-            </Payment>
-            <Payment>
-              <PaymentHeading>Fee</PaymentHeading>
-              <PaymentAmount>$120.00</PaymentAmount>
-            </Payment>
-            <Payment>
-              <PaymentHeading>Total</PaymentHeading>
-              <PaymentAmount>$2,520.00</PaymentAmount>
-            </Payment>
-          </InvoiceAmount>
-        </InvoiceTable>
-        <Accordion style={{ marginTop: '10px' }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-            <Typography className={classes.heading}>Jason Maynard - 8 hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>New Task</TaskName>
-                <TaskHours>3 Hours</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Another New Task</TaskName>
-                <TaskHours>8 Hours</TaskHours>
-              </Tasks>
-              <div style={{ width: '90%', margin: '0px auto' }}>
-                <Button
-                  background="#1976D2"
-                  noBorder
-                  margin="5px 0px 5px 0px"
-                  buttonHeight="35px"
-                  webKit
-                  colors={{
-                    background: '#1976D2',
-                    text: '#FFF'
-                  }}
-                  onClick={e => {
-                    e.stopPropagation()
-                  }}>
-                  View Invoice
-                </Button>
-              </div>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-            <Typography className={classes.heading}>Jessie Blie - 8 hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-            <Typography className={classes.heading}>Jack Reacher - 8 hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-      </InvoiceOverView>
+      {showSingleInvoice ? (
+        <SingleWeekInvoiceView weekInvoice={freelancerInvoice} />
+      ) : (
+        <InvoiceOverView>
+          <InvoiceTable>
+            <Table>
+              <TableHeader style={{}}>
+                <TableHeading width="90%" textAlign="left">
+                  Name
+                </TableHeading>
+                <TableHeading width="10%" textAlign="right">
+                  Hours
+                </TableHeading>
+              </TableHeader>
+              <div
+                style={{
+                  position: 'absolute',
+                  borderBottom: '1px solid #777',
+                  width: '160px'
+                }}></div>
+              <TableBody>
+                {weekInvoices.map(invoice => {
+                  return (
+                    <TableRow key={invoice._id}>
+                      <TableData width="90%" wordBreak>
+                        {ConverterUtils.capitalize(`${invoice?.user?.FirstName} ${invoice?.user?.LastName}`)}
+                      </TableData>
+                      <TableData width="10%" textAlign="right" padding="0px 0px 0px 5px">
+                        {invoice?.hoursWorked || 0}
+                      </TableData>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+            <VerticalLine></VerticalLine>
+            <InvoiceAmount>
+              <Payment>
+                <PaymentHeading>Hours</PaymentHeading>
+                <PaymentAmount>
+                  {weekInvoices.map(invoice => invoice.hoursWorked).reduce((acc, hours) => acc + hours, 0)} Hours
+                </PaymentAmount>
+              </Payment>
+              <Payment>
+                <PaymentHeading>Fee</PaymentHeading>
+                <PaymentAmount>
+                  $
+                  {weekInvoices
+                    .map(invoice => invoice.hoursWorked * invoice.hourlyRate * 0.05)
+                    .reduce((acc, hours) => acc + hours, 0)}
+                </PaymentAmount>
+              </Payment>
+              <Payment>
+                <PaymentHeading>Total</PaymentHeading>
+                <PaymentAmount>
+                  $
+                  {weekInvoices
+                    .map(invoice => invoice.hoursWorked * invoice.hourlyRate)
+                    .reduce((acc, hours) => acc + hours, 0)}
+                </PaymentAmount>
+              </Payment>
+            </InvoiceAmount>
+          </InvoiceTable>
+          {weekInvoices?.map(invoice => {
+            return (
+              <Accordion key={`${invoice._id}_${invoice?.user?._id}`}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                  <Typography className={classes.heading}>
+                    {ConverterUtils.capitalize(`${invoice?.user?.FirstName} ${invoice?.user?.LastName}`)} -{' '}
+                    {invoice?.hoursWorked} hours
+                  </Typography>
+                </AccordionSummary>
+                <CustomAccordionDetails>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Tasks>
+                      <TaskIcon>
+                        <MdCheckCircle />
+                      </TaskIcon>
+                      <TaskName>New Task</TaskName>
+                      <TaskHours>3 Hours</TaskHours>
+                    </Tasks>
+                    <Tasks>
+                      <TaskIcon>
+                        <MdCheckCircle />
+                      </TaskIcon>
+                      <TaskName>Another New Task</TaskName>
+                      <TaskHours>8 Hours</TaskHours>
+                    </Tasks>
+                    <div style={{ width: '90%', margin: '0px auto' }}>
+                      <Button
+                        background="#1976D2"
+                        noBorder
+                        margin="5px 0px 5px 0px"
+                        buttonHeight="35px"
+                        webKit
+                        colors={{
+                          background: '#1976D2',
+                          text: '#FFF'
+                        }}
+                        onClick={() => {
+                          setShowInvoice(true)
+                          setFreelancerId(invoice.freelancerId)
+                        }}>
+                        View Invoice
+                      </Button>
+                    </div>
+                  </div>
+                </CustomAccordionDetails>
+              </Accordion>
+            )
+          })}
+        </InvoiceOverView>
+      )}
     </>
   )
 }

@@ -25,7 +25,7 @@ const Container = styled.div`
   flex: 1;
 `
 
-const HiringTable = ({ data, getContracts, contracts, loading, user }) => {
+const HiringTable = ({ getContracts, contracts }) => {
   const router = useRouter()
   const { id } = router.query
 
