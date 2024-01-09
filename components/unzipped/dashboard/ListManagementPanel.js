@@ -181,7 +181,7 @@ const ListManagementPanel = ({
         setListIcon('');
         setIsModalOpen(false);
         setIsEditMode(false);
-        setSelectedValue("Details");
+        // setSelectedValue("Details");
     };
     const [windowSize, setWindowsize] = useState('100%');
 

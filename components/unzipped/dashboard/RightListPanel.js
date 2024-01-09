@@ -367,7 +367,7 @@ const Panel = ({
             dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
             setSelectedValue("Details")
         }
-    };
+    }
 
     useEffect(() => {
         const storyList = []
@@ -557,7 +557,6 @@ const Panel = ({
         };
     }, []);
 
-    console.log('favouritesList', favouritesList)
 
     return (
         <Container background={type === 'department' ? '#FDFDFD' : '#fff'}>

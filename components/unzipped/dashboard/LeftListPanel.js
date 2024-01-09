@@ -92,10 +92,8 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
             }
         }
     }, [userListItems])
-    // borderLeft={selectedMenuOption === index ? "#1976D2" : "transparent"}
-    // borderRadius={selectedMenuOption === index ? "0" : ""}
+
     const store = useSelector(state => state);
-    console.log('store', store)
     return (
         <Container>
             <TitleText paddingLeft clickable>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Nav from '../../components/unzipped/header';
 import Icon from '../../components/ui/Icon'
 import ListPanel from '../../components/unzipped/dashboard/ListPanel';
@@ -13,6 +13,8 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import ListManagementPanel from '../../components/unzipped/dashboard/ListManagementPanel';
 import { deleteList } from '../../redux/Lists/ListsAction'
+import DownArrow from '../../components/icons/downArrow'
+
 
 const Lists = [
     {
@@ -43,7 +45,57 @@ const SelectInputStyled = styled.select`
     height: 35px;
     font-size: 12px;
    
+`;
+
+
+const SelectionContainer = styled.div`
+    position: relative;
+    display: inline-block;
+    border: 1px solid #D9D9D9;
+    background: rgba(217, 217, 217, 0.28);
+    border-radius: 3px;
+    padding: 5px;
+    width: 100px;
+    margin-left: auto;
+`;
+
+const SelectionButton = styled.div`
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    outline: none;
+    border-radius: 3px;
+    border: 0.25px solid #D9D9D947;
+    background: #D9D9D9;
+    
+    // &::after{
+    //     content : '\2304';
+    //     display : block;
+    // }
+
+`;
+
+const DropdownContainer = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 2px;
+    
 `
+
+const DropdownItems = styled.div`
+    padding: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 24.5px;
+    text-transform: uppercase;
+    font-wight: 500;
+    margin-top: 5px;
+`;
 
 const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cookie }) => {
     const dispatch = useDispatch();
@@ -54,6 +106,7 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
     const [userLists, setUserLists] = useState(null);
     const [isLogoHidden, setIsLogoHidden] = useState(false);
     const router = useRouter();
+    const dropdownRef = useRef();
 
     // select favorites freelancer lists
     const [freelancers, setFreelancers] = useState([]);
@@ -71,6 +124,8 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [listInfo, setListInfo] = useState({ lsitId: null, listTitle: null, listIcon: null })
     const [isEditMode, setIsEditMode] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
+
 
 
     useEffect(() => {
@@ -191,10 +246,29 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
 
     const [selectedValue, setSelectedValue] = useState('')
 
-    const handleSelectChange = (event) => {
+    // const handleSelectChange = (event) => {
 
-        const value = event.target.value;
-        setSelectedValue(value);
+    //     const value = event.target.value;
+    //     setSelectedValue(value);
+    //     if (value == "CREATE" || value == "EDIT") {
+    //         setIsModalOpen(true);
+    //     }
+    //     if (value == "EDIT") {
+    //         setIsEditMode(true)
+    //     }
+    //     if (value == "DELETE") {
+    //         dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
+    //     }
+
+    // }
+
+    const toggleDropdown = (e) => {
+        setIsOpen(!isOpen)
+    };
+
+    const handleSelectChange = (event) => {
+        const value = event?.target?.value || event;
+        // setSelectedValue(value);
         if (value == "CREATE" || value == "EDIT") {
             setIsModalOpen(true);
         }
@@ -203,8 +277,8 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
         }
         if (value == "DELETE") {
             dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
+            // setSelectedValue("Details")
         }
-
     }
 
     return (
@@ -249,13 +323,46 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
 
             {isViewable && !isListViewable && (
                 <>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', borderBottom: '1px solid gray', padding: 5 }}>
+                    {/* <div style={{ display: 'flex', justifyContent: 'flex-end', borderBottom: '1px solid gray', padding: 5 }}>
                         <SelectInputStyled value={selectedValue} onChange={handleSelectChange}>
                             <option value="0">Details</option>
                             <option value="CREATE">CREATE</option>
                             <option value="EDIT">EDIT</option>
                             <option value="DELETE">DELETE</option>
                         </SelectInputStyled>
+                    </div> */}
+                    <div style={{ display: 'flex', marginLeft: 'auto', padding: 5}}>
+                        <SelectionContainer ref={dropdownRef}>
+                            <SelectionButton onClick={toggleDropdown}>
+                                <div style={{ display: 'flex' }}>
+                                    <div> Details </div>
+                                    <div style={{ marginLeft: 'auto' }}>
+                                        <DownArrow color="#444444" />
+                                    </div>
+                                </div>
+                            </SelectionButton>
+                            {isOpen && (
+                                <DropdownContainer >
+                                    <DropdownItems onClick={() => {
+                                        handleSelectChange('CREATE');
+                                        setIsOpen(false);
+                                    }
+                                    }>Create</DropdownItems>
+                                    <DropdownItems onClick={() => {
+                                        handleSelectChange('EDIT');
+                                        setIsOpen(false);
+                                    }
+                                    }>Edit</DropdownItems>
+                                    <DropdownItems onClick={() => {
+                                        handleSelectChange('DELETE');
+                                        setIsOpen(false);
+                                    }
+                                    }>
+                                        Delete
+                                    </DropdownItems>
+                                </DropdownContainer>
+                            )}
+                        </SelectionContainer>
                     </div>
                     {freelancers.map((freelancer) => (
                         <MobileFreelancerCard
