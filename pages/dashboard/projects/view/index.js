@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
-import { accountTypeEnum } from '../../../../server/enum/accountTypeEnum'
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-import { TitleText, DarkText, Absolute } from '../../../../components/unzipped/dashboard/style'
-import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
-import Nav from '../../../../components/unzipped/header'
+import styled, { css } from 'styled-components'
+
 import Button from '../../../../components/ui/Button'
+import Nav from '../../../../components/unzipped/header'
+import { getBusinessList } from '../../../../redux/actions'
+import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
+import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
 
-import { getBusinessList } from '../../../../redux/actions'
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
@@ -26,35 +26,6 @@ const Header = styled.div`
   align-items: center; /* Center vertically */
 `
 
-const Toggle = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 260px;
-  height: 34px;
-  background-color: #d8d8d8;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: 35px;
-  justify-items: center; /* Center items horizontally */
-  align-items: center;
-  margin-bottom: 20px;
-`
-
-const Left = styled.div`
-  text-align: center;
-  padding-top: 10px;
-  height: 100%;
-  width: 100%;
-  background: ${({ selected }) => (selected === accountTypeEnum.INVESTOR ? '#5E99D4' : 'transparent')};
-`
-const Right = styled.div`
-  text-align: center;
-  padding-top: 10px;
-  height: 100%;
-  width: 100%;
-  background: ${({ selected }) =>
-    selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN ? '#5E99D4' : 'transparent'};
-`
 const Projects = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -141,36 +112,21 @@ const ProjectDate = styled.div`
   padding-left: 18px;
 `
 
-const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) => {
-  const access = token?.access_token || cookie
+const AllProjects = ({ businesses = [], getBusinessList, role }) => {
   const router = useRouter()
 
-  const [selected, setSelected] = useState(null)
-
-  const [take, setTake] = useState(3)
-  const [page, setPage] = useState(1)
-  const [selectedTab, setSelectedTab] = useState(0)
   const [filter, setFilter] = useState('')
+  const [selectedTab, setSelectedTab] = useState(0)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
 
   const projectTabs = ['Open Projects', 'Invoices', 'Hires']
 
   useEffect(() => {
     getBusinessList({
-      take: take,
-      skip: (page - 1) * 25
+      take: 1000,
+      skip: 0
     })
   }, [])
-
-  const toggleRole = () => {
-    if (role === accountTypeEnum.ADMIN) {
-      if (selected === accountTypeEnum.FOUNDER) {
-        setSelected(accountTypeEnum.INVESTOR)
-      } else {
-        setSelected(accountTypeEnum.FOUNDER)
-      }
-    }
-  }
 
   const handleFilterOpenClose = value => {
     setFilterOpenClose(value)
@@ -181,7 +137,7 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
       return [
         {
           text: 'Invoice',
-          onClick: () => router.push(`projects/client/invoice/${business._id}`)
+          onClick: () => router.push(`/dashboard/projects/client/invoice/${business._id}`)
         },
         {
           text: 'View details',
@@ -227,16 +183,7 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
           marginBottom={'78px'}
         />
       )}
-      <Header>
-        {/* <Toggle>
-          <Right selected={selected} onClick={toggleRole}>
-            <DarkText small>AS CLIENT</DarkText>
-          </Right>
-          <Left selected={selected} onClick={toggleRole}>
-            <DarkText small>AS FREELANCER</DarkText>
-          </Left>
-        </Toggle> */}
-      </Header>
+      <Header></Header>
       <Projects>
         <Tabs>
           {projectTabs.map((tab, index) => {
@@ -308,12 +255,7 @@ const AllProjects = ({ _id, token, cookie, businesses = [], getBusinessList, rol
 
 const mapStateToProps = state => {
   return {
-    _id: state.Auth.user._id,
-    access_token: state.Auth.token,
-    businesses: state.Business?.businesses,
-    loading: state.Business?.loading,
-    role: state.Auth.user.role,
-    cookie: state.Auth.token
+    businesses: state.Business?.businesses
   }
 }
 

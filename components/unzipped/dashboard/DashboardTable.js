@@ -1,53 +1,15 @@
 import React from 'react'
+import Swal from 'sweetalert2'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
-import { DarkText, Absolute, WhiteCard, Underline } from './style'
-import { TableTitle } from './tableStyle'
+import { useRouter } from 'next/router'
+import { bindActionCreators } from 'redux'
+
 import Button from '../../ui/Button'
 import { ValidationUtils } from '../../../utils'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { useRouter } from 'next/router'
 import { updateBusiness } from '../../../redux/Business/actions'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Paper from '@material-ui/core/Paper'
-import { withStyles, makeStyles } from '@material-ui/core/styles'
 import { TableHeading, TableData } from './style'
-
-const StyledTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white
-  },
-  body: {
-    fontSize: 14,
-    margin: '0px 10px 0px 0px'
-  }
-}))(TableCell)
-
-const StyledTableRow = withStyles(theme => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover
-    },
-    margin: '0px 10px 0px 0px'
-  }
-}))(TableRow)
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: '1150px',
-    borderRadius: '10px',
-    border: '1px solid #D9D9D9',
-    background: 'rgba(255, 255, 255, 0.36)'
-  }
-})
 
 const Container = styled.div`
   position: relative;
@@ -59,21 +21,8 @@ const Container = styled.div`
   border-radius: 10px;
 `
 
-const Box = styled.div`
-  display: flex;
-  flex-flow: column;
-  width: 100%;
-  min-height: 100px;
-  justify-content: center;
-  align-items: center;
-`
-
-const StoryTable = styled.div``
-import Swal from 'sweetalert2'
-
-const Panel = ({ type, businesses, loading, userType, updateBusiness }) => {
+const Panel = ({ businesses, userType, updateBusiness }) => {
   const router = useRouter()
-  const classes = useStyles()
 
   const archivedProject = async projectID => {
     await Swal.fire({

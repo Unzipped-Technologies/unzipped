@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { makeStyles } from '@material-ui/core/styles'
+import { MdCheckCircle } from 'react-icons/md'
 import Accordion from '@material-ui/core/Accordion'
+import Typography from '@material-ui/core/Typography'
+import { makeStyles } from '@material-ui/core/styles'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
-import Typography from '@material-ui/core/Typography'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { MdCheckCircle } from 'react-icons/md'
-import SingleWeekInvoiceView from './SingleWeekInvoiceView'
 
 import Button from '../../../ui/Button'
-import { ConverterUtils, ValidationUtils } from '../../../../utils'
+import { ConverterUtils } from '../../../../utils'
+import SingleWeekInvoiceView from './SingleWeekInvoiceView'
 
 const InvoiceOverView = styled.div`
   width: 96%;
@@ -86,12 +86,6 @@ const TableData = styled.div`
 const VerticalLine = styled.div`
   margin-left: 35px;
   border-left: 1px solid #000; /* Adjust color and width as needed */
-`
-
-const HorizontalLine = styled.hr`
-  width: 140px;
-  margin-bottom: 5px;
-  border-left: 3px solid #777; /* Adjust color and width as needed */
 `
 
 const InvoiceAmount = styled.div`
@@ -212,11 +206,14 @@ const ClientInvoices = ({ weekInvoices }) => {
   const [showSingleInvoice, setShowInvoice] = useState(false)
   const [freelancerId, setFreelancerId] = useState('')
 
+  // Filter invoices of selected User
   useEffect(() => {
-    setFreelancerInvoice({})
-    for (var invoice of weekInvoices) {
-      if (invoice?.freelancerId === freelancerId) {
-        setFreelancerInvoice(invoice)
+    if (freelancerId) {
+      setFreelancerInvoice({})
+      for (var invoice of weekInvoices) {
+        if (invoice?.freelancerId === freelancerId) {
+          setFreelancerInvoice(invoice)
+        }
       }
     }
   }, [showSingleInvoice, weekInvoices])

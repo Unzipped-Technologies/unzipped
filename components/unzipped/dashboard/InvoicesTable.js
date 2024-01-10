@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
-import { useRouter } from 'next/router'
 import * as moment from 'moment'
-import styled from 'styled-components'
-import { getInvoices, updateInvoice } from '../../../redux/Invoices/actions'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
+import { bindActionCreators } from 'redux'
+
 import Button from '../../ui/Button'
 import MobileInvoicesView from './mobile/MobileInvoicesView'
-import { ConverterUtils, ValidationUtils } from '../../../utils'
 import { TableHeading, TableData } from '../dashboard/style'
+import { ConverterUtils, ValidationUtils } from '../../../utils'
+import { getInvoices, updateInvoice } from '../../../redux/Invoices/actions'
 
 const Desktop = styled.div`
   width: 80%;
@@ -22,7 +23,6 @@ const Desktop = styled.div`
 `
 
 const InvoicesTable = ({ invoices, getInvoices, updateInvoice, role, selectedWeek }) => {
-  console.log('selectedWeekselectedWeek', selectedWeek)
   const router = useRouter()
   const { id } = router.query
 

@@ -1,16 +1,15 @@
 import React from 'react'
 import * as moment from 'moment'
-
-import styled, { css } from 'styled-components'
-
-import Badge from '../../ui/Badge'
+import styled from 'styled-components'
 import { MdFlag } from 'react-icons/md'
 import { MdPerson } from 'react-icons/md'
 import { MdAccessTime } from 'react-icons/md'
 import { MdLocationOn } from 'react-icons/md'
-import { MdDesktopWindows } from 'react-icons/md'
 import { MdCreditCard } from 'react-icons/md'
+import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
+
+import Badge from '../../ui/Badge'
 import MobileProjectDetail from './mobile/MobileProjectDetail'
 
 const Desktop = styled.div`

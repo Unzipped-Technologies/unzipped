@@ -6,7 +6,6 @@ import React, { useState, useEffect, useMemo } from 'react'
 
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
-import { DarkText } from '../../../../components/unzipped/dashboard/style'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
 import InvoicesTable from '../../../../components/unzipped/dashboard/InvoicesTable'
@@ -83,48 +82,6 @@ const ProjectSubHeading = styled.p`
   @media (max-width: 680px) {
     display: none;
   }
-`
-const Toggle = styled.div`
-  justify-content: space-between;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 260px;
-  height: 34px;
-  background-color: #d8d8d8;
-  border-radius: 5px;
-  @media (max-width: 680px) {
-    display: none;
-  }
-`
-
-const Left = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 15px;
-  height: 34px;
-  width: 120px;
-  border-radius: 5px;
-  background: ${({ displayFormat }) => (!displayFormat ? '#5E99D4' : 'transparent')};
-`
-const Right = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 15px;
-  height: 34px;
-  width: 140px;
-  border-radius: 5px;
-  background: ${({ displayFormat }) => (displayFormat ? '#5E99D4' : 'transparent')};
-`
-
-const ProjectInfo = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction:row
-  margin-bottom: 20px;
 `
 
 const Tabs = styled.div`
@@ -203,8 +160,6 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth)
   const [weekOptions, setWeekOptions] = useState([])
   const [selectedWeek, setSelectedWeek] = useState({})
-  const [data, setData] = useState([])
-  const [filteredData, setFilteredData] = useState([])
 
   const router = useRouter()
   const { id } = router.query
@@ -213,8 +168,6 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)
-
-  const [displayFormat, setDisplayFormat] = useState(false)
 
   let projectTabs = []
 
@@ -263,27 +216,11 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
     setSelectedWeek(JSON.stringify(options[0]))
   }, [])
 
-  useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined) {
-      const filteredItems = data?.filter(item => {
-        const itemDate = new Date(item.updatedAt)
-        const startOfWeek = weekOptions[selectedWeek].startOfWeek
-        const endOfWeek = weekOptions[selectedWeek].endOfWeek
-        return itemDate >= startOfWeek && itemDate <= endOfWeek
-      })
-      setFilteredData(filteredItems)
-    }
-  }, [selectedWeek, data, weekOptions])
-
   useMemo(() => {
     if (id !== undefined) {
       getBusinessById(id)
     }
   }, [id])
-
-  const toggleDisplayFormat = () => {
-    setDisplayFormat(!displayFormat)
-  }
 
   return (
     <>
@@ -312,14 +249,6 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
             ) : (
               ''
             )}
-            {/* <Toggle>
-              <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-                <DarkText small>{selectedTab === 0 ? 'As Client' : 'As Founder'}</DarkText>
-              </Left>
-              <Right displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-                <DarkText small>{selectedTab === 0 ? 'As Freelancer' : 'As Investor'}</DarkText>
-              </Right>
-            </Toggle> */}
           </Header>
           {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
         </HeaderDetail>

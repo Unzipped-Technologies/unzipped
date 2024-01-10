@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react'
-import styled from 'styled-components'
-import Button from '../../ui/Button'
-import { useRouter } from 'next/router'
-import { getContracts } from '../../../redux/Contract/actions'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
+import { bindActionCreators } from 'redux'
+
+import Button from '../../ui/Button'
 import MobileProjectHires from './mobile/MobileProjectHires'
-import { ConverterUtils, ValidationUtils } from '../../../utils'
 import { TableHeading, TableData } from '../dashboard/style'
+import { getContracts } from '../../../redux/Contract/actions'
+import { ConverterUtils, ValidationUtils } from '../../../utils'
 
 const Desktop = styled.div`
   width: 80%;

@@ -1,16 +1,15 @@
 import React from 'react'
 import * as moment from 'moment'
-
-import styled, { css } from 'styled-components'
-
-import Badge from '../../../ui/Badge'
 import { MdFlag } from 'react-icons/md'
 import { MdPerson } from 'react-icons/md'
+import { MdCreditCard } from 'react-icons/md'
 import { MdAccessTime } from 'react-icons/md'
 import { MdLocationOn } from 'react-icons/md'
+import styled, { css } from 'styled-components'
 import { MdDesktopWindows } from 'react-icons/md'
-import { MdCreditCard } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
+
+import Badge from '../../../ui/Badge'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 
 const MobileView = styled.div`

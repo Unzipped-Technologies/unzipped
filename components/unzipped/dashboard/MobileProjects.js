@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import styled from 'styled-components'
-import IconComponent from '../../ui/icons/IconComponent'
+import React, { useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { getBusinessList } from '../../../redux/actions'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-import { accountTypeEnum } from '../../../server/enum/accountTypeEnum'
+
+import IconComponent from '../../ui/icons/IconComponent'
+import { getBusinessList } from '../../../redux/actions'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -23,25 +24,16 @@ const Heading = styled.div`
   display: flex;
   align-items: baseline;
 `
-{
-  /* <img src='/img/heart.png' />
-        <IconComponent name='eye' width="20" height="13" viewBox="0 0 20 13" fill="#8EDE64" />
-        <IconComponent name='team' width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
-        <IconComponent name='team' width="18" height="15" viewBox="0 0 18 15" fill="#000000" /> */
-}
 
-function MobileProjects({ _id, token, cookie, businesses = [], getBusinessList, role, loading, access_token }) {
-  const access = token?.access_token || cookie
-
-  const [take, setTake] = useState(3)
-  const [page, setPage] = useState(1)
+function MobileProjects({ businesses = [], getBusinessList }) {
+  const router = useRouter()
 
   const limitedProjects = useMemo(() => businesses.slice(0, 3), [businesses])
 
   useEffect(() => {
     getBusinessList({
-      take: take,
-      skip: (page - 1) * 25
+      take: 3,
+      skip: 0
     })
   }, [])
 
@@ -58,9 +50,13 @@ function MobileProjects({ _id, token, cookie, businesses = [], getBusinessList, 
         </Link>
       </div>
       {limitedProjects?.length ? (
-        limitedProjects.map((project, index) => {
+        limitedProjects.map(project => {
           return (
-            <Heading key={project._id}>
+            <Heading
+              key={project._id}
+              onClick={() => {
+                router.push(`projects/details/${project._id}`)
+              }}>
               <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#000000" />
               <P>{project?.name}</P>
             </Heading>
@@ -115,12 +111,7 @@ function MobileProjects({ _id, token, cookie, businesses = [], getBusinessList, 
 
 const mapStateToProps = state => {
   return {
-    _id: state.Auth.user._id,
-    access_token: state.Auth.token,
-    businesses: state.Business?.businesses,
-    loading: state.Business?.loading,
-    role: state.Auth.user.role,
-    cookie: state.Auth.token
+    businesses: state.Business?.businesses
   }
 }
 

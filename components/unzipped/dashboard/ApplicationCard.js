@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react'
-import styled, { css } from 'styled-components'
-import Image from '../../ui/Image'
-import Button from '../../ui/Button'
-import Badge from '../../ui/Badge'
-import { useRouter } from 'next/router'
-import { TitleText, DarkText, Absolute, DarkSpan } from './style'
-import { MdVerifiedUser } from 'react-icons/md'
-import MobileApplicationCard from './mobile/MobileApplicationsView'
-
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-import { getProjectApplications } from '../../../redux/actions'
+import { MdVerifiedUser } from 'react-icons/md'
+import styled, { css } from 'styled-components'
+
+import Image from '../../ui/Image'
+import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
+import { getProjectApplications } from '../../../redux/actions'
+import MobileApplicationCard from './mobile/MobileApplicationsView'
 
 const DesktopContainer = styled.div`
   @media (max-width: 680px) {
@@ -153,8 +151,6 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
     })
   }, [])
 
-  console.log('projectApplications', projectApplications)
-
   return (
     <>
       <DesktopContainer>
@@ -194,7 +190,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                     </div>
                   )}
 
-                  {/* <InviteButton>{user?.isInvited ? 'Invited' : 'Invite'}</InviteButton> */}
+                  <InviteButton>{user?.isInvited ? 'Invited' : 'Invite'}</InviteButton>
                 </ProfileImage>
                 <UserInfo>
                   <div style={{ display: 'flex' }}>
@@ -285,7 +281,6 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
 }
 
 const mapStateToProps = state => {
-  console.log('state', state)
   return {
     projectApplications: state.ProjectApplications.projectApplications
   }
@@ -298,4 +293,3 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApplicationCard)
-// export default ApplicationCard
