@@ -18,23 +18,26 @@ const MobileInvoicesView = ({ role, invoices, selectedWeek }) => {
   const [weekInvoices, setWeekInvoices] = useState([])
 
   // Filter selected week invoices when selected week OR invoice data changes.
-  useEffect(() => {
-    const currentWeek = JSON.parse(selectedWeek)
-    setWeekInvoice({})
-    setWeekInvoices([])
-    const newInvoices = []
 
-    for (var invoice of invoices) {
-      if (moment(invoice?.createdAt).isBetween(currentWeek.startOfWeek, currentWeek.endOfWeek, null, '[]')) {
-        if (role === 1) {
-          setWeekInvoice(invoice)
-          break
-        } else {
-          newInvoices.push(invoice)
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && selectedWeek !== '') {
+      const currentWeek = JSON.parse(selectedWeek)
+      setWeekInvoice({})
+      setWeekInvoices([])
+      const newInvoices = []
+
+      for (var invoice of invoices) {
+        if (moment(invoice?.createdAt).isBetween(currentWeek.startOfWeek, currentWeek.endOfWeek, null, '[]')) {
+          if (role === 1) {
+            setWeekInvoice(invoice)
+            break
+          } else {
+            newInvoices.push(invoice)
+          }
         }
       }
+      setWeekInvoices(newInvoices)
     }
-    setWeekInvoices(newInvoices)
   }, [selectedWeek, invoices])
 
   return (

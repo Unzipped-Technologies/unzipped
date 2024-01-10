@@ -4,12 +4,15 @@ import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import styled, { css } from 'styled-components'
 
+import { ValidationUtils } from '../../../../utils'
 import Button from '../../../../components/ui/Button'
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
 import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
+import AllProjectHires from '../../../../components/unzipped/dashboard/mobile/AllProjectHires'
+import AllProjectsInvoices from '../../../../components/unzipped/dashboard/mobile/AllProjectsInvoices'
 
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
@@ -20,12 +23,6 @@ const MobileDisplayBox = styled.div`
   }
 `
 
-const Header = styled.div`
-  display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-`
-
 const Projects = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -34,6 +31,7 @@ const Projects = styled.div`
 const Tabs = styled.div`
   width: 100%;
   display: flex;
+  justify-content: space-around;
   gap: 20px;
   border-bottom: 1px solid #bcc5d3;
   margin-bottom: 1px;
@@ -53,6 +51,10 @@ const TabButton = styled.button`
   line-height: 23px; /* 164.286% */
   letter-spacing: 0.15px;
   background: none !important;
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
   ${({ active }) =>
     active &&
     css`
@@ -71,11 +73,11 @@ const TabContent = styled.div`
 `
 
 const SearchField = styled.div`
+  height: 50px;
   width: 96%;
-  height: 45px;
-  margin: auto;
+  margin-left: 2.5%;
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 `
 
 const ProjectsList = styled.div`
@@ -119,7 +121,22 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
   const [selectedTab, setSelectedTab] = useState(0)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
 
-  const projectTabs = ['Open Projects', 'Invoices', 'Hires']
+  let projectTabs = []
+
+  switch (role) {
+    case 1:
+      projectTabs = [
+        { name: 'Projects', index: 0 },
+        { name: 'Invoices', index: 1 }
+      ]
+      break
+    default:
+      projectTabs = [
+        { name: 'Open Projects', index: 0 },
+        { name: 'Invoices', index: 1 },
+        { name: 'Hires', index: 2 }
+      ]
+  }
 
   useEffect(() => {
     getBusinessList({
@@ -136,20 +153,20 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
     if (role !== 1) {
       return [
         {
-          text: 'Invoice',
-          onClick: () => router.push(`/dashboard/projects/client/invoice/${business._id}`)
-        },
-        {
           text: 'View details',
           onClick: () => router.push(`/dashboard/projects/details/${business._id}`)
         },
         {
-          text: 'Close project',
-          onClick: () => archivedProject(business._id)
+          text: 'Invoice',
+          onClick: () => router.push(`/dashboard/projects/client/invoice/${business._id}`)
         },
         {
           text: 'Assign department',
           onClick: () => console.log('ITEM 3')
+        },
+        {
+          text: 'Close project',
+          onClick: () => archivedProject(business._id)
         }
       ]
     } else {
@@ -183,13 +200,15 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
           marginBottom={'78px'}
         />
       )}
-      <Header></Header>
       <Projects>
         <Tabs>
           {projectTabs.map((tab, index) => {
             return (
-              <TabButton onClick={() => setSelectedTab(index)} active={selectedTab === index} key={`${tab}_${index}`}>
-                {tab}
+              <TabButton
+                onClick={() => setSelectedTab(tab.index)}
+                active={selectedTab === index}
+                key={`${tab.name}_${index}`}>
+                {tab.name}
               </TabButton>
             )
           })}
@@ -210,9 +229,12 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
               <ProjectsList>
                 {businesses?.map(business => {
                   return (
-                    <ProjectCard>
+                    <ProjectCard key={business._id}>
                       <ProjectName>{business?.name}</ProjectName>
-                      <ProjectDate>10/26/2024</ProjectDate>
+                      <ProjectDate>
+                        {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
+                          ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
+                      </ProjectDate>
                       <Absolute
                         buttonHeight="33px"
                         position="none"
@@ -246,6 +268,8 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
               </ProjectsList>
             </div>
           )}
+          {selectedTab === 1 && <AllProjectsInvoices />}
+          {selectedTab === 2 && <AllProjectHires />}
         </TabContent>
       </Projects>
       <MobileFreelancerFooter defaultSelected="Projects" />
@@ -255,7 +279,8 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
 
 const mapStateToProps = state => {
   return {
-    businesses: state.Business?.businesses
+    businesses: state.Business?.businesses,
+    role: state.Auth.user.role
   }
 }
 

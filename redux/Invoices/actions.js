@@ -75,7 +75,6 @@ export const getInvoiceById = invoiceID => async (dispatch, getState) => {
 
 export const updateInvoice = (invoiceID, data) => async (dispatch, getState) => {
   dispatch(startLoading())
-  console.log('invoiceID, data', invoiceID, data)
   await axios
     .put(`/api/invoice/update/${invoiceID}`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>

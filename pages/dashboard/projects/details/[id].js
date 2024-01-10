@@ -109,6 +109,7 @@ const TabButton = styled.button`
   line-height: 23px; /* 127.778% */
   letter-spacing: 0.15px;
   background: none !important;
+
   @media (max-width: 680px) {
     display: flex;
     color: #12151b;
@@ -119,6 +120,10 @@ const TabButton = styled.button`
     line-height: 23px; /* 164.286% */
     letter-spacing: 0.15px;
     margin-right: 0px;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
   }
 
   ${({ active }) =>

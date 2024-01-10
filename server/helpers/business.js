@@ -169,6 +169,7 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
           requiredSkills: 1,
           applicants: 1,
           description: 1,
+          deadline: 1,
           profileImage: '$userProfile.profileImage',
           country: '$userProfile.AddressLineCountry',
           likes: '$userProfile.likeTotal',

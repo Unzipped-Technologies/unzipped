@@ -190,7 +190,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                     </div>
                   )}
 
-                  <InviteButton>{user?.isInvited ? 'Invited' : 'Invite'}</InviteButton>
+                  <InviteButton>Invite</InviteButton>
                 </ProfileImage>
                 <UserInfo>
                   <div style={{ display: 'flex' }}>

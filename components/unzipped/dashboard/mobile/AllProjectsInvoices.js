@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import * as moment from 'moment'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 
-import ClientInvoices from './ClientInvoiceView'
+import MobileInvoicesView from './MobileInvoicesView'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 import { getInvoices, updateInvoice } from '../../../../redux/Invoices/actions'
 
@@ -33,11 +31,7 @@ const Select = styled.select`
   margin-bottom: -10px !important;
 `
 
-const MobileInvoices = ({ invoices, getInvoices }) => {
-  const router = useRouter()
-  const { id } = router.query
-
-  const [weekInvoices, setWeekInvoices] = useState([])
+const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
   const [selectedWeek, setSelectedWeek] = useState(0)
   const [weekOptions, setWeekOptions] = useState([])
 
@@ -61,26 +55,8 @@ const MobileInvoices = ({ invoices, getInvoices }) => {
   }, [])
 
   useEffect(() => {
-    getInvoices({ businessId: id, limit: 'all', page: 1 })
+    getInvoices({ businessId: '', limit: 'all', page: 1 })
   }, [])
-
-  useEffect(() => {
-    setWeekInvoices([])
-    const newInvoices = []
-    for (var invoice of invoices) {
-      if (
-        moment(invoice?.createdAt).isBetween(
-          weekOptions[selectedWeek]?.startOfWeek,
-          weekOptions[selectedWeek]?.endOfWeek,
-          null,
-          '[]'
-        )
-      ) {
-        newInvoices.push(invoice)
-      }
-    }
-    setWeekInvoices(newInvoices)
-  }, [weekOptions, selectedWeek, invoices])
 
   return (
     <InvoiceOverView>
@@ -97,8 +73,7 @@ const MobileInvoices = ({ invoices, getInvoices }) => {
           ))}
         </Select>
       </div>
-
-      <ClientInvoices weekInvoices={weekInvoices} />
+      <MobileInvoicesView role={role} invoices={invoices} selectedWeek={JSON.stringify(weekOptions?.[selectedWeek])} />
       <MobileFreelancerFooter />
     </InvoiceOverView>
   )
@@ -106,7 +81,8 @@ const MobileInvoices = ({ invoices, getInvoices }) => {
 
 const mapStateToProps = state => {
   return {
-    invoices: state.Invoices.invoices
+    invoices: state.Invoices.invoices,
+    role: state.Auth.user.role
   }
 }
 
@@ -117,4 +93,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MobileInvoices)
+export default connect(mapStateToProps, mapDispatchToProps)(AllProjectsInvoices)
