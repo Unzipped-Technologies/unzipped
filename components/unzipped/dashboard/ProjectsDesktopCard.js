@@ -1,48 +1,43 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import {
-    TitleText,
-    DarkText,
-    Absolute,
-    DarkSpan,
-} from './style'
+import { TitleText, DarkText, Absolute, DarkSpan } from './style'
 
 const Container = styled.div`
-    display: flex;
-    flex-flow: row;
-    width: inherit;
-    padding: ${({ includeRate }) => includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px'};
-`;
+  display: flex;
+  flex-flow: row;
+  width: inherit;
+  padding: ${({ includeRate }) => (includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px')};
+`
 const Left = styled.div`
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    margin: 0px 10px;
-`;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  margin: 0px 10px;
+`
 const Right = styled.div`
-    padding: ${({ includeRate }) => includeRate ? '5px 30px' : '15px 30px'};
-    min-width: ${({ minWidth }) => minWidth ? minWidth : '850px'} ;
-`;
+  padding: ${({ includeRate }) => (includeRate ? '5px 30px' : '15px 30px')};
+  min-width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
+`
 const P = styled.p`
-    font-size: ${({ fontSize }) => fontSize ? fontSize : '16px'};
-    font-weight: ${({ fontWeight }) => fontWeight ? fontWeight : ''};
-    color: ${({ color }) => color ? color : 'black'};
-    background: ${({ background }) => background ? background : '#fff'};
-    padding: ${({ padding }) => padding ? padding : ''};
-    margin: ${({ margin }) => margin ? margin : ''};
-    text-align: ${({ align }) => align ? align : ''};
-    border-bottom: ${({ borderBottom }) => borderBottom ? borderBottom : ''};
-    right: ${({ right }) => right ? right : ''};
-    cursor: ${({ cursor }) => cursor ? cursor : ''};
-`;
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
+  color: ${({ color }) => (color ? color : 'black')};
+  background: ${({ background }) => (background ? background : '#fff')};
+  padding: ${({ padding }) => (padding ? padding : '')};
+  margin: ${({ margin }) => (margin ? margin : '')};
+  text-align: ${({ align }) => (align ? align : '')};
+  border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
+  right: ${({ right }) => (right ? right : '')};
+  cursor: ${({ cursor }) => (cursor ? cursor : '')};
+`
 const Flex = styled.div`
-    display: flex;
-    flex-flow: row;
-    justify-items: space-between;
-`;
+  display: flex;
+  flex-flow: row;
+  justify-items: space-between;
+`
 
 const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
     console.log(project)
@@ -73,4 +68,4 @@ const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
     )
 }
 
-export default ProjectDesktopCard;
+export default ProjectDesktopCard
