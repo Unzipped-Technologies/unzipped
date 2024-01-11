@@ -1,21 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react'
-import styled from 'styled-components'
-import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
-import Search from './input'
-import Button from '@material-ui/core/Button'
-import { makeStyles } from '@material-ui/core/styles'
 import Link from 'next/link'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
-import { logoutUser, resetBusinessForm } from '../../redux/actions'
+import Button from '@material-ui/core/Button'
+import { useRouter } from 'next/router'
+import { makeStyles } from '@material-ui/core/styles'
+
+import Search from './input'
 import Icon from '../ui/Icon'
-import { Absolute } from './dashboard/style'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
+import { Absolute } from './dashboard/style'
 import { Button as Buttons, SearchBar } from '../ui'
-import router, { useRouter } from 'next/router'
 import IconComponent from '../ui/icons/IconComponent'
 import BackArrow from '../../components/icons/backArrow'
+import { logoutUser, resetBusinessForm } from '../../redux/actions'
+import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
 
 const Div = styled.div`
   width: 100%;
@@ -78,7 +79,7 @@ const Item = styled.div`
   color: #333;
   margin: 0px 10px;
   @media (min-width: 680px) {
-    display: ${({isMobileOnly}) => isMobileOnly ? 'none' : 'block'}
+    display: ${({ isMobileOnly }) => (isMobileOnly ? 'none' : 'block')};
   }
 `
 
@@ -363,17 +364,16 @@ const Nav = ({
   const [menuOpen, setMenuOpen] = useState(false)
   const classes = useStyles()
   const wrapperRef = useRef(null)
-  const dropdownRef = useRef(null)
   const [highlightColor, setHighlightColor] = useState('#333333')
   const [highlightedIndex, setHighlightedIndex] = useState(false)
 
-  const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
-  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false)
+  const [isHidden, setIsHidden] = useState(false)
+  const [prevScrollPos, setPrevScrollPos] = useState(0)
 
   useEffect(() => {
-    setIsProjectMenuEnabled(router.pathname === '/projects');
-  }, [router.pathname]);
+    setIsProjectMenuEnabled(router.pathname === '/projects')
+  }, [router.pathname])
 
   const setDropdowns = item => {
     setTimeout(function () {
@@ -474,34 +474,31 @@ const Nav = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const isScrollingDown = scrollPosition > (60);
+      const scrollPosition = window.scrollY
+      const isScrollingDown = scrollPosition > 60
 
-      setIsHidden(isScrollingDown);
-    };
+      setIsHidden(isScrollingDown)
+    }
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll)
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-
-  }, [prevScrollPos, isHidden]);
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [prevScrollPos, isHidden])
 
   useEffect(() => {
     // Function to remove existing 'Log in' or 'Sign out' item
     const removeAuthItem = () => {
-      const authItemIndex = menuItems.findIndex(item => 
-        item.name === 'Log in' || item.name === 'Sign out'
-      );
+      const authItemIndex = menuItems.findIndex(item => item.name === 'Log in' || item.name === 'Sign out')
       if (authItemIndex !== -1) {
-        menuItems.splice(authItemIndex, 1);
+        menuItems.splice(authItemIndex, 1)
       }
-    };
-  
+    }
+
     // Remove the existing authentication-related menu item
-    removeAuthItem();
-  
+    removeAuthItem()
+
     // Add the appropriate item based on authentication status
     if (isAuthenticated) {
       menuItems.push({
@@ -510,17 +507,16 @@ const Nav = ({
         link: '/',
         icon: <LightIcon width={35} height={35} />,
         mobileOnly: true
-      });
+      })
     } else {
       menuItems.push({
         name: 'Log in',
         link: '/login',
         icon: <LightIcon width={35} height={35} />,
         mobileOnly: true
-      });
+      })
     }
-  }, [isAuthenticated]);
-  
+  }, [isAuthenticated])
 
   return (
     <Div marginBottom={marginBottom && marginBottom}>
@@ -634,10 +630,9 @@ const Nav = ({
         <SubMenTop
           style={{
             transition: 'transform 0.3s ease-in-out',
-            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)',
-          }}
-        >
-          {handleSearch &&
+            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)'
+          }}>
+          {handleSearch && (
             <>
               <div>
                 <h4>Browse</h4>
@@ -651,31 +646,30 @@ const Nav = ({
                 />
               </div>
             </>
-          }
-          {
-            ((isProjectMenuEnabled && token) ? (
-              <SubMenu>
-                {subMenuItems.map((item, key) => (
-                  <Link href={item.link} key={key}>
-                    <SpanWhite count={key} underline={router.pathname === item.link}>
-                      <Sub>{item.name} </Sub>
-                    </SpanWhite>
-                  </Link>
-                ))}
-              </SubMenu>
-            ) : ((isProjectMenuEnabled) ? <></> : (
-              <SubMenu>
-                {subMenuItems.map((item, key) => (
-                  <Link href={item.link} key={key}>
-                    <SpanWhite count={key} underline={router.pathname === item.link}>
-                      <Sub>{item.name} </Sub>
-                    </SpanWhite>
-                  </Link>
-                ))}
-              </SubMenu>
-            )))
-          }
-
+          )}
+          {isProjectMenuEnabled && token ? (
+            <SubMenu>
+              {subMenuItems.map((item, key) => (
+                <Link href={item.link} key={key}>
+                  <SpanWhite count={key} underline={router.pathname === item.link}>
+                    <Sub>{item.name} </Sub>
+                  </SpanWhite>
+                </Link>
+              ))}
+            </SubMenu>
+          ) : isProjectMenuEnabled ? (
+            <></>
+          ) : (
+            <SubMenu>
+              {subMenuItems.map((item, key) => (
+                <Link href={item.link} key={key}>
+                  <SpanWhite count={key} underline={router.pathname === item.link}>
+                    <Sub>{item.name} </Sub>
+                  </SpanWhite>
+                </Link>
+              ))}
+            </SubMenu>
+          )}
         </SubMenTop>
       )}
     </Div>
@@ -699,4 +693,3 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav)
-

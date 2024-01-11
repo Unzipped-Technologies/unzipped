@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
+import { bindActionCreators } from 'redux'
+
 import IconComponent from '../../ui/icons/IconComponent'
 import Icon from '../../../components/ui/Icon'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,15 +11,15 @@ import { getListEntriesById, getRecentlyViewedList, getTeamMembers } from '../..
 import { IconPickerItem } from 'react-fa-icon-picker'
 
 const P = styled.p`
-font-size: ${({ fontSize }) => fontSize ? fontSize : '16px'};
-font-weight: ${({ fontWeight }) => fontWeight ? fontWeight : ''};
-color: ${({ color }) => color ? color : 'black'};
-background: ${({ background }) => background ? background : '#fff'};
-padding: ${({ padding }) => padding ? padding : ''};
-margin: ${({ margin }) => margin ? margin : ''};
-text-align: ${({ align }) => align ? align : ''};
-border-bottom: ${({ borderBottom }) => borderBottom ? borderBottom : ''};
-right: ${({ right }) => right ? right : ''}
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
+  color: ${({ color }) => (color ? color : 'black')};
+  background: ${({ background }) => (background ? background : '#fff')};
+  padding: ${({ padding }) => (padding ? padding : '')};
+  margin: ${({ margin }) => (margin ? margin : '')};
+  text-align: ${({ align }) => (align ? align : '')};
+  border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
+  right: ${({ right }) => (right ? right : '')};
 `
 const Heading = styled.div`
 gap:20px;
@@ -126,4 +129,16 @@ function MobileProjects({
     )
 }
 
-export default MobileProjects
+const mapStateToProps = state => {
+  return {
+    businesses: state.Business?.businesses
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getBusinessList: bindActionCreators(getBusinessList, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MobileProjects)

@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
 router.use('/auth', require('./authRoutes'));
 router.use('/user', require('./userRoutes'));
@@ -21,5 +21,4 @@ router.use('/taskHours', require('./taskHoursRoutes'));
 router.use('/invoice', require('./invoiceRoutes'));
 router.use('/list-entries', require('./listEntriesRoute'));
 
-
-module.exports = router;
+module.exports = router

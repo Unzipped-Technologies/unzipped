@@ -22,4 +22,4 @@ const rootReducer = combineReducers({
     ListEntries
 });
 
-export default rootReducer;
+export default rootReducer
