@@ -94,15 +94,15 @@ const DarkText = styled.div`
   }
   @media (max-width: 750px) {
     font-size: ${({ small, fontSize }) =>
-      small
-        ? '14px'
-        : fontSize
+    small
+      ? '14px'
+      : fontSize
         ? `${fontSize.replace('px', '') * 0.75 > 16 ? fontSize.replace('px', '') * 0.75 : 16}px`
         : '16px'};
     line-height: ${({ lineHeight, fontSize }) =>
-      lineHeight
-        ? `${lineHeight.replace('px', '') * 0.75 > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px`
-        : fontSize
+    lineHeight
+      ? `${lineHeight.replace('px', '') * 0.75 > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px`
+      : fontSize
         ? `${fontSize.replace('px', '') * 0.75 > 16 ? fontSize.replace('px', '') * 0.75 : 18}px`
         : '18px'};
   }
@@ -157,17 +157,17 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-      size === 'large'
-        ? '151px'
-        : size === 'extraLarge'
+    size === 'large'
+      ? '151px'
+      : size === 'extraLarge'
         ? '370px'
         : unset
-        ? 'unset'
-        : cardHeightDesktop
-        ? '262px'
-        : height
-        ? height
-        : '63px'};
+          ? 'unset'
+          : cardHeightDesktop
+            ? '262px'
+            : height
+              ? height
+              : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: ${({ padding }) => (padding ? padding : '20px 20px')};
@@ -187,24 +187,24 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-      size === 'large'
-        ? '151px'
-        : size === 'extraLarge'
+    size === 'large'
+      ? '151px'
+      : size === 'extraLarge'
         ? '370px'
         : unset
-        ? 'unset'
-        : cardHeightDesktop
-        ? '262px'
-        : height
-        ? height
-        : '63px'};
+          ? 'unset'
+          : cardHeightDesktop
+            ? '262px'
+            : height
+              ? height
+              : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: ${({ padding }) => (padding ? padding : '20px 20px')};
     position: relative;
     box-shadow: ${({ shadow }) => (shadow ? shadow : 'none')};
     margin-bottom: ${({ noMargin, half, marginBottom }) =>
-      noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
+    noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
   }
   @media screen and (max-width: 600px) {
@@ -349,6 +349,20 @@ export const MinWidth = styled.span`
   min-width: 10%;
 `
 
+export const ScheduleInterviewContainer = styled.div`
+  width: 100%;
+  border: 1px solid #D8D8D8;
+  display: flex;
+  padding: 10px;
+`;
+
+export const ScheduleInterviewButtonContainer = styled.div`
+  width: 16%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+`;
+
 module.exports = {
   HeadingText,
   BlackCard,
@@ -369,5 +383,7 @@ module.exports = {
   Span,
   Box,
   PaddingLeft,
-  Title
+  Title,
+  ScheduleInterviewContainer,
+  ScheduleInterviewButtonContainer
 }

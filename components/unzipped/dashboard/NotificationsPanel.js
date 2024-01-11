@@ -14,7 +14,7 @@ const Notifications = styled.div`
 `
 
 const NotificationsPanel = ({ notifications, user }) => {
-  return (
+    return (
     <Container>
       <Notifications>
         {notifications.map(item => (

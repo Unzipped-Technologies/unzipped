@@ -3,6 +3,7 @@ import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
 import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
+import ScheduleInterview from './ScheduleInterview'
 
 import { useRouter } from 'next/router'
 
@@ -84,6 +85,10 @@ const Notification = ({ type, children, noButton }) => {
             </Button>
           </Absolute>
         </WhiteCard>
+      )
+    case 'meetingCalender':
+      return (
+        <ScheduleInterview />
       )
     case 'dismiss':
       return (

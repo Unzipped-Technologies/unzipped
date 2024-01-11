@@ -22,6 +22,7 @@ const notifications = [
   { type: 'plan' },
   { type: 'github' },
   { type: 'browse' },
+  { type: 'meetingCalender' },
   { type: 'dismiss', text: 'Update types of professionals you are seeking for your business' },
   {
     type: 'blue',
@@ -31,7 +32,7 @@ const notifications = [
   { type: 'faq' },
   { type: 'updateBusiness' },
   { type: 'freeTrial' },
-  { type: 'explore' }
+  { type: 'explore' },
 ]
 
 const MobileDisplayBox = styled.div`
