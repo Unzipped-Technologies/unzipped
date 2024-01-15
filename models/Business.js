@@ -3,7 +3,7 @@ const { Schema } = mongoose
 
 const businessSchema = new Schema(
   {
-    userId: String,
+    userId: { type: Schema.Types.ObjectId, ref: 'users' },
     name: String,
     projectBudgetType: {
       type: String,
@@ -50,7 +50,7 @@ const businessSchema = new Schema(
     goals: String,
     companyBackground: String,
     budget: String,
-    questionsToAsk: [String],
+    questionsToAsk: { type: [mongoose.Schema.Types.ObjectId], ref: 'questions', default: null },
     isSelected: { type: Boolean, default: false },
     paymentMethod: {
       card: String,
@@ -67,7 +67,6 @@ const businessSchema = new Schema(
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },
     isSelected: { type: Boolean, default: false },
-    user: { type: Schema.Types.ObjectId, ref: 'users' },
     tags: { type: Schema.Types.Mixed, refs: 'tags' },
     tasks: { type: Schema.Types.Mixed, ref: 'tasks' },
     audience: { type: Schema.Types.ObjectId, ref: 'businessAudiences' },

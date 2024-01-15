@@ -4,8 +4,8 @@ const { softDeletePlugin } = require('soft-delete-plugin-mongoose')
 
 const projectApplicationSchema = new Schema(
   {
+    rate: Number,
     coverLetter: String,
-    resume: { type: String, default: '' },
     deletedAt: { type: Date, default: '' },
     isDeleted: { type: Boolean, default: true },
     projectId: { type: Schema.Types.ObjectId, ref: 'businesses' },
