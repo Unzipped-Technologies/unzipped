@@ -15,7 +15,7 @@ const likeHistory = require('../../models/LikeHistory');
 const { likeEnum } = require('../enum/likeEnum');
 const FreelancerSkills = require('../../models/FreelancerSkills');
 const User = require('../../models/User');
-
+const notificationModel = require('../../models/Notifications')
 // create user
 const createUser = async (data, hash) => {
     // create User 
@@ -82,6 +82,7 @@ const createUser = async (data, hash) => {
             });
         }
     }
+    await notificationModel.create({userId:newUser._id,user:newUser._id,type:9})
     return newUser;
 }
 

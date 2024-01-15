@@ -24,7 +24,7 @@ const DropDown = styled.div`
     width: 100%; /* Adjust the width as needed */
     border: 1px solid #ccc;
 `
-function MobileProfileCardOptions({ handleProfilePage }) {
+function MobileProfileCardOptions({ sendMessage, handleProfilePage }) {
     const [openList, setOpenList] = useState(false);
     const navigate= useRouter()
     return (
@@ -36,7 +36,7 @@ function MobileProfileCardOptions({ handleProfilePage }) {
             <div className='mx-2'>
                 <P padding="25px 0 18px 0" margin="7px 0 0 0" borderBottom="3px solid #EFF1F4" fontWeight="600" onClick={()=>{navigate.push('/hire')}} >Make An Offer</P>
                 <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" >Schedule an Interview</P>
-                <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" >Send A Message</P>
+                {sendMessage ? <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" >Send A Message</P> : <></>}
                 <div onClick={() => setOpenList(!openList)} className='d-flex justify-content-between' style={{ padding: "12px 0 18px 0", borderBottom: "3px solid #EFF1F4" }}>
                     <P fontWeight="600" margin="0"  >Add User To A List</P>
                     <span style={{ position: "absolute", right: "23px" }} ><IconComponent name='downArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span>

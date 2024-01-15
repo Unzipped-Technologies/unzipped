@@ -6,7 +6,8 @@ import Freelancers from './Freelancers/reducers';
 import Messages from './Messages/reducers';
 import FreelancerSkills from './FreelancerSkills/reducers';
 import Loading from './Loading/reducers';
-import Stripe from './Stripe/reducers'
+import Stripe from './Stripe/reducers';
+import Meetings from './Meeting/reducers';
 
 const rootReducer = combineReducers({
     // counter: counterReducer
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
     Messages,
     FreelancerSkills,
     Loading,
-    Stripe
+    Stripe,
+    Meetings
 });
 
 export default rootReducer;

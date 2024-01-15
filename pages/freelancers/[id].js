@@ -49,7 +49,7 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
                 <ProjectsCard user={selectedFreelancer} />
             </Container>
             <MobileContainer>
-                {interViewView ? <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} /> : <MobileProfileCardOptions handleProfilePage={handleValueFromChild} />}
+                {interViewView ? <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} /> : <MobileProfileCardOptions sendMessage={true} handleProfilePage={handleValueFromChild} />}
             </MobileContainer>
         </>
     )
