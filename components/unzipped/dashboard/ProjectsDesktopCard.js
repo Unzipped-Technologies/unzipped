@@ -45,7 +45,7 @@ const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
         <Container includeRate={includeRate}>
             <Left>
                 <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
-                <Button margin="20px 0px" type={!project.applicants.includes(id) ? "default" : "grey"} noBorder>Applied</Button>
+                {/* <Button margin="20px 0px" type={!project.applicants.includes(id) ? "default" : "grey"} noBorder>Applied</Button> */}
             </Left>
             <Right minWidth={width} includeRate={includeRate}>
                 <TitleText half color="#0057FF" >{project?.name}</TitleText>
