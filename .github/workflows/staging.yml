@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Development Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # - name: Use Node.js 14.10.0
       #   uses: actions/setup-node@v1
       #   with:
