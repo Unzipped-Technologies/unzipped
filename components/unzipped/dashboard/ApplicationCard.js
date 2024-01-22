@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components'
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
-import { getProjectApplications } from '../../../redux/actions'
+import { getProjectApplications } from '../../../redux/ProjectApplications/actions'
 import MobileApplicationCard from './mobile/MobileApplicationsView'
 
 const DesktopContainer = styled.div`
