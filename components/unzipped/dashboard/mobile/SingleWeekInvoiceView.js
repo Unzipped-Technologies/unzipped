@@ -8,7 +8,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { MdCheckCircle } from 'react-icons/md'
-import { updateInvoice } from '../../../../redux/actions'
+import { updateInvoice } from '../../../../redux/Invoices/actions'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'

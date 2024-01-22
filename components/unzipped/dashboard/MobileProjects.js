@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-
+import { connect } from 'react-redux'
 import IconComponent from '../../ui/icons/IconComponent'
 import Icon from '../../../components/ui/Icon'
 import { useDispatch, useSelector } from 'react-redux'
 import MobileFreelancerCard from './MobileFreelancerCard'
 import { getListEntriesById, getRecentlyViewedList, getTeamMembers } from '../../../redux/ListEntries/action'
+import {getBusinessList} from '../../../redux/Business/actions'
 import { IconPickerItem } from 'react-fa-icon-picker'
 
 const P = styled.p`
