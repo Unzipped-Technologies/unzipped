@@ -1,4 +1,4 @@
-const ProjectApplications = require('../../models/ProjectApplications')
+const ProjectApplications = require('../models/ProjectApplications')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const business = require('./business')
 const questions = require('./questions')

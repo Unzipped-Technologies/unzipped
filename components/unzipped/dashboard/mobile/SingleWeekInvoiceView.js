@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Accordion from '@material-ui/core/Accordion'
@@ -8,7 +9,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { MdCheckCircle } from 'react-icons/md'
-import { updateInvoice } from '../../../../redux/actions'
+import { updateInvoice, getInvoices } from '../../../../redux/actions'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -20,6 +21,7 @@ const InvoiceOverView = styled.div`
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 4px;
+  padding-bottom: 60px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
   flex-direction: row;
   justify-content: space-around;
@@ -189,8 +191,101 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const SingleWeekInvoiceView = ({ role, updateInvoice, weekInvoice }) => {
+const SingleWeekInvoiceView = ({
+  role,
+  updateInvoice,
+  getInvoices,
+  invoices,
+  freelancerId,
+  weekOptions,
+  selectedWeek
+}) => {
   const classes = useStyles()
+  const router = useRouter()
+  const { id } = router.query
+
+  const [filteredData, setFilteredData] = useState([])
+  const [sortedData, setSortedData] = useState({})
+  const [subTotal, setSubTotal] = useState(0)
+  const [fee, setFee] = useState(0)
+  const [totalAmount, setAmount] = useState(0)
+  const [totalHours, setTotalHours] = useState(0)
+  const [take, setTake] = useState(25)
+
+  useEffect(async () => {
+    await getInvoices({
+      businessId: id,
+      freelancerId: freelancerId,
+      limit: take,
+      page: 1
+    })
+  }, [])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && invoices?.length) {
+      const filteredItems = invoices.filter(item => {
+        if (freelancerId) {
+          if (freelancerId === item.freelancerId) {
+            const itemDate = new Date(item.updatedAt)
+            const startOfWeek = weekOptions[selectedWeek].startOfWeek
+            const endOfWeek = weekOptions[selectedWeek].endOfWeek
+            return itemDate >= startOfWeek && itemDate <= endOfWeek
+          }
+        } else {
+          const itemDate = new Date(item.updatedAt)
+          const startOfWeek = weekOptions[selectedWeek].startOfWeek
+          const endOfWeek = weekOptions[selectedWeek].endOfWeek
+          return itemDate >= startOfWeek && itemDate <= endOfWeek
+        }
+      })
+      setFilteredData(filteredItems)
+    } else {
+      setFilteredData([])
+    }
+  }, [selectedWeek, invoices, weekOptions, freelancerId])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null && invoices?.length) {
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
+      filteredData.forEach(item => {
+        item.task.forEach(taskObj => {
+          taskObj.taskHours.forEach(taskHour => {
+            const itemDate = new Date(taskHour.createdAt)
+            const dayOfWeek = daysOfWeek[itemDate.getDay()]
+            organizedItems[dayOfWeek].push(taskHour)
+          })
+        })
+      })
+      setSortedData(organizedItems)
+    } else {
+      setSortedData({})
+    }
+  }, [selectedWeek, filteredData])
+
+  useEffect(() => {
+    let subTotal = 0
+    let fee = 0
+    let totalAmount = 0
+    if (filteredData?.length) {
+      for (var invoice of filteredData) {
+        if (invoice?.freelancerId === freelancerId) {
+          setTotalHours(invoice.hoursWorked)
+          subTotal = invoice?.contract?.hourlyRate * invoice.hoursWorked
+        }
+      }
+    } else {
+      setSubTotal(0)
+      setFee(0)
+      setAmount(0)
+      setTotalHours(0)
+    }
+    fee = subTotal * 0.05
+    totalAmount = subTotal - fee
+    setSubTotal(subTotal)
+    setFee(fee)
+    setAmount(totalAmount)
+  }, [filteredData])
 
   return (
     <>
@@ -204,178 +299,86 @@ const SingleWeekInvoiceView = ({ role, updateInvoice, weekInvoice }) => {
               </tr>
             </thead>
             <tbody>
-              <TableRow>
-                <TableData>Monday</TableData>
-                <TableData textAlign="center" width="2px">
-                  8
-                </TableData>
-              </TableRow>
-              <TableRow>
-                <TableData>Tuesday</TableData>
-                <TableData textAlign="center">8</TableData>
-              </TableRow>
-              <TableRow>
-                <TableData>Wednesday</TableData>
-                <TableData textAlign="center">8</TableData>
-              </TableRow>
-              <TableRow>
-                <TableData>Thursday</TableData>
-                <TableData textAlign="center">8</TableData>
-              </TableRow>
-              <TableRow>
-                <TableData>Friday</TableData>
-                <TableData textAlign="center">8</TableData>
-              </TableRow>
+              {sortedData &&
+                Object?.keys(sortedData)?.map((day, index) => {
+                  return (
+                    <TableRow key={`${day}_${index}`}>
+                      <TableData>{day}</TableData>
+                      <TableData textAlign="center" width="2px">
+                        {sortedData[day]?.reduce((accumulator, currentValue) => {
+                          return accumulator + currentValue.hours
+                        }, 0)}
+                      </TableData>
+                    </TableRow>
+                  )
+                })}
             </tbody>
           </Table>
           <VerticalLine></VerticalLine>
           <InvoiceAmount>
             <Payment>
               <PaymentHeading>Hours</PaymentHeading>
-              <PaymentAmount>{weekInvoice?.hoursWorked || 0} Hours</PaymentAmount>
+              <PaymentAmount>{totalHours || 0} Hours</PaymentAmount>
             </Payment>
             <Payment>
               <PaymentHeading>Fee</PaymentHeading>
-              <PaymentAmount>${weekInvoice?.hoursWorked * weekInvoice?.hourlyRate * 0.05 || 0}</PaymentAmount>
+              <PaymentAmount>${fee || 0}</PaymentAmount>
             </Payment>
             <Payment>
               <PaymentHeading>Total</PaymentHeading>
-              <PaymentAmount>${weekInvoice?.hoursWorked * weekInvoice?.hourlyRate || 0}</PaymentAmount>
+              <PaymentAmount>${totalAmount || 0}</PaymentAmount>
             </Payment>
           </InvoiceAmount>
         </InvoiceTable>
-        <Accordion style={{ marginTop: '10px' }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-            <Typography className={classes.heading}>Monday - 8 Hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>New Task</TaskName>
-                <TaskHours>3 Hours</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Another New Task</TaskName>
-                <TaskHours>8 Hours</TaskHours>
-              </Tasks>
-              <div style={{ width: '90%', margin: '0px auto' }}>
-                <Button
-                  background="#1976D2"
-                  noBorder
-                  margin="5px 0px 5px 0px"
-                  buttonHeight="35px"
-                  webKit
-                  colors={{
-                    background: '#1976D2',
-                    text: '#FFF'
-                  }}
-                  onClick={e => {
-                    e.stopPropagation()
-                  }}>
-                  Add Task
-                </Button>
-              </div>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-            <Typography className={classes.heading}>Tuesday - 8 Hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-            <Typography className={classes.heading}>Wednesday - 8 Hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-            <Typography className={classes.heading}>Thursday - 8 Hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-            <Typography className={classes.heading}>Friday - 8 Hours</Typography>
-          </AccordionSummary>
-          <CustomAccordionDetails>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle style={{ color: '#D8D8D8' }} />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-              <Tasks>
-                <TaskIcon>
-                  <MdCheckCircle />
-                </TaskIcon>
-                <TaskName>Project I'm Hired For</TaskName>
-                <TaskHours>View Invoice</TaskHours>
-              </Tasks>
-            </div>
-          </CustomAccordionDetails>
-        </Accordion>
+        {sortedData &&
+          Object?.keys(sortedData)?.map((day, index) => {
+            return (
+              <Accordion style={{ marginTop: '0px' }} key={`${day}`}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                  <Typography className={classes.heading}>
+                    {day} -{' '}
+                    {sortedData[day]?.reduce((accumulator, currentValue) => {
+                      return accumulator + currentValue.hours
+                    }, 0)}{' '}
+                    Hours
+                  </Typography>
+                </AccordionSummary>
+                <CustomAccordionDetails>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {sortedData[day]?.map(task => {
+                      return (
+                        <Tasks key={`${task._id}`}>
+                          <TaskIcon color={task.task?.status === 'done' ? '#5dc26a' : '#D8D8D8'}>
+                            <MdCheckCircle />
+                          </TaskIcon>
+                          <TaskName>{task?.task?.taskName}</TaskName>
+                          <TaskHours>{task?.hours || 0} Hours</TaskHours>
+                        </Tasks>
+                      )
+                    })}
+
+                    <div style={{ width: '90%', margin: '0px auto' }}>
+                      <Button
+                        background="#1976D2"
+                        noBorder
+                        margin="5px 0px 5px 0px"
+                        buttonHeight="35px"
+                        webKit
+                        colors={{
+                          background: '#1976D2',
+                          text: '#FFF'
+                        }}
+                        onClick={e => {
+                          e.stopPropagation()
+                        }}>
+                        Add Task
+                      </Button>
+                    </div>
+                  </div>
+                </CustomAccordionDetails>
+              </Accordion>
+            )
+          })}
         {role !== 1 && (
           <div style={{ width: '100%', margin: '0px auto' }}>
             <Button
@@ -389,7 +392,7 @@ const SingleWeekInvoiceView = ({ role, updateInvoice, weekInvoice }) => {
                 text: '#FFF'
               }}
               onClick={async () => {
-                await updateInvoice(weekInvoice._id, { isApproved: true })
+                await updateInvoice(weekInvoice._id, { status: 'approved' })
               }}>
               APPROVE
             </Button>
@@ -402,13 +405,15 @@ const SingleWeekInvoiceView = ({ role, updateInvoice, weekInvoice }) => {
 
 const mapStateToProps = state => {
   return {
+    invoices: state.Invoices.invoices,
     role: state.Auth.user.role
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateInvoice: bindActionCreators(updateInvoice, dispatch)
+    updateInvoice: bindActionCreators(updateInvoice, dispatch),
+    getInvoices: bindActionCreators(getInvoices, dispatch)
   }
 }
 

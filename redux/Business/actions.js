@@ -325,40 +325,20 @@ export const getBusinessList = data => async (dispatch, getState) => {
     access_token: getState()?.Auth.token
   }
   dispatch(startLoading())
-  if (getState()?.Auth.user.role == 1) {
-    await axios
-      .get(`/api/business/investor/${getState()?.Auth.user._id}`, {
-        data,
-        headers
+  await axios
+    .post(`/api/business/list`, data, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: GET_BUSINESSES,
+        payload: res.data
       })
-      .then(res =>
-        dispatch({
-          type: GET_BUSINESSES,
-          payload: res.data
-        })
-      )
-      .catch(err => {
-        dispatch({
-          type: DEPARTMENT_ERROR,
-          payload: err.response
-        })
+    )
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
       })
-  } else {
-    await axios
-      .post(`/api/business/user/list`, data, tokenConfig(getState()?.Auth.token))
-      .then(res => {
-        dispatch({
-          type: GET_BUSINESSES,
-          payload: res.data
-        })
-      })
-      .catch(err => {
-        dispatch({
-          type: DEPARTMENT_ERROR,
-          payload: err.response
-        })
-      })
-  }
+    })
   dispatch(stopLoading())
 }
 

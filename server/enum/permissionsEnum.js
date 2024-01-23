@@ -45,7 +45,7 @@ const userPermissions = Object.freeze({
   UpdateTag: 'updateTag',
   GetTagById: 'getTagById',
   DeleteTag: 'deleteTag',
-  ListTag: 'listTags',
+  ListTags: 'listTags',
   addComment: 'addComment',
   removeComment: 'removeComment',
   // tasks

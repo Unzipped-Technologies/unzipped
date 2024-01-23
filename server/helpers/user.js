@@ -1,20 +1,20 @@
 const mongoose = require('mongoose')
-const user = require('../../models/User')
-const taxDataTables = require('../../models/TaxDataTable')
-const thirdPartyApplications = require('../../models/ThirdPartyApplications')
-const freelancerSkills = require('../../models/FreelancerSkills')
-const list = require('../../models/List')
-const freelancer = require('../../models/Freelancer')
-const notifications = require('../../models/Notifications')
-const emailList = require('../../models/EmailList')
+const user = require('../models/User')
+const taxDataTables = require('../models/TaxDataTable')
+const thirdPartyApplications = require('../models/ThirdPartyApplications')
+const freelancerSkills = require('../models/FreelancerSkills')
+const list = require('../models/List')
+const freelancer = require('../models/Freelancer')
+const notifications = require('../models/Notifications')
+const emailList = require('../models/EmailList')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
-const likeHistory = require('../../models/LikeHistory')
+const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../../models/FreelancerSkills')
-const User = require('../../models/User')
+const FreelancerSkills = require('../models/FreelancerSkills')
+const User = require('../models/User')
 
 // create user
 const createUser = async (data, hash) => {
@@ -140,150 +140,6 @@ const listUsers = async ({ filter, take, skip }) => {
   }
 }
 
-const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, skill }) => {
-  try {
-    const regexQuery = new RegExp(filter, 'i')
-    const existingIndexes = await freelancer.collection.getIndexes()
-    const existingFreelancerSkillsIndexes = await FreelancerSkills.collection.getIndexes()
-    const existingUserIndexes = await User.collection.getIndexes()
-    const indexExists = existingIndexes && 'user_1_rate_1' in existingIndexes
-    const indexExistsFreelancerSkillsIndexes =
-      existingFreelancerSkillsIndexes && 'skill_1' in existingFreelancerSkillsIndexes
-    const indexExistsUserIndexes = existingUserIndexes && 'FullName_1' in existingUserIndexes
-    if (!indexExists) {
-      await freelancer.createIndex({ user: 1, rate: 1 })
-    }
-    if (!indexExistsFreelancerSkillsIndexes) {
-      await FreelancerSkills.createIndex({ skill: 1 })
-    }
-    if (!indexExistsUserIndexes) {
-      await User.createIndex({ FullName: 1 })
-      await User.createIndex({ freelancerSkills: 1 })
-    }
-
-    const aggregationPipeline = [
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$user' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
-              }
-            },
-            {
-              $project: {
-                AddressLineCountry: 1,
-                freelancerSkills: 1,
-                FirstName: 1,
-                LastName: 1,
-                profileImage: 1,
-                FullName: 1
-              }
-            }
-          ],
-          as: 'user'
-        }
-      },
-      {
-        $unwind: '$user'
-      },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$user.freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ['$_id', '$$freelancerSkills']
-                }
-              }
-            },
-            {
-              $project: {
-                skill: 1
-              }
-            }
-          ],
-          as: 'user.freelancerSkills'
-        }
-      },
-      {
-        $match: {
-          $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
-          ...(skill?.length > 0
-            ? {
-                'user.freelancerSkills.skill': {
-                  $in: skill
-                }
-              }
-            : {}),
-          ...(minRate && {
-            rate: { $gte: +minRate }
-          }),
-          ...(maxRate && {
-            rate: { $lte: +maxRate }
-          })
-        }
-      },
-      ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
-        ? [
-            {
-              $sort: {
-                rate: sort === 'lowest hourly rate' ? 1 : -1
-              }
-            }
-          ]
-        : []),
-      {
-        $facet: {
-          limitedRecords: [
-            {
-              $skip: +skip
-            },
-            {
-              $limit: +take
-            }
-          ],
-          totalCount: [
-            {
-              $count: 'count'
-            }
-          ]
-        }
-      }
-    ]
-
-    const list = await freelancer.aggregate(aggregationPipeline).exec()
-    return list[0]
-  } catch (e) {
-    throw Error(`Could not find user, error: ${e}`)
-  }
-}
-
-const getFreelancerById = async id => {
-  try {
-    return await freelancer
-      .findById(id)
-      .populate([
-        {
-          path: 'userId',
-          model: 'users'
-        },
-        {
-          path: 'freelancerSkills',
-          model: 'freelancerskills',
-          select: 'yearsExperience skill isActive'
-        }
-      ])
-      .exec()
-  } catch (e) {
-    throw Error(`Could not find user, error: ${e}`)
-  }
-}
-
 // delete users
 const deleteUser = async id => {
   // set inactive, dont actually delete
@@ -301,27 +157,6 @@ const createFreelanceAccount = async data => {
     ...data,
     user: await user.findById(data.userId)
   })
-}
-
-// add skills to freelancer
-
-const addSkillsToFreelancer = async (data, freelancerId) => {
-  try {
-    const updateFreelancer = await freelancer.findById(freelancerId)
-    const ids = []
-    for (const item of data.skills) {
-      item['user'] = freelancerId
-      const id = await freelancerSkills.create({
-        ...item
-      })
-      ids.push(id.id)
-    }
-    updateFreelancer.freelancerSkills = [...updateFreelancer.freelancerSkills, ...ids]
-    updateFreelancer.save()
-    return updateFreelancer
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
 }
 // add list to freelancer
 
@@ -469,10 +304,7 @@ module.exports = {
   listUsers,
   deleteUser,
   createFreelanceAccount,
-  addSkillsToFreelancer,
   updateUserByid,
-  listFreelancers,
-  getFreelancerById,
   addListsToFreelancer,
   setUpNotificationsForUser,
   updateTaxDataByid,
