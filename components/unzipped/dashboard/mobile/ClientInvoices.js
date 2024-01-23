@@ -7,10 +7,15 @@ import { makeStyles } from '@material-ui/core/styles'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
+import { useRouter } from 'next/router'
 
 import Button from '../../../ui/Button'
 import { ConverterUtils } from '../../../../utils'
 import SingleWeekInvoiceView from './SingleWeekInvoiceView'
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { getInvoices, getBusinessById } from '../../../../redux/actions'
 
 const InvoiceOverView = styled.div`
   width: 96%;
@@ -20,6 +25,7 @@ const InvoiceOverView = styled.div`
   background-color: #f7f7f7;
   margin-top: 10px;
   border-radius: 4px;
+  padding-bottom: 60px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
   flex-direction: row;
 `
@@ -174,12 +180,12 @@ const TaskHours = styled.div`
 const CustomAccordionDetails = styled(AccordionDetails)`
   /* Add your custom styles here */
   display: block !important;
-  padding: 0px !important;
+  // padding: 0px !important;
 `
 
 const TaskIcon = styled.div`
   margin-left: 10px;
-  color: #5dc26a;
+  color: ${({ color }) => (color ? color : '#5dc26a')};
   font-size: 13px;
 `
 
@@ -199,29 +205,93 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const ClientInvoices = ({ weekInvoices }) => {
+const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices, role }) => {
   const classes = useStyles()
-
-  const [freelancerInvoice, setFreelancerInvoice] = useState({})
+  const router = useRouter()
+  const { id, freelancer } = router.query
+  const [filteredData, setFilteredData] = useState([])
+  const [sortedData, setSortedData] = useState({})
   const [showSingleInvoice, setShowInvoice] = useState(false)
   const [freelancerId, setFreelancerId] = useState('')
+  const [take, setTake] = useState(25)
 
-  // Filter invoices of selected User
+  const [subTotal, setSubTotal] = useState(0)
+  const [fee, setFee] = useState(0)
+  const [totalAmount, setAmount] = useState(0)
+
   useEffect(() => {
-    if (freelancerId) {
-      setFreelancerInvoice({})
-      for (var invoice of weekInvoices) {
-        if (invoice?.freelancerId === freelancerId) {
-          setFreelancerInvoice(invoice)
-        }
-      }
+    getInvoices({
+      businessId: id,
+      freelancerId: freelancer,
+      limit: take,
+      page: 1
+    })
+    if (id !== undefined) {
+      getBusinessById(id)
     }
-  }, [showSingleInvoice, weekInvoices])
+  }, [])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined) {
+      const filteredItems = invoices.filter(item => {
+        if (freelancerId) {
+          if (freelancerId === item.freelancerId) {
+            const itemDate = new Date(item.updatedAt)
+            const startOfWeek = weekOptions[selectedWeek].startOfWeek
+            const endOfWeek = weekOptions[selectedWeek].endOfWeek
+            return itemDate >= startOfWeek && itemDate <= endOfWeek
+          }
+        } else {
+          const itemDate = new Date(item.updatedAt)
+          const startOfWeek = weekOptions[selectedWeek].startOfWeek
+          const endOfWeek = weekOptions[selectedWeek].endOfWeek
+          return itemDate >= startOfWeek && itemDate <= endOfWeek
+        }
+      })
+      setFilteredData(filteredItems)
+    }
+  }, [selectedWeek, invoices, weekOptions, freelancerId])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null && invoices?.length) {
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
+      filteredData.forEach(item => {
+        item.task.forEach(taskObj => {
+          taskObj.taskHours.forEach(taskHour => {
+            const itemDate = new Date(taskHour.createdAt)
+            const dayOfWeek = daysOfWeek[itemDate.getDay()]
+            organizedItems[dayOfWeek].push(taskHour)
+          })
+        })
+      })
+      setSortedData(organizedItems)
+    }
+  }, [selectedWeek, filteredData])
+
+  useEffect(() => {
+    let subTotal = 0
+    let fee = 0
+    let totalAmount = 0
+    if (role === 0) {
+      for (var invoice of filteredData) {
+        subTotal += invoice?.contract.hourlyRate * invoice.hoursWorked
+      }
+      fee = subTotal * 0.05
+    } else {
+      subTotal = filteredData?.length && filteredData[0]?.contract?.hourlyRate * filteredData[0]?.hoursWorked
+      fee = subTotal * 0.05
+    }
+    totalAmount = subTotal - fee
+    setSubTotal(subTotal)
+    setFee(fee)
+    setAmount(totalAmount)
+  }, [filteredData])
 
   return (
     <>
       {showSingleInvoice ? (
-        <SingleWeekInvoiceView weekInvoice={freelancerInvoice} />
+        <SingleWeekInvoiceView weekOptions={weekOptions} selectedWeek={selectedWeek} freelancerId={freelancerId} />
       ) : (
         <InvoiceOverView>
           <InvoiceTable>
@@ -241,18 +311,21 @@ const ClientInvoices = ({ weekInvoices }) => {
                   width: '160px'
                 }}></div>
               <TableBody>
-                {weekInvoices.map(invoice => {
-                  return (
-                    <TableRow key={invoice._id}>
-                      <TableData width="90%" wordBreak>
-                        {ConverterUtils.capitalize(`${invoice?.user?.FirstName} ${invoice?.user?.LastName}`)}
-                      </TableData>
-                      <TableData width="10%" textAlign="right" padding="0px 0px 0px 5px">
-                        {invoice?.hoursWorked || 0}
-                      </TableData>
-                    </TableRow>
-                  )
-                })}
+                {filteredData?.length &&
+                  filteredData.map(invoice => {
+                    return (
+                      <TableRow key={invoice._id}>
+                        <TableData width="90%" wordBreak>
+                          {ConverterUtils.capitalize(
+                            `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
+                          )}
+                        </TableData>
+                        <TableData width="10%" textAlign="right" padding="0px 0px 0px 5px">
+                          {invoice?.hoursWorked || 0}
+                        </TableData>
+                      </TableRow>
+                    )
+                  })}
               </TableBody>
             </Table>
             <VerticalLine></VerticalLine>
@@ -260,55 +333,52 @@ const ClientInvoices = ({ weekInvoices }) => {
               <Payment>
                 <PaymentHeading>Hours</PaymentHeading>
                 <PaymentAmount>
-                  {weekInvoices.map(invoice => invoice.hoursWorked).reduce((acc, hours) => acc + hours, 0)} Hours
+                  {filteredData?.map(invoice => invoice.hoursWorked).reduce((acc, hours) => acc + hours, 0) || 0} Hours
                 </PaymentAmount>
               </Payment>
               <Payment>
                 <PaymentHeading>Fee</PaymentHeading>
-                <PaymentAmount>
-                  $
-                  {weekInvoices
-                    .map(invoice => invoice.hoursWorked * invoice.hourlyRate * 0.05)
-                    .reduce((acc, hours) => acc + hours, 0)}
-                </PaymentAmount>
+                <PaymentAmount>${fee}</PaymentAmount>
               </Payment>
               <Payment>
                 <PaymentHeading>Total</PaymentHeading>
-                <PaymentAmount>
-                  $
-                  {weekInvoices
-                    .map(invoice => invoice.hoursWorked * invoice.hourlyRate)
-                    .reduce((acc, hours) => acc + hours, 0)}
-                </PaymentAmount>
+                <PaymentAmount>${totalAmount}</PaymentAmount>
               </Payment>
             </InvoiceAmount>
           </InvoiceTable>
-          {weekInvoices?.map(invoice => {
+          {filteredData?.map(invoice => {
             return (
               <Accordion key={`${invoice._id}_${invoice?.user?._id}`}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                   <Typography className={classes.heading}>
-                    {ConverterUtils.capitalize(`${invoice?.user?.FirstName} ${invoice?.user?.LastName}`)} -{' '}
-                    {invoice?.hoursWorked} hours
+                    {ConverterUtils.capitalize(
+                      `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
+                    )}{' '}
+                    - {invoice?.hoursWorked} hours
                   </Typography>
                 </AccordionSummary>
                 <CustomAccordionDetails>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Tasks>
-                      <TaskIcon>
-                        <MdCheckCircle />
-                      </TaskIcon>
-                      <TaskName>New Task</TaskName>
-                      <TaskHours>3 Hours</TaskHours>
-                    </Tasks>
-                    <Tasks>
-                      <TaskIcon>
-                        <MdCheckCircle />
-                      </TaskIcon>
-                      <TaskName>Another New Task</TaskName>
-                      <TaskHours>8 Hours</TaskHours>
-                    </Tasks>
-                    <div style={{ width: '90%', margin: '0px auto' }}>
+                    {invoice?.task?.length
+                      ? invoice.task.map(task => {
+                          {
+                            return task.taskHours?.length
+                              ? task.taskHours.map(hours => {
+                                  return (
+                                    <Tasks key={hours._id}>
+                                      <TaskIcon color={hours.task?.status === 'done' ? '#5dc26a' : '#D8D8D8'}>
+                                        <MdCheckCircle />
+                                      </TaskIcon>
+                                      <TaskName>{hours.task?.taskName}</TaskName>
+                                      <TaskHours>{hours?.hours || 0} Hours</TaskHours>
+                                    </Tasks>
+                                  )
+                                })
+                              : ''
+                          }
+                        })
+                      : ''}
+                    <div style={{ width: '90%', margin: '0px auto 0px auto' }}>
                       <Button
                         background="#1976D2"
                         noBorder
@@ -336,4 +406,20 @@ const ClientInvoices = ({ weekInvoices }) => {
     </>
   )
 }
-export default ClientInvoices
+
+const mapStateToProps = state => {
+  return {
+    invoices: state.Invoices.invoices,
+    role: state.Auth.user.role,
+    projectDetails: state.Business.selectedBusiness
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getInvoices: bindActionCreators(getInvoices, dispatch),
+    getBusinessById: bindActionCreators(getBusinessById, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClientInvoices)

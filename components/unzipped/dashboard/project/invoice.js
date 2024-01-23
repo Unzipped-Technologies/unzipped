@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { TitleText, DarkText } from '../style'
+import { useRouter } from 'next/router'
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { SearchBar } from '../../../ui'
+import { ConverterUtils } from '../../../../utils'
 import styled, { css } from 'styled-components'
 import { FaRegCheckCircle } from 'react-icons/fa'
+import { getInvoices, getBusinessById } from '../../../../redux/actions'
 
 const Title = styled.div`
   display: flex;
   flex-flow: row;
   width: 70%;
-  margin: 60px 15% 40px 15%;
+  margin: 60px 15% 0px 15%;
 `
 const Toggle = styled.div`
   display: grid;
@@ -149,76 +155,137 @@ const Select = styled.select`
   background-color: transparent;
 `
 
-function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, handleFilter, projectName, userType }) {
+function Invoice({
+  weekOptions,
+  handletake,
+  take,
+  getInvoices,
+  getBusinessById,
+  selectedWeek,
+  handleWeekChange,
+  invoices,
+  projectDetails,
+  role
+}) {
+  const router = useRouter()
+  const { id, freelancer } = router.query
+  const [filteredData, setFilteredData] = useState([])
+  const [sortedData, setSortedData] = useState({})
   const [displayFormat, setDisplayFormat] = useState(false)
-  const [rate, setRate] = useState(null)
-  const [totalHours, setTotalHours] = useState(null)
-  const [founderInvoice, setFounderInvoice] = useState({})
-  var id = 0
-  var totalInvoiceOfFounder = 0
-  const shippingFee = 68.35
+  const [subTotal, setSubTotal] = useState(0)
+  const [fee, setFee] = useState(0)
+  const [totalAmount, setAmount] = useState(0)
+  const [searchFilter, setSearchFilter] = useState('')
+
   useEffect(() => {
-    if (userType === 'Investor') {
-      const rate = Object?.keys(sortedData)
-        ?.map(day => {
-          return sortedData[day]?.length > 0 ? sortedData[day]?.map(item => item.rate) : []
-        })
-        .flat()
-        .filter(item => item !== undefined)
-      setRate(rate)
-      const totalHours = Object.keys(sortedData).reduce((acc, day) => {
-        return acc + sortedData[day].reduce((dayAcc, obj) => dayAcc + obj.hours, 0)
-      }, 0)
-      setTotalHours(totalHours)
-    } else if (userType === 'Founder') {
-      const result = {}
-      for (const day in sortedData) {
-        const dayData = sortedData[day]
-        for (const item of dayData) {
-          const userId = item.userId._id
-          const rate = item.rate
-          const hours = item.hours
-          if (result[userId]) {
-            result[userId].rate = rate
-            result[userId].totalHours += hours
-            result[userId].name =
-              item?.userId?.FirstName !== '' || item?.userId?.LastName !== ''
-                ? item?.userId?.FirstName + ' ' + item?.userId?.LastName
-                : 'Anonymous'
-          } else {
-            result[userId] = {
-              rate: rate,
-              totalHours: hours,
-              name:
-                item?.userId?.FirstName !== '' || item?.userId?.LastName !== ''
-                  ? item?.userId?.FirstName + ' ' + item?.userId?.LastName
-                  : 'Anonymous'
-            }
-          }
-        }
-      }
-      setFounderInvoice(result)
+    getInvoices({
+      businessId: id,
+      freelancerId: freelancer,
+      limit: take,
+      page: 1
+    })
+    if (id !== undefined) {
+      getBusinessById(id)
     }
-  }, [sortedData])
+  }, [])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && invoices?.length) {
+      const filteredItems = invoices.filter(item => {
+        const itemDate = new Date(item.updatedAt)
+        const startOfWeek = weekOptions[selectedWeek].startOfWeek
+        const endOfWeek = weekOptions[selectedWeek].endOfWeek
+        return itemDate >= startOfWeek && itemDate <= endOfWeek
+      })
+      setFilteredData(filteredItems)
+    }
+  }, [selectedWeek, invoices, weekOptions])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null && invoices?.length) {
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
+      filteredData.forEach(item => {
+        item.task.forEach(taskObj => {
+          taskObj.taskHours.forEach(taskHour => {
+            const itemDate = new Date(taskHour.createdAt)
+            const dayOfWeek = daysOfWeek[itemDate.getDay()]
+            organizedItems[dayOfWeek].push(taskHour)
+          })
+        })
+      })
+      setSortedData(organizedItems)
+    }
+  }, [selectedWeek, filteredData])
+
+  useEffect(() => {
+    let subTotal = 0
+    let fee = 0
+    let totalAmount = 0
+    if (filteredData?.length) {
+      if (role === 0) {
+        for (var invoice of filteredData) {
+          subTotal += invoice?.contract.hourlyRate * invoice.hoursWorked
+        }
+        fee = subTotal * 0.05
+      } else {
+        subTotal = filteredData[0]?.contract?.hourlyRate * filteredData[0]?.hoursWorked
+        fee = subTotal * 0.05
+      }
+      totalAmount = subTotal - fee
+    }
+    setSubTotal(subTotal)
+    setFee(fee)
+    setAmount(totalAmount)
+  }, [filteredData])
 
   const toggleDisplayFormat = () => {
     setDisplayFormat(!displayFormat)
   }
 
-  const getStatusColor = tagName => {
-    if (tagName.includes('In')) {
+  const getStatusColor = ({ task }) => {
+    if (task?.status.includes('inprogress')) {
       return '#FFA500'
-    } else if (tagName.includes('Done')) {
+    } else if (task?.status.includes('done')) {
       return '#198754'
     } else {
       return '#D8D8D8'
     }
   }
 
+  const getTaskHours = weeklyTasks => {
+    let taskHours = 0
+    if (weeklyTasks?.length) {
+      for (var task of weeklyTasks) {
+        taskHours += task.hours
+      }
+    }
+    return taskHours
+  }
+
+  const getContractRate = task => {
+    for (var invoice of filteredData) {
+      if (invoice?.freelancerId === task?.assignee) {
+        return invoice?.contract.hourlyRate
+      }
+    }
+  }
+
+  const getData = ({ task }, key) => {
+    for (var invoice of filteredData) {
+      if (invoice?.freelancerId === task?.assignee) {
+        return invoice?.freelancer.user[key]
+      }
+    }
+  }
+  const handleFilter = value => {
+    setSearchFilter(value)
+  }
+
   return (
     <>
       <Title>
-        <TitleText title>INVOICE</TitleText>
+        <TitleText title="true">INVOICE</TitleText>
         <Toggle>
           <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
             <DarkText small>Day</DarkText>
@@ -233,12 +300,15 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
         <TableDiv>
           <TableTop>
             <P margin="0px" fontSize="24px" fontWeight="500">
-              {projectName?.slice(0, 15)}
-              {+projectName?.length > 15 && '...'}
+              {projectDetails?.name?.slice(0, 15)}
+              {+projectDetails?.name?.length > 15 && '...'}
             </P>
-            <Select onChange={handleWeekChange}>
+            <Select
+              onChange={e => {
+                handleWeekChange(e.target.value)
+              }}>
               {weekOptions.map((week, index) => (
-                <option key={index} value={index}>
+                <option key={`week_${index}`} value={index}>
                   Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
                 </option>
               ))}
@@ -248,13 +318,13 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
           {sortedData &&
             Object?.keys(sortedData)?.map((day, index) => {
               return (
-                <TableInnerDiv key={index}>
+                <TableInnerDiv key={`${day}_${index}`}>
                   <CustomTable displayFormat={displayFormat}>
                     {!displayFormat ? (
                       <thead>
                         <tr>
                           <th>
-                            {day} ({sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)} HOURS)
+                            {day} ({getTaskHours(sortedData[day])} HOURS)
                           </th>
                           <th>RATE</th>
                           <th>TIME SPENT</th>
@@ -276,24 +346,21 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
                     <tbody>
                       {sortedData[day].length > 0 ? (
                         sortedData[day]?.map((item, itemIndex) => {
-                          id = id + 1
                           return (
                             <tr key={itemIndex} className={displayFormat && id % 2 === 0 && 'bg-light'}>
-                              <td>
-                                <FaRegCheckCircle size={15} color={getStatusColor(item.tagName)} />
-                                <span className="px-3">{item?.taskName}</span>
+                              <td style={{ paddingLeft: '40px' }}>
+                                <FaRegCheckCircle size={15} color={getStatusColor(item)} />
+                                <span className="px-3">{item?.task?.taskName}</span>
                               </td>
-                              <td>${item?.rate}</td>
+                              <td>${getContractRate(item?.task)}</td>
                               <td>{item?.hours}</td>
                               <td>
                                 {' '}
                                 <img
-                                  src={item?.userId?.profileImage}
+                                  src={getData(item, 'profileImage')}
                                   style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
                                 />
-                                {item?.userId?.FirstName !== '' || item?.userId?.LastName !== ''
-                                  ? item?.userId?.FirstName + ' ' + item?.userId?.LastName
-                                  : 'Anonymous'}
+                                {getData(item, 'FirstName') + ' ' + getData(item, 'LastName') ?? 'Anonymous'}
                               </td>
                             </tr>
                           )
@@ -315,7 +382,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
                 </TableInnerDiv>
               )
             })}
-          {userType === 'Investor' ? (
+          {role === 1 ? (
             <HoursDiv>
               <div className="d-flex justify-content-between" style={{ borderBottom: '1px solid #777' }}>
                 <P fontWeight="500">DAY</P>
@@ -324,7 +391,7 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
               {sortedData &&
                 Object?.keys(sortedData)?.map((day, index) => {
                   return (
-                    <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-between" key={`day_hours_${index}`}>
                       <P fontWeight="500">{day}</P>
                       <P fontWeight="500">{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
                     </div>
@@ -332,15 +399,15 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
                 })}
               <div className="d-flex justify-content-between" style={{ borderTop: '1px solid #777' }}>
                 <P fontWeight="500">RATE</P>
-                {rate && <P fontWeight="500">${rate[0]} /HOUR</P>}
+                {filteredData && <P fontWeight="500">${filteredData[0]?.contract?.hourlyRate || 0} /HOUR</P>}
               </div>
               <div className="d-flex justify-content-between">
                 <P fontWeight="500">FEE</P>
-                <P fontWeight="500">${shippingFee}</P>
+                <P fontWeight="500">${fee || 0}</P>
               </div>
               <div className="d-flex justify-content-between">
                 <P fontWeight="500">TOTAL</P>
-                {totalHours && <P fontWeight="500">${(+totalHours * +rate[0]).toLocaleString()} </P>}
+                <P fontWeight="500">${totalAmount || 0} </P>
               </div>
             </HoursDiv>
           ) : (
@@ -349,29 +416,31 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
                 <P fontWeight="500">Name</P>
                 <P fontWeight="500">Amount</P>
               </div>
-              {founderInvoice &&
-                Object?.values(founderInvoice)?.map((user, index) => {
-                  totalInvoiceOfFounder += user?.rate * user?.totalHours
-                  return (
-                    <div className="d-flex justify-content-between">
-                      <P fontWeight="500">{user?.name}</P>
-                      <P fontWeight="500">${user?.rate * user?.totalHours}</P>
-                    </div>
-                  )
-                })}
+              {filteredData?.length
+                ? filteredData?.map((invoice, index) => {
+                    return (
+                      <div className="d-flex justify-content-between" key={invoice._id}>
+                        <P fontWeight="500">
+                          {ConverterUtils.capitalize(
+                            `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
+                          )}
+                        </P>
+                        <P fontWeight="500">${invoice?.contract?.hourlyRate * invoice?.hoursWorked}</P>
+                      </div>
+                    )
+                  })
+                : ''}
               <div className="d-flex justify-content-between" style={{ borderTop: '1px solid #777' }}>
                 <P fontWeight="500">Subtotal</P>
-                {totalInvoiceOfFounder && <P fontWeight="500">${totalInvoiceOfFounder.toLocaleString()}</P>}
+                <P fontWeight="500">${subTotal}</P>
               </div>
               <div className="d-flex justify-content-between">
                 <P fontWeight="500">FEE</P>
-                <P fontWeight="500">${shippingFee}</P>
+                <P fontWeight="500">${fee}</P>
               </div>
               <div className="d-flex justify-content-between">
                 <P fontWeight="500">TOTAL</P>
-                {totalInvoiceOfFounder && (
-                  <P fontWeight="500">${(shippingFee + totalInvoiceOfFounder).toLocaleString()} </P>
-                )}
+                <P fontWeight="500">${totalAmount} </P>
               </div>
             </HoursDiv>
           )}
@@ -381,4 +450,19 @@ function Invoice({ weekOptions, sortedData, handleWeekChange, take, handletake, 
   )
 }
 
-export default Invoice
+const mapStateToProps = state => {
+  return {
+    invoices: state.Invoices.invoices,
+    role: state.Auth.user.role,
+    projectDetails: state.Business.selectedBusiness
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getInvoices: bindActionCreators(getInvoices, dispatch),
+    getBusinessById: bindActionCreators(getBusinessById, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Invoice)

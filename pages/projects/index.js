@@ -47,66 +47,64 @@ const MobileDisplayBox = styled.div`
 const DesktopDisplayBox = styled.div`
 @media(max-width: 680px) {
     display: none;
-}
-`;
-const Projects = ({ projectList, access_token, totalCount, getFreelancerSkillsList, freelancerSkillsList = [], getProjectsList, id }) => {
-    const containerRef = useRef(null)
+  }
+`
+const Projects = ({
+  projectList,
+  totalCount,
+  getFreelancerSkillsList,
+  freelancerSkillsList = [],
+  getProjectsList,
+  freelancerId
+}) => {
+  const containerRef = useRef(null)
 
-    const [take, setTake] = useState(20)
-    const [skip, setSkip] = useState(0);
-    const [filter, setFilter] = useState('')
-    const [minRate, setMinRate] = useState();
-    const [maxRate, setMaxRate] = useState();
-    const [skill, setSkill] = useState([]);
-    const [isVisible, setIsVisible] = useState(false);
-    const [filterOpenClose, setFilterOpenClose] = useState(false);
-    const [type, setType] = useState('');
-    const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '245px')
+  const [take, setTake] = useState(20)
+  const [skip, setSkip] = useState(0)
+  const [filter, setFilter] = useState({
+    isActive: true,
+    searchKey: ''
+  })
+  const [minRate, setMinRate] = useState()
+  const [maxRate, setMaxRate] = useState()
+  const [skill, setSkill] = useState([])
+  const [isVisible, setIsVisible] = useState(false)
+  const [filterOpenClose, setFilterOpenClose] = useState(false)
+  const [type, setType] = useState('')
+  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '245px')
 
-    useMemo(() => {
-        getFreelancerSkillsList();
-        getProjectsList({take,skip},access_token)
-    }, [])
+  useMemo(() => {
+    getFreelancerSkillsList()
+    getProjectsList({ take, skip, isActive: true })
+  }, [])
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window && window.innerWidth < 680) {
-                setMarginBottom(undefined)
-            }
-            else
-                setMarginBottom('245px')
-        };
-        window.addEventListener("resize", handleResize);
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window && window.innerWidth < 680) {
+        setMarginBottom('80px')
+      } else setMarginBottom('245px')
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
-    useEffect(() => {
-        if (marginBottom) {
-            if (maxRate && minRate) {
-                if (+maxRate > +minRate)
-                    handleSearch()
-            }
-            else {
-                handleSearch()
-            }
-        }
-    }, [type, minRate, maxRate, skill])
+  useEffect(() => {
+    if (marginBottom) {
+      if (maxRate && minRate) {
+        if (+maxRate > +minRate) handleSearch()
+      } else {
+        handleSearch()
+      }
+    }
+  }, [type, minRate, maxRate, skill])
 
-    useEffect(() => {
-        if(skip){
-            const intersectionObserver = true
-            handleSearch(intersectionObserver)
-            setTake(+skip + 20)
-        }
-        setSkip(0);
-    },[skip])
-
-    const options = {
-        root: null,
-        rootMargin: "0px",
-        threshold: 1.0
+  useEffect(() => {
+    if (skip) {
+      const intersectionObserver = true
+      handleSearch(intersectionObserver)
+      setTake(+skip + 20)
     }
 
     useEffect(() => {
@@ -162,62 +160,107 @@ const Projects = ({ projectList, access_token, totalCount, getFreelancerSkillsLi
         }
     }
 
-    return (
-        <div>
-            {!filterOpenClose && <Nav isSubMenu searchValue={filter} handleSearchValue={setFilter} handleSearch={handleSearch} searchButton margin={'0px'} marginBottom={marginBottom} />}
-            {!filterOpenClose && <MobileDisplayBox><MobileSearchBar handleSearch={handleSearch} filter={filter} setFilter={setFilter} handleFilterOpenClose={handleFilterOpenClose} /></MobileDisplayBox>}
-            <Container>
-                {!filterOpenClose ? <MobileDisplayBox>
-                    <div className='d-flex align-items-baseline p-2 bg-white' style={{ marginTop: "10px" }}>
-                        <b style={{ paddingRight: "20px" }}>Top Results</b>
-                        <small>{getResultMessage(projectList, skip, take, totalCount)}</small>
-                    </div>
-                    <div style={{ margin: "0 5px", border: "2px solid #EFF1F4" }}></div>
-                </MobileDisplayBox> :
-                    <MobileDisplayBox>
-                        <MobileSearchFilterProjects handleProjectTypes={setType} maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} handleFilterOpenClose={handleFilterOpenClose} handleSearch={handleSearch} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill} />
-                    </MobileDisplayBox>}
-                <Box >
-                    <DesktopSearchFilterProjects handleProjectTypes={setType} maxRate={maxRate} setMaxRate={setMaxRate} setMinRate={setMinRate} minRate={minRate} freelancerSkillsList={freelancerSkillsList} skill={skill} setSkill={setSkill} />
-                    <div className='overflow-auto'>
-                        <div className='d-flex align-items-baseline py-4 bg-white' >
-                            <h5 className='px-4'><b>Top Results</b></h5>
-                            <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
-                        </div>
-                        {projectList?.length === 0 && (
-                            <DarkText fontSize='20px' padding="20px 40px" backgroundColor="white" width='-webkit-fill-available'>No freelancers found for this search</DarkText>
-                        )}
-                        {projectList?.map((project, index) => {
-                            return (
-                                <>
-                                    <WhiteCard noMargin overlayDesktop cardHeightDesktop key={index}>
-                                        <ProjectDesktopCard project={project} includeRate id={id}/>
-                                    </WhiteCard>
-                                    {index === projectList.length - 1 && <div ref={containerRef} className='mb-2 p-2'></div>}
-                                </>
-                            )
-                        }
-                        )}
-                    </div>
-                </Box>
-                {projectList?.map((project, index) => {
-                    return (
-                        <>
-                            {!filterOpenClose && <MobileDisplayBox key={index}>
-                                <MobileProjectCard project={project} includeRate  />
-                            </MobileDisplayBox>}
-                            {index === projectList.length - 1 && <div ref={containerRef} className='p-1'></div>}
-                        </>
-                    )
-                }
-                )}
-            </Container>
-            <DesktopDisplayBox>
-                <Footer />
-            </DesktopDisplayBox>
-
-        </div>
-    )
+  return (
+    <div>
+      {!filterOpenClose && (
+        <Nav
+          isSubMenu
+          searchValue={filter}
+          handleSearchValue={setSearchKey}
+          handleSearch={handleSearch}
+          searchButton
+          margin={'0px'}
+          marginBottom={marginBottom}
+        />
+      )}
+      {!filterOpenClose && (
+        <MobileDisplayBox>
+          <MobileSearchBar
+            handleSearch={handleSearch}
+            filter={filter}
+            setFilter={setSearchKey}
+            handleFilterOpenClose={handleFilterOpenClose}
+          />
+        </MobileDisplayBox>
+      )}
+      <Container>
+        {!filterOpenClose ? (
+          <MobileDisplayBox>
+            <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '10px' }}>
+              <b style={{ paddingRight: '20px' }}>Top Results</b>
+              <small>{getResultMessage(projectList, skip, take, totalCount)}</small>
+            </div>
+            <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
+          </MobileDisplayBox>
+        ) : (
+          <MobileDisplayBox>
+            <MobileSearchFilterProjects
+              handleProjectTypes={setType}
+              maxRate={maxRate}
+              setMaxRate={setMaxRate}
+              setMinRate={setMinRate}
+              minRate={minRate}
+              handleFilterOpenClose={handleFilterOpenClose}
+              handleSearch={handleSearch}
+              freelancerSkillsList={freelancerSkillsList}
+              skill={skill}
+              setSkill={setSkill}
+            />
+          </MobileDisplayBox>
+        )}
+        <Box>
+          <DesktopSearchFilterProjects
+            handleProjectTypes={setType}
+            maxRate={maxRate}
+            setMaxRate={setMaxRate}
+            setMinRate={setMinRate}
+            minRate={minRate}
+            freelancerSkillsList={freelancerSkillsList}
+            skill={skill}
+            setSkill={setSkill}
+          />
+          <div className="overflow-auto">
+            <div className="d-flex align-items-baseline py-4 bg-white">
+              <h5 className="px-4">
+                <b>Top Results</b>
+              </h5>
+              <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+            </div>
+            {projectList?.length === 0 && (
+              <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                No freelancers found for this search
+              </DarkText>
+            )}
+            {projectList?.map((project, index) => {
+              return (
+                <div key={`${project._id}_desktop`}>
+                  <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
+                    <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
+                  </WhiteCard>
+                  {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
+                </div>
+              )
+            })}
+          </div>
+        </Box>
+        {projectList?.map((project, index) => {
+          return (
+            <div key={`${project._id}_mobile`}>
+              {!filterOpenClose && (
+                <MobileDisplayBox key={`${project._id}_mobile_listing`}>
+                  <MobileProjectCard project={project} includeRate />
+                </MobileDisplayBox>
+              )}
+              {index === projectList.length - 1 && <div ref={containerRef} className="p-1"></div>}
+            </div>
+          )
+        })}
+      </Container>
+      <DesktopDisplayBox>
+        <Footer />
+      </DesktopDisplayBox>
+    </div>
+  )
 }
 
 Projects.getInitialProps = async ({ req, res }) => {
@@ -227,14 +270,13 @@ Projects.getInitialProps = async ({ req, res }) => {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        id: state.Auth.user._id,
-        freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
-        totalCount: state.Business.totalCount,
-        access_token: state.Auth.token,
-        projectList: state.Business.projectList,
-    }
+const mapStateToProps = state => {
+  return {
+    freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
+    freelancerId: state?.Auth?.user?.freelancers,
+    totalCount: state.Business.totalCount,
+    projectList: state.Business.projectList
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {

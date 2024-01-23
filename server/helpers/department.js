@@ -1,58 +1,63 @@
-const department = require('../../models/Department')
-const business = require('../../models/Business')
-const tags = require('../../models/tags')
-const tasks = require('../../models/Task')
-const contracts = require('../../models/Contract')
-const user = require('../../models/User')
-const mongoose = require('mongoose')
-const { Users } = require('react-feather')
-const { Select } = require('@material-ui/core')
-const TaskHours = require('../../models/TaskHours')
-
-const createDepartments = async data => {
-  return await department.create(data)
-}
+const departmentModel = require('../models/Department')
+const business = require('../models/Business')
+const tags = require('../models/tags')
+const tasks = require('../models/Task')
+const contracts = require('../models/Contract')
+const user = require('../models/User')
+const taskHelper = require('./task')
+const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
 // add a department to a business
-const addDepartmentToBusiness = async (data, id) => {
+const createDepartment = async data => {
   try {
+    // Below we are importing function due to circular dependency problem
+    const { getBusinessWithoutPopulate } = require('./business')
+
+    const businessData = await getBusinessWithoutPopulate(data.businessId, 'departments')
+    if (!businessData) throw Error(`Invalid business Id.`)
+
+    if (data.parentDepartmentId) {
+      const parentDepartment = await getDepartmentWithoutPopulate({ _id: data.parentDepartmentId })
+      if (!parentDepartment) throw Error(`Invalid parent department Id.`)
+    }
+
+    // Create department with empty tags, tasks and employees
     const item = {
       ...data,
       tags: [],
       tasks: [],
       employees: []
     }
-    const Dept = await department.create(item)
+    const Dept = await departmentModel.create(item)
 
     // create initial tags for department
     const initTags = [
       {
         departmentId: Dept.id,
         tagName: 'To Do',
-        department: await department.findById(Dept.id)
+        department: await departmentModel.findById(Dept.id)
       },
       {
         departmentId: Dept.id,
         tagName: 'In Progress',
-        department: await department.findById(Dept.id)
+        department: await departmentModel.findById(Dept.id)
       },
       {
         departmentId: Dept.id,
         tagName: 'Done',
-        department: await department.findById(Dept.id)
+        department: await departmentModel.findById(Dept.id)
       }
     ]
-    for (const tag of initTags) {
-      await tags.create(tag)
-    }
+
+    const newCreatedTags = await tags.insertMany(initTags)
+
     // update department with new tags
-    await department.findByIdAndUpdate(Dept.id, {
-      tags: await tags.find({ departmentId: Dept.id })
+    await departmentModel.findByIdAndUpdate(Dept.id, {
+      tags: newCreatedTags?.map(tag => tag._id)
     })
-    // update business to have department
-    const updatedBusiness = await business.findByIdAndUpdate(data.businessId, {
-      departments: await department.find({ businessId: data.businessId })
-    })
+
+    await businessData.departments.push(Dept.id)
+    await businessData.save()
 
     return { msg: `department created for ${data.businessId}` }
   } catch (e) {
@@ -60,54 +65,224 @@ const addDepartmentToBusiness = async (data, id) => {
   }
 }
 
-const getDepartmentById = async id => {
+const getDepartmentById = async (id, select = '') => {
   try {
-    const departments = await department.findById(id)
-    await department.updateMany({ businessId: departments.businessId }, { $set: { isSelected: false } })
-    const selectedDepartment = await department.findByIdAndUpdate(id, { $set: { isSelected: true } })
-    const getUsers = await user
-      .find({ _id: { $in: selectedDepartment?.tasks?.map(e => e.assigneeId && e.assigneeId) || [] } })
-      .select('email FirstName LastName profileImage freelancers')
-    return { ...selectedDepartment._doc, employees: getUsers, isSelected: true }
+    const department = await departmentModel.findById(id).select(select)
+    if (departments) {
+      return department
+    }
+    throw Error(`Department not found`)
   } catch (e) {
-    throw Error(`Could not find user, error: ${e}`)
+    throw Error(`Could not find department, error: ${e}`)
   }
 }
 
 // list departments
 const listDepartments = async ({ filter, take, skip }) => {
   try {
-    const list = await department
-      .find({ ...filter })
-      .skip(skip)
-      .limit(take)
-      // get users associated with this department
-      .populate({
-        path: 'contracts',
-        model: 'contracts'
-      })
-      .exec()
-    return list
+    const filter = pick(query, ['businessId', 'freelancerId', 'departmentId', 'clientId'])
+
+    const total = await countInvoices(filter)
+
+    let limit = query.limit === 'all' ? total : pageLimit(query)
+    limit = limit == 0 ? 10 : limit
+
+    const page = currentPage(query)
+    const skip = (page - 1) * limit
+
+    const aggregationPipeline = [
+      {
+        $match: { ...filter }
+      },
+      {
+        $project: {
+          name: 1,
+          clientId: 1,
+          tags: 1,
+          tasks: 1,
+          parentDepartmentId: 1,
+          businessId: 1,
+          employees: 1
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          let: { clientId: '$clientId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$clientId'] }
+              }
+            },
+            {
+              $project: {
+                FirstName: 1,
+                lastName: 1,
+                FullName: 1
+              }
+            }
+          ],
+          as: 'client'
+        }
+      },
+      {
+        $unwind: '$client'
+      },
+      {
+        $lookup: {
+          from: 'businesses',
+          let: { businessId: '$businessId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$businessId'] }
+              }
+            },
+            {
+              $project: {
+                name: 1
+              }
+            }
+          ],
+          as: 'business'
+        }
+      },
+      {
+        $unwind: '$business'
+      },
+      {
+        $lookup: {
+          from: 'contracts',
+          let: { contractId: '$employees' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$contractId'] }
+              }
+            },
+            {
+              $project: {
+                freelancerId: 1
+              }
+            }
+          ],
+          as: 'employees'
+        }
+      },
+      {
+        $unwind: '$employees'
+      },
+      { $skip: skip },
+      { $limit: limit }
+    ]
+    const employees = await DepartmentModel.aggregate(aggregationPipeline).exec()
+    const totalPages = Math.ceil(total / limit)
+
+    const result = {
+      data: employees,
+      currentPage: page,
+      limit: limit,
+      totalPages: totalPages,
+      totalResults: total
+    }
+    return result
   } catch (e) {
-    throw Error(`Could not find department, error: ${e}`)
+    throw new Error(`Could not retrieve invoices, error: ${e.message}`)
   }
 }
 
 const updateDepartment = async (id, data) => {
-  const uodatedDepartment = await department.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
-  await business.findByIdAndUpdate(data.businessId, {
-    departments: await department.find({ businessId: uodatedDepartment.businessId })
-  })
-  return updateDepartment
+  try {
+    const updatedDepartment = await departmentModel.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
+    return updatedDepartment
+  } catch (err) {
+    throw new Error(`Could not update department, error: ${err.message}`)
+  }
 }
 
 const deleteDepartment = async id => {
-  await department.findByIdAndDelete(id)
-  await contracts.deleteMany({ listId: id })
+  try {
+    // Here we also have to delete department from business, contract, parentDepartment, invoice, tags, task
+    return await departmentModel.softDelete({ _id: id })
+  } catch (e) {
+    throw new Error(`Could not delete department, error: ${e.message}`)
+  }
+}
+
+const addTaskToDepartment = async (taskId, departmentId) => {
+  const departmentData = await getDepartmentWithoutPopulate({ _id: departmentId }, 'tasks')
+
+  if (!departmentData) throw Error(`Department not found`)
+
+  const taskData = await taskHelper.getTaskById(taskId)
+  if (!taskData) throw Error(`Task not found`)
+
+  if (departmentData?.tasks) {
+    if (departmentData?.tasks.includes(taskId)) {
+      throw Error(`Task is already added to department.`)
+    } else {
+      departmentData.tasks.push(taskId)
+      await departmentData.save()
+    }
+  } else {
+    departmentData.tasks = [taskId]
+    await departmentData.save()
+    return { msg: `Task added to department.` }
+  }
+}
+
+const removeTaskFromDepartment = async (taskId, departmentId) => {
+  const departmentData = await getDepartmentWithoutPopulate({ _id: departmentId }, 'tasks')
+
+  if (!departmentData) throw Error(`Department not found`)
+
+  const taskData = await taskHelper.getTaskById(taskId)
+  if (!taskData) throw Error(`Task not found`)
+
+  if (departmentData?.tasks?.length) {
+    if (departmentData?.tasks.includes(taskId)) {
+      departmentData.tasks = departmentData?.tasks.filter(task => task !== taskId)
+      await departmentData.save()
+    }
+  }
+}
+
+const getDepartmentWithoutPopulate = async (filter, selectedFields = '') => {
+  try {
+    return await departmentModel.findOne(filter).select(selectedFields)
+  } catch (e) {
+    throw new Error(`Could not retrieve department, error: ${e.message}`)
+  }
+}
+
+const addCommentToTask = async data => {
+  const task = await tasks.findById(data.taskId)
+
+  if (!task) return undefined
+  if (!task?.comments) task.comments = []
+
+  const idNumber = task?.comments.length + 1
+  task?.comments.push({ id: idNumber, ...data })
+  await task.save()
+  await departmentModel.findByIdAndUpdate(task.departmentId, {
+    tasks: await tasks.find({ departmentId: task.departmentId })
+  })
+  return task
+}
+
+const removeCommentToTask = async data => {
+  const task = await tasks.findById(data.taskId)
+  task.comments.filter(e => e.id !== data.commentId)
+  await task.save()
+  await departmentModel.findByIdAndUpdate(task.departmentId, {
+    tasks: await tasks.find({ departmentId: task.departmentId })
+  })
+  return task
 }
 
 const deleteBusinessDepartments = async businessId => {
-  await department.deleteMany({ businessId: businessId })
+  await departmentModel.deleteMany({ businessId: businessId })
   await contracts.deleteMany({ listId: businessId })
 }
 
@@ -118,7 +293,7 @@ const addBusinessAssociateToBusiness = async data => {
         ...data,
         userId: await user.findById(data.profileId).select('email FirstName LastName profileImage freelancers')
       }),
-      department.findByIdAndUpdate(data.departmentId, {
+      departmentModel.findByIdAndUpdate(data.departmentId, {
         employees: await contracts.find({ departmentId: data.departmentId })
       }),
       business.findByIdAndUpdate(data.businessId, {
@@ -131,110 +306,8 @@ const addBusinessAssociateToBusiness = async data => {
   }
 }
 
-const addTagToDepartment = () => {
-  return
-}
-
-const addTaskToDepartment = async (body, id) => {
-  const findDepartment = await department.findById(body.departmentId)
-  const SelectedBusiness = await business.findById(findDepartment.businessId)
-  const businessCode = SelectedBusiness.businessCode || SelectedBusiness.name.slice(0, 3)
-  const docCount = (await tasks.countDocuments({ businessId: SelectedBusiness._id })) + 1
-  const Task = await tasks.create({
-    ...body,
-    tag: await tags.findById(body.tagId),
-    userId: id,
-    businessId: SelectedBusiness._id,
-    assigneeId: body.assigneeId,
-    assignee: await user.findById(body.assigneeId),
-    ticketCode: `${businessCode.replace(' ', '')}-${docCount}`,
-    updatedAt: body?.updatedAt || new Date(),
-    createdAt: body?.createdAt || new Date()
-  })
-  await department.findByIdAndUpdate(body.departmentId, {
-    tasks: await tasks.find({ departmentId: body.departmentId })
-  })
-  if (body?.hours) {
-    const result = await TaskHours.create({
-      userId: body.assigneeId,
-      taskId: Task._id,
-      hours: body?.hours,
-      departmentId: Task?.departmentId,
-      updatedAt: body?.updatedAt || new Date(),
-      createdAt: body?.createdAt || new Date()
-    })
-    const taskHour = await TaskHours.findOne({ _id: result._id })
-      .populate({
-        path: 'userId',
-        model: 'users',
-        select: '_id FirstName LastName profileImage'
-      })
-      .populate({
-        path: 'taskId',
-        model: 'tasks',
-        select: '_id taskName storyPoints tag',
-        populate: {
-          path: 'tag',
-          model: 'tags',
-          select: '_id tagName'
-        }
-      })
-      .exec()
-    return { Task: Task, result: taskHour }
-  }
-  return Task
-}
-
-const reorderTasks = async lists => {
-  await Promise.all(
-    lists.map(async task => {
-      await tasks.findByIdAndUpdate(task._id, {
-        $set: {
-          order: task.order,
-          tag: task.tag
-        }
-      })
-    })
-  )
-
-  const updatedTasks = await tasks.find({ departmentId: lists[0].departmentId })
-  await department.findByIdAndUpdate(lists[0].departmentId, {
-    $set: {
-      tasks: updatedTasks
-    }
-  })
-
-  return { msg: 'Tasks updated successfully' }
-}
-
-const addCommentToTask = async data => {
-  const task = await tasks.findById(data.taskId)
-
-  if (!task) return undefined
-  if (!task?.comments) task.comments = []
-
-  const idNumber = task?.comments.length + 1
-  task?.comments.push({ id: idNumber, ...data })
-  await task.save()
-  await department.findByIdAndUpdate(task.departmentId, {
-    tasks: await tasks.find({ departmentId: task.departmentId })
-  })
-  return task
-}
-
-const removeCommentToTask = async data => {
-  const task = await tasks.findById(data.taskId)
-  task.comments.filter(e => e.id !== data.commentId)
-  await task.save()
-  await department.findByIdAndUpdate(task.departmentId, {
-    tasks: await tasks.find({ departmentId: task.departmentId })
-  })
-  return task
-}
-
 module.exports = {
-  createDepartments,
-  addDepartmentToBusiness,
+  createDepartment,
   listDepartments,
   getDepartmentById,
   updateDepartment,
@@ -242,8 +315,7 @@ module.exports = {
   removeCommentToTask,
   deleteDepartment,
   addBusinessAssociateToBusiness,
-  addTagToDepartment,
   addTaskToDepartment,
-  reorderTasks,
-  deleteBusinessDepartments
+  deleteBusinessDepartments,
+  getDepartmentWithoutPopulate
 }

@@ -2,12 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import Nav from '../../../../../components/unzipped/header'
 import Invoice from '../../../../../components/unzipped/dashboard/project/invoice'
-import { useRouter } from 'next/router'
-import { getBusinessTasksByFounder, getBusinessList } from '../../../../../redux/actions'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import MobileInvoices from '../../../../../components/unzipped/dashboard/mobile/MobileInvoices'
-import { accountTypeEnum } from '../../../../../server/enum/accountTypeEnum'
+import ClientMobileInvoices from '../../../../../components/unzipped/dashboard/mobile/ClinetMobileInvoices'
 
 const Desktop = styled.div`
   @media (max-width: 680px) {
@@ -31,56 +26,12 @@ const Navbar = styled.div`
   }
 `
 
-const FounderInvoice = ({
-  projectName,
-  invoiceTaskHours,
-  access_token,
-  getBusinessTasksByFounder,
-  role,
-  businesses,
-  _id
-}) => {
-  const router = useRouter()
-  const { id } = router.query
-
-  const [data, setData] = useState([])
-  const [filteredData, setFilteredData] = useState([])
-  const [sortedData, setSortedData] = useState({})
+const FounderInvoice = ({}) => {
   const [selectedWeek, setSelectedWeek] = useState(null)
   const [weekOptions, setWeekOptions] = useState([])
-  const [take, setTake] = useState(25)
-  const [searchFilter, setSearchFilter] = useState('')
-  const [selected, setSelected] = useState(null)
+  const [take, setTake] = useState('all')
 
-  useMemo(() => {
-    if (id !== undefined) {
-      getBusinessTasksByFounder({ businessId: id, access_token })
-    }
-  }, [id])
-
-  useEffect(() => {
-    console.log('role', role)
-    if (role === accountTypeEnum.ADMIN) {
-      setSelected(accountTypeEnum.FOUNDER)
-    }
-  }, [])
-
-  useEffect(() => {
-    getBusinessList(
-      {
-        take: 10000,
-        skip: 0
-      },
-      access_token,
-      selected,
-      _id
-    )
-  }, [])
-
-  useEffect(() => {
-    setData(invoiceTaskHours)
-  }, [invoiceTaskHours])
-
+  // In below useEffect options for week dropdown are creating.
   useEffect(() => {
     const options = []
     const currentDate = new Date()
@@ -100,94 +51,40 @@ const FounderInvoice = ({
     setSelectedWeek(0)
   }, [])
 
-  useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined) {
-      const filteredItems = data.filter(item => {
-        const itemDate = new Date(item.updatedAt)
-        const startOfWeek = weekOptions[selectedWeek].startOfWeek
-        const endOfWeek = weekOptions[selectedWeek].endOfWeek
-        return itemDate >= startOfWeek && itemDate <= endOfWeek
-      })
-      setFilteredData(filteredItems)
-    }
-  }, [selectedWeek, data, weekOptions])
-
-  useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null) {
-      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
-      filteredData.forEach(item => {
-        const itemDate = new Date(item.updatedAt)
-        const dayOfWeek = daysOfWeek[itemDate.getDay()]
-        organizedItems[dayOfWeek].push(item)
-      })
-      setSortedData(organizedItems)
-    }
-  }, [selectedWeek, filteredData])
-
-  const handleWeekChange = event => {
-    const selectedIndex = event.target.value
-    setSelectedWeek(selectedIndex)
+  const handleWeekChange = value => {
+    setSelectedWeek(value)
   }
 
   const handletake = value => {
     setTake(value)
   }
 
-  const handleFilter = value => {
-    setSearchFilter(value)
-  }
   return (
     <>
       <Navbar>
         <Nav isSubMenu />
       </Navbar>
-      <Desktop>
-        <Invoice
-          weekOptions={weekOptions}
-          handleWeekChange={handleWeekChange}
-          sortedData={sortedData}
-          projectName={projectName}
-          handletake={handletake}
-          take={take}
-          handleFilter={handleFilter}
-          userType={'Founder'}
-        />
-      </Desktop>
-      <MobileDisplayBox>
-        <MobileInvoices
-          data={data}
-          businesses={businesses}
-          weekOptions={weekOptions}
-          handleWeekChange={handleWeekChange}
-          sortedData={sortedData}
-          projectName={projectName}
-          handletake={handletake}
-          take={take}
-          handleFilter={handleFilter}
-          userType={'Founder'}
-        />
-      </MobileDisplayBox>
+      {window.innerWidth > 680 ? (
+        <Desktop>
+          <Invoice
+            weekOptions={weekOptions}
+            handletake={handletake}
+            take={take}
+            selectedWeek={selectedWeek}
+            handleWeekChange={handleWeekChange}
+          />
+        </Desktop>
+      ) : (
+        <MobileDisplayBox>
+          <ClientMobileInvoices
+            weekOptions={weekOptions}
+            selectedWeek={selectedWeek}
+            handleWeekChange={handleWeekChange}
+          />
+        </MobileDisplayBox>
+      )}
     </>
   )
 }
 
-const mapStateToProps = state => {
-  return {
-    access_token: state.Auth.token,
-    invoiceTaskHours: state.Business.invoiceTaskHours,
-    projectName: state.Business.projectName,
-    businesses: state.Business?.businesses,
-    role: state.Auth.user.role,
-    _id: state.Auth.user._id
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    getBusinessTasksByFounder: bindActionCreators(getBusinessTasksByFounder, dispatch),
-    getBusinessList: bindActionCreators(getBusinessList, dispatch)
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FounderInvoice)
+export default FounderInvoice

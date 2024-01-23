@@ -39,33 +39,50 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const ProjectDesktopCard = ({ project, includeRate, width, id }) => {
-    console.log(project)
-    return (
-        <Container includeRate={includeRate}>
-            <Left>
-                <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
-                {/* <Button margin="20px 0px" type={!project.applicants.includes(id) ? "default" : "grey"} noBorder>Applied</Button> */}
-            </Left>
-            <Right minWidth={width} includeRate={includeRate}>
-                <TitleText half color="#0057FF" >{project?.name}</TitleText>
-                {includeRate && (
-                    <Flex>
-                        <DarkText half>{project?.country}</DarkText>
-                        {/* <DarkText small half bold><DarkSpan medium>{project?.projectType?.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText> */}
-                    </Flex>
-                )}
-                <div className='d-flex justify-content-between'>
-                    <P fontSize='13px'>{project?.description}</P>
-                    <P fontSize='15px'>{project?.likes ? `${project?.likes} Upvotes by Freelancers` : ''}</P>
-                </div>
-                {project?.requiredSkills?.map(item => (
-                    <Badge>{item}</Badge>
-                ))}
-            </Right>
-            <Absolute><Button color='#000' style={{ padding: "8px 22px" }} normal oval type="green2" noBorder >View Profile</Button></Absolute>
-        </Container>
-    )
+const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
+  const router = useRouter()
+
+  return (
+    <Container includeRate={includeRate}>
+      <Left>
+        <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
+        {project?.applicants?.includes(freelancerId) && (
+          <Button margin="20px 0px" type={!project.applicants.includes(freelancerId) ? 'default' : 'grey'} noBorder>
+            Applied
+          </Button>
+        )}
+      </Left>
+      <Right minWidth={width} includeRate={includeRate}>
+        <TitleText
+          half
+          clickable
+          color="#0057FF"
+          onClick={() => {
+            router.push(`/projects/${project._id}`)
+          }}>
+          {project?.name}
+        </TitleText>
+        {includeRate && (
+          <Flex>
+            <DarkText half>{project?.country}</DarkText>
+            {/* <DarkText small half bold><DarkSpan medium>{project?.projectType?.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText> */}
+          </Flex>
+        )}
+        <div className="d-flex justify-content-between">
+          <P fontSize="13px">{project?.description}</P>
+          <P fontSize="15px">{project?.likes ? `${project?.likes} Upvotes by Freelancers` : ''}</P>
+        </div>
+        {project?.requiredSkills?.map(item => (
+          <Badge key={`${item}_desktop_card`}>{item}</Badge>
+        ))}
+      </Right>
+      <Absolute>
+        <Button color="#000" style={{ padding: '8px 22px' }} normal oval type="green2" noBorder>
+          View Profile
+        </Button>
+      </Absolute>
+    </Container>
+  )
 }
 
 export default ProjectDesktopCard

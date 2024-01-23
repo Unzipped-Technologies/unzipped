@@ -21,33 +21,6 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllU
   }
 })
 
-router.get('/freelancer/list', requireLogin, async (req, res) => {
-  try {
-    const { filter, take, skip, sort, maxRate, minRate, skill } = req.query
-    const listUsers = await userHelper.listFreelancers({ filter, take, skip, sort, maxRate, minRate, skill })
-    if (!listUsers) throw Error('could not find freelancers')
-    res.json(listUsers)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
-router.get(
-  '/freelancer/:id',
-  requireLogin,
-  permissionCheckHelper.hasPermission('getFreelancerById'),
-  async (req, res) => {
-    try {
-      const id = req.params.id
-      const User = await userHelper.getFreelancerById(id)
-      if (!User) throw Error('freelancer does not exist')
-      res.json(User)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
-  }
-)
-
 router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateAllUsers'), async (req, res) => {
   try {
     if (!req.body.id) throw Error('user id does not exist')
@@ -80,16 +53,6 @@ router.post('/current/delete', requireLogin, permissionCheckHelper.hasPermission
     const deletedUser = await userHelper.deleteUser(req.body.id)
     if (!deletedUser) throw Error('user does not exist')
     res.json(deletedUser)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
-router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
-  try {
-    const addedSkill = await userHelper.addSkillsToFreelancer(req.body, req.user?.userInfo?.freelancers)
-    if (!addedSkill) throw Error('user does not exist')
-    res.json(addedSkill)
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }

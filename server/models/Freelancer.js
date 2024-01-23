@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
+const { softDeletePlugin } = require('soft-delete-plugin-mongoose')
+
 const { Schema } = mongoose
 
 const freelancerSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
-    rate: Number,
+    rate: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },
     isPreferedFreelancer: { type: Boolean, default: false },
@@ -14,7 +16,6 @@ const freelancerSchema = new Schema(
     lists: { type: Schema.Types.ObjectId, ref: 'lists' },
     invites: { type: Schema.Types.Mixed, ref: 'invites' },
     cover: String,
-    // refer to other users likes of this freelancer
     likeTotal: { type: Number, default: 0 },
     dislikeTotal: { type: Number, default: 0 },
     likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
@@ -24,5 +25,6 @@ const freelancerSchema = new Schema(
     timestamps: true
   }
 )
+freelancerSchema.plugin(softDeletePlugin)
 
 module.exports = mongoose.model('freelancers', freelancerSchema)

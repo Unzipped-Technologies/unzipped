@@ -1,35 +1,55 @@
-const business = require('../../models/Business')
-const businessAudience = require('../../models/BusinessAudience')
-const listItems = require('../../models/ListItems')
-const likeHistory = require('../../models/LikeHistory')
-const department = require('../../models/Department')
+const business = require('../models/Business')
+const businessAudience = require('../models/BusinessAudience')
+const listItems = require('../models/ListItems')
+const likeHistory = require('../models/LikeHistory')
+const department = require('../models/Department')
 const departmentHelper = require('./department')
-const tags = require('../../models/tags')
-const user = require('../../models/User')
+const tags = require('../models/tags')
+const user = require('../models/User')
 const mongoose = require('mongoose')
 const { likeEnum } = require('../enum/likeEnum')
-const Contracts = require('../../models/Contract')
-const Freelancer = require('../../models/Freelancer')
-const TaskHours = require('../../models/TaskHours')
+const Contracts = require('../models/Contract')
+const Freelancer = require('../models/Freelancer')
+const TaskHours = require('../models/TaskHours')
+const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
-const createBusiness = async (data, id) => {
+const createBusiness = async data => {
   // create business
-  const newBusiness = await business.create({ ...data, userId: id })
+  const newBusiness = await business.create({ ...data, questionsToAsk: [], applicants: [] })
+
+  // Create business audience
   const audience = await businessAudience.create({
     ...data,
     businessId: newBusiness._id
   })
+
+  // Create questions and store their _ids in questions array
+  let questions = []
+  if (data?.questionsToAsk?.length) {
+    let businessQuestions = []
+    for (var question of data.questionsToAsk) {
+      businessQuestions.push({
+        businessId: newBusiness._id,
+        userId: data.userId,
+        question: question,
+        answers: []
+      })
+    }
+    questions = await questionHelper.createManyQuestion(businessQuestions)
+
+    questions = questions?.map(question => question._id)
+  }
+
   // create department management and assign main user to it
-  const dep = await departmentHelper.addDepartmentToBusiness({
+  await departmentHelper.createDepartment({
     name: 'Management',
     businessId: newBusiness._id,
-    userId: id,
-    tags: await tags.find({ businessId: newBusiness._id })
+    userId: data.userId
   })
   // associate department with business
   await business.findByIdAndUpdate(newBusiness._id, {
-    // departments: [await department.findById(dep._id)],
+    questionsToAsk: questions,
     audience: await businessAudience.findById(audience._id)
   })
   return { msg: 'business created successfully' }
@@ -53,14 +73,37 @@ const deleteBusiness = async (businessId, userId) => {
 
 const getBusinessById = async (id, sub) => {
   try {
-    await business.updateMany({ userId: sub }, { $set: { isSelected: false } })
     const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } })
-    const populatedBusiness = await getBusiness
-      .populate({
-        path: 'employees',
-        model: 'contracts',
-        populate: {
-          path: 'freelancerId',
+    let populateData = []
+    if (user?.userInfo?.role === 1) {
+      populateData = [
+        {
+          path: 'questionsToAsk',
+          model: 'questions',
+          select: 'question'
+        },
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName profileImage  isIdentityVerified stripeId stripeSubscription createdAt'
+        }
+      ]
+    } else {
+      populateData = [
+        {
+          path: 'departments',
+          model: 'departments',
+          select: 'name tags',
+          populate: [
+            {
+              path: 'tags',
+              model: 'tags',
+              select: 'tagName'
+            }
+          ]
+        },
+        {
+          path: 'applicants',
           model: 'freelancers',
           populate: {
             path: 'userId',
@@ -151,31 +194,23 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
         }
       },
       {
-        $lookup: {
-          from: 'users',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'userProfile'
-        }
-      },
-      {
-        $unwind: '$userProfile'
-      },
-      {
         $project: {
           name: 1,
           budget: 1,
+          equity: 1,
+          businessAddressLineOne: 1,
+          businessCountry: 1,
+          businessCity: 1,
+          businessState: 1,
+          businessZip: 1,
           projectType: 1,
-          requiredSkills: 1,
           applicants: 1,
-          description: 1,
           deadline: 1,
-          profileImage: '$userProfile.profileImage',
-          country: '$userProfile.AddressLineCountry',
-          likes: '$userProfile.likeTotal',
           createdAt: 1,
           updatedAt: 1,
-          valueEstimate: 1
+          isActive: 1,
+          valueEstimate: 1,
+          userId: 1
         }
       },
       {
@@ -183,6 +218,29 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
           createdAt: -1
         }
       },
+      {
+        $lookup: {
+          from: 'users',
+          let: { userId: '$userId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] }
+              }
+            },
+            {
+              $project: {
+                name: 1
+              }
+            }
+          ],
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+
       {
         $facet: {
           limitedRecords: [
