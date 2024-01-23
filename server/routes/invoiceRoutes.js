@@ -6,7 +6,6 @@ const permissionCheckHelper = require('../middlewares/permissionCheck')
 
 router.post('/create', requireLogin, permissionCheckHelper.hasPermission('invoice'), async (req, res) => {
   try {
-    req.body.freelancerId = req?.user?.userInfo?.freelancers
     const newInvoice = await invoiceHelper.createInvoice(req.body)
     if (!newInvoice) throw new Error('Invoice not created')
     res.json(newInvoice)

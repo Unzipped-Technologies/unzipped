@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const cloudinary = require('../../services/cloudinary')
 const upload = require('../middlewares/multer')
-const FileModel = require('../models/file')
-const user = require('../models/User')
+const FileModel = require('../../models/file')
+const user = require('../../models/User')
 const path = require('path')
 // https://www.topcoder.com/thrive/articles/using-cloudinary-for-image-storage-with-express
 

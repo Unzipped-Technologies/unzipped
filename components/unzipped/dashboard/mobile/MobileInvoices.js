@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import * as moment from 'moment'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 
-import MobileInvoicesView from './MobileInvoicesView'
+import ClientInvoices from './ClientInvoiceView'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 import { getInvoices, updateInvoice } from '../../../../redux/Invoices/actions'
 
@@ -31,7 +33,11 @@ const Select = styled.select`
   margin-bottom: -10px !important;
 `
 
-const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
+const MobileInvoices = ({ invoices, getInvoices }) => {
+  const router = useRouter()
+  const { id } = router.query
+
+  const [weekInvoices, setWeekInvoices] = useState([])
   const [selectedWeek, setSelectedWeek] = useState(0)
   const [weekOptions, setWeekOptions] = useState([])
 
@@ -55,8 +61,26 @@ const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
   }, [])
 
   useEffect(() => {
-    getInvoices({ businessId: '', limit: 'all', page: 1 })
+    getInvoices({ businessId: id, limit: 'all', page: 1 })
   }, [])
+
+  useEffect(() => {
+    setWeekInvoices([])
+    const newInvoices = []
+    for (var invoice of invoices) {
+      if (
+        moment(invoice?.createdAt).isBetween(
+          weekOptions[selectedWeek]?.startOfWeek,
+          weekOptions[selectedWeek]?.endOfWeek,
+          null,
+          '[]'
+        )
+      ) {
+        newInvoices.push(invoice)
+      }
+    }
+    setWeekInvoices(newInvoices)
+  }, [weekOptions, selectedWeek, invoices])
 
   return (
     <InvoiceOverView>
@@ -73,7 +97,8 @@ const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
           ))}
         </Select>
       </div>
-      <MobileInvoicesView role={role} invoices={invoices} selectedWeek={JSON.stringify(weekOptions?.[selectedWeek])} />
+
+      <ClientInvoices weekInvoices={weekInvoices} />
       <MobileFreelancerFooter />
     </InvoiceOverView>
   )
@@ -81,8 +106,7 @@ const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
 
 const mapStateToProps = state => {
   return {
-    invoices: state.Invoices.invoices,
-    role: state.Auth.user.role
+    invoices: state.Invoices.invoices
   }
 }
 
@@ -93,4 +117,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllProjectsInvoices)
+export default connect(mapStateToProps, mapDispatchToProps)(MobileInvoices)

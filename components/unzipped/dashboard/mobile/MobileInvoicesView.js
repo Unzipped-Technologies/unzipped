@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import * as moment from 'moment'
 import styled from 'styled-components'
 
-import ClientInvoices from './ClientInvoices'
+import ClientInvoices from './ClientInvoiceView'
 import SingleWeekInvoiceView from './SingleWeekInvoiceView'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
-import { connect } from 'react-redux'
 
 const MobileView = styled.div`
   background-color: #f7f7f7;
@@ -13,31 +13,41 @@ const MobileView = styled.div`
   }
 `
 
-const MobileInvoicesView = ({ selectedWeek, weekOptions, role, freelancerId }) => {
+const MobileInvoicesView = ({ role, invoices, selectedWeek }) => {
+  const [weekInvoice, setWeekInvoice] = useState({})
+  const [weekInvoices, setWeekInvoices] = useState([])
+
   // Filter selected week invoices when selected week OR invoice data changes.
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined && selectedWeek !== '') {
+      const currentWeek = JSON.parse(selectedWeek)
+      setWeekInvoice({})
+      setWeekInvoices([])
+      const newInvoices = []
+
+      for (var invoice of invoices) {
+        if (moment(invoice?.createdAt).isBetween(currentWeek.startOfWeek, currentWeek.endOfWeek, null, '[]')) {
+          if (role === 1) {
+            setWeekInvoice(invoice)
+            break
+          } else {
+            newInvoices.push(invoice)
+          }
+        }
+      }
+      setWeekInvoices(newInvoices)
+    }
+  }, [selectedWeek, invoices])
 
   return (
     <MobileView>
       {/* Show client invoices */}
-      {role !== 1 && <ClientInvoices selectedWeek={selectedWeek} weekOptions={weekOptions} />}
+      {role !== 1 && <ClientInvoices weekInvoices={weekInvoices} />}
       {/* Show freelancer invoices */}
-      {role === 1 && (
-        <SingleWeekInvoiceView weekOptions={weekOptions} selectedWeek={selectedWeek} freelancerId={freelancerId} />
-      )}
+      {role === 1 && <SingleWeekInvoiceView weekInvoice={weekInvoice} />}
       <MobileFreelancerFooter />
     </MobileView>
   )
 }
-
-const mapStateToProps = state => {
-  return {
-    role: state.Auth.user.role,
-    freelancerId: state?.Auth?.user?.freelancers || ''
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MobileInvoicesView)
+export default MobileInvoicesView

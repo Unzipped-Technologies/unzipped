@@ -1,9 +1,9 @@
-const FreelancerSkills = require('../models/FreelancerSkills')
+const FreelancerSkills = require("../../models/FreelancerSkills");
 
 const getAllFreelancerSkills = async () => {
-  return await FreelancerSkills.find()
+    return await FreelancerSkills.find();
 }
 
 module.exports = {
-  getAllFreelancerSkills
+    getAllFreelancerSkills
 }

@@ -8,7 +8,7 @@ import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
-import Invoices from '../../../../components/unzipped/dashboard/Invoices'
+import InvoicesTable from '../../../../components/unzipped/dashboard/InvoicesTable'
 import DesktopProjectDetail from '../../../../components/unzipped/dashboard/DesktopProjectDetail'
 
 const Navbar = styled.div`
@@ -164,7 +164,7 @@ const Select = styled.select`
 const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth)
   const [weekOptions, setWeekOptions] = useState([])
-  const [selectedWeek, setSelectedWeek] = useState(0)
+  const [selectedWeek, setSelectedWeek] = useState({})
 
   const router = useRouter()
   const { id } = router.query
@@ -218,11 +218,13 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       options.unshift({ startOfWeek, endOfWeek })
     }
     setWeekOptions(options)
-    setSelectedWeek(0)
+    setSelectedWeek(JSON.stringify(options[0]))
   }, [])
 
-  useEffect(() => {
-    getBusinessById(id)
+  useMemo(() => {
+    if (id !== undefined) {
+      getBusinessById(id)
+    }
   }, [id])
 
   return (
@@ -244,7 +246,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
                 }}
                 value={selectedWeek}>
                 {weekOptions.map((week, index) => (
-                  <option key={index} value={index} style={{ fontSize: '4px' }}>
+                  <option key={index} value={JSON.stringify(week)} style={{ fontSize: '4px' }}>
                     Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
                   </option>
                 ))}
@@ -274,7 +276,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
         {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
         {selectedTab === 2 && <HiringTable />}
-        {selectedTab === 3 && <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} />}
+        {selectedTab === 3 && <InvoicesTable selectedWeek={selectedWeek} />}
       </TabContent>
     </>
   )
@@ -282,6 +284,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
 
 const mapStateToProps = state => {
   return {
+    access_token: state.Auth.token,
     projectDetails: state.Business.selectedBusiness,
     role: state.Auth.user.role
   }

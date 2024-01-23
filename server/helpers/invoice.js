@@ -1,53 +1,16 @@
-const Invoice = require('../models/Invoice')
+const Invoice = require('../../models/Invoice')
+const mongoose = require('mongoose')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
 const createInvoice = async data => {
   try {
-    const { getBusinessWithoutPopulate } = require('./business')
-    // Check whether the business against businessId exist OR not
-    const businessData = await getBusinessWithoutPopulate(data.businessId, 'businessCode userId')
-    if (!businessData) throw new Error(`Business not exist.`)
-
-    if (data.departmentId) {
-      const { getDepartmentWithoutPopulate } = require('./department')
-      // Check whether the department against departmentId exist OR not
-      const departmentData = await getDepartmentWithoutPopulate({ _id: data.departmentId })
-      if (!departmentData) throw new Error(`Department not exist.`)
-    }
-
-    data.clientId = businessData.userId
-
-    if (!data?.tasks?.length) throw new Error(`Provide at least one task to create invoice.`)
-
-    const { getTaskWithoutPopulate } = require('./task')
-    const { getMultipleTaskHours } = require('./taskHours')
-
-    for (var task of data.tasks) {
-      const taskData = await getTaskWithoutPopulate({ _id: task }, 'assignee businessId taskName')
-      if (taskData?.assignee?.toString() != data.freelancerId)
-        throw new Error(`You can only create invoice of your own tasks.`)
-      if (taskData?.businessId?.toString() != data.businessId)
-        throw new Error(`${taskData?.taskName} not exist in this business.`)
-    }
-
-    const taskHours = await getMultipleTaskHours(
-      {
-        taskId: { $in: data.tasks }
-      },
-      'hours'
-    )
-
-    data.hoursWorked = taskHours.reduce((accumulator, currentTask) => {
-      return accumulator + currentTask.hours
-    }, 0)
-    const newInvoice = await new Invoice(data)
-    const response = await newInvoice.save()
-    return response
+    const newInvoice = new Invoice(data)
+    const savedInvoice = await newInvoice.save()
+    return savedInvoice
   } catch (e) {
     throw new Error(`Something went wrong: ${e.message}`)
   }
 }
-
 const getInvoiceById = async id => {
   try {
     return await Invoice.findById(id).exec()
@@ -58,9 +21,20 @@ const getInvoiceById = async id => {
 
 const getAllInvoices = async query => {
   try {
-    const filter = pick(query, ['businessId', 'freelancerId', 'departmentId', 'clientId'])
-
-    const total = await countInvoices(filter)
+    let filters = {}
+    if (query.businessId) {
+      filters['businessId'] = mongoose.Types.ObjectId(query.businessId)
+    }
+    if (query.freelancerId) {
+      filters['freelancerId'] = mongoose.Types.ObjectId(query.freelancerId)
+    }
+    if (query.clientId) {
+      filters['clientId'] = mongoose.Types.ObjectId(query.clientId)
+    }
+    if (query.departmentId) {
+      filters['departmentId'] = mongoose.Types.ObjectId(query.departmentId)
+    }
+    const total = await countInvoices(filters)
 
     let limit = query.limit === 'all' ? total : pageLimit(query)
     limit = limit == 0 ? 10 : limit
@@ -70,59 +44,40 @@ const getAllInvoices = async query => {
 
     const aggregationPipeline = [
       {
-        $match: { ...filter }
-      },
-      {
-        $project: {
-          clientId: 1,
-          freelancerId: 1,
-          businessId: 1,
-          hoursWorked: 1,
-          hourlyRate: 1,
-          status: 1,
-          createdAt: 1,
-          updatedAt: 1
-        }
+        $match: { ...filters }
       },
       {
         $lookup: {
           from: 'businesses',
-          let: { businessId: '$businessId' },
+          localField: 'businessId',
+          foreignField: '_id',
+          as: 'businesses',
           pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$businessId'] }
-              }
-            },
             {
               $project: {
                 name: 1
               }
             }
-          ],
-          as: 'business'
+          ]
         }
       },
       {
-        $unwind: '$business'
+        $unwind: '$businesses'
       },
       {
         $lookup: {
           from: 'freelancers',
-          let: { freelancerId: '$freelancerId' },
+          localField: 'freelancerId',
+          foreignField: '_id',
+          as: 'freelancer',
           pipeline: [
             {
-              $match: {
-                $expr: { $eq: ['$_id', '$$freelancerId'] }
-              }
-            },
-            {
               $project: {
+                name: 1,
                 userId: 1
               }
             }
-          ],
-          as: 'freelancer'
+          ]
         }
       },
       {
@@ -131,27 +86,22 @@ const getAllInvoices = async query => {
       {
         $lookup: {
           from: 'users',
-          let: { userId: '$freelancer.userId' },
+          localField: 'freelancer.userId',
+          foreignField: '_id',
+          as: 'user',
           pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
-              }
-            },
             {
               $project: {
                 FirstName: 1,
                 LastName: 1,
-                FullName: 1,
-                profileImage: 1
+                FullName: 1
               }
             }
-          ],
-          as: 'freelancer.user'
+          ]
         }
       },
       {
-        $unwind: '$freelancer.user'
+        $unwind: '$user'
       },
       {
         $lookup: {
@@ -162,124 +112,21 @@ const getAllInvoices = async query => {
               $match: {
                 $expr: {
                   $and: [
-                    { $eq: ['$userId', '$$clientId'] },
-                    { $eq: ['$freelancerId', '$$freelancerId'] },
-                    { $eq: ['$businessId', '$$businessId'] }
+                    { $eq: ['$$clientId', '$userId'] },
+                    { $eq: ['$$freelancerId', '$freelancerId'] },
+                    { $eq: ['$$businessId', '$businessId'] }
                   ]
                 }
-              }
-            },
-            {
-              $project: {
-                isActive: 1,
-                hourlyRate: 1,
-                hoursLimit: 1,
-                totalStoryPoints: 1,
-                isOfferAccepted: 1,
-                createdAt: 1,
-                updatedAt: 1
               }
             }
           ],
           as: 'contract'
         }
       },
-      {
-        $unwind: '$contract'
-      },
-      {
-        $lookup: {
-          from: 'tasks',
-          let: { businessId: '$businessId', assignee: '$freelancerId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [{ $eq: ['$businessId', '$$businessId'] }, { $eq: ['$assignee', '$$assignee'] }]
-                }
-              }
-            },
-            {
-              $lookup: {
-                from: 'taskhours',
-                let: { taskId: '$_id' },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: { $eq: ['$taskId', '$$taskId'] }
-                    }
-                  },
-                  {
-                    $project: {
-                      hours: 1,
-                      taskId: 1,
-                      createdAt: 1,
-                      updatedAt: 1
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: 'tasks',
-                      let: { taskId: '$taskId' },
-                      pipeline: [
-                        {
-                          $match: {
-                            $expr: {
-                              $and: [{ $eq: ['$_id', '$$taskId'] }]
-                            }
-                          }
-                        },
-                        {
-                          $project: {
-                            taskName: 1,
-                            ticketCode: 1,
-                            status: 1,
-                            assignee: 1,
-                            taskHours: 1
-                          }
-                        }
-                      ],
-                      as: 'task'
-                    }
-                  },
-                  {
-                    $unwind: '$task'
-                  },
-                  {
-                    $sort: { createdAt: 1 } // 1 for ascending, -1 for descending
-                  }
-                ],
-                as: 'taskHours'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                // taskName: 1,
-                // ticketCode: 1,
-                // status: 1,
-                // assignee: 1,
-                taskHours: 1
-              }
-            }
-          ],
-          as: 'task'
-        }
-      },
-      {
-        $addFields: {
-          tasks: {
-            $map: {
-              input: '$tasks',
-              as: 'task',
-              in: '$$task'
-            }
-          }
-        }
-      },
       { $skip: skip },
       { $limit: limit }
     ]
+
     const invoices = await Invoice.aggregate(aggregationPipeline).exec()
     const totalPages = Math.ceil(total / limit)
 
