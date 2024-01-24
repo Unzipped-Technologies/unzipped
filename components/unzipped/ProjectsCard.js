@@ -50,7 +50,6 @@ const OtherInformationCard = styled.div`
 `
 
 function ProjectsCard({ user }) {
-  console.log('user', user)
   const images = []
   for (let i = 0; i < 3; i++) {
     images.push(<img src="/img/projectImages.png" style={{ marginRight: '21px' }} key={i} alt={`Image ${i}`} />)

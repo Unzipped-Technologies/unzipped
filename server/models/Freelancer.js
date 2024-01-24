@@ -12,7 +12,7 @@ const freelancerSchema = new Schema(
     isPreferedFreelancer: { type: Boolean, default: false },
     isAcceptEquity: { type: Boolean, default: false },
     category: { type: String, default: '' },
-    freelancerSkills: [{ type: Schema.Types.ObjectId, refs: 'freelancerskills' }],
+    freelancerSkills: { type: [Schema.Types.ObjectId], refs: 'freelancerskills' },
     lists: { type: Schema.Types.ObjectId, ref: 'lists' },
     invites: { type: Schema.Types.Mixed, ref: 'invites' },
     cover: String,

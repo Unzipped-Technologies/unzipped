@@ -59,7 +59,7 @@ const getApplicationById = async id => {
             {
               path: 'user',
               model: 'users',
-              select: 'email FirstName LastName FullName profileImage'
+              select: 'email FirstName LastName FullName profileImage AddressLineCountry'
             },
             {
               path: 'freelancerSkills',

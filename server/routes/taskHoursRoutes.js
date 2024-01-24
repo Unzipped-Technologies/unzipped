@@ -38,7 +38,7 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('taskHour
   }
 })
 
-router.patch('/time/:_id', requireLogin, permissionCheckHelper.hasPermission('taskHours'), async (req, res) => {
+router.patch('/:_id', requireLogin, permissionCheckHelper.hasPermission('taskHours'), async (req, res) => {
   try {
     const { updatedAt } = req.body
     const { _id } = req.params
@@ -50,7 +50,7 @@ router.patch('/time/:_id', requireLogin, permissionCheckHelper.hasPermission('ta
   }
 })
 
-router.delete('/delete/:id', requireLogin, permissionCheckHelper.hasPermission('taskHours'), async (req, res) => {
+router.delete('/:id', requireLogin, permissionCheckHelper.hasPermission('taskHours'), async (req, res) => {
   try {
     const taskHoursId = req.params.id
     if (!taskHoursId) throw Error('Request cannot be processed without TaskHoursId')

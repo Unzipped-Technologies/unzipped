@@ -133,7 +133,7 @@ const getBusinessById = async (id, user) => {
 }
 
 // list lists
-const listBusinesses = async ({ filter, take = 20, skip = 0, maxRate, minRate, skill, type }) => {
+const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, skill, type }) => {
   try {
     const existingNameIndex = await business.collection.indexes()
     const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
@@ -231,7 +231,7 @@ const listBusinesses = async ({ filter, take = 20, skip = 0, maxRate, minRate, s
               $skip: +skip
             },
             {
-              $limit: +take
+              $limit: +limit
             }
           ],
           totalCount: [

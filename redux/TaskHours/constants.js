@@ -1,0 +1,10 @@
+// Tasks
+export const CREATE_TASK_HOUR = 'CREATE_TASK_HOUR'
+export const UPDATE_TASK_HOUR = 'UPDATE_TASK_HOUR'
+export const GET_TASK_HOURS = 'GET_TASK_HOURS'
+export const GET_TASK_HOUR_BY_ID = 'GET_TASK_HOUR_BY_ID'
+export const DELETE_TASK_HOUR = 'DELETE_TASK_HOUR'
+export const TASK_HOUR_ERROR = 'TASK_HOUR_ERROR'
+
+export const LOAD_STATE = 'LOAD_STATE'
+export const SUCCESS = 'SUCCESS'

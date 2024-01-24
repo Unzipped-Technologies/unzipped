@@ -1,6 +1,5 @@
 const FreelancerModel = require('../models/Freelancer')
 const FreelancerSkillsModel = require('../models/FreelancerSkills')
-const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
 const getFreelancerById = async id => {
   try {
@@ -8,10 +7,12 @@ const getFreelancerById = async id => {
       .populate([
         {
           path: 'userId',
-          select: 'FirstName LastName FullName email'
+          select:
+            'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry'
         },
         {
           path: 'freelancerSkills',
+          model: 'freelancerskills',
           select: 'skill isActive yearsExperience'
         }
       ])
