@@ -1,51 +1,48 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import Nav from '../../components/unzipped/header';
+import React, { useState, useEffect, useRef, useMemo } from 'react'
+import Nav from '../../components/unzipped/header'
 import Footer from '../../components/unzipped/Footer'
-import {
-    DarkText,
-    WhiteCard
-} from '../../components/unzipped/dashboard/style'
-import styled from 'styled-components';
-import { connect } from 'react-redux';
+import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
+import styled from 'styled-components'
+import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getFreelancerSkillsList, getProjectsList } from '../../redux/actions';
-import { parseCookies } from "../../services/cookieHelper";
-import MobileSearchBar from '../../components/ui/MobileSearchBar';
-import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects';
-import MobileSearchFilterProjects from '../../components/unzipped/MobileSearchFilterProjects';
-import ProjectDesktopCard from '../../components/unzipped/dashboard/ProjectsDesktopCard';
-import MobileProjectCard from '../../components/unzipped/dashboard/MobileProjectCard';
+import { getFreelancerSkillsList, getProjectsList } from '../../redux/actions'
+import { parseCookies } from '../../services/cookieHelper'
+import MobileSearchBar from '../../components/ui/MobileSearchBar'
+import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects'
+import MobileSearchFilterProjects from '../../components/unzipped/MobileSearchFilterProjects'
+import ProjectDesktopCard from '../../components/unzipped/dashboard/ProjectsDesktopCard'
+import MobileProjectCard from '../../components/unzipped/dashboard/MobileProjectCard'
 
 const Container = styled.div`
-    display: flex;
-    flex-flow: column;
-    width: 100%;
-    justify-content: center;
-    background: #F7F8F9;
-    padding-top: 21px;
-    @media(max-width: 680px) {
-        padding-top: 0px;
-        background-color: #F6F7F9;
-        margin-bottom: 48px;
-    }
-`;
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  justify-content: center;
+  background: #f7f8f9;
+  padding-top: 21px;
+  @media (max-width: 680px) {
+    padding-top: 0px;
+    background-color: #f6f7f9;
+    margin-bottom: 48px;
+  }
+`
 const Box = styled.div`
-    display: flex;
-    padding: 0px 67px;
-    gap: 21px;
-    overflow: overflow;
-    @media(max-width: 680px) {
-        display: none;
-    }
-`;
+  display: flex;
+  padding: 0px 67px;
+  gap: 21px;
+  overflow: overflow;
+  @media (max-width: 680px) {
+    display: none;
+  }
+`
 const MobileDisplayBox = styled.div`
-    position: relative;
-    @media(min-width: 680px) {
-        display: none;
-    }
-`;
+  position: relative;
+  @media (min-width: 680px) {
+    display: none;
+  }
+`
 const DesktopDisplayBox = styled.div`
-@media(max-width: 680px) {
+  @media (max-width: 680px) {
     display: none;
   }
 `
@@ -106,59 +103,72 @@ const Projects = ({
       handleSearch(intersectionObserver)
       setTake(+skip + 20)
     }
+    setSkip(0)
+  }, [skip])
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(callbackFunction, options)
-        if (containerRef.current) observer.observe(containerRef.current)
-        return () => {
-            if (containerRef.current) observer.unobserve(containerRef.current)
-        }
-    }, [containerRef, options])
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0
+  }
 
-    const handleFilterOpenClose = (value) => {
-        setFilterOpenClose(value)
+  useEffect(() => {
+    const observer = new IntersectionObserver(callbackFunction, options)
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => {
+      if (containerRef.current) observer.unobserve(containerRef.current)
     }
+  }, [containerRef, options])
 
-    const handleSearch = (intersectionObserver) => {
-        getProjectsList({
-            intersectionObserver,
-            filter,
-            take,
-            skip,
-            type,
-            minRate,
-            maxRate,
-            skill,
-        }, access_token)
-    }
-  
-    const callbackFunction = (entries) => {
-        const [entry] = entries;
-        setIsVisible(entry.isIntersecting);
-        if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
-            if (take < totalCount) {
-                const total = +take;
-                setTake(20);
-                setSkip(total)
-            }
-        }
-    };
+  const handleFilterOpenClose = value => {
+    setFilterOpenClose(value)
+  }
 
-    const getResultMessage = (freelancerList, skip, take, totalCount) => {
-        if (freelancerList?.length === 0) {
-            return "0 result";
-        } else if (freelancerList?.length === 1) {
-            return "1 result";
-        } else if (skip === 0) {
-            return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`
-                }`;
-        } else {
-            const start = (+skip * +take) + 1;
-            const end = Math.min((+skip * +take) + +take, totalCount);
-            return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`
-                }`;
-        }
+  const handleSearch = intersectionObserver => {
+    getProjectsList({
+      intersectionObserver,
+      filter,
+      take,
+      skip,
+      type,
+      minRate,
+      maxRate,
+      skill
+    })
+  }
+
+  const callbackFunction = entries => {
+    const [entry] = entries
+    setIsVisible(entry.isIntersecting)
+    if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
+      if (take < totalCount) {
+        const total = +take
+        setTake(20)
+        setSkip(total)
+      }
     }
+  }
+
+  const getResultMessage = (freelancerList, skip, take, totalCount) => {
+    if (freelancerList?.length === 0) {
+      return '0 result'
+    } else if (freelancerList?.length === 1) {
+      return '1 result'
+    } else if (skip === 0) {
+      return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
+    } else {
+      const start = +skip * +take + 1
+      const end = Math.min(+skip * +take + +take, totalCount)
+      return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
+    }
+  }
+
+  const setSearchKey = value => {
+    setFilter(prevData => ({
+      ...prevData,
+      searchKey: value
+    }))
+  }
 
   return (
     <div>
@@ -264,10 +274,10 @@ const Projects = ({
 }
 
 Projects.getInitialProps = async ({ req, res }) => {
-    const token = parseCookies(req)
-    return {
-        token: token && token,
-    }
+  const token = parseCookies(req)
+  return {
+    token: token && token
+  }
 }
 
 const mapStateToProps = state => {
@@ -279,11 +289,11 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        getProjectsList: bindActionCreators(getProjectsList, dispatch),
-        getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch),
-    }
+const mapDispatchToProps = dispatch => {
+  return {
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
+    getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch)
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Projects);
+export default connect(mapStateToProps, mapDispatchToProps)(Projects)

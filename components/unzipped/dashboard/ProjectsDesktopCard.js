@@ -1,9 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
+
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import { TitleText, DarkText, Absolute, DarkSpan } from './style'
+import { TitleText, DarkText, Absolute } from './style'
 
 const Container = styled.div`
   display: flex;

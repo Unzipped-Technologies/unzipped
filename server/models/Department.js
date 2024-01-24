@@ -6,7 +6,7 @@ const { Schema } = mongoose
 const departmentSchema = new Schema(
   {
     name: String,
-    clientId: String,
+    clientId: { type: Schema.Types.ObjectId, ref: 'users' },
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },
     isSubDepartment: { type: Boolean, default: false },

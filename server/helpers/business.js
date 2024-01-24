@@ -71,9 +71,8 @@ const deleteBusiness = async (businessId, userId) => {
   }
 }
 
-const getBusinessById = async (id, sub) => {
+const getBusinessById = async (id, user) => {
   try {
-    const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } })
     let populateData = []
     if (user?.userInfo?.role === 1) {
       populateData = [
@@ -105,59 +104,37 @@ const getBusinessById = async (id, sub) => {
         {
           path: 'applicants',
           model: 'freelancers',
-          populate: {
-            path: 'userId',
-            model: 'users',
-            select: 'email FirstName LastName profileImage freelancers'
-          }
+          select: 'userId rate category freelancerSkills likeTotal dislikeTotal',
+          populate: [
+            {
+              path: 'userId',
+              model: 'users',
+              select: 'email FirstName LastName profileImage freelancers'
+            }
+          ]
+        },
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'email FirstName LastName profileImage  isIdentityVerified stripeId stripeSubscription createdAt'
+        },
+        {
+          path: 'questionsToAsk',
+          model: 'questions',
+          select: 'question answers'
         }
-      })
-      .populate({
-        path: 'userId',
-        model: 'users',
-        select:
-          'email FirstName LastName profileImage freelancers isIdentityVerified stripeId stripeSubscription createdAt freelancerSkills',
-        populate: [
-          {
-            path: 'freelancerSkills',
-            model: 'freelancerskills',
-            select: 'skill yearsExperience'
-          }
-        ]
-      })
-      .populate({
-        path: 'applicants',
-        model: 'projectapplications',
-        select: 'freelancerId projectId coverLetter resume isDeleted',
-        populate: [
-          {
-            path: 'freelancerId',
-            model: 'freelancers',
-            select: 'rate freelancerSkills',
-            populate: [
-              {
-                path: 'freelancerSkills',
-                model: 'freelancerskills',
-                select: 'skill yearsExperience'
-              }
-            ]
-          },
-          {
-            path: 'freelancerId.freelancerSkills',
-            model: 'freelancerskills',
-            select: 'skill yearsExperience'
-          }
-        ]
-      })
-      .execPopulate()
-    return { getBusiness: populatedBusiness }
+      ]
+    }
+    const response = await business.findByIdAndUpdate(id, { $set: { isSelected: true } }).populate(populateData)
+
+    return { getBusiness: response }
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
 }
 
 // list lists
-const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, type }) => {
+const listBusinesses = async ({ filter, take = 20, skip = 0, maxRate, minRate, skill, type }) => {
   try {
     const existingNameIndex = await business.collection.indexes()
     const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
@@ -230,7 +207,9 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
             },
             {
               $project: {
-                name: 1
+                FirstName: 1,
+                LastName: 1,
+                FullName: 1
               }
             }
           ],

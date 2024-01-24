@@ -321,9 +321,7 @@ export const getBusinessTasksByFounder =
 export const getBusinessList = data => async (dispatch, getState) => {
   //business list Loading
   dispatch({ type: LOAD_STATE })
-  const headers = {
-    access_token: getState()?.Auth.token
-  }
+  console.log('token', getState()?.Auth.token)
   dispatch(startLoading())
   await axios
     .post(`/api/business/list`, data, tokenConfig(getState()?.Auth.token))
@@ -493,10 +491,7 @@ export const getProjectsList = (queryParams, token) => async (dispatch, getState
   }
   dispatch(startLoading())
   await axios
-    .post(`/api/business/list`, tokenConfig(token), {
-      headers,
-      params: queryParams
-    })
+    .post(`/api/business/list`, queryParams, tokenConfig(getState()?.Auth.token))
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
