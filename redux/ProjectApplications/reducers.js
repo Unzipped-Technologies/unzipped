@@ -5,6 +5,8 @@ import {
   UPDATE_PROJECT_APPLICATION,
   DELETE_PROJECT_APPLICATION,
   PROJECT_APPLICATION_ERROR,
+  SHOW_SUCCESS_NOTIFICATION,
+  HIDE_SUCCESS_NOTIFICATION,
   LOAD_STATE,
   SUCCESS
 } from './constants'
@@ -14,15 +16,22 @@ const INIT_STATE = {
   selectedApplication: {},
   error: '',
   loading: false,
-  totalCount: 0
+  totalCount: 0,
+  success: false
 }
 
 const ProjectApplications = (state = INIT_STATE, action = {}) => {
   switch (action.type) {
+    case HIDE_SUCCESS_NOTIFICATION:
+      return {
+        ...state,
+        success: false
+      }
     case CREATE_PROJECT_APPLICATION:
       return {
         ...state,
         loading: false,
+        success: true,
         projectApplications: [...state.projectApplications]
       }
     case UPDATE_PROJECT_APPLICATION:

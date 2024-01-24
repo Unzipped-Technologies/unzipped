@@ -13,8 +13,9 @@ import Badge from '../../ui/Badge'
 import MobileProjectDetail from './mobile/MobileProjectDetail'
 
 const Desktop = styled.div`
-  width: 80%;
-  margin: auto;
+  min-width: 82%;
+  margin-left: 10%;
+  margin-right: 9%;
   display: flex;
   flex-direction: row;
   @media (max-width: 680px) {
@@ -26,13 +27,13 @@ const ProjectDetail = styled.div`
   position: relative;
   right: 0px;
   top: 10px;
-  width: 750px;
+  width: 68%;
   flex-shrink: 0;
   border-radius: 8px;
   border: 1px solid #f0f0f0;
   background: #fff;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
-  padding: 0 24px 15px;
+  padding: 0px 24px 15px;
 `
 
 const DetailHeading = styled.div`
@@ -116,7 +117,7 @@ const ProjectID = styled.p`
 const AboutClient = styled.div`
   position: relative;
   top: 10px;
-  width: 390px;
+  width: 28%;
   flex-shrink: 0;
   left: 20px;
   border-radius: 8px;

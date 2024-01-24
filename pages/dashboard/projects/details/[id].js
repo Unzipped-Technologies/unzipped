@@ -1,8 +1,8 @@
+import React, { useState, useEffect, useMemo } from 'react'
 import { connect } from 'react-redux'
-import styled, { css } from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-import React, { useState, useEffect, useMemo } from 'react'
+import styled, { css } from 'styled-components'
 
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
@@ -278,7 +278,6 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 2 && <HiringTable />}
         {selectedTab === 3 && <InvoicesTable selectedWeek={selectedWeek} />}
       </TabContent>
-      <TabContent active={selectedTab === 1}></TabContent>
     </>
   )
 }

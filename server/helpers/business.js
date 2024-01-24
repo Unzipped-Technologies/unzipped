@@ -11,15 +11,32 @@ const { likeEnum } = require('../enum/likeEnum')
 const Contracts = require('../../models/Contract')
 const Freelancer = require('../../models/Freelancer')
 const TaskHours = require('../../models/TaskHours')
+const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
 const createBusiness = async (data, id) => {
   // create business
-  const newBusiness = await business.create({ ...data, userId: id })
+  const newBusiness = await business.create({ ...data, userId: id, questionsToAsk: [] })
   const audience = await businessAudience.create({
     ...data,
     businessId: newBusiness._id
   })
+
+  let questions = []
+  if (data?.questionsToAsk?.length) {
+    let businessQuestions = []
+    for (var question of data.questionsToAsk) {
+      businessQuestions.push({
+        businessId: newBusiness._id,
+        userId: id,
+        question: question,
+        answers: []
+      })
+    }
+    questions = await questionHelper.createManyQuestion(businessQuestions)
+
+    questions = questions?.map(question => question._id)
+  }
   // create department management and assign main user to it
   const dep = await departmentHelper.addDepartmentToBusiness({
     name: 'Management',
@@ -30,6 +47,7 @@ const createBusiness = async (data, id) => {
   // associate department with business
   await business.findByIdAndUpdate(newBusiness._id, {
     // departments: [await department.findById(dep._id)],
+    questionsToAsk: questions,
     audience: await businessAudience.findById(audience._id)
   })
   return { msg: 'business created successfully' }
@@ -51,62 +69,51 @@ const deleteBusiness = async (businessId, userId) => {
   }
 }
 
-const getBusinessById = async (id, sub) => {
+const getBusinessById = async (id, user) => {
   try {
-    await business.updateMany({ userId: sub }, { $set: { isSelected: false } })
+    await business.updateMany({ userId: user.sub }, { $set: { isSelected: false } })
     const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } })
-    const populatedBusiness = await getBusiness
-      .populate({
-        path: 'employees',
-        model: 'contracts',
-        populate: {
-          path: 'freelancerId',
-          model: 'freelancers',
-          populate: {
-            path: 'userId',
-            model: 'users',
-            select: 'email FirstName LastName profileImage freelancers'
-          }
+    let populateData = []
+    if (user?.userInfo?.role === 1) {
+      populateData = [
+        {
+          path: 'questionsToAsk',
+          model: 'questions',
+          select: 'question'
+        },
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName profileImage  isIdentityVerified stripeId stripeSubscription createdAt'
         }
-      })
-      .populate({
-        path: 'userId',
-        model: 'users',
-        select:
-          'email FirstName LastName profileImage freelancers isIdentityVerified stripeId stripeSubscription createdAt freelancerSkills',
-        populate: [
-          {
-            path: 'freelancerSkills',
-            model: 'freelancerskills',
-            select: 'skill yearsExperience'
-          }
-        ]
-      })
-      .populate({
-        path: 'applicants',
-        model: 'projectapplications',
-        select: 'freelancerId projectId coverLetter resume isDeleted',
-        populate: [
-          {
-            path: 'freelancerId',
-            model: 'freelancers',
-            select: 'rate freelancerSkills',
-            populate: [
-              {
-                path: 'freelancerSkills',
-                model: 'freelancerskills',
-                select: 'skill yearsExperience'
-              }
-            ]
-          },
-          {
-            path: 'freelancerId.freelancerSkills',
-            model: 'freelancerskills',
-            select: 'skill yearsExperience'
-          }
-        ]
-      })
-      .execPopulate()
+      ]
+    } else {
+      populateData = [
+        {
+          path: 'applicants',
+          model: 'freelancers',
+          select: 'userId rate category freelancerSkills likeTotal dislikeTotal',
+          populate: [
+            {
+              path: 'userId',
+              model: 'users',
+              select: 'email FirstName LastName profileImage freelancers'
+            }
+          ]
+        },
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'email FirstName LastName profileImage  isIdentityVerified stripeId stripeSubscription createdAt'
+        },
+        {
+          path: 'questionsToAsk',
+          model: 'questions',
+          select: 'question answers'
+        }
+      ]
+    }
+    const populatedBusiness = await getBusiness.populate(populateData).execPopulate()
     return { getBusiness: populatedBusiness }
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
@@ -114,7 +121,7 @@ const getBusinessById = async (id, sub) => {
 }
 
 // list lists
-const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, type }) => {
+const listBusinesses = async ({ filter, take = 25, skip = 0, maxRate, minRate, skill, type }) => {
   try {
     const existingNameIndex = await business.collection.indexes()
     const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
@@ -125,8 +132,12 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
       await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
       await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
     }
+    let filters = {} // Default query to retrieve all records
 
-    const regexQuery = new RegExp(filter, 'i')
+    if (filter?.isActive !== undefined) {
+      filters.isActive = filter?.isActive
+    }
+    const regexQuery = new RegExp(filter?.searchKey, 'i')
     const regexType = new RegExp(type, 'i')
     const aggregationPipeline = [
       {
@@ -147,13 +158,14 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
           }),
           ...(maxRate && {
             budget: { $lte: +maxRate }
-          })
+          }),
+          ...filters
         }
       },
       {
         $lookup: {
           from: 'users',
-          localField: 'user',
+          localField: 'userId',
           foreignField: '_id',
           as: 'userProfile'
         }
@@ -175,6 +187,7 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
           likes: '$userProfile.likeTotal',
           createdAt: 1,
           updatedAt: 1,
+          isActive: 1,
           valueEstimate: 1
         }
       },
@@ -201,6 +214,7 @@ const listBusinesses = async ({ filter, take, skip, maxRate, minRate, skill, typ
         }
       }
     ]
+
     const list = await business.aggregate(aggregationPipeline).exec()
     return list[0]
   } catch (e) {

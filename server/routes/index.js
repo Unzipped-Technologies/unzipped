@@ -20,5 +20,8 @@ router.use('/education', require('./educationRoutes'));
 router.use('/taskHours', require('./taskHoursRoutes'));
 router.use('/invoice', require('./invoiceRoutes'));
 router.use('/list-entries', require('./listEntriesRoute'));
+router.use('/questions', require('./questionRoutes'))
+router.use('/projectApplication', require('./projectApplicationsRoutes'))
+
 
 module.exports = router

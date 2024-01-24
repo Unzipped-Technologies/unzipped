@@ -32,7 +32,6 @@ const Contracts = (state = INIT_STATE, action = {}) => {
       let newListContracts = state.contracts.filter(item => action.payload.id !== item.id)
       return { ...state, loading: false, contracts: [...newListContracts] }
     case GET_CONTRACTS:
-      console.log('action.payload', action.payload)
       const selectedContract = action.payload?.data.find(e => e.isSelected) || action.payload?.data[0]
       return {
         ...state,

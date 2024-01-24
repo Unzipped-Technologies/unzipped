@@ -1,6 +1,7 @@
 import React from 'react'
 import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
 
 const UserSkills = styled.div`
   ::-webkit-scrollbar {
@@ -17,26 +18,33 @@ const UserSkills = styled.div`
 `
 
 function MobileProjectCard({ project }) {
+  const router = useRouter()
+
   return (
     <div className="bg-white" style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}>
       <div className="px-3 py-2">
         <div className="d-flex">
           <div>
             <div className="d-flex">
-              <p className="mb-0 pe-2" style={{ color: '#0057FF', fontWeight: '500', fontSize: '16px' }}>
+              <p
+                className="mb-0 pe-2"
+                style={{ color: '#0057FF', fontWeight: '500', fontSize: '16px' }}
+                onClick={() => {
+                  router.push(`/projects/${project._id}`)
+                }}>
                 {project?.name}
               </p>
             </div>
           </div>
         </div>
-        <div className='d-flex justify-content-between align-items-center'>
-            <p className='mb-0'>{project?.country}</p>
-            <div className='d-flex'>
-          {/* <span style={{ fontSize: "24px" }}>${project?.budget} <span style={{ fontSize: "15px" }}>{project?.projectType.includes('Hourly Rate') ? '/ hour ' : 'fixed rate '}</span></span> */}
-          <div className='d-flex align-items-center ps-3'>
-            <IconComponent name='thumbUp' width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
-            <span style={{ fontSize: "16px", paddingLeft: "3px" }}>{project?.likes}</span>
-          </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <p className="mb-0">{project?.country}</p>
+          <div className="d-flex">
+            {/* <span style={{ fontSize: "24px" }}>${project?.budget} <span style={{ fontSize: "15px" }}>{project?.projectType.includes('Hourly Rate') ? '/ hour ' : 'fixed rate '}</span></span> */}
+            <div className="d-flex align-items-center ps-3">
+              <IconComponent name="thumbUp" width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
+              <span style={{ fontSize: '16px', paddingLeft: '3px' }}>{project?.likes}</span>
+            </div>
           </div>
         </div>
       </div>
