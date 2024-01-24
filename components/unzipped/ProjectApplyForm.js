@@ -272,31 +272,16 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
             }}
           />
         </FieldContainer>
-        {data?.questions?.length &&
-          data.questions?.map(question => {
-            return (
-              <FieldContainer key={question.question}>
-                <FieldHeading>{question?.questionText}</FieldHeading>
-                <TextArea value={question.answer} onChange={e => updateAnswer(e.target.value, question.question)} />
-              </FieldContainer>
-            )
-          })}
-        {/* <FieldContainer>
-          <FieldHeading>
-            Describe yourself here, and why you are a good fit for the role (min 200 characters)
-          </FieldHeading>
-          <TextArea />
-        </FieldContainer>
-        <FieldContainer>
-          <FieldHeading>
-            This is one of the custom questions the client added when making the project
-            <TextArea />
-          </FieldHeading>
-        </FieldContainer>
-        <FieldContainer>
-          <FieldHeading>This is another one of the custom questions that were added at that time.</FieldHeading>
-          <TextArea />
-        </FieldContainer> */}
+        {data?.questions?.length
+          ? data.questions?.map(question => {
+              return (
+                <FieldContainer key={question.question}>
+                  <FieldHeading>{question?.questionText}</FieldHeading>
+                  <TextArea value={question.answer} onChange={e => updateAnswer(e.target.value, question.question)} />
+                </FieldContainer>
+              )
+            })
+          : ''}
       </ApplySection>
       <ShowCaseProjects>
         <ProjectContainer>

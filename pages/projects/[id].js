@@ -227,7 +227,7 @@ const mapStateToProps = state => {
     projectDetails: state.Business.selectedBusiness,
     freelancerId: state?.Auth?.user?.freelancers,
     role: state?.Auth?.user?.role,
-    success: state.ProjectApplications.success
+    success: state?.ProjectApplications?.success
   }
 }
 

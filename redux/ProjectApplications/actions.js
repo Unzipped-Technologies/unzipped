@@ -18,10 +18,6 @@ export const createProjectApplication = data => async (dispatch, getState) => {
     .post(`/api/projectApplication`, data, tokenConfig(getState()?.Auth.token))
     .then(res => {
       dispatch({
-        type: SHOW_SUCCESS_NOTIFICATION,
-        payload: null
-      })
-      dispatch({
         type: CREATE_PROJECT_APPLICATION,
         payload: res.data
       })

@@ -67,7 +67,7 @@ const NotificationsPanel = ({ notifications, user, success }) => {
 
 const mapStateToProps = state => {
   return {
-    success: state.ProjectApplications.success
+    success: state?.ProjectApplications?.success
   }
 }
 
