@@ -484,10 +484,10 @@ export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
   //     })
 }
 
-export const getProjectsList = (queryParams, token) => async (dispatch, getState) => {
+export const getProjectsList = queryParams => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
   const headers = {
-    access_token: token
+    access_token: getState()?.Auth.token
   }
   dispatch(startLoading())
   await axios

@@ -44,9 +44,7 @@ router.post(
 
 router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('userListBusinesses'), async (req, res) => {
   try {
-    const { filter = {}, take = 25, skip = 0 } = req.body
-    filter.userId = req.user.sub
-    const listBusinesses = await businessHelper.listBusinesses({ filter, take, skip })
+    const listBusinesses = await businessHelper.listBusinesses(req.body)
     if (!listBusinesses) throw Error('could not find businesses')
     res.json(listBusinesses)
   } catch (e) {

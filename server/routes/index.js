@@ -26,5 +26,8 @@ router.use('/tags', require('./tagRoutes'))
 router.use('/department', require('./departmentRoutes'))
 router.use('/freelancer', require('./freelancerRoutes'))
 router.use('/list-entries', require('./listEntriesRoute'));
+router.use('/questions', require('./questionRoutes'))
+router.use('/projectApplication', require('./projectApplicationsRoutes'))
+
 
 module.exports = router

@@ -76,12 +76,19 @@ const userPermissions = Object.freeze({
   getApplicationById: 'getApplicationById',
   getAllApplications: 'getAllApplications',
 
-  // project applications
+  // contract
   createContract: 'createContract',
   updateContract: 'updateContract',
   deleteContract: 'deleteContract',
   getContractById: 'getContractById',
-  getAllContracts: 'getAllContracts'
+  getAllContracts: 'getAllContracts',
+
+  // questions
+  createQuestion: 'createQuestion',
+  updateQuestion: 'updateQuestion',
+  deleteQuestion: 'deleteQuestion',
+  getQuestionById: 'getQuestionById',
+  getAllQuestions: 'getAllQuestions'
 })
 
 const accountTypePermissions = Object.freeze({
@@ -158,7 +165,14 @@ const accountTypePermissions = Object.freeze({
 
     // project applications
     userPermissions.getApplicationById,
-    userPermissions.getAllApplications
+    userPermissions.getAllApplications,
+
+    // questions
+    userPermissions.createQuestion,
+    userPermissions.updateQuestion,
+    userPermissions.deleteQuestion,
+    userPermissions.getQuestionById,
+    userPermissions.getAllQuestions
   ],
   [accountTypeEnum.INVESTOR]: [
     // users
@@ -173,8 +187,6 @@ const accountTypePermissions = Object.freeze({
     userPermissions.UpdateLists,
     userPermissions.DeleteLists,
     // businesses
-    userPermissions.userCreateBusiness,
-    userPermissions.userUpdateBusiness,
     userPermissions.userListBusinesses,
     userPermissions.getBusinessByInvestor,
     userPermissions.listAllBusinesses,
@@ -220,7 +232,14 @@ const accountTypePermissions = Object.freeze({
 
     // contract
     userPermissions.getContractById,
-    userPermissions.getAllContracts
+    userPermissions.getAllContracts,
+
+    // questions
+    userPermissions.createQuestion,
+    userPermissions.updateQuestion,
+    userPermissions.deleteQuestion,
+    userPermissions.getQuestionById,
+    userPermissions.getAllQuestions
   ],
   [accountTypeEnum.ADMIN]: [
     // users
@@ -303,7 +322,14 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateContract,
     userPermissions.deleteContract,
     userPermissions.getContractById,
-    userPermissions.getAllContracts
+    userPermissions.getAllContracts,
+
+    // questions
+    userPermissions.createQuestion,
+    userPermissions.updateQuestion,
+    userPermissions.deleteQuestion,
+    userPermissions.getQuestionById,
+    userPermissions.getAllQuestions
   ]
 })
 

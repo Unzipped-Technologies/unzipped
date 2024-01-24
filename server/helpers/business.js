@@ -40,7 +40,6 @@ const createBusiness = async data => {
 
     questions = questions?.map(question => question._id)
   }
-
   // create department management and assign main user to it
   await departmentHelper.createDepartment({
     name: 'Management',
@@ -145,8 +144,12 @@ const listBusinesses = async ({ filter, take = 20, skip = 0, maxRate, minRate, s
       await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
       await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
     }
+    let filters = {} // Default query to retrieve all records
 
-    const regexQuery = new RegExp(filter, 'i')
+    if (filter?.isActive !== undefined) {
+      filters.isActive = filter?.isActive
+    }
+    const regexQuery = new RegExp(filter?.searchKey, 'i')
     const regexType = new RegExp(type, 'i')
     const aggregationPipeline = [
       {
@@ -167,7 +170,8 @@ const listBusinesses = async ({ filter, take = 20, skip = 0, maxRate, minRate, s
           }),
           ...(maxRate && {
             budget: { $lte: +maxRate }
-          })
+          }),
+          ...filters
         }
       },
       {
@@ -238,6 +242,7 @@ const listBusinesses = async ({ filter, take = 20, skip = 0, maxRate, minRate, s
         }
       }
     ]
+
     const list = await business.aggregate(aggregationPipeline).exec()
     return list[0]
   } catch (e) {

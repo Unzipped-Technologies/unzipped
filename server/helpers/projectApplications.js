@@ -1,25 +1,40 @@
 const ProjectApplications = require('../models/ProjectApplications')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
-const file = require('../helpers/file')
 const business = require('./business')
+const questions = require('./questions')
 
-const createApplication = async (data, resumeFile, userId) => {
+const createApplication = async data => {
   try {
-    if (resumeFile && userId) {
-      const resumeUrl = await file.createFile(resumeFile, userId)
-      data['resume'] = resumeUrl?.url
+    const isAlreadyApplied = await countApplications({
+      projectId: data.projectId,
+      freelancerId: data.freelancerId
+    })
+    if (isAlreadyApplied) throw new Error('You have already applied for this project.')
+    const projectData = await business.getBusinessWithoutPopulate(data.projectId, 'applicants questionsToAsk')
+
+    if (data?.questions?.length && projectData?.questionsToAsk?.length) {
+      for (var question of data.questions) {
+        if (projectData?.questionsToAsk?.includes(question.question)) {
+          const questionAnswer = {
+            userId: data.freelancerId,
+            answer: question?.answer
+          }
+          const updatedQuestion = await questions.getQuestionById(question.question)
+          updatedQuestion.answers.push(questionAnswer)
+          const res = await updatedQuestion.save()
+        }
+      }
     }
     const projectApplication = new ProjectApplications(data)
     const response = await projectApplication.save()
-    const previousApplicatns = await business.getBusinessWithoutPopulate(data.projectId, 'applicants')
-    if (previousApplicatns?.applicants) {
-      previousApplicatns.applicants.push(response.id)
+    if (projectData?.applicants) {
+      projectData.applicants.push(data.freelancerId)
     } else {
-      previousApplicatns['applicants'] = [response.id]
+      projectData['applicants'] = [data.freelancerId]
     }
     const updatedBusiness = await business.updateBusiness({
       listId: data.projectId,
-      applicants: previousApplicatns.applicants
+      applicants: projectData.applicants
     })
     return response
   } catch (e) {
