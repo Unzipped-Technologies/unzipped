@@ -5,12 +5,12 @@ const { softDeletePlugin } = require('soft-delete-plugin-mongoose');
 const taskHoursSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
-    ref: 'users',  
+    ref: 'users',
     required: true,
   },
-  taskId:{
+  taskId: {
     type: Schema.Types.ObjectId,
-    ref: 'tasks',  
+    ref: 'tasks',
     required: true,
   },
   hours: {
@@ -26,7 +26,11 @@ const taskHoursSchema = new Schema({
     default: new Date(),
   }
 }, {
-  timestamps: { createdAt: true, updatedAt: false } 
+  timestamps: {
+    createdAt: true,
+    updatedAt: false
+  }
 });
+
 taskHoursSchema.plugin(softDeletePlugin)
-module.exports  = mongoose.model('taskhours', taskHoursSchema);
+module.exports = mongoose.model('taskhours', taskHoursSchema);
