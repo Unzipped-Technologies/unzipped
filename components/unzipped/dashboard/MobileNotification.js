@@ -15,6 +15,56 @@ import {
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
+const ExploreContainer = styled.div`
+  display: flex;
+  width: 100%;
+  background: #FAFAFA;
+  flex-direction: column;
+  border-radius: 5px;
+  border: 1px solid #D8D8D8;
+  padding: 10px;
+`;
+
+const TextContent = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin-bottom: 20px;
+`;
+
+const ExploreItems = styled.div`
+  display: flex;
+  width: 100%;
+  border-radius:  ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  // border-radius: 10px 10px 0px 0px;
+  border: 1px solid #D8D8D8;
+  background: #F1F0F0;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+`;
+
+const ExploreIconContainer = styled.div`
+  display: flex;
+  padding: 10px;
+  align-items: center;
+`
+
+const HeadingStyled = styled.p`
+  margin: 0px !important;
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
+  display: block;
+`;
+
+const ExploreItemTextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+`;
+
+const FontStyled = styled.span`
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
+`
 const help = [
     {
         name: 'Help Center',
@@ -112,7 +162,7 @@ const Notification = ({ type, children, noButton }) => {
             )
         case 'dismiss':
             return (
-                <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', border: '1px solid #D8D8D8', borderRadius:5, padding: 10, marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', border: '1px solid #D8D8D8', borderRadius: 5, padding: 10, marginBottom: 20 }}>
                     <div>
                         <DarkText noMargin>{children}</DarkText>
                     </div>
@@ -185,29 +235,74 @@ const Notification = ({ type, children, noButton }) => {
         //     )
         case 'explore':
             return (
-                <WhiteCard padding="20px 3px" marginBottom='70px' size="extraLarge" background="#FAFAFA">
-                    <TitleText noMargin paddingLeft="8px" marginLeft="0">Explore more support</TitleText>
-                    <DarkText>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
+                <ExploreContainer>
+                    <TextContent>
+                        <div>
+                            <FontStyled fontWeight={500} fontSize={'16px'}>
+                                Explore more support
+                            </FontStyled>
+                        </div>
+                        <div>
+                            <FontStyled>
+                                Check out these resources for answers to your questions, videos, and best practices.
+                            </FontStyled>
+                        </div>
+                    </TextContent>
                     {help.map((item, index) => (
-                        // <div style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 5, background: "#EAEAEA", padding: 5, borderRadius: 5 }}>
-                        <InnerCard style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 15, background: "#EAEAEA", padding: 15 }}>
-                            <div>
-                                <Icon name={item.icon} />
+                        <ExploreItems borderRadius={(index === 0) ? "10px 10px 0px 0px" : "0px"}>
+                            <div style={{ display: 'flex' }}>
+
+                                <ExploreIconContainer>
+                                    <Icon name={item.icon} />
+                                </ExploreIconContainer>
+
+                                <ExploreItemTextContainer>
+
+                                    <HeadingStyled fontWeight={400}>
+                                        {item.name}
+                                    </HeadingStyled>
+                                    <div>
+                                        <span style={{ display: 'inline' }}> {item.text} </span>
+                                        <span
+                                            style={{
+                                                color: "#001AFF",
+                                                cursor: "pointer",
+                                                display: 'inline',
+                                                fontSize: 13
+                                            }}
+                                            onClick={() => router.push(item.link.to)}>
+                                            {item.link.text}
+                                        </span>
+                                    </div>
+                                </ExploreItemTextContainer>
                             </div>
-                            <div>
-                                <TitleText noMargin small >{item.name}</TitleText>
-                                <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
-                            </div>
-                        </InnerCard>
-                        // <WhiteCard display='-webkit-box' gap='7px' shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
-                        //     <Absolute left top="17px"><Icon name={item.icon} /></Absolute>
-                        //     <div style={{ width: "95%" }}>
-                        //         <TitleText noMargin small >{item.name}</TitleText>
-                        //         <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
-                        //     </div>
-                        // </WhiteCard>
+                        </ExploreItems>
                     ))}
-                </WhiteCard>
+
+                </ExploreContainer>
+                // <WhiteCard padding="20px 3px" marginBottom='70px' size="extraLarge" background="#FAFAFA">
+                //     <TitleText noMargin paddingLeft="8px" marginLeft="0">Explore more support</TitleText>
+                //     <DarkText>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
+                //     {help.map((item, index) => (
+                //         // <div style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 5, background: "#EAEAEA", padding: 5, borderRadius: 5 }}>
+                //         <InnerCard style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 15, background: "#EAEAEA", padding: 15 }}>
+                //             <div>
+                //                 <Icon name={item.icon} />
+                //             </div>
+                //             <div>
+                //                 <TitleText noMargin small >{item.name}</TitleText>
+                //                 <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
+                //             </div>
+                //         </InnerCard>
+                //         // <WhiteCard display='-webkit-box' gap='7px' shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
+                //         //     <Absolute left top="17px"><Icon name={item.icon} /></Absolute>
+                //         //     <div style={{ width: "95%" }}>
+                //         //         <TitleText noMargin small >{item.name}</TitleText>
+                //         //         <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
+                //         //     </div>
+                //         // </WhiteCard>
+                //     ))}
+                // </WhiteCard>
             )
         default:
             return <></>

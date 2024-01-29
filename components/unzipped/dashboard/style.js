@@ -85,6 +85,8 @@ const DarkText = styled.div`
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   padding: ${({ padding }) => (padding ? padding : '')};
   width: ${({ width }) => (width ? width : '96%')};
+  padding-left: 20px;
+  // padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
   text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
@@ -94,28 +96,32 @@ const DarkText = styled.div`
   }
   @media (max-width: 750px) {
     font-size: ${({ small, fontSize }) =>
-      small
-        ? '14px'
-        : fontSize
+    small
+      ? '14px'
+      : fontSize
         ? `${fontSize.replace('px', '') * 0.75 > 16 ? fontSize.replace('px', '') * 0.75 : 16}px`
         : '16px'};
     line-height: ${({ lineHeight, fontSize }) =>
-      lineHeight
-        ? `${lineHeight.replace('px', '') * 0.75 > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px`
-        : fontSize
+    lineHeight
+      ? `${lineHeight.replace('px', '') * 0.75 > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px`
+      : fontSize
         ? `${fontSize.replace('px', '') * 0.75 > 16 ? fontSize.replace('px', '') * 0.75 : 18}px`
         : '18px'};
   }
-  @media (max-width: 416px) {
-    margin-left: ${({ paddingLeft }) => (paddingLeft ? '10px' : '0px')};
-    font-size: ${({ small }) => (small ? '14px' : '16px')};
+
+  @media screen and (max-width: 600px){
+    padding-left: 0px;
+    margin-left: 0px;
+    font-size: 0px;
     line-height: '18px';
   }
+
   @media (max-width: 341px) {
-    margin-left: ${({ paddingLeft }) => (paddingLeft ? '5px' : '0px')};
+    margin-left: ${({ marginLeft }) => (marginLeft ? '5px' : '0px')};
     font-size: ${({ small }) => (small ? '12px' : '14px')};
     line-height: '16px';
   }
+
 `
 
 const Absolute = styled.div`
@@ -131,6 +137,7 @@ const Absolute = styled.div`
   left: ${({ left, wideLeft, smallLeft }) => (left ? '10px' : wideLeft ? '20px' : smallLeft ? '0px' : 'unset')};
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 'inherit')};
   gap: ${({ gap, mobile }) => (mobile && gap ? '20px' : gap ? gap : 'unset')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
   @media (max-width: ${({ hide }) => (hide ? hide + 'px' : '0px')}) {
     display: none;
   }
@@ -158,17 +165,17 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-      size === 'large'
-        ? '151px'
-        : size === 'extraLarge'
+    size === 'large'
+      ? '151px'
+      : size === 'extraLarge'
         ? '370px'
         : unset
-        ? 'unset'
-        : cardHeightDesktop
-        ? '262px'
-        : height
-        ? height
-        : '63px'};
+          ? 'unset'
+          : cardHeightDesktop
+            ? '262px'
+            : height
+              ? height
+              : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: ${({ padding }) => (padding ? padding : '20px 20px')};
@@ -188,24 +195,24 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-      size === 'large'
-        ? '151px'
-        : size === 'extraLarge'
+    size === 'large'
+      ? '151px'
+      : size === 'extraLarge'
         ? '370px'
         : unset
-        ? 'unset'
-        : cardHeightDesktop
-        ? '262px'
-        : height
-        ? height
-        : '63px'};
+          ? 'unset'
+          : cardHeightDesktop
+            ? '262px'
+            : height
+              ? height
+              : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
-    padding: ${({ padding }) => (padding ? padding : '20px 20px')};
+    padding: 0px;
     position: relative;
     box-shadow: ${({ shadow }) => (shadow ? shadow : 'none')};
     margin-bottom: ${({ noMargin, half, marginBottom }) =>
-      noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
+    noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
   }
   @media screen and (max-width: 600px) {
@@ -372,6 +379,15 @@ const TableData = styled.td`
   line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
   letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
   text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+`;
+
+const HelpCenterContainer = styled.div`
+  padding-left: 35px; 
+  display: flex; 
+  width: 100%;
+  @media screen and (max-width: 600px) {
+    padding-left: 0px ;
+  }
 `
 
 module.exports = {
@@ -396,5 +412,6 @@ module.exports = {
   PaddingLeft,
   Title,
   TableHeading,
-  TableData
+  TableData,
+  HelpCenterContainer
 }

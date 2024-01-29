@@ -67,3 +67,7 @@ section .tip-wrapper svg {
 section .tip-wrapper svg path {
   fill: #1ea7fd;
 }
+
+.anchorTagStyled {
+  color: "#001AFF !important";
+}
