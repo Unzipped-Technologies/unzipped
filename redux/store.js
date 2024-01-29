@@ -9,6 +9,7 @@ import Messages from './Messages/reducers'
 import FreelancerSkills from './FreelancerSkills/reducers'
 import Loading from './Loading/reducers'
 import Stripe from './Stripe/reducers'
+import ListEntries from './ListEntries/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'
 import Invoices from './Invoices/reducers'
@@ -23,6 +24,7 @@ const combinedReducer = combineReducers({
   FreelancerSkills,
   Loading,
   Stripe,
+  ListEntries,
   ProjectApplications,
   Contracts,
   Invoices

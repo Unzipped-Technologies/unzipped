@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
+import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
+import { useDispatch, useSelector } from 'react-redux'
 
 const UserSkills = styled.div`
 ::-webkit-scrollbar {
@@ -16,16 +18,39 @@ const UserSkills = styled.div`
   background-color: transparent;
 }
 `
+const SelectInputStyled = styled.select`
+    border-radius: 3px;
+    border: 0.25px solid #000;
+    background: rgba(217, 217, 217, 0.28);
+    display: block;
+    padding: 5px;
+    width: 100px;
+    height: 35px;
+    font-size: 15px;
+`
 
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
   const router = useRouter();
+  const dispatch = useDispatch()
+  const userLists = useSelector(state => state.ListEntries.userLists);
+  const userId = useSelector(state => state.Auth.user._id);
+  const listObj = userLists?.find(list => list.name === 'Recently Viewed');
+
 
   const redirectToProfile = () => {
-    clearSelectedFreelancer()
+    dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
+    // clearSelectedFreelancer()
     if (user?.id) {
       router.push(`/freelancers/${user.id}`)
     }
   }
+
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const handleSelectChange = () => {
+    console.log('handleChangeEvent')
+  }
+
   return (
     <div className='bg-white' style={{ borderBottom: "2px solid rgba(0, 0, 0, 0.25)", color: "black" }}>
       <div className='px-3 py-2'>

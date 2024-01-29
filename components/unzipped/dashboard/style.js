@@ -154,6 +154,8 @@ const Underline = styled.div`
 
 const WhiteCard = styled.div`
   @media (min-width: 681px) {
+    padding-left: ${({ paddingLeft }) => (paddingLeft ? `${paddingLeft} !important` : '0px')};
+    border-left: ${({ borderLeft }) => (borderLeft ? `4px solid ${borderLeft} !important` : '0px')};
     overflow: visible hidden;
     background: ${({ background }) => (background ? background : '#fff')};
     border: 1px ${({ borderColor }) => (borderColor ? borderColor : '#d8d8d8')} solid;

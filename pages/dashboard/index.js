@@ -1,5 +1,6 @@
 import React from 'react'
 import Nav from '../../components/unzipped/header'
+
 import Image from '../../components/ui/Image'
 import Icon from '../../components/ui/Icon'
 import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel'
@@ -86,7 +87,7 @@ const Dashboard = ({ resetRegisterForm }) => {
   ]
   return (
     <React.Fragment>
-      <Nav isSubMenu />
+      <Nav isSubMenu marginBottom={window.innerWidth >= 680 ? '120px' : '100px'} />
       <DesktopBox>
         <NotificationsPanel notifications={notifications} user={user} />
       </DesktopBox>
@@ -94,8 +95,10 @@ const Dashboard = ({ resetRegisterForm }) => {
         <div>
           <Panel user={user} />
           <Notifications>
-            {notifications.map(item => (
-              <Notification type={item.type}>{item.text}</Notification>
+            {notifications.map((item, index) => (
+              <Notification type={item.type} key={`${index}_mobile`}>
+                {item.text}
+              </Notification>
             ))}
           </Notifications>
         </div>

@@ -4,7 +4,8 @@ import {
   DELETE_PROJECT_APPLICATION,
   GET_PROJECT_APPLICATIONS,
   GET_PROJECT_APPLICATION_BY_ID,
-  PROJECT_APPLICATION_ERROR
+  PROJECT_APPLICATION_ERROR,
+  SHOW_SUCCESS_NOTIFICATION
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -13,17 +14,16 @@ import { ConverterUtils } from '../../utils'
 
 export const createProjectApplication = data => async (dispatch, getState) => {
   dispatch(startLoading())
-
-  const formData = ConverterUtils.toFormData(data)
   await axios
-    .post(`/api/projectApplication`, formData, tokenConfig(getState()?.Auth.token))
-    .then(res =>
+    .post(`/api/projectApplication`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => {
       dispatch({
         type: CREATE_PROJECT_APPLICATION,
         payload: res.data
       })
-    )
+    })
     .catch(err => {
+      dispatch(stopLoading())
       dispatch({
         type: PROJECT_APPLICATION_ERROR,
         payload: err.response

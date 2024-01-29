@@ -91,8 +91,6 @@ const Panel = ({ userProps }) => {
   const [hasUserInfo, setHasUserInfo] = useState(false)
   const dropzoneRef = useRef(null)
 
-  console.log('user_auth', user)
-
   useEffect(() => {
     if (user.role != '0' && user.FirstName && user.AddressCity) {
       setHasUserInfo(true)

@@ -14,6 +14,7 @@ import Dropdowns from '../ui/Dropdowns'
 import { Absolute } from './dashboard/style'
 import { Button as Buttons, SearchBar } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
+import BackArrow from '../../components/icons/backArrow'
 import { logoutUser, resetBusinessForm } from '../../redux/actions'
 import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
 
@@ -347,7 +348,17 @@ const Nav = ({
   resetBusinessForm,
   marginBottom,
   margin,
-  zIndex
+  zIndex,
+  isLogoHidden,
+  setIsViewable,
+  listName,
+  setListName,
+  setIsLogoHidden,
+  isListViewable,
+  setIsListViewable,
+  isViewable,
+  isExpanded,
+  setIsExpanded
 }) => {
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -425,6 +436,7 @@ const Nav = ({
     await resetBusinessForm()
     router.push('/create-your-business')
   }
+
 
   const getButtons = () => {
     if (isAuthenticated) {
@@ -509,9 +521,56 @@ const Nav = ({
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
-        <Link href="/">
+        {!isLogoHidden && !isListViewable && (<Link href="/">
           <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
-        </Link>
+        </Link>)}
+
+        {(isListViewable) && (<>
+          <div style={{ marginLeft: 15 }}
+            onClick={() => {
+              setIsViewable(false)
+              setListName('')
+              setIsLogoHidden(false)
+              setIsListViewable(false)
+              setIsExpanded(false);
+            }
+            }
+          >
+            <BackArrow />
+            <span style={{
+              marginLeft: 10,
+              fontSize: 20,
+              fontWeight: 600,
+              letterSpacing: '0.15px',
+              lineHeight: '19.5px'
+            }}>
+              Lists
+            </span>
+          </div>
+        </>)}
+
+        {isLogoHidden && (<>
+          <div style={{ marginLeft: 15 }}
+            onClick={() => {
+              setIsViewable(false)
+              setListName('')
+              setIsLogoHidden(false)
+            }
+            }
+          >
+            <BackArrow />
+            <span style={{
+              marginLeft: 10,
+              fontSize: 20,
+              fontWeight: 600,
+              letterSpacing: '0.15px',
+              lineHeight: '19.5px'
+            }}>
+              {listName ? listName : ''}
+            </span>
+          </div>
+        </>)}
+
         <Menu>
           {menuItems &&
             menuItems.map((item, index) => {

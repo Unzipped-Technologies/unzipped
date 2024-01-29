@@ -5,22 +5,15 @@ const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
 const upload = require('../middlewares/multer')
 
-router.post(
-  '/',
-  requireLogin,
-  permissionCheckHelper.hasPermission('createApplication'),
-  upload.array('resume'),
-  async (req, res) => {
-    try {
-      console.log('req.body', req.body?.projectId)
-      const response = await projectApplications.createApplication(req.body, req?.files[0] || null, req.user.sub)
-      if (!response) throw new Error('Application not created')
-      res.json(response)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
+router.post('/', requireLogin, permissionCheckHelper.hasPermission('createApplication'), async (req, res) => {
+  try {
+    const response = await projectApplications.createApplication(req.body)
+    if (!response) throw new Error('Application not created')
+    res.json(response)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
   }
-)
+})
 
 router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getApplicationById'), async (req, res) => {
   try {
