@@ -11,12 +11,10 @@ import {
     LETTER_SPACING
 } from '../../ui/TextMaskInput/core/utilities';
 import DownArrow from '../../../components/icons/downArrow';
-import { SELECT_MEETING_TIME } from '../../../utils/constants';
-import dayjs from 'dayjs';
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { useDispatch } from 'react-redux';
+import { createCalenderSetting } from '../../../redux/CalenderSetting/CalenderSettingAction';
+
+
 const useStyles = makeStyles((theme) => ({
     modal: {
         display: 'flex',
@@ -54,20 +52,22 @@ const InputStyled = styled.input`
     }
 `;
 
+
 const Label = styled.span`
-    display: block;
-    ${getFontStyled(
-    {
-        color: COLORS.black,
-        fontSize: FONT_SIZE.PX_12,
-        fontWeight: 500,
-        fontStyle: 'normal',
-        lineHeight: FONT_SIZE.PX_16,
-        letterSpacing: LETTER_SPACING,
-    })};
-    margin-top: 12px;
-    margin-bottom: 6px;
-`;
+  display: block;
+  ${({ color, fontSize, fontWeight }) =>
+        getFontStyled({
+            color: color || COLORS.black,
+            fontSize: fontSize || FONT_SIZE.PX_12,
+            fontWeight: fontWeight || 500,
+            fontStyle: 'normal',
+            lineHeight: FONT_SIZE.PX_20,
+            letterSpacing: LETTER_SPACING
+        })};
+  margin-top: 0px;
+  margin-bottom: 6px;
+  font-family: Roboto;
+`
 
 const CancelButtonStyled = styled.button`
     background: #fff;
@@ -102,74 +102,21 @@ const AddListButtonStyled = styled.button`
     margin-left: 10px;
 `;
 
-const ScheduleMeetingContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 20px;
-`
-const SelectionContainer = styled.div`
-    position: relative;
-    display: inline-block;
-    border: 1px solid #D9D9D9;
-    background: rgba(217, 217, 217, 0.28);
-    border-radius: 3px;
-    padding: 5px;
-    width: 100px;
-    margin-left: auto;
-`;
-
-const SelectionButton = styled.div`
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    outline: none;
-    border-radius: 3px;
-    border: 0.25px solid #D9D9D947;
-    background: #D9D9D9;
-    
-    // &::after{
-    //     content : '\2304';
-    //     display : block;
-    // }
-
-`;
-
-const DropdownContainer = styled.div`
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    margin-top: 2px;
-    height: 320px;
-    overflow: auto;
-`
-
-const DropdownItems = styled.div`
-    padding: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 24.5px;
-    text-transform: uppercase;
-    font-wight: 500;
-    margin-top: 5px;
-`;
-
 const SetupCalendlyModal = ({
-    isModalOpen,
+    isCalendlyModal,
+    setIsCalendlyModal,
     setIsModalOpen
 }) => {
+    const dispatch = useDispatch();
     const classes = useStyles();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef();
-    const [startMeetingTime, setStartMeetingTime] = useState('12.00 AM');
-    const [endMeetingTime, setEndMeetingTime] = useState('12.30 AM');
-    const [value, setValue] = React.useState(dayjs('2022-04-17T15:30'));
+
+    const [calendlyLink, setCalendlyLink] = useState('');
+
     const handleClose = () => {
-        setIsModalOpen(false);
+        setIsCalendlyModal(false);
+        setIsModalOpen(true);
     };
 
 
@@ -183,17 +130,18 @@ const SetupCalendlyModal = ({
         }
     };
 
-    const handleMeetingScheduling = (time) => {
-        setStartMeetingTime(time);
-        setIsOpen(!isOpen)
-    }
-
     useEffect(() => {
         document.addEventListener('click', handleClickOutside, true);
         return () => {
             document.removeEventListener('click', handleClickOutside, true);
         };
     }, []);
+
+    const handleCalendlyLinkSetting = () => {
+        setIsCalendlyModal(false);
+        setIsModalOpen(false);
+        dispatch(createCalenderSetting({ calendlyLink }));
+    }
 
     return (
 
@@ -202,12 +150,12 @@ const SetupCalendlyModal = ({
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
-                open={isModalOpen}
+                open={isCalendlyModal}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{ timeout: 500, }}
             >
-                <Fade in={isModalOpen}>
+                <Fade in={isCalendlyModal}>
                     <div className={classes.paper}>
                         <div style={{
                             display: 'flex',
@@ -220,34 +168,31 @@ const SetupCalendlyModal = ({
                             }}>
                                 <div>
                                     <TextTitleStyled> Set up your Calendly Link </TextTitleStyled>
-
                                 </div>
                                 <div>
-
-                                    <Label>
+                                    <Label fontSize={"15px"} fontWeight={300}>
                                         In order to use this feature, you need to have a paid Calendly subscription.
                                         Add your meeting invite link here and our calendar system will use this instead of our built in calendar.
                                     </Label>
                                 </div>
 
-                                <div>
-                                    <Label>Add your Calendly Link Below</Label>
+                                <div className='mt-2'>
+                                    <Label fontSize={"16px"} fontWeight={600}>Add your Calendly Link Below</Label>
                                 </div>
                                 <div>
                                     <InputStyled
-                                        placeholder='Only clients whose jobs I have applied to'
+                                        placeholder='Calendly Link...'
                                         style={{
                                             border: '1px solid #D9D9D9',
                                             borderRadius: '5px',
                                         }}
-
+                                        onChange={(e) => setCalendlyLink(e.target.value)}
+                                        value={calendlyLink}
                                     />
                                 </div>
                                 <div>
                                     <TextTitleStyled weight={400} color="#1976D2">How to setup Calendly?</TextTitleStyled>
                                 </div>
-
-
                             </div>
 
                             <div style={{
@@ -261,7 +206,7 @@ const SetupCalendlyModal = ({
                                     BACK
                                 </CancelButtonStyled>
                                 <AddListButtonStyled
-                                    onClick={() => console.log('update_meeting_link')}
+                                    onClick={handleCalendlyLinkSetting}
                                 >
                                     UPDATE
                                 </AddListButtonStyled>

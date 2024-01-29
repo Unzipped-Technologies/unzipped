@@ -5,9 +5,7 @@ import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import { DateCalendar } from '@mui/x-date-pickers'
 import { useState } from 'react'
-// import Grid from '@mui/material/Unstable_Grid2';
 import { styled } from '@mui/material/styles'
-// import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -15,6 +13,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import dayjs from 'dayjs'
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
+import { createMeeting } from '../../redux/Meeting/actions'
+import socket from '../../components/sockets/index'
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -37,12 +37,17 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   borderRadius: '8px',
-  padding: '32px'
+  padding: '32px',
+  '@media (max-width: 680px)': {
+    height: '95%',
+    width: '95%',
+    overflow: 'scroll'
+  }
+
 }
-export default function ScheduleMeetingModal({ scheduleInterviewModal, handleScheduleInterviewModal, receiver }) {
+export default function ScheduleMeetingModal({ scheduleInterviewModal, handleScheduleInterviewModal, receiver, setScheduleInterviewModal }) {
   const dispatch = useDispatch()
   const { Auth, Loading } = useSelector(state => state)
-  console.log(Auth, receiver)
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()))
   const [selectedTime, setSelectedTime] = useState([])
   const updatedSelectedTime = new Set(selectedTime)
@@ -62,6 +67,7 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
   const dayTime = generateTimeSlots(selectedDate)
 
   const handleSelectedTime = time => {
+
     if (updatedSelectedTime.has(time)) {
       updatedSelectedTime.delete(time)
     } else {
@@ -76,42 +82,66 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
   }
 
   const convertToUserTimeZone = dateString => {
-    console.log(dateString, typeof dateString);
+    console.log('date_string', dateString, typeof dateString);
 
-    // Use dayjs to parse the input date string with the correct format
     const userDate = dayjs(dateString, { format: 'YYYY-MM-DD HH:mm:ss A' });
-    console.log('userDate:', userDate.format()); // Log the parsed date for debugging
+    console.log('userDate:', userDate);
 
-    // Specify the user's time zone explicitly
-    const userTimeZone = 'Asia/Karachi'; // Replace with the actual time zone
+    const userTimeZone = 'Asia/Karachi';
     const convertedDate = userDate.tz(userTimeZone);
 
     return convertedDate.toDate();
-}
+  }
 
-  
-console.log(dayjs.tz.guess())
+
   const handleScheduleMeeting = () => {
-    const body = {
-      PrimaryTime: {
-        Date: convertToUserTimeZone(Array.from(updatedSelectedTime)[0]),
-        Time: dayjs(Array.from(updatedSelectedTime)[0], 'YYYY:MM:DD hh:mm A').format('YYYY:MM:DD hh:mm:ss A')
+
+    let meetingSlots = (Array.from(updatedSelectedTime))
+      .map(time => {
+        return {
+          Date: getDate(time),
+          Time: getTime(time)
+        }
+      });
+
+    console.log('receiver', receiver)
+
+    const scheduleMeetingObj = {
+      primaryTime: {
+        Date: getDate((Array.from(updatedSelectedTime))[0]),
+        Time: getTime((Array.from(updatedSelectedTime))[0])
+
       },
-      secondaryTimes: Array.from(updatedSelectedTime)
-        .slice(1)
-        .map(time => {
-          return {
-            Date: convertToUserTimeZone(time),
-            Time: dayjs(time, 'YYYY:MM:DD hh:mm A').format('YYYY:MM:DD hh:mm:ss A') // Extract time part
-          }
-        }),
+      secondaryTimes: meetingSlots.slice(1),
       senderId: Auth?.user?._id,
       receiverId: receiver?.userId?._id
     }
-    console.log(body, "body")
-    // dispatch(createMeeting(updatedSelectedTime, Auth.token))
+
+    socket.emit("createMeeting", scheduleMeetingObj)
+    setScheduleInterviewModal(false);
+
+    // dispatch(createMeeting(scheduleMeetingObj, Auth.token))
   }
-  // console.log(updatedSelectedTime, Array.from(updatedSelectedTime)[0])
+
+  const getDate = (val) => {
+    if (val) {
+      const [datePart, timePart] = val.split(" ");
+      const slpitDateString = datePart.replace(/:/g, '-');// + 'T' + timePart + 'Z';
+      // const timeString = timePart.split(/:/g);
+      // let formattedDate = dayjs(datePart).hour(timeString[0]).minute(timeString[1]).second(timeString[2])
+      // console.log('converted_date', formattedDate)
+      return slpitDateString //formattedDate
+    }
+  }
+
+  const getTime = (time) => {
+    if (time) {
+      const [datePart, timePart, hoursPart] = time.split(" ");
+      const timeFormat = timePart + ' ' + hoursPart;
+      return timeFormat;
+    }
+  }
+
   return (
     <div>
       <Modal

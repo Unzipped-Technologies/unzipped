@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import SimpleBar from 'simplebar-react';
-import styled from 'styled-components'
 import 'simplebar/dist/simplebar.min.css';
 import {
     DarkText,
@@ -16,7 +15,11 @@ import AttachmentModal from './AttachmentModal'
 import ProfileContainer from './ProfileContainer';
 import { ValidationUtils } from '../../utils'
 import theme from '../ui/theme'
-
+import { useSelect } from '@mui/base';
+import { useSelector } from 'react-redux';
+import styled from "styled-components"
+import MeetingTemplate from './MeetingTemplate';
+import Link from 'next/link';
 const Right = styled.div`
     display: grid;
     position: relative;
@@ -72,6 +75,50 @@ const Spacer = styled.div`
     height: 64px;
     width: 100%;
 `;
+// Message Box
+
+const MessageTemplateContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: end;
+`;
+
+const MessageContentTemplate = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  width: 450px;
+  height: auto;
+  letter-spacing: 0.15px;
+  color: white;
+  border-radius: 8px 8px 0px 8px;
+  background: ${({ bgColor }) => bgColor ? bgColor : '#007FED'};
+  padding: 10px;
+`
+const ButtonContainer = styled.div`
+    display: flex;
+    background: transparent;
+    width: 100%;
+    justify-content: flex-end;
+    padding: 10px;
+`;
+
+const ButtonStyled = styled.button`
+    color: #fff;
+    text-decoration: ${({ textDecoration }) => textDecoration ? textDecoration : 'none'};
+    border: 0px;
+    background: transparent;
+    &:focus{
+        background: transparent !important;
+    }
+`;
+
+const ParagrapStyled = styled.p`
+    margin: 0 !important;
+    color: ${({ color }) => color ? color : '#fff'}
+`
+const DECLINE_MESSAGE_TEXT = 'The freelancer has proposed some additional times:';
 
 const MessageContainer = ({
     data = {},
@@ -102,6 +149,7 @@ const MessageContainer = ({
         attachment: '',
     })
     const messagesEndRef = useRef()
+    const [userMessage, setUserMessage] = useState('');
 
     useEffect(() => {
         socket.on('chat message', message => {
@@ -116,12 +164,14 @@ const MessageContainer = ({
                     isActive: true,
                     isArchived: false,
                     isSingle: true,
-                    sender: message?.sender?.userId,
+                    sender: message?.sender?.userId || message?.sender,
                     conversationId: message?.conversationId,
                     updatedAt: message?.updatedAt,
                     __v: 0
                 }
             ]);
+
+            console.log(messages, "inmeassagecontainer")
             socket.on('typing', typingData => {
                 setTyping(typingData)
             })
@@ -153,7 +203,7 @@ const MessageContainer = ({
             }
         }
     }, [messages]);
-    
+
 
     useEffect(() => {
         setMessages(data?.messages?.slice().reverse());
@@ -163,6 +213,16 @@ const MessageContainer = ({
 
     useEffect(() => {
     }, [receiver])
+
+    useEffect(() => {
+        socket.on('refreshMessageList', () => {
+            console.log('refreshMessageList',);
+        });
+
+        return () => {
+            socket.off('refreshMessageList');
+        };
+    }, []);
 
     const handleLastMessageScroll = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
@@ -195,6 +255,7 @@ const MessageContainer = ({
                 message: '',
                 attachment: '',
             });
+
         }
     }
 
@@ -230,6 +291,30 @@ const MessageContainer = ({
         }
     }
 
+    const handleMeetingOnAcceptOrDecline = (params) => {
+        socket.emit('onMeetingAcceptOrDecline', { meeting, meetingStatus: params, message: userMessage })
+    }
+    const getApproveRejectButton = (params) => {
+        return (
+            <ButtonContainer>
+                <div>
+                    <ButtonStyled
+                        textDecoration={"underline"}
+                        onClick={() => handleMeetingOnAcceptOrDecline("DECLINE")}
+                    >
+                        Decline
+                    </ButtonStyled>
+                </div>
+                <div>
+                    <ButtonStyled
+                        onClick={() => handleMeetingOnAcceptOrDecline("ACCEPTED")}
+                    >
+                        Approve
+                    </ButtonStyled>
+                </div>
+            </ButtonContainer>
+        )
+    }
     return (
         <>
             {data ? (
@@ -253,28 +338,59 @@ const MessageContainer = ({
                                         messages?.map((e, index) => {
                                             if (e?.sender === userId) {
                                                 return (
-                                                    <WhiteCard autoFoucs half row borderColor="transparent" unset padding="10px" alignEnd justifyEnd>
-                                                        <WhiteCard background="#007FED" noMargin maxWidth="50%" unset borderRadius="15px 15px 3px 15px" padding="10px 10px">
-                                                            <DarkText small noMargin color="#fff">{e?.message}</DarkText>
-                                                            <Absolute right="-35px" bottom="0px" width="100px"><DarkText noMargin color="#fff" fontSize="12px">{ValidationUtils.getTimeFormated(e?.updatedAt)}</DarkText></Absolute>
+                                                    <>
+                                                        <WhiteCard autoFoucs half row borderColor="transparent" unset padding="10px" alignEnd justifyEnd>
+                                                            <WhiteCard background="#007FED" noMargin maxWidth="50%" unset borderRadius="15px 15px 3px 15px" padding="10px 10px">
+                                                                <DarkText small noMargin color="#fff">
+                                                                    {e?.message?.includes('You can join the meeting at the link here:') ?
+                                                                        <>
+                                                                            {e?.message}
+                                                                            <a
+                                                                                href={e?.meetingId?.zoomMeeting.zoomJoiningUrl}
+                                                                                target='_blank'
+                                                                                style={{ color: "#fff", textDecoration: 'underline' }}
+                                                                            >
+                                                                                {e?.meetingId?.zoomMeeting.zoomJoiningUrl}
+                                                                            </a>
+                                                                        </>
+                                                                        : e?.message}
+                                                                </DarkText>
+                                                                {e && e?.meetingId?.meetingStatus === "PENDING" && (
+                                                                    <MeetingTemplate meeting={e?.meetingId} userDetails={sender?.userId} message={e} />
+                                                                )}
+                                                                <Absolute right="-35px" bottom="0px" width="100px"><DarkText noMargin color="#fff" fontSize="12px">{ValidationUtils.getTimeFormated(e?.updatedAt)}</DarkText></Absolute>
+                                                            </WhiteCard>
+                                                            <Span space unset>
+                                                                <Image src={sender?.userId?.profileImage} height="54px" width="54px" radius="22%" />
+                                                            </Span>
                                                         </WhiteCard>
-                                                        <Span space unset>
-                                                            <Image src={sender?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-                                                        </Span>
 
-                                                    </WhiteCard>
+                                                    </>
                                                 )
                                             } else if (e?.conversationId === data?._id) {
                                                 return (
-                                                    <WhiteCard half row borderColor="transparent" unset padding="10px" alignEnd>
-                                                        <Span space unset>
-                                                            <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-                                                        </Span>
-                                                        <WhiteCard background="transparent" borderColor="transparent" noMargin maxWidth="50%" unset borderRadius="15px 15px 3px 15px" padding="10px 10px">
-                                                            <DarkText small noMargin>{e?.message}</DarkText>
-                                                            <Absolute right="-35px" bottom="0px" width="100px"><DarkText noMargin color="#fff" fontSize="12px">{ValidationUtils.getTimeFormated(e?.updatedAt)}</DarkText></Absolute>
+                                                    <>
+                                                        <WhiteCard half row borderColor="transparent" unset padding="10px" alignEnd>
+                                                            <Span space unset>
+                                                                <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
+                                                            </Span>
+                                                            <WhiteCard background="transparent" borderColor="transparent" noMargin maxWidth="50%" unset borderRadius="15px 15px 3px 15px" padding="10px 10px">
+                                                                <DarkText small noMargin>
+                                                                    {e?.message}
+                                                                    {((e && e?.meetingId?.meetingStatus === "DECLINE") || (e?.message && e?.message?.includes(DECLINE_MESSAGE_TEXT))) && (
+                                                                        <MeetingTemplate
+                                                                            meeting={e?.meetingId}
+                                                                            userDetails={sender?.userId}
+                                                                            message={e}
+                                                                            templateKey={(e?.message && e?.message.includes(DECLINE_MESSAGE_TEXT)) ? true : false} />
+                                                                    )}
+                                                                </DarkText>
+                                                                <Absolute right="-35px" bottom="0px" width="100px"><DarkText noMargin color="#fff" fontSize="12px">{ValidationUtils.getTimeFormated(e?.updatedAt)}</DarkText></Absolute>
+                                                            </WhiteCard>
                                                         </WhiteCard>
-                                                    </WhiteCard>
+
+                                                    </>
+
                                                 )
                                             }
                                         })}

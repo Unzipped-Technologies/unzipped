@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
@@ -14,6 +14,7 @@ import {
 
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import ScheduleMeetingModal from './ScheduleMeetingModal';
 
 const help = [
     {
@@ -68,6 +69,12 @@ margin-bottom: 2px;
 `
 const Notification = ({ type, children, noButton }) => {
     const router = useRouter()
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleMeetingModal = () => {
+        setIsModalOpen(true);
+    }
+
     switch (type) {
         case 'plan':
             return (
@@ -112,7 +119,7 @@ const Notification = ({ type, children, noButton }) => {
             )
         case 'dismiss':
             return (
-                <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', border: '1px solid #D8D8D8', borderRadius:5, padding: 10, marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', border: '1px solid #D8D8D8', borderRadius: 5, padding: 10, marginBottom: 20 }}>
                     <div>
                         <DarkText noMargin>{children}</DarkText>
                     </div>
@@ -121,12 +128,29 @@ const Notification = ({ type, children, noButton }) => {
                         <Button noBorder type="default" normal small>UPDATE</Button>
                     </div>
                 </div>
-                // <WhiteCard row display='block'>
-                //     <DarkText noMargin>{children}</DarkText>
-                //     <Absolute justifyContent='end' >
-                //         <Dismiss>Dismiss</Dismiss>
-                //         <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
-                // </WhiteCard>
+
+            )
+        case 'meetingCalender':
+            return (
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    flexDirection: 'column',
+                    border: '1px solid #D8D8D8',
+                    borderRadius: 5,
+                    padding: 10,
+                    marginBottom: 20
+                }}>
+                    <div>
+                        <DarkText noMargin>{children}</DarkText>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                        <Dismiss>Dismiss</Dismiss>
+                        <Button noBorder type="default" normal small onClick={handleMeetingModal}>UPDATE</Button>
+                    </div>
+                    <ScheduleMeetingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} isSmallWindow={true} />
+
+                </div>
             )
         case 'faq':
             return (
@@ -146,12 +170,6 @@ const Notification = ({ type, children, noButton }) => {
                         <Button noBorder type="default" normal small>UPDATE</Button>
                     </div>
                 </div>
-                // <WhiteCard row display='block'>
-                //     <DarkText noMargin>Investors are asking about your businss. Update Frequently asked  questions now.</DarkText>
-                //     <Absolute justifyContent='end'>
-                //         <Dismiss>Dismiss</Dismiss>
-                //         <Button noBorder type="default" normal small>UPDATE</Button></Absolute>
-                // </WhiteCard>
             )
         case 'freeTrial':
             return (
@@ -189,8 +207,14 @@ const Notification = ({ type, children, noButton }) => {
                     <TitleText noMargin paddingLeft="8px" marginLeft="0">Explore more support</TitleText>
                     <DarkText>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
                     {help.map((item, index) => (
-                        // <div style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 5, background: "#EAEAEA", padding: 5, borderRadius: 5 }}>
-                        <InnerCard style={{ display: 'flex', width: '100%', justifyContent: 'center', gap: 15, background: "#EAEAEA", padding: 15 }}>
+                        <InnerCard style={{
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'center',
+                            gap: 15,
+                            background: "#EAEAEA",
+                            padding: 15
+                        }}>
                             <div>
                                 <Icon name={item.icon} />
                             </div>
@@ -199,13 +223,6 @@ const Notification = ({ type, children, noButton }) => {
                                 <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
                             </div>
                         </InnerCard>
-                        // <WhiteCard display='-webkit-box' gap='7px' shadow="0px 4px 4px rgba(0, 0, 0, 0.25)" background="#EAEAEA" key={index} noMargin padding="15px 20px" borderRadius={index === 0 ? "10px 10px 0px 0px" : index === 3 ? "0px 0px 10px 10px" : "0px"}>
-                        //     <Absolute left top="17px"><Icon name={item.icon} /></Absolute>
-                        //     <div style={{ width: "95%" }}>
-                        //         <TitleText noMargin small >{item.name}</TitleText>
-                        //         <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
-                        //     </div>
-                        // </WhiteCard>
                     ))}
                 </WhiteCard>
             )

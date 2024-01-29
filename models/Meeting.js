@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const meetingSchema = new Schema({
-    PrimaryTime: {
+    primaryTime: {
         Date: Date,
         Time: String
     },
@@ -11,24 +11,35 @@ const meetingSchema = new Schema({
         Date: Date,
         Time: String
     }],
-    senderId: String,
-    receiverId: String,
-    isAccepted: {
-        type: Boolean,
-        default: false
+    senderId: {
+        type: String
+    },
+    receiverId: {
+        type: String
+    },
+    meetingStatus: {
+        type: String,
+        enum: ['DECLINED', 'PENDING', 'ACCEPTED', 'REJECTED'],
+        default: 'PENDING'
     },
     isSecondaryTimeAccepted: {
         type: Boolean,
         default: false
     },
-    calendlyLink: String,
-    meetingLink: String,
+    calendlyLink: {
+        type: String
+    },
+    zoomMeeting: {
+        zoomJoiningUrl: { type: String },
+        zoomMeetingId: { type: String }
+    },
     createdAt: {
         type: Date,
-        default: Date.now
     },
     isArchive: Boolean
-});
+},
+    { timestamps: true }
+);
 
 const Meeting = mongoose.model('meetings', meetingSchema);
 

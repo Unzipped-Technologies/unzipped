@@ -20,6 +20,7 @@ router.use('/education', require('./educationRoutes'));
 router.use('/taskHours', require('./taskHoursRoutes'));
 router.use('/invoice', require('./invoiceRoutes'));
 router.use('/meeting', require('./meetingRoutes'));
+router.use('/calender', require('./CalenderSettingRoutes'));
 
 
 module.exports = router;

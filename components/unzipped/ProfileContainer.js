@@ -34,42 +34,42 @@ const DropDown = styled.div`
     border-top: 0px;
 `
 const ProfileContainer = ({
-    data, 
+    data,
     isArchived,
     isMute,
     handleChatArchive,
     handleChatMute,
 }) => {
     const [scheduleInterviewModal, setScheduleInterviewModal] = useState(false)
-    const handleMute= (value)=>{
+    const handleMute = (value) => {
         handleChatMute(value)
     }
 
-    const handleArchive = (value) =>{
+    const handleArchive = (value) => {
         handleChatArchive(value)
     }
-    const handleScheduleInterviewModal = () =>{
+    const handleScheduleInterviewModal = () => {
         setScheduleInterviewModal(!scheduleInterviewModal)
     }
     const [openList, setOpenList] = useState(false);
-    const navigate= useRouter()
+    const navigate = useRouter()
     return (
         <WhiteCard height="100%">
-            <Image src={data?.userId.profileImage} radius="3px"/>
+            <Image src={data?.userId.profileImage} radius="3px" />
             <DarkText center topMargin="15px">{ValidationUtils.getFullNameFromUser(data?.userId)}</DarkText>
             <DarkText topMargin="15px" color="blue" clickable>+ Hire?</DarkText>
-            <Underline width="100%" margin="5px 0px 15px 0px"/>
-         
+            <Underline width="100%" margin="5px 0px 15px 0px" />
+
             <div className='w-100'>
-                <P padding="25px 0 18px 0" margin="7px 0 0 0" borderBottom="3px solid #EFF1F4" fontWeight="600" className='px-1' onClick={()=>{navigate.push('/hire')}} >Make An Offer</P>
+                <P padding="25px 0 18px 0" margin="7px 0 0 0" borderBottom="3px solid #EFF1F4" fontWeight="600" className='px-1' onClick={() => { navigate.push('/hire') }} >Make An Offer</P>
                 <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" className='px-1' onClick={handleScheduleInterviewModal} >Schedule an Interview</P>
-                <div  onClick={() => setOpenList(!openList)} className='d-flex justify-content-between' style={{ padding: "12px 0 18px 0", border:'1px solid #ccc', borderBottom: "3px solid #EFF1F4" }}>
+                <div onClick={() => setOpenList(!openList)} className='d-flex justify-content-between' style={{ padding: "12px 0 18px 0", border: '1px solid #ccc', borderBottom: "3px solid #EFF1F4" }}>
                     <P fontWeight="600" margin="0 0 0 5px"  >Add User To A List</P>
-                    <span style={{ position: "absolute", right: "23px", marginRight:'5px' }} ><IconComponent name='downArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span>
+                    <span style={{ position: "absolute", right: "23px", marginRight: '5px' }} ><IconComponent name='downArrow' width="20" height="20" viewBox="0 0 20 20" fill="black" /></span>
                 </div>
             </div >
 
-             <DropDown display={openList? 'block' : 'none'} >
+            <DropDown display={openList ? 'block' : 'none'} >
                 <div className='d-flex px-4 py-2 mx-2' style={{ gap: "15px", borderBottom: "3px solid #EFF1F4" }} >
                     <div>
                         <img src='/img/heart.png' />
@@ -127,10 +127,15 @@ const ProfileContainer = ({
                     </div>
                 </div>
             </DropDown>
-        
-            <Toggle toggled={isArchived} handleSetToggle={handleArchive} title="Archive"  sideText="Hide chat from your active list."/>
-            <Toggle toggled={isMute} handleSetToggle={handleMute} title="Mute"  sideText="Turn off this chat's notifications."/>
-            <ScheduleMeetingModal scheduleInterviewModal={scheduleInterviewModal} handleScheduleInterviewModal={handleScheduleInterviewModal} receiver={data}/>
+
+            <Toggle toggled={isArchived} handleSetToggle={handleArchive} title="Archive" sideText="Hide chat from your active list." />
+            <Toggle toggled={isMute} handleSetToggle={handleMute} title="Mute" sideText="Turn off this chat's notifications." />
+            <ScheduleMeetingModal
+                scheduleInterviewModal={scheduleInterviewModal}
+                handleScheduleInterviewModal={handleScheduleInterviewModal}
+                receiver={data}
+                setScheduleInterviewModal={setScheduleInterviewModal}
+            />
         </WhiteCard>
     )
 }

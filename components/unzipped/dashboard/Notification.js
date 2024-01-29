@@ -46,6 +46,7 @@ const help = [
   }
 ]
 
+
 const Notification = ({ type, children, noButton }) => {
   const router = useRouter()
   switch (type) {
@@ -77,6 +78,7 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'browse':
       return (
+
         <WhiteCard row>
           <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
           <Absolute>

@@ -36,9 +36,21 @@ const deleteMeeting = async (meetingId) => {
         throw Error(`Error: Failed to delete meetingId ${meetingId}, ${e}`)
     }
 }
+
+const findMeetingById = async (meetingId) => {
+    try {
+        const result = await MeetingModel.findById({ _id: meetingId });
+        if (result) return result;
+        return { status: false, msg: 'No record found!' }
+    } catch (e) {
+        throw Error(`Error: Failed to delete meetingId ${meetingId}, ${e}`)
+    }
+}
+
 module.exports = {
     getAllMeetings,
     createMeeting,
     updateMeeting,
-    deleteMeeting
+    deleteMeeting,
+    findMeetingById
 }

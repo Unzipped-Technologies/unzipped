@@ -354,6 +354,7 @@ export const ScheduleInterviewContainer = styled.div`
   border: 1px solid #D8D8D8;
   display: flex;
   padding: 10px;
+  gap: 10px;
 `;
 
 export const ScheduleInterviewButtonContainer = styled.div`

@@ -8,12 +8,21 @@ import { COLORS, getFontStyled, FONT_SIZE, LETTER_SPACING } from '../../ui/TextM
 import DownArrow from '../../../components/icons/downArrow'
 import { SELECT_MEETING_TIME } from '../../../utils/constants'
 import dayjs from 'dayjs'
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
-import { InputLabel, TextField } from '@material-ui/core'
-import { Stack } from '@mui/material'
+
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { createCalenderSetting } from '../../../redux/CalenderSetting/CalenderSettingAction'
+import SetupCalendlyModal from './SetupCalendlyModal'
+dayjs.extend(timezone);
+dayjs.extend(utc);
+
+// Get the user's timezone
+const userTimezone = dayjs.tz.guess();
 const useStyles = makeStyles(theme => ({
   modal: {
     display: 'flex',
@@ -31,11 +40,42 @@ const useStyles = makeStyles(theme => ({
   },
   focusedInput: {
     '& .MuiInputBase-root.Mui-focused': {
-      // Your focused styles go here
-      border: '2px solid red' // Example border color on focus
+      border: '2px solid red'
     }
   }
-}))
+}));
+const useStylesSM = makeStyles(theme => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '0px',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 2),
+    borderRadius: '10px',
+    width: '350px',
+    height: 'auto'
+  },
+  focusedInput: {
+    '& .MuiInputBase-root.Mui-focused': {
+      border: '2px solid red'
+    }
+  }
+}));
+
+const TimePickerStyled = {
+  width: 130,
+  input: {
+    borderBottom: '0px solid transparent !important',
+    margin: '0 0 0 6px !important'
+  },
+  button: { background: 'transparent !important' },
+  '&.MuiFocused': {
+  }
+}
 
 const TextTitleStyled = styled.p`
   color: ${({ color }) => (color ? color : '#000')};
@@ -46,6 +86,11 @@ const TextTitleStyled = styled.p`
   line-height: 24.5px;
   letter-spacing: 0.4px;
   text-transform: capitalize;
+  @media screen and (max-width: 600px){
+    font-size: 18px;
+    margin-top: 0px;
+    maring-bottom: 0px;
+  }
 `
 
 const InputStyled = styled.input`
@@ -65,11 +110,12 @@ const Label = styled.span`
       fontSize: fontSize || FONT_SIZE.PX_12,
       fontWeight: fontWeight || 500,
       fontStyle: 'normal',
-      lineHeight: FONT_SIZE.PX_16,
+      lineHeight: FONT_SIZE.PX_20,
       letterSpacing: LETTER_SPACING
     })};
   margin-top: 0px;
   margin-bottom: 6px;
+  font-family: Roboto;
 `
 
 const CancelButtonStyled = styled.button`
@@ -111,80 +157,89 @@ const ScheduleMeetingContainer = styled.div`
   width: 100%;
   gap: 20px;
 `
-const SelectionContainer = styled.div`
-  position: relative;
-  display: inline-block;
-  border: 1px solid #d9d9d9;
-  background: rgba(217, 217, 217, 0.28);
-  border-radius: 3px;
-  padding: 5px;
-  width: 100px;
-  margin-left: auto;
-`
 
-const SelectionButton = styled.div`
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    outline: none;
-    border-radius: 3px;
-    border: 0.25px solid #D9D9D947;
-    background: #D9D9D9;
-    
-    // &::after{
-    //     content : '\2304';
-    //     display : block;
-    // }
-
-`
+// Dropdown for you can schedule meeting
 
 const DropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+  width: 100%;
+`;
+
+const DropdownButton = styled.button`
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 4px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  text-align: left;
+  &:focus {
+    background: #fff !important;
+  }
+  @media screen and (max-width: 600px){
+    font-size: 14px;
+    padding: 8px;
+  }
+`;
+
+const DropdownList = styled.ul`
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  margin-top: 2px;
-  height: 320px;
-  overflow: auto;
-`
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 4px;
+  background: #FFF;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+`;
 
-const DropdownItems = styled.div`
-  padding: 5px;
+const DropdownItem = styled.li`
+  padding: 10px;
+  list-style: none;
   cursor: pointer;
-  font-size: 14px;
-  line-height: 24.5px;
-  text-transform: uppercase;
-  font-wight: 500;
-  margin-top: 5px;
-`
+`;
 
-const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen }) => {
-  const classes = useStyles()
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef()
-  const [startMeetingTime, setStartMeetingTime] = useState('12.00 AM')
-  const [endMeetingTime, setEndMeetingTime] = useState('12.30 AM')
-  const [value, setValue] = React.useState(dayjs('2022-04-17T15:30'))
+const options = [
+  { label: 'Only clients whose projects I have applied to', value: 'APPLIED_TO_PROJECTS' },
+  { label: 'Recruiters, and clients whose jobs I have not applied to', value: 'RECURITERS_OTHERS' },
+  { label: 'I do not wish to schedule interviews through the unzipped platform', value: 'DONOT_SCHEDULE_WITH_UNZIPPED' },
+];
+
+const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) => {
+  // const classes = useStyles();
+  // const classesSM = useStylesSM();
+  const classes = isSmallWindow ? useStylesSM() : useStyles()
+  const dropdownRef = useRef();
+  const dispatch = useDispatch();
+  const { _id } = useSelector(state => state.Auth.user);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [availableFromTime, setAvailableFromTime] = useState((dayjs().hour(9).minute(0).second(0)));
+  const [availableEndTime, setAvailableEndTime] = useState(dayjs().hour(17).minute(0).second(0));
+  const [selectedOption, setSelectedOption] = useState('APPLIED_TO_PROJECTS');
+  const [isCalendlyModal, setIsCalendlyModal] = useState(false);
+
   const handleClose = () => {
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   }
 
   const toggleDropdown = e => {
-    setIsOpen(!isOpen)
+    setIsOpen(!isOpen);
   }
 
   const handleClickOutside = event => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false)
+      setIsOpen(false);
     }
-  }
-
-  const handleMeetingScheduling = time => {
-    setStartMeetingTime(time)
-    setIsOpen(!isOpen)
   }
 
   useEffect(() => {
@@ -193,6 +248,31 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen }) => {
       document.removeEventListener('click', handleClickOutside, true)
     }
   }, [])
+
+  const handleOptionClick = (value) => {
+    setSelectedOption(value);
+    setIsOpen(false);
+  };
+
+  const handleCalenderSettings = () => {
+    let calenderSettingObj = {
+      userId: _id,
+      startTime: availableFromTime,
+      endTime: availableEndTime,
+      timezone: userTimezone
+    }
+
+    setIsOpen(false);
+    setIsModalOpen(false);
+    setSelectedOption('APPLIED_TO_PROJECTS');
+    dispatch(createCalenderSetting(calenderSettingObj));
+  }
+
+  const handleCalendlyIntegration = () => {
+    setIsModalOpen(false);
+    setIsCalendlyModal(true);
+  }
+
 
   return (
     <>
@@ -221,100 +301,71 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen }) => {
                   <TextTitleStyled> Select Your Available Times </TextTitleStyled>
                 </div>
                 <div>
-                  <Label fontSize="16px" fontWeight="360">
+                  <Label fontSize="16px" fontWeight="400">
                     Select your working hours and the times you will likely be available for an interview. You will
                     always receive an optional request from the client for interviews.
                   </Label>
                 </div>
 
-                {/* <ScheduleMeetingContainer>
-                                    <div><Label>Start Time</Label></div>
-                                    <div><Label>End Time</Label></div>
-                                </ScheduleMeetingContainer> */}
-
                 <ScheduleMeetingContainer>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <div className='d-flex gap-5 mt-5'>
+                    <div className='d-flex gap-5 mt-3'>
                       <div>
-                      <Label fontSize="16px" htmlFor="start-time-1">Start Time</Label>
+                        <Label fontSize="16px" fontWeight={600} htmlFor="start-time-1">Start Time</Label>
                         <TimePicker
+                          value={availableFromTime}
+                          onChange={(e) => {
+                            setAvailableFromTime(dayjs(e))
+                          }}
                           id="start-time-1"
                           minutesStep={30}
-                          renderInput={(params) => 
+                          renderInput={(params) =>
                             <input {...params} placeholder="Select start time" />
                           }
-                          sx={{
-                            width: 130,
-                            input: {
-                              borderBottom: '0px solid transparent !important',
-                              margin: '0 0 0 6px !important'
-                            },
-                            button: { background: 'transparent !important' },
-                            '&.MuiFocused': {
-                            //   borderBottom: '2px solid #4CAF50 !important'
-                            }
-                          }}
+                          sx={TimePickerStyled}
                         />
                       </div>
                       <div>
-                      <Label fontSize="16px" htmlFor="end-time">End Time</Label>
+                        <Label fontSize="16px" fontWeight={600} htmlFor="end-time">End Time</Label>
                         <TimePicker
                           id="end-time"
                           minutesStep={30}
-                          sx={{
-                            width: 130,
-                            input: {
-                              borderBottom: '0px solid transparent !important',
-                              margin: '0 0 0 6px !important'
-                            },
-                            button: { background: 'transparent !important' },
-                            '&.MuiFocused': {
-                            //   borderBottom: '2px solid #4CAF50 !important'
-                            }
-                          }}
+                          sx={TimePickerStyled}
+                          value={availableEndTime}
+                          onChange={(endTime) => setAvailableEndTime(endTime)}
                         />
                       </div>
-                      </div>
+                    </div>
                   </LocalizationProvider>
                 </ScheduleMeetingContainer>
 
-                <div>
-                  <Label>Who can schedule Interviews with you?</Label>
+                <div style={{ marginTop: 10, marginBottom: 5 }}>
+                  <Label fontSize="16px" fontWeight={600} >Who can schedule Interviews with you?</Label>
                 </div>
-                <div>
-                  <InputStyled
-                    placeholder="Only clients whose jobs I have applied to"
-                    style={{
-                      border: '1px solid #D9D9D9',
-                      borderRadius: '5px'
-                    }}
-                  />
-                </div>
-                <div>
-                  <TextTitleStyled weight={400} color="#1976D2">
-                    Prefer to use Calendly?
-                  </TextTitleStyled>
-                </div>
-                {/* <div>
-                                    <SelectionContainer ref={dropdownRef}>
-                                        <SelectionButton onClick={toggleDropdown}>
-                                            <div style={{ display: 'flex' }}>
-                                                <div> {startMeetingTime} </div>
-                                                <div style={{ marginLeft: 'auto' }}>
-                                                    <DownArrow color="#444444" />
-                                                </div>
-                                            </div>
-                                        </SelectionButton>
-                                        {isOpen && (
-                                            <DropdownContainer >
-                                                {SELECT_MEETING_TIME.map((time) => (
-                                                    <DropdownItems onClick={() => handleMeetingScheduling(time)}>{time}</DropdownItems>
-                                                ))}
+                <div style={{ width: '100%' }}>
 
-                                            </DropdownContainer>
-                                        )}
-                                    </SelectionContainer>
-                                </div> */}
+                  <DropdownContainer ref={dropdownRef}>
+                    <DropdownButton onClick={toggleDropdown}>
+                      {selectedOption ? options.find(option => option.value === selectedOption).label : 'Select an option'}
+                    </DropdownButton>
+                    {isOpen && (
+                      <DropdownList>
+                        {options.map((option) => (
+                          <DropdownItem
+                            key={option.value}
+                            onClick={() => handleOptionClick(option.value)}
+                          >
+                            {option.label}
+                          </DropdownItem>
+                        ))}
+                      </DropdownList>
+                    )}
+                  </DropdownContainer>
+                </div>
+                <div className='mt-2'>
+                  <TextTitleStyled weight={400} color="#1976D2" onClick={handleCalendlyIntegration}> Prefer to use Calendly? </TextTitleStyled>
+                </div>
+
               </div>
 
               <div
@@ -323,13 +374,28 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen }) => {
                   flexDirection: 'row',
                   justifyContent: 'flex-end'
                 }}>
-                <CancelButtonStyled onClick={handleClose}>cancel</CancelButtonStyled>
-                <AddListButtonStyled onClick={() => console.log('update_meeting_link')}>UPDATE</AddListButtonStyled>
+                <CancelButtonStyled
+                  onClick={handleClose}
+                >
+                  cancel
+                </CancelButtonStyled>
+                <AddListButtonStyled
+                  onClick={() => handleCalenderSettings()}>
+                  UPDATE
+                </AddListButtonStyled>
               </div>
             </div>
           </div>
         </Fade>
       </Modal>
+      {isCalendlyModal && (
+        <SetupCalendlyModal
+          isCalendlyModal={isCalendlyModal}
+          setIsCalendlyModal={setIsCalendlyModal}
+          setIsModalOpen={setIsModalOpen}
+        />
+
+      )}
     </>
   )
 }

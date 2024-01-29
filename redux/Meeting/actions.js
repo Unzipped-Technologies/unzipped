@@ -12,7 +12,7 @@ export const createMeeting = (data, token) => async (dispatch, getState) => {
         type: MEETING_LOADING
     })
     await axios
-        .post(`/api/meeting`, data, tokenConfig(token))
+        .post(`/api/meeting/create`, data, tokenConfig(token))
         .then(res => {
             dispatch({
                 type: CREATE_MEETING,
