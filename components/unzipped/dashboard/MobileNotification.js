@@ -2,70 +2,62 @@ import React, { useState } from 'react';
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
-import {
-    BlackCard,
-    WhiteText,
-    TitleText,
-    DarkText,
-    Absolute,
-    WhiteCard,
-    Dismiss
-} from './style'
+import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import ScheduleMeetingModal from './ScheduleMeetingModal';
 
 const help = [
-    {
-        name: 'Help Center',
-        icon: 'glasses',
-        text: 'Find documentation and tutorials on how to use Unzipped.',
-        link: {
-            text: 'See our help docs',
-            to: '/'
-        }
-    },
-    {
-        name: 'Unzipped Learn',
-        icon: 'compass',
-        text: 'Get step-by-step guidance on how to best set up your business online.',
-        link: {
-            text: 'Get started',
-            to: '/'
-        }
-    },
-    {
-        name: 'Courses',
-        icon: 'play',
-        text: 'Learn how to run a successful business with video courses taught by industry experts',
-        link: {
-            text: 'Learn more',
-            to: 'https://www.udemy.com/'
-        }
-    },
-    {
-        name: 'Ask us about a topic',
-        icon: 'questionCircle',
-        text: 'Find answers to your questions and review Unzipped resources.',
-        link: {
-            text: 'Ask about a topic.',
-            to: '/'
-        }
-    },
+  {
+    name: 'Help Center',
+    icon: 'glasses',
+    text: 'Find documentation and tutorials on how to use Unzipped.',
+    link: {
+      text: 'See our help docs',
+      to: '/'
+    }
+  },
+  {
+    name: 'Unzipped Learn',
+    icon: 'compass',
+    text: 'Get step-by-step guidance on how to best set up your business online.',
+    link: {
+      text: 'Get started',
+      to: '/'
+    }
+  },
+  {
+    name: 'Courses',
+    icon: 'play',
+    text: 'Learn how to run a successful business with video courses taught by industry experts',
+    link: {
+      text: 'Learn more',
+      to: 'https://www.udemy.com/'
+    }
+  },
+  {
+    name: 'Ask us about a topic',
+    icon: 'questionCircle',
+    text: 'Find answers to your questions and review Unzipped resources.',
+    link: {
+      text: 'Ask about a topic.',
+      to: '/'
+    }
+  }
 ]
 
 const InnerCard = styled.div`
-border-radius: 10px 10px 0px 0px;
-border-bottom: 1px solid #D8D8D8;
-background: #F1F0F0;
-box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-display: flex;
-width: 100%;
-align-items: center;
-color: #fff;
-border-radius: 5px;
-margin-bottom: 2px; 
+  border-radius: 10px 10px 0px 0px;
+  border-bottom: 1px solid #d8d8d8;
+  background: #f1f0f0;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  display: flex;
+  width: 100%;
+  align-items: center;
+  color: #fff;
+  border-radius: 5px;
+  margin-bottom: 2px;
 `
 const Notification = ({ type, children, noButton }) => {
     const router = useRouter()

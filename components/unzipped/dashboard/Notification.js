@@ -2,6 +2,7 @@ import React from 'react'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
+
 import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 import ScheduleInterview from './ScheduleInterview'
 
@@ -94,15 +95,17 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'dismiss':
       return (
-        <WhiteCard row>
-          <DarkText noMargin>{children}</DarkText>
-          <Absolute>
-            <Dismiss>Dismiss</Dismiss>
-            <Button noBorder type="default" normal small>
-              UPDATE
-            </Button>
-          </Absolute>
-        </WhiteCard>
+        <>
+          <WhiteCard row>
+            <DarkText noMargin>{children}</DarkText>
+            <Absolute>
+              <Dismiss>Dismiss</Dismiss>
+              <Button noBorder type="default" normal small>
+                UPDATE
+              </Button>
+            </Absolute>
+          </WhiteCard>
+        </>
       )
     case 'faq':
       return (

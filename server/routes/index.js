@@ -1,5 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
 router.use('/auth', require('./authRoutes'));
 router.use('/user', require('./userRoutes'));
@@ -21,6 +21,9 @@ router.use('/taskHours', require('./taskHoursRoutes'));
 router.use('/invoice', require('./invoiceRoutes'));
 router.use('/meeting', require('./meetingRoutes'));
 router.use('/calender', require('./CalenderSettingRoutes'));
+router.use('/list-entries', require('./listEntriesRoute'));
+router.use('/questions', require('./questionRoutes'))
+router.use('/projectApplication', require('./projectApplicationsRoutes'))
 
 
-module.exports = router;
+module.exports = router

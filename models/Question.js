@@ -1,15 +1,23 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const { softDeletePlugin } = require('soft-delete-plugin-mongoose')
 
-const questionSchema = new Schema({
-  businessId: String,
-  userId: String,
-  question: String,
-  answer: String,
-  isActive: {type: Boolean, default: true},
-  isArchived: {type: Boolean, default: false},
-}, {
-  timestamps: true
-});
+const { Schema } = mongoose
 
-module.exports = mongoose.model('questions', questionSchema);
+const questionSchema = new Schema(
+  {
+    businessId: { type: Schema.Types.ObjectId, ref: 'businesses' },
+    userId: { type: Schema.Types.ObjectId, ref: 'users' },
+    question: String,
+    answers: [
+      { userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Answer' }, answer: { type: String, default: '' } }
+    ],
+    isActive: { type: Boolean, default: true },
+    isArchived: { type: Boolean, default: false }
+  },
+  {
+    timestamps: true
+  }
+)
+
+questionSchema.plugin(softDeletePlugin)
+module.exports = mongoose.model('questions', questionSchema)
