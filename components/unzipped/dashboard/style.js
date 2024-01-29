@@ -359,6 +359,20 @@ export const MinWidth = styled.span`
   min-width: 10%;
 `
 
+export const ScheduleInterviewContainer = styled.div`
+  width: 100%;
+  border: 1px solid #D8D8D8;
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+`;
+
+export const ScheduleInterviewButtonContainer = styled.div`
+  width: 16%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+`;
 const TableHeading = styled.th`
   color: ${({ $color }) => ($color ? $color : '#000')};
   text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
@@ -413,6 +427,8 @@ module.exports = {
   Box,
   PaddingLeft,
   Title,
+  ScheduleInterviewContainer,
+  ScheduleInterviewButtonContainer,
   TableHeading,
   TableData,
   HelpCenterContainer

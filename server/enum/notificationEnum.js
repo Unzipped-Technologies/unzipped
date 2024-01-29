@@ -11,6 +11,8 @@ const notificationEnum = Object.freeze({
     VIEW_FIRST_INVOICE: 7,
     // freelancer
     FIND_FIRST_JOB: 8,
+    // calender setup
+    CALENDAR_SETUP: 9,
   })
   
   module.exports = {

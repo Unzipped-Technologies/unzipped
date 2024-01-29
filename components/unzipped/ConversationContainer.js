@@ -39,17 +39,17 @@ const Scroll = styled(SimpleBar)`
 `;
 
 const ConversationContainer = ({ conversations = [], userId, userEmail, openConversation }) => {
-    const [conversation, setConversation] = useState([])
+    // const [conversation, setConversation] = useState([])
     const [selectedItem, setSelectedItem] = useState({})
     const [archivedChatsShow, setArchivedChatsShow] = useState(false)
 
-    useEffect(() => {
-        setConversation(conversations)
-    }, [conversations])
+    // useEffect(() => {
+    //     setConversation(conversations)
+    // }, [conversations])
 
     const handleSearch = (e) => {
-        const filteredConversations = conversations.filter(conversation => {
-            const participants = conversation.participants;
+        const filteredConversations = conversations.filter(convo => {
+            const participants = convo.participants;
             return participants.some(participant => {
                 const fullName = `${participant.userId.FirstName} ${participant.userId.LastName}`;
                 return participant.userId._id !== userId && fullName.includes(e);
@@ -93,7 +93,7 @@ const ConversationContainer = ({ conversations = [], userId, userEmail, openConv
     const RenderConversations = ({
         type
     }) =>
-        conversation.filter((item) => item?.isArchived === (type === 'archived')).map((item, index) => {
+        conversations.filter((item) => item?.isArchived === (type === 'archived')).map((item, index) => {
             const receiver = item?.participants?.find(e => e.userId.email !== userEmail)
             const sender = item?.participants?.find(e => e.userId.email === userEmail)
             return (

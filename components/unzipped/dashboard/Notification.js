@@ -4,6 +4,7 @@ import Icon from '../../ui/Icon'
 import Link from 'next/link'
 
 import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
+import ScheduleInterview from './ScheduleInterview'
 
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
@@ -97,6 +98,7 @@ const help = [
   }
 ]
 
+
 const Notification = ({ type, children, noButton }) => {
   const router = useRouter()
   switch (type) {
@@ -128,6 +130,7 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'browse':
       return (
+
         <WhiteCard row>
           <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
           <Absolute>
@@ -136,6 +139,10 @@ const Notification = ({ type, children, noButton }) => {
             </Button>
           </Absolute>
         </WhiteCard>
+      )
+    case 'meetingCalender':
+      return (
+        <ScheduleInterview />
       )
     case 'dismiss':
       return (

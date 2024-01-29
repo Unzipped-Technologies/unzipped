@@ -13,13 +13,14 @@ const sendMessage = async (data, id) => {
                 { ...data.sender, userId: id },
                 { ...data.receiver }
             ]
-        }) 
+        })
     }
-    await message.create({
+    const msg = await message.create({
         sender: id,
         message: data?.message,
         attachment: data?.attachment,
-        conversationId: getConversation._id
+        conversationId: getConversation._id,
+        ...(data?.meetingId && { meetingId: data.meetingId })
     })
     await conversation.findByIdAndUpdate(getConversation._id, {
         messages: await message.find({ conversationId: getConversation._id })
@@ -35,21 +36,32 @@ const sendMessage = async (data, id) => {
 }
 
 const getMessagesForUser = async ({ filter = {}, take = 25, skip = 0 }, id) => {
-    return await conversation.find({
-        participants: {
-            $elemMatch: { userId: id }
-        },
-        ...filter
-    })
-        .skip(skip)
-        .limit(take)
-        .populate('messages')
-        .populate({
-            path: 'participants.userId',
-            model: 'users',
-            select: ['email', 'FirstName', 'LastName', 'profileImage']
+    try {
+        return await conversation.find({
+            participants: {
+                $elemMatch: { userId: id }
+            },
+            ...filter
         })
-        .exec();
+            .skip(skip)
+            .limit(take)
+            .populate({
+                path: 'messages',
+                model: 'messages',
+                populate: {
+                    path: 'meetingId',
+                    model: 'meetings'
+                }
+            })
+            .populate({
+                path: 'participants.userId',
+                model: 'users',
+                select: ['email', 'FirstName', 'LastName', 'profileImage']
+            })
+            .exec();
+    } catch (error) {
+        console.log('Error on getting user messages', error?.message)
+    }
 }
 
 const getConversationById = async (conversationId, id, limit) => {
@@ -62,7 +74,7 @@ const getConversationById = async (conversationId, id, limit) => {
         },
         {
             arrayFilters: [{ 'elem.userId': id }],
-            new: true, 
+            new: true,
         }
     )
         .populate({
@@ -71,6 +83,10 @@ const getConversationById = async (conversationId, id, limit) => {
                 sort: { createdAt: -1 },
                 limit: limit,
             },
+            populate: {
+                path: 'meetingId',
+                model: 'meetings'
+            }
         })
         .populate({
             path: 'participants.userId',
@@ -95,8 +111,8 @@ const updateConversationStatus = async (conversationId, type, status) => {
         return { msg: `Conversation ${type} updated successfully` }
     }
     else {
-    return undefined
-}
+        return undefined
+    }
 }
 
 module.exports = {
