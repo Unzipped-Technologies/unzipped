@@ -50,6 +50,7 @@ const createBusiness = async (data, id) => {
     questionsToAsk: questions,
     audience: await businessAudience.findById(audience._id)
   })
+  console.log('business_created',newBusiness)
   return { msg: 'business created successfully' }
 }
 

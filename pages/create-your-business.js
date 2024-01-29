@@ -364,7 +364,7 @@ const GetCardDesktop = ({
               type="purple"
               buttonHeight="42px"
               disabled={inputValue === '' || requiredSkills.length >= 15}
-              zIndex={10}
+              zIndex={20}
               onClick={() => {
                 updateForm({ requiredSkills: [...requiredSkills, inputValue] })
                 handleInput('')
@@ -444,7 +444,7 @@ const GetCardDesktop = ({
           </Grid>
         </CreateABusiness>
       )
-    case 8:
+    case 10:
       if (!isGithubConnected) {
         return (
           <CreateABusiness
@@ -455,7 +455,9 @@ const GetCardDesktop = ({
             onSubmit={submitForm}
             progress={stage}
             stage={stage}
-            skip>
+            submit
+            // skip
+            >
             <Grid>
               <Button icon="github" extraWide noBorder type="dark" normal onClick={handleGithub}>
                 CONNECT YOUR GITHUB ACCOUNT
@@ -466,7 +468,7 @@ const GetCardDesktop = ({
       } else {
         handleSkip()
       }
-    case 9:
+    case 8:
       return (
         <CreateABusiness
           title="Budget"
@@ -489,12 +491,12 @@ const GetCardDesktop = ({
               width="100%"
               borderRadius="12px"
               onChange={e => updateForm({ budget: e.value })}
-              value={{label: budget}}
+              value={{ label: budget }}
             />
           </Grid>
         </CreateABusiness>
       )
-    case 10:
+    case 9:
       return (
         <CreateABusiness
           title="Questions for Potential Hires"
@@ -503,7 +505,7 @@ const GetCardDesktop = ({
           onUpdate={updateForm}
           onBack={goBack}
           onSubmit={submitForm}
-          submit
+          // submit
           progress={stage}
           stage={stage}>
           <Grid>
@@ -799,7 +801,7 @@ const GetCardMobile = ({
               sub="What are the specific tasks and objectives for this project"
               disabled={objectives?.length === 0 || challenge?.length === 0}
               onUpdate={updateForm}
-              onBack={()=>goBack(stage-1)}
+              onBack={() => goBack(stage - 1)}
               onSubmit={submitForm}
               stage={stage}>
               <Grid margin="0px">
@@ -878,7 +880,7 @@ const GetCardMobile = ({
               sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
               disabled={teamDynamics?.length === 0 || role?.length === 0}
               onUpdate={updateForm}
-              onBack={()=>goBack(stage-1)}
+              onBack={() => goBack(stage - 1)}
               onSubmit={submitForm}
               stage={stage}>
               <Grid margin="0px 0px 50px 0px">
@@ -1041,7 +1043,7 @@ const GetCardMobile = ({
             sub="Every great story has a setting. What's the backdrop of your company or venture?"
             disabled={companyBackground?.length === 0 || goals?.length === 0}
             onUpdate={updateForm}
-            onBack={()=>goBack(stage-1)}
+            onBack={() => goBack(stage - 1)}
             onSubmit={submitForm}
             stage={stage}>
             <Grid margin="0px 0px 50px 0px">
@@ -1059,8 +1061,8 @@ const GetCardMobile = ({
           </CreateABusiness>
         </>
       )
-    case 8:
-      if (!isGithubConnected) {
+    case 10:
+      // if (!isGithubConnected) {
         return (
           <CreateABusiness
             mobile
@@ -1072,7 +1074,9 @@ const GetCardMobile = ({
             onSubmit={submitForm}
             progress={stage - 2}
             stage={stage}
-            skip>
+            submit
+          // skip
+          >
             <Grid margin="50px 0px 100px 0px">
               <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
                 CONNECT YOUR GITHUB ACCOUNT
@@ -1080,10 +1084,10 @@ const GetCardMobile = ({
             </Grid>
           </CreateABusiness>
         )
-      } else {
-        handleSkip()
-      }
-    case 9:
+      // } else {
+      //   handleSkip()
+      // }
+    case 8:
       return (
         <>
           <CreateABusiness
@@ -1109,7 +1113,7 @@ const GetCardMobile = ({
                 width="100%"
                 borderRadius="12px"
                 onChange={e => updateForm({ budget: e.value })}
-                value={{label: budget}}
+                value={{ label: budget }}
               />
             </Grid>
           </CreateABusiness>
@@ -1123,7 +1127,7 @@ const GetCardMobile = ({
             onUpdate={updateForm}
             onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
             onSubmit={submitForm}
-            submit
+            // submit
             stage={stage + 1}>
             <Grid margin="0px">
               <FormField
@@ -1170,7 +1174,7 @@ const GetCardMobile = ({
           </CreateABusiness>
         </>
       )
-    case 10:
+    case 9:
       return (
         <>
           <CreateABusiness
@@ -1196,7 +1200,7 @@ const GetCardMobile = ({
                 width="100%"
                 borderRadius="12px"
                 onChange={e => updateForm({ budget: e.value })}
-                value={{label: budget}}
+                value={{ label: budget }}
               />
             </Grid>
           </CreateABusiness>
@@ -1208,9 +1212,10 @@ const GetCardMobile = ({
             sub="What questions do you have for potential hires? (max three)"
             disabled={questionsToAsk?.length === 0 || budget?.length === 0}
             onUpdate={updateForm}
-            onBack={() => goBack((isGithubConnected ? stage - 1 : stage)-1)}
+            // onBack={() => goBack((isGithubConnected ? stage - 1 : stage) - 1)}
+            onBack={() => goBack(stage - 1)}
             onSubmit={submitForm}
-            submit
+            // submit
             stage={stage}>
             <Grid margin="0px">
               <FormField
@@ -1359,8 +1364,8 @@ const CreateBusiness = ({
 
   return (
     <Container>
-      
-        <DesktopBox>
+
+      <DesktopBox>
         <GetCardDesktop
           stage={stage}
           submitForm={submitForm}
@@ -1385,37 +1390,37 @@ const CreateBusiness = ({
           budget={budget}
           questionsToAsk={questionsToAsk}
         />
-        </DesktopBox>
-      
-        <MobileBox>
-          <Nav isSubMenu marginBottom={'0px'} zIndex={20} />
-          <GetCardMobile
-            stage={stage}
-            submitForm={submitForm}
-            updateForm={updateForm}
-            goBack={goBack}
-            inputValue={inputValue}
-            isGithubConnected={isGithubConnected}
-            handleInput={handleInput}
-            handleSkip={handleSkip}
-            handleCancelIcon={handleCancelIcon}
-            handleEnterKey={handleEnterKey}
-            loading={loading}
-            projectType={projectType}
-            name={name}
-            challenge={challenge}
-            role={role}
-            objectives={objectives}
-            teamDynamics={teamDynamics}
-            requiredSkills={requiredSkills}
-            goals={goals}
-            companyBackground={companyBackground}
-            budget={budget}
-            questionsToAsk={questionsToAsk}
-          />
-          <MobileFreelancerFooter defaultSelected='Create'/>
-        </MobileBox>
-      
+      </DesktopBox>
+
+      <MobileBox>
+        <Nav isSubMenu marginBottom={'0px'} zIndex={20} />
+        <GetCardMobile
+          stage={stage}
+          submitForm={submitForm}
+          updateForm={updateForm}
+          goBack={goBack}
+          inputValue={inputValue}
+          isGithubConnected={isGithubConnected}
+          handleInput={handleInput}
+          handleSkip={handleSkip}
+          handleCancelIcon={handleCancelIcon}
+          handleEnterKey={handleEnterKey}
+          loading={loading}
+          projectType={projectType}
+          name={name}
+          challenge={challenge}
+          role={role}
+          objectives={objectives}
+          teamDynamics={teamDynamics}
+          requiredSkills={requiredSkills}
+          goals={goals}
+          companyBackground={companyBackground}
+          budget={budget}
+          questionsToAsk={questionsToAsk}
+        />
+        <MobileFreelancerFooter defaultSelected='Create' />
+      </MobileBox>
+
     </Container>
   )
 }
