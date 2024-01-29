@@ -7,6 +7,56 @@ import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
+const ExploreContainer = styled.div`
+  display: flex;
+  width: 100%;
+  background: #FAFAFA;
+  flex-direction: column;
+  border-radius: 5px;
+  border: 1px solid #D8D8D8;
+  padding: 10px;
+`;
+
+const TextContent = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin-bottom: 20px;
+`;
+
+const ExploreItems = styled.div`
+  display: flex;
+  width: 100%;
+  border-radius:  ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  // border-radius: 10px 10px 0px 0px;
+  border: 1px solid #D8D8D8;
+  background: #F1F0F0;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+`;
+
+const ExploreIconContainer = styled.div`
+  display: flex;
+  padding: 10px;
+  align-items: center;
+`
+
+const HeadingStyled = styled.p`
+  margin: 0px !important;
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
+  display: block;
+`;
+
+const ExploreItemTextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+`;
+
+const FontStyled = styled.span`
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
+`
 const help = [
   {
     name: 'Help Center',
