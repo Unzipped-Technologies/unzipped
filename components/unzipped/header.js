@@ -20,7 +20,7 @@ import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icon
 
 const Div = styled.div`
   width: 100%;
-  margin-bottom: ${({ marginBottom }) => (marginBottom ? marginBottom : '128px')};
+  margin-bottom: ${({ marginBottom }) => (marginBottom ? marginBottom : '0px')};
 `
 
 const Container = styled.div`
