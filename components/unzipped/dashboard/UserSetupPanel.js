@@ -201,19 +201,6 @@ const Panel = ({ userProps }) => {
         </AccountSetup>
       </AccountSetupContainer>
 
-      {/* <TitleText>Set up your account<Absolute top="20px"><DarkText>75%</DarkText></Absolute></TitleText>
-            <ProgressBar value={75} width={190} showValue/>
-            <DarkText>Some functionality will not be accessable if your
-            account is not completed </DarkText>
-            <TitleText small>Complete your account setup by:</TitleText>
-            <WhiteCard unset background="#d8d8d8">
-                {user.map(item => (
-                        <WhiteCard onClick={item?.onClick || (() => {})} borderColor="#37DEC5" row half clickable>
-                            {item.icon}
-                            <DarkText clickable noMargin paddingLeft={item.padding} fontSize="12px">{item.text}</DarkText>
-                        </WhiteCard>
-                ))}
-            </WhiteCard> */}
     </Container>
   )
 }

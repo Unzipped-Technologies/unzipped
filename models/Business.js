@@ -77,7 +77,12 @@ const businessSchema = new Schema(
     likeTotal: { type: Number, default: 0 },
     dislikeTotal: { type: Number, default: 0 },
     likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
-    dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' }
+    dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+    projectImagesUrl: [
+      {
+        type: Schema.Types.ObjectId, ref: 'file'
+      }
+    ]
   },
   {
     timestamps: true
