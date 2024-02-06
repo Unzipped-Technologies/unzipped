@@ -247,8 +247,8 @@ const Notification = ({ type, children, noButton }) => {
         case 'explore':
             return (
                 <WhiteCard padding="20px 3px" marginBottom='70px' size="extraLarge" background="#FAFAFA">
-                    <TitleText noMargin paddingLeft="8px" marginLeft="0">Explore more support</TitleText>
-                    <DarkText>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
+                    <TitleText noMargin paddingLeft="8px" marginTop={"5px"} marginLeft="10px" >Explore more support</TitleText>
+                    <DarkText topPadding={'5px'}>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
                     {help.map((item, index) => (
                         <InnerCard style={{
                             display: 'flex',

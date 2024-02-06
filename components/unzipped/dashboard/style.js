@@ -366,6 +366,7 @@ export const ScheduleInterviewContainer = styled.div`
   display: flex;
   padding: 10px;
   gap: 10px;
+  justify-content: space-between;
 `;
 
 export const ScheduleInterviewButtonContainer = styled.div`
@@ -405,6 +406,11 @@ const HelpCenterContainer = styled.div`
   @media screen and (max-width: 600px) {
     padding-left: 0px ;
   }
+`;
+
+const CalanderParagraphStyled = styled.p`
+  margin-left: 30px;
+  width: 87%;
 `
 
 module.exports = {
@@ -432,5 +438,6 @@ module.exports = {
   ScheduleInterviewButtonContainer,
   TableHeading,
   TableData,
-  HelpCenterContainer
+  HelpCenterContainer,
+  CalanderParagraphStyled
 }

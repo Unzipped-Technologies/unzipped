@@ -142,7 +142,9 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'meetingCalender':
       return (
+        <>
         <ScheduleInterview />
+        </>
       )
     case 'dismiss':
       return (
