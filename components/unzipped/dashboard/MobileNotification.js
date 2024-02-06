@@ -155,7 +155,8 @@ const Notification = ({ type, children, noButton }) => {
         case 'browse':
             return (
                 <WhiteCard row display='block'>
-                    <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
+                    {/* Browse other projects to inspire ideas */}
+                    <DarkText noMargin marginLeft={"5px"}>Browse other projects to inspire ideas</DarkText>
                     <Absolute justifyContent='end' ><Button noBorder type="default" normal small>BROWSE</Button></Absolute>
                 </WhiteCard>
             )
@@ -230,7 +231,7 @@ const Notification = ({ type, children, noButton }) => {
         case 'createBusiness':
             return (
                 <WhiteCard size="large">
-                    <DarkText>You haven't created your first Business yet, create one now so
+                    <DarkText fontSize={'16'} topPadding={"5px"}>You haven't created your first Business yet, create one now so
                         you can begin Collaborating! Need Ideas? View existing projects here.</DarkText>
                     <Button noBorder webKit type="dark" normal>CREATE FIRST PROJECT</Button>
                 </WhiteCard>
