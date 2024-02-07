@@ -77,7 +77,7 @@ const DarkText = styled.div`
   margin-top: ${({ topMargin }) => (topMargin ? topMargin : 'unset')};
   margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) =>
     bottomMargin ? '22px' : noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
-  margin-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
+  margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '0px')};
   margin-right: ${({ marginRight }) => (marginRight ? marginRight : '0px')};
   padding-top: ${({ topPadding }) => (topPadding ? '10px' : '0px')};
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
@@ -89,6 +89,7 @@ const DarkText = styled.div`
   // padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
   text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
+  // color: ${({ color  }) => (color ? color : theme.text2)};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '')};
   &:hover {
@@ -111,8 +112,8 @@ const DarkText = styled.div`
 
   @media screen and (max-width: 600px){
     padding-left: 0px;
-    margin-left: 0px;
-    font-size: 0px;
+    margin-left: 10px;
+    font-size: 16px;
     line-height: '18px';
   }
 
@@ -365,6 +366,7 @@ export const ScheduleInterviewContainer = styled.div`
   display: flex;
   padding: 10px;
   gap: 10px;
+  justify-content: space-between;
 `;
 
 export const ScheduleInterviewButtonContainer = styled.div`
@@ -404,6 +406,11 @@ const HelpCenterContainer = styled.div`
   @media screen and (max-width: 600px) {
     padding-left: 0px ;
   }
+`;
+
+const CalanderParagraphStyled = styled.p`
+  margin-left: 30px;
+  width: 87%;
 `
 
 module.exports = {
@@ -431,5 +438,6 @@ module.exports = {
   ScheduleInterviewButtonContainer,
   TableHeading,
   TableData,
-  HelpCenterContainer
+  HelpCenterContainer,
+  CalanderParagraphStyled
 }
