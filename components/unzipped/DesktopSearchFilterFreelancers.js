@@ -42,7 +42,7 @@ const Li = styled.li`
 function DesktopSearchFilterFreelancers({ sortOptions, sort, setSort, maxRate, setMaxRate, setMinRate, minRate, freelancerSkillsList, setSkill }) {
     const minRef = useRef()
     const maxRef = useRef()
-
+    console.log('freelancersSkills')
     const [skillData, setSkillData] = useState([...freelancerSkillsList.slice(+freelancerSkillsList.length - 4, freelancerSkillsList.length)])
     const [skills, setSkills] = useState([]);
     const [suggestions, setSuggestions] = useState([]);

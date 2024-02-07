@@ -38,7 +38,7 @@ import {
   CREATE_TASK_AND_TASK_HOURS,
   GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
   GET_PROJECT_Error,
-  GET_PROJECT_LIST_AND_APPEND
+  GET_PROJECT_LIST_AND_APPEND,
 } from './constants'
 
 const INIT_STATE = {
@@ -85,6 +85,9 @@ const INIT_STATE = {
 
 const Business = (state = INIT_STATE, action = {}) => {
   switch (action.type) {
+    // case RESET_BUSINESS_FORM: {
+    //   return { ...state, businessForm: INIT_STATE.businessForm }
+    // }
     case CREATE_BUSINESS:
       return {
         ...state,

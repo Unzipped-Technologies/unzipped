@@ -17,6 +17,8 @@ import { nextPublicGithubClientId } from '../config/keys'
 import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined'
 import ClearSharpIcon from '@material-ui/icons/ClearSharp'
 import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
+import UploadImage from '../components/unzipped/image-upload/UploadImage'
+import axios from 'axios'
 
 const Container = styled.div`
   display: flex;
@@ -126,7 +128,9 @@ const GetCardDesktop = ({
   handleSkip,
   handleCancelIcon,
   handleEnterKey,
-  loading
+  loading,
+  files,
+  setFiles
 }) => {
   switch (stage) {
     case 1:
@@ -135,11 +139,11 @@ const GetCardDesktop = ({
           title={`Are you looking to hire for a long term hire?`}
           sub={`We’ll help you get started based on your business needs.`}
           onUpdate={updateForm}
-          onBack={goBack}
           disabled={projectType === ''}
           onSubmit={submitForm}
           progress={stage}
-          stage={stage}>
+          stage={stage}
+          projectType={projectType}>
           <Grid>
             <OptionTileGroup
               availableWidth
@@ -149,6 +153,7 @@ const GetCardDesktop = ({
               onChange={e => updateForm({ projectType: e.target.value })}
               stage={stage}
             />
+            
           </Grid>
         </CreateABusiness>
       )
@@ -444,7 +449,7 @@ const GetCardDesktop = ({
           </Grid>
         </CreateABusiness>
       )
-    case 10:
+    case 11:
       if (!isGithubConnected) {
         return (
           <CreateABusiness
@@ -456,8 +461,8 @@ const GetCardDesktop = ({
             progress={stage}
             stage={stage}
             submit
-            // skip
-            >
+          // skip
+          >
             <Grid>
               <Button icon="github" extraWide noBorder type="dark" normal onClick={handleGithub}>
                 CONNECT YOUR GITHUB ACCOUNT
@@ -551,6 +556,50 @@ const GetCardDesktop = ({
           </ContentContainer>
         </CreateABusiness>
       )
+    case 10:
+      return (
+        <CreateABusiness
+          title="Project Image"
+          sub="Upload a photo here to represent your project. This will display in the projects section of your profile."
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage}
+          stage={stage}
+        // submit
+        // skip
+        >
+          <Button
+            type="transparent"
+            noUppercase
+            noPadding
+            position="absolute"
+            right="50px"
+            top="170px"
+            onClick={() => handleSkip(true)}>
+            Skip
+            <SkipNextOutlinedIcon />
+          </Button>
+          <Grid margin={files?.length && '0'}>
+            <UploadImage setFiles={setFiles} files={files} />
+            {/* <p> You can only drop maximum 3 files here</p> */}
+          </Grid>
+          {!!files?.length && (
+            <ContentContainer padding="20px 5px 20px 10px ">
+              {files?.map((file, index) => (
+                <ContainedSpan>
+                  <ClearSharpIcon
+                    style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                    onClick={() => handleCancelIcon(`files:${index}`)}
+                  />
+                  {file.name}
+                </ContainedSpan>
+              ))}
+            </ContentContainer>
+          )}
+        </CreateABusiness>
+      )
+
     default:
       return <></>
   }
@@ -1063,30 +1112,30 @@ const GetCardMobile = ({
       )
     case 10:
       // if (!isGithubConnected) {
-        return (
-          <CreateABusiness
-            mobile
-            titleFontSize="16px"
-            title="Do you currently have a github account?"
-            sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
-            onUpdate={updateForm}
-            onBack={goBack}
-            onSubmit={submitForm}
-            progress={stage - 2}
-            stage={stage}
-            submit
-          // skip
-          >
-            <Grid margin="50px 0px 100px 0px">
-              <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
-                CONNECT YOUR GITHUB ACCOUNT
-              </Button>
-            </Grid>
-          </CreateABusiness>
-        )
-      // } else {
-      //   handleSkip()
-      // }
+      return (
+        <CreateABusiness
+          mobile
+          titleFontSize="16px"
+          title="Do you currently have a github account?"
+          sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
+          onUpdate={updateForm}
+          onBack={goBack}
+          onSubmit={submitForm}
+          progress={stage - 2}
+          stage={stage}
+          submit
+        // skip
+        >
+          <Grid margin="50px 0px 100px 0px">
+            <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
+              CONNECT YOUR GITHUB ACCOUNT
+            </Button>
+          </Grid>
+        </CreateABusiness>
+      )
+    // } else {
+    //   handleSkip()
+    // }
     case 8:
       return (
         <>
@@ -1288,31 +1337,39 @@ const CreateBusiness = ({
 }) => {
 
   const submitForm = step => {
-    if (step < 10) {
+    if (step < 11) {
       // submit form
       // if step is true then go forward 1 step
       updateBusinessForm({
         stage: step ? step + 1 : stage
       })
     } else {
-      createBusiness(
-        {
-          projectType,
-          name,
-          challenge,
-          role,
-          objectives,
-          teamDynamics,
-          requiredSkills,
-          goals,
-          companyBackground,
-          budget,
-          questionsToAsk
-        },
-        access_token
-      )
+      const formData = new FormData();
+      if (files.length > 0) {
+        files.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+      formData.append("projectDetails",
+        JSON.stringify(
+          {
+            projectType,
+            name,
+            challenge,
+            role,
+            objectives,
+            teamDynamics,
+            requiredSkills,
+            goals,
+            companyBackground,
+            budget,
+            questionsToAsk
+          }
+        )
+      );
+      createBusiness(formData, access_token)
         .then(() => {
-          router.push('/dashboard?success=true')
+          router.push('/dashboard')
         })
         .catch(e => {
           console.log('error: ', e)
@@ -1342,17 +1399,28 @@ const CreateBusiness = ({
   const isGithubConnected = !!router?.query?.['github-connect'] || false
 
   const [inputValue, setInputValue] = useState('')
+  const [files, setFiles] = useState([]);
 
   const handleInput = value => {
     setInputValue(value)
   }
 
-  const handleSkip = () => {
+  const handleSkip = (isFileSkipped = false) => {
+    if (isFileSkipped && files.length > 0) {
+      setFiles([])
+    }
     submitForm(stage)
   }
 
   const handleCancelIcon = (feildName, data, value) => {
-    updateForm({ [feildName]: data.filter(val => val !== value) })
+    if (feildName.split(":")[0] === "files" && files.length > 0) {
+      const popFiles = [...files];
+      popFiles.splice(parseInt(feildName.split(":")[1]), 1);
+      setFiles(popFiles);
+    } else {
+      updateForm({ [feildName]: data.filter(val => val !== value) })
+
+    }
   }
 
   const handleEnterKey = (fieldName, data, e) => {
@@ -1361,6 +1429,7 @@ const CreateBusiness = ({
       handleInput('')
     }
   }
+
 
   return (
     <Container>
@@ -1389,6 +1458,8 @@ const CreateBusiness = ({
           companyBackground={companyBackground}
           budget={budget}
           questionsToAsk={questionsToAsk}
+          files={files}
+          setFiles={setFiles}
         />
       </DesktopBox>
 

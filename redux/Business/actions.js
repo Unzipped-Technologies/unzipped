@@ -39,7 +39,8 @@ import {
   UPDATE_TASK_STATUS,
   CREATE_TASK_AND_TASK_HOURS,
   UPDATE_TASK_HOURS_DATE,
-  GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER
+  GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
+
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -251,9 +252,15 @@ export const removeCommentFromStory = (data, token) => async (dispatch, getState
 export const createBusiness = (data, token) => async (dispatch, getState) => {
   //department Loading
   dispatch({ type: LOAD_STATE })
-  data.budget = data.budget.value
+
   await axios
-    .post(`/api/business/create`, data, tokenConfig(token))
+    .post(`/api/business/create`, data, {
+      "headers": {
+        'Content-Type': 'multipart/form-data',
+        "access_token": token
+      }
+
+    })
     .then(res =>
       dispatch({
         type: CREATE_BUSINESS,
@@ -270,53 +277,53 @@ export const createBusiness = (data, token) => async (dispatch, getState) => {
 
 export const getBusinessTasksByInvestor =
   ({ businessId, access_token }) =>
-  async (dispatch, getState) => {
-    dispatch({ type: LOAD_STATE })
-    const headers = {
-      access_token: access_token
+    async (dispatch, getState) => {
+      dispatch({ type: LOAD_STATE })
+      const headers = {
+        access_token: access_token
+      }
+      dispatch(startLoading())
+      await axios
+        .get(`/api/business/investor/task/${businessId}`, { headers })
+        .then(res =>
+          dispatch({
+            type: GET_TASK_HOURS_BY_BUSINESS,
+            payload: res.data
+          })
+        )
+        .catch(err => {
+          dispatch({
+            type: DEPARTMENT_ERROR,
+            payload: err.response
+          })
+        })
+      dispatch(stopLoading())
     }
-    dispatch(startLoading())
-    await axios
-      .get(`/api/business/investor/task/${businessId}`, { headers })
-      .then(res =>
-        dispatch({
-          type: GET_TASK_HOURS_BY_BUSINESS,
-          payload: res.data
-        })
-      )
-      .catch(err => {
-        dispatch({
-          type: DEPARTMENT_ERROR,
-          payload: err.response
-        })
-      })
-    dispatch(stopLoading())
-  }
 
 export const getBusinessTasksByFounder =
   ({ businessId, access_token }) =>
-  async (dispatch, getState) => {
-    dispatch({ type: LOAD_STATE })
-    const headers = {
-      access_token: access_token
+    async (dispatch, getState) => {
+      dispatch({ type: LOAD_STATE })
+      const headers = {
+        access_token: access_token
+      }
+      dispatch(startLoading())
+      await axios
+        .get(`/api/business/founder/task/${businessId}`, { headers })
+        .then(res =>
+          dispatch({
+            type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
+            payload: res.data
+          })
+        )
+        .catch(err => {
+          dispatch({
+            type: DEPARTMENT_ERROR,
+            payload: err.response
+          })
+        })
+      dispatch(stopLoading())
     }
-    dispatch(startLoading())
-    await axios
-      .get(`/api/business/founder/task/${businessId}`, { headers })
-      .then(res =>
-        dispatch({
-          type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
-          payload: res.data
-        })
-      )
-      .catch(err => {
-        dispatch({
-          type: DEPARTMENT_ERROR,
-          payload: err.response
-        })
-      })
-    dispatch(stopLoading())
-  }
 
 export const getBusinessList = data => async (dispatch, getState) => {
   //business list Loading
@@ -517,13 +524,13 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -579,4 +586,12 @@ export const updateBusiness = data => async (dispatch, getState) => {
     })
   dispatch(stopLoading())
   return response
+}
+
+export const nullBusinessForm = (data ={}) =>  (dispatch) => {
+  console.log('nullBusinessForm', dispatch)
+  dispatch({
+    type: RESET_BUSINESS_FORM,
+    // payload: null
+  })
 }

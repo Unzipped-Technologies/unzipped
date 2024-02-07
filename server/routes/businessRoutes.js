@@ -4,18 +4,24 @@ const businessHelper = require('../helpers/business')
 const departmentHelper = require('../helpers/department')
 const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
+const upload = require('../middlewares/multer')
 
-router.post('/create', requireLogin, permissionCheckHelper.hasPermission('createBusiness'), async (req, res) => {
-  const id = req.body.id || req.user.sub
-  req.body.user = id
-  try {
-    const createBusiness = await businessHelper.createBusiness(req.body, id)
-    if (!createBusiness) throw Error('business already exists')
-    res.json(createBusiness)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
+router.post('/create',
+  requireLogin,
+  permissionCheckHelper.hasPermission('createBusiness'),
+  upload.array('images', 3),
+  async (req, res) => {
+    const id = req.body.id || req.user.sub
+    // req.body.user = id
+    try {
+      const { projectDetails } = req.body;
+      const createBusiness = await businessHelper.createBusiness(JSON.parse(projectDetails), id, req.files)
+      if (!createBusiness) throw Error('business already exists')
+      res.json(createBusiness)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  })
 
 router.post(
   '/user/create',
