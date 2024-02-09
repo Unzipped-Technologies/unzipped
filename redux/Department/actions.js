@@ -15,7 +15,7 @@ export const createDepartment = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
 
   await axios
-    .post(`/api/department`, data, tokenConfig(token))
+    .post(`/api/department`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: CREATE_DEPARTMENT,
@@ -35,7 +35,7 @@ export const getDepartmentsForBusiness = (data, token) => async (dispatch, getSt
   dispatch({ type: LOAD_STATE })
 
   await axios
-    .post(`/api/department`, data, tokenConfig(token))
+    .post(`/api/department`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: GET_DEPARTMENTS,
@@ -44,18 +44,18 @@ export const getDepartmentsForBusiness = (data, token) => async (dispatch, getSt
     )
     .catch(err => {
       dispatch({
-        type: BUSINESS_ERROR,
+        type: DEPARTMENT_ERROR,
         payload: err.response
       })
     })
 }
 
-export const getDepartmentsById = (id, token) => async (dispatch, getState) => {
+export const getDepartmentById = id => async (dispatch, getState) => {
   //department list Loading
   dispatch({ type: LOAD_STATE })
 
   await axios
-    .get(`/api/department/${id}`, tokenConfig(token))
+    .get(`/api/department/${id}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: GET_DEPARTMENT_BY_ID,
@@ -98,7 +98,7 @@ export const deleteDepartment = departmentId => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
 
   await axios
-    .delete(`/api/department/${departmentId}`, tokenConfig(token))
+    .delete(`/api/department/${departmentId}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: DELETE_DEPARTMENT,

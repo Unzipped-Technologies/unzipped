@@ -8,7 +8,6 @@ import {
   ADD_COMMENT_TO_STORY,
   UPDATE_BUSINESS_FORM,
   RESET_BUSINESS_FORM,
-  UPDATE_CREATE_STORY,
   GET_PROJECT_LIST,
   GET_PROJECT_Error,
   BUSINESS_ERROR
@@ -20,13 +19,6 @@ import { startLoading, stopLoading } from '../Loading/actions'
 export const updateBusinessForm = (data, token) => async (dispatch, getState) => {
   dispatch({
     type: UPDATE_BUSINESS_FORM,
-    payload: data
-  })
-}
-
-export const updateCreateStoryForm = (data, token) => async (dispatch, getState) => {
-  dispatch({
-    type: UPDATE_CREATE_STORY,
     payload: data
   })
 }
@@ -59,26 +51,6 @@ export const resetBusinessForm = () => async (dispatch, getState) => {
   dispatch({
     type: RESET_BUSINESS_FORM
   })
-}
-
-export const addCommentToStory = (data, token) => async (dispatch, getState) => {
-  //story Loading
-  dispatch({ type: LOAD_STATE })
-
-  await axios
-    .post(`/api/business/current/comment/add`, data, tokenConfig(token))
-    .then(res =>
-      dispatch({
-        type: ADD_COMMENT_TO_STORY,
-        payload: res.data
-      })
-    )
-    .catch(err => {
-      dispatch({
-        type: BUSINESS_ERROR,
-        payload: err.response
-      })
-    })
 }
 
 export const createBusiness = (data, token) => async (dispatch, getState) => {

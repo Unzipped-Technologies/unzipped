@@ -356,6 +356,7 @@ const Nav = ({
   setIsLogoHidden,
   isListViewable,
   setIsListViewable,
+  onBackArrowClick,
   isViewable,
   isExpanded,
   setIsExpanded
@@ -436,7 +437,6 @@ const Nav = ({
     await resetBusinessForm()
     router.push('/create-your-business')
   }
-
 
   const getButtons = () => {
     if (isAuthenticated) {
@@ -521,55 +521,62 @@ const Nav = ({
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
-        {!isLogoHidden && !isListViewable && (<Link href="/">
-          <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
-        </Link>)}
+        {!isLogoHidden && !isListViewable && (
+          <Link href="/">
+            <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
+          </Link>
+        )}
 
-        {(isListViewable) && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-              setIsListViewable(false)
-              setIsExpanded(false);
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
-              Lists
-            </span>
-          </div>
-        </>)}
+        {isListViewable && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+                setIsListViewable(false)
+                setIsExpanded(false)
+              }}>
+              <BackArrow />
+              <span
+                style={{
+                  marginLeft: 10,
+                  fontSize: 20,
+                  fontWeight: 600,
+                  letterSpacing: '0.15px',
+                  lineHeight: '19.5px'
+                }}>
+                Lists
+              </span>
+            </div>
+          </>
+        )}
 
-        {isLogoHidden && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
+        {isLogoHidden && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+                onBackArrowClick()
+              }}>
+              <BackArrow />
+            </div>
+            <span
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                fontWeight: 600,
+                letterSpacing: '0.15px',
+                lineHeight: '19.5px'
+              }}>
               {listName ? listName : ''}
             </span>
-          </div>
-        </>)}
+          </>
+        )}
 
         <Menu>
           {menuItems &&

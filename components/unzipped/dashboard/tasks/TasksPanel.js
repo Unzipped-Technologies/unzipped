@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import TicketPreview from '../TicketPreview'
+import { TODO_STATUS } from '../../../../utils/constants'
 
 import { AiOutlinePlusCircle } from 'react-icons/ai'
 import { FaRegCheckCircle } from 'react-icons/fa'
@@ -10,20 +11,12 @@ import { AiOutlinePlus } from 'react-icons/ai'
 import { Dialog } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
-import { TASK_PRIORITY, TODO_STATUS, TASK_STATUS } from '../../../../utils/constants'
 import { TitleText, DarkText, Absolute, WhiteCard, Grid3 } from '../style'
 import Icon from '../../../ui/Icon'
 import Button from '../../../ui/Button'
 import FormField from '../../../ui/FormField'
 import { DragDropContext } from 'react-beautiful-dnd'
-import {
-  getDepartmentById,
-  updateCreateStoryForm,
-  createTask,
-  updateTask,
-  addCommentToStory,
-  resetStoryForm
-} from '../../../../redux/actions'
+import { getDepartmentById, updateCreateStoryForm, resetStoryForm } from '../../../../redux/actions'
 
 const Container = styled.div`
   position: relative;
@@ -93,99 +86,19 @@ const TasksPanel = ({
   tags = [],
   reorderStories,
   access,
-  taskForm,
   departmentData,
-  createTask,
-  updateTask,
-  addCommentToStory,
-  resetStoryForm,
-  user
+  resetStoryForm
 }) => {
   const dragItem = useRef()
   const dragOverItem = useRef()
-  const [open, setOpen] = React.useState(false)
   const [storyModal, setStoryModal] = React.useState(false)
   const [storyList, setStoryList] = useState([])
   const [taskId, setTaskId] = useState('')
-  const [content, setContent] = useState({})
   const [isEditing, setIsEditing] = useState(false)
-
-  const tagOptions = useMemo(() => {
-    return (
-      departmentData?.departmentTags?.map(tag => ({
-        value: tag?._id,
-        label: tag?.tagName
-      })) || []
-    )
-  }, [departmentData])
-
-  const assigneeOptions = useMemo(() => {
-    return (
-      departmentData?.contracts?.map(contract => ({
-        value: contract?.freelancerId,
-        label: (
-          <div>
-            <div
-              style={{
-                color: '#000',
-                textAlign: 'center',
-                fontFamily: 'Roboto',
-                fontSize: '14px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-                letterSpacing: '0.4px',
-                textTransform: 'capitalize'
-              }}>
-              {contract?.freelancer?.user?.FullName}
-            </div>
-            <div
-              style={{
-                color: '#787878',
-                textAlign: 'center',
-                fontSize: '10px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-                letterSpacing: '0.4px'
-              }}>
-              {contract?.freelancer?.user?.email}
-            </div>
-          </div>
-        )
-      })) || []
-    )
-  }, [departmentData])
-
-  const taskPriorityOptions = useMemo(() => {
-    return (
-      TASK_PRIORITY?.map(priority => ({
-        value: priority,
-        label: priority
-      })) || []
-    )
-  }, [departmentData])
-
-  const taskStatusOptions = useMemo(() => {
-    return (
-      TASK_STATUS?.map(status => ({
-        value: status,
-        label: status
-      })) || []
-    )
-  }, [])
 
   useEffect(() => {
     if (selectedDepartment?._id) getDepartmentById(selectedDepartment._id)
   }, [selectedDepartment])
-
-  useEffect(async () => {
-    await updateCreateStoryForm({
-      businessId: selectedDepartment.businessId,
-      departmentId: selectedDepartment._id,
-      status: TODO_STATUS
-    })
-  }, [open])
 
   const getStatusColor = task => {
     if (task?.status.includes('inprogress')) {
@@ -236,27 +149,6 @@ const TasksPanel = ({
         }
       })
 
-      const menuItems = [
-        {
-          name: 'Create a story',
-          onClick: () => {
-            updateCreateStoryForm({ tagId: tags[0]._id })
-            setCreateAStory(true)
-          },
-          icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
-        },
-        {
-          name: 'Create Department',
-          link: '/',
-          icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
-        },
-        {
-          name: 'Remove Department',
-          link: '/',
-          icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
-        }
-      ]
-
       storyList.forEach(e => {
         if (e.tag._id === column.tag._id) {
           allStories.push(...newSource)
@@ -268,102 +160,14 @@ const TasksPanel = ({
     }
   }
 
-  const updateForm = (field, value) => {
-    updateCreateStoryForm({
-      [`${field}`]: value
-    })
-  }
-
-  const handleOpen = () => {
-    setOpen(true)
-  }
-
-  const handleClose = async reason => {
-    if (reason !== 'backdropClick') {
-      setOpen(false)
-      if (taskId) {
-        await updateCreateStoryForm({
-          taskName: '',
-          storyPoints: 0,
-          priority: '',
-          order: 1,
-          description: '',
-          status: '',
-          assignee: ''
-        })
-      }
-      setTaskId('')
-    }
+  const openStoryModal = () => {
+    setStoryModal(true)
   }
 
   const closeStoryModal = () => {
     setStoryModal(false)
     resetStoryForm()
     setTaskId('')
-    setContent({})
-  }
-
-  const setTaskContent = (task, tag) => {
-    const commentsContent = []
-    if (task?.comments?.length) {
-      for (var comment of task.comments) {
-        const commentData = {
-          _id: comment._id,
-          profilePic: '',
-          name: '',
-          updatedAt: comment.updatedAt,
-          comment: comment.comment,
-          img: comment.img
-        }
-        if (comment.userId === departmentData?.clientId) {
-          commentData.profilePic = departmentData?.client?.profileImage || ''
-          commentData.name = departmentData?.client?.FullName || ''
-        }
-        commentsContent.push(commentData)
-      }
-    }
-    const contentData = {
-      ...task,
-      tagName: tag?.tagName,
-      department: selectedDepartment?.name,
-      employee: {
-        FirstName: task?.assignee?.user?.FirstName,
-        LastName: task?.assignee?.user?.LastName,
-        profileImage: task?.assignee?.user?.profileImage
-      },
-      comments: commentsContent
-    }
-    setIsEditing(true)
-    setContent(contentData)
-    setStoryModal(true)
-    updateCreateStoryForm({
-      taskName: task?.taskName,
-      storyPoints: task?.storyPoints,
-      priority: task?.priority,
-      order: 1,
-      description: task?.description,
-      status: task?.status,
-      businessId: selectedDepartment?.businessId,
-      departmentId: selectedDepartment._id,
-      assignee: task?.assignee?.user?.freelancers,
-      tag: task?.tag
-    })
-  }
-
-  const addCommentToTask = async data => {
-    await addCommentToStory(data)
-    setStoryModal(false)
-    await getDepartmentById(selectedDepartment._id)
-  }
-
-  const onSubmit = async () => {
-    if (taskId) {
-      await updateTask(taskId, taskForm)
-    } else {
-      await createTask(taskForm)
-    }
-    setStoryModal(false)
-    await getDepartmentById(selectedDepartment._id)
   }
 
   return (
@@ -428,10 +232,10 @@ const TasksPanel = ({
                         <DarkText noMargin bold width="300px">
                           {tag.tagName} ({tag?.tasks?.length})
                         </DarkText>
-                        <DarkText noMargin center bold width="120px" paddingLeft="50px">
+                        <DarkText noMargin center bold width="200px">
                           STORY POINTS
                         </DarkText>
-                        <DarkText noMargin center bold width="80px" paddingLeft="50px">
+                        <DarkText noMargin center bold width="100px">
                           ASSIGNEE
                         </DarkText>
                       </WhiteCard>
@@ -451,7 +255,7 @@ const TasksPanel = ({
                                   width="300px"
                                   onClick={async () => {
                                     setTaskId(task._id)
-                                    setTaskContent(task, tag)
+                                    openStoryModal()
                                   }}>
                                   <div
                                     style={{
@@ -468,10 +272,10 @@ const TasksPanel = ({
                                     {task.taskName}
                                   </div>
                                 </DarkText>
-                                <DarkText noMargin center bold width="120px" paddingLeft="70px">
+                                <DarkText noMargin center bold width="200px" marginLeft="30px">
                                   {task.storyPoints}
                                 </DarkText>
-                                <DarkText noMargin center bold width="50px" paddingLeft="70px">
+                                <DarkText noMargin center bold width="100px" paddingLeft="50px">
                                   <img
                                     src={task?.assignee?.user?.profileImage}
                                     style={{
@@ -489,14 +293,14 @@ const TasksPanel = ({
 
                       <WhiteCard
                         onClick={() => {
-                          setStoryModal(true)
-                          setContent({
+                          updateCreateStoryForm({
+                            businessId: selectedDepartment.businessId,
+                            departmentId: selectedDepartment._id,
                             tag: tag._id,
-                            businessId: selectedDepartment?.businessId,
-                            departmentId: selectedDepartment?.departmentId
+                            status: TODO_STATUS
                           })
-                          updateForm('tag', tag._id)
                           setIsEditing(false)
+                          setStoryModal(true)
                         }}
                         noMargin
                         borderRadius="0px"
@@ -523,160 +327,13 @@ const TasksPanel = ({
       {storyModal && (
         <TicketPreview
           open={storyModal}
-          user={user}
+          selectedTaskId={taskId}
           isEditing={isEditing}
-          content={content}
-          onSubmit={onSubmit}
-          submitComments={addCommentToTask}
-          updateForm={updateForm}
-          assigneeOptions={assigneeOptions}
-          taskStatusOptions={taskStatusOptions}
-          tagOptions={tagOptions}
-          taskPriorityOptions={taskPriorityOptions}
-          addCommentToStory={addCommentToStory}
-          taskForm={taskForm}
           onHide={() => {
             closeStoryModal()
           }}
         />
       )}
-
-      <MUIDialog
-        onClose={() => {
-          handleClose('backdropClick')
-        }}
-        disableEscapeKeyDown
-        open={open}
-        maxWidth="md"
-        style={{ minHeight: '50vh', maxHeight: '80vh' }} // Adjust the height as needed
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description">
-        <DialogContent dividers>
-          <FormField
-            fieldType="input"
-            margin
-            fontSize="14px"
-            noMargin
-            width="100%"
-            onChange={e => updateForm('taskName', e.target.value)}
-            value={taskForm.taskName}>
-            TASK NAME(REQUIRED)
-          </FormField>
-          <Grid3 margin="10px 0px 0px 0px" top="10px" width="100%" grid="2fr 2fr">
-            <FormField
-              zIndex
-              mobile
-              required
-              fieldType="select"
-              isSearchable={true}
-              name="select"
-              options={tagOptions}
-              placeholder="Select tag"
-              borderRadius="12px"
-              fontSize="14px"
-              noMargin
-              width="95%"
-              dropdownList={tagOptions}
-              onChange={value => updateForm('tag', value?.value)}
-              value={{ label: tagOptions?.find(tag => tag.value === taskForm.tag)?.label }}
-              clickType="tag"
-              onUpdate={updateCreateStoryForm}>
-              Tag
-            </FormField>
-            <FormField
-              mobile
-              required
-              fieldType="select"
-              isSearchable={true}
-              name="select"
-              options={taskPriorityOptions}
-              placeholder="Select priority"
-              borderRadius="12px"
-              fontSize="14px"
-              noMargin
-              width="95%"
-              dropdownList={taskPriorityOptions}
-              onChange={value => updateForm('priority', value?.value)}
-              value={{
-                label: taskForm.priority
-              }}
-              clickType="priority"
-              onUpdate={updateCreateStoryForm}>
-              PRIORITY
-            </FormField>
-          </Grid3>
-          <Grid3 margin="10px 0px 0px 0px" width="100%" grid="2fr 2fr">
-            <FormField
-              zIndex
-              mobile
-              required
-              fieldType="select"
-              isSearchable={true}
-              name="select"
-              options={assigneeOptions}
-              placeholder="Select Assignee"
-              borderRadius="12px"
-              fontSize="14px"
-              noMargin
-              width="95%"
-              dropdownList={assigneeOptions}
-              onChange={value => updateForm('assignee', value?.value)}
-              value={{ label: assigneeOptions?.find(assignee => assignee.value === taskForm.assignee)?.label }}
-              clickType="assignee"
-              onUpdate={updateCreateStoryForm}>
-              ASSIGN TO
-            </FormField>
-            <FormField
-              zIndexUnset
-              fieldType="input"
-              margin
-              fontSize="14px"
-              noMargin
-              width="100%"
-              onChange={e => updateForm('storyPoints', e?.target?.value)}
-              value={taskForm?.storyPoints}
-              clickType="storyPoints"
-              onUpdate={updateCreateStoryForm}>
-              STORY POINTS
-            </FormField>
-          </Grid3>
-          <div style={{ margin: '10px 0px 0px 0px' }}>
-            <FormField
-              zIndexUnset
-              fieldType="input"
-              margin
-              fontSize="14px"
-              textarea
-              onChange={e => updateForm('description', e?.target?.value)}
-              value={taskForm?.description}>
-              DESCRIPTION
-            </FormField>
-          </div>
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              marginTop: '15px',
-              marginLeft: '35px'
-            }}>
-            <Button oval extraWide type="outlineInverse" onClick={handleClose}>
-              CANCEL
-            </Button>
-            <Button
-              disabled={false}
-              onClick={() => onSubmit()}
-              width="58.25px"
-              oval
-              extraWide
-              margin="0px 37px 0px 20px"
-              type="black">
-              Save
-            </Button>
-          </div>
-        </DialogContent>
-      </MUIDialog>
       {/* {!loading ? 'ADD TASK' : <CircularProgress size={18} />} */}
     </Container>
   )
@@ -684,7 +341,6 @@ const TasksPanel = ({
 
 const mapStateToProps = state => {
   return {
-    user: state.Auth.user,
     departmentData: state.Departments.selectedDepartment,
     taskForm: state.Tasks.createStoryForm
   }
@@ -692,11 +348,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
     getDepartmentById: bindActionCreators(getDepartmentById, dispatch),
-    createTask: bindActionCreators(createTask, dispatch),
-    updateTask: bindActionCreators(updateTask, dispatch),
-    addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
+    updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
     resetStoryForm: bindActionCreators(resetStoryForm, dispatch)
   }
 }

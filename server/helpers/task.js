@@ -1,3 +1,6 @@
+const mongoose = require('mongoose')
+
+const file = require('../helpers/file')
 const TaskModel = require('../models/Task')
 const DepartmentModel = require('../models/Department')
 const contractHelper = require('./contract')
@@ -7,7 +10,12 @@ const createTask = async data => {
   try {
     const { getBusinessWithoutPopulate } = require('./business')
     // Check whether the department against departmentId exist OR not
-    const departmentData = await DepartmentModel.findById(data.departmentId)
+    const departmentData = await DepartmentModel.findById(data.departmentId).populate([
+      {
+        path: 'tags',
+        select: 'tagName'
+      }
+    ])
     if (!departmentData) throw new Error(`Department not exist.`)
 
     // Check whether the business against businessId exist OR not
@@ -29,6 +37,9 @@ const createTask = async data => {
     const totalBusinessTasks = await countTasks({ businessId: departmentData.businessId })
     data.ticketCode = `${businessData.businessCode.replace(' ', '')}-${totalBusinessTasks}`
 
+    if (departmentData?.tags?.length && !data.tag) {
+      data.tag = departmentData?.tags?.find(tag => tag.tagName?.toLowerCase() === 'to do')?._id
+    }
     // Create new tasks
     const newTask = await TaskModel.create(data)
 
@@ -68,7 +79,8 @@ const getAllTasks = async query => {
           _id: 1,
           taskName: 1,
           departmentId: 1,
-          assignee: 1
+          assignee: 1,
+          storyPoints: 1
         }
       },
       {
@@ -130,7 +142,8 @@ const getAllTasks = async query => {
               $project: {
                 FirstName: 1,
                 LastName: 1,
-                FullName: 1
+                FullName: 1,
+                profileImage: 1
               }
             }
           ],
@@ -211,10 +224,17 @@ const countTasks = async filter => {
   }
 }
 
-const updateTask = async (data, taskId) => {
+const updateTask = async (taskId, data) => {
   try {
-    //   Update the task against taskId and return updated document
-    return await TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } })
+    const taskData = await getTaskWithoutPopulate({ _id: taskId })
+    if (!taskData) throw Error(`Error: Failed to add comment`)
+    let ticketComments = []
+    if (data?.comments?.length) {
+      ticketComments = [...taskData.comments, ...data.comments]
+    }
+    await Object.assign(taskData, data)
+    taskData.comments = ticketComments
+    return await taskData.save()
   } catch (err) {
     throw Error(`Could not update task, error: ${err}`)
   }
@@ -222,9 +242,158 @@ const updateTask = async (data, taskId) => {
 
 const getTaskById = async taskId => {
   try {
-    //   Get task against task ID and return
-    const task = await TaskModel.findByIdAndUpdate(taskId, { $set: { isSelected: true } })
-    return task
+    const aggregate = [
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(taskId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'departments',
+          let: { departmentId: '$departmentId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$departmentId'] }
+              }
+            },
+            {
+              $project: {
+                tags: 1,
+                name: 1,
+                clientId: 1,
+                businessId: 1
+              }
+            },
+            {
+              $lookup: {
+                from: 'users',
+                let: { clientId: '$clientId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$clientId'] }
+                    }
+                  },
+                  {
+                    $project: {
+                      FirstName: 1,
+                      LastName: 1,
+                      FullName: 1,
+                      email: 1,
+                      profileImage: 1
+                    }
+                  }
+                ],
+                as: 'client'
+              }
+            },
+            {
+              $unwind: '$client'
+            },
+
+            {
+              $lookup: {
+                from: 'tags',
+                let: { departmentId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$departmentId', '$$departmentId'] }
+                    }
+                  },
+                  {
+                    $project: {
+                      tagName: 1
+                    }
+                  }
+                ],
+                as: 'departmentTags'
+              }
+            },
+            {
+              $lookup: {
+                from: 'contracts',
+                let: { businessId: '$businessId', departmentId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $and: [{ $eq: ['$departmentId', '$$departmentId'] }, { $eq: ['$businessId', '$$businessId'] }]
+                      }
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: 'freelancers',
+                      let: { freelancerId: '$freelancerId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$freelancerId'] }
+                          }
+                        },
+                        {
+                          $project: {
+                            _id: 1,
+                            userId: 1
+                          }
+                        },
+                        {
+                          $lookup: {
+                            from: 'users',
+                            let: { userId: '$userId' },
+                            pipeline: [
+                              {
+                                $match: {
+                                  $expr: { $eq: ['$_id', '$$userId'] }
+                                }
+                              },
+                              {
+                                $project: {
+                                  _id: 1,
+                                  FirstName: 1,
+                                  LastName: 1,
+                                  FullName: 1,
+                                  email: 1,
+                                  profileImage: 1
+                                }
+                              }
+                            ],
+                            as: 'user'
+                          }
+                        },
+                        {
+                          $addFields: {
+                            user: { $arrayElemAt: ['$user', 0] }
+                          }
+                        }
+                      ],
+                      as: 'freelancer'
+                    }
+                  },
+                  {
+                    $unwind: '$freelancer'
+                  }
+                ],
+                as: 'contracts'
+              }
+            }
+          ],
+          as: 'department'
+        }
+      },
+      {
+        $unwind: '$department'
+      }
+    ]
+    const response = await TaskModel.aggregate(aggregate).exec()
+    if (response) {
+      return response[0]
+    } else {
+      throw Error(`Task not found`)
+    }
   } catch (e) {
     throw Error(`Could not find task, error: ${e}`)
   }
@@ -301,6 +470,63 @@ const getTaskWithoutPopulate = async (filter, selectedFields = '') => {
   }
 }
 
+const addCommentToTask = async (data, image) => {
+  try {
+    const taskData = await getTaskWithoutPopulate({ _id: data.taskId })
+    if (!taskData) throw Error(`Error: Failed to add comment`)
+
+    if (image && data?.userId) {
+      const resumeUrl = await file.createFile(image, data?.userId)
+      data['img'] = resumeUrl?.url
+    }
+    await taskData.comments.push(data)
+
+    await updateTask(data.taskId, taskData)
+
+    return { message: 'Comment added successfully.' }
+  } catch (e) {
+    throw new Error(`Could not add comment, error: ${e.message}`)
+  }
+}
+
+const updateTaskComment = async (taskId, commentId, data, image) => {
+  try {
+    const taskData = await getTaskWithoutPopulate({ _id: taskId })
+    if (!taskData) throw Error(`Error: Failed to updated comment`)
+
+    if (image && typeof image !== 'string' && data?.userId) {
+      const resumeUrl = await file.createFile(image, data?.userId)
+      data['img'] = resumeUrl?.url
+    }
+    const commentIndex = taskData.comments.findIndex(comment => comment?._id?.toString() === commentId)
+    if (commentIndex !== -1) {
+      taskData.comments[commentIndex] = Object.assign(taskData.comments[commentIndex], data)
+      await taskData.save()
+    } else {
+      throw new Error(`Could not update comment`)
+    }
+    return { message: 'Comment added successfully.' }
+  } catch (e) {
+    throw new Error(`Could not add comment, error: ${e.message}`)
+  }
+}
+
+const removeCommentFromTask = async commentId => {
+  try {
+    const taskData = await getTaskWithoutPopulate({
+      'comments._id': commentId
+    })
+    if (!taskData) throw Error(`Error: Failed to delete comment`)
+
+    taskData.comments = taskData.comments.filter(comment => comment._id?.toString() !== commentId)
+
+    await taskData.save()
+    return { message: 'Comment deleted successfully.' }
+  } catch (e) {
+    throw new Error(`Could not remove comment, error: ${e.message}`)
+  }
+}
+
 module.exports = {
   createTask,
   getAllTasks,
@@ -309,6 +535,9 @@ module.exports = {
   countTasks,
   deleteTask,
   reorderTasks,
+  updateTaskComment,
+  removeCommentFromTask,
+  addCommentToTask,
   updateTaskStatus,
   getTaskWithoutPopulate
 }

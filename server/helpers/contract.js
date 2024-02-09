@@ -199,9 +199,9 @@ const getContractByfreelacerId = async id => {
   }
 }
 
-const updateContract = async data => {
+const updateContract = async (contractId, data) => {
   try {
-    const updatedContract = await Contracts.findByIdAndUpdate(data.contractId, { $set: { ...data } }, { new: true })
+    const updatedContract = await Contracts.findByIdAndUpdate(contractId, { $set: { ...data } }, { new: true })
     return updatedContract
   } catch (e) {
     throw Error(`Could not update contract, error: ${e}`)

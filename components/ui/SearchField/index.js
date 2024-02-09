@@ -10,6 +10,7 @@ const SearchField = ({
   value = null,
   onChange,
   name,
+  id,
   placeholder = '',
   options = [],
   isMulti,
@@ -93,13 +94,15 @@ const SearchField = ({
   }
   return (
     <Select
-      value={value}
+      value={value?.label ? value : null}
       isMulti={isMulti}
       isDisabled={disabled ? disabled : false}
       isSearchable={isSearchable}
       openMenuOnClick={disableMenu ? false : true}
       styles={customStyles}
       aria-errormessage={name}
+      name={name}
+      id={id}
       onChange={onChange}
       onBlur={onBlur}
       onFocus={onFocus}

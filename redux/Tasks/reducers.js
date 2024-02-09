@@ -73,7 +73,8 @@ const Tasks = (state = INIT_STATE, action = {}) => {
         ...state,
         loading: false,
         tasks: [...state.tasks],
-        createStoryForm: { ...INITIAL_TASKS }
+        createStoryForm: { ...INITIAL_TASKS },
+        selectedTask: {}
       }
     case SET_DEPARTMENT:
       return { ...state, loading: false, currentDepartment: action.payload }

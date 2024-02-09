@@ -49,18 +49,18 @@ router.post(
   }
 )
 
-router.post('/user/list', requireLogin, permissionCheckHelper.hasPermission('userListBusinesses'), async (req, res) => {
-  try {
-    const listBusinesses = await businessHelper.listBusinesses(req.body)
-    if (!listBusinesses) throw Error('could not find businesses')
-    res.json(listBusinesses)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
 router.post('/list', requireLogin, async (req, res) => {
   try {
+    if (!req.body?.filter) {
+      if (req.user?.userInfo?.role && req.user?.userInfo?.role !== 1) {
+        Object.assign(req.body, { filter: { userId: req.user.sub } })
+      }
+    } else {
+      if (req.user?.userInfo?.role && req.user?.userInfo?.role !== 1) {
+        req.body['filter'].userId = req.user.sub
+      }
+    }
+
     const listBusinesses = await businessHelper.listBusinesses(req.body)
     if (!listBusinesses) throw Error('could not find businesses')
     res.json(listBusinesses)
@@ -99,36 +99,6 @@ router.post('/employee/create', requireLogin, permissionCheckHelper.hasPermissio
   }
 })
 
-router.post(
-  '/current/comment/add',
-  requireLogin,
-  permissionCheckHelper.hasPermission('addComment'),
-  async (req, res) => {
-    try {
-      const newComment = await departmentHelper.addCommentToTask(req.body)
-      if (!newComment) throw Error('failed to add comment to story')
-      res.json(newComment)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
-  }
-)
-
-router.post(
-  '/current/comment/remove',
-  requireLogin,
-  permissionCheckHelper.hasPermission('removeComment'),
-  async (req, res) => {
-    try {
-      const newComment = await departmentHelper.removeCommentToTask(req.body)
-      if (!newComment) throw Error('failed to remove comment from story')
-      res.json(newComment)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
-  }
-)
-
 router.get(
   '/investor/:id',
   requireLogin,
@@ -140,7 +110,6 @@ router.get(
       if (!existingBusiness) throw Error('business does not exist')
       res.json(existingBusiness)
     } catch (e) {
-      console.log('e', e)
       res.status(400).json({ msg: e.message })
     }
   }

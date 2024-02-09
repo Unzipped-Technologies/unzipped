@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { TitleText, DarkText } from '../style'
 import { useRouter } from 'next/router'
 
 import { connect } from 'react-redux'
@@ -10,41 +9,6 @@ import styled, { css } from 'styled-components'
 import { FaRegCheckCircle } from 'react-icons/fa'
 import { getInvoices, getBusinessById } from '../../../../redux/actions'
 
-const Title = styled.div`
-  display: flex;
-  flex-flow: row;
-  width: 70%;
-  margin: 60px 15% 0px 15%;
-`
-const Toggle = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 260px;
-  height: 34px;
-  background-color: #d8d8d8;
-  border-radius: 5px;
-  overflow: hidden;
-`
-const Left = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ displayFormat }) => (!displayFormat ? '#5E99D4' : 'transparent')};
-`
-const Right = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ displayFormat }) => (displayFormat ? '#5E99D4' : 'transparent')};
-`
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
@@ -65,9 +29,10 @@ const TableTop = styled.div`
   background-color: rgba(217, 217, 217, 0.36);
   justify-content: space-between;
   width: 830px;
-  align-self: center;
 `
 const TableDiv = styled.div`
+  display: flex;
+  flex-direction: row;
   text-align: -webkit-center;
   position: relative;
 `
@@ -139,10 +104,7 @@ const CustomTable = styled.table`
   }
 `
 const HoursDiv = styled.div`
-  position: absolute;
-  right: 24px;
-  top: 10px;
-  width: 264px;
+  width: 300px;
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   padding: 24px 15px;
@@ -165,13 +127,13 @@ function Invoice({
   handleWeekChange,
   invoices,
   projectDetails,
-  role
+  role,
+  displayFormat
 }) {
   const router = useRouter()
   const { id, freelancer } = router.query
   const [filteredData, setFilteredData] = useState([])
   const [sortedData, setSortedData] = useState({})
-  const [displayFormat, setDisplayFormat] = useState(false)
   const [subTotal, setSubTotal] = useState(0)
   const [fee, setFee] = useState(0)
   const [totalAmount, setAmount] = useState(0)
@@ -239,10 +201,6 @@ function Invoice({
     setAmount(totalAmount)
   }, [filteredData])
 
-  const toggleDisplayFormat = () => {
-    setDisplayFormat(!displayFormat)
-  }
-
   const getStatusColor = ({ task }) => {
     if (task?.status.includes('inprogress')) {
       return '#FFA500'
@@ -284,104 +242,94 @@ function Invoice({
 
   return (
     <>
-      <Title>
-        <TitleText title="true">INVOICE</TitleText>
-        <Toggle>
-          <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-            <DarkText small>Day</DarkText>
-          </Left>
-          <Right displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-            <DarkText small>Week</DarkText>
-          </Right>
-        </Toggle>
-      </Title>
-      <SearchBar take={take} setTake={handletake} setFilter={handleFilter} />
       <div className="mb-5">
         <TableDiv>
-          <TableTop>
-            <P margin="0px" fontSize="24px" fontWeight="500">
-              {projectDetails?.name?.slice(0, 15)}
-              {+projectDetails?.name?.length > 15 && '...'}
-            </P>
-            <Select
-              onChange={e => {
-                handleWeekChange(e.target.value)
-              }}>
-              {weekOptions.map((week, index) => (
-                <option key={`week_${index}`} value={index}>
-                  Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
-                </option>
-              ))}
-            </Select>
-            <ButtonComp>SUBMIT</ButtonComp>
-          </TableTop>
-          {sortedData &&
-            Object?.keys(sortedData)?.map((day, index) => {
-              return (
-                <TableInnerDiv key={`${day}_${index}`}>
-                  <CustomTable displayFormat={displayFormat}>
-                    {!displayFormat ? (
-                      <thead>
-                        <tr>
-                          <th>
-                            {day} ({getTaskHours(sortedData[day])} HOURS)
-                          </th>
-                          <th>RATE</th>
-                          <th>TIME SPENT</th>
-                          <th>ASIGNEE</th>
-                        </tr>
-                      </thead>
-                    ) : (
-                      index === 0 && (
+          <div style={{ marginLeft: '270px' }}>
+            <TableTop>
+              <P margin="0px" fontSize="24px" fontWeight="500">
+                {projectDetails?.name?.slice(0, 15)}
+                {+projectDetails?.name?.length > 15 && '...'}
+              </P>
+              <Select
+                onChange={e => {
+                  handleWeekChange(e.target.value)
+                }}>
+                {weekOptions.map((week, index) => (
+                  <option key={`week_${index}`} value={index}>
+                    Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
+                  </option>
+                ))}
+              </Select>
+              <ButtonComp>SUBMIT</ButtonComp>
+            </TableTop>
+            {sortedData &&
+              Object?.keys(sortedData)?.map((day, index) => {
+                return (
+                  <TableInnerDiv key={`${day}_${index}`}>
+                    <CustomTable displayFormat={displayFormat}>
+                      {!displayFormat ? (
                         <thead>
                           <tr>
-                            <th>TASK</th>
+                            <th>
+                              {day} ({getTaskHours(sortedData[day])} HOURS)
+                            </th>
                             <th>RATE</th>
                             <th>TIME SPENT</th>
                             <th>ASIGNEE</th>
                           </tr>
                         </thead>
-                      )
-                    )}
-                    <tbody>
-                      {sortedData[day].length > 0 ? (
-                        sortedData[day]?.map((item, itemIndex) => {
-                          return (
-                            <tr key={itemIndex} className={displayFormat && id % 2 === 0 && 'bg-light'}>
-                              <td style={{ paddingLeft: '40px' }}>
-                                <FaRegCheckCircle size={15} color={getStatusColor(item)} />
-                                <span className="px-3">{item?.task?.taskName}</span>
-                              </td>
-                              <td>${getContractRate(item?.task)}</td>
-                              <td>{item?.hours}</td>
-                              <td>
-                                {' '}
-                                <img
-                                  src={getData(item, 'profileImage')}
-                                  style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
-                                />
-                                {getData(item, 'FirstName') + ' ' + getData(item, 'LastName') ?? 'Anonymous'}
-                              </td>
-                            </tr>
-                          )
-                        })
-                      ) : !displayFormat ? (
-                        <tr>
-                          <td className="px-5">No Records</td>
-                        </tr>
                       ) : (
-                        index === +Object.keys(sortedData).length - 1 &&
-                        id == 0 && (
+                        index === 0 && (
+                          <thead>
+                            <tr>
+                              <th>TASK</th>
+                              <th>RATE</th>
+                              <th>TIME SPENT</th>
+                              <th>ASIGNEE</th>
+                            </tr>
+                          </thead>
+                        )
+                      )}
+                      <tbody>
+                        {sortedData[day].length > 0 ? (
+                          sortedData[day]?.map((item, itemIndex) => {
+                            return (
+                              <tr key={itemIndex} className={displayFormat && id % 2 === 0 && 'bg-light'}>
+                                <td style={{ paddingLeft: '40px' }}>
+                                  <FaRegCheckCircle size={15} color={getStatusColor(item)} />
+                                  <span className="px-3">{item?.task?.taskName}</span>
+                                </td>
+                                <td>${getContractRate(item?.task)}</td>
+                                <td>{item?.hours}</td>
+                                <td>
+                                  {' '}
+                                  <img
+                                    src={getData(item, 'profileImage')}
+                                    style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
+                                  />
+                                  {getData(item, 'FirstName') + ' ' + getData(item, 'LastName') ?? 'Anonymous'}
+                                </td>
+                              </tr>
+                            )
+                          })
+                        ) : !displayFormat ? (
                           <tr>
                             <td className="px-5">No Records</td>
                           </tr>
-                        )
-                      )}
-                    </tbody>
-                  </CustomTable>
-                </TableInnerDiv>
-              )
-            })}
+                        ) : (
+                          index === +Object.keys(sortedData).length - 1 &&
+                          id == 0 && (
+                            <tr>
+                              <td className="px-5">No Records</td>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </CustomTable>
+                  </TableInnerDiv>
+                )
+              })}
+          </div>
           {role === 1 ? (
             <HoursDiv>
               <div className="d-flex justify-content-between" style={{ borderBottom: '1px solid #777' }}>

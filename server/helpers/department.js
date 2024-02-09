@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const departmentModel = require('../models/Department')
 const business = require('../models/Business')
 const tags = require('../models/tags')
@@ -13,9 +14,8 @@ const createDepartment = async data => {
     // Below we are importing function due to circular dependency problem
     const { getBusinessWithoutPopulate } = require('./business')
 
-    const businessData = await getBusinessWithoutPopulate(data.businessId, 'departments')
+    const businessData = await getBusinessWithoutPopulate(data.businessId, 'departments userId')
     if (!businessData) throw Error(`Invalid business Id.`)
-
     if (data.parentDepartmentId) {
       const parentDepartment = await getDepartmentWithoutPopulate({ _id: data.parentDepartmentId })
       if (!parentDepartment) throw Error(`Invalid parent department Id.`)
@@ -24,6 +24,7 @@ const createDepartment = async data => {
     // Create department with empty tags, tasks and employees
     const item = {
       ...data,
+      clientId: businessData?.userId,
       tags: [],
       tasks: [],
       employees: []
@@ -67,22 +68,196 @@ const createDepartment = async data => {
 
 const getDepartmentById = async (id, select = '') => {
   try {
-    const department = await departmentModel.findById(id).select(select)
-    if (departments) {
-      return department
+    const aggregate = [
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(id)
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          let: { clientId: '$clientId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$clientId'] }
+              }
+            },
+            {
+              $project: {
+                FirstName: 1,
+                LastName: 1,
+                FullName: 1,
+                profileImage: 1
+              }
+            }
+          ],
+          as: 'client'
+        }
+      },
+      {
+        $unwind: '$client'
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          let: { departmentId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$departmentId', '$$departmentId'] }
+              }
+            },
+            {
+              $project: {
+                tagName: 1
+              }
+            },
+            {
+              $lookup: {
+                from: 'tasks',
+                let: { tagId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$tag', '$$tagId'] }
+                    }
+                  },
+                  {
+                    $project: {
+                      taskName: 1,
+                      status: 1,
+                      assignee: 1,
+                      tag: 1,
+                      storyPoints: 1,
+                      priority: 1,
+                      description: 1,
+                      ticketCode: 1,
+                      comments: 1
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: 'users',
+                      let: { assigneeId: '$assignee' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$freelancers', '$$assigneeId'] }
+                          }
+                        },
+                        {
+                          $project: {
+                            FirstName: 1,
+                            LastName: 1,
+                            FullName: 1,
+                            email: 1,
+                            profileImage: 1,
+                            freelancers: 1
+                          }
+                        }
+                      ],
+                      as: 'assignee.user'
+                    }
+                  },
+                  {
+                    $addFields: {
+                      'assignee.user': { $arrayElemAt: ['$assignee.user', 0] }
+                    }
+                  }
+                ],
+                as: 'tasks'
+              }
+            }
+          ],
+          as: 'departmentTags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'contracts',
+          let: { businessId: '$businessId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$businessId', '$$businessId'] }
+              }
+            },
+            {
+              $lookup: {
+                from: 'freelancers',
+                let: { freelancerId: '$freelancerId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$_id', '$$freelancerId'] }
+                    }
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      userId: 1
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: 'users',
+                      let: { userId: '$userId' },
+                      pipeline: [
+                        {
+                          $match: {
+                            $expr: { $eq: ['$_id', '$$userId'] }
+                          }
+                        },
+                        {
+                          $project: {
+                            _id: 1,
+                            FirstName: 1,
+                            LastName: 1,
+                            FullName: 1,
+                            email: 1,
+                            profileImage: 1
+                          }
+                        }
+                      ],
+                      as: 'user'
+                    }
+                  },
+                  {
+                    $addFields: {
+                      user: { $arrayElemAt: ['$user', 0] }
+                    }
+                  }
+                ],
+                as: 'freelancer'
+              }
+            },
+            {
+              $unwind: '$freelancer'
+            }
+          ],
+          as: 'contracts'
+        }
+      }
+    ]
+    const response = await departmentModel.aggregate(aggregate).exec()
+    if (response) {
+      return response[0]
+    } else {
+      throw Error(`Department not found`)
     }
-    throw Error(`Department not found`)
   } catch (e) {
     throw Error(`Could not find department, error: ${e}`)
   }
 }
 
 // list departments
-const listDepartments = async ({ filter, take, skip }) => {
+const listDepartments = async query => {
   try {
     const filter = pick(query, ['businessId', 'freelancerId', 'departmentId', 'clientId'])
 
-    const total = await countInvoices(filter)
+    const total = await countDepartments(filter)
 
     let limit = query.limit === 'all' ? total : pageLimit(query)
     limit = limit == 0 ? 10 : limit
@@ -151,32 +326,84 @@ const listDepartments = async ({ filter, take, skip }) => {
       {
         $unwind: '$business'
       },
+      // {
+      //   $lookup: {
+      //     from: 'contracts',
+      //     let: { contractId: '$employees' },
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           $expr: { $in: ['$_id', '$$contractId'] }
+      //         }
+      //       },
+      //       {
+      //         $project: {
+      //           freelancerId: 1
+      //         }
+      //       }
+      //     ],
+      //     as: 'employees'
+      //   }
+      // },
+      // {
+      //   $unwind: '$employees'
+      // },
       {
         $lookup: {
-          from: 'contracts',
-          let: { contractId: '$employees' },
+          from: 'tasks',
+          let: { businessId: '$businessId', departmentId: '$_id' },
           pipeline: [
             {
               $match: {
-                $expr: { $eq: ['$_id', '$$contractId'] }
+                $expr: {
+                  $and: [{ $eq: ['$businessId', '$$businessId'] }, { $eq: ['$departmentId', '$$departmentId'] }]
+                }
+              }
+            },
+            {
+              $lookup: {
+                from: 'taskhours',
+                let: { taskId: '$taskId' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$taskId', '$$taskId'] }
+                    }
+                  },
+                  {
+                    $project: {
+                      hours: 1,
+                      taskId: 1,
+                      createdAt: 1,
+                      updatedAt: 1
+                    }
+                  },
+                  {
+                    $sort: { createdAt: 1 } // 1 for ascending, -1 for descending
+                  }
+                ],
+                as: 'taskHours'
               }
             },
             {
               $project: {
-                freelancerId: 1
+                _id: 1,
+                taskName: 1,
+                ticketCode: 1,
+                status: 1,
+                assignee: 1,
+                taskHours: 1
               }
             }
           ],
-          as: 'employees'
+          as: 'task'
         }
       },
-      {
-        $unwind: '$employees'
-      },
+
       { $skip: skip },
       { $limit: limit }
     ]
-    const employees = await DepartmentModel.aggregate(aggregationPipeline).exec()
+    const employees = await departmentModel.aggregate(aggregationPipeline).exec()
     const totalPages = Math.ceil(total / limit)
 
     const result = {
@@ -306,6 +533,15 @@ const addBusinessAssociateToBusiness = async data => {
   }
 }
 
+const countDepartments = async filters => {
+  try {
+    const count = await departmentModel.countDocuments(filters)
+    return count
+  } catch (e) {
+    throw new Error(`Could not count departments, error: ${e.message}`)
+  }
+}
+
 module.exports = {
   createDepartment,
   listDepartments,
@@ -313,6 +549,7 @@ module.exports = {
   updateDepartment,
   addCommentToTask,
   removeCommentToTask,
+  countDepartments,
   deleteDepartment,
   addBusinessAssociateToBusiness,
   addTaskToDepartment,

@@ -25,7 +25,7 @@ const TicketPreview = ({
   open,
   content,
   onHide,
-  user,
+  selectedTaskId,
   isEditing,
   onSubmit,
   submitComments,
@@ -39,7 +39,7 @@ const TicketPreview = ({
 }) => {
   return (
     <MUIDialog
-      onClose={onHide}
+      onClose={() => onHide()}
       disableEscapeKeyDown
       open={open}
       maxWidth="md"
@@ -49,17 +49,10 @@ const TicketPreview = ({
         <TaskForm
           onHide={onHide}
           content={content}
-          user={user}
           taskForm={taskForm}
           isEditing={isEditing}
           onSubmit={onSubmit}
-          submitComments={submitComments}
-          updateForm={updateForm}
-          assigneeOptions={assigneeOptions}
-          tagOptions={tagOptions}
-          addCommentToStory={addCommentToStory}
-          taskPriorityOptions={taskPriorityOptions}
-          taskStatusOptions={taskStatusOptions}
+          selectedTaskId={selectedTaskId}
         />
       </DialogContent>
     </MUIDialog>

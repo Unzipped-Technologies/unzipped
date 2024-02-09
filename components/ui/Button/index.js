@@ -104,6 +104,7 @@ const ButtonIcon = styled(Icon)`
 `
 
 const ButtonContent = styled.div`
+  margin: ${({ contentMargin }) => (contentMargin ? contentMargin : '20px 0px 0px 0px')};
   display: inline-block;
 `
 
@@ -270,6 +271,7 @@ const Button = ({
   top,
   zIndex,
   mobile,
+  contentMargin,
   ...rest
 }) => {
   const colors = typeColors[type] ? typeColors[type] : typeColors.default
@@ -324,7 +326,7 @@ const Button = ({
           )}
         </ButtonIconContainer>
       )}
-      <ButtonContent>{!condensed && children}</ButtonContent>
+      <ButtonContent contentMargin={contentMargin}>{!condensed && children}</ButtonContent>
       {popout && (
         <DropDown
           key={popoutOpen}
@@ -376,7 +378,9 @@ Button.propTypes = {
   /** Width of popout */
   popoutWidth: PropTypes.string,
   /** Height of button */
-  height: PropTypes.string
+  height: PropTypes.string,
+  /** contentMargin of button */
+  contentMargin: PropTypes.string
 }
 
 Button.defaultProps = {
@@ -396,7 +400,8 @@ Button.defaultProps = {
   noBorder: false,
   noUppercase: false,
   popoutWidth: '200px',
-  height: ''
+  height: '',
+  contentMargin: ''
 }
 
 export default Button

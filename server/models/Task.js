@@ -23,12 +23,9 @@ const taskSchema = new Schema(
       {
         type: new Schema(
           {
-            id: String,
-            text: String,
-            img: String,
-            profilePic: String,
-            userId: String,
-            name: String
+            comment: { type: String, required: true },
+            img: { type: String, default: '' },
+            userId: { type: Schema.Types.ObjectId, ref: 'users' }
           },
           { timestamps: true }
         ),

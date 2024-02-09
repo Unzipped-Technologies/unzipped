@@ -11,7 +11,7 @@ import {
 
 const INIT_STATE = {
   departments: [],
-  selectDepartment: {},
+  selectedDepartment: {},
   error: '',
   loading: false,
   totalCount: 0
@@ -32,11 +32,11 @@ const Departments = (state = INIT_STATE, action = {}) => {
       let newListDepartments = state.departments.filter(item => action.payload.id !== item.id)
       return { ...state, loading: false, departments: [...newListDepartments] }
     case GET_DEPARTMENTS:
-      const selectDepartment = action.payload?.data.find(e => e.isSelected) || action.payload?.data[0]
+      const selectedDepartment = action.payload?.data.find(e => e.isSelected) || action.payload?.data[0]
       return {
         ...state,
         loading: false,
-        selectDepartment,
+        selectedDepartment,
         departments: action.payload.data,
         totalCount: action.payload.totalResults
       }
@@ -50,7 +50,7 @@ const Departments = (state = INIT_STATE, action = {}) => {
       return {
         ...state,
         loading: false,
-        selectDepartment: action.payload
+        selectedDepartment: action.payload
       }
     case DEPARTMENT_ERROR:
       return { ...state, loading: false, error: action.payload }

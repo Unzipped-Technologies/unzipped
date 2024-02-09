@@ -17,7 +17,6 @@ import {
   ADD_COMMENT_TO_STORY,
   CREATE_FILE,
   REMOVE_COMMENT_FROM_STORY,
-  UPDATE_CREATE_STORY,
   GET_PROJECT_LIST,
   GET_PROJECT_Error,
   GET_PROJECT_LIST_AND_APPEND,
@@ -86,8 +85,6 @@ const Business = (state = INIT_STATE, action = {}) => {
         employees: action.payload?.employees || []
       }
 
-    case UPDATE_CREATE_STORY:
-      return { ...state, loading: false, createStoryForm: { ...state.createStoryForm, ...action.payload } }
     case CREATE_STORY:
       return {
         ...state,

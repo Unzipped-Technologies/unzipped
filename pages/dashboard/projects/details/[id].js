@@ -162,7 +162,6 @@ const Select = styled.select`
 `
 
 const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
   const [weekOptions, setWeekOptions] = useState([])
   const [selectedWeek, setSelectedWeek] = useState(0)
 
@@ -234,10 +233,10 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         <HeaderDetail>
           <Header>
             <ProjectName>
-              {selectedTab !== 3 ? (screenWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
-              {selectedTab === 3 && screenWidth > 680 ? 'Invoice History' : ''}
+              {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
+              {selectedTab === 3 && window.innerWidth > 680 ? 'Invoice History' : ''}
             </ProjectName>
-            {(selectedTab === 3) & (screenWidth < 680) ? (
+            {(selectedTab === 3) & (window.innerWidth < 680) ? (
               <Select
                 onChange={e => {
                   setSelectedWeek(e.target.value)

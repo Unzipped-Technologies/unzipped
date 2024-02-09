@@ -199,7 +199,7 @@ export const updateCreateStoryForm = data => async (dispatch, getState) => {
 export const resetStoryForm = () => async (dispatch, getState) => {
   dispatch({
     type: RESET_STORY_FORM,
-    payload: null
+    payload: {}
   })
 }
 

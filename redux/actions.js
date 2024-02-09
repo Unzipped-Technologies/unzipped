@@ -13,5 +13,5 @@ export * from './Invoices/actions'
 export * from './Department/actions'
 export * from './Tags/actions'
 export * from './TaskHours/actions'
-export * from './Task/actions'
-export * from './Meeting/actions';
+export * from './Tasks/actions'
+export * from './Meeting/actions'

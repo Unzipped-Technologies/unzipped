@@ -157,7 +157,7 @@ const getBusinessById = async (id, user) => {
 }
 
 // list lists
-const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, skill, type }) => {
+const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, skill, type, populate = true }) => {
   try {
     const existingNameIndex = await business.collection.indexes()
     const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
@@ -168,11 +168,8 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
       await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
       await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
     }
-    let filters = {} // Default query to retrieve all records
+    const filters = pick(filter, ['userId', 'isActive'])
 
-    if (filter?.isActive !== undefined) {
-      filters.isActive = filter?.isActive
-    }
     const regexQuery = new RegExp(filter?.searchKey, 'i')
     const regexType = new RegExp(type, 'i')
     const aggregationPipeline = [
@@ -215,7 +212,8 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
           updatedAt: 1,
           isActive: 1,
           valueEstimate: 1,
-          userId: 1
+          userId: 1,
+          departments: 1
         }
       },
       {
@@ -247,6 +245,27 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
       {
         $unwind: '$user'
       },
+      {
+        $lookup: {
+          from: 'departments',
+          let: { departments: '$departments' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$departments'] }
+              }
+            },
+            {
+              $project: {
+                name: 1,
+                tags: 1,
+                businessId: 1
+              }
+            }
+          ],
+          as: 'businessDepartments'
+        }
+      },
 
       {
         $facet: {
@@ -255,7 +274,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
               $skip: +skip
             },
             {
-              $limit: +limit
+              $limit: limit === 'all' ? await countBusiness(filters) : Number(limit)
             }
           ],
           totalCount: [
@@ -415,6 +434,11 @@ const countContracts = async filter => {
   return await Contracts.countDocuments(filter)
 }
 
+const countBusiness = async filter => {
+  const totalDocuments = await business.countDocuments(filter)
+  return totalDocuments
+}
+
 // add like to business
 const addLikeToBusiness = async (data, id) => {
   try {
@@ -460,6 +484,7 @@ module.exports = {
   updateBusiness,
   deleteBusiness,
   addLikeToBusiness,
+  countBusiness,
   getAllBusinessByInvestor,
   getBusinessByInvestor,
   getBusinessByFounder,
