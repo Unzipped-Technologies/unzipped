@@ -15,6 +15,7 @@ import Departments from './Department/reducers'
 import Tags from './Tags/reducers'
 import TaskHours from './TaskHours/reducers'
 import Tasks from './Task/reducers'
+import Meetings from './Meeting/reducers';
 
 const rootReducer = combineReducers({
   // counter: counterReducer

@@ -84,9 +84,15 @@ export const addCommentToStory = (data, token) => async (dispatch, getState) => 
 export const createBusiness = (data, token) => async (dispatch, getState) => {
   //story Loading
   dispatch({ type: LOAD_STATE })
-  data.budget = data.budget.value
+
   await axios
-    .post(`/api/business/create`, data, tokenConfig(token))
+    .post(`/api/business/create`, data, {
+      "headers": {
+        'Content-Type': 'multipart/form-data',
+        "access_token": token
+      }
+
+    })
     .then(res =>
       dispatch({
         type: CREATE_BUSINESS,
@@ -130,13 +136,13 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -164,4 +170,12 @@ export const getBusinessById = id => async (dispatch, getState) => {
         payload: err.response
       })
     })
+}
+
+export const nullBusinessForm = (data ={}) =>  (dispatch) => {
+  console.log('nullBusinessForm', dispatch)
+  dispatch({
+    type: RESET_BUSINESS_FORM,
+    // payload: null
+  })
 }

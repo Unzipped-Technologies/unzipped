@@ -11,6 +11,7 @@ const messageSchema = new Schema({
   isRead: {type: Boolean, default: false},
   isActive: {type: Boolean, default: true},
   isArchived: {type: Boolean, default: false},
+  meetingId: {type: Schema.Types.ObjectId, ref: 'meetings'}
 }, {
   timestamps: true
 });

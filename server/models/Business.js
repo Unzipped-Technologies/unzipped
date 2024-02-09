@@ -76,7 +76,12 @@ const businessSchema = new Schema(
         ref: 'projectapplications'
       }
     ],
-    questionsToAsk: { type: [mongoose.Schema.Types.ObjectId], ref: 'questions', default: null }
+    questionsToAsk: { type: [mongoose.Schema.Types.ObjectId], ref: 'questions', default: null },
+    projectImagesUrl: [
+      {
+        type: Schema.Types.ObjectId, ref: 'file'
+      }
+    ]
   },
   {
     timestamps: true

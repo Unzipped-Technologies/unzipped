@@ -75,10 +75,10 @@ export const updateChatStatus = (type, status, id, token) => async (dispatch, ge
 
 };
 
-export const handleUnreadMessages = (messsage) => async (dispatch) => {
+export const handleUnreadMessages = (message) => async (dispatch) => {
     dispatch({
         type: UPDATE_CONVERSATION_MESSAGE,
-        payload: messsage
+        payload: message
     });
 
 }

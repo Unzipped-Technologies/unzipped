@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import SimpleBar from 'simplebar-react'
-import styled from 'styled-components'
-import 'simplebar/dist/simplebar.min.css'
-import { DarkText, Span, WhiteCard, Absolute } from './dashboard/style'
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
+import {
+  DarkText,
+  Span,
+  WhiteCard,
+  Absolute
+} from './dashboard/style'
 import Icon from '../ui/Icon'
 import Button from '../ui/Button'
 import FormField from '../ui/FormField'
@@ -11,7 +15,11 @@ import AttachmentModal from './AttachmentModal'
 import ProfileContainer from './ProfileContainer'
 import { ValidationUtils } from '../../utils'
 import theme from '../ui/theme'
-
+import { useSelect } from '@mui/base';
+import { useSelector } from 'react-redux';
+import styled from "styled-components"
+import MeetingTemplate from './MeetingTemplate';
+import Link from 'next/link';
 const Right = styled.div`
   display: grid;
   position: relative;
@@ -64,9 +72,53 @@ export const Div = styled.div`
 `
 
 const Spacer = styled.div`
-  height: 64px;
+    height: 64px;
+    width: 100%;
+`;
+// Message Box
+
+const MessageTemplateContainer = styled.div`
+  display: flex;
   width: 100%;
+  justify-content: flex-end;
+  align-items: end;
+`;
+
+const MessageContentTemplate = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  width: 450px;
+  height: auto;
+  letter-spacing: 0.15px;
+  color: white;
+  border-radius: 8px 8px 0px 8px;
+  background: ${({ bgColor }) => bgColor ? bgColor : '#007FED'};
+  padding: 10px;
 `
+const ButtonContainer = styled.div`
+    display: flex;
+    background: transparent;
+    width: 100%;
+    justify-content: flex-end;
+    padding: 10px;
+`;
+
+const ButtonStyled = styled.button`
+    color: #fff;
+    text-decoration: ${({ textDecoration }) => textDecoration ? textDecoration : 'none'};
+    border: 0px;
+    background: transparent;
+    &:focus{
+        background: transparent !important;
+    }
+`;
+
+const ParagrapStyled = styled.p`
+    margin: 0 !important;
+    color: ${({ color }) => color ? color : '#fff'}
+`
+const DECLINE_MESSAGE_TEXT = 'The freelancer has proposed some additional times:';
 
 const MessageContainer = ({
   data = {},
@@ -129,10 +181,38 @@ const MessageContainer = ({
         setTyping(typingData)
       })
     })
-    return () => {
-      socket.off('chat message')
-    }
-  }, [])
+  })
+
+  const [userMessage, setUserMessage] = useState('');
+
+  useEffect(() => {
+    socket.on('chat message', message => {
+      handleUnreadCount(message)
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
+          message: message?.message,
+          attachment: "",
+          isAlert: false,
+          isRead: false,
+          isActive: true,
+          isArchived: false,
+          isSingle: true,
+          sender: message?.sender?.userId || message?.sender,
+          conversationId: message?.conversationId,
+          updatedAt: message?.updatedAt,
+          __v: 0
+        }
+      ]);
+
+      socket.on('typing', typingData => {
+        setTyping(typingData)
+      })
+      socket.on('stop-typing', typingData => {
+        setTyping(typingData)
+      })
+    })
+  })
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
@@ -153,17 +233,30 @@ const MessageContainer = ({
     }
   }, [messages])
 
+
   useEffect(() => {
-    setMessages(data?.messages?.slice().reverse())
+    setMessages(data?.messages?.slice().reverse());
     setReceiver(data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail))
     setSender(data?.participants && data?.participants.find(e => e?.userId?.email === userEmail))
   }, [data])
 
-  useEffect(() => {}, [receiver])
+  useEffect(() => {
+  }, [receiver])
+
+  useEffect(() => {
+    socket.on('refreshMessageList', () => {
+      console.log('refreshMessageList',);
+    });
+
+    return () => {
+      socket.off('refreshMessageList');
+    };
+  }, []);
 
   const handleLastMessageScroll = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }
+
 
   const send = () => {
     if (form.message || form.attachment) {
@@ -180,20 +273,22 @@ const MessageContainer = ({
         conversationId: data._id || null,
         updatedAt: new Date().toISOString(),
         access
-      })
+      });
       socket.emit('stop-typing', {
         receiverId: form.receiverId,
         conversationId: data._id || null,
-        isTyping: false
-      })
+        isTyping: false,
+      });
       handleLastMessageScroll()
       setForm({
         ...form,
         message: '',
-        attachment: ''
-      })
+        attachment: '',
+      });
+
     }
   }
+
 
   const handleMute = value => {
     handleChatMute(value)

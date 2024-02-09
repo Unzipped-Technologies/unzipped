@@ -29,5 +29,7 @@ router.use('/list-entries', require('./listEntriesRoute'));
 router.use('/questions', require('./questionRoutes'))
 router.use('/projectApplication', require('./projectApplicationsRoutes'))
 
+router.use('/meeting', require('./meetingRoutes'));
+router.use('/calender', require('./CalenderSettingRoutes'));
 
 module.exports = router

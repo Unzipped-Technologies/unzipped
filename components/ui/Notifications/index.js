@@ -12,7 +12,7 @@ const NotificationsContainer = styled.div`
     & .expanded-container {
         width: 26px;
         height: 26px;
-        padsding-top: 1px;
+        padding-top: 1px;
     }
     @media (max-width: ${({theme}) => theme.reducedWidth}px) {
         padding: 20px 0 20px 3px;

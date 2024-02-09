@@ -46,7 +46,6 @@ const Messages = (state = INIT_STATE, action) => {
                 ...state,
                 loading: false,
                 error: null,
-                conversations: [...updateSelected],
                 selectedConversation: {
                     ...action.payload.updatedConversation,
                     isSelected: true
@@ -74,7 +73,7 @@ const Messages = (state = INIT_STATE, action) => {
                 isRead: false,
                 isActive: true,
                 isAlert: false,
-                isSingle:true,
+                isSingle: true,
                 attachment: '',
                 updatedAt: new Date().toISOString(),
             };

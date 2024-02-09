@@ -38,7 +38,7 @@ const Flex = styled.div`
 `;
 
 const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
-    console.log('users', user)
+    console.log('users_details', user)
 
     const userLists = useSelector(state => state.ListEntries.userLists);
     const userId = useSelector(state => state.Auth.user._id);

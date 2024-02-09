@@ -13,10 +13,21 @@ const Freelancer = require('../models/Freelancer')
 const TaskHours = require('../models/TaskHours')
 const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
+const CloudinaryUploadHelper = require("./file");
+
+const createBusiness = async (data, id, files = []) => {
+  // upload file to cloudinary platform
+  const uploadResult = await CloudinaryUploadHelper.createFile(files, id);
+  let cloudinaryIds = [];
+  if (uploadResult && uploadResult.length > 0) {
+    cloudinaryIds = uploadResult.map(elem => elem._id);
+  }
 
 const createBusiness = async data => {
   // create business
-  const newBusiness = await business.create({ ...data, questionsToAsk: [], applicants: [] })
+  const newBusiness = await business.create({ ...data, questionsToAsk: [], applicants: [],
+        projectImagesUrl: cloudinaryIds
+ })
 
   // Create business audience
   const audience = await businessAudience.create({
@@ -51,7 +62,8 @@ const createBusiness = async data => {
     questionsToAsk: questions,
     audience: await businessAudience.findById(audience._id)
   })
-  return { msg: 'business created successfully' }
+
+  return { msg: 'business created successfully', business: newBusiness }
 }
 
 const updateBusiness = async data => {
@@ -84,6 +96,11 @@ const getBusinessById = async (id, user) => {
           path: 'userId',
           model: 'users',
           select: 'FirstName LastName profileImage  isIdentityVerified stripeId stripeSubscription createdAt'
+        },
+        {
+          path: "projectImagesUrl",
+          model: "file",
+          select: "url"
         }
       ]
     } else {
@@ -121,6 +138,11 @@ const getBusinessById = async (id, user) => {
           path: 'questionsToAsk',
           model: 'questions',
           select: 'question answers'
+        },
+        {
+          path: "projectImagesUrl",
+          model: "file",
+          select: "url"
         }
       ]
     }
@@ -157,10 +179,10 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
           name: { $regex: regexQuery },
           ...(skill?.length > 0
             ? {
-                requiredSkills: {
-                  $all: skill
-                }
+              requiredSkills: {
+                $all: skill
               }
+            }
             : {}),
           ...(type && {
             projectType: { $regex: regexType }
@@ -341,7 +363,7 @@ const getBusinessByFounder = async businessId => {
 
     const results = await Promise.all(taskHoursPromises)
     return { businessDetails: businessDetails, results: [].concat(...results) }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 const getAllBusinessByInvestor = async (id, query) => {

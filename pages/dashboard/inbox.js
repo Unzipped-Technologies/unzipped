@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import router from 'next/router';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import styled from 'styled-components'
 import Nav from '../../components/unzipped/header';
@@ -62,7 +62,8 @@ const Inbox = ({
         take: 25
     })
     const [messageLimit, setMessageLimit] = useState(0)
-    const [conversationId, setConversationId] = useState(selectedConversationId)
+    const [conversationId, setConversationId] = useState(selectedConversationId);
+    const store = useSelector(state => state.Messages.conversations);
 
     useEffect(() => {
         if (!access) {
@@ -111,6 +112,26 @@ const Inbox = ({
         setMessageLimit(prevLimit => prevLimit + 10);
         selectConversation(conversationId, access, +messageLimit + 10)
     }
+
+    useEffect(() => {
+        socket.on('refreshConversationList', () => {
+            console.log('Received refreshConversationList event', selectConversation);
+            getConversationList(form, access)
+        });
+
+        return () => {
+            socket.off('refreshConversationList');
+        };
+    }, []);
+
+    useEffect(() => {
+        if (conversations && conversations.length > 0) {
+            const item = conversations[conversations.length - 1];
+            openConversation(item._id)
+        }
+    }, [conversations])
+
+    console.log(selectedConversation, "select")
     return (
         <Page>
             <Nav isSubMenu />
