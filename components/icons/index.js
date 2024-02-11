@@ -7,6 +7,7 @@ import TwitterIcon from './twitter'
 import ClearFitLogo from './clearfit'
 import SkillPodLogo from './skillpods'
 import HexagonIcon from './hexagon'
+import CloseIcon from './close'
 import ReactIcon from './react'
 import NodeIcon from './node'
 import NetIcon from './net'
@@ -40,12 +41,20 @@ import ReviewHalfSmall from './reviewHalfSmall'
 import UpArrow from './upArrow'
 import GoBack from './navback'
 import UpdateUserIcon from './updateUser'
+import CircleBrushIcon from './circleBrush'
+import CircleDashboardIcon from './circleDashboard'
+import CircleHeartIcon from './circleHeart'
+import CircleLightningIcon from './circleLightning'
+import CircleSearchIcon from './circleSearch'
+import CircleShipIcon from './circleShip'
+import CircleNotesIcon from './circleNotes'
 
 export {
     ClearFitLogo,
     SkillPodLogo,
     HexagonIcon,
     MailIcon,
+    CloseIcon,
     PhoneIcon,
     DiamondIcon,
     DownWideIcon,
@@ -54,6 +63,13 @@ export {
     LeafIcon,
     CycleIcon,
     DownIcon,
+    CircleBrushIcon,
+    CircleDashboardIcon,
+    CircleHeartIcon,
+    CircleLightningIcon,
+    CircleShipIcon,
+    CircleSearchIcon,
+    CircleNotesIcon,
     LinkedInIcon,
     CircleStar,
     WorkIcon,
