@@ -204,7 +204,7 @@ const Freelancers = ({
       <Container>
         {!filterOpenClose ? (
           <MobileDisplayBox>
-            <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '10px' }}>
+            <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
               <b style={{ paddingRight: '20px' }}>Top Results</b>
               <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
             </div>
