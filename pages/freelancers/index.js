@@ -49,6 +49,13 @@ const DesktopDisplayBox = styled.div`
   @media (max-width: 680px) {
     display: none;
   }
+`;
+
+const SearchContainer = styled.div`
+  margin-top: 78px;
+  @media and screen (max-width: 600px){
+    margin-top: 78px;
+  }
 `
 const Freelancers = ({
   freelancerList = [],
@@ -177,10 +184,11 @@ const Freelancers = ({
       return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
     }
   }
+  console.log('filterOpenClose', filterOpenClose)
 
   return (
-    <div>
-      {!filterOpenClose && (
+    <SearchContainer >
+      {/* {!filterOpenClose && (
         <Nav
           isSubMenu
           searchValue={filter}
@@ -190,7 +198,16 @@ const Freelancers = ({
           margin={'0px'}
           marginBottom={marginBottom}
         />
-      )}
+      )} */}
+      <Nav
+        isSubMenu
+        searchValue={filter}
+        handleSearchValue={setFilter}
+        handleSearch={handleSearch}
+        searchButton
+        margin={'0px'}
+        marginBottom={marginBottom}
+      />
       {!filterOpenClose && (
         <MobileDisplayBox>
           <MobileSearchBar
@@ -204,7 +221,7 @@ const Freelancers = ({
       <Container>
         {!filterOpenClose ? (
           <MobileDisplayBox>
-            <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '10px' }}>
+            <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
               <b style={{ paddingRight: '20px' }}>Top Results</b>
               <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
             </div>
@@ -264,8 +281,7 @@ const Freelancers = ({
                 skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
                 cover:
                   user?.cover ||
-                  `I have been a ${user?.category || 'developer'} for over ${
-                    (user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
+                  `I have been a ${user?.category || 'developer'} for over ${(user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
                   } years. schedule a meeting to check if I'm a good fit for your business.`,
                 profilePic:
                   user?.user?.profileImage ||
@@ -296,8 +312,7 @@ const Freelancers = ({
             skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
             cover:
               user?.cover ||
-              `I have been a ${user?.category || 'developer'} for over ${
-                (user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
+              `I have been a ${user?.category || 'developer'} for over ${(user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
               } years. schedule a meeting to check if I'm a good fit for your business.`,
             profilePic:
               user?.user?.profileImage ||
@@ -331,7 +346,7 @@ const Freelancers = ({
           <MobileFreelancerFooter />
         </MobileDisplayBox>
       )}
-    </div>
+    </SearchContainer>
   )
 }
 

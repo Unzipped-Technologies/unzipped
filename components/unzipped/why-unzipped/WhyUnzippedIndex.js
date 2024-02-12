@@ -20,6 +20,9 @@ const Wrapper = styled.div`
     gap: 1.25rem;
     margin-top: 8rem;
     margin-bottom: 2.125rem;
+    @media screen and (max-width: 600px){
+        padding-right: 20px;
+    }
 `;
 
 const TextBox = styled.div`
@@ -37,14 +40,23 @@ const TextBox = styled.div`
 
     @media screen and (max-width: 600px){
         width: auto;
+        margin-left: 20px;
         &:after{
             content : '';
-            display : none;
+            display : block;
             height : 2px;
-            width : 0;
+            width : 100%;
             background: #F3F6F3;
-            margin-top: 0;
+            margin-top: ${FONT_SIZE.PX_43};
         }
+        // &:after{
+        //     content : '';
+        //     display : none;
+        //     height : 2px;
+        //     width : 0;
+        //     background: #F3F6F3;
+        //     margin-top: 0;
+        // }
     }
 
 `;
@@ -63,6 +75,7 @@ const HeaderTitle = styled.h1`
 `;
 
 const TalentText = styled.p`
+    margin-top: 15px;
     ${getFontStyled(
     {
         color: COLORS.gray,
@@ -95,7 +108,7 @@ const HeadingStyled = styled.h1`
 })
     }
     @media screen and (max-width: 600px){
-        padding-left: 0;
+        // padding-left: 30px;
     }
 `;
 
@@ -111,16 +124,46 @@ const SealOfApprovalContainer = styled.div`
         background: ${COLORS.hrLineColor};
     }
     @media screen and (max-width: 600px){
-        padding-left: 0;
-        width: 385px;
+        padding-left: 0px;
+        width: 100%;
         &::after{
         margin-top: 29px;
         content: '';
         display: none;
         height: 2px;
-        width: 1052px;
+        width: 100%;//1052px;
         background: ${COLORS.hrLineColor};
     }
+    }
+`;
+
+const FaqContainerStyled = styled.div`
+    width: 100%;
+    padding-left: 0 ;
+    display: flex;
+    padding-left: 120px;
+    @media screen and (max-width: 600px){
+        padding-left: 20px;
+    }
+`;
+
+const LearnAsYouWorkContainer = styled.div`
+    width: 100%;
+    padding-left: 0 ;
+    display: flex;
+    padding-left: 120px;
+    @media screen and (max-width: 600px){
+         padding-left: 20px;
+    }
+`;
+
+const NewsLetterContainer = styled.div`
+    width: 100%;
+    padding-left: 0 ;
+    display: flex;
+    margin-left: -135px;
+    @media screen and (max-width: 600px){
+        margin-left: 0px;
     }
 `;
 
@@ -146,9 +189,15 @@ const WhyUnzippedComponent = () => {
             <Testimonials />
             <SecurityPrivacy />
             {/* <FAQ /> */}
-            <Faq />
-            <CareerGrowth />
-            <NewsLetter />
+            <FaqContainerStyled>
+                <Faq />
+            </FaqContainerStyled>
+            <LearnAsYouWorkContainer>
+                <CareerGrowth />
+            </LearnAsYouWorkContainer>
+            <NewsLetterContainer>
+                <NewsLetter />
+            </NewsLetterContainer>
         </Wrapper>
     )
 }

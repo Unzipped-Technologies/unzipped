@@ -28,9 +28,11 @@ const TrustedByContent = styled.div`
     width: 65.688rem;
     margin-top: 5.812rem;
     @media screen and (max-width: 600px){
-        width: 385px;
+        width: 100%;//385px;
         flex-direction: column;
         gap: 1rem;
+        margin: 10px;
+        padding-left: 40px;
     }
 `;
 
