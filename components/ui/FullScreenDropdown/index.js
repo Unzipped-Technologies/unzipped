@@ -72,7 +72,7 @@ const BottomButton = styled.button`
 `;
 
 const Footer = styled.div`
-    position: absolute;
+    position: fixed;
     bottom: 0px;
     border-top: 1px solid rgb(216, 216, 216);
     display: flex;
@@ -85,6 +85,12 @@ const Footer = styled.div`
     background-color: #fff;
 `;
 
+const ItemContainer = styled.div`
+    max-height: calc(100vh - 228px);
+    overflow: auto;
+    padding-bottom: 20px;
+`;
+
 const Row = styled.div`
     padding: 7px 20px;
     display: flex;
@@ -94,22 +100,26 @@ const Row = styled.div`
     color: #333;
 `;
 const Title = styled.h5``;
+const Box = styled.div`
+  cursor: pointer;
+`;
 
 const SubContainer = styled.div`
   border-left: #E4E4E6 1px solid;
-  padding-left: 15px;
   margin-left: 24px;
   margin-top: 10px;
 `;
 const SubTitle = styled.div`
     font-size: 20px;
     padding-left: 10px;
+    cursor: default;
 `;
 
 const SubHeader = styled.div`
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    padding-left: 15px;
 `;
 
 const Icon = styled.div`
@@ -118,7 +128,16 @@ const Icon = styled.div`
 `;
 
 const SubItem = styled.div`
-  padding: 15px;
+    padding: 10px 15px 10px 35px;
+    cursor: ${({sub}) => sub ? 'default' : 'pointer'};
+    &:focus {
+        background: ${({sub}) => sub ? '#fff' : '#d8d8d8'};
+        border-radius: 12px;
+    }
+    &:hover {
+        background: ${({sub}) => sub ? '#fff' : '#d8d8d8'};
+        border-radius: 12px;
+    }
 `;
 
 const SubItemTitle = styled.div`
@@ -127,12 +146,21 @@ const SubItemTitle = styled.div`
 `;
 const SubItemDescription = styled.div`
   font-size: 16px;
+  padding-top: ${({sub}) => sub ? '8px' : '0px'};
 `;
 
 const WikiContainer = styled.div`
     display: flex;
     align-items: flex-start;
-    padding: 10px 0px;
+    padding: 10px 5px;
+    &:focus {
+        background: #d8d8d8;
+        border-radius: 12px;
+    }
+    &:hover {
+        background: #d8d8d8;
+        border-radius: 12px;
+    }
 `;
 
 const WikiTextBox = styled.div`
@@ -155,7 +183,6 @@ const FullScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, sta
     const linkPush = (link) => {
         router.push(link)
     }
-    console.log(selected)
     return (
         <Container>
             <Header>
@@ -167,10 +194,11 @@ const FullScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, sta
                     search
                 </Magnify>
             </Header>
+            <ItemContainer>
             {menuItems.map((item, index) => {
                 return (
-                    <div>
-                        <Row key={item.name + index} onClick={() => setSelected(item.name)}>
+                    <Box key={item.name + index}>
+                        <Row onClick={() => setSelected(selected === item.name ? false : item.name)}>
                             <Title onClick={() => !item?.subItems && item?.link && linkPush(item.link)}>{item.name}</Title>
                             {item?.subItems && item?.subItems.length && (
                                 <Icon selected={selected === item.name}>
@@ -185,13 +213,12 @@ const FullScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, sta
                                     <SubTitle>{item.subTitle}</SubTitle>
                                 </SubHeader>
                                 {item.subItems.map((sub, index) => {
-                                    console.log(sub.name, ': ', typeof sub.sub === 'string')
                                     return (
-                                        <SubItem key={sub.name + index} onClick={() => linkPush(sub.link)}>
+                                        <SubItem key={sub.name + index} onClick={() => linkPush(sub.link)}  sub={!(typeof sub.sub === 'string')}>
                                             <SubItemTitle>
                                                 {sub.name}
                                             </SubItemTitle>
-                                            <SubItemDescription>
+                                            <SubItemDescription sub={!(typeof sub.sub === 'string')}>
                                                 {typeof sub.sub === 'string' ? sub.sub : sub.sub.map((element, index) => {
                                                     return (
                                                         <WikiContainer key={element.name + index}>
@@ -213,9 +240,10 @@ const FullScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, sta
                                 })}
                             </SubContainer>
                         )}
-                    </div>
+                    </Box>
                 )
             })}
+            </ItemContainer>
             <FooterScroll />
             <Footer>
                 {isAuth ? (

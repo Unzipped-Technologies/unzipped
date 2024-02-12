@@ -633,22 +633,22 @@ useEffect(() => {
           subItems: [
           {
               name: 'Notifications',
+              sub: 'Check pending todo items',
               link: '/dashboard'
           },
           {
               name: 'Browse',
+              sub: 'See potential projects and freelancers',
               link: '/browse'
           },
           {
-              name: 'Projects',
-              link: '/dashboard/projects'
-          },
-          {
               name: 'Messages',
+              sub: 'Manage communication within the app',
               link: '/dashboard/inbox'
           },
           {
               name: 'Account',
+              sub: 'Manage your account details',
               link: '/dashboard/account'
           },
         ]
