@@ -51,8 +51,9 @@ const TitleText = styled.div`
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   color: ${({ color }) => (color ? color : theme.text2)};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '')};
-  padding-right: ${paddingRight => (paddingRight ? paddingRight : '')} @media screen and (max-width: 600px) {
-    width: 100%;
+  padding-right: ${paddingRight => (paddingRight ? paddingRight : '')};
+  @media screen and (max-width: 600px) {
+    width: ${({ width }) => (width ? width : '100%')};
     display: flex;
   }
 `
@@ -113,7 +114,7 @@ const DarkText = styled.div`
   }
 
   @media screen and (max-width: 600px) {
-    padding-left: 0px;
+    padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
     margin-left: 10px;
     font-size: 16px;
     line-height: '18px';

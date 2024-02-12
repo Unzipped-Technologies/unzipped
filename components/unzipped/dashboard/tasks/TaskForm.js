@@ -61,7 +61,7 @@ const TaskForm = ({
   }, [selectedTaskId])
 
   useEffect(() => {
-    if (Object.entries(taskDetail)?.length) {
+    if (taskDetail && Object.entries(taskDetail)?.length) {
       updateCreateStoryForm({
         taskName: taskDetail?.taskName,
         storyPoints: taskDetail?.storyPoints,
@@ -146,7 +146,7 @@ const TaskForm = ({
   const enableEditMode = () => {
     setEditMode(true)
   }
-  const disableEditMode = e => {
+  const disableEditMode = () => {
     if (document.activeElement?.tagName?.toLowerCase() === 'div') {
       setEditMode(false)
     }
@@ -162,16 +162,18 @@ const TaskForm = ({
   }
 
   const onSubmit = async () => {
-    const comments = [
-      {
-        comment: newComment.comment,
-        userId: userId
-      }
-    ]
+    if (newComment?.comment) {
+      const comments = [
+        {
+          comment: newComment.comment,
+          userId: userId
+        }
+      ]
 
-    await updateCreateStoryForm({
-      comments: comments
-    })
+      await updateCreateStoryForm({
+        comments: comments
+      })
+    }
     if (selectedTaskId) {
       await updateTask(selectedTaskId, taskForm)
     } else {
@@ -290,7 +292,10 @@ const TaskForm = ({
             <span
               style={{
                 paddingRight: '10px',
-                paddingTop: '20px'
+                paddingTop: '10px',
+                display: 'flex',
+                marginLeft: '15%',
+                justifyContent: 'flex-end'
               }}>
               <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
             </span>
@@ -305,7 +310,7 @@ const TaskForm = ({
                 options={assigneeOptions}
                 placeholder="assignee"
                 fontSize="14px"
-                margin="0px 0px 0px 40px"
+                margin="0px 0px 0px 10px"
                 width="160px"
                 height={taskDetail?.assignee ? '15px' : '30px'}
                 dropdownList={assigneeOptions}

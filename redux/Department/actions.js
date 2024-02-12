@@ -8,6 +8,8 @@ import {
   LOAD_STATE
 } from './constants'
 import axios from 'axios'
+import { startLoading, stopLoading } from '../Loading/actions'
+
 import { tokenConfig } from '../../services/tokenConfig'
 
 export const createDepartment = data => async (dispatch, getState) => {
@@ -52,7 +54,7 @@ export const getDepartmentsForBusiness = (data, token) => async (dispatch, getSt
 
 export const getDepartmentById = id => async (dispatch, getState) => {
   //department list Loading
-  dispatch({ type: LOAD_STATE })
+  dispatch(startLoading())
 
   await axios
     .get(`/api/department/${id}`, tokenConfig(getState()?.Auth.token))
@@ -68,6 +70,7 @@ export const getDepartmentById = id => async (dispatch, getState) => {
         payload: err.response
       })
     })
+  dispatch(stopLoading())
 }
 
 // TODO update department BE route and action

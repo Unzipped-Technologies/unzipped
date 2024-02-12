@@ -60,8 +60,8 @@ const Tasks = (state = INIT_STATE, action = {}) => {
     case GET_TASK_BY_ID:
       return { ...state, loading: false, selectedTask: action.payload }
     case UPDATE_CREATE_STORY:
-      if (Object.keys(action.payload).includes('comments')) {
-        state.createStoryForm.comments = [...state.createStoryForm.comments, ...action.payload.comments] // Add new comment to the end of the comments array
+      if (Object.keys(action.payload).includes('comments') && action.payload?.comments?.length) {
+        state.createStoryForm.comments = [...state.createStoryForm.comments, ...action.payload?.comments] // Add new comment to the end of the comments array
       }
       return {
         ...state,

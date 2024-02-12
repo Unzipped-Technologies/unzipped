@@ -228,7 +228,7 @@ const updateTask = async (taskId, data) => {
   try {
     const taskData = await getTaskWithoutPopulate({ _id: taskId })
     if (!taskData) throw Error(`Error: Failed to add comment`)
-    let ticketComments = []
+    let ticketComments = taskData.comments || []
     if (data?.comments?.length) {
       ticketComments = [...taskData.comments, ...data.comments]
     }

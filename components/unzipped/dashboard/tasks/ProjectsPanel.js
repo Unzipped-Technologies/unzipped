@@ -72,7 +72,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                                   onSelectDepartment(department)
                                 }}>
                                 <span style={{ paddingRight: '25px' }}>
-                                  {selectedDepartment._id === department._id ? (
+                                  {selectedDepartment?._id === department._id ? (
                                     <>
                                       <div
                                         style={{

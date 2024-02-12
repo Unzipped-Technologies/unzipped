@@ -52,7 +52,8 @@ const Button = styled.button`
 `
 
 const TaskFormContainer = styled.div`
-  margin: 20px !important;
+  margin-left: 20px !important;
+  margin-right: 10px !important;
   padding: 0px 0px 20px 0px;
 `
 
@@ -200,11 +201,13 @@ const MobileTaskForm = ({
   }
 
   const disableEditMode = () => {
-    setEditMode(false)
+    if (document.activeElement?.tagName?.toLowerCase() === 'div') {
+      setEditMode(false)
+    }
   }
 
   const handleSubmit = async () => {
-    if (isCreating) {
+    if (newComment?.comment) {
       const comments = [
         {
           comment: newComment.comment,
@@ -215,19 +218,12 @@ const MobileTaskForm = ({
       await updateCreateStoryForm({
         comments: comments
       })
+    }
+
+    if (isCreating) {
       await createTask(taskForm)
       onCancel && onCancel()
     } else {
-      const comments = [
-        {
-          comment: newComment.comment,
-          userId: user._id
-        }
-      ]
-
-      await updateCreateStoryForm({
-        comments: comments
-      })
       await updateTask(taskDetail?._id, taskForm)
       onCancel && onCancel()
     }
@@ -240,441 +236,449 @@ const MobileTaskForm = ({
           ISSUE {taskForm?.ticketCode?.toLowerCase()}
         </DarkText>
       )}
-      <Task>
-        {editMode ? (
-          <FormField
-            zIndexUnset
-            fieldType="input"
-            margin
-            fontSize="14px"
-            borderColor="red"
-            disableBorder={!editMode}
-            noMargin
-            width="100%"
-            height="36px !important"
-            onChange={e => updateForm('taskName', e?.target?.value)}
-            value={taskForm?.taskName}
-            clickType="taskName"
-            onUpdate={() => {}}
-            //   onBlur={disableEditMode}
-          >
-            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="20px" paddingRight="10px">
-              Task:
-            </TitleText>
-          </FormField>
-        ) : (
-          <DarkText topMargin="20px" paddingLeft="0px !important" padding="0px !important" onClick={enableEditMode}>
-            {taskForm?.taskName}
-          </DarkText>
-        )}
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            marginTop: editMode ? '50px' : '0px !important'
-          }}>
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
-          </span>
+      <form onFocus={enableEditMode} onClick={e => disableEditMode(e)}>
+        <Task>
           {editMode ? (
             <FormField
-              margin="0px 0px 0px 20px"
-              mobile
-              zIndex="1000"
-              disableBorder={editMode}
-              fieldType="searchField"
-              isSearchable={true}
-              name="select"
-              options={assigneeOptions}
-              placeholder="assignee"
+              zIndexUnset
+              fieldType="input"
+              margin
               fontSize="14px"
-              width="160px"
-              height={taskForm?.assignee ? '10px' : '30px'}
-              onChange={value => {
-                updateForm('assignee', value?.value)
-              }}
-              value={assigneeOptions.find(assignee => assignee.value === taskForm?.assignee)}
-              clickType="assignee"
-              onUpdate={() => {}}
-            />
+              borderColor="red"
+              placeholder="Task Name"
+              disableBorder={!editMode}
+              noMargin
+              width="100%"
+              height="36px !important"
+              onChange={e => updateForm('taskName', e?.target?.value)}
+              value={taskForm?.taskName}
+              clickType="taskName"
+              onUpdate={() => {}}>
+              <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="20px" paddingRight="10px">
+                Task:
+              </TitleText>
+            </FormField>
           ) : (
-            <DarkText
-              fontSize="18px"
-              color="#000"
-              lineHeight="normal"
-              width="150px"
-              topMargin="20px"
-              paddingLeft="20px">
-              {assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label}
+            <DarkText topMargin="20px" paddingLeft="0px !important" padding="0px !important" onClick={enableEditMode}>
+              {taskForm?.taskName}
             </DarkText>
           )}
-          {comments?.length ? (
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              marginTop: editMode ? '50px' : '0px !important'
+            }}>
+            <span style={{ display: 'flex', alignItems: 'center' }}>
+              <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
+            </span>
+            {editMode ? (
+              <FormField
+                margin="0px 0px 0px 20px"
+                mobile
+                zIndex="1000"
+                disableBorder={editMode}
+                fieldType="searchField"
+                isSearchable={true}
+                name="select"
+                options={assigneeOptions}
+                placeholder="assignee"
+                fontSize="14px"
+                width="160px"
+                height={taskForm?.assignee ? '10px' : '30px'}
+                onChange={value => {
+                  updateForm('assignee', value?.value)
+                }}
+                value={assigneeOptions.find(assignee => assignee.value === taskForm?.assignee)}
+                clickType="assignee"
+                onUpdate={() => {}}
+              />
+            ) : (
+              <DarkText
+                fontSize="18px"
+                color="#000"
+                lineHeight="normal"
+                width="150px"
+                topMargin="20px"
+                paddingLeft="20px">
+                {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label}
+              </DarkText>
+            )}
+            {comments?.length ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: '180px',
+                  marginLeft: '0px'
+                }}>
+                <>
+                  <Chat width="18" height="18" />
+                  <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" paddingLeft="5px" topPadding>
+                    {comments.length} Comment
+                  </DarkText>
+                </>
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: editMode ? '10px' : '0px !important',
+              flexDirection: 'row'
+            }}>
+            <div
+              style={{
+                display: 'flex'
+              }}>
+              <TitleText
+                color="#000"
+                titleFontSize="16px"
+                lineHeight="normal"
+                light
+                width="100px"
+                paddingRight="10px"
+                marginTop="10px">
+                Priority:
+              </TitleText>
+              {editMode ? (
+                <FormField
+                  zIndex="999"
+                  zIndexUnset={true}
+                  mobile
+                  required
+                  fieldType="searchField"
+                  isSearchable={true}
+                  name="select"
+                  placeholder=" priority"
+                  fontSize="14px"
+                  width="100px"
+                  height={taskForm?.priority ? '10px' : '30px'}
+                  options={taskPriorityOptions}
+                  dropdownList={taskPriorityOptions}
+                  onChange={value => updateForm('priority', value?.value)}
+                  value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
+                  clickType="priority"
+                  onUpdate={() => {}}
+                />
+              ) : (
+                <DarkText fontSize="18px" color="#000" lineHeight="normal" width="60px" topMargin="15px">
+                  {taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label}
+                </DarkText>
+              )}
+            </div>
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                width: '150px',
-                marginLeft: '20px'
+                marginLeft: editMode ? '0px !important' : '0px !important'
               }}>
-              <>
-                <Chat width="18" height="18" />
-                <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" paddingLeft="5px" topPadding>
-                  {comments.length} Comment
+              <TitleText
+                color="#000"
+                titleFontSize="16px"
+                lineHeight="normal"
+                light
+                width="55px"
+                paddingLeft={editMode ? '5px' : '10px'}
+                marginTop="10px">
+                Status:
+              </TitleText>
+              {editMode ? (
+                <FormField
+                  zIndex="100"
+                  mobile
+                  required
+                  margin="0px 0px 0px 5px !important"
+                  fieldType="searchField"
+                  isSearchable={true}
+                  name="status"
+                  placeholder=" status"
+                  fontSize="14px"
+                  width="70px"
+                  height={taskForm?.status ? '10px' : '30px'}
+                  options={taskStatusOptions}
+                  onChange={value => updateForm('status', value?.value)}
+                  value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
+                  clickType="status"
+                  onUpdate={() => {}}
+                />
+              ) : (
+                <DarkText
+                  fontSize="18px"
+                  color="#000"
+                  lineHeight="normal"
+                  topMargin="10px"
+                  width="100px"
+                  paddingLeft="10px">
+                  {taskStatusOptions?.find(status => status.value === taskForm?.status)?.label}
                 </DarkText>
-              </>
+              )}
             </div>
-          ) : (
-            ''
-          )}
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginTop: editMode ? '10px' : '0px',
-            marginRight: '10px',
-            flexDirection: 'row'
-          }}>
+          </div>
           <div
             style={{
-              display: 'flex'
+              marginTop: editMode ? '10px' : '0px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start'
             }}>
             <TitleText
               color="#000"
               titleFontSize="16px"
               lineHeight="normal"
               light
-              width="20px"
-              paddingRight="10px"
-              marginTop="10px">
-              Priority:
+              marginTop="10px"
+              width="100px !important">
+              Story Points:
             </TitleText>
             {editMode ? (
               <FormField
-                zIndex="999"
-                zIndexUnset={true}
+                zIndexUnset
+                fieldType="input"
+                disableBorder={!editMode}
+                borderRadius="0px"
+                border="1px solid #ccc"
+                margin="0px 0px 0px 0px !important"
+                fontSize="14px"
+                width="100px"
+                height="30px  !important"
+                onChange={e => updateForm('storyPoints', e?.target?.value)}
+                value={taskForm?.storyPoints}
+                clickType="storyPoints"
+                onUpdate={() => {}}></FormField>
+            ) : (
+              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px">
+                {taskForm?.storyPoints}
+              </DarkText>
+            )}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginTop: editMode ? '10px' : '0px'
+            }}>
+            <TitleText
+              color="#000"
+              titleFontSize="16px"
+              lineHeight="normal"
+              light
+              marginTop="10px"
+              width="40px !important">
+              tags:
+            </TitleText>
+            {taskDetail?.tag && (
+              <Badge small>
+                {tagOptions?.find(tag => tag.value === taskDetail?.tag)?.label}
+                <AiOutlineClose style={{ width: '14px', height: '14px', marginLeft: '10px' }} />
+              </Badge>
+            )}
+            <div
+              style={{
+                width: '17px',
+                height: '17px',
+                background: '#D9D9D9',
+                display: 'flex',
+                alignItems: 'center',
+                // marginLeft: '10px',
+                marginRight: '10px',
+                marginTop: '-2px'
+              }}>
+              <Plus width="17" height="17" />
+            </div>
+            {editMode && (
+              <FormField
+                zIndex="99"
                 mobile
                 required
+                disableBorder={!editMode}
                 fieldType="searchField"
                 isSearchable={true}
                 name="select"
-                placeholder="Select priority"
+                placeholder="Select tag"
                 fontSize="14px"
-                width="100px"
-                height={taskForm?.priority ? '10px' : '30px'}
-                options={taskPriorityOptions}
-                dropdownList={taskPriorityOptions}
-                onChange={value => updateForm('priority', value?.value)}
-                value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
-                clickType="priority"
+                width="110px"
+                height={taskForm?.tag ? '10px' : '30px'}
+                options={tagOptions}
+                dropdownList={tagOptions}
+                onChange={value => updateForm('tag', value?.value)}
+                value={{
+                  label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
+                }}
+                clickType="tag"
                 onUpdate={() => {}}
               />
-            ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" width="100px" center topMargin="15px">
-                {taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label}
-              </DarkText>
             )}
           </div>
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
-              marginLeft: editMode ? '25px' : '0px'
+              marginTop: editMode ? '10px' : '0px'
             }}>
-            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light paddingRight="10px" marginTop="10px">
-              Status:
-            </TitleText>
-            {editMode ? (
+            {!editMode && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
+                  Description:
+                </TitleText>
+                <div style={{ paddingLeft: '10px' }}>{taskForm?.description}</div>
+              </div>
+            )}
+            {editMode && (
               <FormField
-                zIndex="100"
-                mobile
-                required
-                margin="0px 0px 0px -5px !important"
-                // disableBorder={editMode}
-                fieldType="searchField"
-                isSearchable={true}
-                name="status"
-                placeholder="Select priority"
+                zIndexUnset
+                fieldType="input"
+                textarea
+                margin
                 fontSize="14px"
-                width="80px"
-                height={taskForm?.status ? '10px' : '30px'}
-                options={taskStatusOptions}
-                onChange={value => updateForm('status', value?.value)}
-                value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
-                clickType="status"
-                onUpdate={() => {}}
-              />
-            ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px">
-                {taskStatusOptions?.find(status => status.value === taskForm?.status)?.label}
-              </DarkText>
+                borderColor="red"
+                disableBorder={!editMode}
+                noMargin
+                width="100%"
+                onChange={e => updateForm('description', e?.target?.value)}
+                value={taskForm?.description}
+                clickType="description"
+                onUpdate={() => {}}>
+                Description
+              </FormField>
             )}
           </div>
-        </div>
-        <div
-          style={{
-            marginTop: editMode ? '10px' : '0px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start'
-          }}>
-          <TitleText
-            color="#000"
-            titleFontSize="16px"
-            lineHeight="normal"
-            light
-            marginTop="10px"
-            width="100px !important">
-            Story Points:
-          </TitleText>
-          {editMode ? (
+
+          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
+              Discussion:
+            </TitleText>
             <FormField
-              zIndexUnset
               fieldType="input"
-              disableBorder={!editMode}
-              borderRadius="0px"
-              border="1px solid #ccc"
-              margin="0px 0px 0px 0px !important"
               fontSize="14px"
-              width="100px"
-              height="30px  !important"
-              onChange={e => updateForm('storyPoints', e?.target?.value)}
-              value={taskForm?.storyPoints}
-              clickType="storyPoints"
-              onUpdate={() => {}}></FormField>
-          ) : (
-            <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px" center>
-              {taskForm?.storyPoints}
-            </DarkText>
-          )}
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginTop: editMode ? '10px' : '0px'
-          }}>
-          <TitleText
-            color="#000"
-            titleFontSize="16px"
-            lineHeight="normal"
-            light
-            marginTop="10px"
-            width="40px !important">
-            tags:
-          </TitleText>
-          {taskForm?.tag && (
-            <Badge small>
-              {tagOptions?.find(tag => tag.value === taskForm?.tag)?.label}
-              <AiOutlineClose style={{ width: '14px', height: '14px', marginLeft: '10px' }} />
-            </Badge>
-          )}
+              placeholder="Leave a comment..."
+              noMargin
+              height="auto"
+              textarea
+              width="100%"
+              display="inline !important"
+              onChange={e => setComment({ ...newComment, comment: e.target.value })}
+              value={newComment.comment}></FormField>
+          </div>
           <div
             style={{
-              width: '17px',
-              height: '17px',
-              background: '#D9D9D9',
               display: 'flex',
-              alignItems: 'center',
-              marginLeft: '10px',
-              marginRight: '10px',
-              marginTop: '-2px'
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+              marginTop: '10px'
             }}>
-            <Plus width="17" height="17" />
-          </div>
-          {editMode && (
-            <FormField
-              zIndex="99"
-              mobile
-              required
-              disableBorder={!editMode}
-              fieldType="searchField"
-              isSearchable={true}
-              name="select"
-              placeholder="Select tag"
-              fontSize="14px"
-              width="160px"
-              height={taskForm?.tag ? '10px' : '30px'}
-              options={tagOptions}
-              dropdownList={tagOptions}
-              onChange={value => updateForm('tag', value?.value)}
-              value={{
-                label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
+            <Button
+              type="outlineInverse"
+              color="#1976D2"
+              outline="#1976d2"
+              border="1px solid #1976d2"
+              backgroundColor="white"
+              style={{
+                marginRight: '10px'
               }}
-              clickType="tag"
-              onUpdate={() => {}}
-            />
-          )}
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            marginTop: editMode ? '10px' : '0px'
-          }}>
-          {!editMode && (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
-                Description:
-              </TitleText>
-              <div style={{ paddingLeft: '10px' }}>{taskForm?.description}</div>
-            </div>
-          )}
-          {editMode && (
-            <FormField
-              zIndexUnset
-              fieldType="input"
-              textarea
-              margin
-              fontSize="14px"
-              borderColor="red"
-              disableBorder={!editMode}
-              noMargin
-              width="100%"
-              onChange={e => updateForm('description', e?.target?.value)}
-              value={taskForm?.description}
-              clickType="description"
-              onUpdate={() => {}}>
-              Description
-            </FormField>
-          )}
-        </div>
+              onClick={() => {
+                if (onCancel) onCancel()
+              }}>
+              CANCEL
+            </Button>
+            <Button
+              onClick={async () => {
+                await handleSubmit()
+              }}
+              width="58.25px"
+              extraWide
+              margin="0px 37px 0px 20px"
+              type="black"
+              buttonHeight="25px"
+              fontSize="15px">
+              Save
+            </Button>
+          </div>
+          {comments &&
+            comments.length > 0 &&
+            comments.map((comment, index) => {
+              const userData = getCommentUserData(comment)
 
-        <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-          <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
-            Discussion:
-          </TitleText>
-          <FormField
-            fieldType="input"
-            fontSize="14px"
-            placeholder="Leave a comment..."
-            noMargin
-            height="auto"
-            textarea
-            width="100%"
-            display="inline !important"
-            onChange={e => setComment({ ...newComment, comment: e.target.value })}
-            value={newComment.comment}></FormField>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-            marginTop: '10px'
-          }}>
-          <Button
-            type="outlineInverse"
-            color="#1976D2"
-            outline="#1976d2"
-            border="1px solid #1976d2"
-            backgroundColor="white"
-            style={{
-              marginRight: '10px'
-            }}
-            onClick={() => {
-              if (onCancel) onCancel()
-            }}>
-            CANCEL
-          </Button>
-          <Button
-            onClick={async () => {
-              // if (newComment?.comment || newComment?.img) {
-              //   await addCommentToStory(newComment)
-              // }
-              await handleSubmit()
-            }}
-            width="58.25px"
-            extraWide
-            margin="0px 37px 0px 20px"
-            type="black"
-            buttonHeight="25px"
-            fontSize="15px">
-            Save
-          </Button>
-        </div>
-        {comments &&
-          comments.length > 0 &&
-          comments.map((comment, index) => {
-            const userData = getCommentUserData(comment)
-
-            return (
-              <WhiteCard borderColor="1px solid #F5F6F8" unset key={comment?._id} half padding="10px">
-                <Grid2 block margin="0px">
-                  <Span margin="0px 0px 10px 0px">
-                    {userData?.profilePic && (
-                      <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
-                    )}
-                    <Span space>
-                      <DarkText noMargin>
-                        {userData?.name || ''}
-                        <span style={{ paddingLeft: '20px' }}>
-                          <span>{ValidationUtils.formatDateWithDate(comment?.updatedAt)}</span>
-                          <span
-                            style={{
-                              paddingLeft: '15px'
-                            }}
-                            onClick={() => {
-                              setCommentId(comment?._id)
-                            }}>
-                            <EditIcon width="12px" height="12px" color="#585858" />
+              return (
+                <WhiteCard borderColor="1px solid #F5F6F8" unset key={comment?._id} half padding="10px">
+                  <Grid2 block margin="0px">
+                    <Span margin="0px 0px 10px 0px">
+                      {userData?.profilePic && (
+                        <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
+                      )}
+                      <Span space>
+                        <DarkText noMargin>
+                          {userData?.name || ''}
+                          <span style={{ paddingLeft: '20px' }}>
+                            <span>{ValidationUtils.formatDateWithDate(comment?.updatedAt)}</span>
+                            <span
+                              style={{
+                                paddingLeft: '15px'
+                              }}
+                              onClick={() => {
+                                setCommentId(comment?._id)
+                              }}>
+                              <EditIcon width="12px" height="12px" color="#585858" />
+                            </span>
                           </span>
-                        </span>
-                      </DarkText>
+                        </DarkText>
+                      </Span>
                     </Span>
-                  </Span>
-                </Grid2>
-                {commentId === comment?._id ? (
-                  <FormField
-                    fieldType="input"
-                    fontSize="14px"
-                    placeholder="Leave a comment..."
-                    noMargin
-                    height="auto"
-                    textarea
-                    width="100%"
-                    display="inline !important"
-                    onChange={e => {
-                      setComments(prevArray =>
-                        prevArray.map(item =>
-                          item._id === comment?._id ? { ...item, comment: e?.target.value } : item
+                  </Grid2>
+                  {commentId === comment?._id ? (
+                    <FormField
+                      fieldType="input"
+                      fontSize="14px"
+                      placeholder="Leave a comment..."
+                      noMargin
+                      height="auto"
+                      textarea
+                      width="100%"
+                      display="inline !important"
+                      onChange={e => {
+                        setComments(prevArray =>
+                          prevArray.map(item =>
+                            item._id === comment?._id ? { ...item, comment: e?.target.value } : item
+                          )
                         )
-                      )
-                    }}
-                    // onBlur={() => setCommentId('')}
-                    value={comment?.comment}></FormField>
-                ) : (
-                  <DarkText padding="0px 0px 0px 15px">{comment?.comment}</DarkText>
-                )}
-                {commentId === comment?._id && (
-                  <div
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'flex-end'
-                    }}>
-                    <Button
-                      disabled={false}
-                      onClick={async e => {
-                        e?.preventDefault()
-                        await updateComment(taskDetail?._id, comment._id, comment)
-                        setCommentId('')
                       }}
-                      width="40px"
-                      fontSize="12px"
-                      margin="0px 37px 0px 20px">
-                      <Icon name="send" color="white" width="18" height="18" />
-                    </Button>
-                  </div>
-                )}
-              </WhiteCard>
-            )
-          })}
-      </Task>
+                      value={comment?.comment}></FormField>
+                  ) : (
+                    <DarkText marginLeft="80px">{comment?.comment}</DarkText>
+                  )}
+                  {commentId === comment?._id && (
+                    <div
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end'
+                      }}>
+                      <Button
+                        disabled={false}
+                        onClick={async e => {
+                          e?.preventDefault()
+                          await updateComment(taskDetail?._id, comment._id, comment)
+                          setCommentId('')
+                        }}
+                        width="40px"
+                        fontSize="12px"
+                        margin="0px 37px 0px 20px">
+                        <Icon name="send" color="white" width="18" height="18" />
+                      </Button>
+                    </div>
+                  )}
+                </WhiteCard>
+              )
+            })}
+        </Task>
+      </form>
     </TaskFormContainer>
   )
 }
