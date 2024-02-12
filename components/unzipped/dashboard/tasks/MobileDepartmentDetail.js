@@ -16,6 +16,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+
 import { DarkText } from '../style'
 import {
   getDepartmentById,
@@ -23,7 +25,8 @@ import {
   createTask,
   updateTask,
   addCommentToStory,
-  resetStoryForm
+  resetStoryForm,
+  reorderStories
 } from '../../../../redux/actions'
 
 const Button = styled.button`
@@ -104,12 +107,20 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent)
 
-const MobileTaskDetail = ({ departmentData, getDepartmentById, resetStoryForm, updateCreateStoryForm, user }) => {
+const MobileTaskDetail = ({
+  departmentData,
+  getDepartmentById,
+  resetStoryForm,
+  updateCreateStoryForm,
+  reorderStories
+}) => {
   const router = useRouter()
 
   const { id } = router.query
   const classes = useStyles()
   const [open, setOpen] = useState(false)
+  const [expandedAccordian, setExpanded] = useState({})
+
   useEffect(() => {
     if (id) getDepartmentById(id)
   }, [id])
@@ -127,6 +138,58 @@ const MobileTaskDetail = ({ departmentData, getDepartmentById, resetStoryForm, u
     setOpen(false)
     resetStoryForm()
     await getDepartmentById(id)
+  }
+
+  const handleAccordionToggle = panel => {
+    setExpanded({
+      ...expandedAccordian,
+      [panel]: !expandedAccordian[panel]
+    })
+  }
+
+  const handleOnDragEnd = async result => {
+    if (!result.destination) return
+    const { source, destination } = result
+    handleAccordionToggle(destination?.droppableId)
+    const allStories = []
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = departmentData?.departmentTags.find(e => source.droppableId === e._id)
+      const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
+      const sourceItems = sourceColumn.tasks
+      const destItems = destColumn.tasks
+      const [removed] = sourceItems.splice(source.index, 1)
+      removed.tag = destColumn._id
+      destItems.splice(destination.index, 0, removed).map((e, index) => {
+        return {
+          ...e,
+          order: index
+        }
+      })
+      const newSource = sourceItems.map((e, index) => {
+        return {
+          ...e,
+          order: index
+        }
+      })
+      const newDestination = destItems.map((e, index) => {
+        return {
+          ...e,
+          order: index
+        }
+      })
+      departmentData?.departmentTags.forEach(e => {
+        if (e._id === sourceColumn._id) {
+          allStories.push(...newSource)
+        } else if (e._id === destColumn._id) {
+          allStories.push(...newDestination)
+        } else {
+          allStories.push(...e.tasks)
+        }
+      })
+
+      await reorderStories(allStories)
+      if (id) await getDepartmentById(id)
+    }
   }
 
   return (
@@ -168,58 +231,101 @@ const MobileTaskDetail = ({ departmentData, getDepartmentById, resetStoryForm, u
         </Button>
       </div>
       <TaskDetailContainer>
-        {departmentData?.departmentTags?.length
-          ? departmentData?.departmentTags.map(tag => {
-              return (
-                <Accordion key={tag?._id}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                    <Typography className={classes.heading}>
-                      {tag?.tagName} ({tag?.tasks?.length})
-                    </Typography>
-                  </AccordionSummary>
-                  <CustomAccordionDetails>
-                    {tag?.tasks?.length
-                      ? tag?.tasks.map(task => {
-                          return (
-                            <Task
-                              key={task?._id}
-                              onClick={() => {
-                                router.push(`/dashboard/ticket/${task._id}`)
-                              }}>
-                              <DarkText>{task?.ticketCode}</DarkText>
-                              <DarkText topMargin="5px">{task?.description}</DarkText>
-                              <DarkText margin bold topMargin="10px">
-                                <img
-                                  src={task?.assignee?.user?.profileImage}
+        <DragDropContext onDragEnd={handleOnDragEnd} onDragStart={handleAccordionToggle}>
+          <Droppable droppableId="droppable" type="COLUMN" direction="vertical" key="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={{
+                  background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                  padding: '1px 0px 0px 0px',
+                  borderRadius: '4px'
+                }}>
+                {departmentData?.departmentTags?.length
+                  ? departmentData?.departmentTags.map(tag => {
+                      return (
+                        <Accordion key={tag?._id} expanded={expandedAccordian[`${tag?.id}`]}>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header">
+                            <Typography className={classes.heading}>
+                              {tag?.tagName} ({tag?.tasks?.length})
+                            </Typography>
+                          </AccordionSummary>
+                          <CustomAccordionDetails>
+                            <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
+                              {(provided, snapshot) => (
+                                <div
+                                  {...provided.droppableProps}
+                                  ref={provided.innerRef}
                                   style={{
-                                    width: '24px',
-                                    height: '24px',
-                                    borderRadius: '50%',
-                                    marginRight: '6px'
-                                  }}
-                                />
-                                {ConverterUtils.capitalize(
-                                  `${
-                                    task?.assignee?.user?.FullName ||
-                                    `${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`
-                                  }`
-                                )}
-                              </DarkText>
-                              <DarkText bold topMargin="10px">
-                                Story Points : {task?.storyPoints}
-                              </DarkText>
-                              <DarkText bold topMargin="10px">
-                                Priority :<span style={{ paddingLeft: '40px' }}>{task?.priority}</span>
-                              </DarkText>
-                            </Task>
-                          )
-                        })
-                      : ''}
-                  </CustomAccordionDetails>
-                </Accordion>
-              )
-            })
-          : ''}
+                                    background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                                    padding: '1px 0px 0px 0px',
+                                    borderRadius: '4px'
+                                  }}>
+                                  {tag?.tasks?.length
+                                    ? tag?.tasks.map((task, index) => {
+                                        return (
+                                          <Task
+                                            key={task?._id}
+                                            onClick={() => {
+                                              router.push(`/dashboard/ticket/${task._id}`)
+                                            }}>
+                                            <Draggable key={task._id} draggableId={task._id} index={index}>
+                                              {(provided, snapshot) => (
+                                                <div
+                                                  ref={provided.innerRef}
+                                                  {...provided.draggableProps}
+                                                  {...provided.dragHandleProps}>
+                                                  <DarkText>{task?.ticketCode}</DarkText>
+                                                  <DarkText topMargin="5px">{task?.description}</DarkText>
+                                                  <DarkText margin bold topMargin="10px">
+                                                    <img
+                                                      src={task?.assignee?.user?.profileImage}
+                                                      style={{
+                                                        width: '24px',
+                                                        height: '24px',
+                                                        borderRadius: '50%',
+                                                        marginRight: '6px'
+                                                      }}
+                                                    />
+                                                    {ConverterUtils.capitalize(
+                                                      `${
+                                                        task?.assignee?.user?.FullName ||
+                                                        `${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`
+                                                      }`
+                                                    )}
+                                                  </DarkText>
+                                                  <DarkText bold topMargin="10px">
+                                                    Story Points : {task?.storyPoints}
+                                                  </DarkText>
+                                                  <DarkText bold topMargin="10px">
+                                                    Priority :
+                                                    <span style={{ paddingLeft: '40px' }}>{task?.priority}</span>
+                                                  </DarkText>
+                                                </div>
+                                              )}
+                                            </Draggable>
+                                          </Task>
+                                        )
+                                      })
+                                    : ''}
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </CustomAccordionDetails>
+                        </Accordion>
+                      )
+                    })
+                  : ''}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </TaskDetailContainer>
       <MUIDialog
         onClose={handleClose}
@@ -258,7 +364,8 @@ const mapDispatchToProps = dispatch => {
     createTask: bindActionCreators(createTask, dispatch),
     updateTask: bindActionCreators(updateTask, dispatch),
     addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
-    resetStoryForm: bindActionCreators(resetStoryForm, dispatch)
+    resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
+    reorderStories: bindActionCreators(reorderStories, dispatch)
   }
 }
 

@@ -426,7 +426,7 @@ const deleteTask = async taskId => {
 const reorderTasks = async lists => {
   await Promise.all(
     lists.map(async task => {
-      await tasks.findByIdAndUpdate(task._id, {
+      await TaskModel.findByIdAndUpdate(task._id, {
         $set: {
           order: task.order,
           tag: task.tag
@@ -434,13 +434,6 @@ const reorderTasks = async lists => {
       })
     })
   )
-
-  const updatedTasks = await tasks.find({ departmentId: lists[0].departmentId })
-  await department.findByIdAndUpdate(lists[0].departmentId, {
-    $set: {
-      tasks: updatedTasks
-    }
-  })
 
   return { msg: 'Tasks updated successfully' }
 }

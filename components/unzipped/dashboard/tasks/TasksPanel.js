@@ -1,22 +1,18 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import TicketPreview from '../TicketPreview'
-import { TODO_STATUS } from '../../../../utils/constants'
+import { FaRegCheckCircle } from 'react-icons/fa'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 import { AiOutlinePlusCircle } from 'react-icons/ai'
-import { FaRegCheckCircle } from 'react-icons/fa'
+import { TODO_STATUS } from '../../../../utils/constants'
+import TicketPreview from '../TicketPreview'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { Dialog } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
-import MuiDialogContent from '@material-ui/core/DialogContent'
-import { TitleText, DarkText, Absolute, WhiteCard, Grid3 } from '../style'
+import { TitleText, DarkText, WhiteCard } from '../style'
 import Icon from '../../../ui/Icon'
 import Button from '../../../ui/Button'
-import FormField from '../../../ui/FormField'
-import { DragDropContext } from 'react-beautiful-dnd'
-import { getDepartmentById, updateCreateStoryForm, resetStoryForm } from '../../../../redux/actions'
+import { getDepartmentById, updateCreateStoryForm, resetStoryForm, reorderStories } from '../../../../redux/actions'
 
 const Container = styled.div`
   position: relative;
@@ -66,19 +62,6 @@ const SubmitButton = styled.button`
     `};
 `
 
-const MUIDialog = withStyles(theme => ({
-  root: {
-    padding: theme.spacing(2)
-  }
-}))(Dialog)
-
-const DialogContent = withStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
-    paddingBottom: '0px !important'
-  }
-}))(MuiDialogContent)
-
 const TasksPanel = ({
   updateCreateStoryForm,
   selectedDepartment,
@@ -89,10 +72,7 @@ const TasksPanel = ({
   departmentData,
   resetStoryForm
 }) => {
-  const dragItem = useRef()
-  const dragOverItem = useRef()
   const [storyModal, setStoryModal] = React.useState(false)
-  const [storyList, setStoryList] = useState([])
   const [taskId, setTaskId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
 
@@ -110,17 +90,17 @@ const TasksPanel = ({
     }
   }
 
-  const handleOnDragEnd = result => {
+  const handleOnDragEnd = async result => {
     if (!result.destination) return
     const { source, destination } = result
     const allStories = []
     if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = storyList.find(e => source.droppableId === e.tag._id)
-      const destColumn = storyList.find(e => destination.droppableId === e.tag._id)
-      const sourceItems = sourceColumn.stories
-      const destItems = destColumn.stories
+      const sourceColumn = departmentData?.departmentTags.find(e => source.droppableId === e._id)
+      const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
+      const sourceItems = sourceColumn.tasks
+      const destItems = destColumn.tasks
       const [removed] = sourceItems.splice(source.index, 1)
-      removed.tag = destColumn.tag._id
+      removed.tag = destColumn._id
       destItems.splice(destination.index, 0, removed).map((e, index) => {
         return {
           ...e,
@@ -139,24 +119,18 @@ const TasksPanel = ({
           order: index
         }
       })
-      storyList.forEach(e => {
-        if (e.tag._id === sourceColumn.tag._id) {
+      departmentData?.departmentTags.forEach(e => {
+        if (e._id === sourceColumn._id) {
           allStories.push(...newSource)
-        } else if (e.tag._id === destColumn.tag._id) {
+        } else if (e._id === destColumn._id) {
           allStories.push(...newDestination)
         } else {
-          allStories.push(...e.stories)
+          allStories.push(...e.tasks)
         }
       })
 
-      storyList.forEach(e => {
-        if (e.tag._id === column.tag._id) {
-          allStories.push(...newSource)
-        } else {
-          allStories.push(...e.stories)
-        }
-      })
-      reorderStories(allStories, access)
+      await reorderStories(allStories, access)
+      if (selectedDepartment?._id) await getDepartmentById(selectedDepartment._id)
     }
   }
 
@@ -223,107 +197,151 @@ const TasksPanel = ({
 
       <StoryTable>
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <div>
-            {departmentData?.departmentTags?.length
-              ? departmentData?.departmentTags.map(tag => {
-                  return (
-                    <div key={tag._id}>
-                      <WhiteCard padding="10px 40px" noMargin borderRadius="0px" row background="#F7F7F7">
-                        <DarkText noMargin bold width="300px">
-                          {tag.tagName} ({tag?.tasks?.length})
-                        </DarkText>
-                        <DarkText noMargin center bold width="200px">
-                          STORY POINTS
-                        </DarkText>
-                        <DarkText noMargin center bold width="100px">
-                          ASSIGNEE
-                        </DarkText>
-                      </WhiteCard>
-                      {tag?.tasks?.length
-                        ? tag?.tasks.map(task => {
-                            return (
-                              <WhiteCard
-                                padding="10px 10px"
-                                noMargin
-                                borderRadius="0px"
-                                row
-                                background="#F7F7F7"
-                                key={task._id}>
-                                <DarkText
-                                  noMargin
-                                  bold
-                                  width="300px"
-                                  onClick={async () => {
-                                    setTaskId(task._id)
-                                    openStoryModal()
+          <Droppable droppableId="droppable" type="COLUMN" direction="vertical" key="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={{
+                  background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                  padding: '1px 0px 0px 0px',
+                  borderRadius: '4px'
+                }}>
+                <div>
+                  {departmentData?.departmentTags?.length
+                    ? departmentData?.departmentTags.map(tag => {
+                        return (
+                          <div key={tag._id}>
+                            <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
+                              {(provided, snapshot) => (
+                                <div
+                                  {...provided.droppableProps}
+                                  ref={provided.innerRef}
+                                  style={{
+                                    background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                                    padding: '1px 0px 0px 0px',
+                                    borderRadius: '4px'
                                   }}>
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      flexDirection: 'row',
-                                      alignItems: 'center'
-                                    }}>
-                                    <div
-                                      style={{
-                                        marginRight: '20px'
-                                      }}>
-                                      <FaRegCheckCircle color={getStatusColor(task)} />
-                                    </div>
-                                    {task.taskName}
-                                  </div>
-                                </DarkText>
-                                <DarkText noMargin center bold width="200px" marginLeft="30px">
-                                  {task.storyPoints}
-                                </DarkText>
-                                <DarkText noMargin center bold width="100px" paddingLeft="50px">
-                                  <img
-                                    src={task?.assignee?.user?.profileImage}
-                                    style={{
-                                      width: '24px',
-                                      height: '24px',
-                                      borderRadius: '50%',
-                                      marginRight: '6px'
-                                    }}
-                                  />
-                                </DarkText>
-                              </WhiteCard>
-                            )
-                          })
-                        : ''}
+                                  <WhiteCard padding="10px 40px" noMargin borderRadius="0px" row background="#F7F7F7">
+                                    <DarkText noMargin bold width="300px">
+                                      {tag.tagName} ({tag?.tasks?.length})
+                                    </DarkText>
+                                    <DarkText noMargin center bold width="200px">
+                                      STORY POINTS
+                                    </DarkText>
+                                    <DarkText noMargin center bold width="100px">
+                                      ASSIGNEE
+                                    </DarkText>
+                                  </WhiteCard>
 
-                      <WhiteCard
-                        onClick={() => {
-                          updateCreateStoryForm({
-                            businessId: selectedDepartment.businessId,
-                            departmentId: selectedDepartment._id,
-                            tag: tag._id,
-                            status: TODO_STATUS
-                          })
-                          setIsEditing(false)
-                          setStoryModal(true)
-                        }}
-                        noMargin
-                        borderRadius="0px"
-                        padding="10px 10px"
-                        row
-                        background="#FFF">
-                        <DarkText className="d-flex align-items-center" noMargin bold color="#2F76FF" clickable>
-                          <AiOutlinePlusCircle
-                            style={{
-                              fontSize: '18px',
-                              marginRight: '20px'
-                            }}
-                          />
-                          ADD TASK
-                        </DarkText>
-                      </WhiteCard>
-                    </div>
-                  )
-                })
-              : ''}
-          </div>
+                                  {tag?.tasks?.length
+                                    ? tag?.tasks.map((task, index) => {
+                                        return (
+                                          <div key={task._id}>
+                                            <Draggable key={task._id} draggableId={task._id} index={index}>
+                                              {(provided, snapshot) => (
+                                                <div
+                                                  ref={provided.innerRef}
+                                                  {...provided.draggableProps}
+                                                  {...provided.dragHandleProps}>
+                                                  <WhiteCard
+                                                    padding="10px 10px"
+                                                    noMargin
+                                                    borderRadius="0px"
+                                                    row
+                                                    background="#F7F7F7">
+                                                    <DarkText
+                                                      noMargin
+                                                      bold
+                                                      width="300px"
+                                                      onClick={async () => {
+                                                        setTaskId(task._id)
+                                                        openStoryModal()
+                                                      }}>
+                                                      <div
+                                                        style={{
+                                                          display: 'flex',
+                                                          flexDirection: 'row',
+                                                          alignItems: 'center'
+                                                        }}>
+                                                        <div
+                                                          style={{
+                                                            marginRight: '20px'
+                                                          }}>
+                                                          <FaRegCheckCircle color={getStatusColor(task)} />
+                                                        </div>
+                                                        {task.taskName}
+                                                      </div>
+                                                    </DarkText>
+                                                    <DarkText noMargin center bold width="200px" marginLeft="30px">
+                                                      {task.storyPoints}
+                                                    </DarkText>
+                                                    <DarkText noMargin center bold width="100px" paddingLeft="50px">
+                                                      <img
+                                                        src={task?.assignee?.user?.profileImage}
+                                                        style={{
+                                                          width: '24px',
+                                                          height: '24px',
+                                                          borderRadius: '50%',
+                                                          marginRight: '6px'
+                                                        }}
+                                                      />
+                                                    </DarkText>
+                                                  </WhiteCard>
+                                                </div>
+                                              )}
+                                            </Draggable>
+                                          </div>
+                                        )
+                                      })
+                                    : ''}
+                                  <WhiteCard
+                                    onClick={() => {
+                                      updateCreateStoryForm({
+                                        businessId: selectedDepartment.businessId,
+                                        departmentId: selectedDepartment._id,
+                                        tag: tag._id,
+                                        status: TODO_STATUS
+                                      })
+                                      setIsEditing(false)
+                                      setStoryModal(true)
+                                    }}
+                                    noMargin
+                                    borderRadius="0px"
+                                    padding="10px 10px"
+                                    row
+                                    background="#FFF">
+                                    <DarkText
+                                      className="d-flex align-items-center"
+                                      noMargin
+                                      bold
+                                      color="#2F76FF"
+                                      clickable>
+                                      <AiOutlinePlusCircle
+                                        style={{
+                                          fontSize: '18px',
+                                          marginRight: '20px'
+                                        }}
+                                      />
+                                      ADD TASK
+                                    </DarkText>
+                                  </WhiteCard>
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
+                        )
+                      })
+                    : ''}
+                </div>
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </DragDropContext>
       </StoryTable>
+
       {storyModal && (
         <TicketPreview
           open={storyModal}
@@ -334,7 +352,6 @@ const TasksPanel = ({
           }}
         />
       )}
-      {/* {!loading ? 'ADD TASK' : <CircularProgress size={18} />} */}
     </Container>
   )
 }
@@ -350,7 +367,8 @@ const mapDispatchToProps = dispatch => {
   return {
     getDepartmentById: bindActionCreators(getDepartmentById, dispatch),
     updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
-    resetStoryForm: bindActionCreators(resetStoryForm, dispatch)
+    resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
+    reorderStories: bindActionCreators(reorderStories, dispatch)
   }
 }
 

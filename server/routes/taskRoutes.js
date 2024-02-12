@@ -130,4 +130,14 @@ router.delete(
   }
 )
 
+router.post('/order', requireLogin, permissionCheckHelper.hasPermission('orderTasks'), async (req, res) => {
+  try {
+    const orderTasks = await taskHelper.reorderTasks(req.body)
+    if (!orderTasks) throw Error('failed to reorder tasks')
+    res.json(orderTasks)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 module.exports = router

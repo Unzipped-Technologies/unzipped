@@ -11,6 +11,7 @@ import {
   UPDATE_CREATE_STORY,
   TASK_ERROR,
   SET_DEPARTMENT,
+  REORDER_STORIES,
   SET_CURRENT_TICKET,
   RESET_STORY_FORM,
   REMOVE_COMMENT_FROM_STORY
@@ -154,7 +155,7 @@ export const reorderStories = (data, token) => async (dispatch, getState) => {
   })
   dispatch({ type: LOAD_STATE })
   await axios
-    .post(`/api/business/current/task/order`, data, tokenConfig(token))
+    .post(`/api/tasks/order`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: SUCCESS,
