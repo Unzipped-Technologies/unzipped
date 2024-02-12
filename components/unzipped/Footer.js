@@ -43,6 +43,7 @@ const Links = styled.div`
     @media(max-width: 847px) {
         flex-flow: column;
         flex-direction: column-reverse; 
+        padding-bottom: 25px;
     }
 `;
 
