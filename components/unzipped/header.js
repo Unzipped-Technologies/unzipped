@@ -270,12 +270,12 @@ const mobileMenuItems = [
           {
               name: 'How to Hire',
               sub: 'Find talented people to hire',
-              link: '/projects'
+              link: '/how-it-works/freelancer'
           },
           {
               name: 'How to find work',
               sub: 'Narrow down your search',
-              link: '/projects'
+              link: '/how-it-works/freelancer'
           },
           {
               name: 'Quick start guides',

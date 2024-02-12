@@ -29,6 +29,9 @@ const Logo = styled.img`
     margin-right: 0.5rem;
     max-width: 170px;
   }
+  @media (max-width: 286px) {
+    max-width: 150px;
+  }
 `
 
 const Container = styled.div`
@@ -214,14 +217,14 @@ const FullScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, sta
                                 </SubHeader>
                                 {item.subItems.map((sub, index) => {
                                     return (
-                                        <SubItem key={sub.name + index} onClick={() => linkPush(sub.link)}  sub={!(typeof sub.sub === 'string')}>
+                                        <SubItem key={sub.name + index} onClick={() => typeof sub.sub === 'string' && linkPush(sub.link)}  sub={!(typeof sub.sub === 'string')}>
                                             <SubItemTitle>
                                                 {sub.name}
                                             </SubItemTitle>
                                             <SubItemDescription sub={!(typeof sub.sub === 'string')}>
                                                 {typeof sub.sub === 'string' ? sub.sub : sub.sub.map((element, index) => {
                                                     return (
-                                                        <WikiContainer key={element.name + index}>
+                                                        <WikiContainer key={element.name + index} onClick={() => linkPush(element.link)}>
                                                             {element.icon}
                                                             <WikiTextBox>
                                                                 <WikiTitle>
