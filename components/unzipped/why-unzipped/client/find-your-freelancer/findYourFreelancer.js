@@ -9,7 +9,7 @@ const FindFreelancerSectionContainer = styled.div`
     align-items: center;
     padding: 2rem;
     @media screen and (max-width: 600px){
-        width: 385px;
+        width: 100%;//385px;
         flex-direction: column;
     }
 `;
@@ -24,7 +24,7 @@ const ImageBox = styled.div`
 `;
 
 const ImageBoxResp = styled.div`
-    width: 385px;
+    width: 100%;//385px;
     border-radius: 10px;
     @media screen and (min-width: 600px){
         display: none;
@@ -36,7 +36,7 @@ const TextContainer = styled.div`
     height: 390px;
     border-radius: 10px;
     @media screen and (max-width: 600px){
-        width: 385px;
+        width: 100%;//385px;
         height: auto;
     }
 `;
@@ -54,6 +54,7 @@ const SubHeadingStyled = styled.h1`
     @media screen and (max-width: 600px){
         font-size: 18px;
         line-height: 23px;
+        margin-bottom: 10px;
     }
 `;
 
@@ -127,13 +128,14 @@ const SkilledFreelancerSection = styled.div`
     padding-left: 2rem;
     gap: 0.75rem;
     @media screen and (max-width: 600px){
-        width: 385px;
+        width: 100%;//385px;
         flex-direction: column;
+        margin-right: 10px;
     }
 `;
 
 const BrowseButtonBox = styled.button`
-    margin-top: 3.125rem;
+    margin-top: 1.125rem;
     ${getButtonStyled({
     width: '11.75rem',
     height: FONT_SIZE.PX_38,
@@ -145,19 +147,33 @@ const BrowseButtonBox = styled.button`
 `;
 
 const LowerHeaderStyled = styled.h1`
-    margin-top: 0;
     ${getFontStyled({
     color: COLORS.black,
-    fontSize: FONT_SIZE.PX_28,
+    fontSize: FONT_SIZE.PX_25,
     fontWeight: 500,
     fontStyle: 'normal',
     lineHeight: FONT_SIZE.PX_23,
     letterSpacing: LETTER_SPACING
 })}
+@media screen and (max-width: 600px){
+     margin-top: 15px;
+}
 `;
 
 const SkilledParagraphSection = styled.div`
     width: 31.25rem;
+    @media screen and (max-width: 600px){
+        width: 100%;
+        padding-right: 10px;
+                &:after{
+            content : '';
+            display : block;
+            height : 2px;
+            width : 100%;
+            background: #F3F6F3;
+            margin-top: ${FONT_SIZE.PX_43};
+        }
+    }
 `;
 const ImageBoxSkilledFreelancer = styled.div`
     width: 552px;
@@ -169,7 +185,7 @@ const ImageBoxSkilledFreelancer = styled.div`
 `;
 
 const ImageBoxSkilledFreelancerRes = styled.div`
-width: 385px;
+width: 100%;//385px;
 @media screen and (min-width: 600px){
     display: none;
 }
@@ -197,7 +213,7 @@ const FindYourFreelancer = () => {
 
             <SkilledFreelancerSection>
                 <ImageBoxSkilledFreelancerRes>
-                    <img src="/img/PerfectFreelancer_2.png" width="385" />
+                    <img src="/img/PerfectFreelancer_2.png" width={"90%"} />
                 </ImageBoxSkilledFreelancerRes>
                 <SkilledParagraphSection>
                     <LowerHeaderStyled>Direct Access to Skilled Freelancers</LowerHeaderStyled>

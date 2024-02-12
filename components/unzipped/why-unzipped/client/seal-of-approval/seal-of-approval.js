@@ -8,16 +8,19 @@ const Container = styled.div`
     justify-content: center;
     width: 1052px;
     @media screen and (max-width: 600px){
-        width: 385px;
+        width: 100%;//385px;
         flex-direction: column;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 `;
 
 const ParagraphText = styled.p`
+    margin-left: 20px;
     ${getFontStyled(
     {
         color: COLORS.gray,
-        fontSize: FONT_SIZE.PX_22,
+        fontSize: FONT_SIZE.PX_18,
         fontWeight: 500,
         fontStyle: 'normal',
         lineHeight: FONT_SIZE.PX_23,
@@ -30,13 +33,17 @@ const TextBoxContainer = styled.div`
     padding-left: 2rem;
     @media screen and (max-width: 600px){
         padding-left: 0;
-        width: 385px;
+        width: 100%;//385px;
     }
 
 `;
 
 const ChecklistContainer = styled.div`
     width: 481px;
+    margin-left: 20px;
+    @media screen and (max-width: 600px){
+        width: 100%;//385px;
+    }
 `
 
 const ParagraphTextList = styled.p`

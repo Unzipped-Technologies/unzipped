@@ -13,8 +13,7 @@ const SecurityPrivacy = () => {
     return (
         <SecurityPrivacyContainer>
             <HeadingResp>You’re safe with us</HeadingResp>
-
-            <ImageBox><img src="/img/SecurityPrivacy.png" /></ImageBox>
+                <ImageBox><img src="/img/SecurityPrivacy.png" width={"90%"}/></ImageBox>
             <TextBox>
                 <Heading>You’re safe with us</Heading>
                 <SubHeading> You get what you pay for. And we can prove it. </SubHeading>

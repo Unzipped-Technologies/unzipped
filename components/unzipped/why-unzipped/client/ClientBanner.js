@@ -12,8 +12,8 @@ const BannerContent = styled.div`
     background: rgba(142, 222, 100, 0.25);
     height: 24.55rem;
     @media screen and (max-width: 600px){
-        width: 377px;
-        padding: 0;
+        width: 100%;//377px;
+        padding: 10px;
         background: none;
         height: auto;
     }
@@ -24,9 +24,11 @@ const TextBox = styled.div`
     display: flex;
     flex-direction: column;
     padding: 1.25rem;
+    border-radius: 10px;
     @media screen and (max-width: 600px){
         background: rgba(142, 222, 100, 0.25);
-        width: 377px;
+        margin-left: 20px;
+        width: 100%;//377px;
         // height: 440px;
         // padding: 0;
     }
@@ -117,12 +119,11 @@ const TextContainer = styled.div`
 `;
 
 const TextContainerContent = styled.div`
-    // background: red;
     @media screen and (max-width: 600px){
         &:after{
             content: '';
             display: block;
-            width: 332px;
+            width: 98%;//332px;
             height: 1px;
             background: #D8D8D8;
             margin-top: 58px;
@@ -157,8 +158,8 @@ const ClientBanner = () => {
                             <ParagraphBox>
                                 Get work done efficiently and build lasting professional relationships on Unzipped, the go-to platform for hourly, long-term contracts.
                             </ParagraphBox>
-                            <ButtonBox> 
-                                <ButtonText onClick={() => router.push('/register')}>Create Profile</ButtonText> 
+                            <ButtonBox>
+                                <ButtonText onClick={() => router.push('/register')}>Create Profile</ButtonText>
                             </ButtonBox>
                         </TextContainerContent>
                         <FooterTextContent>

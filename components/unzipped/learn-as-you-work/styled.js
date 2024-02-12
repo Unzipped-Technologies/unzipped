@@ -98,7 +98,7 @@ const CardWrapper = styled.div`
 const CartContainer = styled.div`
     width: 820px;
     @media screen and (max-width: 600px){
-        width: 375px;
+        width: 100%;//375px;
     }
 `;
 const ItemContainer = styled.div`
@@ -106,7 +106,7 @@ const ItemContainer = styled.div`
     display: flex;
     gap: 32px;
     @media screen and (max-width: 600px){
-        width: 375px;
+        width: 100%;//375px;
         flex-direction: column;
     }
 `;
