@@ -20,7 +20,7 @@ const Image = styled.img`
     width: 100%;
     border-radius: 15px;
     position: relative;
-    @media(max-width: 499px) {
+    @media(max-width: 501px) {
         display: none;
     }
 `;
