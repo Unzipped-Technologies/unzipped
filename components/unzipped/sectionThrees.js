@@ -319,7 +319,7 @@ const GreenCard = styled.div`
         height: 100px;
         padding: 10px 25px;
         margin: 5px;
-        z-index: 10;
+        z-index: 1;
     }
     @media(max-width: 521px) {
         width: 100%;

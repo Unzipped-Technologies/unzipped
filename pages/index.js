@@ -9,6 +9,8 @@ import SectionFour from '../components/unzipped/SectionFour'
 import styled from 'styled-components'
 import News from '../components/unzipped/NewsletterSignup'
 import Footer from '../components/unzipped/Footer'
+import ClientLogosBar from '../components/unzipped/clientLogoBar'
+import MUIEmployeeCarousel from '../components/unzipped/EmployeeCarousel'
 import Icon from '../components/ui/Icon'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -88,6 +90,67 @@ const NewsSpacer = styled.div`
         height: 95px;
     }
 `
+
+const ClientLogoURLs = [
+    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760272/wesco_d2d6jx.png',
+    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760272/fedex_f1xhoq.png',
+    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760273/somos_yitrbz.png',
+    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760273/cooley_e5erzw.png',
+    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760273/flutter_lhgepk.png',
+    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760273/macmillan_mefnfb.png'
+]
+
+const EmployeeCarousel = [
+    {
+        name: 'Vladimir Mitrovic',
+        position: 'Engineering',
+        specialty: 'React Developer',
+        prevPosition: 'Chase Bank',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760274/vladimir_dofonq.webp'
+    },
+    {
+        name: 'Anna D Lukasiak',
+        position: 'Engineering',
+        specialty: 'Product Development',
+        prevPosition: 'Goldman Sachs',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760274/anna_qccmds.webp'
+    },
+    {
+        name: 'Ellen Su',
+        position: 'Engineering',
+        specialty: 'AWS Specialist',
+        prevPosition: 'Lehman Brothers',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760275/ellen_oevavs.webp'
+    },
+    {
+        name: 'Adan Perez',
+        position: 'Engineering',
+        specialty: 'React Developer',
+        prevPosition: 'AT & T',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760276/adam_bph4cs.webp'
+    },
+    {
+        name: 'Mathew Warkentin',
+        position: 'Engineering',
+        specialty: 'React Developer',
+        prevPosition: 'Cornell University',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760276/mathew_airoyu.webp'
+    },
+    {
+        name: 'Danielle Thompson',
+        position: 'Engineering',
+        specialty: 'Scrum Master',
+        prevPosition: 'Blackboard',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760277/danielle_gpwhf9.webp'
+    },
+    {
+        name: 'Emily Dubey',
+        position: 'Engineering',
+        specialty: 'Java Developer',
+        prevPosition: 'Macmillan Learning',
+        imgUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1707760276/emily_jix1ko.webp'
+    },
+]
 
 const projects = [
     {
@@ -176,8 +239,10 @@ const Home = ({ token }) => {
             </UnderConstruction>
             <Nav token={token} spacing={18} marginBottom="18px" />
             <HeroUnzipped />
-            <SectionOne projects={projects} />
-            <SectionOneMobile projects={projects} />
+            <ClientLogosBar urls={ClientLogoURLs} />
+            <MUIEmployeeCarousel initialItems={[...EmployeeCarousel, ...EmployeeCarousel, ...EmployeeCarousel]} />
+            {/* <SectionOne projects={projects} />
+            <SectionOneMobile projects={projects} /> */}
             <SectionTwo />
             <SectionThree />
             <Spacer />

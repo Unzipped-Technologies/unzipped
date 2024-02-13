@@ -48,11 +48,14 @@ import CircleLightningIcon from './circleLightning'
 import CircleSearchIcon from './circleSearch'
 import CircleShipIcon from './circleShip'
 import CircleNotesIcon from './circleNotes'
+import VerifiedIcon from './verifiedIcon'
+import ReactCodeIcon from './reactIcon'
 
 export {
     ClearFitLogo,
     SkillPodLogo,
     HexagonIcon,
+    ReactCodeIcon,
     MailIcon,
     CloseIcon,
     PhoneIcon,
@@ -72,6 +75,7 @@ export {
     CircleNotesIcon,
     LinkedInIcon,
     CircleStar,
+    VerifiedIcon,
     WorkIcon,
     ThumbsDownIcon,
     ThumbsUpIcon,
