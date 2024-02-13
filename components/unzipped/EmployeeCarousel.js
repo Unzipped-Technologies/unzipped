@@ -12,6 +12,9 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     margin: 25px 0px;
+    @media (max-width: 550px) {
+        margin: 5px 0px;
+      }
 `;
 
 const CarouselWrapper = styled.div`
@@ -24,6 +27,9 @@ const CarouselWrapper = styled.div`
   margin: 25px 0px;
   display: flex;
   justify-content: center;
+  @media (max-width: 550px) {
+    padding: 0px 40px;
+  }
 `;
 
 const CarouselContainer = styled.div`
