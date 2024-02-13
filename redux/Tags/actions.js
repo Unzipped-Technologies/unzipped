@@ -4,6 +4,8 @@ import {
   GET_TAG_BY_ID,
   GET_TAGS,
   DELETE_TAG,
+  UPDATE_TAG_FORM,
+  RESET_TAG_FORM,
   LOAD_STATE,
   SUCCESS,
   TAG_ERROR
@@ -16,9 +18,8 @@ import { ConverterUtils } from '../../utils'
 export const createTag = data => async (dispatch, getState) => {
   dispatch(startLoading())
 
-  const formData = ConverterUtils.toFormData(data)
   await axios
-    .post(`/api/tags/create`, formData, tokenConfig(getState()?.Auth.token))
+    .post(`/api/tags`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: CREATE_TAG,
@@ -119,4 +120,18 @@ export const deleteTag = tagID => async (dispatch, getState) => {
       })
     })
   dispatch(stopLoading())
+}
+
+export const updateCreateTagForm = data => async (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_TAG_FORM,
+    payload: data
+  })
+}
+
+export const resetTagForm = () => async (dispatch, getState) => {
+  dispatch({
+    type: RESET_TAG_FORM,
+    payload: {}
+  })
 }

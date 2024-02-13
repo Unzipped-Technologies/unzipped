@@ -66,7 +66,7 @@ const createDepartment = async data => {
   }
 }
 
-const getDepartmentById = async (id, select = '') => {
+const getDepartmentById = async (id, filters) => {
   try {
     const aggregate = [
       {
@@ -121,7 +121,10 @@ const getDepartmentById = async (id, select = '') => {
                 pipeline: [
                   {
                     $match: {
-                      $expr: { $eq: ['$tag', '$$tagId'] }
+                      // $expr: { $eq: ['$tag', '$$tagId'] }
+                      $expr: {
+                        $and: [{ $eq: ['$tag', '$$tagId'] }, { ...filters.assignee }]
+                      }
                     }
                   },
                   {

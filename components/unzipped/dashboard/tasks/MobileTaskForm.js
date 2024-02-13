@@ -16,8 +16,7 @@ import {
   createTask,
   updateTask,
   updateComment,
-  addCommentToStory,
-  resetStoryForm
+  addCommentToStory
 } from '../../../../redux/actions'
 import Image from '../../../ui/Image'
 import { ValidationUtils } from '../../../../utils'
@@ -72,11 +71,12 @@ const MobileTaskForm = ({
   onCancel,
   createTask,
   updateTask,
-  user
+  userId,
+  userRole
 }) => {
   const [editMode, setEditMode] = useState(isEditing)
   const [commentId, setCommentId] = useState('')
-  const [comments, setComments] = useState(taskDetail?.comments || [])
+  const [comments, setComments] = useState([])
   const [newComment, setComment] = useState({
     comment: '',
     img: '',
@@ -166,6 +166,12 @@ const MobileTaskForm = ({
     }
   }, [taskDetail])
 
+  useEffect(() => {
+    if (taskDetail) {
+      setComments(taskDetail?.comments)
+    }
+  }, [taskDetail])
+
   const getCommentUserData = comment => {
     let userData = {
       profilePic: '',
@@ -177,7 +183,7 @@ const MobileTaskForm = ({
         taskDetail?.department?.client?.FullName ||
         `${taskDetail?.department?.client?.FirstName} ${taskDetail?.department?.client?.LastName}`
     } else {
-      for (var contract of contracts) {
+      for (var contract of departmentData?.contracts) {
         if (contract?.freelancer?.user?._id === comment?.userId) {
           userData.profilePic = contract?.freelancer?.user?.profileImage
           userData.name =
@@ -211,7 +217,7 @@ const MobileTaskForm = ({
       const comments = [
         {
           comment: newComment.comment,
-          userId: user._id
+          userId: userId
         }
       ]
 
@@ -222,11 +228,21 @@ const MobileTaskForm = ({
 
     if (isCreating) {
       await createTask(taskForm)
+      resetState()
       onCancel && onCancel()
     } else {
       await updateTask(taskDetail?._id, taskForm)
+      resetState()
       onCancel && onCancel()
     }
+  }
+
+  const resetState = () => {
+    setComment({
+      comment: '',
+      img: '',
+      taskId: taskDetail?._id
+    })
   }
 
   return (
@@ -247,6 +263,7 @@ const MobileTaskForm = ({
               borderColor="red"
               placeholder="Task Name"
               disableBorder={!editMode}
+              disabled={userRole === 1}
               noMargin
               width="100%"
               height="36px !important"
@@ -281,6 +298,7 @@ const MobileTaskForm = ({
                 mobile
                 zIndex="1000"
                 disableBorder={editMode}
+                disabled={userRole === 1}
                 fieldType="searchField"
                 isSearchable={true}
                 name="select"
@@ -358,6 +376,7 @@ const MobileTaskForm = ({
                   isSearchable={true}
                   name="select"
                   placeholder=" priority"
+                  disabled={userRole === 1}
                   fontSize="14px"
                   width="100px"
                   height={taskForm?.priority ? '10px' : '30px'}
@@ -447,6 +466,7 @@ const MobileTaskForm = ({
                 border="1px solid #ccc"
                 margin="0px 0px 0px 0px !important"
                 fontSize="14px"
+                disabled={userRole === 1}
                 width="100px"
                 height="30px  !important"
                 onChange={e => updateForm('storyPoints', e?.target?.value)}
@@ -487,7 +507,6 @@ const MobileTaskForm = ({
                 background: '#D9D9D9',
                 display: 'flex',
                 alignItems: 'center',
-                // marginLeft: '10px',
                 marginRight: '10px',
                 marginTop: '-2px'
               }}>
@@ -539,6 +558,7 @@ const MobileTaskForm = ({
                 fontSize="14px"
                 borderColor="red"
                 disableBorder={!editMode}
+                disabled={userRole === 1}
                 noMargin
                 width="100%"
                 onChange={e => updateForm('description', e?.target?.value)}
@@ -617,15 +637,17 @@ const MobileTaskForm = ({
                           {userData?.name || ''}
                           <span style={{ paddingLeft: '20px' }}>
                             <span>{ValidationUtils.formatDateWithDate(comment?.updatedAt)}</span>
-                            <span
-                              style={{
-                                paddingLeft: '15px'
-                              }}
-                              onClick={() => {
-                                setCommentId(comment?._id)
-                              }}>
-                              <EditIcon width="12px" height="12px" color="#585858" />
-                            </span>
+                            {comment?.userId === userId && (
+                              <span
+                                style={{
+                                  paddingLeft: '15px'
+                                }}
+                                onClick={() => {
+                                  setCommentId(comment?._id)
+                                }}>
+                                <EditIcon width="12px" height="12px" color="#585858" />
+                              </span>
+                            )}
                           </span>
                         </DarkText>
                       </Span>
@@ -685,7 +707,8 @@ const MobileTaskForm = ({
 
 const mapStateToProps = state => {
   return {
-    user: state.Auth.user,
+    userId: state.Auth.user?._id,
+    userRole: state.Auth.user?.role,
     taskForm: state.Tasks.createStoryForm
   }
 }
@@ -696,7 +719,6 @@ const mapDispatchToProps = dispatch => {
     updateTask: bindActionCreators(updateTask, dispatch),
     updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
     addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
-    resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
     updateComment: bindActionCreators(updateComment, dispatch)
   }
 }

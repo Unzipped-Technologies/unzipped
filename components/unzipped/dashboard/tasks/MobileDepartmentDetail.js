@@ -112,7 +112,8 @@ const MobileTaskDetail = ({
   getDepartmentById,
   resetStoryForm,
   updateCreateStoryForm,
-  reorderStories
+  reorderStories,
+  userRole
 }) => {
   const router = useRouter()
 
@@ -206,30 +207,33 @@ const MobileTaskDetail = ({
           router.back()
         }}
       />
-      <div
-        style={{
-          margin: '10px',
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'flex-end'
-        }}>
-        <Button
-          mobile
-          disabled={false}
-          onClick={async () => {
-            handleOpen()
-          }}
-          type="black"
-          colors={{
-            text: '#FFF',
-            background: '#1976D2',
-            border: '1px',
-            wideBorder: '#1976D2',
-            paddingBottom: '30px'
+      {userRole === 0 && (
+        <div
+          style={{
+            margin: '10px',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end'
           }}>
-          <AiOutlinePlus style={{ fontSize: '20px', fontWeight: 'bold' }} /> Add
-        </Button>
-      </div>
+          <Button
+            mobile
+            disabled={false}
+            onClick={async () => {
+              handleOpen()
+            }}
+            type="black"
+            colors={{
+              text: '#FFF',
+              background: '#1976D2',
+              border: '1px',
+              wideBorder: '#1976D2',
+              paddingBottom: '30px'
+            }}>
+            <AiOutlinePlus style={{ fontSize: '20px', fontWeight: 'bold' }} /> Add
+          </Button>
+        </div>
+      )}
+
       <TaskDetailContainer>
         <DragDropContext onDragEnd={handleOnDragEnd} onDragStart={handleAccordionToggle}>
           <Droppable droppableId="droppable" type="COLUMN" direction="vertical" key="droppable">
@@ -350,7 +354,8 @@ const MobileTaskDetail = ({
 
 const mapStateToProps = state => {
   return {
-    user: state.Auth.user,
+    userRole: state.Auth.user?.role,
+
     departmentData: state.Departments.selectedDepartment,
     taskForm: state.Tasks.createStoryForm,
     currentDepartment: state.Tasks.currentDepartment

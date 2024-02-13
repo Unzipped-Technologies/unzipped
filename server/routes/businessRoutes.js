@@ -1,4 +1,6 @@
 const express = require('express')
+const mongoose = require('mongoose')
+
 const router = express.Router()
 const businessHelper = require('../helpers/business')
 const departmentHelper = require('../helpers/department')
@@ -6,7 +8,8 @@ const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
 const upload = require('../middlewares/multer')
 
-router.post('/create',
+router.post(
+  '/create',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusiness'),
   upload.array('images', 3),
@@ -14,14 +17,15 @@ router.post('/create',
     const id = req.body.id || req.user.sub
     // req.body.user = id
     try {
-      const { projectDetails } = req.body;
+      const { projectDetails } = req.body
       const createBusiness = await businessHelper.createBusiness(JSON.parse(projectDetails), id, req.files)
       if (!createBusiness) throw Error('business already exists')
       res.json(createBusiness)
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-  })
+  }
+)
 
 router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateBusiness'), async (req, res) => {
   try {
@@ -49,18 +53,31 @@ router.post(
   }
 )
 
-router.post('/list', requireLogin, async (req, res) => {
+router.post('/list', requireLogin, permissionCheckHelper.hasPermission('userListBusinesses'), async (req, res) => {
   try {
-    if (!req.body?.filter) {
-      if (req.user?.userInfo?.role && req.user?.userInfo?.role !== 1) {
-        Object.assign(req.body, { filter: { userId: req.user.sub } })
-      }
-    } else {
-      if (req.user?.userInfo?.role && req.user?.userInfo?.role !== 1) {
-        req.body['filter'].userId = req.user.sub
+    if (req.user?.userInfo) {
+      if (req.user?.userInfo?.role === 1 && req.user?.userInfo?.freelancers) {
+        req.body['filter'] = Object.assign({}, req.body?.['filter'], {
+          applicants: { $in: [mongoose.Types.ObjectId(req.user?.userInfo?.freelancers)] }
+        })
+      } else if (req.user?.userInfo?.role === 0) {
+        req.body['filter'] = Object.assign({}, req.body?.['filter'], {
+          userId: req.user.sub
+        })
       }
     }
 
+    const listBusinesses = await businessHelper.listBusinesses(req.body)
+    if (!listBusinesses) throw Error('could not find businesses')
+    res.json(listBusinesses)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.post('/public/list', async (req, res) => {
+  try {
+    req.body['filter'].isActive = true
     const listBusinesses = await businessHelper.listBusinesses(req.body)
     if (!listBusinesses) throw Error('could not find businesses')
     res.json(listBusinesses)

@@ -41,10 +41,11 @@ const TaskForm = ({
   updateTask,
   updateComment,
   userId,
-  departmentData
+  departmentData,
+  userRole
 }) => {
   const [editMode, setEditMode] = useState()
-  const [comments, setComments] = useState(taskDetail?.comments || [])
+  const [comments, setComments] = useState([])
   const [newComment, setComment] = useState({
     comment: '',
     img: '',
@@ -144,7 +145,7 @@ const TaskForm = ({
   }, [])
 
   const enableEditMode = () => {
-    setEditMode(true)
+    if (userRole !== 1) setEditMode(true)
   }
   const disableEditMode = () => {
     if (document.activeElement?.tagName?.toLowerCase() === 'div') {
@@ -152,7 +153,7 @@ const TaskForm = ({
     }
   }
   useEffect(() => {
-    setEditMode(!isEditing)
+    if (userRole !== 1) setEditMode(!isEditing)
   }, [isEditing])
 
   const updateForm = (field, value) => {
@@ -194,7 +195,7 @@ const TaskForm = ({
         taskDetail?.department?.client?.FullName ||
         `${taskDetail?.department?.client?.FirstName} ${taskDetail?.department?.client?.LastName}`
     } else {
-      for (var contract of contracts) {
+      for (var contract of departmentData?.contracts) {
         if (contract?.freelancer?.user?._id === comment?.userId) {
           userData.profilePic = contract?.freelancer?.user?.profileImage
           userData.name =
@@ -276,6 +277,7 @@ const TaskForm = ({
             name="taskName"
             fontSize="14px"
             borderColor="red"
+            disabled={userRole === 1}
             disableBorder={!editMode}
             noMargin
             width="500px"
@@ -307,6 +309,7 @@ const TaskForm = ({
                 fieldType="searchField"
                 isSearchable={true}
                 name="assignee"
+                disabled={userRole === 1}
                 options={assigneeOptions}
                 placeholder="assignee"
                 fontSize="14px"
@@ -381,28 +384,29 @@ const TaskForm = ({
               }}>
               <Plus width="17" height="17" />
             </div>
-            {editMode && (
-              <FormField
-                zIndex="1000"
-                mobile
-                required
-                fieldType="searchField"
-                isSearchable={true}
-                name="tags"
-                placeholder="Select tag"
-                fontSize="14px"
-                width="160px"
-                height="10px"
-                options={tagOptions}
-                dropdownList={tagOptions}
-                onChange={value => updateForm('tag', value?.value)}
-                value={{
-                  label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
-                }}
-                clickType="tag"
-                onUpdate={() => {}}
-              />
-            )}
+            {editMode ||
+              (userRole === 1 && (
+                <FormField
+                  zIndex="1000"
+                  mobile
+                  required
+                  fieldType="searchField"
+                  isSearchable={true}
+                  name="tags"
+                  placeholder="Select tag"
+                  fontSize="14px"
+                  width="160px"
+                  height="10px"
+                  options={tagOptions}
+                  dropdownList={tagOptions}
+                  onChange={value => updateForm('tag', value?.value)}
+                  value={{
+                    label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
+                  }}
+                  clickType="tag"
+                  onUpdate={() => {}}
+                />
+              ))}
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
@@ -426,6 +430,7 @@ const TaskForm = ({
                 fieldType="searchField"
                 isSearchable={true}
                 name="priority"
+                disabled={userRole === 1}
                 placeholder="Select priority"
                 fontSize="14px"
                 width="160px"
@@ -460,6 +465,7 @@ const TaskForm = ({
                 border="1px solid #ccc"
                 fontSize="14px"
                 name="storyPoints"
+                disabled={userRole === 1}
                 width="160px"
                 margin="0px 0px 0px 0px"
                 height="30px  !important"
@@ -485,7 +491,7 @@ const TaskForm = ({
               paddingRight="30px">
               Status:
             </TitleText>
-            {editMode ? (
+            {editMode || userRole === 1 ? (
               <FormField
                 zIndex="1"
                 mobile
@@ -582,19 +588,21 @@ const TaskForm = ({
                     </DarkText>
                   </Span>
                 </Span>
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                    marginTop: '20px'
-                  }}
-                  onClick={() => {
-                    setCommentId(comment?._id)
-                  }}>
-                  <EditIcon width="12px" height="12px" color="#585858" />
-                </div>
+                {comment?.userId === userId && (
+                  <div
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                      marginTop: '20px'
+                    }}
+                    onClick={() => {
+                      setCommentId(comment?._id)
+                    }}>
+                    <EditIcon width="12px" height="12px" color="#585858" />
+                  </div>
+                )}
               </Grid2>
               {commentId === comment?._id ? (
                 <div
@@ -644,6 +652,7 @@ const TaskForm = ({
 const mapStateToProps = state => {
   return {
     userId: state.Auth.user?._id,
+    userRole: state.Auth.user?.role,
     departmentData: state.Departments.selectedDepartment,
     taskDetail: state.Tasks.selectedTask,
     taskForm: state.Tasks.createStoryForm

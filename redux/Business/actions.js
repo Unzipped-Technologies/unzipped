@@ -59,11 +59,10 @@ export const createBusiness = (data, token) => async (dispatch, getState) => {
 
   await axios
     .post(`/api/business/create`, data, {
-      "headers": {
+      headers: {
         'Content-Type': 'multipart/form-data',
-        "access_token": token
+        access_token: token
       }
-
     })
     .then(res =>
       dispatch({
@@ -108,13 +107,37 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-          type: GET_PROJECT_LIST_AND_APPEND,
-          payload: res.data
-        })
+            type: GET_PROJECT_LIST_AND_APPEND,
+            payload: res.data
+          })
         : dispatch({
-          type: GET_PROJECT_LIST,
-          payload: res.data
-        })
+            type: GET_PROJECT_LIST,
+            payload: res.data
+          })
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_PROJECT_Error,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const getPublicProjectsList = queryParams => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+  await axios
+    .post(`/api/business/public/list`, queryParams)
+    .then(res => {
+      queryParams?.intersectionObserver
+        ? dispatch({
+            type: GET_PROJECT_LIST_AND_APPEND,
+            payload: res.data
+          })
+        : dispatch({
+            type: GET_PROJECT_LIST,
+            payload: res.data
+          })
     })
     .catch(err => {
       dispatch({
@@ -144,10 +167,12 @@ export const getBusinessById = id => async (dispatch, getState) => {
     })
 }
 
-export const nullBusinessForm = (data ={}) =>  (dispatch) => {
-  console.log('nullBusinessForm', dispatch)
-  dispatch({
-    type: RESET_BUSINESS_FORM,
-    // payload: null
-  })
-}
+export const nullBusinessForm =
+  (data = {}) =>
+  dispatch => {
+    console.log('nullBusinessForm', dispatch)
+    dispatch({
+      type: RESET_BUSINESS_FORM
+      // payload: null
+    })
+  }

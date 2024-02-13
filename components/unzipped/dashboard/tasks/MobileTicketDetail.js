@@ -5,15 +5,20 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import Nav from '../../header'
 import MobileTaskForm from './MobileTaskForm'
-import { getTaskById } from '../../../../redux/actions'
-const MobileTaskDetail = ({ getTaskById, detail }) => {
+import { getTaskById, resetStoryForm } from '../../../../redux/actions'
+const MobileTaskDetail = ({ getTaskById, detail, resetStoryForm }) => {
   const router = useRouter()
 
   const { id } = router.query
 
   useEffect(() => {
-    if (id) getTaskById(id)
+    getTaskById(id)
   }, [])
+
+  const onCancel = async () => {
+    router.back()
+    await resetStoryForm()
+  }
 
   return (
     <>
@@ -29,14 +34,7 @@ const MobileTaskDetail = ({ getTaskById, detail }) => {
           router.back()
         }}
       />
-      <MobileTaskForm
-        taskDetail={detail}
-        departmentData={detail?.department}
-        onCancel={() => {
-          router.back()
-          getTaskById(id)
-        }}
-      />
+      <MobileTaskForm taskDetail={detail} departmentData={detail?.department} onCancel={onCancel} />
     </>
   )
 }
@@ -49,7 +47,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getTaskById: bindActionCreators(getTaskById, dispatch)
+    getTaskById: bindActionCreators(getTaskById, dispatch),
+    resetStoryForm: bindActionCreators(resetStoryForm, dispatch)
   }
 }
 

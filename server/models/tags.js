@@ -5,7 +5,6 @@ const { Schema } = mongoose
 
 const tagSchema = new Schema(
   {
-    taskId: { type: Schema.Types.ObjectId, ref: 'tasks' },
     tagName: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },

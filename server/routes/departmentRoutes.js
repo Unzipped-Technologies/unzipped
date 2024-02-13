@@ -1,4 +1,6 @@
 const express = require('express')
+const mongoose = require('mongoose')
+
 const router = express.Router()
 const departmentHelper = require('../helpers/department')
 const requireLogin = require('../middlewares/requireLogin')
@@ -17,7 +19,16 @@ router.post('/', requireLogin, permissionCheckHelper.hasPermission('createDepart
 
 router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getDepartmentById'), async (req, res) => {
   try {
-    const response = await departmentHelper.getDepartmentById(req.params.id)
+    let filters = {}
+    let currentUser = req?.user?.userInfo
+    if (currentUser) {
+      if (currentUser?.role === 1) {
+        filters['assignee'] = {
+          $eq: ['$assignee', mongoose.Types.ObjectId(currentUser?.freelancers)]
+        }
+      }
+    }
+    const response = await departmentHelper.getDepartmentById(req.params.id, filters)
     if (!response) throw new Error('Department not found')
     res.json(response)
   } catch (e) {

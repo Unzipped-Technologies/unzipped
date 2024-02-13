@@ -168,10 +168,12 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
       await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
       await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
     }
-    const filters = pick(filter, ['userId', 'isActive'])
+    const filters = pick(filter, ['userId', 'isActive', 'applicants'])
 
     const regexQuery = new RegExp(filter?.searchKey, 'i')
     const regexType = new RegExp(type, 'i')
+    const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
+    const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
     const aggregationPipeline = [
       {
         $match: {
@@ -273,9 +275,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
             {
               $skip: +skip
             },
-            {
-              $limit: limit === 'all' ? await countBusiness(filters) : Number(limit)
-            }
+            limitStage
           ],
           totalCount: [
             {
@@ -436,7 +436,7 @@ const countContracts = async filter => {
 
 const countBusiness = async filter => {
   const totalDocuments = await business.countDocuments(filter)
-  return totalDocuments
+  return Number(totalDocuments)
 }
 
 // add like to business

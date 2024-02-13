@@ -234,7 +234,8 @@ const updateTask = async (taskId, data) => {
     }
     await Object.assign(taskData, data)
     taskData.comments = ticketComments
-    return await taskData.save()
+    await taskData.save()
+    return { message: 'Task updated successfully.' }
   } catch (err) {
     throw Error(`Could not update task, error: ${err}`)
   }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { FaRegCheckCircle } from 'react-icons/fa'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-
+import TagModal from '../TagModal'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
 import { TODO_STATUS } from '../../../../utils/constants'
 import TicketPreview from '../TicketPreview'
@@ -66,12 +66,13 @@ const TasksPanel = ({
   updateCreateStoryForm,
   selectedDepartment,
   getDepartmentById,
-  tags = [],
   reorderStories,
   access,
+  userRole,
   departmentData,
   resetStoryForm
 }) => {
+  const [tagModal, setTagModal] = React.useState(false)
   const [storyModal, setStoryModal] = React.useState(false)
   const [taskId, setTaskId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
@@ -144,6 +145,15 @@ const TasksPanel = ({
     setTaskId('')
   }
 
+  const openTagModal = () => {
+    setTagModal(true)
+  }
+
+  const closeTagModal = () => {
+    setTagModal(false)
+    getDepartmentById(selectedDepartment._id)
+  }
+
   return (
     <Container background="#FDFDFD">
       <div
@@ -160,39 +170,46 @@ const TasksPanel = ({
           <TitleText width="max-content" noMargin size="24px" paddingRight="20px">
             {selectedDepartment?.name}
           </TitleText>
-          <Button
-            className="bg-transparent text-dark"
-            popoutWidth="150px"
-            dropDownRight="-130px"
-            noBorder
-            block
-            fontSize="13px"
-            popout={[
-              {
-                text: 'update Statuses',
-                onClick: () => console.log('ITEM 1')
-              },
-              {
-                text: 'Create Department',
-                onClick: () => console.log('ITEM 1')
-              },
-              {
-                text: 'Edit',
-                onClick: () => console.log('ITEM 2')
-              },
-              {
-                text: 'Delete',
-                onClick: () => console.log('ITEM 3')
-              }
-            ]}>
-            <Icon name="actionIcon" color="#333" />
-          </Button>
+          {userRole === 0 && (
+            <Button
+              className="bg-transparent text-dark"
+              popoutWidth="150px"
+              dropDownRight="-130px"
+              noBorder
+              block
+              fontSize="13px"
+              popout={[
+                {
+                  text: 'update Statuses',
+                  onClick: () => console.log('ITEM 1')
+                },
+                {
+                  text: 'Create Department',
+                  onClick: () => console.log('ITEM 1')
+                },
+                {
+                  text: 'Edit',
+                  onClick: () => console.log('ITEM 2')
+                },
+                {
+                  text: 'Delete',
+                  onClick: () => console.log('ITEM 3')
+                }
+              ]}>
+              <Icon name="actionIcon" color="#333" />
+            </Button>
+          )}
         </div>
-        <SubmitButtonContainer margin="0px 20px 0px 80px">
-          <SubmitButton onClick={() => {}}>
-            <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add
-          </SubmitButton>
-        </SubmitButtonContainer>
+        {userRole === 0 && (
+          <SubmitButtonContainer margin="0px 20px 0px 80px">
+            <SubmitButton
+              onClick={() => {
+                openTagModal()
+              }}>
+              <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add
+            </SubmitButton>
+          </SubmitButtonContainer>
+        )}
       </div>
 
       <StoryTable>
@@ -295,37 +312,40 @@ const TasksPanel = ({
                                         )
                                       })
                                     : ''}
-                                  <WhiteCard
-                                    onClick={() => {
-                                      updateCreateStoryForm({
-                                        businessId: selectedDepartment.businessId,
-                                        departmentId: selectedDepartment._id,
-                                        tag: tag._id,
-                                        status: TODO_STATUS
-                                      })
-                                      setIsEditing(false)
-                                      setStoryModal(true)
-                                    }}
-                                    noMargin
-                                    borderRadius="0px"
-                                    padding="10px 10px"
-                                    row
-                                    background="#FFF">
-                                    <DarkText
-                                      className="d-flex align-items-center"
+                                  {userRole === 0 && (
+                                    <WhiteCard
+                                      onClick={() => {
+                                        updateCreateStoryForm({
+                                          businessId: selectedDepartment.businessId,
+                                          departmentId: selectedDepartment._id,
+                                          tag: tag._id,
+                                          status: TODO_STATUS
+                                        })
+                                        setIsEditing(false)
+                                        setStoryModal(true)
+                                      }}
                                       noMargin
-                                      bold
-                                      color="#2F76FF"
-                                      clickable>
-                                      <AiOutlinePlusCircle
-                                        style={{
-                                          fontSize: '18px',
-                                          marginRight: '20px'
-                                        }}
-                                      />
-                                      ADD TASK
-                                    </DarkText>
-                                  </WhiteCard>
+                                      borderRadius="0px"
+                                      padding="10px 10px"
+                                      row
+                                      background="#FFF">
+                                      <DarkText
+                                        className="d-flex align-items-center"
+                                        noMargin
+                                        bold
+                                        color="#2F76FF"
+                                        clickable>
+                                        <AiOutlinePlusCircle
+                                          style={{
+                                            fontSize: '18px',
+                                            marginRight: '20px'
+                                          }}
+                                        />
+                                        ADD TASK
+                                      </DarkText>
+                                    </WhiteCard>
+                                  )}
+
                                   {provided.placeholder}
                                 </div>
                               )}
@@ -352,12 +372,23 @@ const TasksPanel = ({
           }}
         />
       )}
+
+      {tagModal && (
+        <TagModal
+          open={tagModal}
+          isEditing={isEditing}
+          onHide={() => {
+            closeTagModal()
+          }}
+        />
+      )}
     </Container>
   )
 }
 
 const mapStateToProps = state => {
   return {
+    userRole: state.Auth.user.role,
     departmentData: state.Departments.selectedDepartment,
     taskForm: state.Tasks.createStoryForm
   }

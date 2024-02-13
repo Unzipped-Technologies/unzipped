@@ -5,6 +5,8 @@ export const GET_TAGS = 'GET_TAGS'
 export const GET_TAG_BY_ID = 'GET_TAG_BY_ID'
 export const DELETE_TAG = 'DELETE_TAG'
 export const TAG_ERROR = 'TAG_ERROR'
+export const UPDATE_TAG_FORM = 'UPDATE_TAG_FORM'
+export const RESET_TAG_FORM = 'RESET_TAG_FORM'
 
 export const LOAD_STATE = 'LOAD_STATE'
 export const SUCCESS = 'SUCCESS'

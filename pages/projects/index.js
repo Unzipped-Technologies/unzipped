@@ -5,7 +5,7 @@ import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getFreelancerSkillsList, getProjectsList } from '../../redux/actions'
+import { getFreelancerSkillsList, getPublicProjectsList } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import MobileSearchBar from '../../components/ui/MobileSearchBar'
 import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects'
@@ -51,7 +51,7 @@ const Projects = ({
   totalCount,
   getFreelancerSkillsList,
   freelancerSkillsList = [],
-  getProjectsList,
+  getPublicProjectsList,
   freelancerId
 }) => {
   const containerRef = useRef(null)
@@ -72,7 +72,7 @@ const Projects = ({
 
   useMemo(() => {
     getFreelancerSkillsList()
-    getProjectsList({ take, skip, isActive: true })
+    getPublicProjectsList({ take, skip, isActive: true })
   }, [])
 
   useEffect(() => {
@@ -125,7 +125,7 @@ const Projects = ({
   }
 
   const handleSearch = intersectionObserver => {
-    getProjectsList({
+    getPublicProjectsList({
       intersectionObserver,
       filter,
       take,
@@ -291,7 +291,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectsList: bindActionCreators(getProjectsList, dispatch),
+    getPublicProjectsList: bindActionCreators(getPublicProjectsList, dispatch),
     getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch)
   }
 }

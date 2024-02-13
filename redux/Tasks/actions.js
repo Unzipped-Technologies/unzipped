@@ -88,15 +88,14 @@ export const getTaskById = taskID => async (dispatch, getState) => {
 
 export const updateTask = (taskID, data) => async (dispatch, getState) => {
   dispatch(startLoading())
-
   await axios
     .patch(`/api/tasks/${taskID}`, data, tokenConfig(getState()?.Auth.token))
-    .then(res =>
+    .then(res => {
       dispatch({
         type: UPDATE_TASK,
         payload: res.data
       })
-    )
+    })
     .catch(err => {
       dispatch({
         type: TASK_ERROR,

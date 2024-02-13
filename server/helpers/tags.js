@@ -7,12 +7,8 @@ const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const createTag = async data => {
   try {
     // Check whether the department against departmentId exist OR not
-    const departmentData = await departmentHelper.getDepartmentById(data.departmentId)
+    const departmentData = await departmentHelper.getDepartmentWithoutPopulate({ _id: data.departmentId })
     if (!departmentData) throw new Error(`Department not exist.`)
-
-    // Check whether the business against businessId exist OR not
-    const taskData = await tagHelper.getTaskById(data.taskId)
-    if (!taskData) throw new Error(`Task not exist.`)
 
     // Create new tag
     await TagModel.create(data)
