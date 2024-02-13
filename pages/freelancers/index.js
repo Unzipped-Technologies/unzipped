@@ -272,8 +272,9 @@ const Freelancers = ({
               </DarkText>
             )}
             {freelancerList?.map((user, index) => {
+              console.log(user)
               const freelancer = {
-                id: user._id,
+                id: user.id,
                 name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
                 type: user.category,
                 isPreferedFreelancer: user?.isPreferedFreelancer,

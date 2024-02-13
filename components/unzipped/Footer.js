@@ -75,7 +75,7 @@ const Footer = () => {
             </Socials>
             <Underline />
             <Links>
-                <Text color={theme.text}> <Icon name="copywrite"/> 2022 UNZIPPED</Text>
+                <Text color={theme.text}> <Icon name="copywrite"/> {new Date().getFullYear()} UNZIPPED</Text>
                 <ValueList>
                     <Link href="/projects"><Text color={theme.text}>FIND WORK</Text></Link>
                     <Link href="/freelancers"><Text color={theme.text}>FIND TALENT</Text></Link>
