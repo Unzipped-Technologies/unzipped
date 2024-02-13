@@ -160,6 +160,7 @@ const Input = ({
       autosize={autosize}
       width={width}
       mobile={mobile}
+      placeholder={placeholder}
       display={display}>
       <InputContainer
         disabled={disabled}
@@ -174,6 +175,7 @@ const Input = ({
         onBlur={() => setIsFocused(false)}>
         <Control
           rows="6"
+          placeholder={placeholder}
           mobile={mobile}
           height={height}
           fontSize={fontSize}

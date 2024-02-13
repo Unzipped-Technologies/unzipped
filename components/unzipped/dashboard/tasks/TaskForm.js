@@ -64,7 +64,7 @@ const TaskForm = ({
   useEffect(() => {
     if (taskDetail && Object.entries(taskDetail)?.length) {
       updateCreateStoryForm({
-        taskName: taskDetail?.taskName,
+        taskName: taskDetail?.taskName || '',
         storyPoints: taskDetail?.storyPoints,
         priority: taskDetail?.priority,
         order: 1,
@@ -148,7 +148,7 @@ const TaskForm = ({
     if (userRole !== 1) setEditMode(true)
   }
   const disableEditMode = () => {
-    if (document.activeElement?.tagName?.toLowerCase() === 'div') {
+    if (document.activeElement?.tagName?.toLowerCase() === 'div' && selectedTaskId) {
       setEditMode(false)
     }
   }
@@ -278,7 +278,6 @@ const TaskForm = ({
             fontSize="14px"
             borderColor="red"
             disabled={userRole === 1}
-            disableBorder={!editMode}
             noMargin
             width="500px"
             height="36px !important"
@@ -294,7 +293,7 @@ const TaskForm = ({
             <span
               style={{
                 paddingRight: '10px',
-                paddingTop: '10px',
+                paddingTop: editMode ? '10px' : '20px',
                 display: 'flex',
                 marginLeft: '15%',
                 justifyContent: 'flex-end'
@@ -328,7 +327,7 @@ const TaskForm = ({
               />
             ) : (
               <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px">
-                {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label}
+                {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label || 'assignee'}
               </DarkText>
             )}
           </div>
@@ -444,7 +443,7 @@ const TaskForm = ({
               />
             ) : (
               <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px">
-                {taskPriorityOptions?.find(priority => priority.value === taskDetail?.priority)?.label}
+                {taskPriorityOptions?.find(priority => priority.value === taskDetail?.priority)?.label || 'priority'}
               </DarkText>
             )}
           </div>
@@ -474,7 +473,7 @@ const TaskForm = ({
                 onUpdate={() => {}}></FormField>
             ) : (
               <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="7px">
-                {taskDetail?.storyPoints}
+                {taskDetail?.storyPoints || 0}
               </DarkText>
             )}
           </div>
@@ -533,6 +532,7 @@ const TaskForm = ({
               fontSize="14px"
               width="100%"
               name="description"
+              placeholder="Description"
               display="inline !important"
               textarea
               onChange={e => updateForm('description', e?.target?.value)}

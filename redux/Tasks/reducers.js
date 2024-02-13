@@ -14,7 +14,7 @@ import {
 } from './constants'
 
 const INITIAL_TASKS = {
-  taskName: ' ',
+  taskName: '',
   storyPoints: 0,
   priority: '',
   order: 1,

@@ -90,6 +90,12 @@ const SearchField = ({
       ...provided,
       display: 'flex',
       gridArea: 'auto'
+    }),
+    // Other styles...
+    placeholder: (provided, state) => ({
+      ...provided,
+      display: 'flex',
+      marginTop: '10px'
     })
   }
   return (
