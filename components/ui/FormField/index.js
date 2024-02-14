@@ -45,7 +45,9 @@ const FormFieldContainer = styled.div`
     // Override menlo styling here, line 659
     // src/pages/Dashboard/index.scss
     // label { margin-bottom: 0 !important; }
-    margin-bottom: ${({ noMargin }) => (noMargin ? '0px' : '14px !important')};
+    margin-bottom: ${({ noMargin }) => (noMargin ? '0px' : '5px !important')};
+    color: #333;
+    font-size: 16px;
   }
   & > label {
     width: 100%;

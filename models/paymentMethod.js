@@ -9,6 +9,15 @@ const PaymentMethodSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users', 
     },
+    card: {
+        type: String,
+    },
+    stripeId: {
+        type: String,
+    },
+    lastFour: {
+        type: Number,
+    },
     isPrimary: {
         type: Boolean,
     },

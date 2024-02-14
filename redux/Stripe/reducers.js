@@ -1,22 +1,26 @@
 import {
     STRIPE_ERROR,
-    CREATEPAYMENTMETHOD,
-    STRIPECUSTOMERANDSETUPINTENT
+    CREATE_PAYMENT_METHOD,
+    STRIPE_CUSTOMER_AND_SETUP_INTENT,
+    GET_PAYMENT_METHODS,
 } from './constants';
 
 const INIT_STATE = {
     session: {},
+    methods: [],
     loading: false,
     error: null,
 }
 
 const Messages = (state = INIT_STATE, action) => {
     switch (action.type) {
-        case STRIPECUSTOMERANDSETUPINTENT:
+        case STRIPE_CUSTOMER_AND_SETUP_INTENT:
             return { ...state, loading: false, session: action.payload };
+        case GET_PAYMENT_METHODS:
+            return { ...state, loading: false, methods: action.payload };
         case STRIPE_ERROR:
             return { ...state, loading: false, error: action.payload };
-        case CREATEPAYMENTMETHOD:
+        case CREATE_PAYMENT_METHOD:
             return { ...state, loading: false, session: {} };
         default:
             return state;

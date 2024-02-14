@@ -4,6 +4,7 @@ import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFo
 import styled from 'styled-components';
 import MobileAccount from '../../components/unzipped/dashboard/MobileAccount';
 import DesktopAccount from '../../components/unzipped/dashboard/DesktopAccount';
+import Footer from '../../components/unzipped/Footer'
 
 const MobileDisplayBox = styled.div`
 position: relative;
@@ -53,6 +54,9 @@ const Account = () => {
                 <MobileAccount />
                 <MobileFreelancerFooter defaultSelected="Account" />
             </MobileDisplayBox>
+            <DesktopDisplayBox>
+                <Footer />
+            </DesktopDisplayBox>
         </React.Fragment>
     )
 }

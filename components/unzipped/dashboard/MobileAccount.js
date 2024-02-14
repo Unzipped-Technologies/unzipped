@@ -114,7 +114,6 @@ const MobileAccount = ({logoutUser, user}) => {
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
       user: state.Auth.user,
     }
