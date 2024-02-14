@@ -314,7 +314,7 @@ const TaskForm = ({
                 fontSize="14px"
                 margin="0px 0px 0px 10px"
                 width="160px"
-                height={taskDetail?.assignee ? '15px' : '30px'}
+                height={taskDetail?.assignee ? '15px' : '15px'}
                 dropdownList={assigneeOptions}
                 onChange={value => {
                   updateForm('assignee', value?.value)
@@ -383,29 +383,28 @@ const TaskForm = ({
               }}>
               <Plus width="17" height="17" />
             </div>
-            {editMode ||
-              (userRole === 1 && (
-                <FormField
-                  zIndex="1000"
-                  mobile
-                  required
-                  fieldType="searchField"
-                  isSearchable={true}
-                  name="tags"
-                  placeholder="Select tag"
-                  fontSize="14px"
-                  width="160px"
-                  height="10px"
-                  options={tagOptions}
-                  dropdownList={tagOptions}
-                  onChange={value => updateForm('tag', value?.value)}
-                  value={{
-                    label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
-                  }}
-                  clickType="tag"
-                  onUpdate={() => {}}
-                />
-              ))}
+            {editMode && (
+              <FormField
+                zIndex="1000"
+                mobile
+                required
+                fieldType="searchField"
+                isSearchable={true}
+                name="tags"
+                placeholder="Select tag"
+                fontSize="14px"
+                width="160px"
+                height="10px"
+                options={tagOptions}
+                dropdownList={tagOptions}
+                onChange={value => updateForm('tag', value?.value)}
+                value={{
+                  label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
+                }}
+                clickType="tag"
+                onUpdate={() => {}}
+              />
+            )}
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>

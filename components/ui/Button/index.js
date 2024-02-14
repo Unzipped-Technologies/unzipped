@@ -104,7 +104,7 @@ const ButtonIcon = styled(Icon)`
 `
 
 const ButtonContent = styled.div`
-  margin: ${({ contentMargin }) => (contentMargin ? contentMargin : '20px 0px 0px 0px')};
+  margin: ${({ contentMargin }) => (contentMargin ? contentMargin : '0px 0px 0px 0px')};
   display: inline-block;
 `
 
