@@ -14,11 +14,9 @@ router.post(
   permissionCheckHelper.hasPermission('createBusiness'),
   upload.array('images', 3),
   async (req, res) => {
-    const id = req.body.id || req.user.sub
-    // req.body.user = id
     try {
-      const { projectDetails } = req.body
-      const createBusiness = await businessHelper.createBusiness(JSON.parse(projectDetails), id, req.files)
+      req.body['userId'] = req.user.sub
+      const createBusiness = await businessHelper.createBusiness(req.body, req.user.sub, req.files)
       if (!createBusiness) throw Error('business already exists')
       res.json(createBusiness)
     } catch (e) {
@@ -77,7 +75,9 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('userList
 
 router.post('/public/list', async (req, res) => {
   try {
-    req.body['filter'].isActive = true
+    req.body['filter'] = Object.assign({}, req.body?.['filter'], {
+      isActive: true
+    })
     const listBusinesses = await businessHelper.listBusinesses(req.body)
     if (!listBusinesses) throw Error('could not find businesses')
     res.json(listBusinesses)

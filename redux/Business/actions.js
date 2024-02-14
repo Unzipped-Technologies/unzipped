@@ -56,7 +56,6 @@ export const resetBusinessForm = () => async (dispatch, getState) => {
 export const createBusiness = (data, token) => async (dispatch, getState) => {
   //story Loading
   dispatch({ type: LOAD_STATE })
-
   await axios
     .post(`/api/business/create`, data, {
       headers: {

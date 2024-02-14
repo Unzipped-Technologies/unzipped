@@ -34,16 +34,16 @@ const Container = styled.div`
 `
 
 const MobileBox = styled.div`
-@media (min-width: 680px) {
-  display:none
-}`
-
-const DesktopBox = styled.div`
-@media (max-width: 680px) {
-  display:none;
-}
+  @media (min-width: 680px) {
+    display: none;
+  }
 `
 
+const DesktopBox = styled.div`
+  @media (max-width: 680px) {
+    display: none;
+  }
+`
 
 const ContentContainer = styled('div')`
   max-height: 150px;
@@ -153,7 +153,6 @@ const GetCardDesktop = ({
               onChange={e => updateForm({ projectType: e.target.value })}
               stage={stage}
             />
-            
           </Grid>
         </CreateABusiness>
       )
@@ -461,7 +460,7 @@ const GetCardDesktop = ({
             progress={stage}
             stage={stage}
             submit
-          // skip
+            // skip
           >
             <Grid>
               <Button icon="github" extraWide noBorder type="dark" normal onClick={handleGithub}>
@@ -566,8 +565,8 @@ const GetCardDesktop = ({
           onSubmit={submitForm}
           progress={stage}
           stage={stage}
-        // submit
-        // skip
+          // submit
+          // skip
         >
           <Button
             type="transparent"
@@ -1124,7 +1123,7 @@ const GetCardMobile = ({
           progress={stage - 2}
           stage={stage}
           submit
-        // skip
+          // skip
         >
           <Grid margin="50px 0px 100px 0px">
             <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
@@ -1318,6 +1317,7 @@ const GetCardMobile = ({
 
 const CreateBusiness = ({
   stage,
+  businessForm,
   updateBusinessForm,
   projectType,
   name,
@@ -1335,7 +1335,6 @@ const CreateBusiness = ({
   token,
   access_token
 }) => {
-
   const submitForm = step => {
     if (step < 11) {
       // submit form
@@ -1344,29 +1343,15 @@ const CreateBusiness = ({
         stage: step ? step + 1 : stage
       })
     } else {
-      const formData = new FormData();
+      const formData = new FormData()
       if (files.length > 0) {
         files.forEach(file => {
-          formData.append('images', file);
-        });
+          formData.append('images', file)
+        })
       }
-      formData.append("projectDetails",
-        JSON.stringify(
-          {
-            projectType,
-            name,
-            challenge,
-            role,
-            objectives,
-            teamDynamics,
-            requiredSkills,
-            goals,
-            companyBackground,
-            budget,
-            questionsToAsk
-          }
-        )
-      );
+      for (var field in businessForm) {
+        formData.append(field, businessForm[field])
+      }
       createBusiness(formData, access_token)
         .then(() => {
           router.push('/dashboard')
@@ -1399,7 +1384,7 @@ const CreateBusiness = ({
   const isGithubConnected = !!router?.query?.['github-connect'] || false
 
   const [inputValue, setInputValue] = useState('')
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([])
 
   const handleInput = value => {
     setInputValue(value)
@@ -1413,13 +1398,12 @@ const CreateBusiness = ({
   }
 
   const handleCancelIcon = (feildName, data, value) => {
-    if (feildName.split(":")[0] === "files" && files.length > 0) {
-      const popFiles = [...files];
-      popFiles.splice(parseInt(feildName.split(":")[1]), 1);
-      setFiles(popFiles);
+    if (feildName.split(':')[0] === 'files' && files.length > 0) {
+      const popFiles = [...files]
+      popFiles.splice(parseInt(feildName.split(':')[1]), 1)
+      setFiles(popFiles)
     } else {
       updateForm({ [feildName]: data.filter(val => val !== value) })
-
     }
   }
 
@@ -1430,10 +1414,8 @@ const CreateBusiness = ({
     }
   }
 
-
   return (
     <Container>
-
       <DesktopBox>
         <GetCardDesktop
           stage={stage}
@@ -1489,9 +1471,8 @@ const CreateBusiness = ({
           budget={budget}
           questionsToAsk={questionsToAsk}
         />
-        <MobileFreelancerFooter defaultSelected='Create' />
+        <MobileFreelancerFooter defaultSelected="Create" />
       </MobileBox>
-
     </Container>
   )
 }
@@ -1506,6 +1487,7 @@ CreateBusiness.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = state => {
   return {
+    businessForm: state.Business?.businessForm,
     name: state.Business?.businessForm.name,
     projectType: state.Business?.businessForm.projectType,
     challenge: state.Business?.businessForm.challenge,
