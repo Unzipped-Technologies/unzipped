@@ -56,7 +56,6 @@ const FooterContainer = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.25);
   display: flex;
   justify-content: around;
-  z-index: 1001;
 `;
 
 const FooterLink = styled.a`

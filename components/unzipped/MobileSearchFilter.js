@@ -98,6 +98,8 @@ function MobileSearchFilter({ sortOptions, handleFilterOpenClose, sort, setSort,
         }
 
     }
+
+    console.log('mobile_search_filters')
     return (
         <div style={{ backgroundColor: "white", color: "black" }}>
 

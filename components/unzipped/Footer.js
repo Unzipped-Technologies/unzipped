@@ -43,6 +43,7 @@ const Links = styled.div`
     @media(max-width: 847px) {
         flex-flow: column;
         flex-direction: column-reverse; 
+        padding-bottom: 25px;
     }
 `;
 
@@ -74,7 +75,7 @@ const Footer = () => {
             </Socials>
             <Underline />
             <Links>
-                <Text color={theme.text}> <Icon name="copywrite"/> 2022 UNZIPPED</Text>
+                <Text color={theme.text}> <Icon name="copywrite"/> {new Date().getFullYear()} UNZIPPED</Text>
                 <ValueList>
                     <Link href="/projects"><Text color={theme.text}>FIND WORK</Text></Link>
                     <Link href="/freelancers"><Text color={theme.text}>FIND TALENT</Text></Link>

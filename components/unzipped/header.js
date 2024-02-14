@@ -16,7 +16,21 @@ import { Button as Buttons, SearchBar } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
 import BackArrow from '../../components/icons/backArrow'
 import { logoutUser, resetBusinessForm } from '../../redux/actions'
-import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
+import { 
+  DownIcon, 
+  LightIcon, 
+  FolderIcon, 
+  BookmarkIcon, 
+  WorkIcon,
+  CircleBrushIcon,
+  CircleDashboardIcon,
+  CircleHeartIcon,
+  CircleLightningIcon,
+  CircleShipIcon,
+  CircleSearchIcon,
+  CircleNotesIcon,
+} from '../icons'
+import FullScreenDropdown from '../ui/FullScreenDropdown'
 
 const Div = styled.div`
   width: 100%;
@@ -208,6 +222,92 @@ const ButtonHolder = styled.div`
   }
 `
 
+const mobileMenuItems = [
+  {
+      name: 'Find Talent',
+      subTitle: 'Hire a Pro',
+      subIcon: <CircleHeartIcon />,
+      subItems: [
+          {
+              name: 'Search freelancers',
+              sub: 'Find talented people to hire',
+              link: '/freelancers'
+          },
+          {
+              name: 'Browse by Skill',
+              sub: 'Narrow down your search',
+              link: '/freelancers'
+          },
+          {
+              name: 'How it Works',
+              sub: 'Learn how to hire & grow your team',
+              link: '/how-it-works/client'
+          },
+      ]
+  },
+  {
+      name: 'Find a Projects',
+      subTitle: 'Get Hired',
+      subIcon: <CircleBrushIcon />,
+      subItems: [
+          {
+              name: 'Find a Project',
+              sub: 'Browse projects that match your skills',
+              link: '/projects'
+          },
+          {
+              name: 'Search by Company',
+              sub: 'Narrow down your search',
+              link: '/projects'
+          },
+      ]
+  },
+  {
+      name: 'Why Unzipped',
+      subTitle: 'Guides & More',
+      subIcon: <CircleLightningIcon />,
+      subItems: [
+          {
+              name: 'How to Hire',
+              sub: 'Find talented people to hire',
+              link: '/how-it-works/freelancer'
+          },
+          {
+              name: 'How to find work',
+              sub: 'Narrow down your search',
+              link: '/how-it-works/freelancer'
+          },
+          {
+              name: 'Quick start guides',
+              sub: [
+                  {
+                      name: 'Freelancer',
+                      sub: 'How to get started as a freelancer?',
+                      link: '/wiki/getting-started',
+                      icon: <CircleNotesIcon />,
+                  },
+                  {
+                      name: 'Business',
+                      sub: 'Hiring & working with independent talent',
+                      link: '/wiki/working-with-independent-contractors',
+                      icon: <CircleSearchIcon />,
+                  },
+                  {
+                      name: 'Freelancer',
+                      sub: 'Growing your freelancing career',
+                      link: '/wiki/grow-your-career',
+                      icon: <CircleShipIcon />,
+                  },
+              ],
+          },
+      ]
+  },
+  {
+      name: 'Enterprise',
+      link: '/how-it-works/client'
+  }
+]
+
 const menuItems = [
   {
     name: 'Find Talent',
@@ -371,6 +471,7 @@ const Nav = ({
   const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
+  const seenNames = new Set();
 
   useEffect(() => {
     setIsProjectMenuEnabled(router.pathname === '/projects')
@@ -518,6 +619,43 @@ const Nav = ({
     }
   }, [isAuthenticated])
 
+useEffect(() => {
+  if (!isAuthenticated) {
+      mobileMenuItems.push({
+        name: 'Get Started Today',
+        link: '/register'
+    })
+  } else {
+      mobileMenuItems.unshift(    {
+          name: 'Dashboard',
+          subTitle: 'Manage Your Work',
+          subIcon: <CircleDashboardIcon />,
+          subItems: [
+          {
+              name: 'Notifications',
+              sub: 'Check pending todo items',
+              link: '/dashboard'
+          },
+          {
+              name: 'Browse',
+              sub: 'See potential projects and freelancers',
+              link: '/browse'
+          },
+          {
+              name: 'Messages',
+              sub: 'Manage communication within the app',
+              link: '/dashboard/inbox'
+          },
+          {
+              name: 'Account',
+              sub: 'Manage your account details',
+              link: '/dashboard/account'
+          },
+        ]
+      })
+    }
+  }, [isAuthenticated, menuItems])
+
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
@@ -626,8 +764,25 @@ const Nav = ({
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </MenuIcon>
             {menuOpen === 'mobile' && (
-              <Absolute right="228px" top="0px">
-                <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} />
+              <Absolute right="0px" top="0px">
+                {/* <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /> */}
+                <FullScreenDropdown 
+                  menuItems={mobileMenuItems.filter(item => {
+                    // Check if the item's name has already been seen
+                    if (seenNames.has(item.name)) {
+                      // If so, filter this item out
+                      return false;
+                    } else {
+                      // If not, add the name to the Set and keep the item
+                      seenNames.add(item.name);
+                      return true;
+                    }
+                  })} 
+                  startAProject={startAProject} 
+                  isAuth={isAuthenticated} 
+                  logoutUser={signOut} 
+                  onClose={() => setMenuOpen(false)}
+                />
               </Absolute>
             )}
           </Mobile>

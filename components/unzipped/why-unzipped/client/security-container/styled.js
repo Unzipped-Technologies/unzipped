@@ -8,19 +8,31 @@ const SecurityPrivacyContainer = styled.div`
     margin-top: 8.125rem;
     @media screen and (max-width: 600px){
         flex-direction: column;
-        width: 385px;
+        width: 100%;//385px;
         gap: 5px;
-        margin-top: 10px
+        margin-top: 10px;
+        // padding: 10px;
+        // align-items: center;
     }
 `;
 
 const ImageBox = styled.div`
     width: 436px;
     height: 429px;
+    @media screen and (max-width: 600px){
+        width: 100%;//385px;
+        padding: 5px;
+        // height: 100%;
+        text-align: center;
+    }
 `;
 
 const TextBox = styled.div`
     width: 20.375rem;
+    @media screen and (max-width: 600px){
+        width: 90%;//385px;
+        padding-left: 30px;
+    }
 `;
 
 const Heading = styled.h1`
@@ -50,7 +62,7 @@ const SubHeading = styled.p`
 })
     }
     @media screen and (max-width: 600px){
-        margin-top: 40px;
+        // margin-top: 40px;
     }
 `;
 
@@ -64,6 +76,7 @@ const Paragraph = styled.p`
     letterSpacing: LETTER_SPACING
 })
     }
+    margin-top: 10px;
 `;
 
 const SectionHeading = styled.h1`
@@ -81,6 +94,7 @@ const SectionHeading = styled.h1`
 `;
 
 const HeadingResp = styled.h1`
+    margin-left: 20px;
     margin-bottom: ${FONT_SIZE.PX_16};
         ${getFontStyled({
         color: COLORS.black,
@@ -95,6 +109,17 @@ const HeadingResp = styled.h1`
         display: none;
     }
 `;
+
+const TestSection = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 436px;
+    height: 429px;
+    // @media screen and (min-width: 600px){
+    //     display: none;
+    // }
+`;
+
 export {
     SecurityPrivacyContainer,
     ImageBox,

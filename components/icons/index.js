@@ -7,6 +7,7 @@ import TwitterIcon from './twitter'
 import ClearFitLogo from './clearfit'
 import SkillPodLogo from './skillpods'
 import HexagonIcon from './hexagon'
+import CloseIcon from './close'
 import ReactIcon from './react'
 import NodeIcon from './node'
 import NetIcon from './net'
@@ -40,50 +41,69 @@ import ReviewHalfSmall from './reviewHalfSmall'
 import UpArrow from './upArrow'
 import GoBack from './navback'
 import UpdateUserIcon from './updateUser'
+import CircleBrushIcon from './circleBrush'
+import CircleDashboardIcon from './circleDashboard'
+import CircleHeartIcon from './circleHeart'
+import CircleLightningIcon from './circleLightning'
+import CircleSearchIcon from './circleSearch'
+import CircleShipIcon from './circleShip'
+import CircleNotesIcon from './circleNotes'
+import VerifiedIcon from './verifiedIcon'
+import ReactCodeIcon from './reactIcon'
 import ManIcon from './man'
 
 export {
-  ClearFitLogo,
-  SkillPodLogo,
-  HexagonIcon,
-  MailIcon,
-  ManIcon,
-  PhoneIcon,
-  DiamondIcon,
-  DownWideIcon,
-  FolderIcon,
-  FacebookIcon,
-  LeafIcon,
-  CycleIcon,
-  DownIcon,
-  LinkedInIcon,
-  CircleStar,
-  WorkIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
-  BookmarkIcon,
-  InstagramIcon,
-  LongArrow,
-  TwitterIcon,
-  ReactIcon,
-  NetIcon,
-  NodeIcon,
-  UIUXIcon,
-  AWSIcon,
-  ReactNativeIcon,
-  StarIcon,
-  LightIcon,
-  DownSolidIcon,
-  SkillPodImage,
-  BackArrow,
-  RightArrow,
-  Check,
-  DownArrow,
-  Review,
-  ReviewHalf,
-  ReviewSmall,
-  ReviewHalfSmall,
-  UpArrow,
-  GoBack,
-  UpdateUserIcon
-}
+    ClearFitLogo,
+    SkillPodLogo,
+    HexagonIcon,
+    ReactCodeIcon,
+    MailIcon,
+      ManIcon,
+    CloseIcon,
+    PhoneIcon,
+    DiamondIcon,
+    DownWideIcon,
+    FolderIcon,
+    FacebookIcon,
+    LeafIcon,
+    CycleIcon,
+    DownIcon,
+    CircleBrushIcon,
+    CircleDashboardIcon,
+    CircleHeartIcon,
+    CircleLightningIcon,
+    CircleShipIcon,
+    CircleSearchIcon,
+    CircleNotesIcon,
+    LinkedInIcon,
+    CircleStar,
+    VerifiedIcon,
+    WorkIcon,
+    ThumbsDownIcon,
+    ThumbsUpIcon,
+    BookmarkIcon,
+    InstagramIcon,
+    LongArrow,
+    TwitterIcon,
+    ReactIcon,
+    NetIcon,
+    NodeIcon,
+    UIUXIcon,
+    AWSIcon,
+    ReactNativeIcon,
+    StarIcon,
+    LightIcon,
+    DownSolidIcon,
+    SkillPodImage,
+    BackArrow,
+    RightArrow,
+    Check,
+    DownArrow,
+    Review,
+    ReviewHalf,
+    ReviewSmall,
+    ReviewHalfSmall,
+    UpArrow,
+    GoBack,
+    UpdateUserIcon
+};

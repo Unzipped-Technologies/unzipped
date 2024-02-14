@@ -16,6 +16,20 @@ const Container = styled.div`
   flex-flow: column;
   width: 100%;
   padding: 0px 15px;
+  // margin: 0px 10px;
+`
+
+const ContainerAccount = styled.div`
+  display: flex;
+  flex-flow: column;
+  width: 90%;
+  padding: 0px 15px;
+  margin-left: 20px;
+  background: #fff ;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px 0px #0000001A;
+  padding: 25px 0px;
+
 `
 
 // const Container = styled.div`
@@ -157,6 +171,7 @@ const Panel = ({ user: userProps, success }) => {
 
   const router = useRouter()
   return (
+    <ContainerAccount>
     <Container>
       {success && (
         <WhiteCard
@@ -266,6 +281,7 @@ const Panel = ({ user: userProps, success }) => {
                 </WhiteCard>
             </div> */}
     </Container>
+    </ContainerAccount>
   )
 }
 

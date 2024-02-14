@@ -59,42 +59,42 @@ const FontStyled = styled.span`
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
 `
 const help = [
-  {
-    name: 'Help Center',
-    icon: 'glasses',
-    text: 'Find documentation and tutorials on how to use Unzipped.',
-    link: {
-      text: 'See our help docs',
-      to: '/'
+    {
+        name: 'Help Center',
+        icon: 'glasses',
+        text: 'Find documentation and tutorials on how to use Unzipped.',
+        link: {
+            text: 'See our help docs',
+            to: '/'
+        }
+    },
+    {
+        name: 'Unzipped Learn',
+        icon: 'compass',
+        text: 'Get step-by-step guidance on how to best set up your business online.',
+        link: {
+            text: 'Get started',
+            to: '/'
+        }
+    },
+    {
+        name: 'Courses',
+        icon: 'play',
+        text: 'Learn how to run a successful business with video courses taught by industry experts',
+        link: {
+            text: 'Learn more',
+            to: 'https://www.udemy.com/'
+        }
+    },
+    {
+        name: 'Ask us about a topic',
+        icon: 'questionCircle',
+        text: 'Find answers to your questions and review Unzipped resources.',
+        link: {
+            text: 'Ask about a topic.',
+            to: '/'
+        }
     }
-  },
-  {
-    name: 'Unzipped Learn',
-    icon: 'compass',
-    text: 'Get step-by-step guidance on how to best set up your business online.',
-    link: {
-      text: 'Get started',
-      to: '/'
-    }
-  },
-  {
-    name: 'Courses',
-    icon: 'play',
-    text: 'Learn how to run a successful business with video courses taught by industry experts',
-    link: {
-      text: 'Learn more',
-      to: 'https://www.udemy.com/'
-    }
-  },
-  {
-    name: 'Ask us about a topic',
-    icon: 'questionCircle',
-    text: 'Find answers to your questions and review Unzipped resources.',
-    link: {
-      text: 'Ask about a topic.',
-      to: '/'
-    }
-  }
 ]
 
 const InnerCard = styled.div`
@@ -130,7 +130,7 @@ const Notification = ({ type, children, noButton }) => {
                     borderRadius: '5px',
                     marginTop: '20px'
                 }}>
-                    <div style={{ padding: '10px' }}>
+                    <div style={{ padding: '20px', fontSize: "19px" }}>
                         Build your dream business, grow your following, and collaborate with other professionals to
                         make your vision a reality. Start your free trial now.
                     </div>
@@ -146,10 +146,12 @@ const Notification = ({ type, children, noButton }) => {
             )
         case 'github':
             return (
-                <WhiteCard size="large">
-                    <DarkText>You haven't created your first Business yet, create one now so
-                        you can begin Collaborating! Need Ideas? View existing projects here.</DarkText>
-                    <Button icon="github" webKit noBorder type="dark" normal>CONNECT YOUR GITHUB ACCOUNT</Button>
+                <WhiteCard size="large" style={{ marginTop:20 }}>
+                    <DarkText style={{ paddingTop: 20, marginTop:20 }}>You haven't created your first Business yet, create one now so
+                        you can begin Collaborating! Need Ideas? View existing projects here.
+                        
+                    <Button icon="github" webKit noBorder type="dark" normal style={{marginTop:"20px", marginRight:"10px"}}>CONNECT YOUR GITHUB ACCOUNT</Button>
+                        </DarkText>
                 </WhiteCard>
             )
         case 'browse':
@@ -173,28 +175,28 @@ const Notification = ({ type, children, noButton }) => {
                 </div>
 
             )
-        case 'meetingCalender':
-            return (
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    flexDirection: 'column',
-                    border: '1px solid #D8D8D8',
-                    borderRadius: 5,
-                    padding: 10,
-                    marginBottom: 20
-                }}>
-                    <div>
-                        <DarkText noMargin>{children}</DarkText>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <Dismiss>Dismiss</Dismiss>
-                        <Button noBorder type="default" normal small onClick={handleMeetingModal}>UPDATE</Button>
-                    </div>
-                    <ScheduleMeetingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} isSmallWindow={true} />
+        // case 'meetingCalender':
+        //     return (
+        //         <div style={{
+        //             display: 'flex',
+        //             alignItems: 'flex-end',
+        //             flexDirection: 'column',
+        //             border: '1px solid #D8D8D8',
+        //             borderRadius: 5,
+        //             padding: 10,
+        //             marginBottom: 20
+        //         }}>
+        //             <div>
+        //                 <DarkText noMargin>{children}</DarkText>
+        //             </div>
+        //             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+        //                 <Dismiss>Dismiss</Dismiss>
+        //                 <Button noBorder type="default" normal small onClick={handleMeetingModal}>UPDATE</Button>
+        //             </div>
+        //             <ScheduleMeetingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} isSmallWindow={true} />
 
-                </div>
-            )
+        //         </div>
+        //     )
         case 'faq':
             return (
                 <div style={{
@@ -216,7 +218,7 @@ const Notification = ({ type, children, noButton }) => {
             )
         case 'freeTrial':
             return (
-                <WhiteCard row borderColor="#0029FF" background="#F8FAFF">
+                <WhiteCard row background="#F8FAFF" style={{ borderRadius: "5px 5px 0px 0px", border: "1px solid #0029FF", paddingLeft: "30px", marginTop: "20px", paddingTop:"20px", paddingBottom:"20px" }}>
                     <Icon name="question" />
                     <DarkText noMargin paddingLeft>Your free trial will end in 5 days on
                         12/02/2022</DarkText>
@@ -231,9 +233,10 @@ const Notification = ({ type, children, noButton }) => {
         case 'createBusiness':
             return (
                 <WhiteCard size="large">
-                    <DarkText fontSize={'16'} topPadding={"5px"}>You haven't created your first Business yet, create one now so
-                        you can begin Collaborating! Need Ideas? View existing projects here.</DarkText>
-                    <Button noBorder webKit type="dark" normal>CREATE FIRST PROJECT</Button>
+                    <DarkText fontSize={'16'} style={{ paddingTop: 20 }}>You haven't created your first Business yet, create one now so
+                        you can begin Collaborating! Need Ideas? View existing projects here.
+                        <Button noBorder webKit type="dark" normal style={{marginTop:"20px", marginRight: "20px"}}>CREATE FIRST PROJECT</Button>
+                    </DarkText>
                 </WhiteCard>
             )
         // case 'updateBusiness':
@@ -246,7 +249,7 @@ const Notification = ({ type, children, noButton }) => {
         //     )
         case 'explore':
             return (
-                <WhiteCard padding="20px 3px" marginBottom='70px' size="extraLarge" background="#FAFAFA">
+                <WhiteCard padding="200px 3px" marginBottom='70px' size="extraLarge" background="#FAFAFA" style={{padding: "5px 10px"}}>
                     <TitleText noMargin paddingLeft="8px" marginTop={"5px"} marginLeft="10px" >Explore more support</TitleText>
                     <DarkText topPadding={'5px'}>Check out these resources for answers to your questions, videos, and best practices.</DarkText>
                     {help.map((item, index) => (
@@ -262,7 +265,7 @@ const Notification = ({ type, children, noButton }) => {
                                 <Icon name={item.icon} />
                             </div>
                             <div>
-                                <TitleText noMargin small >{item.name}</TitleText>
+                                <TitleText noMargin small style={{ paddingLeft: 10 }}>{item.name}</TitleText>
                                 <DarkText noMargin small>{item.text} <Link href={item.link.to}>{item.link.text}</Link></DarkText>
                             </div>
                         </InnerCard>

@@ -7,6 +7,7 @@ const BannerWrapperStyled = styled.div`
     width: 100%;
     justify-content: center;
     flex-direction: columns;
+    margin-top: 65px;
     @media screen and (max-width: 600px){
         display: none;
     }
@@ -113,7 +114,8 @@ const TrustedByTextStyled = styled.span`
 const BannerResponsiveWrapper = styled.div`
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 95px;
+    border-radius: 10px;
 `;
 
 const BannerResponsiveContent = styled.div`
