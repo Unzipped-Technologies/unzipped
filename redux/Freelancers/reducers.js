@@ -4,6 +4,7 @@ import {
     GET_FREELANCER_BY_ID,
     RESET_SELECTED_FREELANCER,
     FREELANCER_ERROR,
+    SETNAVBAR
 } from './constants';
 
 const INIT_STATE = {
@@ -11,12 +12,16 @@ const INIT_STATE = {
     loading: false,
     selectedFreelancer: null,
     error: null,
-    totalCount: ''
+    totalCount: '',
+    isExpanded: false
 }
 
 const Freelancers = (state = INIT_STATE, action) => {
 
     switch (action.type) {
+        case SETNAVBAR: {
+            return { ...state, isExpanded: action.payload }
+        }
         case FREELANCER_LOADING:
             return { ...state, loading: true };
         case GET_LIST_FREELANCERS:

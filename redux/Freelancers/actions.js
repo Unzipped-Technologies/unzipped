@@ -4,6 +4,7 @@ import {
     GET_FREELANCER_BY_ID,
     RESET_SELECTED_FREELANCER,
     FREELANCER_ERROR,
+    SETNAVBAR
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
@@ -62,3 +63,7 @@ export const clearSelectedFreelancer = () => async (dispatch, getState) => {
         type: RESET_SELECTED_FREELANCER
     })
 };
+
+export const freelancerExpandedOpts = (params) => (dispatch) => {
+    dispatch({type : SETNAVBAR, payload : params})
+}
