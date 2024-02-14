@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const paymentMethodSchema = new mongoose.Schema({
+const PaymentMethodSchema = new mongoose.Schema({
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'businesses', 
@@ -20,6 +20,6 @@ const paymentMethodSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('paymentmethods', paymentMethodSchema);
+module.exports = mongoose.model('Paymentmethods', PaymentMethodSchema);
 
 

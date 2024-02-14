@@ -3,10 +3,18 @@ import Nav from '../../components/unzipped/header';
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
 import styled from 'styled-components';
 import MobileAccount from '../../components/unzipped/dashboard/MobileAccount';
+import DesktopAccount from '../../components/unzipped/dashboard/DesktopAccount';
 
 const MobileDisplayBox = styled.div`
 position: relative;
 @media(min-width: 680px) {
+    display: none;
+}
+`;
+
+const DesktopDisplayBox = styled.div`
+position: relative;
+@media(max-width: 681px) {
     display: none;
 }
 `;
@@ -38,6 +46,9 @@ const Account = () => {
     return (
         <React.Fragment>
             <Nav isSubMenu marginBottom={marginBottom}/>
+            <DesktopDisplayBox>
+                <DesktopAccount />
+            </DesktopDisplayBox>
             <MobileDisplayBox>
                 <MobileAccount />
                 <MobileFreelancerFooter defaultSelected="Account" />
