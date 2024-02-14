@@ -44,7 +44,7 @@ const TaskForm = ({
   departmentData,
   userRole
 }) => {
-  const [editMode, setEditMode] = useState()
+  const [editMode, setEditMode] = useState(false)
   const [comments, setComments] = useState([])
   const [newComment, setComment] = useState({
     comment: '',
@@ -58,7 +58,12 @@ const TaskForm = ({
   }, [taskDetail])
 
   useEffect(() => {
-    if (selectedTaskId) getTaskById(selectedTaskId)
+    if (selectedTaskId) {
+      setEditMode(false)
+      getTaskById(selectedTaskId)
+    } else {
+      setEditMode(true)
+    }
   }, [selectedTaskId])
 
   useEffect(() => {
@@ -152,9 +157,6 @@ const TaskForm = ({
       setEditMode(false)
     }
   }
-  useEffect(() => {
-    if (userRole !== 1) setEditMode(!isEditing)
-  }, [isEditing])
 
   const updateForm = (field, value) => {
     updateCreateStoryForm({
@@ -213,11 +215,12 @@ const TaskForm = ({
       <DarkText fontSize="18px" color="#0057FF" lineHeight="normal">
         ISSUE {taskDetail?.ticketCode?.toLowerCase()}
       </DarkText>
-      <form onFocus={enableEditMode} onClick={e => disableEditMode(e)}>
+      <form onClick={e => disableEditMode(e)}>
         <div
           style={{
-            width: '100%',
+            width: '97%',
             display: 'flex',
+            overflow: 'hidden',
             alignItems: 'flex-end',
             justifyContent: 'flex-end',
             marginLeft: '35px',
@@ -277,6 +280,7 @@ const TaskForm = ({
             name="taskName"
             fontSize="14px"
             borderColor="red"
+            disableBorder={!editMode}
             disabled={userRole === 1}
             noMargin
             width="500px"
@@ -284,8 +288,8 @@ const TaskForm = ({
             onChange={e => updateForm('taskName', e?.target?.value)}
             value={taskForm?.taskName}
             clickType="taskName"
-            onUpdate={() => {}}
             onClick={enableEditMode}
+            onUpdate={() => {}}
           />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
@@ -367,10 +371,7 @@ const TaskForm = ({
               paddingRight="5px">
               tags:
             </TitleText>
-            <Badge small>
-              {tagOptions?.find(tag => tag.value === taskForm?.tag)?.label}
-              <AiOutlineClose style={{ width: '14px', height: '14px', marginLeft: '10px' }} />
-            </Badge>
+            <Badge small>{tagOptions?.find(tag => tag.value === taskForm?.tag)?.label}</Badge>
             <div
               style={{
                 width: '17px',

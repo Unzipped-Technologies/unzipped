@@ -95,11 +95,11 @@ const TasksPanel = ({
     if (!result.destination) return
     const { source, destination } = result
     const allStories = []
-    if (source.droppableId !== destination.droppableId) {
+    if (source.droppableId !== destination.droppableId && destination.droppableId !== 'droppable') {
       const sourceColumn = departmentData?.departmentTags.find(e => source.droppableId === e._id)
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
-      const destItems = destColumn.tasks
+      const destItems = destColumn?.tasks || []
       const [removed] = sourceItems.splice(source.index, 1)
       removed.tag = destColumn._id
       destItems.splice(destination.index, 0, removed).map((e, index) => {
@@ -214,7 +214,7 @@ const TasksPanel = ({
 
       <StoryTable>
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="droppable" type="COLUMN" direction="vertical" key="droppable">
+          {/* <Droppable droppableId="droppable" type="COLUMN" direction="vertical" key="droppable">
             {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
@@ -223,142 +223,137 @@ const TasksPanel = ({
                   background: snapshot.isDraggingOver ? 'lightblue' : 'white',
                   padding: '1px 0px 0px 0px',
                   borderRadius: '4px'
-                }}>
-                <div>
-                  {departmentData?.departmentTags?.length
-                    ? departmentData?.departmentTags.map(tag => {
-                        return (
-                          <div key={tag._id}>
-                            <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
-                              {(provided, snapshot) => (
-                                <div
-                                  {...provided.droppableProps}
-                                  ref={provided.innerRef}
-                                  style={{
-                                    background: snapshot.isDraggingOver ? 'lightblue' : 'white',
-                                    padding: '1px 0px 0px 0px',
-                                    borderRadius: '4px'
-                                  }}>
-                                  <WhiteCard padding="10px 40px" noMargin borderRadius="0px" row background="#F7F7F7">
-                                    <DarkText noMargin bold width="300px">
-                                      {tag.tagName} ({tag?.tasks?.length})
-                                    </DarkText>
-                                    <DarkText noMargin center bold width="200px">
-                                      STORY POINTS
-                                    </DarkText>
-                                    <DarkText noMargin center bold width="100px">
-                                      ASSIGNEE
-                                    </DarkText>
-                                  </WhiteCard>
+                }}> */}
+          <div>
+            {departmentData?.departmentTags?.length
+              ? departmentData?.departmentTags.map(tag => {
+                  return (
+                    <div key={tag._id}>
+                      <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
+                        {(provided, snapshot) => (
+                          <div
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                            style={{
+                              background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                              padding: '1px 0px 0px 0px',
+                              borderRadius: '4px'
+                            }}>
+                            <WhiteCard padding="10px 40px" noMargin borderRadius="0px" row background="#F7F7F7">
+                              <DarkText noMargin bold width="300px">
+                                {tag.tagName} ({tag?.tasks?.length})
+                              </DarkText>
+                              <DarkText noMargin center bold width="200px">
+                                STORY POINTS
+                              </DarkText>
+                              <DarkText noMargin center bold width="100px">
+                                ASSIGNEE
+                              </DarkText>
+                            </WhiteCard>
 
-                                  {tag?.tasks?.length
-                                    ? tag?.tasks.map((task, index) => {
-                                        return (
-                                          <div key={task._id}>
-                                            <Draggable key={task._id} draggableId={task._id} index={index}>
-                                              {(provided, snapshot) => (
+                            {tag?.tasks?.length
+                              ? tag?.tasks.map((task, index) => {
+                                  return (
+                                    <div key={task._id}>
+                                      <Draggable key={task._id} draggableId={task._id} index={index}>
+                                        {(provided, snapshot) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}>
+                                            <WhiteCard
+                                              padding="10px 10px"
+                                              noMargin
+                                              borderRadius="0px"
+                                              row
+                                              background="#F7F7F7">
+                                              <DarkText
+                                                noMargin
+                                                bold
+                                                width="300px"
+                                                onClick={async () => {
+                                                  setTaskId(task._id)
+                                                  openStoryModal()
+                                                }}>
                                                 <div
-                                                  ref={provided.innerRef}
-                                                  {...provided.draggableProps}
-                                                  {...provided.dragHandleProps}>
-                                                  <WhiteCard
-                                                    padding="10px 10px"
-                                                    noMargin
-                                                    borderRadius="0px"
-                                                    row
-                                                    background="#F7F7F7">
-                                                    <DarkText
-                                                      noMargin
-                                                      bold
-                                                      width="300px"
-                                                      onClick={async () => {
-                                                        setTaskId(task._id)
-                                                        openStoryModal()
-                                                      }}>
-                                                      <div
-                                                        style={{
-                                                          display: 'flex',
-                                                          flexDirection: 'row',
-                                                          alignItems: 'center'
-                                                        }}>
-                                                        <div
-                                                          style={{
-                                                            marginRight: '20px'
-                                                          }}>
-                                                          <FaRegCheckCircle color={getStatusColor(task)} />
-                                                        </div>
-                                                        {task.taskName}
-                                                      </div>
-                                                    </DarkText>
-                                                    <DarkText noMargin center bold width="200px" marginLeft="30px">
-                                                      {task.storyPoints}
-                                                    </DarkText>
-                                                    <DarkText noMargin center bold width="100px" paddingLeft="50px">
-                                                      <img
-                                                        src={task?.assignee?.user?.profileImage}
-                                                        style={{
-                                                          width: '24px',
-                                                          height: '24px',
-                                                          borderRadius: '50%',
-                                                          marginRight: '6px'
-                                                        }}
-                                                      />
-                                                    </DarkText>
-                                                  </WhiteCard>
+                                                  style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center'
+                                                  }}>
+                                                  <div
+                                                    style={{
+                                                      marginRight: '20px'
+                                                    }}>
+                                                    <FaRegCheckCircle color={getStatusColor(task)} />
+                                                  </div>
+                                                  {task.taskName}
                                                 </div>
-                                              )}
-                                            </Draggable>
+                                              </DarkText>
+                                              <DarkText noMargin center bold width="200px" marginLeft="30px">
+                                                {task.storyPoints}
+                                              </DarkText>
+                                              <DarkText noMargin center bold width="100px" paddingLeft="50px">
+                                                <img
+                                                  src={task?.assignee?.user?.profileImage}
+                                                  style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '50%',
+                                                    marginRight: '6px'
+                                                  }}
+                                                />
+                                              </DarkText>
+                                            </WhiteCard>
                                           </div>
-                                        )
-                                      })
-                                    : ''}
-                                  {userRole === 0 && (
-                                    <WhiteCard
-                                      onClick={() => {
-                                        updateCreateStoryForm({
-                                          businessId: selectedDepartment.businessId,
-                                          departmentId: selectedDepartment._id,
-                                          tag: tag._id,
-                                          status: TODO_STATUS
-                                        })
-                                        setIsEditing(false)
-                                        setStoryModal(true)
-                                      }}
-                                      noMargin
-                                      borderRadius="0px"
-                                      padding="10px 10px"
-                                      row
-                                      background="#FFF">
-                                      <DarkText
-                                        className="d-flex align-items-center"
-                                        noMargin
-                                        bold
-                                        color="#2F76FF"
-                                        clickable>
-                                        <AiOutlinePlusCircle
-                                          style={{
-                                            fontSize: '18px',
-                                            marginRight: '20px'
-                                          }}
-                                        />
-                                        ADD TASK
-                                      </DarkText>
-                                    </WhiteCard>
-                                  )}
+                                        )}
+                                      </Draggable>
+                                    </div>
+                                  )
+                                })
+                              : ''}
+                            {userRole === 0 && (
+                              <WhiteCard
+                                onClick={() => {
+                                  updateCreateStoryForm({
+                                    businessId: selectedDepartment.businessId,
+                                    departmentId: selectedDepartment._id,
+                                    tag: tag._id,
+                                    status: TODO_STATUS
+                                  })
+                                  setIsEditing(false)
+                                  setStoryModal(true)
+                                }}
+                                noMargin
+                                borderRadius="0px"
+                                padding="10px 10px"
+                                row
+                                background="#FFF">
+                                <DarkText className="d-flex align-items-center" noMargin bold color="#2F76FF" clickable>
+                                  <AiOutlinePlusCircle
+                                    style={{
+                                      fontSize: '18px',
+                                      marginRight: '20px'
+                                    }}
+                                  />
+                                  ADD TASK
+                                </DarkText>
+                              </WhiteCard>
+                            )}
 
-                                  {provided.placeholder}
-                                </div>
-                              )}
-                            </Droppable>
+                            {provided.placeholder}
                           </div>
-                        )
-                      })
-                    : ''}
-                </div>
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+                        )}
+                      </Droppable>
+                    </div>
+                  )
+                })
+              : ''}
+          </div>
+          {/* {provided.placeholder}
+              </div> */}
+          {/* )}
+          </Droppable> */}
         </DragDropContext>
       </StoryTable>
 
