@@ -208,7 +208,6 @@ const FormField = ({
     }
   }, [dropdownList])
 
-  console.log('ppp', currentError)
   return (
     <FormFieldContainer
       zIndexUnset={zIndexUnset}

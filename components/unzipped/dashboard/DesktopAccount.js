@@ -197,7 +197,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
             setEditCompany(false)
         }
     }
-    console.log(ValidationUtils._validateString(userData.firstName, {min: 1, max: 40}))
+
     return (
         <Shell>
             <BackHeader 
@@ -682,7 +682,6 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
       token: state.Auth.token,
       email: state.Auth.email,

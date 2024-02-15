@@ -648,7 +648,6 @@ export const updateBusiness = data => async (dispatch, getState) => {
 }
 
 export const nullBusinessForm = (data ={}) =>  (dispatch) => {
-  console.log('nullBusinessForm', dispatch)
   dispatch({
     type: RESET_BUSINESS_FORM,
     // payload: null

@@ -183,7 +183,6 @@ class Validations {
     
         // Check if input is a string
         if (typeof input !== 'string') {
-            console.error('Input must be a string.');
             return false;
         }
     
@@ -210,7 +209,6 @@ class Validations {
     
         // Check if ein is a string
         if (typeof ein !== 'string') {
-            console.error('EIN must be a string.');
             return false;
         }
     
@@ -220,7 +218,6 @@ class Validations {
     _formatToEIN(value) {
         // Check if value is a string
         if (typeof value !== 'string') {
-            console.error('Value must be a string.');
             return value; // Return the original value if it's not a string
         }
     
