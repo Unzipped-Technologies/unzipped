@@ -16,6 +16,9 @@ import {
   SORT_STORIES_ON_DRAG,
   SELECT_BUSINESS,
   DELETE_BUSINESS,
+  GET_BUSINESS_DETAILS,
+  CREATE_BUSINESS_DETAILS,
+  UPDATE_BUSINESS_DETAILS,
   GET_DEPARTMENT_BY_ID,
   REORDER_STORIES,
   DEPARTMENT_ERROR,
@@ -249,8 +252,64 @@ export const removeCommentFromStory = (data, token) => async (dispatch, getState
     })
 }
 
+export const createBusinessDetails = (data, token) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+
+  await axios
+    .post(`/api/business/details/create`, data, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: CREATE_BUSINESS_DETAILS,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: BUSINESS_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const updateBusinessDetails = (data, token) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+
+  await axios
+    .post(`/api/business/details/update`, data, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: UPDATE_BUSINESS_DETAILS,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: BUSINESS_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const getBusinessDetails = (userId, token) => async (dispatch, getState) => {
+  const id = userId || getState().Auth.user._id
+  dispatch({ type: LOAD_STATE })
+  await axios
+    .post(`/api/business/details`, {userId: id}, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: GET_BUSINESS_DETAILS,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: BUSINESS_ERROR,
+        payload: err.response
+      })
+    })
+}
+
 export const createBusiness = (data, token) => async (dispatch, getState) => {
-  //department Loading
   dispatch({ type: LOAD_STATE })
 
   await axios

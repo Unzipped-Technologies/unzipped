@@ -170,6 +170,75 @@ class Validations {
         return true;
     }
 
+        /**
+     * Validates a string based on provided minimum and maximum length.
+     * @param {string} input - The string to validate.
+     * @param {object} options - The options for validation.
+     * @param {number} options.min - The minimum length of the string.
+     * @param {number} options.max - The maximum length of the string.
+     * @returns {boolean} - Returns true if the string is valid, false otherwise.
+     */
+    _validateString(input, options = {}) {
+        const { min = 0, max = Infinity, allowSpecialChars = false } = options;
+    
+        // Check if input is a string
+        if (typeof input !== 'string') {
+            console.error('Input must be a string.');
+            return false;
+        }
+    
+        // Validate the string length
+        const length = input.length;
+        if (length < min || length > max) {
+            return false; // Invalid string due to length
+        }
+    
+        // Regular expression to check if the string contains only letters, numbers (and optionally, special characters)
+        const regex = allowSpecialChars ? /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/ : /^[a-zA-Z0-9]*$/;
+        
+        // Validate against the regular expression
+        if (!regex.test(input)) {
+            return false; // Invalid string due to character restrictions
+        }
+    
+        return true; // String is valid
+    }
+
+    _validateEIN(ein) {
+        // EIN format: XX-XXXXXXX
+        const einRegex = /^\d{2}-\d{7}$/;
+    
+        // Check if ein is a string
+        if (typeof ein !== 'string') {
+            console.error('EIN must be a string.');
+            return false;
+        }
+    
+        return einRegex.test(ein);
+    }
+
+    _formatToEIN(value) {
+        // Check if value is a string
+        if (typeof value !== 'string') {
+            console.error('Value must be a string.');
+            return value; // Return the original value if it's not a string
+        }
+    
+        // Count the number of dashes in the string
+        const dashCount = (value.match(/-/g) || []).length;
+    
+        // Check if there's exactly one dash and it's at the third position
+        if (dashCount === 1 && value[2] === '-') {
+            return value; // Return the string unchanged if it already matches the EIN format
+        } else {
+            // If not, format the string to match the EIN pattern (XX-XXXXXXX)
+            // Remove all non-digit characters first
+            const digitsOnly = value.replace(/\D/g, '');
+            // Then insert a dash after the second digit to format as EIN
+            return digitsOnly.length > 2 ? `${digitsOnly.slice(0, 2)}-${digitsOnly.slice(2)}` : digitsOnly;
+        }
+    }
+
     /**
      * Indicates whether an email validation has failed on a given input.
      * @param {string} email - Potential email

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import theme from '../theme'
 import FormError from '../FormError'
 import CurrencyInput from 'react-currency-input-field'
-import { set } from 'react-ga'
 
 const ControlContainer = styled.div`
     position: relative;

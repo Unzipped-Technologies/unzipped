@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Nav from '../../components/unzipped/header';
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+import Nav from '../../../components/unzipped/header';
+import MobileFreelancerFooter from '../../../components/unzipped/MobileFreelancerFooter';
 import styled from 'styled-components';
-import MobileAccount from '../../components/unzipped/dashboard/MobileAccount';
-import DesktopAccount from '../../components/unzipped/dashboard/DesktopAccount';
-import Footer from '../../components/unzipped/Footer'
+import MobileAccount from '../../../components/unzipped/dashboard/MobileAccount';
+import DesktopAccount from '../../../components/unzipped/dashboard/DesktopAccount';
+import Footer from '../../../components/unzipped/Footer'
 
 const MobileDisplayBox = styled.div`
 position: relative;
