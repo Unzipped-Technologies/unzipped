@@ -36,9 +36,10 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
   const userId = useSelector(state => state.Auth.user._id);
   const listObj = userLists?.find(list => list.name === 'Recently Viewed');
 
-
   const redirectToProfile = () => {
-    dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
+    if (listObj) {
+      dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
+    }
     // clearSelectedFreelancer()
     if (user?.id) {
       router.push(`/freelancers/${user.id}`)
@@ -52,7 +53,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer }) {
   }
 
   return (
-    <div className='bg-' style={{ borderBottom: "2px solid rgba(0, 0, 0, 0.25)", color: "black"}}>
+    <div className='bg-' style={{ borderBottom: "2px solid rgba(0, 0, 0, 0.25)", color: "black" }}>
       <div className='px-3 py-2'>
         <div className='d-flex'>
           <img src={user?.profilePic} alt="Profile Pic" style={{ width: "55px", height: "55px" }} className='mt-2' />

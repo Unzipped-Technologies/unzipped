@@ -5,9 +5,9 @@ import FreelancerCard from '../../components/unzipped/dashboard/FreelancerCard'
 import Footer from '../../components/unzipped/Footer'
 import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
 import styled from 'styled-components'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getFreelancerList, clearSelectedFreelancer, getFreelancerSkillsList } from '../../redux/actions'
+import { getFreelancerList, clearSelectedFreelancer, getFreelancerSkillsList, getAllFreelancers } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import MobileSearchBar from '../../components/ui/MobileSearchBar'
 import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard'
@@ -64,7 +64,9 @@ const Freelancers = ({
   totalCount,
   clearSelectedFreelancer,
   getFreelancerSkillsList,
-  freelancerSkillsList = []
+  freelancerSkillsList = [],
+  allFreelancers = [],
+  getAllFreelancers
 }) => {
   const [take, setTake] = useState(20)
   const [skip] = useState(0)
@@ -75,6 +77,8 @@ const Freelancers = ({
   const [skill, setSkill] = useState([])
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
+  const isNavbarExpanded = useSelector(state => state.Freelancers);
+
   const sortOptions = [
     {
       text: 'All Categories',
@@ -104,6 +108,7 @@ const Freelancers = ({
 
   useMemo(() => {
     getFreelancerSkillsList()
+    getAllFreelancers()
   }, [])
 
   useEffect(() => {
@@ -184,7 +189,27 @@ const Freelancers = ({
       return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
     }
   }
-  console.log('filterOpenClose', filterOpenClose)
+
+  const constructFreelancerModel = (item) => {
+    const freelancer = {
+      id: item?._id,
+      name: `${item?.userId?.FirstName} ${item?.userId?.LastName}`,
+      type: item?.category,
+      isPreferedFreelancer: item?.isPreferedFreelancer,
+      country: item?.userId?.AddressLineCountry || 'United States',
+      skills: item?.freelancerSkills?.map(e => e.skill) || [],
+      cover:
+        item?.cover ||
+        `I have been a ${item?.category || 'developer'} for over ${(item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
+        } years. schedule a meeting to check if I'm a good fit for your business.`,
+      profilePic:
+        item?.userId?.profileImage ||
+        'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+      rate: item?.rate,
+      likes: item?.likeTotal
+    }
+    return freelancer;
+  }
 
   return (
     <SearchContainer >
@@ -245,7 +270,7 @@ const Freelancers = ({
             />
           </MobileDisplayBox>
         )}
-        <Box>
+        <Box style={{ marginTop: !(isNavbarExpanded.isExpanded) ? (access_token) ? "100px" : "0px" : (access_token) ? "100px" : "0px" }}>
           <DesktopSearchFilterFreelancers
             maxRate={maxRate}
             setMaxRate={setMaxRate}
@@ -259,7 +284,8 @@ const Freelancers = ({
             setSkill={setSkill}
           />
 
-          <div className="overflow-auto">
+
+          {/* <div className="overflow-auto">
             <div className="d-flex align-items-baseline py-4 bg-white">
               <h5 className="px-4">
                 <b>Top Results</b>
@@ -301,39 +327,67 @@ const Freelancers = ({
                 )
               }
             })}
+          </div> */}
+          <div className="overflow-auto">
+            <div className="d-flex align-items-baseline py-4 bg-white">
+              <h5 className="px-4">
+                <b>Top Results</b>
+              </h5>
+              <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+            </div>
+            {allFreelancers?.length === 0 && (
+              <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                No freelancers found for this search
+              </DarkText>
+            )}
+            {allFreelancers?.map((item, index) => {
+              // console.log('user_freelancer', user)
+              const freelancer = constructFreelancerModel(item)
+              if (item?.userId?.FirstName) {
+                return (
+                  <>
+                    <WhiteCard noMargin overlayDesktop cardHeightDesktop>
+                      <FreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer} />
+                    </WhiteCard>
+                    {index === allFreelancers.length - 1 && <div ref={containerRef}></div>}
+                  </>
+                )
+              }
+            })}
           </div>
         </Box>
-        {freelancerList?.map((user, index) => {
-          const freelancer = {
-            id: user._id,
-            name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
-            type: user.category,
-            isPreferedFreelancer: user?.isPreferedFreelancer,
-            country: user?.user?.AddressLineCountry || 'United States',
-            skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
-            cover:
-              user?.cover ||
-              `I have been a ${user?.category || 'developer'} for over ${(user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
-              } years. schedule a meeting to check if I'm a good fit for your business.`,
-            profilePic:
-              user?.user?.profileImage ||
-              'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            rate: user?.rate,
-            likes: user?.likeTotal
-          }
-          if (user?.user?.FirstName) {
+        {allFreelancers?.map((item, index) => {
+          const freelancerModel = constructFreelancerModel(item);
+          // {
+          //   id: item._id,
+          //   name: `${item?.user?.FirstName} ${item?.user?.LastName}`,
+          //   type: item.category,
+          //   isPreferedFreelancer: item?.isPreferedFreelancer,
+          //   country: item?.user?.AddressLineCountry || 'United States',
+          //   skills: item?.user?.freelancerSkills?.map(e => e.skill) || [],
+          //   cover:
+          //     item?.cover ||
+          //     `I have been a ${item?.category || 'developer'} for over ${(item?.user?.freelancerSkills && item?.user?.freelancerSkills[0]?.yearsExperience) || 1
+          //     } years. schedule a meeting to check if I'm a good fit for your business.`,
+          //   profilePic:
+          //     item?.user?.profileImage ||
+          //     'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+          //   rate: item?.rate,
+          //   likes: item?.likeTotal
+          // }
+          if (item?.userId?.FirstName) {
             return (
               <>
                 {!filterOpenClose && (
                   <MobileDisplayBox>
                     <MobileFreelancerCard
-                      user={freelancer}
+                      user={freelancerModel}
                       includeRate
                       clearSelectedFreelancer={clearSelectedFreelancer}
                     />
                   </MobileDisplayBox>
                 )}
-                {index === freelancerList.length - 1 && <div ref={containerRef}></div>}
+                {index === allFreelancers.length - 1 && <div ref={containerRef}></div>}
               </>
             )
           }
@@ -363,7 +417,8 @@ const mapStateToProps = state => {
     freelancerList: state.Freelancers?.freelancers,
     freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
     totalCount: state.Freelancers?.totalCount[0]?.count,
-    access_token: state.Auth.token
+    access_token: state.Auth.token,
+    allFreelancers: state.FreelancerSkills?.allFreelancers
   }
 }
 
@@ -371,7 +426,8 @@ const mapDispatchToProps = dispatch => {
   return {
     getFreelancerList: bindActionCreators(getFreelancerList, dispatch),
     clearSelectedFreelancer: bindActionCreators(clearSelectedFreelancer, dispatch),
-    getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch)
+    getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch),
+    getAllFreelancers: bindActionCreators(getAllFreelancers, dispatch)
   }
 }
 
