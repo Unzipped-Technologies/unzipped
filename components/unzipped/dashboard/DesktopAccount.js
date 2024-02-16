@@ -201,7 +201,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                 <RightOne>
                     <Rows>
                         <Item>{email}</Item>
-                        <Link>Change email</Link>
+                        <Link href="/change-email">Change email</Link>
                     </Rows>
                     <Rows>
                         <Item>Password: ******</Item>
@@ -209,7 +209,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                     </Rows>
                     <Rows>
                         <Item>Phone: {phone}</Item>
-                        <Link>Change number</Link>
+                        <Link href="/change-phone">Change number</Link>
                     </Rows>
                     <Underline color="#333"/>
                     <Rows>
@@ -217,7 +217,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             <img height={20} src={getCardLogoUrl(primaryPM.card)} />
                             <Span>**** **** **** {primaryPM.lastFour}</Span>
                         </Item>
-                        <Link>Manage payment method</Link>
+                        <Link href='/manage-payment-method'>Manage payment method</Link>
                     </Rows>
                     <Rows>
                         <Item>Your next billing date is {phone}</Item>
@@ -232,7 +232,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                 <RightOne>
                     <Rows fullHeight>
                         <Item>{email}</Item>
-                        <Link>Change plan</Link>
+                        <Link href={'/pick-a-plan'}>Change plan</Link>
                     </Rows>
                 </RightOne>
             </Container>

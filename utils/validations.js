@@ -271,6 +271,47 @@ class Validations {
         return pw.length >= 8;
     }
 
+    _formatPhoneNumber(number) {
+        // Convert number to string to handle it easily
+        let numStr = number.toString();
+    
+        // Check if number should be prefixed with 1
+        if (numStr.length === 10 && numStr.startsWith("8")) {
+            numStr = "1" + numStr;
+        }
+    
+        // Format based on length after possible prefix addition
+        if (numStr.length === 11) {
+            return `${numStr.slice(0, 1)} (${numStr.slice(1, 4)}) ${numStr.slice(4, 7)}-${numStr.slice(7)}`;
+        } else if (numStr.length === 10) {
+            return `(${numStr.slice(0, 3)}) ${numStr.slice(3, 6)}-${numStr.slice(6)}`;
+        } else {
+            return numStr; // Return as is if it does not match expected lengths
+        }
+    }
+    
+    // Function to verify if a phone number is valid
+    _isValidPhoneNumber(formattedNumber) {
+        console.log('formattedNumber', formattedNumber)
+        // Define parts of the regex to make it more readable
+        const optionalCountryCode = /^1 /; // Optional '1 ' at the beginning
+        const areaCode = /\(\d{3}\)/; // Area code in the format (XXX)
+        const mainNumber = / \d{3}-\d{4}$/; // Main number in the format XXX-XXXX
+    
+        // Combine parts to create the full regex for validation
+        const fullRegex = new RegExp(
+            (optionalCountryCode.source + "?") + // Make country code optional
+            areaCode.source +
+            mainNumber.source
+        );
+        if (formattedNumber.length < 14 || formattedNumber > 16) {
+            console.log('ran here')
+            return true
+        }
+    
+        return fullRegex.test(formattedNumber.toString().replace(/[^\d]/g, ''));
+    }
+
     _cellNumberValidation(number) {
         let error = false;
         if (number && !this.validatePhoneNumber(number)) {

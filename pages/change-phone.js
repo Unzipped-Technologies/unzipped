@@ -3,12 +3,12 @@ import Head from 'next/head';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
-import UpdateKeyDataForm from '../components/unzipped/UpdatePasswordForm'
+import UpdatePhoneForm from '../components/unzipped/UpdatePhoneForm'
 import {changePassword} from '../redux/actions';
 import Nav from '../components/unzipped/header';
 import { parseCookies } from "../services/cookieHelper";
 
-const Reset = ({ error, token }) => {
+const Reset = ({ error, token, phone }) => {
     const [loading, setLoading] = useState(false);
     const router = useRouter()
 
@@ -55,11 +55,12 @@ const Reset = ({ error, token }) => {
             <meta name="Change Password | Unzipped" content="Change Password"/>
             </Head>
             <Nav token={token} marginBottom={marginBottom} />
-            <UpdateKeyDataForm 
-                type='password' 
-                title="Change Password" 
+            <UpdatePhoneForm 
+                type='phone' 
+                title="Change Phone" 
                 onBack={() => linkPush('/dashboard/account')}
                 onSubmit={resetPassword}
+                phone={phone}
             />
         </React.Fragment>
     )
@@ -74,8 +75,10 @@ Reset.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
+    console.log(state)
     return {
         error: state.Auth.error,
+        phone: state.Auth.user.phoneNumber
     }
 }
 
