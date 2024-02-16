@@ -258,13 +258,13 @@ class Validations {
         return $new
     }
 
-    // _passwordValidation(pw) {
-    //     return /[A-Z]/       .test(pw) &&
-    //     /[a-z]/       .test(pw) &&
-    //     /[0-9]/       .test(pw) &&
-    //     /[^A-Za-z0-9]/.test(pw) &&
-    //     pw.length > 8;
-    // }
+    _strongPasswordValidation(pw) {
+        return /[A-Z]/.test(pw) && // At least one uppercase letter
+               /[a-z]/.test(pw) && // At least one lowercase letter
+               /[0-9]/.test(pw) && // At least one digit
+               /[^A-Za-z0-9]/.test(pw) && // At least one special character
+               pw.length >= 8; // Minimum length of 8 characters
+    }
 
     // weak validator for now
     _passwordValidation(pw) {

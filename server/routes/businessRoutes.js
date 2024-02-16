@@ -306,7 +306,6 @@ router.post('/details',
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
     const id = req.body.userId || req.user.sub
-    console.log('ran here')
     try {
       const businessDetails = await businessHelper.getBusinessDetailsByUserId(id)
       if (!businessDetails) throw Error('business details already exists')

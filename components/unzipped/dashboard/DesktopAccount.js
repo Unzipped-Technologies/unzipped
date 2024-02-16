@@ -125,30 +125,20 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
     const [businessPhoneError, setBusinessPhoneError] = useState('')
     const [taxIdError, setTaxIdError] = useState('')
     const initialState = {
-        firstName: user.FirstName,
-        lastName: user.LastName,
-        addressLineOne: user.AddressLineOne,
-        addressLineTwo: user.AddressLineTwo,
-        addressState: user.AddressState,
-        addressCity: user.AddressCity,
-        addressZip: user.AddressZip,
-        businessName: business.name,
-        businessType: business.type,
-        businessPhone: business.businessPhone,
-        taxId: business.taxId,
+        firstName: user?.FirstName,
+        lastName: user?.LastName,
+        addressLineOne: user?.AddressLineOne,
+        addressLineTwo: user?.AddressLineTwo,
+        addressState: user?.AddressState,
+        addressCity: user?.AddressCity,
+        addressZip: user?.AddressZip,
+        businessName: business?.name,
+        businessType: business?.type,
+        businessPhone: business?.businessPhone,
+        taxId: business?.taxId,
     }
     const [userData, setUserData] = useState({
-        firstName: user.FirstName,
-        lastName: user.LastName,
-        addressLineOne: user.AddressLineOne,
-        addressLineTwo: user.AddressLineTwo,
-        addressState: user.AddressState,
-        addressCity: user.AddressCity,
-        addressZip: user.AddressZip,
-        businessName: business.name,
-        businessType: business.type,
-        businessPhone: business.businessPhone,
-        taxId: business.taxId,
+        ...initialState
     })
 
     const updateForm = (type, data) => {
@@ -215,7 +205,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                     </Rows>
                     <Rows>
                         <Item>Password: ******</Item>
-                        <Link>Change password</Link>
+                        <Link href="/change-password">Change password</Link>
                     </Rows>
                     <Rows>
                         <Item>Phone: {phone}</Item>
@@ -522,8 +512,9 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                     <Underline color="#333" margin="15px 0px 5px 0px" />
                     <Rows>
                         <SubTitle>Company</SubTitle>
-                        <EditButton onClick={() => setEditCompany(true)}>Edit</EditButton>
+                        <EditButton onClick={() => setEditCompany(true)}>{!business ? 'verify business details' : 'Edit'}</EditButton>
                     </Rows>
+                    {business && (
                     <Rows>
                         <FormField
                             fieldType="input"
@@ -560,6 +551,8 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             value={userData.businessName}
                         >Business Name</FormField>
                     </Rows>
+                    )}
+                    {business && (
                     <Rows>
                         <FormField
                             fieldType="input"
@@ -596,6 +589,8 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             value={userData.businessType}
                         >Business Type</FormField>
                     </Rows>
+                    )}
+                    {business && (
                     <Rows>
                         <Align>
                             <FormField
@@ -667,6 +662,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             >Tax EIN or Social security Number</FormField>
                         </Align>
                     </Rows>
+                    )}
                 </RightOne>
             </Container>
             <Container border>
@@ -697,6 +693,6 @@ const mapDispatchToProps = dispatch => {
       getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
       getBusinessDetails: bindActionCreators(getBusinessDetails, dispatch),
     }
-  }
+}
   
 export default connect(mapStateToProps, mapDispatchToProps)(DesktopAccount)
