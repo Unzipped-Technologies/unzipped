@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Button from '@material-ui/core/Button'
@@ -14,12 +14,12 @@ import { Absolute } from './dashboard/style'
 import { Button as Buttons, SearchBar } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
 import BackArrow from '../../components/icons/backArrow'
-import { logoutUser, resetBusinessForm } from '../../redux/actions'
-import { 
-  DownIcon, 
-  LightIcon, 
-  FolderIcon, 
-  BookmarkIcon, 
+import { freelancerExpandedOpts, logoutUser, resetBusinessForm } from '../../redux/actions'
+import {
+  DownIcon,
+  LightIcon,
+  FolderIcon,
+  BookmarkIcon,
   WorkIcon,
   CircleBrushIcon,
   CircleDashboardIcon,
@@ -225,87 +225,87 @@ const ButtonHolder = styled.div`
 
 const mobileMenuItems = [
   {
-      name: 'Find Talent',
-      subTitle: 'Hire a Pro',
-      subIcon: <CircleHeartIcon />,
-      subItems: [
-          {
-              name: 'Search freelancers',
-              sub: 'Find talented people to hire',
-              link: '/freelancers'
-          },
-          {
-              name: 'Browse by Skill',
-              sub: 'Narrow down your search',
-              link: '/freelancers'
-          },
-          {
-              name: 'How it Works',
-              sub: 'Learn how to hire & grow your team',
-              link: '/how-it-works/client'
-          },
-      ]
+    name: 'Find Talent',
+    subTitle: 'Hire a Pro',
+    subIcon: <CircleHeartIcon />,
+    subItems: [
+      {
+        name: 'Search freelancers',
+        sub: 'Find talented people to hire',
+        link: '/freelancers'
+      },
+      {
+        name: 'Browse by Skill',
+        sub: 'Narrow down your search',
+        link: '/freelancers'
+      },
+      {
+        name: 'How it Works',
+        sub: 'Learn how to hire & grow your team',
+        link: '/how-it-works/client'
+      },
+    ]
   },
   {
-      name: 'Find a Projects',
-      subTitle: 'Get Hired',
-      subIcon: <CircleBrushIcon />,
-      subItems: [
-          {
-              name: 'Find a Project',
-              sub: 'Browse projects that match your skills',
-              link: '/projects'
-          },
-          {
-              name: 'Search by Company',
-              sub: 'Narrow down your search',
-              link: '/projects'
-          },
-      ]
+    name: 'Find a Projects',
+    subTitle: 'Get Hired',
+    subIcon: <CircleBrushIcon />,
+    subItems: [
+      {
+        name: 'Find a Project',
+        sub: 'Browse projects that match your skills',
+        link: '/projects'
+      },
+      {
+        name: 'Search by Company',
+        sub: 'Narrow down your search',
+        link: '/projects'
+      },
+    ]
   },
   {
-      name: 'Why Unzipped',
-      subTitle: 'Guides & More',
-      subIcon: <CircleLightningIcon />,
-      subItems: [
+    name: 'Why Unzipped',
+    subTitle: 'Guides & More',
+    subIcon: <CircleLightningIcon />,
+    subItems: [
+      {
+        name: 'How to Hire',
+        sub: 'Find talented people to hire',
+        link: '/how-it-works/freelancer'
+      },
+      {
+        name: 'How to find work',
+        sub: 'Narrow down your search',
+        link: '/how-it-works/freelancer'
+      },
+      {
+        name: 'Quick start guides',
+        sub: [
           {
-              name: 'How to Hire',
-              sub: 'Find talented people to hire',
-              link: '/how-it-works/freelancer'
+            name: 'Freelancer',
+            sub: 'How to get started as a freelancer?',
+            link: '/wiki/getting-started',
+            icon: <CircleNotesIcon />,
           },
           {
-              name: 'How to find work',
-              sub: 'Narrow down your search',
-              link: '/how-it-works/freelancer'
+            name: 'Business',
+            sub: 'Hiring & working with independent talent',
+            link: '/wiki/working-with-independent-contractors',
+            icon: <CircleSearchIcon />,
           },
           {
-              name: 'Quick start guides',
-              sub: [
-                  {
-                      name: 'Freelancer',
-                      sub: 'How to get started as a freelancer?',
-                      link: '/wiki/getting-started',
-                      icon: <CircleNotesIcon />,
-                  },
-                  {
-                      name: 'Business',
-                      sub: 'Hiring & working with independent talent',
-                      link: '/wiki/working-with-independent-contractors',
-                      icon: <CircleSearchIcon />,
-                  },
-                  {
-                      name: 'Freelancer',
-                      sub: 'Growing your freelancing career',
-                      link: '/wiki/grow-your-career',
-                      icon: <CircleShipIcon />,
-                  },
-              ],
+            name: 'Freelancer',
+            sub: 'Growing your freelancing career',
+            link: '/wiki/grow-your-career',
+            icon: <CircleShipIcon />,
           },
-      ]
+        ],
+      },
+    ]
   },
   {
-      name: 'Enterprise',
-      link: '/how-it-works/client'
+    name: 'Enterprise',
+    link: '/how-it-works/client'
   }
 ]
 
@@ -471,6 +471,7 @@ const Nav = ({
   const [prevScrollPos, setPrevScrollPos] = useState(0)
   const seenNames = new Set();
   const otherNames = new Set();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsProjectMenuEnabled(router.pathname === '/projects')
@@ -562,6 +563,7 @@ const Nav = ({
       const isScrollingDown = scrollPosition > 60
 
       setIsHidden(isScrollingDown)
+      dispatch(freelancerExpandedOpts({ isExpanded: isScrollingDown }))
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -602,43 +604,42 @@ const Nav = ({
     }
   }, [isAuthenticated])
 
-useEffect(() => {
-  if (!isAuthenticated) {
+  useEffect(() => {
+    if (!isAuthenticated) {
       mobileMenuItems.push({
         name: 'Get Started Today',
         link: '/register'
-    })
-  } else {
-      mobileMenuItems.unshift(    {
-          name: 'Dashboard',
-          subTitle: 'Manage Your Work',
-          subIcon: <CircleDashboardIcon />,
-          subItems: [
+      })
+    } else {
+      mobileMenuItems.unshift({
+        name: 'Dashboard',
+        subTitle: 'Manage Your Work',
+        subIcon: <CircleDashboardIcon />,
+        subItems: [
           {
-              name: 'Notifications',
-              sub: 'Check pending todo items',
-              link: '/dashboard'
+            name: 'Notifications',
+            sub: 'Check pending todo items',
+            link: '/dashboard'
           },
           {
-              name: 'Browse',
-              sub: 'See potential projects and freelancers',
-              link: '/browse'
+            name: 'Browse',
+            sub: 'See potential projects and freelancers',
+            link: '/browse'
           },
           {
-              name: 'Messages',
-              sub: 'Manage communication within the app',
-              link: '/dashboard/inbox'
+            name: 'Messages',
+            sub: 'Manage communication within the app',
+            link: '/dashboard/inbox'
           },
           {
-              name: 'Account',
-              sub: 'Manage your account details',
-              link: '/dashboard/account'
+            name: 'Account',
+            sub: 'Manage your account details',
+            link: '/dashboard/account'
           },
         ]
       })
     }
   }, [isAuthenticated, menuItems])
-
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
@@ -742,7 +743,7 @@ useEffect(() => {
             {menuOpen === 'mobile' && (
               <Absolute right="0px" top="0px">
                 {/* <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /> */}
-                <FullScreenDropdown 
+                <FullScreenDropdown
                   menuItems={mobileMenuItems.filter(item => {
                     // Check if the item's name has already been seen
                     if (seenNames.has(item.name)) {
@@ -753,10 +754,10 @@ useEffect(() => {
                       seenNames.add(item.name);
                       return true;
                     }
-                  })} 
-                  startAProject={startAProject} 
-                  isAuth={isAuthenticated} 
-                  logoutUser={signOut} 
+                  })}
+                  startAProject={startAProject}
+                  isAuth={isAuthenticated}
+                  logoutUser={signOut}
                   onClose={() => setMenuOpen(false)}
                 />
               </Absolute>
@@ -764,7 +765,7 @@ useEffect(() => {
           </Mobile>
         </Right>
       </Container>
-      {isSubMenu && (
+      {isSubMenu && token && (
         <SubMenTop
           style={{
             transition: 'transform 0.3s ease-in-out',

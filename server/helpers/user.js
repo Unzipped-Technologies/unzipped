@@ -474,6 +474,26 @@ const setUpNotificationsForUser = async id => {
   }
 }
 
+const getAllFreelancers = async () => {
+  const freelancers = await freelancer.find().populate(
+    [
+      {
+        path: 'userId',
+        model: 'users',
+        select: 'AddressLineCountry FirstName LastName profileImage _id' 
+      },
+      {
+        path: 'freelancerSkills',
+        model: 'freelancerskills',
+        select: 'yearsExperience _id skill' 
+      }
+    ]
+  ).select('_id rate dislike likeTotal category');
+
+  return freelancers;
+
+}
+
 module.exports = {
   createUser,
   updateUserByEmail,
@@ -493,5 +513,6 @@ module.exports = {
   removeLikeToFreelancer,
   listLikes,
   addToNewsletter,
-  retrievePaymentMethods
+  retrievePaymentMethods,
+  getAllFreelancers,
 }

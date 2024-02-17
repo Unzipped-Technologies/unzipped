@@ -21,7 +21,7 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllU
   }
 })
 
-router.get('/freelancer/list', requireLogin, async (req, res) => {
+router.get('/freelancer/list', async (req, res) => {
   try {
     const { filter, take, skip, sort, maxRate, minRate, skill } = req.query
     const listUsers = await userHelper.listFreelancers({ filter, take, skip, sort, maxRate, minRate, skill })
@@ -34,8 +34,8 @@ router.get('/freelancer/list', requireLogin, async (req, res) => {
 
 router.get(
   '/freelancer/:id',
-  requireLogin,
-  permissionCheckHelper.hasPermission('getFreelancerById'),
+  // requireLogin,
+  // permissionCheckHelper.hasPermission('getFreelancerById'),
   async (req, res) => {
     try {
       const id = req.params.id
@@ -146,6 +146,15 @@ router.get('/current/payment-methods', requireLogin, async (req, res) => {
     console.log(req.user.sub)
     const getSubscriptions = await userHelper.retrievePaymentMethods(req.user.sub)
     res.json(getSubscriptions)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/getAllFreelancers', async (req, res) => {
+  try {
+    const freelancers = await userHelper.getAllFreelancers()
+    res.json(freelancers)
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
