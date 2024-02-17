@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Search from './input'
-import Icon from '../ui/Icon'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
 import { Absolute } from './dashboard/style'
@@ -31,6 +30,7 @@ import {
   CircleNotesIcon,
 } from '../icons'
 import FullScreenDropdown from '../ui/FullScreenDropdown'
+import LargeScreenDropdown from '../ui/LargeScreenDropdown'
 
 const Div = styled.div`
   width: 100%;
@@ -206,6 +206,10 @@ const SpanWhite = styled.div`
   }
 `
 
+const Shift = styled.div`
+  margin-right: 15px;
+`
+
 const Sub = styled.div`
   max-height: 90px;
 `
@@ -214,9 +218,6 @@ const ButtonHolder = styled.div`
   display: flex;
   flex-flow: row;
   margin-left: 15px;
-  & div:first-of-type {
-    margin: 0px 15px;
-  }
   & div:last-of-type {
     cursor: pointer;
   }
@@ -456,8 +457,6 @@ const Nav = ({
   setIsLogoHidden,
   isListViewable,
   setIsListViewable,
-  isViewable,
-  isExpanded,
   setIsExpanded
 }) => {
   const router = useRouter()
@@ -471,6 +470,7 @@ const Nav = ({
   const [isHidden, setIsHidden] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
   const seenNames = new Set();
+  const otherNames = new Set();
 
   useEffect(() => {
     setIsProjectMenuEnabled(router.pathname === '/projects')
@@ -486,46 +486,6 @@ const Nav = ({
     logoutUser()
     router.push('/login')
   }
-
-  const profileItems = [
-    {
-      name: 'Dashboard',
-      link: '/dashboard',
-      icon: <FolderIcon width={35} height={35} />
-    },
-    {
-      name: 'Membership',
-      link: '/pick-a-plan',
-      icon: <FolderIcon width={35} height={35} />
-    },
-    {
-      name: 'Hire a freelancer',
-      link: '/freelancers',
-      icon: <WorkIcon width={35} height={35} />
-    },
-    {
-      name: 'Work with us',
-      link: '/how-it-works/client',
-      icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
-    },
-    {
-      name: 'Get Ideas',
-      link: '/projects',
-      icon: <LightIcon width={35} height={35} />
-    },
-    { name: '<hr />', link: '/' },
-    {
-      name: 'Sign out',
-      onClick: () => signOut(),
-      link: '/',
-      icon: <LightIcon width={35} height={35} />
-    },
-    {
-      name: 'Help',
-      link: '/wiki',
-      icon: <LightIcon width={35} height={35} />
-    }
-  ]
 
   const setCloseDropdowns = time => {
     setTimeout(function () {
@@ -543,9 +503,11 @@ const Nav = ({
     if (isAuthenticated) {
       return (
         <ButtonHolder>
-          <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>
-            Start A Project
-          </Buttons>
+          <Shift>
+            <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>
+              Start A Project
+            </Buttons>
+          </Shift>
           <Image
             src={profilePic}
             alt="profile pic"
@@ -555,7 +517,28 @@ const Nav = ({
             onMouseEnter={() => setDropdowns('profile')}
           />
           {menuOpen === 'profile' && (
-            <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />
+            // <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />
+            <Desktop>
+              <Absolute right="0px" top="0px" width="400px">
+                  <LargeScreenDropdown 
+                  menuItems={mobileMenuItems.filter(item => {
+                    // Check if the item's name has already been seen
+                    if (otherNames.has(item.name)) {
+                      // If so, filter this item out
+                      return false;
+                    } else {
+                      // If not, add the name to the Set and keep the item
+                      otherNames.add(item.name);
+                      return true;
+                    }
+                  })} 
+                  startAProject={startAProject} 
+                  isAuth={isAuthenticated} 
+                  logoutUser={signOut} 
+                  onClose={() => setMenuOpen(false)}
+                />
+              </Absolute>
+            </Desktop>
           )}
         </ButtonHolder>
       )
