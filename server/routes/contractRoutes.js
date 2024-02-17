@@ -26,11 +26,10 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('getAllContrac
   }
 })
 
-// Get a contract by ID (GET)
+// Get a contract for current user only
 router.get('/current', requireLogin, permissionCheckHelper.hasPermission('getAllContracts'), async (req, res) => {
   try {
-    const userId = req.user.sub
-    const getContract = await contractHelper.getContracts(userId)
+    const getContract = await contractHelper.getUserContracts(req.query, req?.user?.userInfo)
     if (!getContract) throw Error('Contract not found')
     res.json(getContract)
   } catch (e) {

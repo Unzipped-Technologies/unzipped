@@ -5,13 +5,27 @@ import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
 import { parseCookies } from "../services/cookieHelper";
 import styled from 'styled-components'
-import {getPaymentMethods, deletePaymentMethods} from '../redux/actions';
+import {getPaymentMethods, deletePaymentMethods, getActiveContractsForUser} from '../redux/actions';
 import BackHeader from '../components/unzipped/BackHeader';
 import Nav from '../components/unzipped/header';
+import EmployeeCard from '../components/unzipped/EmployeeCard';
 
-const Container = styled.div``;
+const Container = styled.div`
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+`;
 
-const BillingDetails = ({token}) => {
+const Content = styled.div`
+    display: flex;
+    flex-flow: column;
+    gap: 15px;
+    margin: 15px 0px;
+    width: 953px;
+`;
+
+const BillingDetails = ({token, getActiveContractsForUser, activeContracts}) => {
     const [marginBottom, setMarginBottom] = useState('0px');
 
     useEffect(()=>{
@@ -35,6 +49,10 @@ const BillingDetails = ({token}) => {
         };
     },[])
 
+    useEffect(() => {
+        getActiveContractsForUser(token)
+    }, [])
+
     return (
         <React.Fragment>
             <Head>
@@ -49,6 +67,9 @@ const BillingDetails = ({token}) => {
                 <BackHeader 
                     title="Billing Details"
                 />
+                <Content>
+                    <EmployeeCard contracts={activeContracts.data}/>
+                </Content>
             </Container>
         </React.Fragment>
     )
@@ -63,10 +84,12 @@ BillingDetails.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
+    console.log(state)
     return {
         token: state.Auth.token,
         error: state.Auth.error,
         paymentMethods: state.Stripe.methods,
+        activeContracts: state.Contracts.activeContracts,
     }
 }
 
@@ -74,6 +97,7 @@ const mapDispatchToProps = dispatch => {
     return {
         getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
         deletePaymentMethods: bindActionCreators(deletePaymentMethods, dispatch),
+        getActiveContractsForUser: bindActionCreators(getActiveContractsForUser, dispatch),
     }
 }
 

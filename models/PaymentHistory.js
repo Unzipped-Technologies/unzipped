@@ -11,6 +11,8 @@ const paymentHistorySchema = new Schema({
   paymentStatus: { type: Number, default: 0 },
   paymentType: { type: String, default: '' },
   paymentAmount: Number,
+  card: String,
+  lastFour: String,
   paymentCurrency: { type: String, default: 'USD' },
   paymentDate: String 
 }, {

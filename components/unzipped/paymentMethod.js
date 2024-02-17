@@ -28,7 +28,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import useWindowSize from '../ui/hooks/useWindowSize';
 
 const Container = styled.div`
-    margin: 0px 10px 0px 0px;
+    margin: 0px 0px 0px 0px;
 `;
 
 const ButtonContainer = styled.div`

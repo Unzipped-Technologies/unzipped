@@ -10,6 +10,7 @@ import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
 import { getProjectApplications } from '../../../redux/ProjectApplications/actions'
 import MobileApplicationCard from './mobile/MobileApplicationsView'
+import VerticalDropdown from '../../VerticalDropdown'
 
 const DesktopContainer = styled.div`
   @media (max-width: 680px) {
@@ -57,6 +58,11 @@ const InviteButton = styled.button`
       display: none;
     `};
 `
+
+const Grid2 = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const UserInfo = styled.div`
   display: flex;
@@ -132,6 +138,13 @@ const ViewProfileButton = styled.button`
   background: #8ede64;
 `
 
+const DefaultDisplay = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+`;
+
 const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
   const router = useRouter()
   const { id } = router.query
@@ -190,7 +203,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                     </div>
                   )}
 
-                  <InviteButton>Invite</InviteButton>
+                  <InviteButton>Invited</InviteButton>
                 </ProfileImage>
                 <UserInfo>
                   <div style={{ display: 'flex' }}>
@@ -240,12 +253,30 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                   </div>
                 </UserInfo>
                 <ViewProfile>
-                  <ViewProfileButton
-                    onClick={() => {
-                      redirectToProfile(application?.freelancerId?._id)
-                    }}>
-                    View Profile
-                  </ViewProfileButton>
+                  <Grid2>
+                    <ViewProfileButton
+                      onClick={() => {
+                        redirectToProfile(application?.freelancerId?._id)
+                      }}>
+                      View Profile
+                    </ViewProfileButton>
+                    <VerticalDropdown 
+                      dropdownOptions={[
+                        {
+                          name: 'Hire User',
+                          action: () => {},
+                        },
+                        {
+                          name: 'View Application',
+                          action: () => {},
+                        },
+                        {
+                          name: 'Dismiss Application',
+                          action: () => {},
+                        },
+                      ]}
+                    />
+                  </Grid2>
                   <span
                     style={{
                       color: ' #000',
@@ -264,15 +295,9 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
             )
           })
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingTop: '200px'
-            }}>
-            <p>N/A</p>
-          </div>
+          <DefaultDisplay>
+            <p>When someone applies to this project, it will display here!</p>
+          </DefaultDisplay>
         )}
       </DesktopContainer>
       <MobileApplicationCard projectApplications={projectApplications}></MobileApplicationCard>
@@ -281,6 +306,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
 }
 
 const mapStateToProps = state => {
+  console.log(state.ProjectApplications.projectApplications)
   return {
     projectApplications: state.ProjectApplications.projectApplications
   }

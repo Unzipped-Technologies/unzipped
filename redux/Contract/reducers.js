@@ -2,6 +2,7 @@ import {
   CREATE_CONTRACT,
   GET_CONTRACTS,
   GET_CONTRACT_BY_ID,
+  GET_ACTIVE_CONTRACTS,
   UPDATE_CONTRACT,
   DELETE_CONTRACT,
   LOAD_STATE,
@@ -12,6 +13,7 @@ import {
 const INIT_STATE = {
   contracts: [],
   selectedContract: {},
+  activeContracts: [],
   error: '',
   loading: false,
   totalCount: 0
@@ -28,6 +30,8 @@ const Contracts = (state = INIT_STATE, action = {}) => {
     case UPDATE_CONTRACT:
       const RemoveUpdateContract = state.contracts.filter(item => item.id !== action.payload.id)
       return { ...state, loading: false, contracts: [action.payload, ...RemoveUpdateContract] }
+    case GET_ACTIVE_CONTRACTS:
+      return { ...state, loading: false, activeContracts: action.payload }
     case DELETE_CONTRACT:
       let newListContracts = state.contracts.filter(item => action.payload.id !== item.id)
       return { ...state, loading: false, contracts: [...newListContracts] }

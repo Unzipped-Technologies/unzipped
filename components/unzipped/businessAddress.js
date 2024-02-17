@@ -16,7 +16,7 @@ import { CircularProgress } from '@material-ui/core';
 import useWindowSize from '../ui/hooks/useWindowSize';
 
 const Container = styled.div`
-    margin: 0px 10px 0px 0px;
+    margin: 0px 0px 0px 0px;
     @media screen and (max-width: 600px) {
         width: 100%;
         margin: 5px;
