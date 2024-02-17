@@ -107,14 +107,73 @@ const countContracts = async filter => {
 
 const getContracts = async (query, user) => {
   try {
-    if (user?.role === accountTypeEnum.FOUNDER || user?.role === accountTypeEnum.ADMIN) {
-      query['userId'] = user.id
+    if (user?.role === accountTypeEnum.FOUNDER) {
+      query['userId'] = user._id
     } else if (user?.role === accountTypeEnum.INVESTOR) {
       query['freelancerId'] = user.freelancers
+      if (!query.freelancerId) {
+        throw new Error(`User does not have access to this!`)
+      }
     }
-    console.log(query)
+
     const filter = pick(query, ['businessId', 'departmentId', 'freelancerId', 'userId'])
-    console.log('/////filter', filter)
+
+    const options = pick(query, ['limit', 'page', 'count'])
+    const total = await countContracts(filter)
+    const limit = options.limit === 'all' ? total : pageLimit(options)
+
+    const page = currentPage(options)
+    const skip = (page - 1) * limit
+
+    const applications = await Contracts.find(filter)
+      .populate([
+        {
+          path: 'freelancerId',
+          model: 'freelancers',
+          select: 'userId user freelancerSkills rate category',
+          populate: [
+            {
+              path: 'userId',
+              model: 'users',
+              select: 'FirstName LastName FullName'
+            }
+          ]
+        },
+        {
+          path: 'departmentId',
+          select: 'name'
+        }
+      ])
+      .skip(skip)
+      .limit(limit)
+
+    const totalPages = Math.ceil(total / limit)
+    const result = {
+      data: applications,
+      currentPage: page,
+      limit,
+      totalPages,
+      totalResults: total
+    }
+    return result
+  } catch (e) {
+    throw new Error(`Could not retrieve contracts, error: ${e.message}`)
+  }
+}
+
+const getUserContracts = async (query, user) => {
+  try {
+    if (user?.role === accountTypeEnum.FOUNDER || user?.role === accountTypeEnum.ADMIN) {
+      query['userId'] = user._id
+    } else if (user?.role === accountTypeEnum.INVESTOR) {
+      query['freelancerId'] = user.freelancers
+      if (!query.freelancerId) {
+        throw new Error(`User does not have access to this!`)
+      }
+    }
+
+    const filter = pick(query, ['businessId', 'departmentId', 'freelancerId', 'userId', 'isActive'])
+
     const options = pick(query, ['limit', 'page', 'count'])
     const total = await countContracts(filter)
     const limit = options.limit === 'all' ? total : pageLimit(options)
@@ -274,6 +333,7 @@ module.exports = {
   deleteContract,
   deletePaymentMethod,
   getContractByfreelacerId,
+  getUserContracts,
   updateContractByFreelancer,
   createStripeCustomer,
   createPaymentMethod,

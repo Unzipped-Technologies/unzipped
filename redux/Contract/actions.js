@@ -4,6 +4,7 @@ import {
   GET_CONTRACT_BY_ID,
   UPDATE_CONTRACT,
   DELETE_CONTRACT,
+  GET_ACTIVE_CONTRACTS,
   LOAD_STATE,
   SUCCESS,
   CONTRACT_ERROR
@@ -67,6 +68,26 @@ export const getContractById = contractID => async (dispatch, getState) => {
     .then(res =>
       dispatch({
         type: GET_CONTRACT_BY_ID,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: CONTRACT_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const getActiveContractsForUser = () => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  await axios
+    .get(`/api/contract/current?limit=all&isActive=true`, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: GET_ACTIVE_CONTRACTS,
         payload: res.data
       })
     )

@@ -52,13 +52,6 @@ const Header = styled.div`
     border-bottom: 1px solid rgb(216, 216, 216);
 `;
 
-const Magnify = styled.div`
-    margin-right: 10px;
-    margin-top: 15px;
-    font-size: 30px;
-    color: #333;
-`;
-
 const TopButton = styled.button`
     width: 100%;
     border-color: #000;
