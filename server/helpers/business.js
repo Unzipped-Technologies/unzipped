@@ -5,6 +5,7 @@ const likeHistory = require('../../models/LikeHistory')
 const department = require('../../models/Department')
 const departmentHelper = require('./department')
 const tags = require('../../models/tags')
+const businessDetail = require('../../models/BusinessDetails')
 const user = require('../../models/User')
 const mongoose = require('mongoose')
 const { likeEnum } = require('../enum/likeEnum')
@@ -427,6 +428,25 @@ const addLikeToBusiness = async (data, id) => {
   }
 }
 
+const createBusinessDetails = async (data, id) => {
+  return await businessDetail.create(
+    {
+      ...data,
+      userId: id,
+    }
+  )
+}
+
+const getBusinessDetailsByUserId = async (id) => {
+  return await businessDetail.findOne({ userId: id })
+}
+
+const updateBusinessDetails = async (data, id) => {
+  return await businessDetail.findOneAndUpdate({ userId: id }, {
+    ...data
+  }, { new: true })
+}
+
 module.exports = {
   createBusiness,
   listBusinesses,
@@ -437,5 +457,8 @@ module.exports = {
   getAllBusinessByInvestor,
   getBusinessByInvestor,
   getBusinessByFounder,
-  getBusinessWithoutPopulate
+  getBusinessWithoutPopulate,
+  createBusinessDetails,
+  updateBusinessDetails,
+  getBusinessDetailsByUserId,
 }

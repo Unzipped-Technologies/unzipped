@@ -132,6 +132,25 @@ router.get('/newsletter/list', async (req, res) => {
   }
 })
 
+router.get('/current/subscriptions', requireLogin, async (req, res) => {
+  try {
+    const getSubscriptions = await userHelper.retrieveSubscriptions(req.user.sub)
+    res.json(getSubscriptions)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/current/payment-methods', requireLogin, async (req, res) => {
+  try {
+    console.log(req.user.sub)
+    const getSubscriptions = await userHelper.retrievePaymentMethods(req.user.sub)
+    res.json(getSubscriptions)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 router.get('/getAllFreelancers', async (req, res) => {
   try {
     const freelancers = await userHelper.getAllFreelancers()

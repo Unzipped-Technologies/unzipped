@@ -3,12 +3,12 @@ import Head from 'next/head';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
-import UpdateKeyDataForm from '../components/unzipped/UpdatePasswordForm'
+import UpdateKeyDataForm from '../components/unzipped/UpdateEmailForm'
 import {changePassword} from '../redux/actions';
 import Nav from '../components/unzipped/header';
 import { parseCookies } from "../services/cookieHelper";
 
-const Reset = ({ error, token }) => {
+const Reset = ({ error, token, email }) => {
     const [loading, setLoading] = useState(false);
     const router = useRouter()
 
@@ -60,6 +60,7 @@ const Reset = ({ error, token }) => {
                 title="Change Password" 
                 onBack={() => linkPush('/dashboard/account')}
                 onSubmit={resetPassword}
+                email={email}
             />
         </React.Fragment>
     )
@@ -76,6 +77,7 @@ Reset.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = (state) => {
     return {
         error: state.Auth.error,
+        email: state.Auth.user.email
     }
 }
 

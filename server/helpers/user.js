@@ -7,6 +7,8 @@ const list = require('../../models/List')
 const freelancer = require('../../models/Freelancer')
 const notifications = require('../../models/Notifications')
 const emailList = require('../../models/EmailList')
+const Subscriptions = require('../../models/Subscription')
+const PaymentMethods = require('../../models/PaymentMethod')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
@@ -430,6 +432,16 @@ const addToNewsletter = async data => {
   return await emailList.findOneAndUpdate({ email: data }, { $set: { email: data, isActive: true } }, { upsert: true })
 }
 
+const retrieveSubscriptions = async id => {
+  return await Subscriptions.findById(id)
+}
+
+const retrievePaymentMethods = async id => {
+  const payment = await PaymentMethods.find({userId: id})
+  console.log(payment)
+  return await PaymentMethods.find({userId: id})
+}
+
 const setUpNotificationsForUser = async id => {
   const userNotifications = [
     notificationEnum.IS_GITHUB,
@@ -491,6 +503,7 @@ module.exports = {
   createFreelanceAccount,
   addSkillsToFreelancer,
   updateUserByid,
+  retrieveSubscriptions,
   listFreelancers,
   getFreelancerById,
   addListsToFreelancer,
@@ -500,5 +513,6 @@ module.exports = {
   removeLikeToFreelancer,
   listLikes,
   addToNewsletter,
-  getAllFreelancers
+  retrievePaymentMethods,
+  getAllFreelancers,
 }

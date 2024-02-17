@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Head from 'next/head';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
-import UpdateKeyDataForm from '../components/unzipped/UpdatePasswordForm'
-import {changePassword} from '../redux/actions';
-import Nav from '../components/unzipped/header';
 import { parseCookies } from "../services/cookieHelper";
+import styled from 'styled-components'
+import {getPaymentMethods, deletePaymentMethods} from '../redux/actions';
+import BackHeader from '../components/unzipped/BackHeader';
+import Nav from '../components/unzipped/header';
 
-const Reset = ({ error, token }) => {
-    const [loading, setLoading] = useState(false);
-    const router = useRouter()
+const Container = styled.div``;
 
-    const linkPush = (link) => {
-        router.push(link)
-    }
-
+const BillingDetails = ({token}) => {
     const [marginBottom, setMarginBottom] = useState('0px');
 
     useEffect(()=>{
@@ -39,33 +35,26 @@ const Reset = ({ error, token }) => {
         };
     },[])
 
-    const resetPassword = (ev) => {
-        ev.preventDefault();
-        setLoading(true)
-        changePassword(user, token.access_token)
-    }
-
     return (
         <React.Fragment>
             <Head>
             <link rel="preconnect" href="https://fonts.gstatic.com" />
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-            <title>Change Password | Unzipped</title>
-            <meta name="Change Password | Unzipped" content="Change Password"/>
+            <title>Manage Payment | Unzipped</title>
+            <meta name="Manage Payment | Unzipped" content="Manage Payment"/>
             </Head>
             <Nav token={token} marginBottom={marginBottom} />
-            <UpdateKeyDataForm 
-                type='password' 
-                title="Change Password" 
-                onBack={() => linkPush('/dashboard/account')}
-                onSubmit={resetPassword}
-            />
+            <Container>
+                <BackHeader 
+                    title="Billing Details"
+                />
+            </Container>
         </React.Fragment>
     )
 }
 
-Reset.getInitialProps = async ({ req, res }) => {
+BillingDetails.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
     
       return {
@@ -75,14 +64,17 @@ Reset.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = (state) => {
     return {
+        token: state.Auth.token,
         error: state.Auth.error,
+        paymentMethods: state.Stripe.methods,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-      changePassword: bindActionCreators(changePassword, dispatch),
+        getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
+        deletePaymentMethods: bindActionCreators(deletePaymentMethods, dispatch),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Reset);
+export default connect(mapStateToProps, mapDispatchToProps)(BillingDetails);

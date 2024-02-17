@@ -170,6 +170,72 @@ class Validations {
         return true;
     }
 
+        /**
+     * Validates a string based on provided minimum and maximum length.
+     * @param {string} input - The string to validate.
+     * @param {object} options - The options for validation.
+     * @param {number} options.min - The minimum length of the string.
+     * @param {number} options.max - The maximum length of the string.
+     * @returns {boolean} - Returns true if the string is valid, false otherwise.
+     */
+    _validateString(input, options = {}) {
+        const { min = 0, max = Infinity, allowSpecialChars = false } = options;
+    
+        // Check if input is a string
+        if (typeof input !== 'string') {
+            return false;
+        }
+    
+        // Validate the string length
+        const length = input.length;
+        if (length < min || length > max) {
+            return false; // Invalid string due to length
+        }
+    
+        // Regular expression to check if the string contains only letters, numbers (and optionally, special characters)
+        const regex = allowSpecialChars ? /^[a-zA-Z0-9 !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/ : /^[a-zA-Z0-9]*$/;
+        
+        // Validate against the regular expression
+        if (!regex.test(input)) {
+            return false; // Invalid string due to character restrictions
+        }
+    
+        return true; // String is valid
+    }
+
+    _validateEIN(ein) {
+        // EIN format: XX-XXXXXXX
+        const einRegex = /^\d{2}-\d{7}$/;
+    
+        // Check if ein is a string
+        if (typeof ein !== 'string') {
+            return false;
+        }
+    
+        return einRegex.test(ein);
+    }
+
+    _formatToEIN(value) {
+        // Check if value is a string
+        if (typeof value !== 'string') {
+            return value; // Return the original value if it's not a string
+        }
+    
+        // Count the number of dashes in the string
+        const dashCount = (value.match(/-/g) || []).length;
+    
+        // Check if there's exactly one dash and it's at the third position
+        if (dashCount === 1 && value[2] === '-') {
+            return value; // Return the string unchanged if it already matches the EIN format
+        } else {
+            // If not, format the string to match the EIN pattern (XX-XXXXXXX)
+            // Remove all non-digit characters first
+            const digitsOnly = value.replace(/\D/g, '');
+            // Then insert a dash after the second digit to format as EIN
+            return digitsOnly.length > 2 ? `${digitsOnly.slice(0, 2)}-${digitsOnly.slice(2)}` : digitsOnly;
+        }
+    }
+
     /**
      * Indicates whether an email validation has failed on a given input.
      * @param {string} email - Potential email
@@ -192,17 +258,58 @@ class Validations {
         return $new
     }
 
-    // _passwordValidation(pw) {
-    //     return /[A-Z]/       .test(pw) &&
-    //     /[a-z]/       .test(pw) &&
-    //     /[0-9]/       .test(pw) &&
-    //     /[^A-Za-z0-9]/.test(pw) &&
-    //     pw.length > 8;
-    // }
+    _strongPasswordValidation(pw) {
+        return /[A-Z]/.test(pw) && // At least one uppercase letter
+               /[a-z]/.test(pw) && // At least one lowercase letter
+               /[0-9]/.test(pw) && // At least one digit
+               /[^A-Za-z0-9]/.test(pw) && // At least one special character
+               pw.length >= 8; // Minimum length of 8 characters
+    }
 
     // weak validator for now
     _passwordValidation(pw) {
         return pw.length >= 8;
+    }
+
+    _formatPhoneNumber(number) {
+        // Convert number to string to handle it easily
+        let numStr = number.toString();
+    
+        // Check if number should be prefixed with 1
+        if (numStr.length === 10 && numStr.startsWith("8")) {
+            numStr = "1" + numStr;
+        }
+    
+        // Format based on length after possible prefix addition
+        if (numStr.length === 11) {
+            return `${numStr.slice(0, 1)} (${numStr.slice(1, 4)}) ${numStr.slice(4, 7)}-${numStr.slice(7)}`;
+        } else if (numStr.length === 10) {
+            return `(${numStr.slice(0, 3)}) ${numStr.slice(3, 6)}-${numStr.slice(6)}`;
+        } else {
+            return numStr; // Return as is if it does not match expected lengths
+        }
+    }
+    
+    // Function to verify if a phone number is valid
+    _isValidPhoneNumber(formattedNumber) {
+        console.log('formattedNumber', formattedNumber)
+        // Define parts of the regex to make it more readable
+        const optionalCountryCode = /^1 /; // Optional '1 ' at the beginning
+        const areaCode = /\(\d{3}\)/; // Area code in the format (XXX)
+        const mainNumber = / \d{3}-\d{4}$/; // Main number in the format XXX-XXXX
+    
+        // Combine parts to create the full regex for validation
+        const fullRegex = new RegExp(
+            (optionalCountryCode.source + "?") + // Make country code optional
+            areaCode.source +
+            mainNumber.source
+        );
+        if (formattedNumber.length < 14 || formattedNumber > 16) {
+            console.log('ran here')
+            return true
+        }
+    
+        return fullRegex.test(formattedNumber.toString().replace(/[^\d]/g, ''));
     }
 
     _cellNumberValidation(number) {
