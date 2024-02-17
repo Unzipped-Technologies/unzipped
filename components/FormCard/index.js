@@ -1,5 +1,5 @@
 import React from 'react'
-import { Badge } from '../ui'
+import { Badge, Icon } from '../ui'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -7,6 +7,7 @@ const Container = styled.div`
     border-radius: 8px;
     padding: 12px 30px;
     margin: 10px 0px;
+    width: 100%;
     ${({first}) => first ? 'margin-top: 24px' : ''};
 `;
 
@@ -14,6 +15,8 @@ const Row = styled.div`
     display: flex;
     justify-content: space-between;
     padding: 6px 0px;
+    display: flex;
+    align-items: center;
 `;
 
 const Button = styled.button`
@@ -21,6 +24,7 @@ const Button = styled.button`
     height: 32px;
     border: #999999 solid 1px;
     color: #333;
+    ${({isSelected}) => isSelected && 'visibility: hidden;'}
     background: #fff;
     border-radius: 5px;
 `;
@@ -30,19 +34,37 @@ const Image = styled.img`
 `;
 
 const Title = styled.div`
-    width: 240px;
+    min-width: 240px;
+    max-width: 300px;
 `;
 
-const FormCard = ({image, title, children, badge, isSelected, first}) => {
+const Div = styled.div`
+    display: flex;
+`;
+
+const ButtonTwo = styled.div`
+    transform: rotate(90deg);
+    outline: none;
+    border: none;
+    left: 10px;
+    position: relative;
+`;
+
+const FormCard = ({image, title, children, badge, isSelected, first, onClick}) => {
     return (
         <Container first={first}>
             {badge && <Badge color="grey">{badge}</Badge>}
             <Row>
                 {image && <Image src={image} alt='credit-card'/>}
                 <Title>{title}</Title>
-                <Button>Update</Button>
+                <Div>
+                    <Button isSelected={isSelected} onClick={onClick}>Update</Button>
+                    <ButtonTwo>
+                        <Icon name="actionIcon" color="#333" />
+                    </ButtonTwo>
+                </Div>
             </Row>
-            {children && children}
+            {children && isSelected && children}
         </Container>
     )
 }

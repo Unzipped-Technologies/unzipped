@@ -221,7 +221,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                     </Rows>
                     <Rows>
                         <Item>Your next billing date is {phone}</Item>
-                        <Link>Billing details</Link>
+                        <Link href='/billing-details'>Billing details</Link>
                     </Rows>
                 </RightOne>
             </Container>

@@ -3,14 +3,14 @@ import Head from 'next/head';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
-import UpdateKeyDataForm from '../components/unzipped/UpdatePasswordForm'
-import {changePassword} from '../redux/actions';
+import {getPaymentMethods, deletePaymentMethods} from '../redux/actions';
 import Nav from '../components/unzipped/header';
 import { parseCookies } from "../services/cookieHelper";
 import styled from 'styled-components';
 import BackHeader from '../components/unzipped/BackHeader';
 import { stripeBrandsEnum, stripeLogoEnum } from '../server/enum/paymentEnum'
 import FormCard from '../components/FormCard';
+import PaymentMethod from '../components/StripeForm';
 
 const Shell = styled.div`
     display: flex;
@@ -57,15 +57,35 @@ const ButtonOne = styled.button`
     margin: 5px 0px;
 `;
 
-const Reset = ({ error, token, paymentMethods }) => {
-    const primaryPM = paymentMethods.find(e => e.isPrimary)
-    const [loading, setLoading] = useState(false);
+const Center = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    margin-bottom: 10px;
+`;
+
+const AddPaymentButton = styled.button`
+    outline: none;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    border-radius: 8px;
+    padding: 12px;
+`;
+
+const Reset = ({ token, paymentMethods, getPaymentMethods, deletePaymentMethods }) => {
     const [marginBottom, setMarginBottom] = useState('0px');
+    const [selectedMembership, setSelectedMembership] = useState(false)
     const router = useRouter()
 
     const linkPush = (link) => {
         router.push(link)
     }
+
+    useEffect(() => {
+        getPaymentMethods(token)
+    }, [])
 
     const getCardLogoUrl = (cardType) => {
         const brand = Object.keys(stripeBrandsEnum).find(key => stripeBrandsEnum[key] === cardType);
@@ -115,13 +135,73 @@ const Reset = ({ error, token, paymentMethods }) => {
                         <ButtonOne>Cancel Membership</ButtonOne>
                     </LeftOne>
                     <RightOne>
-                        <FormCard
-                            badge="Primary"
-                            first
-                            image={getCardLogoUrl(primaryPM.card)}
-                            title={`${primaryPM.card.toUpperCase()} **** **** ${primaryPM.lastFour}`}
-                            isSelected={false}
-                        ></FormCard>
+                        {paymentMethods.filter(e => parseInt(e.paymentType, 10) === 0).sort((a, b) => {
+                            return (b.isPrimary === true) - (a.isPrimary === true);
+                        }).map((item, index) => {
+                            const isPrimary = item.isPrimary
+                            return (
+                                <FormCard
+                                    key={index}
+                                    badge={isPrimary ? "Primary" : ""}
+                                    first={index === 0}
+                                    image={getCardLogoUrl(item.card)}
+                                    onClick={() => setSelectedMembership('primary-' + index)}
+                                    title={`${item.card.toUpperCase()} **** **** ${item.lastFour}`}
+                                    isSelected={selectedMembership === `primary-${index}`}
+                                >
+                                    <PaymentMethod address={item?.address}/>
+                                </FormCard>
+                            )
+                        })}
+                        <Center>
+                            {selectedMembership === "primary" ? (
+                            <FormCard
+                                isSelected={true}
+                                title="Create a new subscription payment method."
+                            >
+                                <PaymentMethod />
+                            </FormCard>
+                            ) : (
+                                <AddPaymentButton onClick={() => setSelectedMembership("primary")}>+ Add Payment</AddPaymentButton>
+                            )}
+                        </Center>
+                    </RightOne>
+                </Container>
+                <Container border>
+                    <LeftOne>
+                        <TitleOne>Project Payment</TitleOne>
+                    </LeftOne>
+                    <RightOne>
+                        {paymentMethods.filter(e => parseInt(e.paymentType, 10) === 1).sort((a, b) => {
+                            return (b.isPrimary === true) - (a.isPrimary === true);
+                        }).map((item, index) => {
+                            const isPrimary = item.isPrimary
+                            return (
+                                <FormCard
+                                    key={index}
+                                    badge={isPrimary ? "Primary" : ""}
+                                    first={index === 0}
+                                    image={getCardLogoUrl(item.card)}
+                                    onClick={() => setSelectedMembership('payroll-' + index)}
+                                    title={`${item.card?.toUpperCase()} **** **** ${item.lastFour}`}
+                                    isSelected={selectedMembership === `payroll-${index}`}
+                                >
+                                    <PaymentMethod address={item?.address}/>
+                                </FormCard>
+                            )
+                        })}
+                        <Center>
+                            {selectedMembership === 'payroll' ? (
+                                <FormCard
+                                    isSelected={true}
+                                    title="Create a new subscription payment method."
+                                >
+                                    <PaymentMethod />
+                                </FormCard>
+                            ) : (
+                                <AddPaymentButton onClick={() => setSelectedMembership('payroll')}>+ Add Payment</AddPaymentButton>
+                            )}
+                        </Center>
                     </RightOne>
                 </Container>
             </Shell>
@@ -139,6 +219,7 @@ Reset.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = (state) => {
     return {
+        token: state.Auth.token,
         error: state.Auth.error,
         paymentMethods: state.Stripe.methods,
     }
@@ -146,7 +227,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-      changePassword: bindActionCreators(changePassword, dispatch),
+        getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
+        deletePaymentMethods: bindActionCreators(deletePaymentMethods, dispatch),
     }
 }
 

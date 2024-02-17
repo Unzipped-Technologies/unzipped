@@ -3,6 +3,7 @@ import {
     CREATE_PAYMENT_METHOD,
     STRIPE_ERROR,
     GET_PAYMENT_METHODS,
+    DELETE_PAYMENT_METHODS,
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
@@ -54,6 +55,25 @@ export const getPaymentMethods = (token) => async (dispatch, getState) => {
         .then(res => {
             dispatch({
                 type: GET_PAYMENT_METHODS,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: STRIPE_ERROR,
+                payload: err.response
+            })
+        })
+    dispatch(stopLoading());
+};
+
+export const deletePaymentMethods = (id, token) => async (dispatch, getState) => {
+    dispatch(startLoading());
+    await axios
+        .post('/api/contract/payment-methods/delete', id, tokenConfig(token))
+        .then(res => {
+            dispatch({
+                type: DELETE_PAYMENT_METHODS,
                 payload: res.data
             });
         })

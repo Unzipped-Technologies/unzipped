@@ -75,12 +75,28 @@ const createPaymentMethod = async data => {
     if (userId !== null) {
       newPaymentMethodData.userId = userId
     }
+    if (data?.lastFour) {
+      newPaymentMethodData.lastFour = data.lastFour
+    }
+    if (data?.card) {
+      newPaymentMethodData.card = data.card
+    }
+    if (data?.paymentType) {
+      newPaymentMethodData.paymentType = data.paymentType
+    }
+    if (data?.isPrimary) {
+      newPaymentMethodData.isRequired = data.isPrimary
+    }
     const newPaymentMethod = new PaymentMethod(newPaymentMethodData)
     const savedPaymentMethod = await newPaymentMethod.save()
     return { savedThirdPartyApplication, savedPaymentMethod }
   } catch (e) {
     throw Error(`Something went wrong: ${e}`)
   }
+}
+
+const deletePaymentMethod = async (id) => {
+  return await PaymentMethod.findByIdAndDelete(id);
 }
 
 const countContracts = async filter => {
@@ -91,12 +107,14 @@ const countContracts = async filter => {
 
 const getContracts = async (query, user) => {
   try {
-    if (user?.role === accountTypeEnum.FOUNDER) {
+    if (user?.role === accountTypeEnum.FOUNDER || user?.role === accountTypeEnum.ADMIN) {
       query['userId'] = user.id
     } else if (user?.role === accountTypeEnum.INVESTOR) {
       query['freelancerId'] = user.freelancers
     }
+    console.log(query)
     const filter = pick(query, ['businessId', 'departmentId', 'freelancerId', 'userId'])
+    console.log('/////filter', filter)
     const options = pick(query, ['limit', 'page', 'count'])
     const total = await countContracts(filter)
     const limit = options.limit === 'all' ? total : pageLimit(options)
@@ -254,6 +272,7 @@ module.exports = {
   getContractById,
   updateContract,
   deleteContract,
+  deletePaymentMethod,
   getContractByfreelacerId,
   updateContractByFreelancer,
   createStripeCustomer,

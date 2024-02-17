@@ -115,4 +115,13 @@ router.post('/create-payment-method', requireLogin, async (req, res) => {
   }
 })
 
+router.post('/payment-method/delete', requireLogin, async (req, res) => {
+  try {
+    await contractHelper.deletePaymentMethod(req.body.id)
+    res.json({ id: req.body.id })
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 module.exports = router

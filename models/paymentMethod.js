@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
 
+const AddressSchema = new mongoose.Schema({
+    lineOne: String,
+    lineTwo: String,
+    city: String,
+    state: String,
+    zip: String,
+    country: String,
+});
+
 const PaymentMethodSchema = new mongoose.Schema({
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -9,6 +18,10 @@ const PaymentMethodSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users', 
     },
+    paymentType: {
+        type: String,
+    },
+    address: AddressSchema,
     card: {
         type: String,
     },
