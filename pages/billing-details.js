@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
 import { parseCookies } from "../services/cookieHelper";
 import styled from 'styled-components'
-import {getPaymentMethods, deletePaymentMethods, getActiveContractsForUser} from '../redux/actions';
+import {getPaymentMethods, deletePaymentMethods, getActiveContractsForUser, getUnpaidInvoices} from '../redux/actions';
 import BackHeader from '../components/unzipped/BackHeader';
 import Nav from '../components/unzipped/header';
 import EmployeeCard from '../components/unzipped/EmployeeCard';
@@ -25,7 +25,16 @@ const Content = styled.div`
     width: 953px;
 `;
 
-const BillingDetails = ({token, getActiveContractsForUser, activeContracts}) => {
+const BillingDetails = ({
+    token, 
+    activeContracts, 
+    plans, 
+    plan, 
+    paymentDate,
+    getActiveContractsForUser, 
+    getUnpaidInvoices,
+    unpaidInvoices,
+}) => {
     const [marginBottom, setMarginBottom] = useState('0px');
 
     useEffect(()=>{
@@ -51,6 +60,7 @@ const BillingDetails = ({token, getActiveContractsForUser, activeContracts}) => 
 
     useEffect(() => {
         getActiveContractsForUser(token)
+        getUnpaidInvoices(token)
     }, [])
 
     return (
@@ -68,7 +78,12 @@ const BillingDetails = ({token, getActiveContractsForUser, activeContracts}) => 
                     title="Billing Details"
                 />
                 <Content>
-                    <EmployeeCard contracts={activeContracts.data}/>
+                    <EmployeeCard 
+                        paymentDate={paymentDate} 
+                        contracts={activeContracts.data} 
+                        plan={plans[plan]}
+                        unpaidInvoices={unpaidInvoices}
+                    />
                 </Content>
             </Container>
         </React.Fragment>
@@ -90,6 +105,10 @@ const mapStateToProps = (state) => {
         error: state.Auth.error,
         paymentMethods: state.Stripe.methods,
         activeContracts: state.Contracts.activeContracts,
+        plan: state.Auth.user.plan,
+        plans: state.Auth.plans,
+        paymentDate: state.Auth.user.subscriptionDate,
+        unpaidInvoices: state.Invoices.unpaidInvoices,
     }
 }
 
@@ -97,6 +116,7 @@ const mapDispatchToProps = dispatch => {
     return {
         getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
         deletePaymentMethods: bindActionCreators(deletePaymentMethods, dispatch),
+        getUnpaidInvoices: bindActionCreators(getUnpaidInvoices, dispatch),
         getActiveContractsForUser: bindActionCreators(getActiveContractsForUser, dispatch),
     }
 }

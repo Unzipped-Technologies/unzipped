@@ -4,6 +4,7 @@ import {
   GET_INVOICE_BY_ID,
   UPDATE_INVOICE,
   DELETE_INVOICE,
+  GET_UNPAID_INVOICES,
   INVOICE_ERROR,
   LOAD_STATE,
   SUCCESS
@@ -11,6 +12,7 @@ import {
 
 const INIT_STATE = {
   invoices: [],
+  unpaidInvoices: [],
   selectedInvoice: {},
   error: '',
   loading: false,
@@ -43,6 +45,12 @@ const Invoices = (state = INIT_STATE, action = {}) => {
         selectedInvoice,
         invoices: action.payload.data,
         totalCount: action.payload.totalResults
+      }
+    case GET_UNPAID_INVOICES:
+      return {
+        ...state,
+        loading: false,
+        unpaidInvoices: action.payload
       }
     case GET_INVOICE_BY_ID:
       const invoice = state.invoices.map(e => {

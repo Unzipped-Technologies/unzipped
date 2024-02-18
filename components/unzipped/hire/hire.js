@@ -8,11 +8,12 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { useRouter } from 'next/router';
 // import Select from 'react-select';
-import { useDispatch, useSelector } from 'react-redux';
-import { getProjectsList } from '../../../redux/actions';
+import { useDispatch, useSelector, connect } from 'react-redux';
+import { getProjectsList, getProjectApplications, getFreelancerById } from '../../../redux/actions';
 import ProjectDropdown from './project-dropdown';
 import useWindowSize from '../../../hooks/windowWidth';
 import BackIcon from '../../ui/icons/back'
+import { bindActionCreators } from 'redux'
 
 const HireWrapper = styled.div`
     width: 100%;
@@ -42,6 +43,7 @@ const HireInputContainer = styled.div`
 const HeadingText = styled.h1`
     text-transform: uppercase;
     margin-bottom: 0;
+    padding: 10px 0px;
     margin-top: 0;
     ${getFontStyled(
     {
@@ -73,7 +75,7 @@ const Label = styled.span`
     ${getFontStyled(
     {
         color: COLORS.black,
-        fontSize: FONT_SIZE.PX_12,
+        fontSize: FONT_SIZE.PX_14,
         fontWeight: 500,
         fontStyle: 'normal',
         lineHeight: FONT_SIZE.PX_24,
@@ -84,11 +86,12 @@ const Label = styled.span`
 `;
 
 const InputField = styled.input`
-    height: 30px !important;
+    height: 45px !important;
     width: 470px !important;
-    margin:0 ;
+    margin: 0;
+    border-radius: 4px;
     border: 1px solid #000 !important;
-    background: rgba(217, 217, 217, 0.15) !important;
+    background: #fff;
     padding-left: 8px !important;
     @media screen and (max-width: 600px) {
         width: 100% !important;
@@ -98,9 +101,10 @@ const InputField = styled.input`
 const TextareaField = styled.textarea`
     height: 121px !important;
     width: 488px !important;
-    margin:0 ;
+    margin: 0;
+    border-radius: 4px;
     border: 1px solid #000 !important;
-    background: rgba(217, 217, 217, 0.15) !important;
+    background: #fff;
     padding: 10px !important;
     @media screen and (max-width: 600px) {
         width: 100% !important;
@@ -109,8 +113,8 @@ const TextareaField = styled.textarea`
 
 const HireButton = styled.button`
     background: ${COLORS.hireButton};
-    width: 122px;
-    height: 36px;
+    width: 135px;
+    height: 40px;
     border-radius: 5px;
     text-transform: uppercase;
     border: none;
@@ -120,23 +124,26 @@ const HireButton = styled.button`
 `;
 
 const InputHourlyField = styled.input`
-    font-size: 12px !important;
+    font-size: 14px !important;
     margin-left: 2rem;
-    height: 30px !important;
-    width: 35px !important;
-    margin:0 ;
+    height: 100%;
+    position: relative;
+    top: 5px;
+    width: 45px !important;
+    padding: 0px 15px !important;
     border: none !important;
     background: rgba(217, 217, 217, 0.15) !important;
 `;
 
 const TrackingField = styled.input`
     padding-left: 2rem !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     margin-left: 2rem;
     margin-top: 5px !important;
-    height: 30px !important;
+    height: 100%;
+    padding: 15px 0px;
     width: 35px !important;
-    margin:0 ;
+    margin: 0px 35px;
     border: none !important;
     background: rgba(217, 217, 217, 0.15) !important;
     @media screen and (max-width: 600px) {
@@ -147,12 +154,12 @@ const TrackingField = styled.input`
 const Span = styled.span`
 text-transform: uppercase;
 display: inline-block;
-margin-right: 20px;
-margin-left: 20px;
+margin-right: 15px;
+margin-left: 15px;
 ${getFontStyled(
     {
         color: COLORS.black,
-        fontSize: FONT_SIZE.PX_12,
+        fontSize: FONT_SIZE.PX_14,
         fontWeight: 500,
         fontStyle: 'normal',
         lineHeight: FONT_SIZE.PX_24,
@@ -167,7 +174,7 @@ const ButtonText = styled.span`
     ${getFontStyled(
     {
         color: COLORS.white,
-        fontSize: FONT_SIZE.PX_12,
+        fontSize: FONT_SIZE.PX_14,
         fontWeight: 500,
         fontStyle: 'normal',
         lineHeight: FONT_SIZE.PX_24,
@@ -177,6 +184,7 @@ const ButtonText = styled.span`
 
 const ContentContainer = styled.div`
     width: 488px;
+    padding: 10px 0px;
     @media screen and (max-width: 600px) {
         width: 100%;
     }
@@ -185,6 +193,7 @@ const ContentContainer = styled.div`
 const HourlyRateStyled = styled.div`    
     display: flex;
     width: 488px;
+    height: 45px;
     gap: 20px;
     @media screen and (max-width: 600px) {
         width: 100%;
@@ -193,6 +202,8 @@ const HourlyRateStyled = styled.div`
 
 const HourlyInputContainer = styled.div`
     border: 1px solid black;
+    display: flex;
+    align-items: center;
     @media screen and (max-width: 600px) {
         border: none;
     }
@@ -201,9 +212,11 @@ const HourlyInputContainer = styled.div`
 const MiddleContent = styled.div`
     display: flex; 
     width: 353px; 
+    height: 45px;
     border: 1px solid black; 
     justify-content: space-between; 
     align-items: center;
+    padding: 0px 15px 0px 35px;
     @media screen and (max-width: 600px) {
         width: 100%;
     }
@@ -220,28 +233,8 @@ const ButtonContainer = styled.div`
         justify-content: center;
     }
 `;
-const NotificationText = styled.p`
-    color: #000;
-    font-family: Roboto;
-    font-size: ${({ fontSize }) => fontSize ? fontSize : '12px'};
-    font-style: normal;
-    font-weight: {({ fontWeight }) => fontWeight ? fontWeight : '300'};
-    line-height: 19.5px;
-    letter-spacing: 0.15px;
-    text-transform: ${({ textTransform }) => textTransform ? textTransform : 'none'};
-    width: ${({ width }) => width ? width : '100%'};
-    text-align: ${({ textAlign }) => textAlign ? textAlign : 'left'};
-    margin-left: ${({ marginLeft }) => marginLeft ? marginLeft : '0'};
-`;
-const RecurringPaymentSmHeader = styled.div`
-    display: flex; 
-    flex-direction: row;
-    width: 100%; 
-    background: #FFF;
-    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25); 
-    padding: 10px;
-`;
-const HireComp = () => {
+
+const HireComp = ({name}) => {
     const dispatch = useDispatch();
     const projects = useSelector(state => state.Business.projectList);
     const router = useRouter();
@@ -281,9 +274,9 @@ const HireComp = () => {
             <HireInputContainer>
                 <ContentContainer >
                     <HeadingText>
-                        Contact User About Your Job
+                        Contact {name} About Your Job
                     </HeadingText>
-                    <Text>Your subscription will be paid using your primary payment method.</Text>
+                    <Text>Send a contract request to {name}. More details on the next screen.</Text>
                     <Label>Project Name</Label>
                     <ProjectDropdown />
                     <Label>Send a private message</Label>
@@ -304,10 +297,11 @@ const HireComp = () => {
                                 style={{
                                     width: `${isSmallWindow ? '100%' : '77px'}`,
                                     border: '1px solid black',
+                                    height: '45px',
                                     paddingLeft: 5,
                                     paddingRight: 5,
                                     paddingTop: 6,
-                                    fontSize: '12px !important'
+                                    fontSize: '14px !important'
                                 }}
                             >
                                 <MenuItem value="USD">USD</MenuItem>
@@ -316,24 +310,35 @@ const HireComp = () => {
                             </Select>
                         </div>
                     </HourlyRateStyled>
-                    <Label>weekly tracking limit</Label>
+                    <Label>weekly tracking limit (limit 40)</Label>
 
                     <MiddleContent>
-                        <div>
                             <TrackingField value={weeklyTrackingLimit} onChange={(e) => setWeeklyTrackingLimit(e.target.value)} />
-                        </div>
-                        <div>
                             <Span>hours / week</Span>
-                        </div>
-
                     </MiddleContent>
                 </ContentContainer>
                 <ButtonContainer >
-                    <HireButton ><ButtonText onClick={() => router.push('/recurring-payment')} >Hire (user)</ButtonText></HireButton>
+                    <HireButton ><ButtonText onClick={() => router.push('/recurring-payment')} >Hire {name ? name : ''}</ButtonText></HireButton>
                 </ButtonContainer>
             </HireInputContainer>
         </HireWrapper>
     )
 }
 
-export default HireComp;
+const mapStateToProps = state => {
+    console.log(state)
+    return {
+      token: state.Auth.token,
+      projectApplications: state.ProjectApplications.projectApplications,
+      name: state.Freelancers.selectedFreelancer.userId.FirstName
+    }
+  }
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+      getProjectApplications: bindActionCreators(getProjectApplications, dispatch),
+      getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(HireComp)

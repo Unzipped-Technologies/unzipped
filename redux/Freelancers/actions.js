@@ -44,6 +44,7 @@ export const getFreelancerById = (id, token) => async (dispatch, getState) => {
     dispatch({
         type: FREELANCER_LOADING
     })
+    console.log('ran here')
     await axios
         .get(`/api/user/freelancer/${id}`, tokenConfig(token))
         .then(res => dispatch({

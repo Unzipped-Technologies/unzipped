@@ -397,6 +397,10 @@ const TableData = styled.td`
   line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
   letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
   text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  ${({ $default }) => ($default ? 'cursor: pointer;' : '')}
+  &:hover {
+    ${({ $default }) => ($default ? 'color: darkred;' : '')}
+  }
 `;
 
 const HelpCenterContainer = styled.div`

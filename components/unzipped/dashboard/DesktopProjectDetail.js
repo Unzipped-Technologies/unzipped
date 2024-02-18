@@ -230,7 +230,7 @@ const DesktopProjectDetail = ({ projectDetails }) => {
         <ProjectDetail>
           <DetailHeading>
             <ProjectSummary>Project Hires</ProjectSummary>
-            <ProjectBudget>Budget: ${projectDetails?.budget || 0}</ProjectBudget>
+            <ProjectBudget>Budget: {projectDetails?.budget.includes('$') ? '' : '$'}{projectDetails?.budget || 0}</ProjectBudget>
           </DetailHeading>
           <ProjectDescription>{projectDetails?.challenge}</ProjectDescription>
           <ProjectRequirements>

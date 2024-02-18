@@ -1,8 +1,9 @@
 
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
 import { getProjectsList } from '../../../redux/actions';
-import { useEffect, useState } from 'react';
 import useWindowSize from '../../ui/hooks/useWindowSize';
 import styled from 'styled-components';
 
@@ -20,7 +21,7 @@ const SelectStyled = styled(Select)`
     }
 `;
 
-const ProjectDropdown = () => {
+const ProjectDropdown = ({getProjectsList}) => {
 
     const dispatch = useDispatch();
     const projects = useSelector(state => state.Business.projectList);
@@ -39,11 +40,25 @@ const ProjectDropdown = () => {
         setSelectedVal(e);
     }
 
-    const handleSearch = (e) => {
-        if (e.target.value.length >= 3) {
-            dispatch(getProjectsList({ filter: { name: e.target.value } }));
-        }
+    function debounce(func, wait) {
+        let timeout;
+    
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+    
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
+
+    const handleSearch = debounce((e) => {
+        if (e.target.value.length > 1) {
+            getProjectsList({ filter: { name: e.target.value } });
+        }
+    }, 500);
 
     useEffect(() => {
         if (width <= 600) {
@@ -54,6 +69,11 @@ const ProjectDropdown = () => {
             console.log('large window')
         }
     }, [width])
+
+    useEffect(() => {
+        getProjectsList({ filter: { name: "" } });
+    }, [])
+
     return (
         <Container>
             <SelectStyled
@@ -82,4 +102,18 @@ const ProjectDropdown = () => {
     )
 }
 
-export default ProjectDropdown;
+const mapStateToProps = state => {
+    console.log(state)
+    return {
+      token: state.Auth.token,
+      projectApplications: state.ProjectApplications.projectApplications
+    }
+  }
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+      getProjectsList: bindActionCreators(getProjectsList, dispatch)
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(ProjectDropdown)
