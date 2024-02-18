@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components'
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
-import { getProjectApplications } from '../../../redux/ProjectApplications/actions'
+import { getProjectApplications, getFreelancerById } from '../../../redux/actions'
 import MobileApplicationCard from './mobile/MobileApplicationsView'
 import VerticalDropdown from '../../VerticalDropdown'
 
@@ -145,7 +145,7 @@ const DefaultDisplay = styled.div`
   padding-top: 100px;
 `;
 
-const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
+const ApplicationCard = ({ projectApplications, getProjectApplications, getFreelancerById, token }) => {
   const router = useRouter()
   const { id } = router.query
 
@@ -264,7 +264,10 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                       dropdownOptions={[
                         {
                           name: 'Hire User',
-                          action: () => {},
+                          action: () => {
+                            getFreelancerById(application?.freelancerId?._id, token)
+                            router.push(`/hire`)
+                          }
                         },
                         {
                           name: 'View Application',
@@ -306,15 +309,17 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
 }
 
 const mapStateToProps = state => {
-  console.log(state.ProjectApplications.projectApplications)
+  console.log(state)
   return {
+    token: state.Auth.token,
     projectApplications: state.ProjectApplications.projectApplications
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectApplications: bindActionCreators(getProjectApplications, dispatch)
+    getProjectApplications: bindActionCreators(getProjectApplications, dispatch),
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
   }
 }
 

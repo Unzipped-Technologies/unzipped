@@ -76,6 +76,7 @@ Reset.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = (state) => {
     return {
         error: state.Auth.error,
+        token: state.Auth.token,
     }
 }
 

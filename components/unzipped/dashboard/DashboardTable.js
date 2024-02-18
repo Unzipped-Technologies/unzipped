@@ -109,7 +109,7 @@ const Panel = ({ businesses, userType, updateBusiness }) => {
           {businesses?.length > 0 &&
             businesses?.map(row => (
               <tr key={row._id}>
-                <TableData>{row.name}</TableData>
+                <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>{row.name}</TableData>
                 <TableData>{row.budget || 0}</TableData>
                 <TableData>{row.equity || 0}</TableData>
                 <TableData>27</TableData>
