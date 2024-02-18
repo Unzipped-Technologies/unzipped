@@ -85,8 +85,7 @@ const DarkText = styled.div`
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   padding: ${({ padding }) => (padding ? padding : '')};
   width: ${({ width }) => (width ? width : '96%')};
-  padding-left: 20px;
-  // padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
   text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
   // color: ${({ color  }) => (color ? color : theme.text2)};
