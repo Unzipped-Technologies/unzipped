@@ -1,12 +1,14 @@
 const mongoose = require('mongoose')
-const user = require('../models/User')
-const taxDataTables = require('../models/TaxDataTable')
-const thirdPartyApplications = require('../models/ThirdPartyApplications')
-const freelancerSkills = require('../models/FreelancerSkills')
-const list = require('../models/List')
-const freelancer = require('../models/Freelancer')
-const notifications = require('../models/Notifications')
-const emailList = require('../models/EmailList')
+const user = require('../../models/User')
+const taxDataTables = require('../../models/TaxDataTable')
+const thirdPartyApplications = require('../../models/ThirdPartyApplications')
+const freelancerSkills = require('../../models/FreelancerSkills')
+const list = require('../../models/List')
+const freelancer = require('../../models/Freelancer')
+const notifications = require('../../models/Notifications')
+const emailList = require('../../models/EmailList')
+const Subscriptions = require('../../models/Subscription')
+const PaymentMethods = require('../../models/PaymentMethod')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
@@ -265,6 +267,16 @@ const addToNewsletter = async data => {
   return await emailList.findOneAndUpdate({ email: data }, { $set: { email: data, isActive: true } }, { upsert: true })
 }
 
+const retrieveSubscriptions = async id => {
+  return await Subscriptions.findById(id)
+}
+
+const retrievePaymentMethods = async id => {
+  const payment = await PaymentMethods.find({userId: id})
+  console.log(payment)
+  return await PaymentMethods.find({userId: id})
+}
+
 const setUpNotificationsForUser = async id => {
   const userNotifications = [
     notificationEnum.IS_GITHUB,
@@ -297,6 +309,26 @@ const setUpNotificationsForUser = async id => {
   }
 }
 
+const getAllFreelancers = async () => {
+  const freelancers = await freelancer.find().populate(
+    [
+      {
+        path: 'userId',
+        model: 'users',
+        select: 'AddressLineCountry FirstName LastName profileImage _id' 
+      },
+      {
+        path: 'freelancerSkills',
+        model: 'freelancerskills',
+        select: 'yearsExperience _id skill' 
+      }
+    ]
+  ).select('_id rate dislike likeTotal category');
+
+  return freelancers;
+
+}
+
 module.exports = {
   createUser,
   updateUserByEmail,
@@ -305,11 +337,16 @@ module.exports = {
   deleteUser,
   createFreelanceAccount,
   updateUserByid,
+  retrieveSubscriptions,
+  listFreelancers,
+  getFreelancerById,
   addListsToFreelancer,
   setUpNotificationsForUser,
   updateTaxDataByid,
   addLikeToFreelancer,
   removeLikeToFreelancer,
   listLikes,
-  addToNewsletter
+  addToNewsletter,
+  retrievePaymentMethods,
+  getAllFreelancers,
 }

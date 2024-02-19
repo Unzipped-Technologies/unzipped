@@ -1,11 +1,11 @@
+import React, { useEffect } from 'react'
 import {
     RecurringWrapper,
     Container,
-    NotificationContainer,
-    NotificationContainerText,
     ContentContainer,
     PaymentContainer,
     PaymentDetailContainer,
+    ContainerBox,
     ChargeText,
     AmountTextStyled,
     AmountTextNote,
@@ -32,58 +32,55 @@ import HireDivider from '../hire/hire-divider/hireDivider';
 import PaymentDataTable from './PaymentDataTable';
 import PaymentMethod from '../paymentMethod';
 import RecurringPaymentResponsive from './RecurringPaymentResponsive';
-const RecurringPaymentComponent = () => {
-    const currentEmployeeData = [
-        {
-            name: 'Bob Barker',
-            rate: '$100.00',
-            hoursLimit: 20,
-            currentBalance: 2000,
-        },
-        {
-            name: 'Joe Maynard',
-            rate: '$140.00',
-            hoursLimit: 30,
-            currentBalance: 300,
-        },
-    ]
+import Notification from '../dashboard/Notification';
+import EmployeeCard from '../EmployeeCard';
+import styled from 'styled-components'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {getPaymentMethods, deletePaymentMethods, getActiveContractsForUser, getUnpaidInvoices} from '../../../redux/actions';
+
+const Content = styled.div`
+    width: 953px;
+    margin: 30px;
+`;
+
+const RecurringPaymentComponent = ({
+    token, 
+    activeContracts, 
+    plans, 
+    plan, 
+    paymentDate,
+    getActiveContractsForUser, 
+    getUnpaidInvoices,
+    unpaidInvoices,
+}) => {
+
+    useEffect(() => {
+        getActiveContractsForUser(token)
+        getUnpaidInvoices(token)
+    }, [])
+
+    console.log(paymentDate)
+
     return (
         <RecurringWrapper>
             <Container >
                 <HireDivider title="Confirm Recurring Payment" />
-                <NotificationContainer>
-                    <NotificationContainerText>
-                        <InfoIcon />
+                <Content>
+                    <Notification type="blue" noButton>
                         You will be charged weekly on tuesday at 11:59 PM for all agreed upon hours worked.
-                    </NotificationContainerText>
-                </NotificationContainer>
+                    </Notification>
+                </Content>
                 <ContentContainer>
                     <div style={{ width: '725px', display: 'flex', gap: '20px', flexDirection: 'column' }}>
-                        <PaymentContainer>
-                            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                                <div>
-                                    <AmountDueTextHeading> Amount Due </AmountDueTextHeading>
-                                </div>
-                                <div>
-                                    <ChargeText>you will be charged upto</ChargeText>
-                                    <AmountTextStyled>$6,100.00 USD</AmountTextStyled>
-                                    <AmountTextNote>note: there is a 5% payment fee</AmountTextNote>
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <div>
-                                    <TableText>Current Employee</TableText>
-                                </div>
-                                <div>
-                                    <PaymentDataTable currentEmployeeData={currentEmployeeData} />
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '156px' }}>
-                                    <ConfirmAmountButton>
-                                        <ConfirmAmountText>Confirm Amount</ConfirmAmountText>
-                                    </ConfirmAmountButton>
-                                </div>
-                            </div>
-                        </PaymentContainer>
+                        <ContainerBox>
+                            <EmployeeCard 
+                                paymentDate={paymentDate} 
+                                contracts={activeContracts.data} 
+                                plan={plans[plan]}
+                                unpaidInvoices={unpaidInvoices}
+                            />
+                        </ContainerBox>
                         <BusinessAddress
                             style={{ width: '100%', marginTop: 20 }}
                             form={null}
@@ -147,4 +144,27 @@ const RecurringPaymentComponent = () => {
     )
 }
 
-export default RecurringPaymentComponent;
+const mapStateToProps = (state) => {
+    console.log(state)
+    return {
+        token: state.Auth.token,
+        error: state.Auth.error,
+        paymentMethods: state.Stripe.methods,
+        activeContracts: state.Contracts.activeContracts,
+        plan: state.Auth.user.plan,
+        plans: state.Auth.plans,
+        paymentDate: state.Auth.user.subscriptionDate,
+        unpaidInvoices: state.Invoices.unpaidInvoices,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
+        deletePaymentMethods: bindActionCreators(deletePaymentMethods, dispatch),
+        getUnpaidInvoices: bindActionCreators(getUnpaidInvoices, dispatch),
+        getActiveContractsForUser: bindActionCreators(getActiveContractsForUser, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecurringPaymentComponent);

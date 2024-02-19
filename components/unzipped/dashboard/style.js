@@ -89,8 +89,7 @@ const DarkText = styled.div`
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   padding: ${({ padding }) => (padding ? padding : '')};
   width: ${({ width }) => (width ? width : '96%')};
-  padding-left: 20px;
-  // padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
   text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
   // color: ${({ color }) => (color ? color : theme.text2)};
@@ -400,7 +399,11 @@ const TableData = styled.td`
   line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
   letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
   text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
-`
+  ${({ $default }) => ($default ? 'cursor: pointer;' : '')}
+  &:hover {
+    ${({ $default }) => ($default ? 'color: darkred;' : '')}
+  }
+`;
 
 const HelpCenterContainer = styled.div`
   padding-left: 35px;

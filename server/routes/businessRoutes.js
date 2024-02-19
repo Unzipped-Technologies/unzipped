@@ -132,4 +132,79 @@ router.get(
   }
 )
 
+router.get(
+  '/investor/task/:businessId',
+  requireLogin,
+  permissionCheckHelper.hasPermission('removeComment'),
+  async (req, res) => {
+    try {
+      businessId = req.params.businessId
+      id = req.user.sub
+      const existingBusiness = await businessHelper.getBusinessByInvestor({ businessId, id })
+      if (!existingBusiness) throw Error('business does not exist')
+      res.json(existingBusiness)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.get(
+  '/founder/task/:businessId',
+  requireLogin,
+  permissionCheckHelper.hasPermission('removeComment'),
+  async (req, res) => {
+    try {
+      businessId = req.params.businessId
+      const existingBusiness = await businessHelper.getBusinessByFounder(businessId)
+      if (!existingBusiness) throw Error('business does not exist')
+      res.json(existingBusiness)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.post('/details',
+  requireLogin,
+  permissionCheckHelper.hasPermission('createBusinessDetails'),
+  async (req, res) => {
+    const id = req.body.userId || req.user.sub
+    try {
+      const businessDetails = await businessHelper.getBusinessDetailsByUserId(id)
+      if (!businessDetails) throw Error('business details already exists')
+      res.json(businessDetails)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+})
+
+router.post('/details/create',
+  requireLogin,
+  permissionCheckHelper.hasPermission('createBusinessDetails'),
+  async (req, res) => {
+    const id = req.body.userId || req.user.sub
+    try {
+      const businessDetails = await businessHelper.createBusinessDetails(req.body, id)
+      if (!businessDetails) throw Error('business details already exists')
+      res.json(businessDetails)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+})
+
+router.post('/details/update',
+  requireLogin,
+  permissionCheckHelper.hasPermission('createBusinessDetails'),
+  async (req, res) => {
+    const id = req.body.userId || req.user.sub
+    try {
+      const businessDetails = await businessHelper.updateBusinessDetails(req.body, id)
+      if (!businessDetails) throw Error('business details could not be updated')
+      res.json(businessDetails)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+})
+
 module.exports = router

@@ -38,7 +38,6 @@ const Flex = styled.div`
 `;
 
 const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
-    console.log('users_details', user)
 
     const userLists = useSelector(state => state.ListEntries.userLists);
     const userId = useSelector(state => state.Auth.user._id);
@@ -47,8 +46,9 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
     const router = useRouter()
     const redirectToProfile = () => {
         const listObj = userLists?.find(list => list.name === 'Recently Viewed');
-
-        dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
+        if(listObj){
+            dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
+        }
         // clearSelectedFreelancer()
         if (user?.id) {
             router.push(`/freelancers/${user.id}`)

@@ -13,6 +13,7 @@ const taskHoursSchema = new Schema({
     ref: 'tasks',
     required: true,
   },
+  invoice: { type: Schema.Types.ObjectId, ref: 'invoices' },
   hours: {
     type: Number,
     required: true,

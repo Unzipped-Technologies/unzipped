@@ -328,7 +328,7 @@ const GetCardDesktop = ({
       return (
         <CreateABusiness
           title="Required Expertise"
-          sub="What skills should they have mastered? List the abilities your project or role demands."
+          sub="What skills should they have mastered? List the abilities needed for your project (ex. React, AWS, SQL)."
           disabled={requiredSkills?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}
@@ -953,7 +953,7 @@ const GetCardMobile = ({
         <CreateABusiness
           mobile
           title="Required Expertise"
-          sub="What skills should they have mastered? List the abilities your project or role demands."
+          sub="What skills should they have mastered? List the abilities needed for your project (ex. React, AWS, SQL)."
           disabled={requiredSkills?.length === 0}
           onUpdate={updateForm}
           onBack={goBack}

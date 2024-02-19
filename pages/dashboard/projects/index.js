@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import Nav from '../../../components/unzipped/header'
+import SearchBar from '../../../components/ui/SearchBar'
+import { TitleText } from '../../../components/unzipped/dashboard/style'
+import ProjectsContainer from '../../../components/unzipped/dashboard/ProjectsContainer'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { getBusinessList } from '../../../redux/actions'
+import { parseCookies } from '../../../services/cookieHelper'
 import styled from 'styled-components'
-
-import Nav from '../../components/unzipped/header'
-import SearchBar from '../../components/ui/SearchBar'
-import { parseCookies } from '../../services/cookieHelper'
-import { TitleText } from '../../components/unzipped/dashboard/style'
-import MobileProjects from '../../components/unzipped/dashboard/MobileProjects'
-import ProjectsContainer from '../../components/unzipped/dashboard/ProjectsContainer'
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
+import { accountTypeEnum } from '../../../server/enum/accountTypeEnum'
+import MobileFreelancerFooter from '../../../components/unzipped/MobileFreelancerFooter'
+import MobileProjects from '../../../components/unzipped/dashboard/MobileProjects'
 
 const Desktop = styled.div`
   margin-top: 192px;

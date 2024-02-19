@@ -20,10 +20,14 @@ import {
   GET_PROJECT_LIST,
   GET_PROJECT_Error,
   GET_PROJECT_LIST_AND_APPEND,
+  CREATE_BUSINESS_DETAILS,
+  UPDATE_BUSINESS_DETAILS,
+  GET_BUSINESS_DETAILS,
 } from './constants'
 
 const INIT_STATE = {
   businesses: [],
+  details: {},
   files: [],
   stories: [],
   loading: false,
@@ -104,6 +108,12 @@ const Business = (state = INIT_STATE, action = {}) => {
       return { ...state, loading: false, stories: action.payload }
     case GET_STORIES:
       return { ...state, loading: false, stories: [...action.payload] }
+    case GET_BUSINESS_DETAILS:
+      return { ...state, loading: false, details: action.payload }
+    case CREATE_BUSINESS_DETAILS:
+      return { ...state, loading: false, details: action.payload }
+    case UPDATE_BUSINESS_DETAILS:
+      return { ...state, loading: false, details: action.payload }
     case ADD_COMMENT_TO_STORY:
       const updatedStories = state.stories || []
       const index = updatedStories.map(e => e._id).indexOf(action.payload._id)
