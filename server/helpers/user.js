@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
-const user = require('../../models/User')
-const taxDataTables = require('../../models/TaxDataTable')
-const thirdPartyApplications = require('../../models/ThirdPartyApplications')
-const freelancerSkills = require('../../models/FreelancerSkills')
-const list = require('../../models/List')
-const freelancer = require('../../models/Freelancer')
-const notifications = require('../../models/Notifications')
-const emailList = require('../../models/EmailList')
-const Subscriptions = require('../../models/Subscription')
-const PaymentMethods = require('../../models/PaymentMethod')
+const user = require('../models/User')
+const taxDataTables = require('../models/TaxDataTable')
+const thirdPartyApplications = require('../models/ThirdPartyApplications')
+const freelancerSkills = require('../models/FreelancerSkills')
+const list = require('../models/List')
+const freelancer = require('../models/Freelancer')
+const notifications = require('../models/Notifications')
+const emailList = require('../models/EmailList')
+const Subscriptions = require('../models/Subscription')
+const PaymentMethods = require('../models/PaymentMethod')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
@@ -272,9 +272,9 @@ const retrieveSubscriptions = async id => {
 }
 
 const retrievePaymentMethods = async id => {
-  const payment = await PaymentMethods.find({userId: id})
+  const payment = await PaymentMethods.find({ userId: id })
   console.log(payment)
-  return await PaymentMethods.find({userId: id})
+  return await PaymentMethods.find({ userId: id })
 }
 
 const setUpNotificationsForUser = async id => {
@@ -310,23 +310,167 @@ const setUpNotificationsForUser = async id => {
 }
 
 const getAllFreelancers = async () => {
-  const freelancers = await freelancer.find().populate(
-    [
+  const freelancers = await freelancer
+    .find()
+    .populate([
       {
         path: 'userId',
         model: 'users',
-        select: 'AddressLineCountry FirstName LastName profileImage _id' 
+        select: 'AddressLineCountry FirstName LastName profileImage _id'
       },
       {
         path: 'freelancerSkills',
         model: 'freelancerskills',
-        select: 'yearsExperience _id skill' 
+        select: 'yearsExperience _id skill'
+      }
+    ])
+    .select('_id rate dislike likeTotal category')
+
+  return freelancers
+}
+
+const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, skill }) => {
+  try {
+    const regexQuery = new RegExp(filter, 'i')
+    const existingIndexes = await freelancer.collection.getIndexes()
+    const existingFreelancerSkillsIndexes = await FreelancerSkills.collection.getIndexes()
+    const existingUserIndexes = await User.collection.getIndexes()
+    const indexExists = existingIndexes && 'user_1_rate_1' in existingIndexes
+    const indexExistsFreelancerSkillsIndexes =
+      existingFreelancerSkillsIndexes && 'skill_1' in existingFreelancerSkillsIndexes
+    const indexExistsUserIndexes = existingUserIndexes && 'FullName_1' in existingUserIndexes
+    if (!indexExists) {
+      await freelancer.createIndex({ user: 1, rate: 1 })
+    }
+    if (!indexExistsFreelancerSkillsIndexes) {
+      await FreelancerSkills.createIndex({ skill: 1 })
+    }
+    if (!indexExistsUserIndexes) {
+      await User.createIndex({ FullName: 1 })
+      await User.createIndex({ freelancerSkills: 1 })
+    }
+
+    const aggregationPipeline = [
+      {
+        $lookup: {
+          from: 'users',
+          let: { userId: '$user' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] }
+              }
+            },
+            {
+              $project: {
+                AddressLineCountry: 1,
+                freelancerSkills: 1,
+                FirstName: 1,
+                LastName: 1,
+                profileImage: 1,
+                FullName: 1
+              }
+            }
+          ],
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $lookup: {
+          from: 'freelancerskills',
+          let: { freelancerSkills: '$user.freelancerSkills' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ['$_id', '$$freelancerSkills']
+                }
+              }
+            },
+            {
+              $project: {
+                skill: 1
+              }
+            }
+          ],
+          as: 'user.freelancerSkills'
+        }
+      },
+      {
+        $match: {
+          $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
+          ...(skill?.length > 0
+            ? {
+                'user.freelancerSkills.skill': {
+                  $in: skill
+                }
+              }
+            : {}),
+          ...(minRate && {
+            rate: { $gte: +minRate }
+          }),
+          ...(maxRate && {
+            rate: { $lte: +maxRate }
+          })
+        }
+      },
+      ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
+        ? [
+            {
+              $sort: {
+                rate: sort === 'lowest hourly rate' ? 1 : -1
+              }
+            }
+          ]
+        : []),
+      {
+        $facet: {
+          limitedRecords: [
+            {
+              $skip: +skip
+            },
+            {
+              $limit: +take
+            }
+          ],
+          totalCount: [
+            {
+              $count: 'count'
+            }
+          ]
+        }
       }
     ]
-  ).select('_id rate dislike likeTotal category');
 
-  return freelancers;
+    const list = await freelancer.aggregate(aggregationPipeline).exec()
+    return list[0]
+  } catch (e) {
+    throw Error(`Could not find user, error: ${e}`)
+  }
+}
 
+const getFreelancerById = async id => {
+  try {
+    return await freelancer
+      .findById(id)
+      .populate([
+        {
+          path: 'userId',
+          model: 'users'
+        },
+        {
+          path: 'freelancerSkills',
+          model: 'freelancerskills',
+          select: 'yearsExperience skill isActive'
+        }
+      ])
+      .exec()
+  } catch (e) {
+    throw Error(`Could not find user, error: ${e}`)
+  }
 }
 
 module.exports = {
@@ -348,5 +492,5 @@ module.exports = {
   listLikes,
   addToNewsletter,
   retrievePaymentMethods,
-  getAllFreelancers,
+  getAllFreelancers
 }
