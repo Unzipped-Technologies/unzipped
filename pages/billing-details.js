@@ -9,6 +9,65 @@ import {getPaymentMethods, deletePaymentMethods, getActiveContractsForUser, getU
 import BackHeader from '../components/unzipped/BackHeader';
 import Nav from '../components/unzipped/header';
 import EmployeeCard from '../components/unzipped/EmployeeCard';
+import PaymentDetailsTable from '../components/unzipped/PaymentDetailsTable'
+import Footer from '../components/unzipped/Footer';
+
+const invoices = [
+    {
+      date: "1/24/24",
+      description: "Bob Barker",
+      cardLastFour: "2264",
+      card: 'visa',
+      payPeriod: "1/14/2024 - 2/21/2024",
+      subtotal: "$22.99 (+tax & fees)",
+      total: "$24.71"
+    },
+    {
+      date: "1/24/24",
+      description: "Bob Barker",
+      cardLastFour: "2264",
+      card: 'mastercard',
+      payPeriod: "1/14/2024 - 2/21/2024",
+      subtotal: "$22.99 (+tax & fees)",
+      total: "$24.71"
+    },
+    {
+      date: "1/24/24",
+      description: "Bob Barker",
+      cardLastFour: "2264",
+      card: 'discover',
+      payPeriod: "1/14/2024 - 2/21/2024",
+      subtotal: "$22.99 (+tax & fees)",
+      total: "$24.71"
+    },
+    {
+      date: "1/24/24",
+      description: "Bob Barker",
+      cardLastFour: "2264",
+      card: 'visa',
+      payPeriod: "1/14/2024 - 2/21/2024",
+      subtotal: "$22.99 (+tax & fees)",
+      total: "$24.71"
+    },
+    {
+      date: "1/24/24",
+      description: "Bob Barker",
+      cardLastFour: "2264",
+      card: 'mastercard',
+      payPeriod: "1/14/2024 - 2/21/2024",
+      subtotal: "$22.99 (+tax & fees)",
+      total: "$24.71"
+    },
+    {
+      date: "1/24/24",
+      description: "Bob Barker",
+      cardLastFour: "2264",
+      card: 'visa',
+      payPeriod: "1/14/2024 - 2/21/2024",
+      subtotal: "$22.99 (+tax & fees)",
+      total: "$24.71"
+    }
+  ];  
 
 const Container = styled.div`
     display: flex;
@@ -23,6 +82,37 @@ const Content = styled.div`
     gap: 15px;
     margin: 15px 0px;
     width: 953px;
+    @media (max-width: 1000px) {
+        width: 95%;
+    }
+    @media (max-width: 600px) {
+        margin-top: 25px;
+    }
+`;
+
+const SubContainer = styled.div`
+    text-align: left;
+    width: 953px;
+    @media (max-width: 1000px) {
+        width: 95%;
+    }
+`;
+
+const Table = styled.div`
+    width: 953px;
+    margin: 30px 0px 50px 0px;
+    @media (max-width: 1000px) {
+        width: 95%;
+    }
+    @media(max-width: 550px) {
+        margin: 10px 0px 25px 0px;
+    }
+`;
+
+const HideMobile = styled.div`
+    @media(max-width: 600px) {
+        display: none;
+    }
 `;
 
 const BillingDetails = ({
@@ -72,7 +162,7 @@ const BillingDetails = ({
             <title>Manage Payment | Unzipped</title>
             <meta name="Manage Payment | Unzipped" content="Manage Payment"/>
             </Head>
-            <Nav token={token} marginBottom={marginBottom} />
+            <HideMobile><Nav token={token} marginBottom={marginBottom} /></HideMobile>
             <Container>
                 <BackHeader 
                     title="Billing Details"
@@ -85,7 +175,14 @@ const BillingDetails = ({
                         unpaidInvoices={unpaidInvoices}
                     />
                 </Content>
+                <SubContainer>Employee fees are billed at 12 AM each week on monday morning for any approved invoices</SubContainer>
+                <Table>
+                    <PaymentDetailsTable 
+                        invoices={invoices}
+                    />
+                </Table>
             </Container>
+            <Footer />
         </React.Fragment>
     )
 }
