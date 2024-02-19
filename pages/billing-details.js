@@ -170,7 +170,7 @@ const BillingDetails = ({
                 <Content>
                     <EmployeeCard 
                         paymentDate={paymentDate} 
-                        contracts={activeContracts.data} 
+                        contracts={activeContracts?.data} 
                         plan={plans[plan]}
                         unpaidInvoices={unpaidInvoices}
                     />
