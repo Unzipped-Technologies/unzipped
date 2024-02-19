@@ -71,17 +71,17 @@ const InvoiceTable = ({ invoices }) => {
       </TableHeader>
       {invoices.map((invoice, index) => (
         <TableRow key={index}>
-          <TableCell isTotalColumn>{invoice.date}</TableCell>
-          <TableCell>Invoice by {invoice.description}</TableCell>
+          <TableCell isTotalColumn>{invoice?.date}</TableCell>
+          <TableCell>Invoice by {invoice?.description}</TableCell>
           <TableCell>
             <PaymentMethod>
-                <CardImage height={20} src={getCardLogoUrl(invoice.card)} />
-              •••• •••• {invoice.cardLastFour}
+                <CardImage height={20} src={getCardLogoUrl(invoice?.card)} />
+              •••• •••• {invoice?.cardLastFour}
             </PaymentMethod>
           </TableCell>
-          <TableCell clearMobile><MobileHide>{invoice.payPeriod}</MobileHide></TableCell>
-          <TableCell clearMobile><MobileHide>{invoice.subtotal}</MobileHide></TableCell>
-          <TableCell isTotalColumn>{invoice.total}</TableCell>
+          <TableCell clearMobile><MobileHide>{invoice?.payPeriod}</MobileHide></TableCell>
+          <TableCell clearMobile><MobileHide>{invoice?.subtotal}</MobileHide></TableCell>
+          <TableCell isTotalColumn>{invoice?.total}</TableCell>
         </TableRow>
       ))}
     </StyledTable>

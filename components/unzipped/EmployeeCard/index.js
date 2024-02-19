@@ -166,8 +166,6 @@ const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) 
 
     const calcAmtOwed = (data) => {
         let amount = 0
-        console.log(data)
-        console.log(unpaidInvoices)
         unpaidInvoices.forEach(item => {
             if (item.freelancerId === data.freelancerId._id) {
                 amount += item.hourlyRate * item.hoursWorked
@@ -192,8 +190,8 @@ const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) 
                         return (
                             <Row key={index}>
                                 <RowItem>{ValidationUtils._toUpper(item?.freelancerId?.userId?.FullName)}</RowItem>
-                                <RowItem smallMobile>$ {item.hourlyRate}.00</RowItem>
-                                <RowItem smallMobile>{item.hoursLimit}</RowItem>
+                                <RowItem smallMobile>$ {item?.hourlyRate}.00</RowItem>
+                                <RowItem smallMobile>{item?.hoursLimit}</RowItem>
                                 <RowItem>$ {calcAmtOwed(item).toLocaleString()}.00</RowItem>
                             </Row>
                         )
