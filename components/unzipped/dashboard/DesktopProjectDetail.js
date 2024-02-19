@@ -220,7 +220,7 @@ const ImageContainer = styled.div`
     object-fit: cover; /* Cover the container without losing aspect ratio */
     object-position: center; /* Center the image in the container */
   }
-`;
+`
 
 const DesktopProjectDetail = ({ projectDetails }) => {
   console.log('project_details', projectDetails)
@@ -230,7 +230,10 @@ const DesktopProjectDetail = ({ projectDetails }) => {
         <ProjectDetail>
           <DetailHeading>
             <ProjectSummary>Project Hires</ProjectSummary>
-            <ProjectBudget>Budget: {projectDetails?.budget.includes('$') ? '' : '$'}{projectDetails?.budget || 0}</ProjectBudget>
+            <ProjectBudget>
+              Budget: {projectDetails?.budget?.includes('$') ? '' : '$'}
+              {projectDetails?.budget || 0}
+            </ProjectBudget>
           </DetailHeading>
           <ProjectDescription>{projectDetails?.challenge}</ProjectDescription>
           <ProjectRequirements>
@@ -246,12 +249,15 @@ const DesktopProjectDetail = ({ projectDetails }) => {
             : 'N/A'}
           <ProjectID>Project ID: {projectDetails?._id || 'N / A'}</ProjectID>
           <div style={{ display: 'flex', width: '100%', gap: '10px' }}>
-            {projectDetails && projectDetails?.projectImagesUrl?.length > 0 && projectDetails.projectImagesUrl.map((item) => (<>
-              <ImageContainer>
-                  <img src={item.url} alt="project image" height={"100%"}/>
-              </ImageContainer>
-            </>))}
-
+            {projectDetails &&
+              projectDetails?.projectImagesUrl?.length > 0 &&
+              projectDetails.projectImagesUrl.map(item => (
+                <>
+                  <ImageContainer>
+                    <img src={item.url} alt="project image" height={'100%'} />
+                  </ImageContainer>
+                </>
+              ))}
           </div>
         </ProjectDetail>
         <AboutClient>
