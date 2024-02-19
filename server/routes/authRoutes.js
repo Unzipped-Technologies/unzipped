@@ -30,10 +30,15 @@ router.get('/google/callback', passport.authenticate('google'), (req, res) => {
 })
 
 router.post('/register', async (req, res, next) => {
-  const { email, password } = req.body
-  const data = req.body
+
 
   try {
+    const { user } = req.body;
+    const decodeUserCredentials = Buffer.from(user, 'base64').toString('utf-8');
+    const userCredentials = JSON.parse(decodeUserCredentials);
+    const { email, password } = userCredentials;
+    const data = userCredentials;
+
     const existingUser = await AuthService.isExistingUser(email, false)
 
     if (existingUser) {

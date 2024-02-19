@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import IconComponent from '../../ui/icons/IconComponent'
-import Icon from '../../../components/ui/Icon'
 import { useDispatch, useSelector } from 'react-redux'
 import MobileFreelancerCard from './MobileFreelancerCard'
 import { getListEntriesById, getRecentlyViewedList, getTeamMembers } from '../../../redux/ListEntries/action'
-import {getBusinessList} from '../../../redux/Business/actions'
-import { IconPickerItem } from 'react-fa-icon-picker'
+import { getBusinessList } from '../../../redux/Business/actions'
+import RenderIcon from '../RenderIcon'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -103,9 +101,9 @@ function MobileProjects({
                 </P>
             </div>
 
-            {userListItems && userListItems.map(item => (
+            {userListItems && userListItems.slice(0,3).map(item => (
                 <Heading>
-                    {item.icon && (<IconPickerItem icon={item.icon} size={18} color="#e25050" />)}
+                    {item.icon && (<RenderIcon iconName={item.icon} />)}
                     <P onClick={() => handleListChangeEv(item)}>{item.name}</P>
                 </Heading>
             ))}
@@ -131,15 +129,15 @@ function MobileProjects({
 }
 
 const mapStateToProps = state => {
-  return {
-    businesses: state.Business?.businesses
-  }
+    return {
+        businesses: state.Business?.businesses
+    }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    getBusinessList: bindActionCreators(getBusinessList, dispatch)
-  }
+    return {
+        getBusinessList: bindActionCreators(getBusinessList, dispatch)
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MobileProjects)

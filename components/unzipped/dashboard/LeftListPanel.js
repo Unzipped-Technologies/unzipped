@@ -7,7 +7,6 @@ import {
     WhiteCard,
     Underline,
 } from './style'
-import Icon from '../../../components/ui/Icon'
 import {
     getListEntriesById,
     getTeamMembers,
@@ -15,8 +14,7 @@ import {
 } from '../../../redux/ListEntries/action'
 import { useDispatch, useSelector } from 'react-redux'
 import ListManagementPanel from './ListManagementPanel'
-import { IconPicker } from 'react-fa-icon-picker';
-import { IconPickerItem } from 'react-fa-icon-picker'
+import IconSelector from './IconSelector'
 
 const Container = styled.div`
     position: relative;
@@ -93,7 +91,6 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
         }
     }, [userListItems])
 
-    const store = useSelector(state => state);
     return (
         <Container>
             <TitleText paddingLeft clickable>
@@ -124,17 +121,30 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
                     borderRadius={selectedMenuOption?.name == item.name ? "0" : ""}
                     key={index}
                 >
-                    {(item?.isDefault && item.icon == 'FaEye') && (
-                        <IconPickerItem icon={item.icon} size={24} color="#8EDE64" />
+                    {(item?.isDefault && item.icon == 'EyeOutlined') && (
+                        <IconSelector icon={item.icon} size={24} color="#8EDE64" />
                     )}
 
-                    {(item?.isDefault && item.icon == 'FaRegHeart') && (
-                        <IconPickerItem icon={item.icon} size={24} color="#FA00FF" />
+                    {(item?.isDefault && item.icon == 'HeartOutlined') && (
+                        <IconSelector icon={item.icon} size={24} color="#FA00FF" />
                     )}
-                    {(item?.isDefault && item.icon == 'FaUsers') && (
-                        <IconPickerItem icon={item.icon} size={24} color="#FFC24E" />
+
+                    {(item?.isDefault && item.icon == 'TeamOutlined') && (
+                        <IconSelector icon={item.icon} size={24} color="#FFC24E" />
                     )}
-                    {!item?.isDefault && (<IconPickerItem icon={item.icon} size={24} color="#e25050" />)}
+
+                    {item?.icon && !item?.isDefault
+                        &&
+                        (
+                            item.icon !== 'EyeOutlined'
+                            && item.icon !== 'HeartOutlined'
+                            && item.icon !== 'TeamOutlined'
+                        )
+                        && (
+                            <IconSelector icon={item.icon} size={24} color="#e25050" />
+                        )
+                    }
+
                     <DarkText
                         clickable
                         noMargin
