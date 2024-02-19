@@ -4,9 +4,6 @@ import PropTypes from 'prop-types'
 import theme from '../theme'
 
 const BadgeContainer = styled.div`
-  white-space: pre-line;
-  overflow: scroll;
-  word-wrap: break-word;
   align-items: center;
   justifycontent: center;
   background: ${props => props.color.background};

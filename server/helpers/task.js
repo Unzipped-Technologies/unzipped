@@ -9,21 +9,23 @@ const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const createTask = async data => {
   try {
     const { getBusinessWithoutPopulate } = require('./business')
+    const { getDepartmentWithoutPopulate } = require('./department')
+    const { getTagsWithoutPopulate } = require('./tags')
     // Check whether the department against departmentId exist OR not
-    const departmentData = await DepartmentModel.findById(data.departmentId).populate([
-      {
-        path: 'tags',
-        select: 'tagName'
-      }
-    ])
+    const departmentData = await getDepartmentWithoutPopulate({ _id: data.departmentId }, '')
     if (!departmentData) throw new Error(`Department not exist.`)
 
     // Check whether the business against businessId exist OR not
     const businessData = await getBusinessWithoutPopulate(departmentData.businessId, 'businessCode')
     if (!businessData) throw new Error(`Business not exist.`)
 
-    // Check whether the assigne has a contract or not
+    const tagData = await getTagsWithoutPopulate({ _id: data.tag }, '')
+    if (!tagData) throw new Error(`Invalid tag Id.`)
+
+    if (data?.tags?.length > 5) throw new Error(`Tags cannot have more than 5 elements.`)
+
     if (data.assignee) {
+      // Check whether the assigne has a contract or not
       const contractData = await contractHelper.getContractWithoutPopulate({
         businessId: departmentData.businessId,
         freelancerId: data.assignee
@@ -37,9 +39,6 @@ const createTask = async data => {
     const totalBusinessTasks = await countTasks({ businessId: departmentData.businessId })
     data.ticketCode = `${businessData.businessCode.replace(' ', '')}-${totalBusinessTasks}`
 
-    if (departmentData?.tags?.length && !data.tag) {
-      data.tag = departmentData?.tags?.find(tag => tag.tagName?.toLowerCase() === 'to do')?._id
-    }
     // Create new tasks
     const newTask = await TaskModel.create(data)
 
@@ -226,6 +225,13 @@ const countTasks = async filter => {
 
 const updateTask = async (taskId, data) => {
   try {
+    const { getTagsWithoutPopulate } = require('./tags')
+
+    if (data?.tags?.length > 5) throw new Error(`Tags cannot have more than 5 elements.`)
+
+    const tagData = await getTagsWithoutPopulate({ _id: data.tag }, '')
+    if (!tagData) throw new Error(`Invalid tag Id.`)
+
     const taskData = await getTaskWithoutPopulate({ _id: taskId })
     if (!taskData) throw Error(`Error: Failed to add comment`)
     let ticketComments = taskData.comments || []
@@ -247,6 +253,11 @@ const getTaskById = async taskId => {
       {
         $match: {
           _id: mongoose.Types.ObjectId(taskId)
+        }
+      },
+      {
+        $project: {
+          __v: 0
         }
       },
       {

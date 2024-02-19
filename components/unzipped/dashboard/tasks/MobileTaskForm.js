@@ -19,7 +19,7 @@ import {
   addCommentToStory
 } from '../../../../redux/actions'
 import Image from '../../../ui/Image'
-import { ValidationUtils } from '../../../../utils'
+import { ValidationUtils, ConverterUtils } from '../../../../utils'
 import Badge from '../../../ui/Badge'
 import EditIcon from '../../../icons/edit'
 import Chat from '../../../icons/chat'
@@ -76,21 +76,15 @@ const MobileTaskForm = ({
 }) => {
   const [editMode, setEditMode] = useState(isEditing)
   const [commentId, setCommentId] = useState('')
+  const [tag, setTag] = useState('')
+  const [tagShow, setTagShow] = useState(false)
+
   const [comments, setComments] = useState([])
   const [newComment, setComment] = useState({
     comment: '',
     img: '',
     taskId: taskDetail?._id
   })
-
-  const tagOptions = useMemo(() => {
-    return (
-      departmentData?.departmentTags?.map(tag => ({
-        value: tag?._id,
-        label: tag?.tagName
-      })) || []
-    )
-  }, [])
 
   const assigneeOptions = useMemo(() => {
     return (
@@ -159,8 +153,9 @@ const MobileTaskForm = ({
         status: taskDetail?.status,
         businessId: taskDetail?.businessId || departmentData?.businessId,
         departmentId: taskDetail?.departmentId || departmentData?.departmentId,
-        assignee: taskDetail?.assigneUser?.freelancers,
-        tag: taskDetail?.tag?._id,
+        assignee: taskDetail?.assignee,
+        tags: taskDetail?.tags,
+        tag: taskDetail?.tag,
         ticketCode: taskDetail?.ticketCode
       })
     }
@@ -245,6 +240,13 @@ const MobileTaskForm = ({
     })
   }
 
+  const removeTag = async tagName => {
+    let filteredTags = taskForm?.tags.filter(tag => tag !== tagName)
+    updateForm('tags', filteredTags)
+    taskDetail.tags = filteredTags
+    if (taskDetail?._id && taskDetail.tags?.includes(tagName)) await updateTask(taskDetail?._id, taskDetail)
+  }
+
   return (
     <TaskFormContainer>
       {taskForm?.ticketCode && (
@@ -289,7 +291,12 @@ const MobileTaskForm = ({
               alignItems: 'center',
               marginTop: editMode ? '50px' : '0px !important'
             }}>
-            <span style={{ display: 'flex', alignItems: 'center' }}>
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end'
+              }}>
               <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
             </span>
             {editMode ? (
@@ -297,7 +304,6 @@ const MobileTaskForm = ({
                 margin="0px 0px 0px 20px"
                 mobile
                 zIndex="1000"
-                disableBorder={editMode}
                 disabled={userRole === 1}
                 fieldType="searchField"
                 isSearchable={true}
@@ -330,15 +336,13 @@ const MobileTaskForm = ({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  width: '180px',
-                  marginLeft: '0px'
+                  justifyContent: 'flex-end',
+                  marginLeft: '10px'
                 }}>
-                <>
-                  <Chat width="18" height="18" />
-                  <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" paddingLeft="5px" topPadding>
-                    {comments.length} Comment
-                  </DarkText>
-                </>
+                <Chat width="18" height="18" />
+                <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" paddingLeft="0px" topPadding>
+                  {comments.length} Comment
+                </DarkText>
               </div>
             ) : (
               ''
@@ -348,22 +352,15 @@ const MobileTaskForm = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
               marginTop: editMode ? '10px' : '0px !important',
               flexDirection: 'row'
             }}>
             <div
               style={{
-                display: 'flex'
+                display: 'flex',
+                alignItems: 'center'
               }}>
-              <TitleText
-                color="#000"
-                titleFontSize="16px"
-                lineHeight="normal"
-                light
-                width="100px"
-                paddingRight="10px"
-                marginTop="10px">
+              <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="65px" marginTop="10px">
                 Priority:
               </TitleText>
               {editMode ? (
@@ -397,7 +394,8 @@ const MobileTaskForm = ({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                marginLeft: editMode ? '0px !important' : '0px !important'
+                justifyContent: 'flex-end',
+                marginLeft: editMode ? '0px !important' : '150px !important'
               }}>
               <TitleText
                 color="#000"
@@ -420,7 +418,7 @@ const MobileTaskForm = ({
                   name="status"
                   placeholder=" status"
                   fontSize="14px"
-                  width="70px"
+                  width="100px"
                   height={taskForm?.status ? '10px' : '30px'}
                   options={taskStatusOptions}
                   onChange={value => updateForm('status', value?.value)}
@@ -494,47 +492,87 @@ const MobileTaskForm = ({
               width="40px !important">
               tags:
             </TitleText>
-            {taskDetail?.tag && (
-              <Badge small>
-                {tagOptions?.find(tag => tag.value === taskDetail?.tag)?.label}
-                <AiOutlineClose style={{ width: '14px', height: '14px', marginLeft: '10px' }} />
-              </Badge>
-            )}
-            <div
-              style={{
-                width: '17px',
-                height: '17px',
-                background: '#D9D9D9',
-                display: 'flex',
-                alignItems: 'center',
-                marginRight: '10px',
-                marginTop: '-2px'
-              }}>
-              <Plus width="17" height="17" />
-            </div>
-            {editMode && (
-              <FormField
-                zIndex="99"
-                mobile
-                required
-                disableBorder={!editMode}
-                fieldType="searchField"
-                isSearchable={true}
-                name="select"
-                placeholder="Select tag"
-                fontSize="14px"
-                width="110px"
-                height={taskForm?.tag ? '10px' : '30px'}
-                options={tagOptions}
-                dropdownList={tagOptions}
-                onChange={value => updateForm('tag', value?.value)}
-                value={{
-                  label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
+            {!tagShow && editMode && (
+              <span
+                style={{
+                  width: '17px',
+                  height: '17px',
+                  background: '#D9D9D9',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '10px',
+                  marginTop: '-2px'
                 }}
-                clickType="tag"
-                onUpdate={() => {}}
-              />
+                id="add_tags_icon"
+                onClick={() => {
+                  setTagShow(true)
+                }}>
+                <Plus width="17" height="17" />
+              </span>
             )}
+
+            {editMode && tagShow && (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <FormField
+                  zIndexUnset
+                  fieldType="input"
+                  disableBorder={!editMode}
+                  borderRadius="0px"
+                  border="1px solid #ccc"
+                  placeholder="Tags"
+                  margin="0px 0px 0px 0px !important"
+                  fontSize="14px"
+                  disabled={userRole === 1}
+                  width="200px"
+                  height="30px  !important"
+                  value={tag}
+                  clickType="tags"
+                  onChange={e => {
+                    setTag(e?.target?.value)
+                  }}
+                />
+                {editMode && taskForm?.tags?.length < 5 && (
+                  <span
+                    style={{
+                      width: '17px',
+                      height: '17px',
+                      background: '#D9D9D9',
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginLeft: '5px'
+                    }}
+                    id="add_tags_icon"
+                    onClick={async e => {
+                      e?.preventDefault()
+                      updateForm('tags', [...taskForm?.tags, tag])
+                      setTag('')
+                    }}>
+                    <Plus width="17" height="17" />
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+          <div
+            style={{
+              width: '100%',
+              marginTop: '10px'
+            }}>
+            {taskForm?.tags?.length
+              ? taskForm.tags.map(tag => {
+                  return (
+                    <Badge key={tag} small>
+                      {ConverterUtils.capitalize(`${tag}`)}
+                      <AiOutlineClose
+                        style={{ width: '14px', height: '14px', marginLeft: '10px' }}
+                        onClick={() => {
+                          removeTag(tag)
+                        }}
+                      />
+                    </Badge>
+                  )
+                })
+              : ''}
           </div>
           <div
             style={{

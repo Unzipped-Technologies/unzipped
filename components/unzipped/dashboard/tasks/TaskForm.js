@@ -10,7 +10,7 @@ import { TitleText, DarkText, WhiteCard, Span, Grid2 } from '../style'
 import Button from '../../../ui/Button'
 import Image from '../../../ui/Image'
 import { FormField } from '../../../ui'
-import { ValidationUtils } from '../../../../utils'
+import { ValidationUtils, ConverterUtils } from '../../../../utils'
 import Badge from '../../../ui/Badge'
 import ManIcon from '../../../icons/man'
 import EditIcon from '../../../icons/edit'
@@ -45,7 +45,9 @@ const TaskForm = ({
   userRole
 }) => {
   const [editMode, setEditMode] = useState(false)
+  const [tagShow, setTagShow] = useState(false)
   const [comments, setComments] = useState([])
+  const [tag, setTag] = useState('')
   const [newComment, setComment] = useState({
     comment: '',
     img: '',
@@ -78,20 +80,12 @@ const TaskForm = ({
         businessId: taskDetail?.businessId || departmentData?.businessId,
         departmentId: taskDetail?.departmentId || departmentData?._id,
         assignee: taskDetail?.assignee,
+        tags: taskDetail?.tags,
         tag: taskDetail?.tag,
         ticketCode: taskDetail?.ticketCode
       })
     }
   }, [taskDetail])
-
-  const tagOptions = useMemo(() => {
-    return (
-      departmentData?.departmentTags?.map(tag => ({
-        value: tag?._id,
-        label: tag?.tagName
-      })) || []
-    )
-  }, [departmentData])
 
   const assigneeOptions = useMemo(() => {
     return (
@@ -210,6 +204,13 @@ const TaskForm = ({
     return userData
   }
 
+  const removeTag = async tagName => {
+    let filteredTags = taskForm?.tags.filter(tag => tag !== tagName)
+    updateForm('tags', filteredTags)
+    taskDetail.tags = filteredTags
+    if (selectedTaskId && taskDetail.tags?.includes(tagName)) await updateTask(selectedTaskId, taskDetail)
+  }
+
   return (
     <>
       <DarkText fontSize="18px" color="#0057FF" lineHeight="normal">
@@ -293,13 +294,13 @@ const TaskForm = ({
           />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-          <div style={{ display: 'flex', width: '27%' }}>
+          <div style={{ display: 'flex', width: '40%' }}>
             <span
               style={{
                 paddingRight: '10px',
                 paddingTop: editMode ? '10px' : '20px',
                 display: 'flex',
-                marginLeft: '15%',
+                marginLeft: '10%',
                 justifyContent: 'flex-end'
               }}>
               <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
@@ -330,7 +331,7 @@ const TaskForm = ({
                 onUpdate={() => {}}
               />
             ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px">
+              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px" marginRight="120px">
                 {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label || 'assignee'}
               </DarkText>
             )}
@@ -340,8 +341,7 @@ const TaskForm = ({
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              width: '20%',
-              marginLeft: '50px'
+              width: '20%'
             }}>
             {taskDetail?.comments?.length ? (
               <>
@@ -354,12 +354,12 @@ const TaskForm = ({
               ''
             )}
           </div>
-
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              width: '47%'
+              paddingLeft: '70px',
+              width: '40%'
             }}>
             <TitleText
               color="#000"
@@ -367,49 +367,82 @@ const TaskForm = ({
               width="50px"
               lineHeight="normal"
               light
-              marginTop="10px"
+              paddingTop="20px"
               paddingRight="5px">
               tags:
             </TitleText>
-            <Badge small>{tagOptions?.find(tag => tag.value === taskForm?.tag)?.label}</Badge>
-            <div
-              style={{
-                width: '17px',
-                height: '17px',
-                background: '#D9D9D9',
-                display: 'flex',
-                alignItems: 'center',
-                marginRight: '10px',
-                marginTop: '5px'
-              }}>
-              <Plus width="17" height="17" />
-            </div>
-            {editMode && (
-              <FormField
-                zIndex="1000"
-                mobile
-                required
-                fieldType="searchField"
-                isSearchable={true}
-                name="tags"
-                placeholder="Select tag"
-                fontSize="14px"
-                width="160px"
-                height="10px"
-                options={tagOptions}
-                dropdownList={tagOptions}
-                onChange={value => updateForm('tag', value?.value)}
-                value={{
-                  label: tagOptions?.find(tag => tag.value === taskForm?.tag)?.label
+
+            {!tagShow && (
+              <div
+                style={{
+                  width: '17px',
+                  height: '17px',
+                  background: '#D9D9D9',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '10px',
+                  marginTop: '5px'
                 }}
-                clickType="tag"
+                onClick={() => {
+                  setTagShow(true)
+                }}>
+                <Plus width="17" height="17" />
+              </div>
+            )}
+            {editMode && tagShow && (
+              <FormField
+                zIndexUnset
+                fieldType="input"
+                borderRadius="0px"
+                placeholder="Tags"
+                border="1px solid #ccc"
+                fontSize="14px"
+                name="tags"
+                disabled={userRole === 1}
+                width="160px"
+                margin="0px 0px 0px 0px"
+                height="30px  !important"
+                value={tag}
+                maxLength="30"
+                onBlur={() => {
+                  setTagShow(false)
+                }}
+                onChange={e => {
+                  setTag(e?.target?.value)
+                }}
+                handleEnterKey={e => {
+                  if (e.keyCode === 13 && e.shiftKey === false && taskForm?.tags?.length < 5) {
+                    updateForm('tags', [...taskForm?.tags, e?.target?.value])
+                    setTag('')
+                  }
+                }}
                 onUpdate={() => {}}
               />
             )}
           </div>
         </div>
+        {taskForm?.tags?.length ? (
+          <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+            {taskForm.tags.map(tag => {
+              return (
+                <Badge key={tag} small>
+                  {ConverterUtils.capitalize(`${tag}`)}
+                  <AiOutlineClose
+                    style={{ width: '14px', height: '14px', marginLeft: '10px' }}
+                    onClick={() => {
+                      removeTag(tag)
+                    }}
+                  />
+                </Badge>
+              )
+            })}
+          </div>
+        ) : (
+          ''
+        )}
+
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-          <div style={{ width: '40%', display: 'flex', marginRight: '50px' }}>
+          <div style={{ width: '50%', display: 'flex', marginRight: '50px' }}>
             <TitleText
               color="#000"
               titleFontSize="16px"
@@ -451,9 +484,10 @@ const TaskForm = ({
             style={{
               width: '50%',
               display: 'flex',
-              marginLeft: '80px'
+              alignItems: 'center',
+              paddingLeft: '85px'
             }}>
-            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" marginTop="7px" light width="120px">
+            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="130px" paddingTop="20px">
               Story Points:
             </TitleText>
             {editMode ? (
@@ -472,14 +506,14 @@ const TaskForm = ({
                 value={taskForm?.storyPoints}
                 onUpdate={() => {}}></FormField>
             ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="7px">
+              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px">
                 {taskDetail?.storyPoints || 0}
               </DarkText>
             )}
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-          <div style={{ width: '40%', display: 'flex' }}>
+          <div style={{ width: '50%', display: 'flex' }}>
             <TitleText
               color="#000"
               titleFontSize="16px"

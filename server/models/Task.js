@@ -13,6 +13,10 @@ const taskSchema = new Schema(
     isActive: { type: Boolean, default: true },
     taskName: { type: String, required: true },
     isArchived: { type: Boolean, default: false },
+    tags: {
+      type: [String],
+      maxlength: 5
+    },
     tag: { type: Schema.Types.ObjectId, ref: 'tags' },
     assignee: { type: Schema.Types.ObjectId, ref: 'freelancers' },
     businessId: { type: Schema.Types.ObjectId, ref: 'businesses' },
@@ -37,7 +41,6 @@ const taskSchema = new Schema(
     timestamps: false
   }
 )
-
 taskSchema.plugin(softDeletePlugin)
 
 module.exports = mongoose.model('tasks', taskSchema)

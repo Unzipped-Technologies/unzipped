@@ -52,6 +52,7 @@ const TitleText = styled.div`
   color: ${({ color }) => (color ? color : theme.text2)};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '')};
   padding-right: ${paddingRight => (paddingRight ? paddingRight : '')};
+  padding-top: ${paddingTop => (paddingTop ? paddingTop : '')};
   @media screen and (max-width: 600px) {
     width: ${({ width }) => (width ? width : '100%')};
     display: flex;

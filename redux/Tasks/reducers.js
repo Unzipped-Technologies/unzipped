@@ -23,6 +23,7 @@ const INITIAL_TASKS = {
   businessId: '',
   departmentId: '',
   assignee: '',
+  tags: [],
   tag: '',
   ticketCode: '',
   comments: []

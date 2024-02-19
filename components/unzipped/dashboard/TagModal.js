@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { Dialog } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
 
 import Button from '../../ui/Button'
 import { FormField } from '../../ui'
@@ -39,7 +40,8 @@ const StyledCustomCheckbox = styled.input`
 
 const MUIDialog = withStyles(theme => ({
   paper: {
-    width: '100%' // Adjust the width as needed
+    width: '100%', // Adjust the width as needed
+    height: '200px'
   },
   root: {
     padding: '0px !important'
@@ -81,16 +83,38 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
       open={open}
       aria-labelledby="story-preview-modal"
       aria-describedby="story-preview-modal-description">
+      <DialogTitle id="tag-dialog-title">Create Tag</DialogTitle>
+
       <DialogContent dividers>
         <div
           style={{
             flex: '0 0 auto',
             boxSizing: 'border-box'
           }}>
+          <form>
+            <div style={{ display: 'flex', marginTop: '5px', alignItems: 'center' }}>
+              <FormField
+                zIndexUnset
+                placeholder="Tag Name"
+                fieldType="input"
+                margin="5px 0px 0px 0px"
+                name="tagName"
+                fontSize="14px"
+                borderColor="red"
+                noMargin
+                width="100%"
+                height="36px !important"
+                onChange={e => updateForm('tagName', e?.target?.value)}
+                value={tagForm?.tagName}
+                clickType="tagName"
+                onUpdate={() => {}}
+              />
+            </div>
+          </form>
           <div
             style={{
               width: '100%',
-              marginLeft: '24px',
+              marginTop: '20px',
               display: 'flex',
               alignItems: 'flex-end',
               justifyContent: 'flex-end'
@@ -121,7 +145,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 }}
                 width="58.25px"
                 extraWide
-                margin="0px 37px 0px 20px"
+                margin="0px 0px 0px 20px"
                 contentMargin="0px !important"
                 type="black"
                 buttonHeight="25px"
@@ -136,85 +160,6 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               </Button>
             </div>
           </div>
-          <form>
-            <div style={{ display: 'flex', marginTop: '5px', alignItems: 'center' }}>
-              <FormField
-                zIndexUnset
-                placeholder="Tag Name"
-                fieldType="input"
-                margin="5px 0px 0px 0px"
-                name="tagName"
-                fontSize="14px"
-                borderColor="red"
-                noMargin
-                width="100%"
-                height="36px !important"
-                onChange={e => updateForm('tagName', e?.target?.value)}
-                value={tagForm?.tagName}
-                clickType="tagName"
-                onUpdate={() => {}}
-              />
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '10px',
-                width: '100%'
-              }}>
-              <div style={{ width: '50%' }}>
-                <label style={{ width: '200px', display: 'flex', alignItems: 'center' }} htmlFor="status-checkbox">
-                  <TitleText
-                    color="#000"
-                    titleFontSize="16px"
-                    width="50px"
-                    lineHeight="normal"
-                    light
-                    marginTop="12px"
-                    paddingRight="5px">
-                    Status:
-                  </TitleText>
-                  <StyledCustomCheckbox
-                    type="checkbox"
-                    checked={tagForm?.isActive}
-                    onChange={e => updateForm('isActive', e?.target?.checked)}
-                    id="status-checkbox"
-                    margin="0px 0px 0px 70px"
-                  />
-                </label>
-              </div>
-              <div
-                style={{
-                  width: '50%'
-                }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end'
-                  }}>
-                  <label style={{ display: 'flex', alignItems: 'center' }} htmlFor="archived-checkbox">
-                    <TitleText
-                      color="#000"
-                      titleFontSize="16px"
-                      lineHeight="normal"
-                      light
-                      marginTop="12px"
-                      marginRight="40px">
-                      Archived:
-                    </TitleText>
-                    <StyledCustomCheckbox
-                      type="checkbox"
-                      checked={tagForm?.isArchived}
-                      onChange={e => updateForm('isArchived', e?.target?.checked)}
-                      id="archived-checkbox"
-                      margin="0px 0px 0px 90px"
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          </form>
         </div>
       </DialogContent>
     </MUIDialog>

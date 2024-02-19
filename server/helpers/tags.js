@@ -146,7 +146,7 @@ const deleteTag = async tagId => {
 
 const getTagsWithoutPopulate = async (filter, selectedFields = '') => {
   try {
-    return await Contracts.findOne(filter).select(selectedFields)
+    return await TagModel.findOne(filter).select(selectedFields)
   } catch (e) {
     throw new Error(`Could not retrieve contracts, error: ${e.message}`)
   }
