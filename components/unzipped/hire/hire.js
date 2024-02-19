@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { getProjectsList, getProjectApplications, getFreelancerById } from '../../../redux/actions';
 import ProjectDropdown from './project-dropdown';
+import BackHeader from '../BackHeader';
 import useWindowSize from '../../../hooks/windowWidth';
 import BackIcon from '../../ui/icons/back'
 import { bindActionCreators } from 'redux'
@@ -270,7 +271,9 @@ const HireComp = ({name}) => {
 
     return (
         <HireWrapper>
-            <HireDivider title="Confirm Payment Details" />
+            <BackHeader 
+                    title="Confirm Payment Details"
+                />
             <HireInputContainer>
                 <ContentContainer >
                     <HeadingText>
