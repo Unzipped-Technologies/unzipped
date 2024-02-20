@@ -60,8 +60,6 @@ const RecurringPaymentComponent = ({
         getUnpaidInvoices(token)
     }, [])
 
-    console.log(paymentDate)
-
     return (
         <RecurringWrapper>
             <Container >

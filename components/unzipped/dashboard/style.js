@@ -85,10 +85,9 @@ const DarkText = styled.div`
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   padding: ${({ padding }) => (padding ? padding : '')};
   width: ${({ width }) => (width ? width : '96%')};
-  padding-left: ${({ paddingLeft }) => (paddingLeft ? '20px' : '0px')};
+  padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? smallPadding ? smallPadding : '20px' : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
   text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
-  // color: ${({ color  }) => (color ? color : theme.text2)};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '')};
   &:hover {
