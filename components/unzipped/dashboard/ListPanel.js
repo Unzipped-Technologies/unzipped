@@ -93,6 +93,7 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
                 isRecentlyViewed={isRecentlyViewed}
                 isMyTeam={isMyTeam}
                 listInfo={listInfo}
+                setIsFavourite={setIsFavourite}
             />
         </Container>
     )

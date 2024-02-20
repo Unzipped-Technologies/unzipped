@@ -191,7 +191,8 @@ const Panel = ({
   isMyTeam,
   isFavourite,
   isRecentlyViewed,
-  listInfo
+  listInfo,
+  setIsFavourite
 }) => {
   const dragItem = useRef();
   const dragOverItem = useRef();
@@ -568,6 +569,7 @@ const Panel = ({
     if (value == "DELETE") {
       dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
       setSelectedValue("Details")
+      setIsFavourite(true)
     }
   }
   return (
@@ -660,9 +662,9 @@ const Panel = ({
         )
       }
 
-      {
+      { 
         !isFavLoading ? (isFavourite && freelancer.length > 0) ? (
-          <>{
+          <>{ 
             freelancer.map((item, index) => (
               <FreelancerListingCard user={item} width={'650px'} key={index} includeRate={10} />
             ))
@@ -670,8 +672,8 @@ const Panel = ({
           </>
         ) : (
           ((isFavourite && freelancer.length < 1) ? (
-            <>
-              {/* <div style={{
+            <> 
+              <div style={{
                             display: 'flex',
                             justifyContent: 'center',
                             flexDirection: 'column',
@@ -693,7 +695,7 @@ const Panel = ({
                             }}>
                                 Browse Freelancers
                             </Button>
-                        </div> */}
+                        </div>
             </>
           ) : (<></>))
         ) : (<></>)
