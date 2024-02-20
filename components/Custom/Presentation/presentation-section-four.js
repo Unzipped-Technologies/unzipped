@@ -26,7 +26,7 @@ const SectionFour = () => {
                     The best UX designers that will design your website to look amazing. Moreover, your site will be user-friendly, intuitive, and lightning-fast.  
                     <br />
                     <br />
-                    Top-tier project managers that drive your project from conception to completion,  with any necessary hand-holding along the way.
+                    Top-tier project managers that drive your project from conception to completion, with any necessary hand-holding along the way.
                     <br />
                     <br />
                     Bottom line, we hire SKILL. 

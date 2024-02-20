@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from 'reactstrap';
 import { connect, useDispatch } from 'react-redux';
-import { clearCart, logoutUser } from '../../redux/actions';
+import { logoutUser } from '../../redux/actions';
 import Icon from "@material-ui/core/Icon";
 import MenuDropdown from '../Custom/MenuDropdown';
 import Scheduler from '../Custom/Presentation/MapSelector';
@@ -44,7 +44,6 @@ const ScheduleNav = ({link, isAuthenticated}) => {
 
     const signOut = () => {
         dispatch(logoutUser());
-        dispatch(clearCart());
         router.push('/');
         return;
     }
@@ -125,4 +124,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {logoutUser, clearCart})(ScheduleNav);
+export default connect(mapStateToProps, { logoutUser })(ScheduleNav);

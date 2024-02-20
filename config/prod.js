@@ -14,6 +14,14 @@ module.exports = {
   carsXe: process.env.CARS_XE_API_KEY,
   facebookID: process.env.FACEBOOK_ID,
   googleMapsId: process.env.GOOGLE_MAPS_ID,
-  facebookAPI: process.env.FACEBOOK_API
-
+  facebookAPI: process.env.FACEBOOK_API,
+  nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+  githubRedirectUrl: process.env.GITHUB_REDIRECT_URL,
+  sendGridName: 'Unzipped',
+  sendGridEmail: 'Jason@unzipped.io',
+  nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || "509d38179ddfee75d61f",
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET || "30a2ea2b0796b6092f825f80680a608ff57d5e9e",
+  githubRedirectUrl: process.env.GITHUB_REDIRECT_URL || "http://localhost:3000/api/auth/github",
+  socketUrl: process.env.SOCKET_URL || "http://localhost:3000",
 };

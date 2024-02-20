@@ -3,11 +3,7 @@ import {
     LOAD_CUSTOMERS,
     FETCH_ORDERS,
     FETCH_SCHEDULE,
-    FETCH_GARAGES,
     FETCH_PROMOS,
-    ADD_GARAGE,
-    DEL_GARAGE,
-    UPDATE_GARAGE,
     UPDATE_USER_DATA,
     ADD_PROMO,
     DEL_PROMO,
@@ -22,9 +18,6 @@ import {
     FETCH_MORE_CUSTOMERS,
     FETCH_MORE_PROMOS,
     FETCH_MORE_ORDERS,
-    GARAGE_ORDERS,
-    HOTEL_ORDERS,
-    HOTEL_OWED,
     GET_STORIES_LIST,
     GET_TAGS_LIST,
     SORT_STORIES_ON_DRAG,
@@ -36,15 +29,11 @@ const INIT_STATE = {
     loading: false,
     orders: [],
     pendingOrders: [],
-    garages: [],
     promos: [],
     users: [],
     schedule: [],
     hasMoreOrders: true,
     hasMorePromos: true,
-    garageOrders: [],
-    hotelOrders: [],
-    hotelOwed: [],
     tags: [
         {
             name: 'To Do',
@@ -147,16 +136,8 @@ const Dashboard = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, pendingOrders: action.payload};
         case FETCH_SCHEDULE:
             return {...state, loading: false, schedule: action.payload};
-        case FETCH_GARAGES:
-            return {...state, loading: false, garages: action.payload};
         case FETCH_PROMOS:
             return {...state, loading: false, promos: action.payload};
-        case ADD_GARAGE:
-            return {...state, loading: false, garages: [...state.garages, action.payload]};
-        case DEL_GARAGE:
-            return {...state, loading: false, garages: action.payload};
-        case UPDATE_GARAGE:
-            return {...state, loading: false, garages: action.payload};
         case UPDATE_USER_DATA:
             return {...state, loading: false, users: action.payload};
         case ADD_PROMO:
@@ -167,8 +148,6 @@ const Dashboard = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, promos: action.payload};
         case REFUND_ORDER:
             return {...state, loading: false, pendingOrders: [...action.payload]};
-        case HOTEL_OWED:
-            return {...state, loading: false, hotelOwed: [...action.payload]};
         case ADD_ORDER:
             return {...state, loading: false, pendingOrders: [action.payload, ...state.pendingOrders]};
         case UPDATE_ORDER:
@@ -177,10 +156,6 @@ const Dashboard = (state = INIT_STATE, action = {}) => {
             return {...state, loading: false, pendingOrders: action.payload.pending, orders: action.payload.complete};
         case UPDATE_ERROR:
             return {...state, loading: false, error: action.payload};
-        case GARAGE_ORDERS:
-            return {...state, loading: false, garageOrders: [...action.payload]};
-        case HOTEL_ORDERS:
-            return {...state, loading: false, hotelOrders: [...action.payload]};
         case SUBMIT_ORDER:
             return {...state, loading: false, orders: action.payload}
         default: 

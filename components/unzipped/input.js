@@ -13,6 +13,9 @@ const Search = styled.div`
     width: 218px;
     align-items: center;
     overflow: hidden;
+    @media (max-width: 1295px) {
+        display: none;
+    }
 `;
 
 const Magnify = styled.div`

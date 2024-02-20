@@ -8,7 +8,6 @@ import FormControl from '@material-ui/core/FormControl';
 import {connect, useDispatch} from 'react-redux';
 import { addPromos } from '../../redux/actions';
 
-
 function getModalStyle() {
     const top = 50;
     const left = 50;
@@ -166,9 +165,7 @@ const SimpleModal = ({open, setOpen, token}) => {
                                 style={{width: '100%'}} 
                             >
                                 <MenuItem value="Customer">Customer</MenuItem>
-                                <MenuItem value="Hotel">Hotel</MenuItem>
                                 <MenuItem value="Admin">Admin</MenuItem>
-                                <MenuItem value="Driver">Driver</MenuItem>
                             </Select>
                         </FormControl>
                         </div>

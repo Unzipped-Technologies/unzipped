@@ -5,23 +5,13 @@ const orderSchema = new Schema({
   user: String,
   name: String,
   phone: String,
-  services: [Object],
   total: Number,
-  hotel: String,
   status: {
       type: String,
       default: "PENDING"
   },
   email: String,
   orderNumber: String,
-  Vehicle: {
-      year: Number,
-      make: String,
-      model: String,
-      color: String,
-      vin: String,
-      license: String
-  },
   promo: {
     error: String, 
     id: String, 
@@ -36,20 +26,9 @@ const orderSchema = new Schema({
   },
   date: String,
   time: String,
-  location: {
-      name: String,
-      address: String,
-      location: {
-          lat: Number,
-          lng: Number,
-      },
-      dropoffAddress: String
-  },
   orderDate: String,
   paymentId: String,
   refundId: String,
-  roomNumber: String,
-  valetNumber: String,
   transmission: String
 });
 

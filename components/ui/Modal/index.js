@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Icon from '../Icon';
 
 const ModalContainer = styled.div`
-    width: 728px;
+    width: ${({width}) => width ? width : '728px'};
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     background: #fff;
@@ -69,11 +69,11 @@ const Heading = styled.h2`
     }
 `;
 
-const Modal = ({heading, children, onHide, hideOnClickOutside, className, height}) => {
+const Modal = ({heading, children, onHide, hideOnClickOutside, className, height, width}) => {
     const onModalClick = e => e.stopPropagation();
     return (
         <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}}>
-            <ModalContainer onClick={onModalClick} $height={height}>
+            <ModalContainer onClick={onModalClick} $height={height} width={width}>
                 <Absolute onClick={onHide}><ClosingIcon name="close" onClick={onHide} /></Absolute>
                 {heading && <Heading>{heading}</Heading>}
                 <div>{children}</div>

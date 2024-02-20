@@ -1,29 +1,35 @@
 // import '../styles/fonts.css';
-import React, { useEffect, useState } from 'react';
-import keys from '../config/keys';
-import { useRouter } from 'next/router';
-import { useStore } from "react-redux";
-import { wrapper } from '../redux/store';
-import { CookiesProvider } from "react-cookie";
-import { PersistGate } from 'redux-persist/integration/react';
-import * as gtag from '../lib/gtag';
+import 'bootstrap/dist/css/bootstrap.css'
+import React, { useEffect, useState } from 'react'
+import keys from '../config/keys'
+import { useRouter } from 'next/router'
+import { useSelector, useStore } from 'react-redux'
+import { wrapper } from '../redux/store'
+import { CookiesProvider } from 'react-cookie'
+import { PersistGate } from 'redux-persist/integration/react'
+import * as gtag from '../lib/gtag'
+import { isProtected } from '../utils/protectedRoutes'
 
 ///styles
-import '../styles/App.scss';
-import 'materialize-css/dist/css/materialize.min.css';
+import '../styles/App.scss'
+import 'materialize-css/dist/css/materialize.min.css'
 // import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import "animate.css/animate.min.css";
-import Loading from '../components/loading';
+import 'animate.css/animate.min.css'
+import Loading from '../components/loading'
 
 function MyApp({ Component, pageProps }) {
-  const store = useStore((state) => state);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
+  const store = useStore(state => state)
+  const token = useSelector(state => state.Auth.token)
+  const isLoading = useSelector(state => state.Loading.loading)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
   useEffect(() => {
     const start = () => setLoading(true)
-    const end = () => setTimeout(() => {  setLoading(false); }, 500);
-    const handleRouteChange = (url) => {
+    const end = () =>
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
+    const handleRouteChange = url => {
       gtag.pageview(url)
     }
     router.events.on('routeChangeStart', start)
@@ -35,6 +41,19 @@ function MyApp({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events])
+  useEffect(() => {
+    if (isLoading) {
+      setLoading(true)
+    }
+    else {
+      setLoading(false)
+    }
+  }, [isLoading])
+  // useEffect(() => {
+  //   if (isProtected(router.route) && !token) {
+  //     router.push('/login')
+  //   }
+  // }, [router])
 
   // useEffect(() => {
   //   import('react-facebook-pixel')
@@ -50,24 +69,21 @@ function MyApp({ Component, pageProps }) {
   // }, [router.events])
 
   return (
-    <PersistGate persistor={store.__persistor} loading={""}>
-    <CookiesProvider>
-      {loading &&
-        <Loading />
-      }
+    <PersistGate persistor={store.__persistor} loading={''}>
+      <CookiesProvider>
+        {loading && <Loading />}
         <Component {...pageProps} />
-
-    </CookiesProvider>
+      </CookiesProvider>
     </PersistGate>
-  );
+  )
 }
 
-MyApp.getInitialProps = async ({Component, ctx}) => {
+MyApp.getInitialProps = async ({ Component, ctx }) => {
   let pageProps = {}
-  if(Component.getInitialProps){
+  if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx)
   }
   return { pageProps }
 }
 
-export default wrapper.withRedux(MyApp);
+export default wrapper.withRedux(MyApp)

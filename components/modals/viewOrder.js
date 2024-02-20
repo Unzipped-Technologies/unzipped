@@ -20,12 +20,7 @@ function getModalStyle() {
 }
 
 const useStyles = makeStyles(theme => ({
-    modal: {
-        // display: 'grid',
-        // gridTemplateColumns: '1fr',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-    },
+    modal: {},
     paper: {
         position: 'absolute',
         marginLeft: '0vw',
@@ -113,15 +108,8 @@ const SimpleModal = ({open, setOpen, selected, cookies, token}) => {
                         <p></p>
                         <p>Email: {selected.email}</p>
                         <p>Name: {selected.name}</p>
-                        <p>Room #: {selected.roomNumber}</p>
-                        <p>Valet #: {selected.valetNumber}</p>
-                        <p>Location: {selected.location.name}</p>
                         <p>Phone: {selected.phone}</p>
-                        <p>Address: {selected.location.address}</p>
                         <p>Time: {selected.time}</p>
-                        <p>Vehicle: {selected.Vehicle.make} {selected.Vehicle.model}</p>
-                        <p>Color: {selected.Vehicle.color}</p>
-                        <p>License Plate #: {selected.Vehicle.license}</p>
                         <FormControl className="form-elim"  style={{height: '110%', width: '95%', marginTop: '7px', marginLeft: '10px', borderBottom: 'none !important'}} required>
                             <Select className="form-elim" value={statusElm} onChange={(e) => setStatusElm(e.target.value)}>
                                 <MenuItem className="form-elim" value={statusElm}>{statusElm}</MenuItem>
@@ -130,7 +118,7 @@ const SimpleModal = ({open, setOpen, selected, cookies, token}) => {
                                 ))}
                             </Select>
                         </FormControl>
-                        {/* <div onClick={() => setChange(true)}>
+                        <div onClick={() => setChange(true)}>
                             Status: {selected.status}<i className="fa fa-angle-down" style={{fontStyle: 'normal', marginLeft: '5px', color: '#000'}}/>
                             {change &&
                             <div className="status-box" ref={wrapperRef} onMouseLeave={() => setChange(false)}>
@@ -145,7 +133,7 @@ const SimpleModal = ({open, setOpen, selected, cookies, token}) => {
                                 })}
                             </div>
                             }
-                        </div> */}
+                        </div>
                         <p>
                         Services: {selected.services.map((item, index) => (
                             <span key={index}>{item.name}{index === selected.length - 1 ? '' : ', '}</span>

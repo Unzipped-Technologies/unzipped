@@ -2,17 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Badge from '../Badge';
-import {statusFormat} from '../utils/dataFormat';
+import { statusFormat } from '../utils/dataFormat';
 
 const BadgeStyled = styled(Badge)`
     ${props => props.xsmall && 'font-size: 0.6rem;'}
 `;
 
 const ProgressBarContainer = styled.div`
+    display: ${({ doubleScreenBottom }) => doubleScreenBottom ? 'none' : 'block'};
     font-family: arial;
     font-weight: 600;
     font-size: ${props => (props.$tileView ? '1.5rem' : '1.625rem')};
-    padding: ${props => (props.$showValue ? '20px 0px' : ' 5px 20px')};
+    padding: ${props => (props.mobile? '15px 0px 32px' : props.$showValue ? '20px 0px' : ' 5px 20px')};
     color: ${props => (props.$tileView ? props.theme.secondary : '#fff')};
     height: auto;
     ${props =>
@@ -29,21 +30,21 @@ const ProgressBarContainer = styled.div`
 `;
 
 const ProgressBarBack = styled.div`
-    background-color: #d8d8d8;
+    background-color: #D2D2D2;
     width: 100%;
-    min-height: 15px;
-    height: 15px;
+    min-height: ${props => props.mobile ? '8px' : '15px'};
+    height: ${props => props.mobile ? '8px' : '15px'};
     position: relative;
     border-radius: 24px;
     overflow: hidden;
 `;
 
 const ProgressBarBar = styled.div`
-    background-color: ${({bar}) => bar ? bar : '#fff'}  !important;
-    background-image: ${({bar}) => bar ? 'unset' : 'linear-gradient(45deg, #DE43DE, #CC4848)'};
-    width: ${props => props.$width}px !important;
-    min-height: 15px;
-    height: 15px;
+    background-color: ${({ bar }) => bar ? bar : '#fff'}  !important;
+    background-image: ${({ bar }) => bar ? 'unset' : 'linear-gradient(45deg, #DE43DE, #CC4848)'};
+    width: ${props => props.$width}% !important;
+    min-height: ${props => props.mobile ? '8px' : '15px'};;
+    height: ${props => props.mobile ? '8px' : '15px'};;
     position: absolute;
     border-radius: 24px;
     @media (min-width: 1266px) {
@@ -55,7 +56,7 @@ const Header = styled.div`
     margin: 0 0 10px 0;
     display: flex;
     align-items: center;
-    width: ${({$width}) => `${$width}px`};
+    width: ${({ $width }) => `${$width}px`};
 `;
 
 const Value = styled.span`
@@ -65,16 +66,16 @@ const Value = styled.span`
 /**
  * Progress Bar Component.
  */
-const ProgressBar = ({tileView, showValue, status, value, width, bar}) => {
-    const barWidth = (width / 100) * value;
+const ProgressBar = ({ tileView, showValue, status, value, width, bar, mobile, doubleScreenBottom }) => {
+    const barWidth = (width / ( mobile ? 7 : 10 )) * value;
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;
 
     return (
-        <ProgressBarContainer $showValue={showValue} $tileView={tileView}>
+        <ProgressBarContainer doubleScreenBottom={doubleScreenBottom} $showValue={showValue} $tileView={tileView} mobile={mobile}>
             {showValue && (
-                <ProgressBarBack $width={width} $tileView={tileView}>
-                    <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} bar={bar} />
+                <ProgressBarBack $width={width} $tileView={tileView} mobile={mobile}>
+                    <ProgressBarBar $width={barWidth} value={value} $tileView={tileView} bar={bar} mobile={mobile} />
                 </ProgressBarBack>
             )}
         </ProgressBarContainer>

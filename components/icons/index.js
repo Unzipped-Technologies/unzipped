@@ -7,6 +7,7 @@ import TwitterIcon from './twitter'
 import ClearFitLogo from './clearfit'
 import SkillPodLogo from './skillpods'
 import HexagonIcon from './hexagon'
+import CloseIcon from './close'
 import ReactIcon from './react'
 import NodeIcon from './node'
 import NetIcon from './net'
@@ -29,12 +30,34 @@ import LongArrow from './longArrow'
 import LeafIcon from './leaf'
 import CycleIcon from './cycleIcon'
 import CircleStar from './circleStar'
+import BackArrow from './backArrow'
+import RightArrow from './rightArrow'
+import Check from './check'
+import DownArrow from './downArrow'
+import Review from './reviews'
+import ReviewHalf from './reviewHalf'
+import ReviewSmall from './reviewSmall'
+import ReviewHalfSmall from './reviewHalfSmall'
+import UpArrow from './upArrow'
+import GoBack from './navback'
+import UpdateUserIcon from './updateUser'
+import CircleBrushIcon from './circleBrush'
+import CircleDashboardIcon from './circleDashboard'
+import CircleHeartIcon from './circleHeart'
+import CircleLightningIcon from './circleLightning'
+import CircleSearchIcon from './circleSearch'
+import CircleShipIcon from './circleShip'
+import CircleNotesIcon from './circleNotes'
+import VerifiedIcon from './verifiedIcon'
+import ReactCodeIcon from './reactIcon'
 
 export {
     ClearFitLogo,
     SkillPodLogo,
     HexagonIcon,
+    ReactCodeIcon,
     MailIcon,
+    CloseIcon,
     PhoneIcon,
     DiamondIcon,
     DownWideIcon,
@@ -43,8 +66,16 @@ export {
     LeafIcon,
     CycleIcon,
     DownIcon,
+    CircleBrushIcon,
+    CircleDashboardIcon,
+    CircleHeartIcon,
+    CircleLightningIcon,
+    CircleShipIcon,
+    CircleSearchIcon,
+    CircleNotesIcon,
     LinkedInIcon,
     CircleStar,
+    VerifiedIcon,
     WorkIcon,
     ThumbsDownIcon,
     ThumbsUpIcon,
@@ -61,5 +92,16 @@ export {
     StarIcon,
     LightIcon,
     DownSolidIcon,
-    SkillPodImage
+    SkillPodImage,
+    BackArrow,
+    RightArrow,
+    Check,
+    DownArrow,
+    Review,
+    ReviewHalf,
+    ReviewSmall,
+    ReviewHalfSmall,
+    UpArrow,
+    GoBack,
+    UpdateUserIcon
 };

@@ -25,7 +25,6 @@ const Dropdown = ({MenuItems, signOut}) => {
                                 }
                                 </>
                             }    
-
                         </li>
                     ))}
                     <div className="blank-space"></div>

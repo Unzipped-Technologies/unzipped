@@ -5,7 +5,7 @@ export const Title = styled.div`
     font-style: normal;
     font-weight: 800;
     font-size: 52px;
-    line-height: 56px;
+    line-height: 60px;
     letter-spacing: 0.39998px;
     min-width: 80%;
     color: #fff;
@@ -24,10 +24,18 @@ export const Title = styled.div`
     @media(max-width: 802px) {
         padding: 0px 20px 0px 20px;
     }
-    @media (max-width: 448px) {
-        padding: 50px 0px 20px 1vw;
+    @media (max-width: 600px) {
+        font-size: 32px;
+        line-height: 40px;
+    }
+    @media (max-width: 550px) {
         font-size: 30px;
-        line-height: 36px;
+        line-height: 45px;
+    }
+    @media (max-width: 448px) {
+        padding: 60px 0px 0px 1vw;
+        font-size: 28px;
+        line-height: 45px;
         font-weight: bold;
     }
     @media (max-width: 280px) {

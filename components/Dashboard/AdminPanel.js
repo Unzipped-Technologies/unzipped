@@ -4,20 +4,12 @@ import Link from 'next/link';
 const Admin = ({page}) => {
     const menu = [
         {
-            name:"Calendar", 
-            link: "/calendar"
-        },
-        {
             name: "Customers", 
             link: "/customers", 
         },
         {
             name: "Orders",
             link: "/orders",
-        },
-        {
-            name: "Garages", 
-            link: "/garages", 
         },
         {
             name: "Promos", 

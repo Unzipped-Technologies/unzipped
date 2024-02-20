@@ -1,299 +1,294 @@
-const express = require("express");
-const router = express.Router();
-const user = require('../../models/User');
-const emailList = require('../../models/email');
-const token = require('../../services/jwt');
-const delToken = require('../../services/delCookie');
-const passport = require('passport');
-const bcrypt = require('bcryptjs');
-const keys = require('../../config/keys');
+const express = require('express')
+const router = express.Router()
+const token = require('../../services/jwt')
+const delToken = require('../../services/delCookie')
+const passport = require('passport')
+const keys = require('../../config/keys')
 const userHelper = require('../helpers/user')
-const requireLogin = require('../middlewares/requireLogin');
-const Mailer = require('../../services/Mailer');
-const verifyTemplate = require('../../services/emailTemplates/verify');
-const resetTemplate = require('../../services/emailTemplates/reset-password');
-const contact = require('../../services/emailTemplates/contact');
-
+const requireLogin = require('../middlewares/requireLogin')
+const Mailer = require('../../services/Mailer')
+const verifyTemplate = require('../../services/emailTemplates/verify')
+const resetTemplate = require('../../services/emailTemplates/reset-password')
+const contact = require('../../services/emailTemplates/contact')
+const API = require('../helpers/axios')
+const AuthService = require('../helpers/authentication')
 
 router.get(
-    '/google',
-    passport.authenticate('google', {
+  '/google',
+  passport.authenticate('google', {
     scope: ['profile', 'email']
-    })
-);
+  })
+)
 
-router.get(
-    '/google/callback',
-    passport.authenticate('google'),
-    (req, res) => {
-      if (req.isAuthenticated()) {
-        const { _id } = req.user;
-        const t = token.signToken(_id);
-        res.cookie('access_token', t, { httpOnly: true });
-        res.redirect(`/signup`);
-        }
-    }
-);
+router.get('/google/callback', passport.authenticate('google'), (req, res) => {
+  if (req.isAuthenticated()) {
+    const { _id } = req.user
 
-// router.post('/register', (req, res) => {
-//     passport.authenticate('local');
-//     res.redirect('/');
-// });
+    res.cookie('access_token', token.signToken(_id), { httpOnly: true })
+    res.redirect(`/signup`)
+  }
+})
 
-router.post(
-    '/register',
-    async (req, res, next) => {
-      const {email, password} = req.body
-      const data = req.body;
-      try {
-        //find user by email, if exists tell user to login
-        const existingUser = await user.findOne({ email });
-        //If a user exists check which signup method they used
-        if (existingUser) {
-          if (existingUser.googleId) {
-            return res.send('Login with Google');
-          } else {
-            throw Error('User with this email already exists')
-          }
-        } else {
-            //salt password
-            const salt = await bcrypt.genSalt(10);
-            if (!salt) throw Error('Something went wrong with bcrypt');
+router.post('/register', async (req, res, next) => {
+  const { email, password } = req.body
+  const data = req.body
 
-            const hash = await bcrypt.hash(password, salt);
-            if (!hash) throw Error('Something went wrong hashing the password');
-            ///Create user and save to database
-            let newuser = await userHelper.createUser(data, hash)
-            const existingUsers = await user.findOne({ email }).select('-password');
+  try {
+    const existingUser = await AuthService.isExistingUser(email, false)
 
-            // create notifications
-            await userHelper.setUpNotificationsForUser();
-            
-            //send verification email
-            const msg = {
-              //recipients: existingUsers.email,
-              id: newuser.id,
-              name: email,
-              recipients: [{email}],
-              from: "support@vohnt.com",
-              subject: "Verify your email to start using",
-              text: "and easy to do anywhere, even with Node.js",
-              html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-            };
-            // const mailer = new Mailer(msg, verifyTemplate(msg));
-            // mailer.send();
-
-            let t = token.signToken(newuser._id);
-            // await newuser.save()
-            res.cookie('access_token', t, { httpOnly: true });
-            res.send({...existingUsers._doc, cookie: t})
-            next();
-          }
-      } catch (e) {
-        console.log('error error: ', e);
-        res.status(400).send(e.message)
+    if (existingUser) {
+      if (existingUser.googleId) {
+        return res.send('Login with Google')
+      } else {
+        throw Error('User with this email already exists')
       }
-    },
-    ////Log user into app and redirect to localhost:3000
-    // passport.authenticate('local', { failureRedirect: '/register' }),
-    // (req, res) => {
-      // if (req.isAuthenticated()) {
-);
+    } else {
+      data.isEmailVerified = true
+      const hash = await AuthService.bcryptAndHashing(password)
+      let newuser = await userHelper.createUser(data, hash)
+      const existingUsers = await AuthService.isExistingUser(email, false)
+      await userHelper.setUpNotificationsForUser()
+
+      res.cookie('access_token', token.signToken(newuser._id), { httpOnly: true })
+      res.send({ ...existingUsers._doc, cookie: token.signToken(newuser._id) })
+      next()
+    }
+  } catch (e) {
+    res.status(400).send(e.message)
+  }
+})
 
 router.get('/verify/:id', async (req, res, next) => {
-  const id = req.params.id;
+  const id = req.params.id
   try {
-    await user.findByIdAndUpdate(id, {$set:{isEmailVerified: true}})
-    const t = token.signToken(id);
-    res.cookie('access_token', t, { httpOnly: true });
-    res.redirect(`/`);
+    await AuthService.verifyUser(id)
+    res.cookie('access_token', token.signToken(id), { httpOnly: true })
+    res.redirect(`/`)
   } catch {
-    res.status(400).send('verify failed'); 
+    res.status(400).send('verify failed')
   }
 })
 
 router.get('/reset/:id', async (req, res, next) => {
-  const id = req.params.id;
-  const existingUser = await user.findById(id).select('-password');
-  await user.updateOne({email: existingUser._doc.email}, {$set:{emailVerified: true}})
-  const t = token.signToken(id);
-  const existingUsers = await user.findById(id).select('-password');
-  // console.log(existingUsers)
-  res.cookie('access_token', t, { httpOnly: true });
-  res.redirect(`/change-password`);
+  const id = req.params.id
+  const existingUser = await AuthService.isExistingUser(id, true)
+  await AuthService.modifyExistingUser(existingUser, false)
+
+  res.cookie('access_token', token.signToken(id), { httpOnly: true })
+  res.redirect(`/change-password`)
 })
 
 router.post('/password', requireLogin, async (req, res, next) => {
-  const password = req.body.password;
-  const existingUser = await user.findById(req.user.sub);
+  const password = req.body.password
+  const existingUser = await AuthService.isExistingUser(req.user.sub, true)
   //salt password
   try {
-    const salt = await bcrypt.genSalt(10);
-    if (!salt) throw Error('Something went wrong with bcrypt');
+    const hash = await AuthService.bcryptAndHashing(password)
+    if (!hash) throw Error('Something went wrong hashing the password')
 
-    const hash = await bcrypt.hash(password, salt);
-    if (!hash) throw Error('Something went wrong hashing the password');
-    
-    await user.updateOne({email: existingUser._doc.email}, {$set:{password: hash}})
-    const t = token.signToken(req.user.sub);
-    const existingUsers = await user.findById(req.user.sub).select('-password').select('-stripeId');
-    res.cookie('access_token', t, { httpOnly: true });
-    res.send({...existingUsers._doc, cookie: token});
+    await AuthService.modifyExistingUser(existingUser, false)
+    const existingUsers = await AuthService.isExistingUser(req.user.sub, true)
+
+    res.cookie('access_token', token.signToken(req.user.sub), { httpOnly: true })
+    res.send({ ...existingUsers._doc, cookie: token })
   } catch {
-    console.log(e);
-    res.status(400).send('Bad request');
+    res.status(400).send('Bad request')
   }
 })
 
+router.post('/verify', async (req, res) => {
+  try {
+    const send = await Mailer.sendVerificationMail(req.body)
+    if (send) {
+      res.send({ send: 'Email sent successfully.' })
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message })
+  }
+})
 
 router.post('/resend', requireLogin, async (req, res, next) => {
-  const { email } = req.body;
-  const existinguser = await user.findById(req.user.sub).select('-password');
+  const { email } = req.body
+  const existinguser = await AuthService.isExistingUser(req.user.sub, true)
   if (email !== existinguser.email) {
-    const exuser = await user.findById(req.user.sub).select('-password');
-      if (exuser) {
-        res.status(400).send('user with that email already exists');
-      }
-      const sub = req.user.sub;
-      await user.updateOne({_id: sub}, {$set:{email: email}})
+    const exuser = await AuthService.isExistingUser(req.user.sub, true)
+    if (exuser) {
+      res.status(400).send('user with that email already exists')
+    }
+    await AuthService.modifyExistingUser({ id: req.user.sub, mail: email }, true)
   }
-  const existinguser2 = await user.findById(req.user.sub).select('-password');
-  //send verification email
+  const existinguser2 = await AuthService.isExistingUser(req.user.sub, true)
   const msg = {
     id: existinguser2._doc._id,
-    // recipients: [email],
     name: existinguser2._doc.email,
-    recipients: [{email}],
-    from: "schedule@vohnt.com",
-    subject: "Verify your email to start using",
-    text: "and easy to do anywhere, even with Node.js",
-    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-  };
-  const token = req.header('access_token')
+    recipients: [{ email }],
+    from: 'schedule@vohnt.com',
+    subject: 'Verify your email to start using',
+    text: 'and easy to do anywhere, even with Node.js',
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+  }
   try {
-    const mailer = new Mailer(msg, verifyTemplate(msg));
-    mailer.send();
+    const mailer = new Mailer(msg, verifyTemplate(msg))
+    mailer.send()
   } catch {
     res.status(400).send('An error has occured')
   }
-  
-  res.send({...existinguser2._doc, cookie: token});
+
+  res.send({ ...existinguser2._doc, cookie: req.header('access_token') })
 })
 
 router.post('/reset', async (req, res, next) => {
-  const existinguser = await user.findOne({ email: req.body.email });
+  const existinguser = await AuthService.isExistingUser(req.body.email, false)
+
   if (!existinguser || existinguser === null) {
-    res.send({ message: 'User with that email does not exist'})
-  } 
+    res.send({ message: 'User with that email does not exist' })
+  }
   if (existinguser) {
-    //send verification email
     const msg = {
       id: existinguser._id,
-      recipients: [{email}],
+      recipients: [{ email }],
       name: existinguser.email,
-      // recipients: [{email: "noreplyvohnt@gmail.com"}],
-      from: "schedule@vohnt.com",
-      subject: "Reset your Vohnt password",
-    };
-    const mailer = new Mailer(msg, resetTemplate(msg));
-    mailer.send();
+      from: 'schedule@vohnt.com',
+      subject: 'Reset your Vohnt password'
+    }
+    const mailer = new Mailer(msg, resetTemplate(msg))
+    mailer.send()
     res.send({ message: 'Check your email for instructions' })
   }
 })
 
 router.post('/contact', async (req, res, next) => {
-  console.log(req.body.email)
-    const msg = {
-      recipients: [...req.body.email],
-      name: req.body.name,
-      phone: req.body.phone,
-      email: req.body.email,
-      message: req.body.message,
-      type: req.body.type,
-      // recipients: [{email: "noreplyvohnt@gmail.com"}],
-      from: "schedule@vohnt.com",
-      subject: `${req.body.type} contact submission`,
-    };
-    try {
-      const mailer = new Mailer(msg, contact(msg));
-      mailer.send();
-      res.send({ message: 'success' })
-    } catch {
-      res.status(400).send({ message: 'Please try again'});
-    }
+  const msg = {
+    recipients: [...req.body.email],
+    name: req.body.name,
+    phone: req.body.phone,
+    email: req.body.email,
+    message: req.body.message,
+    type: req.body.type,
+    // recipients: [{email: "noreplyvohnt@gmail.com"}],
+    from: 'schedule@vohnt.com',
+    subject: `${req.body.type} contact submission`
+  }
+  try {
+    const mailer = new Mailer(msg, contact(msg))
+    mailer.send()
+    res.send({ message: 'success' })
+  } catch {
+    res.status(400).send({ message: 'Please try again' })
+  }
 })
-// router.post('/login', (req, res) => {
-//     passport.authenticate('local');
-//     res.redirect('/');
-// });
-  //login
-router.post(
-    '/login',
-    async (req, res, next) => {
-        const {email, password} = req.body
-        ///check if user exists
-        try {
-        const existingUser = await user.findOne({ email });
-        const existingUsers = await user.findOne({ email }).select('-password').select('-stripeId');
-        if(!existingUser) throw Error('User does not exist');
 
-        const isMatch = await bcrypt.compare(password, existingUser.password);
-        if (!isMatch) throw Error('Invalid credentials');
+//login
+router.post('/login', async (req, res, next) => {
+  const { email, password } = req.body
 
-        let t = token.signToken(existingUser._id);
-        if(!t) throw Error('Invalid Credentials')
-        console.log('cookie:' + t),
-        res.cookie('access_token', t, { httpOnly: true }),
-        res.json({...existingUsers._doc, msg: 'success', cookie: t}),
-        
-        next()
-        } catch (e) {
-        console.log(e);
-        res.status(400).send('Email and Password do not match');
-    }
+  try {
+    const existingUser = await AuthService.isExistingUser(email, false)
+    if (!existingUser) throw Error('User does not exist')
+
+    const isMatch = await AuthService.passwordComparing(email, password, existingUser.password)
+
+    if (!isMatch) throw Error('Invalid credentials')
+    if (!token.signToken(existingUser._id)) throw Error('Invalid Credentials')
+
+    res.cookie('access_token', token.signToken(existingUser._id), { httpOnly: true }),
+      res.json({ ...existingUser._doc, msg: 'success', cookie: token.signToken(existingUser._id) }),
+      next()
+  } catch (e) {
+    res.status(400).send('Email and Password do not match')
+  }
 })
 
 router.get('/logout', (req, res) => {
-    let t = delToken.signToken(123);
-    req.logout();
-    res.cookie('access_token', t, { httpOnly: true }),
-    res.json({msg: 'success', cookie: t});
-});
+  req.logout()
+  res.cookie('access_token', delToken.signToken(123), { httpOnly: true }),
+    res.json({
+      msg: 'success',
+      cookie: delToken.signToken(123)
+    })
+})
 
 router.get('/current_user', requireLogin, async (req, res) => {
   try {
     const existinguser = await userHelper.getUserById(req.user.sub)
-    if(!existinguser) throw Error('user does not exist')
+    if (!existinguser) throw Error('user does not exist')
     res.json(existinguser)
   } catch (e) {
-    res.status(400).json({msg: e.message})
+    res.status(400).json({ msg: e.message })
   }
-});
+})
 
 router.post('/addMailing', async (req, res) => {
-  let {email, firstName, lastName} = req.body;
+  let { email, firstName, lastName } = req.body
   try {
-    const existingEmail = await emailList.findOne({email});
+    const existingEmail = await AuthService.isExistingMail(email)
     if (!existingEmail) {
-    await emailList.create({email, firstName, lastName})
+      await AuthService.createMail(email, firstName, lastName)
     }
-    res.send({ message: 'success'})
+    res.send({ message: 'success' })
   } catch (e) {
-    res.status(400).send({ message: 'please try again'})
+    res.status(400).send({ message: 'please try again' })
   }
-});
+})
 
 router.post('/test', async (req, res) => {
-  let {email, firstName, lastName} = req.body;
+  let { email, firstName, lastName } = req.body
   try {
-    await emailList.create({email, firstName, lastName})
-    console.log(keys.mongoURI)
-    res.send({ message: keys.mongoURI})
+    await AuthService.createMail(email, firstName, lastName)
+    res.send({ message: keys.mongoURI })
   } catch (e) {
-    res.status(400).send({ message: 'please try again'})
+    res.status(400).send({ message: 'please try again' })
   }
-});
+})
 
-  
+router.get('/github', async (req, res) => {
+  // 1) use the code to get token from github
+  const { code } = req.query
+  let githubToken
+  try {
+    const body = {
+      client_id: keys.nextPublicGithubClientId,
+      client_secret: keys.githubClientSecret,
+      redirect_uri: keys.githubRedirectUrl,
+      code
+    }
+    const headers = {
+      Accept: 'application/json'
+    }
+    const res = await API.POST('https://github.com/login/oauth/access_token', headers, body)
+    githubToken = res?.access_token
+  } catch (error) {
+    res.status(400).send({ message: 'Exception occured while parsing github token' })
+  }
+  // 2) use the github token to get user details
+  try {
+    const githubUser = await API.GET('https://api.github.com/user', {
+      Authorization: `Bearer ${githubToken}`
+    })
+    if (githubUser.email === null) {
+      const emails = await API.GET('https://api.github.com/user/emails', {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${githubToken}`,
+        'X-GitHub-Api-Version': '2022-11-28'
+      })
+      let userPrimaryEmail
+      // check if we have an user record with any of the emails, if we do then the user is not new and he is just signing in, if not then the user is new and we need to save his details in db. In this flow we need to update the user record with the new primary email if the user has changed his primary email in github
+      userPrimaryEmail = emails?.find(email => email.primary === true)?.email
+      if (!userPrimaryEmail) {
+        res.status(400).send({ message: 'No primary email found for this user on github' })
+      }
+      githubUser.email = userPrimaryEmail
+      githubUser.emails = emails.map(x => x.email)
+    } else {
+      githubUser.emails = [githubUser.email]
+    }
+    const existingUser = await AuthService.isExistingUser(githubUser.email, false)
+    await AuthService.updateUsersGithubDetails(existingUser.id)
+    await AuthService.addThirdPartyAppDetails(existingUser, res, githubToken)
+    res.redirect(`/create-your-business?github-connect=true`)
+  } catch (error) {
+    res.status(400).send({ message: 'Exception occured when retrieving github user details' })
+  }
+})
 
-module.exports = router;
+module.exports = router

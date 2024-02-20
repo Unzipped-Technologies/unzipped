@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {get} from 'lodash';
+import { get } from 'lodash';
 import Icon from '../Icon';
+import { ifCondition } from '@cloudinary/url-gen/actions/conditional';
 
 const SearchContainer = styled.div`
     display: flex;
+    height:37px;
     border: 1px solid ${props => props.theme.tint3};
     border-radius: 4px;
     width: ${props => props.width};
@@ -13,22 +15,25 @@ const SearchContainer = styled.div`
         width: 100%;
     }
     background: #ffffff;
+
+    @media(max-width: 680px) {
+        border: 1px solid #C4C4C4;
+    }
 `;
 
 const Input = styled.input`
     outline: none !important; // Override user agent stylesheet
+    height:2.3rem !important;
     width: 100%;
+    margin:0 !important;
     border: none !important;
-    height: ${props => (props.large ? '56px' : '40px')};
     background: transparent;
-    padding: 20px;
     outline: none;
-    padding: 8px 0px 0px 0px !important;
     font-family: arial;
     font-size: ${props => props.theme.fontSizeM};
     color: ${props => props.theme.textSecondary};
     ::placeholder {
-        color: ${props => props.theme.tint2};
+        color: ${props => props.placeHolderColor ? props.placeHolderColor : props.theme.tint2};
     }
     @media (max-width: ${props => props.theme.mobileWidth}px) {
         font-size: ${props => props.theme.baseFontSize};
@@ -36,6 +41,7 @@ const Input = styled.input`
     &:focus {
         border: none !important;
         outline: none !important;
+        box-shadow: 0 0px 0 0 #26a69a !important;
     }
 `;
 
@@ -57,7 +63,7 @@ const ClearIcon = styled.span`
         height: 14px;
     }
     cursor: pointer;
-    display: ${({$show}) => ($show ? 'inherit' : 'none')};
+    display: ${({ $show }) => ($show ? 'inherit' : 'none')};
 `;
 
 const SearchIcon = styled.span`
@@ -69,6 +75,15 @@ const SearchIcon = styled.span`
     }
 `;
 
+const Searchbutton = styled.button`
+border-radius: 4px;
+background: #1772EB;
+color: #FFF;
+padding: 8px 27px;
+border: 3.2px solid #1772EB;
+margin-left: 9px;
+`
+
 /**
  * Generic Search bar component, filters and returns filtered items in onChange
  */
@@ -78,52 +93,80 @@ const Search = ({
     },
     keys = [],
     large = false,
-    onAction = () => {},
-    onChange = () => {},
+    placeHolderColor,
+    theme,
+    onAction = () => { },
+    onChange = () => { },
     placeholder = '',
-    searchableItems = [],
     width = '36.75rem',
     initialValue = '',
+    handleSearch,
+    searchButton,
     ...rest
 }) => {
     const [inputValue, setInputValue] = useState(initialValue);
 
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        } else {
+            if (!inputValue && handleSearch) {
+                handleSearch();
+            }
+        }
+    }, [inputValue]);
+
     const handleClearInput = () => {
         setInputValue('');
-        onChange(searchableItems);
         onAction('');
+        onChange('');
     };
 
+
+
+    const handleSearchText = () => {
+        if (inputValue) {
+            handleSearch()
+        }
+    }
     const handleOnChange = e => {
         setInputValue(e.target.value);
         onAction(e.target.value);
-        const filteredItems = searchableItems.filter(item => {
-            for (const key of keys) {
-                if (filterCondition(get(item, key), e.target.value)) {
-                    return true;
-                }
-            }
-        });
-        onChange(filteredItems, e.target.value);
+        onChange(e.target.value);
     };
+    const handleEnter = (e) => {
+        if (e.keyCode === 13) {
+            handleSearchText()
+        }
+    }
 
     return (
-        <SearchContainer width={width} {...rest}>
-            <SearchIcon>
-                <Icon name="search" />
-            </SearchIcon>
-            <Input
-                data-testid="search-bar-input"
-                type="text"
-                placeholder={placeholder}
-                value={inputValue}
-                large={large}
-                onChange={handleOnChange}
-            />
-            <ClearIcon onClick={handleClearInput} $show={inputValue !== ''}>
-                <Icon name="closeBtn" />
-            </ClearIcon>
-        </SearchContainer>
+        <>
+            <SearchContainer width={width} {...rest} theme={theme}>
+                <SearchIcon onClick={handleSearchText}>
+                    <Icon name="search" />
+                </SearchIcon>
+                <Input
+                    placeHolderColor={placeHolderColor}
+                    data-testid="search-bar-input"
+                    type="text"
+                    placeholder={placeholder}
+                    value={inputValue}
+                    large={large}
+                    onChange={handleOnChange}
+                    onKeyDown={handleEnter}
+                />
+                <ClearIcon onClick={handleClearInput} $show={inputValue !== ''}>
+                    <Icon name="closeBtn" />
+                </ClearIcon>
+
+            </SearchContainer>
+            {searchButton && <Searchbutton onClick={handleSearchText}>
+                Search
+            </Searchbutton>}
+        </>
     );
 };
 
@@ -141,7 +184,7 @@ Search.propTypes = {
     /** the placeholder for the input */
     placeholder: PropTypes.string,
     /** array of unflattened searchable objects */
-    searchableItems: PropTypes.arrayOf(PropTypes.object),
+    // searchableItems: PropTypes.arrayOf(PropTypes.object),
     /** width of the input  */
     width: PropTypes.string,
     /** Initial value of the input  */
