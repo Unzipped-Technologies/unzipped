@@ -31,8 +31,28 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('invoice'), as
       req.query['clientId'] = userInfo._id
     } else if (userInfo.role === 1) {
       req.query['freelancerId'] = userInfo.freelancers
+    } else if (userInfo.role === 2) {
+      req.query['clientId'] = req.query['clientId'] || userInfo._id
     }
     const invoices = await invoiceHelper.getAllInvoices(req.query)
+    res.json(invoices)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/fetch/unpaid', requireLogin, permissionCheckHelper.hasPermission('invoice'), async (req, res) => {
+  try {
+    const { userInfo } = req.user
+    if (userInfo.role === 0) {
+      req.query['clientId'] = userInfo._id
+    } else if (userInfo.role === 1) {
+      req.query['freelancerId'] = userInfo.freelancers
+    } else if (userInfo.role === 2) {
+      req.query['clientId'] = req.query['clientId'] || userInfo._id
+    }
+    const invoices = await invoiceHelper.getUnpaidInvoices(req.query)
+    console.log('aaa', invoices)
     res.json(invoices)
   } catch (e) {
     res.status(400).json({ msg: e.message })

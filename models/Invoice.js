@@ -10,6 +10,7 @@ const invoiceSchema = new Schema(
     businessId: { type: Schema.Types.ObjectId, ref: 'businesses' },
     departmentId: { type: Schema.Types.ObjectId, ref: 'departments' },
     taskId: { type: Schema.Types.ObjectId, ref: 'tasks' },
+    taskHours: { type: Schema.Types.ObjectId, refs: 'taskhours' },
     hoursWorked: Number,
     hourlyRate: Number,
     dateWorked: Date,

@@ -4,7 +4,8 @@ import {
   GET_INVOICE_BY_ID,
   UPDATE_INVOICE,
   DELETE_INVOICE,
-  INVOICE_ERROR
+  INVOICE_ERROR,
+  GET_UNPAID_INVOICES
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -41,6 +42,27 @@ export const getInvoices =
       .then(res => {
         dispatch({
           type: GET_INVOICES,
+          payload: res.data
+        })
+      })
+      .catch(err => {
+        dispatch({
+          type: INVOICE_ERROR,
+          payload: err.response
+        })
+      })
+    dispatch(stopLoading())
+  }
+
+export const getUnpaidInvoices = () =>
+  async (dispatch, getState) => {
+    dispatch(startLoading())
+
+    await axios
+      .get(`/api/invoice/fetch/unpaid`, tokenConfig(getState()?.Auth.token))
+      .then(res => {
+        dispatch({
+          type: GET_UNPAID_INVOICES,
           payload: res.data
         })
       })

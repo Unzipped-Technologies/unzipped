@@ -26,6 +26,17 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('getAllContrac
   }
 })
 
+// Get a contract for current user only
+router.get('/current', requireLogin, permissionCheckHelper.hasPermission('getAllContracts'), async (req, res) => {
+  try {
+    const getContract = await contractHelper.getUserContracts(req.query, req?.user?.userInfo)
+    if (!getContract) throw Error('Contract not found')
+    res.json(getContract)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 // Get a contract by ID (GET)
 router.get('/:id', requireLogin, async (req, res) => {
   try {
@@ -110,6 +121,15 @@ router.post('/create-payment-method', requireLogin, async (req, res) => {
     } else {
       res.status(400).json({ msg: 'Payment method not created' })
     }
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.post('/payment-method/delete', requireLogin, async (req, res) => {
+  try {
+    await contractHelper.deletePaymentMethod(req.body.id)
+    res.json({ id: req.body.id })
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }

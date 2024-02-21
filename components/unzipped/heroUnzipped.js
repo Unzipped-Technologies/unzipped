@@ -154,8 +154,8 @@ const List = styled.div`
         font-size: 20px;
     }
     @media (max-width: 400px) {
-        padding: 0px 6vw;
-        font-size: 16px;
+        padding: 5px 6vw;
+        font-size: 18px;
     }
 `;
 

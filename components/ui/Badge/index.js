@@ -70,6 +70,10 @@ const colors = {
         text: '#fff',
         background: theme.error,
     },
+    grey: {
+        text: '#333',
+        background: '#E5E5E5',
+    },
 };
 
 const getStatusColor = status => statusColor[status];

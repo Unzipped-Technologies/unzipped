@@ -22,6 +22,11 @@ const Desktop = styled.div`
   }
 `
 
+const DefaultDisplay = styled.div`
+  text-align: center;
+  padding: 35px 0px;
+`;
+
 const InvoicesTable = ({ invoices, getInvoices, updateInvoice, role, selectedWeek }) => {
   const router = useRouter()
   const { id } = router.query
@@ -129,7 +134,7 @@ const InvoicesTable = ({ invoices, getInvoices, updateInvoice, role, selectedWee
             </tr>
           </thead>
           <tbody>
-            {invoices?.length > 0 &&
+            {invoices?.length > 0 && 
               invoices?.map(row => (
                 <tr key={row._id}>
                   {role !== 1 && (
@@ -182,10 +187,14 @@ const InvoicesTable = ({ invoices, getInvoices, updateInvoice, role, selectedWee
                     </Button>
                   </td>
                 </tr>
-              ))}
+              ))
+            }
           </tbody>
         </table>
       </Desktop>
+        {!(invoices?.length > 0) && (
+          <DefaultDisplay>When invoices are submitted for this project they will display here.</DefaultDisplay>
+        )}
       <MobileInvoicesView role={role} invoices={invoices} selectedWeek={selectedWeek} />
     </>
   )

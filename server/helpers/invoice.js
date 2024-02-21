@@ -34,6 +34,7 @@ const getAllInvoices = async query => {
     if (query.departmentId) {
       filters['departmentId'] = mongoose.Types.ObjectId(query.departmentId)
     }
+
     const total = await countInvoices(filters)
 
     let limit = query.limit === 'all' ? total : pageLimit(query)
@@ -167,9 +168,35 @@ const countInvoices = async filters => {
   }
 }
 
+const getUnpaidInvoices = async (query) => {
+  try {
+    let filters = {}
+    if (query.businessId) {
+      filters.businessId = mongoose.Types.ObjectId(query.businessId);
+    }
+    if (query.freelancerId) {
+      filters.freelancerId = mongoose.Types.ObjectId(query.freelancerId);
+    }
+    if (query.clientId) {
+      filters.clientId = mongoose.Types.ObjectId(query.clientId);
+    }
+    if (query.departmentId) {
+      filters.departmentId = mongoose.Types.ObjectId(query.departmentId);
+    }
+    // const count = await Invoice.countDocuments(filters);
+    // console.log('Count:', count);
+    const completedInvoices = await Invoice.find();
+    // console.log('Filtered Invoices:', completedInvoices);
+    return completedInvoices.filter(item => item.clientId === filters.clientId.toString() && !item.isPaid);
+  } catch (e) {
+    throw new Error(`Could not get unpaid invoices, error: ${e.message}`);
+  }
+};
+
 module.exports = {
   createInvoice,
   getInvoiceById,
+  getUnpaidInvoices,
   getAllInvoices,
   updateInvoice,
   deleteInvoice

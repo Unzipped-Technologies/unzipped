@@ -33,9 +33,9 @@ export const Title = styled.div`
         line-height: 45px;
     }
     @media (max-width: 448px) {
-        padding: 75px 0px 0px 1vw;
-        font-size: 20px;
-        line-height: 29px;
+        padding: 60px 0px 0px 1vw;
+        font-size: 28px;
+        line-height: 45px;
         font-weight: bold;
     }
     @media (max-width: 280px) {

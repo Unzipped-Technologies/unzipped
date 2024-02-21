@@ -28,7 +28,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import useWindowSize from '../ui/hooks/useWindowSize';
 
 const Container = styled.div`
-    margin: 0px 10px 0px 0px;
+    margin: 0px 0px 0px 0px;
 `;
 
 const ButtonContainer = styled.div`
@@ -186,7 +186,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                 <WhiteCard overflow="hidden" height={!isError ? "725px" : "775px"}>
                     <SimpleBar style={{ maxHeight: !isError ? 725 : 775, width: '100%' }}>
                         <TitleText size="22px">Payment Method</TitleText>
-                        <DarkText >Your subscription will be paid using your primary payment method.</DarkText>
+                        <DarkText>Your subscription will be paid using your primary payment method.</DarkText>
                         <form onSubmit={handleSubmit}>
                             {isError && <DarkText error>{isError}</DarkText>}
                             <FormLabel>CARD NUMBER</FormLabel>

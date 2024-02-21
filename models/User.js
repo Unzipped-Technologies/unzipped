@@ -39,6 +39,7 @@ const userSchema = new Schema(
     AddressZip: { type: String, default: '' },
     trialEndDate: { type: Date, default: new Date() },
     stripeSubscription: { type: String, default: '' },
+    subscriptionDate: { type: String },
     isUserSubscribed: { type: Boolean, default: false },
     profileImage: {
       type: String,

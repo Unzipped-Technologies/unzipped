@@ -10,7 +10,7 @@ const LabelContainer = styled.label`
     line-height: ${props => props.theme.baseLineHeight};
     font-family: arial;
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     gap: 10px;
     svg {
         height: 16px;

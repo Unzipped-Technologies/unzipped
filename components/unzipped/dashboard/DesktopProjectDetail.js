@@ -206,6 +206,22 @@ const ClientVerification = styled.div`
   letter-spacing: 0.4px;
 `
 
+const ImageContainer = styled.div`
+  width: 300px;
+  height: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 100%; /* Make the image try to fill the container width */
+    height: 100%; /* Make the image try to fill the container height */
+    object-fit: cover; /* Cover the container without losing aspect ratio */
+    object-position: center; /* Center the image in the container */
+  }
+`;
+
 const DesktopProjectDetail = ({ projectDetails }) => {
   console.log('project_details', projectDetails)
   return (
@@ -214,7 +230,7 @@ const DesktopProjectDetail = ({ projectDetails }) => {
         <ProjectDetail>
           <DetailHeading>
             <ProjectSummary>Project Hires</ProjectSummary>
-            <ProjectBudget>Budget: ${projectDetails?.budget || 0}</ProjectBudget>
+            <ProjectBudget>Budget: {projectDetails?.budget.includes('$') ? '' : '$'}{projectDetails?.budget || 0}</ProjectBudget>
           </DetailHeading>
           <ProjectDescription>{projectDetails?.challenge}</ProjectDescription>
           <ProjectRequirements>
@@ -230,10 +246,10 @@ const DesktopProjectDetail = ({ projectDetails }) => {
             : 'N/A'}
           <ProjectID>Project ID: {projectDetails?._id || 'N / A'}</ProjectID>
           <div style={{ display: 'flex', width: '100%', gap: '10px' }}>
-            {projectDetails && projectDetails?.projectImagesUrl.length > 0 && projectDetails.projectImagesUrl.map((item) => (<>
-              <div style={{ width: '300px'}} >
-                <img src={item.url} alt="project image" width={"100%"}  style={{objectFit: 'contain'}}/>
-              </div>
+            {projectDetails && projectDetails?.projectImagesUrl?.length > 0 && projectDetails.projectImagesUrl.map((item) => (<>
+              <ImageContainer>
+                  <img src={item.url} alt="project image" height={"100%"}/>
+              </ImageContainer>
             </>))}
 
           </div>
