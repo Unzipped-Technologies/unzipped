@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
+import { createUserInvitation } from '../../../redux/actions';
 
 const Container = styled.div`
     display: flex;
@@ -37,16 +38,17 @@ const Flex = styled.div`
     justify-items: space-between;
 `;
 
-const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) => {
+const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited }) => {
 
     const userLists = useSelector(state => state.ListEntries.userLists);
     const userId = useSelector(state => state.Auth.user._id);
+    const accessToken = useSelector(state => state.Auth.token);
     const dispatch = useDispatch();
 
     const router = useRouter()
     const redirectToProfile = () => {
         const listObj = userLists?.find(list => list.name === 'Recently Viewed');
-        if(listObj){
+        if (listObj) {
             dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
         }
         // clearSelectedFreelancer()
@@ -54,11 +56,23 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
             router.push(`/freelancers/${user.id}`)
         }
     }
+
+    const handleUserInvite = () => {
+        if (userId && accessToken) {
+            const inviteFreelancer = {
+                userInvited: userId,
+                freelancer: user.id,
+            }
+            dispatch(createUserInvitation(inviteFreelancer, accessToken));
+        }
+    }
+
     return (
         <Container includeRate={includeRate}>
             <Left>
                 <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
-                <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} noBorder>{user.isInvited ? 'Invited' : 'Invite'}</Button>
+                <Button margin="20px 0px" type={!user.isInvited ? "default" : "grey"} disabled={user?.isInvited ? true : false}
+                    noBorder onClick={handleUserInvite}>{user.isInvited ? 'Invited' : 'Invite'}</Button>
             </Left>
             <Right minWidth={width} includeRate={includeRate}>
                 <TitleText half color="#0057FF" onClick={redirectToProfile}>{user.name}</TitleText>
@@ -68,9 +82,9 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width }) =
                     <Flex>
                         <DarkText small half><DarkSpan large>${user?.rate}</DarkSpan > / hour</DarkText>
                         {user?.likes > 0 && (
-                            <DarkText right color='#000' fontSize='15px' noMargin> 
+                            <DarkText right color='#000' fontSize='15px' noMargin>
                                 {`${user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}  UPVOTES BY CLIENTS `}
-                                
+
                             </DarkText>)
                         }
                     </Flex>
