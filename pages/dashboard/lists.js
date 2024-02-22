@@ -14,7 +14,9 @@ import { useRouter } from 'next/router';
 import ListManagementPanel from '../../components/unzipped/dashboard/ListManagementPanel';
 import { deleteList } from '../../redux/Lists/ListsAction'
 import DownArrow from '../../components/icons/downArrow'
-
+import { WorkIcon } from '../../components/icons';
+import { DarkText, TitleText } from '../../components/unzipped/dashboard/style';
+import Button from '../../components/ui/Button';
 
 const Lists = [
     {
@@ -96,6 +98,17 @@ const DropdownItems = styled.div`
     font-wight: 500;
     margin-top: 5px;
 `;
+// Freelancers listing page
+
+
+const NoUsersInList = styled.div`
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`
 
 const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cookie }) => {
     const dispatch = useDispatch();
@@ -125,7 +138,6 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
     const [listInfo, setListInfo] = useState({ lsitId: null, listTitle: null, listIcon: null })
     const [isEditMode, setIsEditMode] = useState(false)
     const [isOpen, setIsOpen] = useState(false);
-
 
 
     useEffect(() => {
@@ -170,6 +182,9 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
             )
             setFreelancers(transformedArray);
         }
+        else {
+            setFreelancers([])
+        }
 
     }, [freelancersArray]);
 
@@ -195,6 +210,8 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
 
             });
             setFreelancers(viewedItemsTransformed);
+        } else {
+            setFreelancers([])
         }
     }, [recentlyViewedItems]);
 
@@ -219,7 +236,7 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
 
         });
         setFreelancers(freelancerTransformedArr)
-    }, [teamMembers])
+    }, [teamMembers]);
 
     const [windowSize, setWindowsize] = useState('160px');
 
@@ -245,22 +262,8 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
     }, []);
 
     const [selectedValue, setSelectedValue] = useState('')
+    const userId = useSelector(selector => selector.Auth.user._id);
 
-    // const handleSelectChange = (event) => {
-
-    //     const value = event.target.value;
-    //     setSelectedValue(value);
-    //     if (value == "CREATE" || value == "EDIT") {
-    //         setIsModalOpen(true);
-    //     }
-    //     if (value == "EDIT") {
-    //         setIsEditMode(true)
-    //     }
-    //     if (value == "DELETE") {
-    //         dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
-    //     }
-
-    // }
 
     const toggleDropdown = (e) => {
         setIsOpen(!isOpen)
@@ -276,8 +279,11 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
             setIsEditMode(true)
         }
         if (value == "DELETE") {
-            dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
-            // setSelectedValue("Details")
+            dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userId))))
+            setListName('');
+            setIsLogoHidden(true)
+            setIsListViewable(true);
+            setListInfo(null)
         }
     }
 
@@ -323,15 +329,7 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
 
             {isViewable && !isListViewable && (
                 <>
-                    {/* <div style={{ display: 'flex', justifyContent: 'flex-end', borderBottom: '1px solid gray', padding: 5 }}>
-                        <SelectInputStyled value={selectedValue} onChange={handleSelectChange}>
-                            <option value="0">Details</option>
-                            <option value="CREATE">CREATE</option>
-                            <option value="EDIT">EDIT</option>
-                            <option value="DELETE">DELETE</option>
-                        </SelectInputStyled>
-                    </div> */}
-                    <div style={{ display: 'flex', marginLeft: 'auto', padding: 5}}>
+                    <div style={{ display: 'flex', marginLeft: 'auto', padding: 5 }}>
                         <SelectionContainer ref={dropdownRef}>
                             <SelectionButton onClick={toggleDropdown}>
                                 <div style={{ display: 'flex' }}>
@@ -365,13 +363,25 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
                         </SelectionContainer>
                     </div>
                     {freelancers.map((freelancer) => (
-                        <MobileFreelancerCard
-                            user={freelancer}
-                        />
+                        <>
+                            <MobileFreelancerCard
+                                user={freelancer}
+                            />
+                        </>
                     ))}
+                    {
+                        freelancers.length < 1 && (
+                            <NoUsersInList>
+                                <WorkIcon width={200} height={200} />
+                                <TitleText center noMargin size="24px" style={{ justifyContent: 'center' }}>This list is empty</TitleText>
+                                <DarkText center>Add investors to your list to quickly find them later. </DarkText>
+                                <div><Button noBorder oval style={{ color: "black" }}>BROWSE FREELANCERS</Button></div>
+                            </NoUsersInList>
+                        )
+                    }
                 </>
             )}
-            {isListViewable && (<ViewAllList
+            {userState && userState?.role && (userState.role === 0 || userState.role === 2) &&isListViewable && (<ViewAllList
                 userLists={userListItems}
                 setIsViewable={setIsViewable}
                 setIsFavourite={setIsFavourite}
@@ -390,6 +400,12 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
                 isEditMode={isEditMode}
                 setIsEditMode={setIsEditMode}
                 userId={userState._id}
+                setIsViewable={setIsViewable}
+                setIsListViewable={setIsListViewable}
+                setListName={setListName}
+                setIsLogoHidden={setIsLogoHidden}
+                setListInfo={setListInfo}
+                isViewable={true}
             />)}
         </React.Fragment>
     )

@@ -33,15 +33,15 @@ const createUser = async (data, hash) => {
     const listsToCreate = [
       {
         name: 'Favorites',
-        icon: 'heart'
+        icon: 'HeartOutlined'
       },
       {
         name: 'Recently Viewed',
-        icon: 'eye'
+        icon: 'EyeOutlined'
       },
       {
         name: 'My Team',
-        icon: 'work'
+        icon: 'TeamOutlined'
       }
     ]
     for (const item of listsToCreate) {

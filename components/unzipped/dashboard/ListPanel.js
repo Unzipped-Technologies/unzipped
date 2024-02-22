@@ -39,7 +39,7 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
     const [listInfo, setListInfo] = useState({ listId: null, listTitle: null, listIcon: null });
     const [defaultList, setDefaultList] = useState(null);
     const dispatch = useDispatch();
-
+    const userRoleInfo = useSelector(state => state.Auth.user);
     useEffect(() => {
         if (userListItems && userListItems.length > 0) {
             const selectedListObj = userListItems?.find(list => list.name == 'Favorites');
@@ -57,44 +57,47 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
     }, [defaultList])
 
     return (
-        <Container>
-            <LeftListPanel
-                selectList={selectList}
-                list={list}
-                business={business}
-                selectedList={selectedList}
-                departments={departments}
-                type={type}
-                setIsFavourite={setIsFavourite}
-                setIsRecentlyViewed={setIsRecentlyViewed}
-                setIsMyTeam={setIsMyTeam}
-                userListItems={userListItems}
-                setListTitle={setListInfo}
-                listInfo={listInfo}
-            />
-            <RightListPanel
-                updateTasksOrder={updateTasksOrder}
-                updateCreateStoryForm={updateCreateStoryForm}
-                addCommentToStory={addCommentToStory}
-                reorderStories={reorderStories}
-                tags={tags}
-                dropdownList={dropdownList}
-                stories={stories}
-                list={list}
-                access={access}
-                createNewStory={createNewStory}
-                user={user}
-                business={business}
-                selectedList={selectedList}
-                type={type}
-                form={form}
-                departments={departments}
-                isFavourite={isFavourite}
-                isRecentlyViewed={isRecentlyViewed}
-                isMyTeam={isMyTeam}
-                listInfo={listInfo}
-            />
-        </Container>
+        <>
+            {userRoleInfo && userRoleInfo?.role && (userRoleInfo.role === 0 || userRoleInfo.role === 2) && (<Container>
+                <LeftListPanel
+                    selectList={selectList}
+                    list={list}
+                    business={business}
+                    selectedList={selectedList}
+                    departments={departments}
+                    type={type}
+                    setIsFavourite={setIsFavourite}
+                    setIsRecentlyViewed={setIsRecentlyViewed}
+                    setIsMyTeam={setIsMyTeam}
+                    userListItems={userListItems}
+                    setListTitle={setListInfo}
+                    listInfo={listInfo}
+                />
+                <RightListPanel
+                    updateTasksOrder={updateTasksOrder}
+                    updateCreateStoryForm={updateCreateStoryForm}
+                    addCommentToStory={addCommentToStory}
+                    reorderStories={reorderStories}
+                    tags={tags}
+                    dropdownList={dropdownList}
+                    stories={stories}
+                    list={list}
+                    access={access}
+                    createNewStory={createNewStory}
+                    user={user}
+                    business={business}
+                    selectedList={selectedList}
+                    type={type}
+                    form={form}
+                    departments={departments}
+                    isFavourite={isFavourite}
+                    isRecentlyViewed={isRecentlyViewed}
+                    isMyTeam={isMyTeam}
+                    listInfo={listInfo}
+                    setIsFavourite={setIsFavourite}
+                />
+            </Container>)}
+        </>
     )
 }
 

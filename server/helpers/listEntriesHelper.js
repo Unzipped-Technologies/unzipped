@@ -22,7 +22,7 @@ const getAllListEntries = async (id, filters) => {
                 model: 'freelancers',
                 populate: {
                     path: 'freelancerSkills',
-                    model: 'freelancerSkills'
+                    model: 'freelancerskills'
                 }
             },
 
@@ -113,10 +113,10 @@ const findListEntriesById = async (id) => {
             {
                 path: 'freelancerId',
                 model: 'freelancers',
-                select: 'category rate likeTotal',
+                select: 'category rate likeTotal freelancerSkills',
                 populate: {
                     path: 'freelancerSkills',
-                    model: 'freelancerSkills',
+                    model: 'freelancerskills',
                     select: 'yearsExperience skill '
                 }
             },
@@ -152,7 +152,7 @@ const getAllteamMembers = async (id) => {
                         },
                         {
                             path: 'freelancerSkills',
-                            model: 'freelancerSkills',
+                            model: 'freelancerskills',
                             select: 'yearsExperience skill '
                         },
                     ]

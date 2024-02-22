@@ -680,7 +680,7 @@ const Nav = ({
             }
             }
           >
-            <BackArrow />
+            {listName &&(<BackArrow />)}
             <span style={{
               marginLeft: 10,
               fontSize: 20,
