@@ -580,8 +580,12 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
         }
       },
     ];
+
     const result = await freelancer.aggregate(lookup);
-    return result;
+    return {
+      freelancers: result[0].freelancers,
+      totalCount: result[0].totalCount[0]?.count || 0
+    };
 
   } catch (error) {
     console.log('error', error)

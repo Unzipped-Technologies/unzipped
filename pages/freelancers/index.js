@@ -213,17 +213,6 @@ const Freelancers = ({
 
   return (
     <SearchContainer >
-      {/* {!filterOpenClose && (
-        <Nav
-          isSubMenu
-          searchValue={filter}
-          handleSearchValue={setFilter}
-          handleSearch={handleSearch}
-          searchButton
-          margin={'0px'}
-          marginBottom={marginBottom}
-        />
-      )} */}
       <Nav
         isSubMenu
         searchValue={filter}
@@ -283,51 +272,6 @@ const Freelancers = ({
             skill={skill}
             setSkill={setSkill}
           />
-
-
-          {/* <div className="overflow-auto">
-            <div className="d-flex align-items-baseline py-4 bg-white">
-              <h5 className="px-4">
-                <b>Top Results</b>
-              </h5>
-              <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
-            </div>
-            {freelancerList?.length === 0 && (
-              <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                No freelancers found for this search
-              </DarkText>
-            )}
-            {freelancerList?.map((user, index) => {
-              console.log(user)
-              const freelancer = {
-                id: user.id,
-                name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
-                type: user.category,
-                isPreferedFreelancer: user?.isPreferedFreelancer,
-                country: user?.user?.AddressLineCountry || 'United States',
-                skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
-                cover:
-                  user?.cover ||
-                  `I have been a ${user?.category || 'developer'} for over ${(user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
-                  } years. schedule a meeting to check if I'm a good fit for your business.`,
-                profilePic:
-                  user?.user?.profileImage ||
-                  'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-                rate: user?.rate,
-                likes: user?.likeTotal
-              }
-              if (user?.user?.FirstName) {
-                return (
-                  <>
-                    <WhiteCard noMargin overlayDesktop cardHeightDesktop>
-                      <FreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer} />
-                    </WhiteCard>
-                    {index === freelancerList.length - 1 && <div ref={containerRef}></div>}
-                  </>
-                )
-              }
-            })}
-          </div> */}
 
           <div className="overflow-auto">
             <div className="d-flex align-items-baseline py-4 bg-white">

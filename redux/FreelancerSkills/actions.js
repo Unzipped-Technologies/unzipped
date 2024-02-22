@@ -35,9 +35,6 @@ export const getFreelancerSkillsList = token => async (dispatch, getState) => {
 
 export const getAllFreelancers = (token, skip, take, minRate, maxRate, skill, name, sort) => async dispatch => {
     dispatch(startLoading())
-    // const headers = {
-    //     access_token: token
-    // }
     try {
         const params = { skip, take, minRate, maxRate, skill, name, sort};
         const filteredParams = Object.entries(params).reduce((acc, [key, value]) => {
@@ -48,7 +45,6 @@ export const getAllFreelancers = (token, skip, take, minRate, maxRate, skill, na
         }, {});
         const queryString = new URLSearchParams(filteredParams).toString();
         const response = await axios.get(`api/user/getAllFreelancers?${queryString}`);
-        // const response = await axios.get(`api/user/getAllFreelancers?skip=${skip}&take=${take}&minRate=${minRate}&maxRate=${maxRate}&skill=${skill}&name=${name}`);
 
         dispatch({
             type: GET_ALL_FREELANCERS,

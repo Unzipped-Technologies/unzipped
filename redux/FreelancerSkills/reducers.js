@@ -19,7 +19,7 @@ const FreelancerSkills = (state = INIT_STATE, action) => {
         case GET_LIST_FREELANCERSKILLS:
             return { ...state, freelancerSkills: [...action.payload] };
         case GET_ALL_FREELANCERS:
-            return { ...state, allFreelancers: [...action.payload[0].freelancers], freelancersTotalCount: action?.payload[0].totalCount[0].count || 0 };
+            return { ...state, allFreelancers: [...action.payload?.freelancers], freelancersTotalCount: action?.payload.totalCount };
         case FREELANCERSKILLS_ERROR:
             return { ...state, error: action.payload };
         case GET_ALL_FREELANCERS_ERROR:
