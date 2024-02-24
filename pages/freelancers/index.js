@@ -15,6 +15,7 @@ import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFo
 import MobileSearchFilter from '../../components/unzipped/MobileSearchFilter'
 import DesktopSearchFilterFreelancers from '../../components/unzipped/DesktopSearchFilterFreelancers'
 
+
 const Container = styled.div`
   display: flex;
   flex-flow: column;
@@ -68,7 +69,7 @@ const Freelancers = ({
   allFreelancers = [],
   getAllFreelancers
 }) => {
-  const [take, setTake] = useState(20)
+  const [take, setTake] = useState(50)
   const [skip] = useState(0)
   const [filter, setFilter] = useState('')
   const [sort, setSort] = useState('ALL CATEGORIES')
@@ -78,6 +79,9 @@ const Freelancers = ({
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const isNavbarExpanded = useSelector(state => state.Freelancers);
+  const userId = useSelector(state => state.Auth?.user?._id);
+  const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation);
+
 
   const sortOptions = [
     {
@@ -108,7 +112,7 @@ const Freelancers = ({
 
   useMemo(() => {
     getFreelancerSkillsList()
-    getAllFreelancers()
+    getAllFreelancers(access_token, skip, take)
   }, [])
 
   useEffect(() => {
@@ -125,18 +129,7 @@ const Freelancers = ({
   }
 
   const handleSearch = () => {
-    getFreelancerList(
-      {
-        filter,
-        take,
-        skip,
-        sort,
-        minRate,
-        maxRate,
-        skill
-      },
-      access_token
-    )
+    getAllFreelancers(access_token, skip, take, minRate, maxRate, skill, '', sort)
   }
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '130px')
 
@@ -159,7 +152,7 @@ const Freelancers = ({
     setIsVisible(entry.isIntersecting)
     if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
       if (take < totalCount) {
-        setTake(take + 20)
+        setTake(take + 50)
       }
     }
   }
@@ -169,6 +162,7 @@ const Freelancers = ({
     rootMargin: '0px',
     threshold: 1.0
   }
+
   useEffect(() => {
     const observer = new IntersectionObserver(callbackFunction, options)
     if (containerRef.current) observer.observe(containerRef.current)
@@ -176,19 +170,24 @@ const Freelancers = ({
       if (containerRef.current) observer.unobserve(containerRef.current)
     }
   }, [containerRef, options])
-  const getResultMessage = (freelancerList, skip, take, totalCount) => {
-    if (freelancerList?.length === 0) {
+
+  const getResultMessage = (allFreelancers, skip, take, totalCount) => {
+    if (allFreelancers?.length === 0) {
       return '0 result'
-    } else if (freelancerList?.length === 1) {
+    } else if (allFreelancers?.length === 1) {
       return '1 result'
     } else if (skip === 0) {
-      return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
+      return `1 - ${allFreelancers?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     } else {
       const start = +skip * +take + 1
       const end = Math.min(+skip * +take + +take, totalCount)
       return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
     }
   }
+
+  useEffect(() => {
+    getAllFreelancers(access_token, skip, take)
+  }, [createdInvitation])
 
   const constructFreelancerModel = (item) => {
     const freelancer = {
@@ -206,24 +205,14 @@ const Freelancers = ({
         item?.userId?.profileImage ||
         'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       rate: item?.rate,
-      likes: item?.likeTotal
+      likes: item?.likeTotal,
+      isInvited: ((item?.invites && item?.invites.userInvited == userId) ? true : false)
     }
     return freelancer;
   }
 
   return (
     <SearchContainer >
-      {/* {!filterOpenClose && (
-        <Nav
-          isSubMenu
-          searchValue={filter}
-          handleSearchValue={setFilter}
-          handleSearch={handleSearch}
-          searchButton
-          margin={'0px'}
-          marginBottom={marginBottom}
-        />
-      )} */}
       <Nav
         isSubMenu
         searchValue={filter}
@@ -248,7 +237,7 @@ const Freelancers = ({
           <MobileDisplayBox>
             <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
               <b style={{ paddingRight: '20px' }}>Top Results</b>
-              <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
+              <small>{getResultMessage(allFreelancers, skip, take, totalCount)}</small>
             </div>
             <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
           </MobileDisplayBox>
@@ -284,56 +273,12 @@ const Freelancers = ({
             setSkill={setSkill}
           />
 
-
-          {/* <div className="overflow-auto">
-            <div className="d-flex align-items-baseline py-4 bg-white">
-              <h5 className="px-4">
-                <b>Top Results</b>
-              </h5>
-              <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
-            </div>
-            {freelancerList?.length === 0 && (
-              <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                No freelancers found for this search
-              </DarkText>
-            )}
-            {freelancerList?.map((user, index) => {
-              console.log(user)
-              const freelancer = {
-                id: user.id,
-                name: `${user?.user?.FirstName} ${user?.user?.LastName}`,
-                type: user.category,
-                isPreferedFreelancer: user?.isPreferedFreelancer,
-                country: user?.user?.AddressLineCountry || 'United States',
-                skills: user?.user?.freelancerSkills?.map(e => e.skill) || [],
-                cover:
-                  user?.cover ||
-                  `I have been a ${user?.category || 'developer'} for over ${(user?.user?.freelancerSkills && user?.user?.freelancerSkills[0]?.yearsExperience) || 1
-                  } years. schedule a meeting to check if I'm a good fit for your business.`,
-                profilePic:
-                  user?.user?.profileImage ||
-                  'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-                rate: user?.rate,
-                likes: user?.likeTotal
-              }
-              if (user?.user?.FirstName) {
-                return (
-                  <>
-                    <WhiteCard noMargin overlayDesktop cardHeightDesktop>
-                      <FreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer} />
-                    </WhiteCard>
-                    {index === freelancerList.length - 1 && <div ref={containerRef}></div>}
-                  </>
-                )
-              }
-            })}
-          </div> */}
           <div className="overflow-auto">
             <div className="d-flex align-items-baseline py-4 bg-white">
               <h5 className="px-4">
                 <b>Top Results</b>
               </h5>
-              <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+              <h6>{getResultMessage(allFreelancers, skip, take, totalCount)}</h6>
             </div>
             {allFreelancers?.length === 0 && (
               <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
@@ -341,7 +286,6 @@ const Freelancers = ({
               </DarkText>
             )}
             {allFreelancers?.map((item, index) => {
-              // console.log('user_freelancer', user)
               const freelancer = constructFreelancerModel(item)
               if (item?.userId?.FirstName) {
                 return (
@@ -349,7 +293,7 @@ const Freelancers = ({
                     <WhiteCard noMargin overlayDesktop cardHeightDesktop>
                       <FreelancerCard user={freelancer} includeRate clearSelectedFreelancer={clearSelectedFreelancer} />
                     </WhiteCard>
-                    {index === allFreelancers.length - 1 && <div ref={containerRef}></div>}
+                    {allFreelancers.length < 1000 && (allFreelancers.length < totalCount && <div ref={containerRef}></div>)}
                   </>
                 )
               }
@@ -358,23 +302,6 @@ const Freelancers = ({
         </Box>
         {allFreelancers?.map((item, index) => {
           const freelancerModel = constructFreelancerModel(item);
-          // {
-          //   id: item._id,
-          //   name: `${item?.user?.FirstName} ${item?.user?.LastName}`,
-          //   type: item.category,
-          //   isPreferedFreelancer: item?.isPreferedFreelancer,
-          //   country: item?.user?.AddressLineCountry || 'United States',
-          //   skills: item?.user?.freelancerSkills?.map(e => e.skill) || [],
-          //   cover:
-          //     item?.cover ||
-          //     `I have been a ${item?.category || 'developer'} for over ${(item?.user?.freelancerSkills && item?.user?.freelancerSkills[0]?.yearsExperience) || 1
-          //     } years. schedule a meeting to check if I'm a good fit for your business.`,
-          //   profilePic:
-          //     item?.user?.profileImage ||
-          //     'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-          //   rate: item?.rate,
-          //   likes: item?.likeTotal
-          // }
           if (item?.userId?.FirstName) {
             return (
               <>
@@ -387,7 +314,7 @@ const Freelancers = ({
                     />
                   </MobileDisplayBox>
                 )}
-                {index === allFreelancers.length - 1 && <div ref={containerRef}></div>}
+                {allFreelancers.length < 1000 && (allFreelancers.length < totalCount && <div ref={containerRef}></div>)}
               </>
             )
           }
@@ -416,9 +343,9 @@ const mapStateToProps = state => {
   return {
     freelancerList: state.Freelancers?.freelancers,
     freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
-    totalCount: state.Freelancers?.totalCount[0]?.count,
     access_token: state.Auth.token,
-    allFreelancers: state.FreelancerSkills?.allFreelancers
+    allFreelancers: state.FreelancerSkills?.allFreelancers,
+    totalCount: state.FreelancerSkills?.freelancersTotalCount,
   }
 }
 
