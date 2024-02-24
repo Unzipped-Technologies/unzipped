@@ -223,6 +223,14 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                         <Item>Your next billing date is {phone}</Item>
                         <Link href='/billing-details'>Billing details</Link>
                     </Rows>
+                    <Rows>
+                        <Item>Balance</Item>
+                        <Item>$0</Item>
+                    </Rows>
+                    <Rows>
+                        <Item></Item>
+                        <Link href='/dashboard/withdrawal/terms'>Withdrawal Funds</Link>
+                    </Rows>
                 </RightOne>
             </Container>
             <Container border>

@@ -99,12 +99,12 @@ const help = [
 ]
 
 
-const Notification = ({ type, children, noButton }) => {
+const Notification = ({ type, children, noButton, smallMargin }) => {
   const router = useRouter()
   switch (type) {
     case 'plan':
       return (
-        <BlackCard>
+        <BlackCard smallMargin={smallMargin}>
           <WhiteText>
             Build your dream business, grow your following, and collaborate with other professionals to <br />
             make your vision a reality. Start your free trial now.
@@ -174,7 +174,7 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'blue':
       return (
-        <WhiteCard row borderColor="#0029FF" background="#F8FAFF">
+        <WhiteCard row borderColor="#0029FF" background="#F8FAFF"  smallMargin={smallMargin}>
           <Icon name="question" />
           <DarkText noMargin paddingLeft>
             {children}

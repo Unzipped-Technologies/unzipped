@@ -11,7 +11,7 @@ const BlackCard = styled.div`
   align-items: center;
   padding: 0px 40px;
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: ${({smallMargin}) => smallMargin ? '10px' : '24px'};
   @media (max-width: 681px) {
     justify-content: space-between;
     padding: 15px 20px;
