@@ -1,7 +1,6 @@
-const QuestionModel = require('../../models/Question')
-const BusinessModel = require('../../models/Business')
+const QuestionModel = require('../models/Question')
+const BusinessModel = require('../models/Business')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
-const business = require('./business')
 
 const createQuestion = async question => {
   try {

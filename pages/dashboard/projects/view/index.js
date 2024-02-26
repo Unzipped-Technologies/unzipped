@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components'
 import { ValidationUtils } from '../../../../utils'
 import Button from '../../../../components/ui/Button'
 import Nav from '../../../../components/unzipped/header'
-import { getBusinessList } from '../../../../redux/actions'
+import { getProjectsList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
 import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
@@ -114,7 +114,7 @@ const ProjectDate = styled.div`
   padding-left: 18px;
 `
 
-const AllProjects = ({ businesses = [], getBusinessList, role }) => {
+const AllProjects = ({ businesses = [], getProjectsList, role }) => {
   const router = useRouter()
 
   const [filter, setFilter] = useState('')
@@ -139,7 +139,7 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
   }
 
   useEffect(() => {
-    getBusinessList({
+    getProjectsList({
       take: 1000,
       skip: 0
     })
@@ -286,7 +286,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getBusinessList: bindActionCreators(getBusinessList, dispatch)
+    getProjectsList: bindActionCreators(getProjectsList, dispatch)
   }
 }
 

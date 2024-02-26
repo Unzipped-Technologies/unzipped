@@ -59,9 +59,9 @@ router.get('/freelancer/:id', requireLogin, async (req, res) => {
 })
 
 // Update a contract (PUT)
-router.put('/update', requireLogin, async (req, res) => {
+router.put('/update/:id', requireLogin, async (req, res) => {
   try {
-    const updatedContract = await contractHelper.updateContract(req.body)
+    const updatedContract = await contractHelper.updateContract(req.params?.id, req.body)
     if (!updatedContract) throw Error('Contract not found')
     res.json(updatedContract)
   } catch (e) {

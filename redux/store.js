@@ -14,6 +14,10 @@ import ListEntries from './ListEntries/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'
 import Invoices from './Invoices/reducers'
+import Departments from './Department/reducers'
+import Tags from './Tags/reducers'
+import TaskHours from './TaskHours/reducers'
+import Tasks from './Tasks/reducers'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -29,7 +33,11 @@ const combinedReducer = combineReducers({
   ListEntries,
   ProjectApplications,
   Contracts,
-  Invoices
+  Invoices,
+  Departments,
+  Tags,
+  TaskHours,
+  Tasks
   // OTHER REDUCERS WILL BE ADDED HERE
 })
 
@@ -65,7 +73,11 @@ const makeStore = ({ isServer }) => {
         'Stripe',
         'ProjectApplications',
         'Contracts',
-        'Invoices'
+        'Invoices',
+        'Departments',
+        'Tags',
+        'TaskHours',
+        'Tasks'
       ],
       storage // if needed, use a safer storage
     }

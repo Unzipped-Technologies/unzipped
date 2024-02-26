@@ -134,3 +134,7 @@ Stroke effects - Nucleo outline icons
   -o-transform: translateX(0.5px) translateY(0.5px);
   transform: translateX(0.5px) translateY(0.5px);
 }
+
+.custom-react-select input {
+  min-width: 200px;
+}

@@ -1,13 +1,14 @@
-const Contracts = require('../../models/Contract')
-const Business = require('../../models/Business')
-const ThirdPartyApplications = require('../../models/ThirdPartyApplications')
-const PaymentMethod = require('../../models/PaymentMethod')
+const Contracts = require('../models/Contract')
+const Business = require('../models/Business')
+const ThirdPartyApplications = require('../models/ThirdPartyApplications')
+const PaymentMethod = require('../models/PaymentMethod')
 const mongoose = require('mongoose')
 const keys = require('../../config/keys')
-const Department = require('../../models/Department')
+const Department = require('../models/Department')
 const stripe = require('stripe')(`${keys.stripeSecretKey}`)
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
+
 const createContracts = async data => {
   const { businessId, freelancerId, userId } = data
   try {
@@ -217,6 +218,14 @@ const getUserContracts = async (query, user) => {
   }
 }
 
+const getContractWithoutPopulate = async (filter, selectedFields = '') => {
+  try {
+    return await Contracts.findOne(filter).select(selectedFields)
+  } catch (e) {
+    throw new Error(`Could not retrieve contracts, error: ${e.message}`)
+  }
+}
+
 const getContractById = async id => {
   try {
     return await Contracts.findById(id)
@@ -267,9 +276,9 @@ const getContractByfreelacerId = async id => {
   }
 }
 
-const updateContract = async data => {
+const updateContract = async (contractId, data) => {
   try {
-    const updatedContract = await Contracts.findByIdAndUpdate(data.contractId, { $set: { ...data } }, { new: true })
+    const updatedContract = await Contracts.findByIdAndUpdate(contractId, { $set: { ...data } }, { new: true })
     return updatedContract
   } catch (e) {
     throw Error(`Could not update contract, error: ${e}`)

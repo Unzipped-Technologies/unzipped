@@ -33,12 +33,15 @@ export const createInvoice = data => async (dispatch, getState) => {
 }
 
 export const getInvoices =
-  ({ businessId, limit = 25, page = 1 }) =>
+  ({ businessId = '', freelancerId = '', limit = 25, page = 1 }) =>
   async (dispatch, getState) => {
     dispatch(startLoading())
 
     await axios
-      .get(`/api/invoice?businessId=${businessId}&limit=${limit}&page=${page}`, tokenConfig(getState()?.Auth.token))
+      .get(
+        `/api/invoice?businessId=${businessId}&freelancerId=${freelancerId}&limit=${limit}&page=${page}`,
+        tokenConfig(getState()?.Auth.token)
+      )
       .then(res => {
         dispatch({
           type: GET_INVOICES,

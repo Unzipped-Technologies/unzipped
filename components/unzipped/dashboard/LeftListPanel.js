@@ -17,79 +17,72 @@ import ListManagementPanel from './ListManagementPanel'
 import IconSelector from './IconSelector'
 
 const Container = styled.div`
-    position: relative;
-    display: flex;
-    flex-flow: column;
-    border: 1px solid #D9D9D9;
-    width: 371px;
-    height: fit-content;
-    padding: 20px 0px;
-    margin-left: 10px;
-    border-radius: 10px;
-    overflow: hidden
-`;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  border: 1px solid #d9d9d9;
+  width: 371px;
+  height: fit-content;
+  padding: 20px 0px;
+  margin-left: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+`
 
 const Action = styled.div`
-    width: 100%;
-    color: blue;
-    cursor: pointer;
-    font-weight: 400;
-    font-size: 16px;
-    &:hover {
-        color: darkBlue;
+  width: 100%;
+  color: blue;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 16px;
+  &:hover {
+    color: darkBlue;
+  }
+`
+
+const Panel = ({
+  list,
+  business,
+  selectList,
+  type,
+  setIsFavourite,
+  setIsRecentlyViewed,
+  setIsMyTeam,
+  userListItems,
+  setListTitle,
+  listInfo
+}) => {
+  const isDepartment = type === 'department'
+  const dispatch = useDispatch()
+  const userId = useSelector(state => state.Auth?.user?._id)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [selectedMenuOption, setSelectedMenuOption] = useState({ name: '', icon: '', _id: null })
+
+  const handleListChangeEv = item => {
+    let isDefaultListItem = false
+
+    if (item.name === 'Favorites') {
+      setIsFavourite(true)
+      setIsRecentlyViewed(false)
+      setIsMyTeam(false)
+      isDefaultListItem = true
+      dispatch(getListEntriesById(item._id))
     }
-`;
-
-const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecentlyViewed, setIsMyTeam, userListItems, setListTitle, listInfo }) => {
-    const isDepartment = type === 'department';
-    const dispatch = useDispatch();
-    const userId = useSelector(state => state.Auth?.user?._id);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [selectedMenuOption, setSelectedMenuOption] = useState({ name: '', icon: '', _id: null });
-
-    const handleListChangeEv = (item) => {
-        let isDefaultListItem = false;
-
-        if (item.name === 'Favorites') {
-            setIsFavourite(true)
-            setIsRecentlyViewed(false);
-            setIsMyTeam(false);
-            isDefaultListItem = true;
-            dispatch(getListEntriesById(item._id));
-        }
-        if (item.name === 'Recently Viewed') {
-            setIsRecentlyViewed(true);
-            setIsFavourite(false);
-            setIsMyTeam(false);
-            isDefaultListItem = true;
-            dispatch(getRecentlyViewedList(item._id));
-        }
-        if (item.name === 'My Team') {
-            setIsMyTeam(true)
-            setIsRecentlyViewed(false);
-            setIsFavourite(false);
-            isDefaultListItem = true;
-            dispatch(getTeamMembers(userId))
-        }
-
-        setListTitle({ listId: item._id, listTitle: item.name, listIcon: item.icon });
-        if (!isDefaultListItem) {
-            setIsMyTeam(false)
-            setIsRecentlyViewed(false);
-            setIsFavourite(false);
-            dispatch(getListEntriesById(item._id))
-        }
-
+    if (item.name === 'Recently Viewed') {
+      setIsRecentlyViewed(true)
+      setIsFavourite(false)
+      setIsMyTeam(false)
+      isDefaultListItem = true
+      dispatch(getRecentlyViewedList(item._id))
     }
-    useEffect(() => {
-        if (userListItems && userListItems.length > 0) {
-            const selectedItem = userListItems.find(list => list.name.toLowerCase().includes("favorites"));
-            if (selectedItem) {
-                setSelectedMenuOption(selectedItem)
-            }
-        }
-    }, [userListItems])
+    if (item.name === 'My Team') {
+      setIsMyTeam(true)
+      setIsRecentlyViewed(false)
+      setIsFavourite(false)
+      isDefaultListItem = true
+      dispatch(getTeamMembers(userId))
+    }
 
     return (
         <Container>
@@ -172,4 +165,4 @@ const Panel = ({ list, business, selectList, type, setIsFavourite, setIsRecently
     )
 }
 
-export default Panel;
+export default Panel

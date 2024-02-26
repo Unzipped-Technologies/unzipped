@@ -85,16 +85,6 @@ router.post('/current/delete', requireLogin, permissionCheckHelper.hasPermission
   }
 })
 
-router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
-  try {
-    const addedSkill = await userHelper.addSkillsToFreelancer(req.body, req.user?.userInfo?.freelancers)
-    if (!addedSkill) throw Error('user does not exist')
-    res.json(addedSkill)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
 router.post('/newsletter/add', async (req, res) => {
   try {
     const newUser = await userHelper.addToNewsletter(req.body.email)

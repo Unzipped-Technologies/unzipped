@@ -41,7 +41,7 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const ProjectDesktopCard = ({ project, includeRate, width, id, freelancerId }) => {
+const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
   const router = useRouter()
 
   return (
@@ -49,7 +49,7 @@ const ProjectDesktopCard = ({ project, includeRate, width, id, freelancerId }) =
       <Left>
         <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
         {project?.applicants?.includes(freelancerId) && (
-          <Button margin="20px 0px" type={!project.applicants.includes(id) ? 'default' : 'grey'} noBorder>
+          <Button margin="20px 0px" type={!project.applicants.includes(freelancerId) ? 'default' : 'grey'} noBorder>
             Applied
           </Button>
         )}
