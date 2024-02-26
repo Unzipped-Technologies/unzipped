@@ -15,9 +15,9 @@ const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
 const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../../models/FreelancerSkills')
-const User = require('../../models/User')
-const InviteModel = require('../../models/Invited');
+const FreelancerSkills = require('../models/FreelancerSkills')
+const User = require('../models/User')
+const InviteModel = require('../models/Invited')
 
 // create user
 const createUser = async (data, hash) => {
@@ -218,10 +218,10 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
           $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
           ...(skill?.length > 0
             ? {
-              'user.freelancerSkills.skill': {
-                $in: skill
+                'user.freelancerSkills.skill': {
+                  $in: skill
+                }
               }
-            }
             : {}),
           ...(minRate && {
             rate: { $gte: +minRate }
@@ -233,12 +233,12 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
       },
       ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
         ? [
-          {
-            $sort: {
-              rate: sort === 'lowest hourly rate' ? 1 : -1
+            {
+              $sort: {
+                rate: sort === 'lowest hourly rate' ? 1 : -1
+              }
             }
-          }
-        ]
+          ]
         : []),
       {
         $facet: {
@@ -454,11 +454,10 @@ const setUpNotificationsForUser = async id => {
   }
 }
 
-
 const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name, sort) => {
   try {
-    const queryFilters = buildQueryFilters(+minRate, +maxRate, skill, name);
-    let sortStage = buildSortStageFilters(sort);
+    const queryFilters = buildQueryFilters(+minRate, +maxRate, skill, name)
+    let sortStage = buildSortStageFilters(sort)
     const PROJECTION = {
       $project: {
         _id: 1,
@@ -472,8 +471,8 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
         'userId.AddressLineCountry': 1,
         'userId.profileImage': 1,
         freelancerSkills: 1,
-        'invites._id': "$invites._id",
-        'invites.userInvited': "$invites.userInvited",
+        'invites._id': '$invites._id',
+        'invites.userInvited': '$invites.userInvited'
       }
     }
 
@@ -520,134 +519,100 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
 
           freelancerSkills: {
             $map: {
-              input: "$freelancerSkills",
-              as: "skill",
+              input: '$freelancerSkills',
+              as: 'skill',
               in: {
-                _id: "$$skill._id",
-                yearsExperience: "$$skill.yearsExperience",
-                skill: "$$skill.skill"
+                _id: '$$skill._id',
+                yearsExperience: '$$skill.yearsExperience',
+                skill: '$$skill.skill'
               }
             }
           },
           invites: {
-            $arrayElemAt: ["$invites", 0]
-          },
-
-        },
+            $arrayElemAt: ['$invites', 0]
+          }
+        }
       },
       {
         $match: {
-          $or: [queryFilters],
+          $or: [queryFilters]
         }
       },
-      ...((
-        (Object.keys(sortStage).length > 0) &&
-        (sortStage.rate !== 0)) ?
-        [{ $sort: sortStage }]
-        : []
-      ),
+      ...(Object.keys(sortStage).length > 0 && sortStage.rate !== 0 ? [{ $sort: sortStage }] : []),
       PROJECTION,
       {
         $facet: {
-          "freelancers": [
-            { $skip: +skip },
-            { $limit: +take },
-          ],
-          "totalCount": [
-            { $count: "count" }
-          ]
+          freelancers: [{ $skip: +skip }, { $limit: +take }],
+          totalCount: [{ $count: 'count' }]
         }
-      },
-    ];
+      }
+    ]
 
-    const result = await freelancer.aggregate(lookup);
+    const result = await freelancer.aggregate(lookup)
     return {
       freelancers: result[0].freelancers,
       totalCount: result[0].totalCount[0]?.count || 0
-    };
-
+    }
   } catch (error) {
     console.log('error', error)
   }
+}
 
-};
-
-const buildSortStageFilters = (sort) => {
-  let sortStage = {};
+const buildSortStageFilters = sort => {
+  let sortStage = {}
   if (sort === 'Most reviews' || sort === 'recomended') {
     sortStage = {
       likeTotal: -1
-    };
+    }
   }
   if (sort == 'lowest hourly rate' || sort == 'highest hourly rate') {
     sortStage = {
       rate: sort === 'lowest hourly rate' ? 1 : -1
-    };
+    }
   }
-  return sortStage;
-
-const getFreelancerById = async id => {
-  try {
-    return await freelancer
-      .findById(id)
-      .populate([
-        {
-          path: 'userId',
-          model: 'users'
-        },
-        {
-          path: 'freelancerSkills',
-          model: 'freelancerskills',
-          select: 'yearsExperience skill isActive'
-        }
-      ])
-      .exec()
-  } catch (e) {
-    throw Error(`Could not find user, error: ${e}`)
-  }
+  return sortStage
 }
+
 const buildQueryFilters = (minRate, maxRate, skills, name) => {
-  let filter = {};
+  let filter = {}
 
-  if (minRate) filter.rate = { $gte: minRate };
+  if (minRate) filter.rate = { $gte: minRate }
 
-  if (maxRate) filter.rate = { ...filter.rate, $lte: maxRate };
+  if (maxRate) filter.rate = { ...filter.rate, $lte: maxRate }
 
   if (skills && skills.length > 0 && !skills.includes('undefined')) {
-
     if (skills.includes(',')) {
-      let skillsArray;
-      skillsArray = skills.split(',');
+      let skillsArray
+      skillsArray = skills.split(',')
       filter['freelancerSkills.skill'] = {
         $in: skillsArray.map(skill => new RegExp(skill, 'i'))
-      };
+      }
     }
-
   }
 
   if (name && !name.includes('undefined')) {
     filter['$or'] = [
       { 'userId.FirstName': { $regex: name, $options: 'i' } },
       { 'userId.LastName': { $regex: name, $options: 'i' } }
-    ];
+    ]
   }
 
-  return filter;
-
+  return filter
 }
 
-
-const createFreelancerInvite = async (params) => {
-  const createInvite = await InviteModel.create(params);
-  const updateFreelancer = await freelancer.findByIdAndUpdate(params.freelancer, {
-    $set: {
-      invites: createInvite._doc._id
-    }
-  },
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await freelancer.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
     { new: true }
-  );
+  )
 
-  return updateFreelancer;
+  return updateFreelancer
 }
 
 module.exports = {
@@ -670,5 +635,5 @@ module.exports = {
   addToNewsletter,
   getAllFreelancers,
   createFreelancerInvite,
-  retrievePaymentMethods,
+  retrievePaymentMethods
 }

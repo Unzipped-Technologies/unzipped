@@ -6,38 +6,39 @@ const FreelancerModel = require('../models/Freelancer')
 const ListHelper = require('../helpers/list')
 
 const getAllListEntries = async (id, filters) => {
-    let page = 1;
-    let pageSize = 10;
+  let page = 1
+  let pageSize = 10
 
-    if (filters?.page) { page = parseInt(filters.page); };
-    if (filters?.pageSize) { pageSize = parseInt(filters.pageSize); }
+  if (filters?.page) {
+    page = parseInt(filters.page)
+  }
+  if (filters?.pageSize) {
+    pageSize = parseInt(filters.pageSize)
+  }
 
-    const totalCounts = await ListEntriesModel.countDocuments();
+  const totalCounts = await ListEntriesModel.countDocuments()
 
-    const listEntries = await ListEntriesModel.find({ userId: id })
-        .populate(
-            {
-                path: 'freelancerId',
-                model: 'freelancers',
-                populate: {
-                    path: 'freelancerSkills',
-                    model: 'freelancerskills'
-                }
-            },
+  const listEntries = await ListEntriesModel.find({ userId: id })
+    .populate({
+      path: 'freelancerId',
+      model: 'freelancers',
+      populate: {
+        path: 'freelancerSkills',
+        model: 'freelancerskills'
+      }
+    })
+    .populate({
+      path: 'userId',
+      model: 'users'
+    })
+    .populate({
+      path: 'listId',
+      model: 'lists'
+    })
+    .skip((page - 1) * pageSize)
+    .limit(pageSize)
 
-        )
-        .populate({
-            path: 'userId',
-            model: 'users',
-        })
-        .populate({
-            path: 'listId',
-            model: 'lists',
-        })
-        .skip((page - 1) * pageSize)
-        .limit(pageSize);
-
-    return { totalCounts, listEntries }
+  return { totalCounts, listEntries }
 
   return { totalCounts, listEntries }
 }
@@ -106,10 +107,10 @@ const findListEntriesById = async id => {
     .populate({
       path: 'freelancerId',
       model: 'freelancers',
-      select: 'category rate likeTotal',
+      select: 'category rate likeTotal freelancerSkills',
       populate: {
         path: 'freelancerSkills',
-        model: 'freelancerSkills',
+        model: 'freelancerskills',
         select: 'yearsExperience skill '
       }
     })
@@ -120,59 +121,30 @@ const findListEntriesById = async id => {
     })
     .sort({ createdAt: -1 })
 
-const findListEntriesById = async (id) => {
-    let entries = await ListEntriesModel.find(
-        { listId: id }
-    )
-        .populate(
-            {
-                path: 'freelancerId',
-                model: 'freelancers',
-                select: 'category rate likeTotal freelancerSkills',
-                populate: {
-                    path: 'freelancerSkills',
-                    model: 'freelancerskills',
-                    select: 'yearsExperience skill '
-                }
-            },
-
-        )
-        .populate({
-            path: 'userId',
-            model: 'users',
-            select: 'FirstName LastName profileImage AddressLineCountry'
-        }).sort({ createdAt: -1 })
-
-    return entries;
+  return entries
 }
 
-
-const getAllteamMembers = async (id) => {
-    return await ContractModel
-        .find({
-            userId: mongoose.Types.ObjectId(id),
-            isOfferAccepted: true
-        })
-        .populate(
-            {
-                path: 'freelancerId',
-                model: 'freelancers',
-                select: 'category rate _id likeTotal',
-                populate:
-                    [
-                        {
-                            path: 'user',
-                            model: 'users',
-                            select: 'FirstName LastName profileImage AddressLineCountry _id',
-                        },
-                        {
-                            path: 'freelancerSkills',
-                            model: 'freelancerskills',
-                            select: 'yearsExperience skill '
-                        },
-                    ]
-            }
-        )
+const getAllteamMembers = async id => {
+  return await ContractModel.find({
+    userId: mongoose.Types.ObjectId(id),
+    isOfferAccepted: true
+  }).populate({
+    path: 'freelancerId',
+    model: 'freelancers',
+    select: 'category rate _id likeTotal',
+    populate: [
+      {
+        path: 'user',
+        model: 'users',
+        select: 'FirstName LastName profileImage AddressLineCountry _id'
+      },
+      {
+        path: 'freelancerSkills',
+        model: 'freelancerskills',
+        select: 'yearsExperience skill '
+      }
+    ]
+  })
 }
 
 const getRecentlyViewedProfile = async params => {
