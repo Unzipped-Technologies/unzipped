@@ -60,14 +60,12 @@ const RecurringPaymentComponent = ({
         getUnpaidInvoices(token)
     }, [])
 
-    console.log(paymentDate)
-
     return (
         <RecurringWrapper>
             <Container >
                 <HireDivider title="Confirm Recurring Payment" />
                 <Content>
-                    <Notification type="blue" noButton>
+                    <Notification type="blue" noButton paddingLeft="20px">
                         You will be charged weekly on tuesday at 11:59 PM for all agreed upon hours worked.
                     </Notification>
                 </Content>

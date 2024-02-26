@@ -34,10 +34,19 @@ const Page = styled.div`
 `;
 
 const Container = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 4fr;
-    height: calc(100% - 127px);
+    display: flex;
+    flex-flow: row;
+    height: calc(100% - 185px);
     max-height: 100%;
+    @media(max-width: 600px) {
+        height: calc(100% - 140px);
+    }
+`;
+
+const MobileContainer = styled.div`
+    @media(max-width: 600px) {
+        display: none;
+    }
 `;
 
 const Inbox = ({
@@ -131,27 +140,54 @@ const Inbox = ({
         }
     }, [conversations])
 
+    
+    const [windowSize, setWindowsize] = useState('126px');
+    const [isMobile, setIsMobile] = useState(false);
+
+    const handleResize = () => {
+        let windowSize = (window.innerWidth <= 600) ? '85px' : '126px'
+        setWindowsize(windowSize);
+        if (window.innerWidth <= 600) {
+            setIsMobile(true)
+        } else {
+            setIsMobile(false)
+        }
+    };
+
+    useEffect(() => {
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     console.log(selectedConversation, "select")
     return (
         <Page>
-            <Nav isSubMenu />
+            <Nav isSubMenu marginBottom={windowSize}/>
             <Container>
-                <ConversationContainer conversations={conversations} userEmail={user.email} userId={user._id} openConversation={openConversation} />
-                <MessageContainer
-                    data={selectedConversation}
-                    userEmail={user.email}
-                    userId={user._id}
-                    createTempFile={createNewFile}
-                    handleChatArchive={handleArchive}
-                    handleChatMute={handleMute}
-                    access={access}
-                    socket={socket}
-                    onlineUsers={onlineUsers}
-                    handleUnreadCount={handleUnreadCount}
-                    messagesCount={messagesCount}
-                    messageLimit={messageLimit}
-                    handleMessagesOnScroll={handleMessagesOnScroll}
-                />
+                <ConversationContainer isMobile={isMobile} conversations={conversations} userEmail={user.email} userId={user._id} openConversation={openConversation} />
+                <MobileContainer>
+                    <MessageContainer
+                        data={selectedConversation}
+                        userEmail={user.email}
+                        userId={user._id}
+                        createTempFile={createNewFile}
+                        handleChatArchive={handleArchive}
+                        handleChatMute={handleMute}
+                        access={access}
+                        socket={socket}
+                        onlineUsers={onlineUsers}
+                        handleUnreadCount={handleUnreadCount}
+                        messagesCount={messagesCount}
+                        messageLimit={messageLimit}
+                        handleMessagesOnScroll={handleMessagesOnScroll}
+                        isMobile={isMobile}
+                    />
+                </MobileContainer>
             </Container>
             <MobileDisplayBox>
                 <MobileFreelancerFooter defaultSelected="Messages" />

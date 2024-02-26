@@ -2,11 +2,14 @@ import React, { useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 
 import IconComponent from '../../ui/icons/IconComponent'
-import { getProjectsList } from '../../../redux/actions'
+import { useDispatch, useSelector } from 'react-redux'
+import MobileFreelancerCard from './MobileFreelancerCard'
+import { getListEntriesById, getRecentlyViewedList, getTeamMembers } from '../../../redux/ListEntries/action'
+import { getBusinessList } from '../../../redux/Business/actions'
+import RenderIcon from '../RenderIcon'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -30,12 +33,12 @@ function MobileProjects({ businesses = [], getProjectsList }) {
 
   const limitedProjects = useMemo(() => businesses.slice(0, 3), [businesses])
 
-  useEffect(() => {
-    getProjectsList({
-      take: 3,
-      skip: 0
-    })
-  }, [])
+            {userListItems && userListItems.slice(0,3).map(item => (
+                <Heading>
+                    {item.icon && (<RenderIcon iconName={item.icon} />)}
+                    <P onClick={() => handleListChangeEv(item)}>{item.name}</P>
+                </Heading>
+            ))}
 
   return (
     <div className="px-4 mb-5 pb-4">
@@ -110,15 +113,15 @@ function MobileProjects({ businesses = [], getProjectsList }) {
 }
 
 const mapStateToProps = state => {
-  return {
-    businesses: state.Business?.projectList
-  }
+    return {
+        businesses: state.Business?.businesses
+    }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {
-    getProjectsList: bindActionCreators(getProjectsList, dispatch)
-  }
+    return {
+        getBusinessList: bindActionCreators(getBusinessList, dispatch)
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MobileProjects)

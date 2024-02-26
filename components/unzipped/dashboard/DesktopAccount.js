@@ -214,14 +214,22 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                     <Underline color="#333"/>
                     <Rows>
                         <Item>
-                            <img height={20} src={getCardLogoUrl(primaryPM.card)} />
-                            <Span>**** **** **** {primaryPM.lastFour}</Span>
+                            <img height={20} src={getCardLogoUrl(primaryPM?.card)} />
+                            <Span>**** **** **** {primaryPM?.lastFour}</Span>
                         </Item>
                         <Link href='/manage-payment-method'>Manage payment method</Link>
                     </Rows>
                     <Rows>
                         <Item>Your next billing date is {phone}</Item>
                         <Link href='/billing-details'>Billing details</Link>
+                    </Rows>
+                    <Rows>
+                        <Item>Balance</Item>
+                        <Item>$0</Item>
+                    </Rows>
+                    <Rows>
+                        <Item></Item>
+                        <Link href='/dashboard/withdrawal/terms'>Withdrawal Funds</Link>
                     </Rows>
                 </RightOne>
             </Container>
@@ -257,7 +265,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.firstName, 
+                                        item: userData?.firstName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter a valid first name!"
@@ -271,7 +279,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.firstName, 
+                                        item: userData?.firstName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter a valid first name!"
@@ -281,7 +289,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             }}
                             disabled={!editName}
                             onChange={e => updateForm('firstName', e.target.value)}
-                            value={userData.firstName}
+                            value={userData?.firstName}
                         >First Name</FormField>
                         </Align>
                         <Align>
@@ -297,7 +305,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.lastName, 
+                                        item: userData?.lastName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter a valid last name!"
@@ -308,7 +316,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.lastName, 
+                                        item: userData?.lastName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter a valid last name!"
@@ -317,7 +325,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 )
                             }}
                             onChange={e => updateForm('lastName', e.target.value)}
-                            value={userData.lastName}
+                            value={userData?.lastName}
                             disabled={!editName}
                         >Last Name</FormField>
                         </Align>
@@ -339,7 +347,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.addressLineOne, 
+                                        item: userData?.addressLineOne, 
                                         min: 1, 
                                         max: 32,
                                         message: "Please enter a valid address!"
@@ -350,7 +358,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.addressLineOne, 
+                                        item: userData?.addressLineOne, 
                                         min: 1, 
                                         max: 32,
                                         message: "Please enter a valid address!"
@@ -360,7 +368,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             }}
                             disabled={!editAddress}
                             onChange={e => updateForm('addressLineOne', e.target.value)}
-                            value={userData.addressLineOne}
+                            value={userData?.addressLineOne}
                         >Address Line 1</FormField>
                     </Rows>
                     <Rows>
@@ -374,7 +382,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.addressLineTwo, 
+                                        item: userData?.addressLineTwo, 
                                         min: 1, 
                                         max: 32,
                                         message: "Please enter a valid address!"
@@ -385,7 +393,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.addressLineTwo, 
+                                        item: userData?.addressLineTwo, 
                                         min: 1, 
                                         max: 32,
                                         message: "Please enter a valid address!"
@@ -394,7 +402,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 )
                             }}
                             onChange={e => updateForm('addressLineTwo', e.target.value)}
-                            value={userData.addressLineTwo}
+                            value={userData?.addressLineTwo}
                             disabled={!editAddress}
                             zIndexUnset
                         >Address Line 2</FormField>
@@ -413,7 +421,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.addressCity, 
+                                        item: userData?.addressCity, 
                                         min: 1, 
                                         max: 40,
                                         message: "Please enter a valid city!"
@@ -424,7 +432,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.addressCity, 
+                                        item: userData?.addressCity, 
                                         min: 1, 
                                         max: 40,
                                         message: "Please enter a valid city!"
@@ -433,7 +441,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 )
                             }}
                             onChange={e => updateForm('addressCity', e.target.value)}
-                            value={userData.addressCity}
+                            value={userData?.addressCity}
                         >City</FormField>
                         </Align2>
                         <Align2>
@@ -449,7 +457,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.addressState, 
+                                        item: userData?.addressState, 
                                         min: 1, 
                                         max: 30,
                                         message: "Please enter a valid state!"
@@ -460,7 +468,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.addressState, 
+                                        item: userData?.addressState, 
                                         min: 1, 
                                         max: 30,
                                         message: "Please enter a valid state!"
@@ -469,7 +477,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 )
                             }}
                             onChange={e => updateForm('addressState', e.target.value)}
-                            value={userData.addressState}
+                            value={userData?.addressState}
                         >State</FormField>
                         </Align2>
                         <Align2>
@@ -485,7 +493,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.addressZip, 
+                                        item: userData?.addressZip, 
                                         min: 1, 
                                         max: 6,
                                         message: "Please enter a valid zip!"
@@ -496,7 +504,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.addressZip, 
+                                        item: userData?.addressZip, 
                                         min: 1, 
                                         max: 6,
                                         message: "Please enter a valid zip!"
@@ -505,7 +513,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 )
                             }}
                             onChange={e => updateForm('addressZip', e.target.value)}
-                            value={userData.addressZip}
+                            value={userData?.addressZip}
                         >Zip Code</FormField>
                         </Align2>
                     </Rows>
@@ -527,7 +535,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.businessName, 
+                                        item: userData?.businessName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter a valid name!"
@@ -538,7 +546,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.businessName, 
+                                        item: userData?.businessName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter a valid name!"
@@ -548,7 +556,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             }}
                             borderRadius="10px"
                             onChange={e => updateForm('businessName', e.target.value)}
-                            value={userData.businessName}
+                            value={userData?.businessName}
                         >Business Name</FormField>
                     </Rows>
                     )}
@@ -566,7 +574,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 updateDisabled()
                                 validateString(
                                     { 
-                                        item: userData.businessName, 
+                                        item: userData?.businessName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter business type (LLC, C-corp, etc.)!"
@@ -577,7 +585,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                             validate={() => {
                                 validateString(
                                     { 
-                                        item: userData.businessName, 
+                                        item: userData?.businessName, 
                                         min: 1, 
                                         max: 45,
                                         message: "Please enter business type (LLC, C-corp, etc.)!"
@@ -586,7 +594,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 )
                             }}
                             onChange={e => updateForm('businessType', e.target.value)}
-                            value={userData.businessType}
+                            value={userData?.businessType}
                         >Business Type</FormField>
                     </Rows>
                     )}
@@ -605,7 +613,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                     updateDisabled()
                                     validateString(
                                         { 
-                                            item: userData.businessPhone, 
+                                            item: userData?.businessPhone, 
                                             min: 1, 
                                             max: 24,
                                             message: "Please enter a valid phone number!"
@@ -616,7 +624,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 validate={() => {
                                     validateString(
                                         { 
-                                            item: userData.businessPhone, 
+                                            item: userData?.businessPhone, 
                                             min: 1, 
                                             max: 24,
                                             message: "Please enter a valid phone number!"
@@ -625,7 +633,7 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                     )
                                 }}
                                 onChange={e => updateForm('businessPhone', e.target.value)}
-                                value={userData.businessPhone}
+                                value={userData?.businessPhone}
                             >Phone Number</FormField>
                         </Align>
                         <Align>
@@ -638,10 +646,10 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 error={taxIdError}
                                 onBlur={() => {
                                     updateDisabled()
-                                    updateForm('taxId', ValidationUtils._formatToEIN(userData.taxId))
+                                    updateForm('taxId', ValidationUtils._formatToEIN(userData?.taxId))
                                     validateEin(
                                         { 
-                                            item: ValidationUtils._formatToEIN(userData.taxId), 
+                                            item: ValidationUtils._formatToEIN(userData?.taxId), 
                                             message: "Please enter a valid EIN!"
                                         }, 
                                         setTaxIdError
@@ -650,14 +658,14 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                                 validate={() => {
                                     validateEin(
                                         { 
-                                            item: userData.taxId, 
+                                            item: userData?.taxId, 
                                             message: "Please enter a valid EIN!"
                                         }, 
                                         setTaxIdError
                                     )
                                 }}
                                 onChange={e => updateForm('taxId', e.target.value)}
-                                value={userData.taxId}
+                                value={userData?.taxId}
                                 zIndexUnset
                             >Tax EIN or Social security Number</FormField>
                         </Align>

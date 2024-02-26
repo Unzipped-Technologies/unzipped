@@ -95,7 +95,7 @@ const ListEntries = (state = INIT_STATE, action) => {
             }
         case GET_LIST_ENTRIES_BY_ID_SUCCESS:
             {
-                return { ...state, loading: false, listEntries: [...action?.payload] };
+                return { ...state, loading: false, listEntries: action?.payload };
             }
         case GET_LIST_ENTRIES_BY_ID_ERROR:
             return { ...state, loading: false, error: action.payload };

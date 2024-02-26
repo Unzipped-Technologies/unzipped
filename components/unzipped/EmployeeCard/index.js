@@ -28,15 +28,52 @@ const Table = styled.div`
     margin-top: 20px;
 `;
 
-const RowTitle = styled.div`
+const RowTitleFixed = styled.div`
     text-align: ${({left}) => left ? 'left' : 'center'};
     min-width: 130px;
     font-weight: 600;
 `;
 
+const RowTitle = styled.div`
+    text-align: ${({left}) => left ? 'left' : 'center'};
+    min-width: 130px;
+    font-weight: 600;
+    @media(max-width: 600px) {
+        text-align: left;
+        min-width: 116px;
+        font-weight: 600;
+    }
+    @media(max-width: 495px) {
+        min-width: ${({smallMobile}) => smallMobile ? '90px' : '116px'};
+    }
+    @media(max-width: 442px) {
+        min-width: ${({smallMobile}) => smallMobile ? '0px' : '116px'};
+        width: ${({smallMobile}) => smallMobile ? '75px' : '116px'};
+    }
+    @media(max-width: 400px) {
+        min-width: ${({smallMobile}) => smallMobile ? '0px' : '101px'};
+        width: ${({smallMobile}) => smallMobile ? '75px' : '100px'};
+    }
+`;
+
 const RowItem = styled.div`
     text-align: ${({left}) => left ? 'left' : 'center'};
     min-width: 130px;
+    @media(max-width: 600px) {
+        text-align: left;
+        min-width: 116px;
+    }
+    @media(max-width: 495px) {
+        min-width: ${({smallMobile}) => smallMobile ? '90px' : '116px'};
+    }
+    @media(max-width: 442px) {
+        min-width: ${({smallMobile}) => smallMobile ? '0px' : '116px'};
+        width: ${({smallMobile}) => smallMobile ? '75px' : '116px'};
+    }
+    @media(max-width: 400px) {
+        min-width: ${({smallMobile}) => smallMobile ? '0px' : '101px'};
+        width: ${({smallMobile}) => smallMobile ? '75px' : '100px'};
+    }
 `;
 const Title = styled.div`
     font-size: 20px;
@@ -53,6 +90,9 @@ const Row = styled.div`
     justify-content: space-between;
     max-width: 450px;
     padding: ${({padding}) => padding ? padding : '4px 0px'};
+    @media(max-width: 600px) {
+        max-width: 100%;
+    }
 `;
 
 const RightTitle = styled.div`
@@ -65,10 +105,24 @@ const CostPanel = styled.div`
     font-size: 22px;
     font-weight: 600;
     text-align: center;
+    @media(max-width: 550px) {
+        font-size: 18px;
+    }
 `;
+
 const SubText = styled.div`
     font-size: 12px;
     text-align: center;
+    @media(max-width: 550px) {
+        font-size: 10px;
+    }
+`;
+
+const ClearMobile = styled.span`
+    width: 100%;
+    @media(max-width: 600px) {
+        display: none;
+    }
 `;
 
 const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) => {
@@ -112,8 +166,6 @@ const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) 
 
     const calcAmtOwed = (data) => {
         let amount = 0
-        console.log(data)
-        console.log(unpaidInvoices)
         unpaidInvoices.forEach(item => {
             if (item.freelancerId === data.freelancerId._id) {
                 amount += item.hourlyRate * item.hoursWorked
@@ -130,16 +182,16 @@ const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) 
                 <Table>
                     <Row>
                         <RowTitle>Name</RowTitle>
-                        <RowTitle>Rate</RowTitle>
-                        <RowTitle>Hour Limit / week</RowTitle>
+                        <RowTitle smallMobile>Rate</RowTitle>
+                        <RowTitle smallMobile>Hour Limit <ClearMobile>/ week</ClearMobile></RowTitle>
                         <RowTitle>Current Balance</RowTitle>
                     </Row>
                     {contracts.map((item, index) => {
                         return (
                             <Row key={index}>
                                 <RowItem>{ValidationUtils._toUpper(item?.freelancerId?.userId?.FullName)}</RowItem>
-                                <RowItem>$ {item.hourlyRate}.00</RowItem>
-                                <RowItem>{item.hoursLimit}</RowItem>
+                                <RowItem smallMobile>$ {item?.hourlyRate}.00</RowItem>
+                                <RowItem smallMobile>{item?.hoursLimit}</RowItem>
                                 <RowItem>$ {calcAmtOwed(item).toLocaleString()}.00</RowItem>
                             </Row>
                         )
@@ -158,7 +210,7 @@ const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) 
                         )}
                     </LeftTwo>
                     <RightTwo>
-                        <RowTitle left>Next Billing Date</RowTitle>
+                        <RowTitleFixed left>Next Billing Date</RowTitleFixed>
                     {paymentDate ? (
                         <RowItem left>{getNextBillingDate(paymentDate)}</RowItem>
                     ) : (

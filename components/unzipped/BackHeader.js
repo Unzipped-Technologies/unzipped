@@ -22,6 +22,14 @@ const Content = styled.div`
     align-items: center;
     padding: 30px 0px;
     border-bottom: #555 solid 1px;
+    @media(max-width: 960px) {
+        padding: 30px 30px;
+    }
+    @media(max-width: 600px) {
+        padding: 15px 15px;
+        box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.25);
+        border-bottom: none;
+    }
 `;
 
 const BackButton = styled.div`
