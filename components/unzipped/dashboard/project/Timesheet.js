@@ -253,31 +253,38 @@ const Timesheet = ({
   }
 
   const addTasks = async tasks => {
-    const taskHours = tasks.map(task => {
-      return {
-        taskId: task,
-        hours: 0,
-        invoiceId: selectedInvoice?._id || null,
-        day: selectedDay,
-        createdAt: selectedDayDate,
-        updatedAt: selectedDayDate
+    const taskHours = []
+    const dayOfWeek = daysOfWeek[selectedDay]
+
+    for (var task of tasks) {
+      if (!sortedData[dayOfWeek]?.find(item => item.taskId === task)) {
+        taskHours.push({
+          taskId: task,
+          hours: 0,
+          invoiceId: selectedInvoice?._id || null,
+          day: selectedDay,
+          createdAt: selectedDayDate,
+          updatedAt: selectedDayDate
+        })
       }
-    })
-    if (selectedInvoice?._id) {
-      await addInvoiceTasks(selectedInvoice?._id, {
-        tasksHours: taskHours,
-        freelancerId: freelancerId
-      })
-    } else {
-      await createInvoice({
-        tasks: [],
-        tasksHours: taskHours,
-        businessId: projectDetails?._id,
-        freelancerId: freelancerId,
-        clientId: projectDetails?.userId
-      })
     }
-    await getInvoices({ businessId: businessId })
+    if (taskHours?.length) {
+      if (selectedInvoice?._id) {
+        await addInvoiceTasks(selectedInvoice?._id, {
+          tasksHours: taskHours,
+          freelancerId: freelancerId
+        })
+      } else {
+        await createInvoice({
+          tasks: [],
+          tasksHours: taskHours,
+          businessId: projectDetails?._id,
+          freelancerId: freelancerId,
+          clientId: projectDetails?.userId
+        })
+      }
+      await getInvoices({ businessId: businessId })
+    }
   }
 
   const handleSubmit = async () => {
@@ -389,7 +396,6 @@ const Timesheet = ({
                                 {item?.task?.taskName}{' '}
                               </P>
                               <div style={{ width: '15%' }}>
-                                {console.log('hours', item)}
                                 {(!item.hours || selectedTaskId === item._id) && isCurrenWeek ? (
                                   <FormField
                                     zIndexUnset

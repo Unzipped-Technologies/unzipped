@@ -106,6 +106,8 @@ const AddTasksModal = ({
       openNewTasksModal()
     } else {
       onAdd && (await onAdd(tasks?.map(task => task.value)))
+      await HideNewTasksModal()
+      await onHide()
     }
   }
 
@@ -254,7 +256,7 @@ const AddTasksModal = ({
             {newTasks?.length
               ? newTasks.map((task, taskIndex) => {
                   return (
-                    <div key={`${task?.taskName}`}>
+                    <div key={`${task?.taskName}`} style={{ marginBottom: '20px' }}>
                       <div
                         style={{
                           display: 'flex',
