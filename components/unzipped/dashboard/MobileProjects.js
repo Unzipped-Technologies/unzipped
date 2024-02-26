@@ -8,7 +8,7 @@ import IconComponent from '../../ui/icons/IconComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import MobileFreelancerCard from './MobileFreelancerCard'
 import { getListEntriesById, getRecentlyViewedList, getTeamMembers } from '../../../redux/ListEntries/action'
-import { getBusinessList } from '../../../redux/Business/actions'
+import { getProjectsList } from '../../../redux/Business/actions'
 import RenderIcon from '../RenderIcon'
 
 const P = styled.p`
@@ -33,12 +33,15 @@ function MobileProjects({ businesses = [], getProjectsList }) {
 
   const limitedProjects = useMemo(() => businesses.slice(0, 3), [businesses])
 
-            {userListItems && userListItems.slice(0,3).map(item => (
-                <Heading>
-                    {item.icon && (<RenderIcon iconName={item.icon} />)}
-                    <P onClick={() => handleListChangeEv(item)}>{item.name}</P>
-                </Heading>
-            ))}
+  {
+    userListItems &&
+      userListItems.slice(0, 3).map(item => (
+        <Heading>
+          {item.icon && <RenderIcon iconName={item.icon} />}
+          <P onClick={() => handleListChangeEv(item)}>{item.name}</P>
+        </Heading>
+      ))
+  }
 
   return (
     <div className="px-4 mb-5 pb-4">
@@ -113,15 +116,15 @@ function MobileProjects({ businesses = [], getProjectsList }) {
 }
 
 const mapStateToProps = state => {
-    return {
-        businesses: state.Business?.businesses
-    }
+  return {
+    businesses: state.Business?.businesses
+  }
 }
 
 const mapDispatchToProps = dispatch => {
-    return {
-        getBusinessList: bindActionCreators(getBusinessList, dispatch)
-    }
+  return {
+    getProjectsList: bindActionCreators(getProjectsList, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MobileProjects)
