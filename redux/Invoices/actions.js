@@ -16,7 +16,7 @@ export const createInvoice = data => async (dispatch, getState) => {
   dispatch(startLoading())
 
   await axios
-    .post(`/api/invoice`, data, tokenConfig(getState()?.Auth.token))
+    .post(`/api/invoice/create`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: CREATE_INVOICE,
@@ -57,26 +57,25 @@ export const getInvoices =
     dispatch(stopLoading())
   }
 
-export const getUnpaidInvoices = () =>
-  async (dispatch, getState) => {
-    dispatch(startLoading())
+export const getUnpaidInvoices = () => async (dispatch, getState) => {
+  dispatch(startLoading())
 
-    await axios
-      .get(`/api/invoice/fetch/unpaid`, tokenConfig(getState()?.Auth.token))
-      .then(res => {
-        dispatch({
-          type: GET_UNPAID_INVOICES,
-          payload: res.data
-        })
+  await axios
+    .get(`/api/invoice/fetch/unpaid`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: GET_UNPAID_INVOICES,
+        payload: res.data
       })
-      .catch(err => {
-        dispatch({
-          type: INVOICE_ERROR,
-          payload: err.response
-        })
+    })
+    .catch(err => {
+      dispatch({
+        type: INVOICE_ERROR,
+        payload: err.response
       })
-    dispatch(stopLoading())
-  }
+    })
+  dispatch(stopLoading())
+}
 
 export const getInvoiceById = invoiceID => async (dispatch, getState) => {
   dispatch(startLoading())
@@ -102,6 +101,25 @@ export const updateInvoice = (invoiceID, data) => async (dispatch, getState) => 
   dispatch(startLoading())
   await axios
     .put(`/api/invoice/update/${invoiceID}`, data, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: UPDATE_INVOICE,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: INVOICE_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const addInvoiceTasks = (invoiceID, data) => async (dispatch, getState) => {
+  dispatch(startLoading())
+  await axios
+    .put(`/api/invoice/update/${invoiceID}/add-tasks`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: UPDATE_INVOICE,

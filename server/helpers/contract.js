@@ -1,17 +1,29 @@
 const Contracts = require('../models/Contract')
 const Business = require('../models/Business')
-const ThirdPartyApplications = require('../models/ThirdPartyApplications')
+const Department = require('../models/Department')
 const PaymentMethod = require('../models/PaymentMethod')
+const ThirdPartyApplications = require('../models/ThirdPartyApplications')
 const mongoose = require('mongoose')
 const keys = require('../../config/keys')
-const Department = require('../models/Department')
 const stripe = require('stripe')(`${keys.stripeSecretKey}`)
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 
 const createContracts = async data => {
-  const { businessId, freelancerId, userId } = data
+  const { businessId, freelancerId, departmentId, userId } = data
   try {
+    const { getBusinessWithoutPopulate } = require('./business')
+    const { getDepartmentWithoutPopulate } = require('./department')
+    // Check whether the business against businessId exist OR not
+    const businessData = await getBusinessWithoutPopulate(businessId, '')
+    if (!businessData) throw new Error(`Business not exist.`)
+
+    // Check whether the department against departmentId exist OR not
+    const departmentData = await getDepartmentWithoutPopulate({ _id: departmentId }, '')
+    if (!departmentData) throw new Error(`Department not exist.`)
+
+    if (!businessData.departments?.includes(departmentId)) throw new Error(`Department not exist in this business.`)
+
     const existingPaymentMethod = await PaymentMethod.findOne({
       userId: userId
     })
@@ -20,6 +32,7 @@ const createContracts = async data => {
     }
     const existingContract = await Contracts.findOne({
       businessId: businessId,
+      departmentId: departmentId,
       freelancerId: freelancerId
     })
 
@@ -28,6 +41,18 @@ const createContracts = async data => {
     }
     const newContract = new Contracts(data)
     const savedContract = await newContract.save()
+    if (departmentData?.employees?.length) {
+      departmentData.employees.push(newContract?._id)
+    } else {
+      departmentData.employees = [newContract?._id]
+    }
+    if (businessData?.employees?.length) {
+      businessData.employees.push(newContract?._id)
+    } else {
+      businessData.employees = [newContract?._id]
+    }
+    await departmentData.save()
+    await businessData.save()
     return savedContract
   } catch (e) {
     throw Error(`Something went wrong: ${e.message}`)
@@ -96,8 +121,8 @@ const createPaymentMethod = async data => {
   }
 }
 
-const deletePaymentMethod = async (id) => {
-  return await PaymentMethod.findByIdAndDelete(id);
+const deletePaymentMethod = async id => {
+  return await PaymentMethod.findByIdAndDelete(id)
 }
 
 const countContracts = async filter => {
@@ -328,7 +353,13 @@ const endContract = async id => {
 
 const deleteContract = async id => {
   try {
-    await Contracts.findByIdAndDelete(id)
+    await Business.findOneAndUpdate({ employees: { $in: [mongoose.Types.ObjectId(id)] } }, { $pull: { employees: id } })
+    await Department.findOneAndUpdate(
+      { employees: { $in: [mongoose.Types.ObjectId(id)] } },
+      { $pull: { employees: id } }
+    )
+    const response = await Contracts.findByIdAndDelete(id)
+    return response
   } catch (e) {
     throw Error(`Could not delete contract, error: ${e}`)
   }
@@ -346,5 +377,6 @@ module.exports = {
   updateContractByFreelancer,
   createStripeCustomer,
   createPaymentMethod,
-  endContract
+  endContract,
+  getContractWithoutPopulate
 }

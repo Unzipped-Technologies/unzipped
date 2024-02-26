@@ -223,7 +223,6 @@ const ImageContainer = styled.div`
 `
 
 const DesktopProjectDetail = ({ projectDetails }) => {
-  console.log('project_details', projectDetails)
   return (
     <>
       <Desktop>

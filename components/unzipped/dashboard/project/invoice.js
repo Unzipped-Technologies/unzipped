@@ -108,6 +108,7 @@ const HoursDiv = styled.div`
   background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   padding: 24px 15px;
+  height: fit-content;
 `
 
 const Select = styled.select`
@@ -119,8 +120,7 @@ const Select = styled.select`
 
 function Invoice({
   weekOptions,
-  handletake,
-  take,
+  take = 25,
   getInvoices,
   getBusinessById,
   selectedWeek,
@@ -138,7 +138,6 @@ function Invoice({
   const [fee, setFee] = useState(0)
   const [totalAmount, setAmount] = useState(0)
   const [searchFilter, setSearchFilter] = useState('')
-
   useEffect(() => {
     getInvoices({
       businessId: id,
@@ -154,7 +153,7 @@ function Invoice({
   useEffect(() => {
     if (selectedWeek !== null && selectedWeek !== undefined && invoices?.length) {
       const filteredItems = invoices.filter(item => {
-        const itemDate = new Date(item.updatedAt)
+        const itemDate = new Date(item.createdAt)
         const startOfWeek = weekOptions[selectedWeek].startOfWeek
         const endOfWeek = weekOptions[selectedWeek].endOfWeek
         return itemDate >= startOfWeek && itemDate <= endOfWeek
@@ -167,13 +166,11 @@ function Invoice({
     if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null && invoices?.length) {
       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
       const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
-      filteredData.forEach(item => {
-        item.task.forEach(taskObj => {
-          taskObj.taskHours.forEach(taskHour => {
-            const itemDate = new Date(taskHour.createdAt)
-            const dayOfWeek = daysOfWeek[itemDate.getDay()]
-            organizedItems[dayOfWeek].push(taskHour)
-          })
+      filteredData?.forEach(item => {
+        item?.tasks?.forEach(task => {
+          const taskDate = new Date(task.updatedAt)
+          const dayOfWeek = daysOfWeek[taskDate.getDay()]
+          organizedItems[dayOfWeek].push(task)
         })
       })
       setSortedData(organizedItems)
@@ -191,6 +188,7 @@ function Invoice({
         }
         fee = subTotal * 0.05
       } else {
+        console.log('filteredData[0]', filteredData[0])
         subTotal = filteredData[0]?.contract?.hourlyRate * filteredData[0]?.hoursWorked
         fee = subTotal * 0.05
       }

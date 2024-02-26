@@ -8,8 +8,9 @@ module.exports = {
   googleClientSecret: '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',
   googleApiKey: 'AIzaSyDtayOFbb3R-I_0lwlhCovFDBZJzc4K_4k',
   //database
-  mongoURI:
-    'mongodb://jason123:Myfirst1@contactkeeper-shard-00-00.n6tza.mongodb.net:27017,contactkeeper-shard-00-01.n6tza.mongodb.net:27017,contactkeeper-shard-00-02.n6tza.mongodb.net:27017/?replicaSet=atlas-68rw1e-shard-0&ssl=true&authSource=admin',
+  // mongoURI:
+  //   'mongodb://jason123:Myfirst1@contactkeeper-shard-00-00.n6tza.mongodb.net:27017,contactkeeper-shard-00-01.n6tza.mongodb.net:27017,contactkeeper-shard-00-02.n6tza.mongodb.net:27017/?replicaSet=atlas-68rw1e-shard-0&ssl=true&authSource=admin',
+  mongoURI: 'mongodb://localhost:27017/unzipped',
   // 'mongodb+srv://jason123:Welcome75$#31@contactkeeper.n6tza.mongodb.net/?retryWrites=true&w=majority',
   // `mongodb+srv://DeveloperAccount:7CELAMCzusr89y@cluster1.szxtq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
   CLOUDINARY_URL: 'cloudinary://367721181168573:LDo3thl241Z86yWH59SVb0dU5H4@dghsmwkfq',

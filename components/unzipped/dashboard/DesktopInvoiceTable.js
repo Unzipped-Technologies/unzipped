@@ -27,7 +27,13 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
         {
           text: 'View Details',
           onClick: () => {
-            router.push(`/dashboard/projects/client/invoice/${rowData.businessId}`)
+            router.push(
+              {
+                pathname: `/dashboard/projects/freelancer/invoice/[_id]`,
+                query: { tab: 'invoices' }
+              },
+              `/dashboard/projects/freelancer/invoice/${rowData.businessId}`
+            )
           }
         }
       ]
@@ -44,8 +50,8 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
           onClick: () => {
             router.push(
               {
-                pathname: '/dashboard/projects/client/invoice/[_id]',
-                query: { freelancer: rowData.freelancerId }
+                pathname: `/dashboard/projects/client/invoice/[_id]`,
+                query: { freelancer: rowData.freelancerId, tab: 'invoices' }
               },
               `/dashboard/projects/client/invoice/${rowData.businessId}`
             )

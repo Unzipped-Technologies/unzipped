@@ -20,7 +20,7 @@ const Container = styled.div`
   border-radius: 10px;
 `
 
-const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role, limit, page }) => {
+const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role, limit, page, freelancerId }) => {
   const router = useRouter()
 
   useEffect(async () => {
@@ -93,6 +93,18 @@ const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role
         {
           text: 'View Work',
           onClick: () => console.log('ITEM 3')
+        },
+
+        {
+          text: 'View Invoice',
+          onClick: () =>
+            router.push(
+              {
+                pathname: `/dashboard/projects/freelancer/invoice/[_id]`,
+                query: { freelancer: freelancerId, tab: 'invoices' }
+              },
+              `/dashboard/projects/freelancer/invoice/${item._id}`
+            )
         }
       ]
     }
@@ -116,7 +128,9 @@ const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role
           {businesses?.length > 0 &&
             businesses?.map(row => (
               <tr key={row._id}>
-                <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>{row.name}</TableData>
+                <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>
+                  {row.name}
+                </TableData>
                 <TableData>{row.budget || 0}</TableData>
                 <TableData>{row.equity || 0}</TableData>
                 <TableData>27</TableData>
@@ -167,7 +181,8 @@ const mapStateToProps = state => {
   return {
     businesses: state.Business?.projectList,
     loading: state.Business?.loading,
-    role: state.Auth.user.role
+    role: state.Auth.user.role,
+    freelancerId: state.Auth.user?.freelancers
   }
 }
 

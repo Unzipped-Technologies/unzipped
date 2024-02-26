@@ -8,8 +8,9 @@ import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
-import Invoices from '../../../../components/unzipped/dashboard/Invoices'
+import InvoicesTable from '../../../../components/unzipped/dashboard/InvoicesTable'
 import DesktopProjectDetail from '../../../../components/unzipped/dashboard/DesktopProjectDetail'
+import Timesheet from '../../../../components/unzipped/dashboard/project/Timesheet'
 
 const Navbar = styled.div`
   margin-bottom: 160px;
@@ -224,6 +225,10 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
     getBusinessById(id)
   }, [id])
 
+  const handleWeekChange = value => {
+    setSelectedWeek(value)
+  }
+
   return (
     <>
       <Navbar>
@@ -273,7 +278,12 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
         {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
         {selectedTab === 2 && <HiringTable />}
-        {selectedTab === 3 && <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} />}
+        {selectedTab === 3 &&
+          (role === 0 ? (
+            <InvoicesTable selectedWeek={selectedWeek} weekOptions={weekOptions} />
+          ) : (
+            <Timesheet businessId={id} />
+          ))}
       </TabContent>
     </>
   )

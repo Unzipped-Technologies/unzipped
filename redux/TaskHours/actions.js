@@ -16,21 +16,24 @@ import { ConverterUtils } from '../../utils'
 export const createTaskHour = data => async (dispatch, getState) => {
   dispatch(startLoading())
 
-  await axios
+  const taskHours = await axios
     .post(`/api/taskHours/create`, data, tokenConfig(getState()?.Auth.token))
-    .then(res =>
+    .then(res => {
       dispatch({
         type: CREATE_TASK_HOUR,
         payload: res.data
       })
-    )
+      return res?.data?.data
+    })
     .catch(err => {
       dispatch({
         type: TASK_HOUR_ERROR,
         payload: err.response
       })
+      return err
     })
   dispatch(stopLoading())
+  return taskHours
 }
 
 export const getTaskHour =
@@ -81,10 +84,8 @@ export const getTaskHourById = taskHourID => async (dispatch, getState) => {
 export const updateTaskHour = (taskHourID, data) => async (dispatch, getState) => {
   dispatch(startLoading())
 
-  const formData = ConverterUtils.toFormData(data)
-
   await axios
-    .patch(`/api/taskHours/${taskHourID}`, formData, tokenConfig(getState()?.Auth.token))
+    .patch(`/api/taskHours/${taskHourID}`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: UPDATE_TASK_HOUR,
