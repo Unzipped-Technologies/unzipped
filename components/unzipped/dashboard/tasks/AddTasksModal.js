@@ -55,7 +55,7 @@ const AddTasksModal = ({
   const [newTasks, setNewTasks] = useState([])
 
   useEffect(() => {
-    getTasks({ businessId: businessId, limit: 'all', freelancerId: freelancerId })
+    getTasks({ businessId: businessId, limit: 'all', freelancerId: null })
   }, [])
 
   useEffect(() => {

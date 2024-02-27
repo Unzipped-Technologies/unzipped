@@ -99,6 +99,10 @@ const InputControl = styled.input`
   &:focus {
     box-shadow: 0 0 0 0 #ffffff !important;
   }
+  &[type='number']::-webkit-inner-spin-button,
+  &[type='number']::-webkit-outer-spin-button {
+    opacity: 1;
+  }
 `
 
 const CurrencyControl = styled(CurrencyInput).attrs({
