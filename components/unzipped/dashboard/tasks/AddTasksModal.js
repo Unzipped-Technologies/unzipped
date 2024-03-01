@@ -28,15 +28,15 @@ const List = styled.ul`
 `
 
 const Item = styled.li`
-  font-family: Arial;
+  font-family: Roboto;
   font-style: normal;
   display: flex;
   flex-direction: row;
   letter-spacing: 0.39998000860214233px;
-  color: #000000;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 25px;
+  color: ${({ color }) => (color ? color : '#000000')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '500')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '25px')};
   align-items: center;
 `
 
@@ -398,11 +398,11 @@ const AddTasksModal = ({
             aria-labelledby="story-preview-modal"
             aria-describedby="story-preview-modal-description">
             <DialogContent dividers>
-              <div style={{ marginTop: '-10px' }}>
-                <TitleText mobile color="#222222">
+              <div style={{ marginTop: '20px' }}>
+                <TitleText mobile color="#000000" fontSize="16px" lineHeight="18.75px">
                   <b>Select a ticket</b>
                 </TitleText>
-                <TitleText color="#333333" paddingTop="10px">
+                <TitleText light color="#333333" paddingTop="10px" fontSize="16px" lineHeight="18.75px">
                   Start typing to select an assigned task
                 </TitleText>
                 <div
@@ -431,7 +431,7 @@ const AddTasksModal = ({
                       options={taskOptions}
                       renderInput={params => (
                         <div ref={params.InputProps.ref}>
-                          <input type="text" {...params.inputProps} />
+                          <input type="text" {...params.inputProps} placeholder="Type a task and hit enter..." />
                         </div>
                       )}
                       freeSolo
@@ -479,7 +479,7 @@ const AddTasksModal = ({
                       tasks.map((task, index) => {
                         return (
                           <div
-                            style={{ display: 'flex', flexDirection: 'row' }}
+                            style={{ display: 'flex', flexDirection: 'row', marginLeft: '10px' }}
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
                               style={{
@@ -490,29 +490,27 @@ const AddTasksModal = ({
                                 paddingRight: '1px !important',
                                 width: '7px',
                                 height: '7px',
-                                margin: '10px 5px 0px 0px',
+                                margin: '6px 5px 0px 0px',
                                 padding: '0px !important'
                               }}>
-                              <CloseIcon width="7px" height="7px" color="#FFFFFF" />
+                              <CloseIcon width="8px" height="8px" color="#FFFFFF" />
                             </span>
-                            <Item>
-                              <p>{task?.taskName}</p>
+                            <Item fontSize="16px" fontWeight="400" lineHeight="20.5px">
+                              {task?.taskName}
                             </Item>
                           </div>
                         )
                       })
                     ) : (
-                      <List>
-                        <Item>
-                          <p>Create a new task and click add and it will display here</p>
-                        </Item>
-                      </List>
+                      <TitleText color="#000000" paddingTop="10px" fontSize="16px" lineHeight="20.5px">
+                        Create a new task and click add and it will display here
+                      </TitleText>
                     )}
                   </List>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', marginTop: '30px' }}>
                   <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={onHide}>
-                    CANCEL
+                    BACK
                   </Button>
                   <Button
                     disabled={false}
@@ -521,8 +519,8 @@ const AddTasksModal = ({
                     buttonHeight="25px"
                     oval
                     type="black"
-                    margin="0px 0px 0px 20px">
-                    ADD TASK
+                    margin="0px 0px 0px 10px">
+                    SAVE
                   </Button>
                 </div>
               </div>
@@ -537,16 +535,10 @@ const AddTasksModal = ({
             aria-describedby="story-preview-modal-description">
             <DialogContent dividers>
               <div>
-                <TitleText mobile color="#222222" fontSize="16px" lineHeight="18.75px" fontWeight="500">
-                  <b>Create new tasks</b>
+                <TitleText mobile color="#000000" fontSize="16px" lineHeight="18.75px">
+                  Create new tasks
                 </TitleText>
-                <TitleText
-                  color="#333333"
-                  paddingTop="10px"
-                  width="100%"
-                  fontSize="16px"
-                  lineHeight="18.75px"
-                  fontWeight="400">
+                <TitleText color="#333333" paddingTop="10px" width="100%" fontSize="16px" lineHeight="18.75px" light>
                   A few of the tasks you are adding are not assigned to you. Please add more details to create them.
                 </TitleText>
                 {newTasks?.length
@@ -556,11 +548,15 @@ const AddTasksModal = ({
                           key={`${task?.taskName}`}
                           style={{
                             marginBottom: '20px',
-                            borderBottom: '1px solid #CACACA',
-                            marginTop: '10px'
+                            borderBottom: '1px solid #CACACA'
                           }}>
                           <div style={{ width: '100%' }}>
-                            <TitleText color="#333333" paddingTop="30px" fontSize="15px" paddingLeft="10px">
+                            <TitleText
+                              color="#333333"
+                              paddingTop="30px"
+                              fontSize="14px"
+                              lineHeight="24.5px"
+                              paddingLeft="10px">
                               {task?.taskName}
                             </TitleText>
                           </div>
@@ -592,7 +588,7 @@ const AddTasksModal = ({
                                 style={{
                                   fontFamily: 'Roboto',
                                   fontSize: '14px',
-                                  fontWeight: 200,
+                                  fontWeight: 400,
                                   lineHeight: '25px',
                                   letterSpacing: '0.39998000860214233px',
                                   textAlign: 'center',
@@ -611,7 +607,12 @@ const AddTasksModal = ({
                                   setDetailIndex(taskIndex)
                                 }
                               }}>
-                              <TitleText color="#1976D2" fontSize="12px" width="100px">
+                              <TitleText
+                                color="#1976D2"
+                                fontSize="12px"
+                                width="100px"
+                                lineHeight="24.5px"
+                                paddingTop="20px">
                                 {detailIndex === taskIndex ? 'COLLAPSE' : 'ADD DETAILS'}
                               </TitleText>
                             </div>
@@ -655,16 +656,27 @@ const AddTasksModal = ({
                   : ''}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-                  <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={HideNewTasksModal}>
+                  <Button
+                    width="63px"
+                    buttonHeight="25px"
+                    background="#FFFFFF"
+                    colors={{
+                      text: '#1976D2',
+                      border: '#1976D2'
+                    }}
+                    onClick={HideNewTasksModal}>
                     CANCEL
                   </Button>
                   <Button
                     disabled={false}
                     onClick={handleSubmit}
+                    background="#1976D2"
+                    colors={{
+                      text: '#FFFFFF',
+                      border: '#FFFFFF'
+                    }}
                     width="63px"
                     buttonHeight="25px"
-                    oval
-                    type="black"
                     margin="0px 0px 0px 20px">
                     ADD TASK(S)
                   </Button>

@@ -335,14 +335,6 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
             {window.innerWidth > 680 ? (
               <Timesheet businessId={projectDetails?._id} displayFormat={displayFormat} />
             ) : (
-              // <Invoice
-              //   weekOptions={weekOptions}
-              //   handletake={handletake}
-              //   take={take}
-              //   selectedWeek={selectedWeek}
-              //   handleWeekChange={handleWeekChange}
-              //   displayFormat={displayFormat}
-              // />
               <MobileDisplayBox>
                 <ClientMobileInvoices
                   weekOptions={weekOptions}

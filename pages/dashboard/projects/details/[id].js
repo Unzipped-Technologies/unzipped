@@ -166,9 +166,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [selectedWeek, setSelectedWeek] = useState(0)
 
   const router = useRouter()
-  const { id } = router.query
-  const { tab } = router.query
-
+  const { id, tab } = router.query
+  console.log('tab', tab)
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)

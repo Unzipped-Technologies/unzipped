@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { FormField } from '../../../ui'
+import { FaRegCheckCircle } from 'react-icons/fa'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Accordion from '@material-ui/core/Accordion'
@@ -418,8 +419,17 @@ const SingleWeekInvoiceView = ({
                     {sortedData[day]?.map(task => {
                       return (
                         <Tasks key={`${task._id}`}>
-                          <TaskIcon color={task.task?.status === 'done' ? '#5dc26a' : '#D8D8D8'}>
-                            <MdCheckCircle />
+                          <TaskIcon>
+                            <FaRegCheckCircle
+                              size={15}
+                              color={
+                                task?.task?.tag?.tagName?.includes('In Progress')
+                                  ? '#FFA500'
+                                  : task?.task?.tag?.tagName?.includes('Done')
+                                  ? '#198754'
+                                  : '#D8D8D8'
+                              }
+                            />
                           </TaskIcon>
                           <TaskName>{task?.task?.taskName}</TaskName>
                           <TaskHours

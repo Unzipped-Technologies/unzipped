@@ -7,7 +7,7 @@ import Accordion from '@material-ui/core/Accordion'
 import { makeStyles } from '@material-ui/core/styles'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
-import { MdCheckCircle } from 'react-icons/md'
+import { FaRegCheckCircle } from 'react-icons/fa'
 
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -183,15 +183,17 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
                           {row?.tasks?.map(task => {
                             return (
                               <Tasks key={task._id}>
-                                <TaskIcon
-                                  color={
-                                    task?.tag?.tagName?.includes('In')
-                                      ? '#FFA500'
-                                      : task?.tag?.tagName?.includes('Done')
-                                      ? '#198754'
-                                      : '#D8D8D8'
-                                  }>
-                                  <MdCheckCircle />
+                                <TaskIcon>
+                                  <FaRegCheckCircle
+                                    size={15}
+                                    color={
+                                      task?.task?.tag?.tagName?.includes('In Progress')
+                                        ? '#FFA500'
+                                        : task?.task?.tag?.tagName?.includes('Done')
+                                        ? '#198754'
+                                        : '#D8D8D8'
+                                    }
+                                  />
                                 </TaskIcon>
                                 <TaskName>{task.task?.taskName}</TaskName>
                                 <TaskHours>{task?.hours || 0} Hours</TaskHours>

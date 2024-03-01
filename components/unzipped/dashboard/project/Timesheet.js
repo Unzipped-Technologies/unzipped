@@ -238,7 +238,7 @@ const Timesheet = ({
       totalAmount = subTotal - fee
     }
     setSubTotal(subTotal)
-    setFee(fee)
+    setFee(Math.round(fee))
     setAmount(totalAmount)
   }, [filteredData])
 

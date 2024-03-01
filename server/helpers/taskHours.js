@@ -1,5 +1,3 @@
-const Department = require('../models/Department')
-const Task = require('../models/Task')
 const TaskHoursModel = require('../models/TaskHours')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
@@ -155,7 +153,7 @@ const updateTaskHours = async (hours, _id) => {
 
     const invoiceData = await getInvoiceWithoutPopulate({ tasks: { $in: [_id] } })
     if (!invoiceData) throw Error(`Invoice against task hour not found.`)
-    invoiceData.hoursWorked = +invoiceData.hoursWorked + +hours
+    invoiceData.hoursWorked = +invoiceData?.hoursWorked + +hours
 
     taskHourData.hours = +hours
 

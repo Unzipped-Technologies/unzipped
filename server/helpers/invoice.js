@@ -9,14 +9,13 @@ const createInvoice = async data => {
     if (!businessData) throw new Error(`Business not exist.`)
 
     data.clientId = businessData.userId
+    data['hoursWorked'] = 0
 
     const { getTaskWithoutPopulate } = require('./task')
     const { createManyTaskHours } = require('./taskHours')
 
     for (var task of data.tasksHours) {
       const taskData = await getTaskWithoutPopulate({ _id: task?.taskId }, 'assignee businessId taskName')
-      if (taskData?.assignee?.toString() != data.freelancerId)
-        throw new Error(`You can only create invoice of your own tasks.`)
       if (taskData?.businessId?.toString() != data.businessId)
         throw new Error(`${taskData?.taskName} not exist in this business.`)
     }
@@ -28,6 +27,7 @@ const createInvoice = async data => {
       data?.tasksHours.map(taskHour => {
         return {
           ...taskHour,
+          hours: 0,
           invoiceId: response._id,
           freelancerId: data?.freelancerId
         }
