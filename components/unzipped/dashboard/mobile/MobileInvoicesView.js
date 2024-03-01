@@ -5,7 +5,7 @@ import ClientInvoices from './ClientInvoices'
 import SingleWeekInvoiceView from './SingleWeekInvoiceView'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 import { connect } from 'react-redux'
-
+import ProjectsInvoices from './ProjectsInvoices'
 const MobileView = styled.div`
   background-color: #f7f7f7;
   @media (min-width: 680px) {
@@ -22,7 +22,13 @@ const MobileInvoicesView = ({ selectedWeek, weekOptions, role, freelancerId }) =
       {role !== 1 && <ClientInvoices selectedWeek={selectedWeek} weekOptions={weekOptions} />}
       {/* Show freelancer invoices */}
       {role === 1 && (
-        <SingleWeekInvoiceView weekOptions={weekOptions} selectedWeek={selectedWeek} freelancerId={freelancerId} />
+        <ProjectsInvoices />
+        // <SingleWeekInvoiceView
+        //   weekOptions={weekOptions}
+        //   selectedWeek={selectedWeek}
+        //   freelancerId={freelancerId}
+        //   timeSheet={true}
+        // />
       )}
       <MobileFreelancerFooter />
     </MobileView>

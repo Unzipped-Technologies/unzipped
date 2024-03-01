@@ -53,6 +53,25 @@ export const resetBusinessForm = () => async (dispatch, getState) => {
   })
 }
 
+export const getBusinessDetails = (userId, token) => async (dispatch, getState) => {
+  const id = userId || getState().Auth.user._id
+  dispatch({ type: LOAD_STATE })
+  await axios
+    .post(`/api/business/details`, { userId: id }, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: GET_BUSINESS_DETAILS,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: BUSINESS_ERROR,
+        payload: err.response
+      })
+    })
+}
+
 export const createBusiness = (data, token) => async (dispatch, getState) => {
   //story Loading
   dispatch({ type: LOAD_STATE })

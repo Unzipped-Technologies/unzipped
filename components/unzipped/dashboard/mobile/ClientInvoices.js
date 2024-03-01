@@ -243,8 +243,8 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices, role
           }
         } else {
           const itemDate = new Date(item.updatedAt)
-          const startOfWeek = weekOptions[selectedWeek].startOfWeek
-          const endOfWeek = weekOptions[selectedWeek].endOfWeek
+          const startOfWeek = weekOptions[selectedWeek]?.startOfWeek
+          const endOfWeek = weekOptions[selectedWeek]?.endOfWeek
           return itemDate >= startOfWeek && itemDate <= endOfWeek
         }
       })
@@ -256,13 +256,13 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices, role
     if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null && invoices?.length) {
       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
       const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
-      filteredData.forEach(item => {
-        item.task.forEach(taskObj => {
-          taskObj.taskHours.forEach(taskHour => {
-            const itemDate = new Date(taskHour.createdAt)
-            const dayOfWeek = daysOfWeek[itemDate.getDay()]
-            organizedItems[dayOfWeek].push(taskHour)
-          })
+      filteredData?.forEach(item => {
+        item?.tasks?.forEach(task => {
+          const taskDate = new Date(task.updatedAt)
+          const dayOfWeek = daysOfWeek[taskDate.getDay()]
+          task['contract'] = item.contract
+          task['freelancer'] = item.freelancer
+          organizedItems[dayOfWeek].push(task)
         })
       })
       setSortedData(organizedItems)

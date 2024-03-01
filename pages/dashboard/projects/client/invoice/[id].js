@@ -8,6 +8,7 @@ import { TitleText, DarkText } from '../../../../../components/unzipped/dashboar
 import { getBusinessById } from '../../../../../redux/actions'
 import Nav from '../../../../../components/unzipped/header'
 import Invoice from '../../../../../components/unzipped/dashboard/project/invoice'
+import Timesheet from '../../../../../components/unzipped/dashboard/project/Timesheet'
 import ClientMobileInvoices from '../../../../../components/unzipped/dashboard/mobile/ClinetMobileInvoices'
 
 import ApplicationCard from '../../../../../components/unzipped/dashboard/ApplicationCard'
@@ -31,7 +32,7 @@ const MobileDisplayBox = styled.div`
 const Navbar = styled.div`
   margin-bottom: 160px;
   @media (max-width: 680px) {
-    margin-bottom: 0px !important;
+    margin-bottom: 120px !important;
     margin-top: 0px !important;
     padding-bottom: 0px !important;
     padding-top: 0px !important;
@@ -214,8 +215,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
   const [displayFormat, setDisplayFormat] = useState(false)
 
   const router = useRouter()
-  const { id } = router.query
-  const { tab } = router.query
+  const { tab, freelancer, id } = router.query
 
   const [selectedTab, setSelectedTab] = useState(0)
 
@@ -301,7 +301,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
             </Header>
             {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
           </HeaderDetail>
-          {selectedTab === 3 && (
+          {selectedTab === 3 && role === 0 && (
             <Toggle>
               <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                 <DarkText small>Day</DarkText>
@@ -332,14 +332,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 3 && (
           <>
             {window.innerWidth > 680 ? (
-              <Invoice
-                weekOptions={weekOptions}
-                handletake={handletake}
-                take={take}
-                selectedWeek={selectedWeek}
-                handleWeekChange={handleWeekChange}
-                displayFormat={displayFormat}
-              />
+              <Timesheet businessId={projectDetails?._id} displayFormat={displayFormat} approveInvoice={false} />
             ) : (
               <MobileDisplayBox>
                 <ClientMobileInvoices
