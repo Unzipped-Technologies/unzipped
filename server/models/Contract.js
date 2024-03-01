@@ -4,19 +4,23 @@ const contractsSchema = new mongoose.Schema(
   {
     businessId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'businesses'
+      ref: 'businesses',
+      required: true
     },
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'departments'
+      ref: 'departments',
+      required: true
     },
     freelancerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'freelancers'
+      ref: 'freelancers',
+      required: true
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users'
+      ref: 'users',
+      required: true
     },
     hourlyRate: {
       type: Number

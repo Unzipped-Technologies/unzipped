@@ -60,6 +60,19 @@ router.get('/fetch/unpaid', requireLogin, permissionCheckHelper.hasPermission('i
   }
 })
 
+router.put('/update/:id/add-tasks', requireLogin, permissionCheckHelper.hasPermission('invoice'), async (req, res) => {
+  try {
+    req.body['freelancerId'] = req?.user?.userInfo?.freelancers
+
+    const updatedInvoice = await invoiceHelper.addInvoiceTasks(req.params.id, req.body)
+    if (!updatedInvoice) throw new Error('Invoice not found')
+
+    res.json(updatedInvoice)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 router.put('/update/:id', requireLogin, permissionCheckHelper.hasPermission('invoice'), async (req, res) => {
   try {
     let updateFields = {}

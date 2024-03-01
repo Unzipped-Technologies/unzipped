@@ -9,8 +9,16 @@ router.post('/create', requireLogin, permissionCheckHelper.hasPermission('taskHo
   try {
     const { body } = req
     if (!body) throw Error('Task hours details cannot be empty!')
-    const taskHours = await taskHoursHelper.createTaskHours(body)
-    res.json(taskHours)
+    let response = null
+    if (Array.isArray(body?.taskHours) && body?.taskHours.length) {
+      for (var taskHour of body?.taskHours) {
+        taskHour['freelancerId'] = req.user?.userInfo?.freelancers
+      }
+      response = await taskHoursHelper.createManyTaskHours(body.taskHours)
+    } else {
+      response = await taskHoursHelper.createTaskHours(body)
+    }
+    res.json(response)
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
@@ -30,7 +38,7 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('taskHour
   try {
     const { hours } = req.body
     const { id } = req.params
-    if (!hours) throw Error('Task hours details cannot be empty!')
+    if (!hours || hours < 1) throw Error('Task hours details cannot be empty!')
     const taskHours = await taskHoursHelper.updateTaskHours(hours, id)
     res.json(taskHours)
   } catch (e) {

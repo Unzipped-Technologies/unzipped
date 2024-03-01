@@ -24,21 +24,24 @@ import { ConverterUtils } from '../../utils'
 export const createTask = data => async (dispatch, getState) => {
   dispatch(startLoading())
 
-  await axios
+  const newTask = await axios
     .post(`/api/tasks`, data, tokenConfig(getState()?.Auth.token))
-    .then(res =>
+    .then(res => {
       dispatch({
         type: CREATE_TASK,
         payload: res.data
       })
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: TASK_ERROR,
         payload: err.response
       })
+      return err
     })
   dispatch(stopLoading())
+  return newTask
 }
 
 export const getTasks =

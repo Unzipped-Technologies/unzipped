@@ -87,7 +87,7 @@ router.put('/freelancer', requireLogin, async (req, res) => {
 // Delete a contract by ID (DELETE)
 router.delete('/delete/:id', requireLogin, async (req, res) => {
   try {
-    await contractHelper.deleteContract(req.params.id)
+    const response = await contractHelper.deleteContract(req.params.id)
     res.json({ msg: 'Contract successfully deleted' })
   } catch (e) {
     res.status(400).json({ msg: e.message })

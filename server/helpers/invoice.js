@@ -8,40 +8,34 @@ const createInvoice = async data => {
     const businessData = await getBusinessWithoutPopulate(data.businessId, 'businessCode userId')
     if (!businessData) throw new Error(`Business not exist.`)
 
-    if (data.departmentId) {
-      const { getDepartmentWithoutPopulate } = require('./department')
-      // Check whether the department against departmentId exist OR not
-      const departmentData = await getDepartmentWithoutPopulate({ _id: data.departmentId })
-      if (!departmentData) throw new Error(`Department not exist.`)
-    }
-
     data.clientId = businessData.userId
 
-    if (!data?.tasks?.length) throw new Error(`Provide at least one task to create invoice.`)
-
     const { getTaskWithoutPopulate } = require('./task')
-    const { getMultipleTaskHours } = require('./taskHours')
+    const { createManyTaskHours } = require('./taskHours')
 
-    for (var task of data.tasks) {
-      const taskData = await getTaskWithoutPopulate({ _id: task }, 'assignee businessId taskName')
+    for (var task of data.tasksHours) {
+      const taskData = await getTaskWithoutPopulate({ _id: task?.taskId }, 'assignee businessId taskName')
       if (taskData?.assignee?.toString() != data.freelancerId)
         throw new Error(`You can only create invoice of your own tasks.`)
       if (taskData?.businessId?.toString() != data.businessId)
         throw new Error(`${taskData?.taskName} not exist in this business.`)
     }
 
-    const taskHours = await getMultipleTaskHours(
-      {
-        taskId: { $in: data.tasks }
-      },
-      'hours'
-    )
-
-    data.hoursWorked = taskHours.reduce((accumulator, currentTask) => {
-      return accumulator + currentTask.hours
-    }, 0)
     const newInvoice = await new Invoice(data)
-    const response = await newInvoice.save()
+    let response = await newInvoice.save()
+
+    const newTaskHours = await createManyTaskHours(
+      data?.tasksHours.map(taskHour => {
+        return {
+          ...taskHour,
+          invoiceId: response._id,
+          freelancerId: data?.freelancerId
+        }
+      })
+    )
+    newInvoice['tasks'] = await newTaskHours?.data?.map(taskHour => taskHour?._id)
+    response = await newInvoice.save()
+
     return response
   } catch (e) {
     throw new Error(`Something went wrong: ${e.message}`)
@@ -80,6 +74,7 @@ const getAllInvoices = async query => {
           hoursWorked: 1,
           hourlyRate: 1,
           status: 1,
+          tasks: 1,
           createdAt: 1,
           updatedAt: 1
         }
@@ -189,92 +184,73 @@ const getAllInvoices = async query => {
       },
       {
         $lookup: {
-          from: 'tasks',
-          let: { businessId: '$businessId', assignee: '$freelancerId' },
+          from: 'taskhours',
+          let: { invoiceId: '$_id' },
           pipeline: [
             {
               $match: {
                 $expr: {
-                  $and: [{ $eq: ['$businessId', '$$businessId'] }, { $eq: ['$assignee', '$$assignee'] }]
+                  $and: [{ $eq: ['$invoiceId', '$$invoiceId'] }]
                 }
               }
             },
             {
               $lookup: {
-                from: 'taskhours',
-                let: { taskId: '$_id' },
+                from: 'tasks',
+                let: { taskId: '$taskId' },
                 pipeline: [
                   {
                     $match: {
-                      $expr: { $eq: ['$taskId', '$$taskId'] }
+                      $expr: { $eq: ['$_id', '$$taskId'] }
                     }
                   },
                   {
                     $project: {
-                      hours: 1,
-                      taskId: 1,
-                      createdAt: 1,
-                      updatedAt: 1
+                      taskName: 1,
+                      ticketCode: 1,
+                      status: 1,
+                      assignee: 1,
+                      storyPoints: 1,
+                      tag: 1
                     }
                   },
                   {
+                    $sort: { createdAt: 1 } // 1 for ascending, -1 for descending
+                  },
+                  {
                     $lookup: {
-                      from: 'tasks',
-                      let: { taskId: '$taskId' },
+                      from: 'tags',
+                      let: { tagId: '$tag' },
                       pipeline: [
                         {
                           $match: {
-                            $expr: {
-                              $and: [{ $eq: ['$_id', '$$taskId'] }]
-                            }
+                            $expr: { $eq: ['$_id', '$$tagId'] }
                           }
                         },
                         {
                           $project: {
-                            taskName: 1,
-                            ticketCode: 1,
-                            status: 1,
-                            assignee: 1,
-                            taskHours: 1
+                            tagName: 1
                           }
+                        },
+                        {
+                          $sort: { createdAt: 1 } // 1 for ascending, -1 for descending
                         }
                       ],
-                      as: 'task'
+                      as: 'tag'
                     }
                   },
                   {
-                    $unwind: '$task'
-                  },
-                  {
-                    $sort: { createdAt: 1 } // 1 for ascending, -1 for descending
+                    $unwind: '$tag'
                   }
                 ],
-                as: 'taskHours'
+                as: 'task'
               }
             },
             {
-              $project: {
-                _id: 1,
-                // taskName: 1,
-                // ticketCode: 1,
-                // status: 1,
-                // assignee: 1,
-                taskHours: 1
-              }
+              $unwind: '$task'
             }
           ],
-          as: 'task'
-        }
-      },
-      {
-        $addFields: {
-          tasks: {
-            $map: {
-              input: '$tasks',
-              as: 'task',
-              in: '$$task'
-            }
-          }
+          as: 'tasks'
         }
       },
       { $skip: skip },
@@ -303,6 +279,34 @@ const updateInvoice = async (id, data) => {
     throw new Error(`Could not update invoice, error: ${e.message}`)
   }
 }
+
+const addInvoiceTasks = async (invoiceId, data) => {
+  try {
+    const invoiceData = await getInvoiceById(invoiceId)
+    if (!invoiceData) throw new Error(`Invoice not found`)
+
+    const { createManyTaskHours } = require('./taskHours')
+
+    const newTaskHours = await createManyTaskHours(
+      data?.tasksHours.map(taskHour => {
+        return {
+          ...taskHour,
+          freelancerId: data?.freelancerId
+        }
+      })
+    )
+    if (invoiceData?.tasks?.length) {
+      invoiceData.tasks = [...invoiceData.tasks, ...newTaskHours?.data?.map(taskHour => taskHour?._id)]
+    } else {
+      invoiceData.tasks = newTaskHours?.data?.map(taskHour => taskHour?._id)
+    }
+    await invoiceData.save()
+    return invoiceData
+  } catch (e) {
+    throw new Error(`Could not update invoice, error: ${e.message}`)
+  }
+}
+
 const deleteInvoice = async id => {
   try {
     await Invoice.softDelete({ _id: id })
@@ -320,30 +324,35 @@ const countInvoices = async filters => {
   }
 }
 
-const getUnpaidInvoices = async (query) => {
+const getUnpaidInvoices = async query => {
   try {
     let filters = {}
     if (query.businessId) {
-      filters.businessId = mongoose.Types.ObjectId(query.businessId);
+      filters.businessId = mongoose.Types.ObjectId(query.businessId)
     }
     if (query.freelancerId) {
-      filters.freelancerId = mongoose.Types.ObjectId(query.freelancerId);
+      filters.freelancerId = mongoose.Types.ObjectId(query.freelancerId)
     }
     if (query.clientId) {
-      filters.clientId = mongoose.Types.ObjectId(query.clientId);
+      filters.clientId = mongoose.Types.ObjectId(query.clientId)
     }
     if (query.departmentId) {
-      filters.departmentId = mongoose.Types.ObjectId(query.departmentId);
+      filters.departmentId = mongoose.Types.ObjectId(query.departmentId)
     }
-    // const count = await Invoice.countDocuments(filters);
-    // console.log('Count:', count);
-    const completedInvoices = await Invoice.find();
-    // console.log('Filtered Invoices:', completedInvoices);
-    return completedInvoices.filter(item => item.clientId === filters.clientId.toString() && !item.isPaid);
+    const completedInvoices = await Invoice.find()
+    return completedInvoices.filter(item => item.clientId === filters.clientId.toString() && !item.isPaid)
   } catch (e) {
-    throw new Error(`Could not get unpaid invoices, error: ${e.message}`);
+    throw new Error(`Could not get unpaid invoices, error: ${e.message}`)
   }
-};
+}
+
+const getInvoiceWithoutPopulate = async (filter, selectedFields = '') => {
+  try {
+    return await Invoice.findOne(filter).select(selectedFields)
+  } catch (e) {
+    throw new Error(`Could not retrieve invoice, error: ${e.message}`)
+  }
+}
 
 module.exports = {
   createInvoice,
@@ -351,5 +360,7 @@ module.exports = {
   getUnpaidInvoices,
   getAllInvoices,
   updateInvoice,
-  deleteInvoice
+  deleteInvoice,
+  addInvoiceTasks,
+  getInvoiceWithoutPopulate
 }

@@ -29,7 +29,9 @@ const SearchField = ({
   alignItems,
   margin,
   disableBorder,
-  zIndex
+  zIndex,
+  reference,
+  ...rest
 }) => {
   const customStyles = {
     dropdown: (provided, state) => ({
@@ -100,6 +102,8 @@ const SearchField = ({
   }
   return (
     <Select
+      ref={reference}
+      innerRef={reference}
       value={value?.label ? value : null}
       isMulti={isMulti}
       isDisabled={disabled ? disabled : false}
@@ -117,6 +121,7 @@ const SearchField = ({
       options={options}
       placeholder={placeholder}
       className="custom-react-select"
+      {...rest}
     />
   )
 }

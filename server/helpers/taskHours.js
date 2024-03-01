@@ -12,6 +12,15 @@ const createTaskHours = async taskHours => {
   }
 }
 
+const createManyTaskHours = async taskHours => {
+  try {
+    const result = await TaskHoursModel.insertMany(taskHours)
+    return { data: result }
+  } catch (e) {
+    throw Error(`Error: Failed to create task hours: ${e}`)
+  }
+}
+
 const getAllTaskHours = async (query, user) => {
   try {
     if (user?.role === 1) req.query['userId'] = user.freelancers
@@ -112,31 +121,6 @@ const getAllTaskHours = async (query, user) => {
       { $skip: skip },
       { $limit: limit }
     ]
-    // const aggregationPipeline = [
-    //   {
-    //     $match: { ...filter }
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: 'tasks',
-    //       localField: 'taskId',
-    //       foreignField: '_id',
-    //       as: 'task',
-    //       pipeline: [
-    //         {
-    //           $project: {
-    //             taskName: 1
-    //           }
-    //         }
-    //       ]
-    //     }
-    //   },
-    //   {
-    //     $unwind: '$task'
-    //   },
-    //   { $skip: skip },
-    //   { $limit: limit }
-    // ]
 
     const tasks = await TaskHoursModel.aggregate(aggregationPipeline).exec()
     const totalPages = Math.ceil(total / limit)
@@ -165,7 +149,18 @@ const countTaskHours = async filter => {
 
 const updateTaskHours = async (hours, _id) => {
   try {
-    const result = await TaskHoursModel.findByIdAndUpdate(_id, { $set: { hours: hours } }, { new: true })
+    const { getInvoiceWithoutPopulate } = require('./invoice')
+    const taskHourData = await getTaskHoursById(_id)
+    if (!taskHourData) throw Error(`Task hour not found.`)
+
+    const invoiceData = await getInvoiceWithoutPopulate({ tasks: { $in: [_id] } })
+    if (!invoiceData) throw Error(`Invoice against task hour not found.`)
+    invoiceData.hoursWorked = +invoiceData.hoursWorked + +hours
+
+    taskHourData.hours = +hours
+
+    await invoiceData.save()
+    const result = await taskHourData.save()
     return result
   } catch (e) {
     throw Error(`Error: Failed to update task hours: ${e}`)
@@ -201,11 +196,21 @@ const getMultipleTaskHours = async (filter, selectedFields) => {
   }
 }
 
+const getTaskHoursById = async (id, populate = [], selectedFields = '') => {
+  try {
+    return await TaskHoursModel.findById(id).select(selectedFields).populate(populate).exec()
+  } catch (e) {
+    throw new Error(`Could not find task hours, error: ${e.message}`)
+  }
+}
+
 module.exports = {
   getAllTaskHours,
+  createManyTaskHours,
   createTaskHours,
   updateTaskHours,
   deleteTaskHours,
   updateTaskTime,
-  getMultipleTaskHours
+  getMultipleTaskHours,
+  getTaskHoursById
 }

@@ -7,8 +7,13 @@ const permissionCheckHelper = require('../middlewares/permissionCheck')
 
 router.post('/', requireLogin, permissionCheckHelper.hasPermission('createTask'), async (req, res) => {
   try {
-    const response = await taskHelper.createTask(req.body)
-    if (!response) throw new Error('Task not created')
+    let response = null
+    if (Array.isArray(req.body?.tasks) && req.body?.tasks?.length) {
+      response = await taskHelper.createManyTask(req.body?.tasks, req.user?.userInfo?.freelancers)
+    } else {
+      response = await taskHelper.createTask(req.body)
+    }
+    if (!response) throw new Error(`${req.body?.tasks?.length ? 'Tasks' : 'Task'} not created`)
     res.json(response)
   } catch (e) {
     res.status(400).json({ msg: e.message })

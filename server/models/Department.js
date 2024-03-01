@@ -17,7 +17,7 @@ const departmentSchema = new Schema(
     tasks: { type: [Schema.Types.ObjectId], ref: 'tasks' },
     parentDepartmentId: { type: Schema.Types.ObjectId, ref: 'departments' },
     businessId: { type: Schema.Types.ObjectId, ref: 'businesses', required: true },
-    employees: { type: [Schema.Types.ObjectId], ref: 'contracts' }
+    employees: { type: [Schema.Types.ObjectId], ref: 'contracts', default: [] }
   },
   {
     timestamps: true

@@ -2,13 +2,11 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 const { softDeletePlugin } = require('soft-delete-plugin-mongoose')
 
-const questionSchema = new Schema(
-  {
-    questionText: { type: Schema.Types.ObjectId, ref: 'questions', default: null },
-    question: String,
-    answer: String
-  }
-)
+const questionSchema = new Schema({
+  questionText: { type: String, required: true },
+  question: { type: Schema.Types.ObjectId, ref: 'questions', default: null },
+  answer: { type: String, required: true }
+})
 
 const projectApplicationSchema = new Schema(
   {

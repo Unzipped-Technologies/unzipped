@@ -47,7 +47,7 @@ const TitleText = styled.div`
   width: ${({ width }) => (width ? width : '96%')};
   align-items: center;
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
-  white-space: ${({ textOverflow }) => (textOverflow ? 'nowrap' : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? 'normal' : 'unset')};
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   color: ${({ color }) => (color ? color : theme.text2)};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '')};
@@ -402,7 +402,7 @@ const TableData = styled.td`
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
   }
-`;
+`
 
 const HelpCenterContainer = styled.div`
   padding-left: 35px;
