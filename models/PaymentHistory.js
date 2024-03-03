@@ -6,6 +6,7 @@ const paymentHistorySchema = new Schema({
   subscriptionId: String,
   invoiceId: { type: Schema.Types.ObjectId, ref: 'invoices' },
   ipAddress: String,
+  chargeId: String,
   isPaymentSuccessful: { type: Boolean, default: false },
   isPaymentDeclined: { type: Boolean, default: false },
   paymentStatus: { type: Number, default: 0 },

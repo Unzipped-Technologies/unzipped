@@ -22,9 +22,11 @@ module.exports = {
     cookieKey: '1Xxp382GgnXxYz49528',
     //payment
     stripePublishableKey:
-      'pk_test_51N8neBKbRhZhJxMgyOpWY0pyTFdJ9rb9mIIgjor3IaCfRwU5IGCP00Q9aWH629MCbML22vJg7AVOE3Etm9vk4lUs00cMojHSRC',
+      'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog',
     stripeSecretKey:
-      'sk_test_51N8neBKbRhZhJxMgqn7xtwILzeKZPoobbygMQzxUeAFKi3D2ldnUXCsDiaGfdQOH4oALxxXcEIZXlQ3887et74cu00YBfjyyZM',
+      'sk_test_51M4xI7HVpfsarZmB00kaNw3rrH722ddi84qWASUSAkFFM7ACHxhxAiQ8I3tzeOdwjSMI0oRxbLP5FGkFm9HnDwPX00pcXTtQB4',
+    stripeClientId: 'ca_PfJUA8aC0UA53v2zmIRQ6Se4V6qh3jmm',
+    stripeSigningSecret: 'whsec_20e88d86a51726a7e1b7d93425a5c540116f06cea126a8e3ca75342f616cdd3b',
     sendGridKey: process.env.SEND_GRID_KEY,
     sendGridName: 'Unzipped',
     sendGridEmail: 'Jason@unzipped.io',

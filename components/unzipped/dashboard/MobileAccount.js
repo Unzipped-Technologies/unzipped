@@ -62,7 +62,7 @@ const MobileAccount = ({logoutUser, user}) => {
                         </Like>
                     </div>
                 </div>
-                <div onClick={() => linkPush('/billing-details')} className='d-flex align-items-center justify-content-between mb-4 px-3  py-1' onClick={() => linkPush('/pick-a-plan')}>
+                <div onClick={() => linkPush('/billing-details')} className='d-flex align-items-center justify-content-between mb-4 px-3  py-1'>
                     <div className='d-flex align-items-center'>
                         <IconComponent name='membership' width="14" height="14" viewBox="0 0 14 14" fill="black" />
                         <P margin="0" padding='0 0 0 12px' fontSize='20px'>Membership</P>
@@ -84,7 +84,7 @@ const MobileAccount = ({logoutUser, user}) => {
                     </div>
                     <P margin="0" padding='0 0 0 12px' fontSize='20px'>$0.00 USD</P>
                 </div>
-                <div className='d-flex align-items-center justify-content-between mb-4 px-3  py-1'>
+                <div onClick={() => linkPush('/dashboard/withdrawal/terms')} className='d-flex align-items-center justify-content-between mb-4 px-3  py-1'>
                     <div className='d-flex align-items-center'>
                         <img src='/img/withdraw.png' height={18} width={16} />
                         <P margin="0" padding='0 0 0 12px' fontSize='20px'>Withdraw funds</P>

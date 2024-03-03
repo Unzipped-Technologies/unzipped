@@ -6,6 +6,7 @@ router.use('/user', require('./userRoutes'));
 router.use('/freelancerSkills', require('./freelancerSkillsRoutes'));
 router.use('/product', require('./productRoutes'));
 router.use('/payment', require('./billingRoutes'));
+router.use('/stripe', require('./bankingRoutes'));
 router.use('/contract', require('./contractRoutes'));
 router.use('/dashboard', require('./dashboardRoutes'));
 router.use('/facebook', require('./facebookRoutes'));

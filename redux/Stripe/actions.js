@@ -3,6 +3,8 @@ import {
     CREATE_PAYMENT_METHOD,
     STRIPE_ERROR,
     GET_PAYMENT_METHODS,
+    RETRIEVE_BANK_ACCOUNT,
+    GET_ONBOARDING_LINK,
     DELETE_PAYMENT_METHODS,
 } from './constants';
 import _ from 'lodash';
@@ -74,6 +76,44 @@ export const deletePaymentMethods = (id, token) => async (dispatch, getState) =>
         .then(res => {
             dispatch({
                 type: DELETE_PAYMENT_METHODS,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: STRIPE_ERROR,
+                payload: err.response
+            })
+        })
+    dispatch(stopLoading());
+};
+
+export const retrieveExternalBankAccounts = (token) => async (dispatch, getState) => {
+    dispatch(startLoading());
+    await axios
+        .post('/api/stripe/retrieve-external-bank-accounts', {}, tokenConfig(token))
+        .then(res => {
+            dispatch({
+                type: RETRIEVE_BANK_ACCOUNT,
+                payload: res.data.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: STRIPE_ERROR,
+                payload: err.response
+            })
+        })
+    dispatch(stopLoading());
+};
+
+export const getAccountOnboardingLink = (token, data) => async (dispatch, getState) => {
+    dispatch(startLoading());
+    await axios
+        .post('/api/stripe/create-account', data, tokenConfig(token))
+        .then(res => {
+            dispatch({
+                type: GET_ONBOARDING_LINK,
                 payload: res.data
             });
         })

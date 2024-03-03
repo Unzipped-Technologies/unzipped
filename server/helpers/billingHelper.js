@@ -12,6 +12,7 @@ const InvoiceRecordModel = require('../../models/InvoiceRecord')
 const Mailer = require('../../services/Mailer')
 const receiptTemplate = require('../../services/emailTemplates/receipt')
 const { paymentStatusEnum, paymentTypeEnum } = require('../enum/paymentEnum')
+const ThirdPartyApplicationModel = require('../../models/ThirdPartyApplications')
 const { ObjectId } = require('mongoose').Types
 
 const stripePayment = async (obj, user) => {
@@ -491,13 +492,264 @@ const handleWebhookEvent = event => {
   }
 }
 
+const createVbanAccount = async (customerId, bankAccountData) => {
+  return await stripe.customers.createSource(customerId, {
+    source: {
+      object: 'bank_account',
+      ...bankAccountData,
+    }
+  });
+}
+
+const linkExternalBankAccount = async (customerId, bankAccountToken) => {
+  return await stripe.customers.createSource(customerId, {
+    source: bankAccountToken,
+  });
+}
+
+const removeExternalBankAccount = async (customerId, bankAccountId) => {
+  return await stripe.customers.deleteSource(
+    customerId,
+    bankAccountId
+  );
+}
+
+const getUserAccountById = async (userId) => {
+  const user = await UserModel.findById(userId)
+  if (user && user.stripeAccountId) {
+    return await retreiveAccountInfo(user.stripeAccountId) 
+  }
+  return;
+}
+
+const createAccountOnboarding = async (type, userId) => {
+  // Create a new Stripe Connected Account for the user
+  const account = await stripe.accounts.create({
+    type: 'express',
+    country: 'US', 
+    business_type: type,
+  });
+
+  if (account) {
+    // associate the accoutn with the user
+    await UserModel.updateOne({ _id: userId }, { $set: { stripeAccountId: account.id } });
+
+    // Create or update the document in the third-party application collection
+    // Ensure userId and stripeAccountId are correctly mapped to your third-party model schema
+    await ThirdPartyApplicationModel.updateOne(
+      { userId }, 
+      { $set: { userId, stripeAccountId: account.id } },
+      { upsert: true }
+    );
+  }
+
+  return account;
+}
+
+const retreiveAccountInfo = async (id) => {
+    // Create a new Stripe Connected Account for the user
+    const account = await stripe.accounts.retrieve(id);
+
+    return account;
+}
+
+const getAccountOnboardingLink = async (account, url) => {
+    const redirect = url || '/kyc'
+    // Create an account link for the onboarding process
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: `${keys.redirectDomain}${redirect}`, // Your URL for re-onboarding
+      return_url: `${keys.redirectDomain}${redirect}`, // Your URL for successful onboarding
+      type: 'account_onboarding',
+    });
+
+    return accountLink;
+}
+
+const retrieveExternalBankAccounts = async (userStripeAccountId) => {
+    // List all bank accounts associated with the Stripe account
+    const bankAccounts = await stripe.accounts.listExternalAccounts(
+      userStripeAccountId,
+      { object: 'bank_account' }
+    );
+
+    return bankAccounts;
+}
+
+// charge client 
+async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
+  try {
+    // step 1: load invoices that are being paid and verify charge amount
+    // const Invoices = await InvoiceModel.aggregate([
+    //   {
+    //     $match: { isApproved: true, isPaid: false }
+    //   },
+    //   {
+    //     $group: {
+    //       _id: '$clientId',
+    //       invoices: { $push: '$$ROOT' },
+    //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       totalAmount: 1,
+    //       invoices: {
+    //         $map: {
+    //           input: '$invoices',
+    //           as: 'invoice',
+    //           in: {
+    //             _id: '$$invoice._id',
+    //             hoursWorked: '$$invoice.hoursWorked',
+    //             hourlyRate: '$$invoice.hourlyRate'
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // ])
+    // Step 2: Charge the client
+    const charge = await stripe.charges.create({
+      amount: amountToCharge, // Amount intended to charge the client in cents
+      currency: 'usd',
+      source: clientPaymentMethodId, // Client's payment method ID
+      description: 'Service charge',
+      // Optionally, specify that the charge is for a connected account
+      // on_behalf_of: freelancerAccountId,
+    });
+
+    // step 3: create a charge in the db
+    const payment = await PaymentHistoryModel.create({
+      chargeId: id,
+      userId: current_user.id,
+      ipAddress: ip,
+      paymentStatus: paymentStatusEnum.SUCCESSFUL,
+      paymentType: paymentTypeEnum.SUBSCRIPTION,
+      paymentAmount: UserSubscription.product.price
+    })
+    console.log('Charge created:', charge.id);
+    console.log('Transfer created:', transfer.id);
+
+    return { charge };
+  } catch (error) {
+    console.error('Error creating payment and transfer:', error);
+    throw error; // Rethrow or handle as appropriate for your application
+  }
+}
+
+const transferPaymentToFreelancers = async (data) => {
+    console.log('///', data.data.object)
+    const { amount_captured, id } = data.data.object
+    const amountToFreelancer = amount_captured * 0.9
+    // step 1: retrieve invoices that are being paid and figure which freelancers are to be paid
+    // const Invoices = await InvoiceModel.aggregate([
+    //   {
+    //     $match: { isApproved: true, isPaid: false }
+    //   },
+    //   {
+    //     $group: {
+    //       _id: '$clientId',
+    //       invoices: { $push: '$$ROOT' },
+    //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       totalAmount: 1,
+    //       invoices: {
+    //         $map: {
+    //           input: '$invoices',
+    //           as: 'invoice',
+    //           in: {
+    //             _id: '$$invoice._id',
+    //             hoursWorked: '$$invoice.hoursWorked',
+    //             hourlyRate: '$$invoice.hourlyRate'
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // ])
+
+    // step 2: get charge from db
+    // const charge = await PaymentHistoryModel.findOne({chargeId: id})
+    // Step 2: Transfer a portion to the freelancer
+    const transfer = await stripe.transfers.create({
+      amount: amountToFreelancer, // Amount to transfer to freelancer in cents
+      currency: 'usd',
+      destination: "acct_1Oq5X5HBtF1G6Ab3", // Freelancer's Stripe account ID
+      transfer_group: data.id, // Group the transfer with the charge for easy reconciliation
+    });
+
+    return transfer;
+}
+
+const getFreelancerBalance = async (stripeAccountId) => {
+  try {
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: stripeAccountId, // The ID of the connected Stripe account
+    });
+
+    // The balance object contains amounts in different categories
+    // For example, balance.available and balance.pending
+    console.log(balance);
+
+    return balance;
+  } catch (error) {
+    console.error('Error retrieving balance:', error);
+    throw error;
+  }
+}
+
+const createTestCharge = async () => {
+  try {
+    const charge = await stripe.charges.create({
+      amount: 20000000,
+      currency: 'usd',
+      source: 'tok_visa',
+      description: 'Test charge for $200000.00',
+    });
+
+    console.log('Charge successful:', charge);
+    return charge;
+  } catch (error) {
+    console.error('Charge failed:', error);
+    throw error;
+  }
+}
+
+const retrieveStripeBalance = async () => {
+  try {
+    const balance = await stripe.balance.retrieve();
+    console.log(balance); // Logs the entire balance object to the console
+    return balance;
+  } catch (error) {
+    console.error('Error retrieving Stripe balance:', error);
+  }
+}
+
 module.exports = {
   stripePayment,
   createPromo,
   getPromo,
   receiptMail,
+  createTestCharge,
+  getFreelancerBalance,
   createSubscription,
   subscriptionPayment,
   cronJob,
-  handleWebhookEvent
+  retrieveStripeBalance,
+  getUserAccountById,
+  retrieveExternalBankAccounts,
+  retreiveAccountInfo,
+  handleWebhookEvent,
+  createVbanAccount,
+  linkExternalBankAccount,
+  removeExternalBankAccount,
+  getAccountOnboardingLink,
+  createAccountOnboarding,
+  transferPaymentToFreelancers,
+  createPaymentAndTransfer
 }

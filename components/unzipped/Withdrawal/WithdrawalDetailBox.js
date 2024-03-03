@@ -11,6 +11,13 @@ const Container = styled.div`
     border-radius: 5px;
     max-width: 650px;
     width: 630px;
+    @media(max-width: 1115px) {
+        width: 585px;
+    }
+    @media(max-width: 975px) {
+        width: 100%;
+        max-width: 100%;
+    }
 `;
 
 const LeftBox = styled.div``;

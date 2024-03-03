@@ -108,7 +108,7 @@ const getCardLogoUrl = (cardType) => {
     return stripeLogoEnum[brand];
 };
 
-const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetails, business, token, paymentMethods = []}) => {
+const DesktopAccount = ({email, stripeAccountId, phone, user, getPaymentMethods, getBusinessDetails, business, token, paymentMethods = []}) => {
     const primaryPM = paymentMethods.find(e => e.isPrimary)
     const [editName, setEditName] = useState(false)
     const [editAddress, setEditAddress] = useState(false)
@@ -174,6 +174,10 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
         }
     }
 
+    const getAccountOnboardingLink = () => {
+
+    }
+
     useEffect(() => {
         getPaymentMethods(token)
         getBusinessDetails(undefined, token)
@@ -228,8 +232,12 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                         <Item>$0</Item>
                     </Rows>
                     <Rows>
-                        <Item></Item>
-                        <Link href='/dashboard/withdrawal/terms'>Withdrawal Funds</Link>
+                        <Item>{stripeAccountId ? '' : 'Withdraw'}</Item>
+                        {stripeAccountId ? (
+                            <Link href='/dashboard/withdrawal/terms'>Withdraw Funds</Link>
+                        ) : (
+                            <EditButton onClick={() => getAccountOnboardingLink()}>Complete Onboarding</EditButton>
+                        )}
                     </Rows>
                 </RightOne>
             </Container>
@@ -693,6 +701,7 @@ const mapStateToProps = state => {
       user: state.Auth.user,
       paymentMethods: state.Stripe.methods,
       business: state.Business.details,
+      stripeAccountId: state.Auth.user.stripeAccountId,
     }
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router';
 import styled from 'styled-components'
 import Nav from '../../../components/unzipped/header'
 import BackHeader from '../../../components/unzipped/BackHeader';
@@ -8,6 +9,13 @@ import WithdrawalCard from '../../../components/unzipped/Withdrawal/WithdrawalDe
 import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux'
 import { parseCookies } from "../../../services/cookieHelper";
+import FormCard from '../../../components/FormCard';
+import PaymentMethod from '../../../components/StripeForm/bank';
+import { bindActionCreators } from 'redux'
+import {
+    retrieveExternalBankAccounts,
+    getAccountOnboardingLink,
+} from '../../../redux/actions';
 
 const Container = styled.div`
     display: flex;
@@ -20,6 +28,10 @@ const Container = styled.div`
 const Content = styled.div`
     width: 953px;
     margin: 20px;
+    @media(max-width: 974px) {
+        width: 95%;
+        margin: 15px 0px 0px 0px;
+    }
 `;
 
 const Cards = styled.div`
@@ -28,6 +40,12 @@ const Cards = styled.div`
     width: 100%;
     justify-items: flex-end;
     padding: 0px 25px;
+    @media(max-width: 975px) {
+        display: flex;
+        flex-flow: column;
+        flex-direction: column-reverse;
+        gap: 20px;
+    }
 `;
 
 const Left = styled.div`
@@ -36,13 +54,21 @@ const Left = styled.div`
     margin: 0px 15px
 `;
 
-const Withdrawal = ({token}) => {
+const Withdrawal = ({token, retrieveExternalBankAccounts, getAccountOnboardingLink, bank = [], url}) => {
     const [windowSize, setWindowsize] = useState('126px');
+    const [selectedMembership, setSelectedMembership] = useState(false);
+    const [initialUrl] = useState(url.url);
+    const router = useRouter()
+    const isPrimaryBank = false;
 
     const handleResize = () => {
         let windowSize = (window.innerWidth <= 600) ? '85px' : '76px'
         setWindowsize(windowSize);
     };
+
+    const getLinkAndRedirect = () => {
+        getAccountOnboardingLink(token, {url: '/dashboard/withdrawal'})
+    }
 
     useEffect(() => {
         handleResize();
@@ -53,6 +79,16 @@ const Withdrawal = ({token}) => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+    useEffect(() => {
+        retrieveExternalBankAccounts(token)
+    }, [])
+
+    useEffect(() => {
+        if (url && url.url && url.url !== initialUrl) {
+            router.push(url.url);
+        }
+    }, [url, router]);
 
     return (
         <React.Fragment>
@@ -72,6 +108,16 @@ const Withdrawal = ({token}) => {
                 <Cards>
                     <Left>
                         <WithdrawalCard />
+                        <FormCard
+                            badge={isPrimaryBank ? "Primary" : ""}
+                            first={true}
+                            image={'https://res.cloudinary.com/dghsmwkfq/image/upload/v1708747678/Icon_internet-banking_-online-bank_-bank_-university_sjhicv.png'}
+                            onClick={() => getLinkAndRedirect()}
+                            title={`${bank.length && bank[0].bank_name.toUpperCase()} **** **** ${bank.length && bank[0].last4}`}
+                            isSelected={selectedMembership === `bank`}
+                        >
+                            <PaymentMethod/>
+                        </FormCard>
                     </Left>
                     <WithdrawalMethodsTable />
                 </Cards>
@@ -88,9 +134,19 @@ Withdrawal.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = (state) => {
+    console.log(state)
     return {
         token: state.Auth.token,
+        bank: state.Stripe?.bank,
+        url: state.Stripe?.url
     }
 }
 
-export default connect(mapStateToProps)(Withdrawal);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        retrieveExternalBankAccounts: bindActionCreators(retrieveExternalBankAccounts, dispatch),
+        getAccountOnboardingLink: bindActionCreators(getAccountOnboardingLink, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Withdrawal);
