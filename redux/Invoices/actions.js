@@ -33,15 +33,29 @@ export const createInvoice = data => async (dispatch, getState) => {
 }
 
 export const getInvoices =
-  ({ businessId = '', freelancerId = '', limit = 25, page = 1 }) =>
+  ({ businessId = '', freelancerId = '', _id = '', limit = 25, page = 1 }) =>
   async (dispatch, getState) => {
     dispatch(startLoading())
+    let params = {
+      limit: limit,
+      page: page
+    }
 
+    // Add parameters based on variable values
+    if (_id) {
+      params._id = _id
+    }
+    if (businessId) {
+      params.businessId = businessId
+    }
+    if (freelancerId) {
+      params.freelancerId = freelancerId
+    }
+
+    // Build the URL with query parameters
+    const url = `/api/invoice` + '?' + new URLSearchParams(params)
     await axios
-      .get(
-        `/api/invoice?businessId=${businessId}&freelancerId=${freelancerId}&limit=${limit}&page=${page}`,
-        tokenConfig(getState()?.Auth.token)
-      )
+      .get(url, tokenConfig(getState()?.Auth.token))
       .then(res => {
         dispatch({
           type: GET_INVOICES,

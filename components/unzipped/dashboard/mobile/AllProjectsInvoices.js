@@ -73,7 +73,7 @@ const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
           ))}
         </Select>
       </div>
-      <MobileInvoicesView role={role} weekOptions={weekOptions} selectedWeek={selectedWeek} />
+      <MobileInvoicesView role={role} weekOptions={weekOptions} selectedWeek={selectedWeek} viewAll />
       <MobileFreelancerFooter />
     </InvoiceOverView>
   )

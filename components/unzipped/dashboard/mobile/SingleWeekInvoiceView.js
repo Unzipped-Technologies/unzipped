@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
+import { FormField } from '../../../ui'
+import { FaRegCheckCircle } from 'react-icons/fa'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Accordion from '@material-ui/core/Accordion'
@@ -9,7 +11,15 @@ import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Typography from '@material-ui/core/Typography'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { MdCheckCircle } from 'react-icons/md'
-import { updateInvoice, getInvoices } from '../../../../redux/actions'
+import {
+  updateInvoice,
+  getInvoices,
+  addInvoiceTasks,
+  createTaskHour,
+  createInvoice,
+  updateTaskHour
+} from '../../../../redux/actions'
+import AddTasksModal from '../tasks/AddTasksModal'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -193,12 +203,18 @@ const useStyles = makeStyles(theme => ({
 
 const SingleWeekInvoiceView = ({
   role,
-  updateInvoice,
   getInvoices,
   invoices,
   freelancerId,
   weekOptions,
-  selectedWeek
+  selectedWeek,
+  createTaskHour,
+  createInvoice,
+  updateTaskHour,
+  updateInvoice,
+  projectDetails,
+  addInvoiceTasks,
+  timeSheet = false
 }) => {
   const classes = useStyles()
   const router = useRouter()
@@ -211,6 +227,14 @@ const SingleWeekInvoiceView = ({
   const [totalAmount, setAmount] = useState(0)
   const [totalHours, setTotalHours] = useState(0)
   const [take, setTake] = useState(25)
+  const [isCurrenWeek, setIsCurrentWeek] = useState(false)
+  const [tasksModal, setTasksModal] = useState(false)
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
+  const [selectedDay, setDay] = useState('')
+  const [selectedDayDate, setDayDate] = useState('')
+  const [selectedTaskId, setTaskId] = useState('')
+
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
   useEffect(async () => {
     await getInvoices({
@@ -223,18 +247,37 @@ const SingleWeekInvoiceView = ({
 
   useEffect(() => {
     if (selectedWeek !== null && selectedWeek !== undefined && invoices?.length) {
+      setSelectedInvoice(null)
+
+      const currentDate = new Date()
+
+      const currentWeekStartDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() - currentDate.getDay()
+      )
       const filteredItems = invoices.filter(item => {
         if (freelancerId) {
           if (freelancerId === item.freelancerId) {
             const itemDate = new Date(item.updatedAt)
-            const startOfWeek = weekOptions[selectedWeek].startOfWeek
-            const endOfWeek = weekOptions[selectedWeek].endOfWeek
-            return itemDate >= startOfWeek && itemDate <= endOfWeek
+            const startOfWeek = weekOptions[selectedWeek]?.startOfWeek
+            const endOfWeek = weekOptions[selectedWeek]?.endOfWeek
+            const isCurrentWeek = startOfWeek?.getTime() === currentWeekStartDate?.getTime()
+
+            setIsCurrentWeek(isCurrentWeek)
+            const isCurrentInvoice = itemDate >= startOfWeek && itemDate <= endOfWeek
+            if (isCurrentInvoice) {
+              setSelectedInvoice(item)
+            }
+            return isCurrentInvoice
           }
         } else {
           const itemDate = new Date(item.updatedAt)
           const startOfWeek = weekOptions[selectedWeek].startOfWeek
           const endOfWeek = weekOptions[selectedWeek].endOfWeek
+          const isCurrentWeek = startOfWeek?.getTime() === currentWeekStartDate?.getTime()
+
+          setIsCurrentWeek(isCurrentWeek)
           return itemDate >= startOfWeek && itemDate <= endOfWeek
         }
       })
@@ -246,15 +289,14 @@ const SingleWeekInvoiceView = ({
 
   useEffect(() => {
     if (selectedWeek !== null && selectedWeek !== undefined && filteredData !== null && invoices?.length) {
-      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
       const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
-      filteredData.forEach(item => {
-        item.task.forEach(taskObj => {
-          taskObj.taskHours.forEach(taskHour => {
-            const itemDate = new Date(taskHour.createdAt)
-            const dayOfWeek = daysOfWeek[itemDate.getDay()]
-            organizedItems[dayOfWeek].push(taskHour)
-          })
+      filteredData?.forEach(item => {
+        item?.tasks?.forEach(task => {
+          const taskDate = new Date(task.updatedAt)
+          const dayOfWeek = daysOfWeek[taskDate.getDay()]
+          task['contract'] = item.contract
+          task['freelancer'] = item.freelancer
+          organizedItems[dayOfWeek].push(task)
         })
       })
       setSortedData(organizedItems)
@@ -287,49 +329,78 @@ const SingleWeekInvoiceView = ({
     setAmount(totalAmount)
   }, [filteredData])
 
+  const showTasksModal = day => {
+    const daysToAdd = daysOfWeek.indexOf(day)
+    if (daysToAdd !== -1) {
+      const date = new Date(weekOptions[selectedWeek]?.startOfWeek)
+      date.setHours(0, 0, 0, 0)
+
+      date.setDate(date.getDate() + daysToAdd)
+      const dateIso = new Date(date)
+      const isoString = dateIso.toISOString()
+      setDayDate(isoString)
+    }
+    setDay(daysToAdd)
+    setTasksModal(true)
+  }
+
+  const hideTasksModal = () => {
+    setTasksModal(false)
+  }
+
+  const addTasks = async tasks => {
+    const taskHours = []
+    const dayOfWeek = daysOfWeek[selectedDay]
+    for (var task of tasks) {
+      if (!sortedData[dayOfWeek]?.find(item => item.taskId === task)) {
+        taskHours.push({
+          taskId: task,
+          hours: 0,
+          invoiceId: selectedInvoice?._id || null,
+          day: selectedDay,
+          createdAt: selectedDayDate,
+          updatedAt: selectedDayDate
+        })
+      }
+    }
+    if (taskHours?.length) {
+      if (selectedInvoice?._id) {
+        await addInvoiceTasks(selectedInvoice?._id, {
+          tasksHours: taskHours,
+          freelancerId: freelancerId
+        })
+      } else {
+        await createInvoice({
+          tasks: [],
+          tasksHours: taskHours,
+          businessId: id,
+          freelancerId: freelancerId,
+          clientId: projectDetails?.userId
+        })
+      }
+      await getInvoices({ businessId: id })
+    }
+  }
+
+  const addHours = (value, invoiceId, taskHourId) => {
+    setFilteredData(prevData => {
+      const newData = [...prevData]
+      const invoiceToUpdate = newData.find(item => item._id === invoiceId)
+
+      if (invoiceToUpdate) {
+        const taskHourtoUpdate = invoiceToUpdate?.tasks?.find(taskHour => taskHour?._id === taskHourId)
+        if (taskHourtoUpdate) {
+          taskHourtoUpdate.hours = value
+        }
+      }
+
+      return newData
+    })
+  }
+
   return (
     <>
       <InvoiceOverView>
-        <InvoiceTable>
-          <Table>
-            <thead>
-              <tr>
-                <TableHeading padding="0px 0px 10px 0px">Day</TableHeading>
-                <TableHeading padding="0px 0px 10px 10px">Hours</TableHeading>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedData &&
-                Object?.keys(sortedData)?.map((day, index) => {
-                  return (
-                    <TableRow key={`${day}_${index}`}>
-                      <TableData>{day}</TableData>
-                      <TableData textAlign="center" width="2px">
-                        {sortedData[day]?.reduce((accumulator, currentValue) => {
-                          return accumulator + currentValue.hours
-                        }, 0)}
-                      </TableData>
-                    </TableRow>
-                  )
-                })}
-            </tbody>
-          </Table>
-          <VerticalLine></VerticalLine>
-          <InvoiceAmount>
-            <Payment>
-              <PaymentHeading>Hours</PaymentHeading>
-              <PaymentAmount>{totalHours || 0} Hours</PaymentAmount>
-            </Payment>
-            <Payment>
-              <PaymentHeading>Fee</PaymentHeading>
-              <PaymentAmount>${fee || 0}</PaymentAmount>
-            </Payment>
-            <Payment>
-              <PaymentHeading>Total</PaymentHeading>
-              <PaymentAmount>${totalAmount || 0}</PaymentAmount>
-            </Payment>
-          </InvoiceAmount>
-        </InvoiceTable>
         {sortedData &&
           Object?.keys(sortedData)?.map((day, index) => {
             return (
@@ -338,7 +409,7 @@ const SingleWeekInvoiceView = ({
                   <Typography className={classes.heading}>
                     {day} -{' '}
                     {sortedData[day]?.reduce((accumulator, currentValue) => {
-                      return accumulator + currentValue.hours
+                      return +accumulator + +currentValue.hours
                     }, 0)}{' '}
                     Hours
                   </Typography>
@@ -348,32 +419,75 @@ const SingleWeekInvoiceView = ({
                     {sortedData[day]?.map(task => {
                       return (
                         <Tasks key={`${task._id}`}>
-                          <TaskIcon color={task.task?.status === 'done' ? '#5dc26a' : '#D8D8D8'}>
-                            <MdCheckCircle />
+                          <TaskIcon>
+                            <FaRegCheckCircle
+                              size={15}
+                              color={
+                                task?.task?.tag?.tagName?.includes('In Progress')
+                                  ? '#FFA500'
+                                  : task?.task?.tag?.tagName?.includes('Done')
+                                  ? '#198754'
+                                  : '#D8D8D8'
+                              }
+                            />
                           </TaskIcon>
                           <TaskName>{task?.task?.taskName}</TaskName>
-                          <TaskHours>{task?.hours || 0} Hours</TaskHours>
+                          <TaskHours
+                            onClick={() => {
+                              if (role === 1) setTaskId(task._id)
+                            }}>
+                            {(!task.hours || selectedTaskId === task._id) && isCurrenWeek ? (
+                              <FormField
+                                zIndexUnset
+                                fieldType="input"
+                                type="number"
+                                placeholder="Hours"
+                                fontSize="14px"
+                                name={`${task._id}_hours`}
+                                id={`${task._id}_hours`}
+                                width="60px"
+                                margin="0px 0px 0px 20px"
+                                height="30px  !important"
+                                borderRadius="4px"
+                                border="1px solid #A5A0A0"
+                                value={task.hours}
+                                maxLength="30"
+                                onChange={e => addHours(e?.target?.value, task?.invoiceId, task._id)}
+                                onUpdate={() => {}}
+                                handleEnterKey={async e => {
+                                  if (e?.keyCode === 13) {
+                                    await updateTaskHour(task._id, task)
+                                    setTaskId('')
+                                  }
+                                }}
+                              />
+                            ) : (
+                              <span>{task?.hours || 0} Hours</span>
+                            )}
+                          </TaskHours>
                         </Tasks>
                       )
                     })}
 
-                    <div style={{ width: '90%', margin: '0px auto' }}>
-                      <Button
-                        background="#1976D2"
-                        noBorder
-                        margin="5px 0px 5px 0px"
-                        buttonHeight="35px"
-                        webKit
-                        colors={{
-                          background: '#1976D2',
-                          text: '#FFF'
-                        }}
-                        onClick={e => {
-                          e.stopPropagation()
-                        }}>
-                        Add Task
-                      </Button>
-                    </div>
+                    {isCurrenWeek && role === 1 && timeSheet && (
+                      <div style={{ width: '90%', margin: '0px auto' }}>
+                        <Button
+                          background="#1976D2"
+                          noBorder
+                          margin="5px 0px 5px 0px"
+                          buttonHeight="35px"
+                          webKit
+                          colors={{
+                            background: '#1976D2',
+                            text: '#FFF'
+                          }}
+                          onClick={() => {
+                            showTasksModal(day)
+                          }}>
+                          Add Task
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CustomAccordionDetails>
               </Accordion>
@@ -399,12 +513,14 @@ const SingleWeekInvoiceView = ({
           </div>
         )}
       </InvoiceOverView>
+      {tasksModal && <AddTasksModal onHide={hideTasksModal} onAdd={addTasks} open={tasksModal} />}
     </>
   )
 }
 
 const mapStateToProps = state => {
   return {
+    projectDetails: state.Business.selectedBusiness,
     invoices: state.Invoices.invoices,
     role: state.Auth.user.role
   }
@@ -412,8 +528,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getInvoices: bindActionCreators(getInvoices, dispatch),
     updateInvoice: bindActionCreators(updateInvoice, dispatch),
-    getInvoices: bindActionCreators(getInvoices, dispatch)
+    createTaskHour: bindActionCreators(createTaskHour, dispatch),
+    createInvoice: bindActionCreators(createInvoice, dispatch),
+    addInvoiceTasks: bindActionCreators(addInvoiceTasks, dispatch),
+    updateTaskHour: bindActionCreators(updateTaskHour, dispatch)
   }
 }
 

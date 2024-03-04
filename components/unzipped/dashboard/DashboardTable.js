@@ -65,7 +65,7 @@ const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role
       return [
         {
           text: 'Invoice',
-          onClick: () => router.push(`projects/client/invoice/${item._id}`)
+          onClick: () => router.push(`projects/client/invoice/${item._id}?tab=invoices`)
         },
         {
           text: 'View details',
@@ -98,13 +98,7 @@ const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role
         {
           text: 'View Invoice',
           onClick: () =>
-            router.push(
-              {
-                pathname: `/dashboard/projects/freelancer/invoice/[_id]`,
-                query: { freelancer: freelancerId, tab: 'invoices' }
-              },
-              `/dashboard/projects/freelancer/invoice/${item._id}`
-            )
+            router.push(`/dashboard/projects/freelancer/invoice/${item._id}?tab=invoices&freelancer${freelancerId}`)
         }
       ]
     }

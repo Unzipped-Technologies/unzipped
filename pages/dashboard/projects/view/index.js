@@ -114,7 +114,7 @@ const ProjectDate = styled.div`
   padding-left: 18px;
 `
 
-const AllProjects = ({ businesses = [], getProjectsList, role }) => {
+const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) => {
   const router = useRouter()
 
   const [filter, setFilter] = useState('')
@@ -158,7 +158,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role }) => {
         },
         {
           text: 'Invoice',
-          onClick: () => router.push(`/dashboard/projects/client/invoice/${business._id}`)
+          onClick: () => router.push(`/dashboard/projects/details/${business._id}?tab=invoices`)
         },
         {
           text: 'Assign department',
@@ -182,6 +182,13 @@ const AllProjects = ({ businesses = [], getProjectsList, role }) => {
         {
           text: 'View Work',
           onClick: () => console.log('ITEM 3')
+        },
+        {
+          text: 'View Invoice',
+          onClick: () =>
+            router.push(
+              `/dashboard/projects/freelancer/invoice/${business._id}?tab=invoices&freelancer=${freelancerId}`
+            )
         }
       ]
     }
@@ -227,7 +234,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role }) => {
                 </SearchField>
               )}
               <ProjectsList>
-                {businesses?.map(business => {
+                {businesses?.map((business, index) => {
                   return (
                     <ProjectCard key={business._id}>
                       <ProjectName>{business?.name}</ProjectName>
@@ -250,6 +257,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role }) => {
                           noBorder
                           type="lightgrey"
                           fontSize="13px"
+                          zIndex={'auto'}
                           popout={generatePopout(business)}
                           iconRight
                           colors={{
@@ -279,8 +287,9 @@ const AllProjects = ({ businesses = [], getProjectsList, role }) => {
 
 const mapStateToProps = state => {
   return {
-    businesses: state.Business?.businesses,
-    role: state.Auth.user.role
+    businesses: state.Business?.projectList,
+    role: state.Auth.user.role,
+    freelancerId: state.Auth.user?.freelancers
   }
 }
 

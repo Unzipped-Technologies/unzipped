@@ -8,9 +8,8 @@ import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
-import InvoicesTable from '../../../../components/unzipped/dashboard/InvoicesTable'
 import DesktopProjectDetail from '../../../../components/unzipped/dashboard/DesktopProjectDetail'
-import Timesheet from '../../../../components/unzipped/dashboard/project/Timesheet'
+import Invoices from '../../../../components/unzipped/dashboard/Invoices'
 
 const Navbar = styled.div`
   margin-bottom: 160px;
@@ -167,9 +166,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
   const [selectedWeek, setSelectedWeek] = useState(0)
 
   const router = useRouter()
-  const { id } = router.query
-  const { tab } = router.query
-
+  const { id, tab } = router.query
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)
@@ -239,7 +236,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
           <Header>
             <ProjectName>
               {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
-              {selectedTab === 3 && window.innerWidth > 680 ? 'Invoice History' : ''}
+              {selectedTab === 3 && window.innerWidth > 680 ? (role === 1 ? 'TIMESHEET' : 'Invoice History') : ''}
             </ProjectName>
             {(selectedTab === 3) & (window.innerWidth < 680) ? (
               <Select
@@ -278,12 +275,9 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
         {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
         {selectedTab === 2 && <HiringTable />}
-        {selectedTab === 3 &&
-          (role === 0 ? (
-            <InvoicesTable selectedWeek={selectedWeek} weekOptions={weekOptions} />
-          ) : (
-            <Timesheet businessId={id} />
-          ))}
+        {selectedTab === 3 && (
+          <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} role={role} businessId={id} />
+        )}
       </TabContent>
     </>
   )

@@ -188,7 +188,6 @@ function Invoice({
         }
         fee = subTotal * 0.05
       } else {
-        console.log('filteredData[0]', filteredData[0])
         subTotal = filteredData[0]?.contract?.hourlyRate * filteredData[0]?.hoursWorked
         fee = subTotal * 0.05
       }

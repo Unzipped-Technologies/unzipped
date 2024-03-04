@@ -8,6 +8,7 @@ import { TitleText, DarkText } from '../../../../../components/unzipped/dashboar
 import { getBusinessById } from '../../../../../redux/actions'
 import Nav from '../../../../../components/unzipped/header'
 import Invoice from '../../../../../components/unzipped/dashboard/project/invoice'
+import Timesheet from '../../../../../components/unzipped/dashboard/project/Timesheet'
 import ClientMobileInvoices from '../../../../../components/unzipped/dashboard/mobile/ClinetMobileInvoices'
 
 import ApplicationCard from '../../../../../components/unzipped/dashboard/ApplicationCard'
@@ -18,7 +19,7 @@ const Desktop = styled.div`
   width: 80%;
   margin: auto;
   @media (max-width: 680px) {
-    display: none;
+    width: 100%;
   }
 `
 const MobileDisplayBox = styled.div`
@@ -31,7 +32,7 @@ const MobileDisplayBox = styled.div`
 const Navbar = styled.div`
   margin-bottom: 160px;
   @media (max-width: 680px) {
-    margin-bottom: 0px !important;
+    margin-bottom: 100px !important;
     margin-top: 0px !important;
     padding-bottom: 0px !important;
     padding-top: 0px !important;
@@ -190,23 +191,6 @@ const TabContent = styled.div`
   padding-bottom: 50px;
 `
 
-const Select = styled.select`
-  display: block;
-  border: 0;
-  width: fit-content;
-  background-color: transparent;
-  color: #222;
-  font-family: Roboto;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 19.5px; /* 121.875% */
-  letter-spacing: 0.15px;
-  margin-top: -20px;
-  margin-bottom: -10px !important;
-  margin-right: 10px;
-`
-
 const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
   const [selectedWeek, setSelectedWeek] = useState(null)
   const [weekOptions, setWeekOptions] = useState([])
@@ -214,8 +198,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
   const [displayFormat, setDisplayFormat] = useState(false)
 
   const router = useRouter()
-  const { id } = router.query
-  const { tab } = router.query
+  const { tab, freelancer, id, invoice } = router.query
 
   const [selectedTab, setSelectedTab] = useState(0)
 
@@ -301,7 +284,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
             </Header>
             {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
           </HeaderDetail>
-          {selectedTab === 3 && (
+          {window.innerWidth > 680 && selectedTab === 3 && role === 0 && (
             <Toggle>
               <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
                 <DarkText small>Day</DarkText>
@@ -332,13 +315,11 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 3 && (
           <>
             {window.innerWidth > 680 ? (
-              <Invoice
-                weekOptions={weekOptions}
-                handletake={handletake}
-                take={take}
-                selectedWeek={selectedWeek}
-                handleWeekChange={handleWeekChange}
+              <Timesheet
+                businessId={projectDetails?._id}
+                invoice={invoice}
                 displayFormat={displayFormat}
+                approveInvoice={false}
               />
             ) : (
               <MobileDisplayBox>
