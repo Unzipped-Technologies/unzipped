@@ -21,10 +21,15 @@ const accountOnboardedWebhook = (event) => {
     console.log('Handling account onboarded event:', event);
 }
 
+const paymentSucessful = (event) => {
+    console.log('Handling account payout event:', event);
+}
+
 const webhookHandlers = {
     "account.application.deauthorized": () => {},
     "account.updated": accountUpdatedWebhook,
     "customer.created": () => {},
+    "payout.paid": paymentSucessful,
     "charge.succeeded": billingHelper.transferPaymentToFreelancers,
     "customer.subscription.created": () => {},
     "accountCreatedWebhook": accountCreatedWebhook,

@@ -15,6 +15,8 @@ import { bindActionCreators } from 'redux'
 import {
     retrieveExternalBankAccounts,
     getAccountOnboardingLink,
+    getAccountBalance,
+    withdrawAccountFundsToExternalBank,
 } from '../../../redux/actions';
 
 const Container = styled.div`
@@ -54,7 +56,16 @@ const Left = styled.div`
     margin: 0px 15px
 `;
 
-const Withdrawal = ({token, retrieveExternalBankAccounts, getAccountOnboardingLink, bank = [], url}) => {
+const Withdrawal = ({
+    token, 
+    retrieveExternalBankAccounts, 
+    getAccountOnboardingLink,
+    withdrawAccountFundsToExternalBank,
+    getAccountBalance,
+    bank = [], 
+    url,
+    balance = 0,
+}) => {
     const [windowSize, setWindowsize] = useState('126px');
     const [selectedMembership, setSelectedMembership] = useState(false);
     const [initialUrl] = useState(url.url);
@@ -70,6 +81,16 @@ const Withdrawal = ({token, retrieveExternalBankAccounts, getAccountOnboardingLi
         getAccountOnboardingLink(token, {url: '/dashboard/withdrawal'})
     }
 
+    const submitWithdraw = (amount) => {
+        if (amount) {
+            withdrawAccountFundsToExternalBank(token, {
+                amount: amount * 100,
+                currency: 'USD'
+            })
+            router.push('/dashboard/account')
+        }
+    }
+
     useEffect(() => {
         handleResize();
 
@@ -82,6 +103,14 @@ const Withdrawal = ({token, retrieveExternalBankAccounts, getAccountOnboardingLi
 
     useEffect(() => {
         retrieveExternalBankAccounts(token)
+        // Call getAccountBalance on component load
+        getAccountBalance(token);
+        // Set up an interval to call getAccountBalance every 5 minutes
+        const intervalId = setInterval(() => {
+            getAccountBalance(token);
+        }, 300000); // 300000 ms = 5 minutes
+    
+        return () => clearInterval(intervalId);
     }, [])
 
     useEffect(() => {
@@ -107,7 +136,7 @@ const Withdrawal = ({token, retrieveExternalBankAccounts, getAccountOnboardingLi
                 </Content>
                 <Cards>
                     <Left>
-                        <WithdrawalCard />
+                        <WithdrawalCard balance={balance} onSubmit={submitWithdraw} isBank={bank.length}/>
                         <FormCard
                             badge={isPrimaryBank ? "Primary" : ""}
                             first={true}
@@ -134,11 +163,11 @@ Withdrawal.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         token: state.Auth.token,
         bank: state.Stripe?.bank,
-        url: state.Stripe?.url
+        url: state.Stripe?.url,
+        balance: state.Stripe?.balance
     }
 }
 
@@ -146,6 +175,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         retrieveExternalBankAccounts: bindActionCreators(retrieveExternalBankAccounts, dispatch),
         getAccountOnboardingLink: bindActionCreators(getAccountOnboardingLink, dispatch),
+        getAccountBalance: bindActionCreators(getAccountBalance, dispatch),
+        withdrawAccountFundsToExternalBank: bindActionCreators(withdrawAccountFundsToExternalBank, dispatch),
     }
 }
 

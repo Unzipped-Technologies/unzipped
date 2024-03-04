@@ -3,17 +3,6 @@ const router = express.Router();
 const requireLogin = require('../middlewares/requireLogin');
 const billingHelper = require('../helpers/billingHelper');
 
-
-router.post('/create-vban', requireLogin, async (req, res) => {
-    try {
-      const { customerId, bankAccountData } = req.body;
-      const VbanAccount = billingHelper.createVbanAccount(customerId, bankAccountData);
-  
-      res.status(200).json(VbanAccount);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-});
   
 // Route to link an external bank account to Stripe
 router.post('/link-bank-account', requireLogin, async (req, res) => {
@@ -113,6 +102,36 @@ router.post('/retrieve-account-balance', requireLogin, async (req, res) => {
     const account = await billingHelper.getUserAccountById(userId)
 
     const balance = await billingHelper.getFreelancerBalance(account.id)
+
+    res.status(200).json(balance);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.post('/withdraw-funds', requireLogin, async (req, res) => {
+  try {
+    const userId = req.body.id || req.user.sub
+
+    const { amount, currency } = req.body
+
+    const account = await billingHelper.getUserAccountById(userId)
+
+    const balance = await billingHelper.withdrawFundsToBankAccount(account.id, amount, currency)
+
+    res.status(200).json(balance);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.post('/get-transactions', requireLogin, async (req, res) => {
+  try {
+    const userId = req.body.id || req.user.sub
+
+    const account = await billingHelper.getUserAccountById(userId)
+
+    const balance = await billingHelper.listTransactions(account.id)
 
     res.status(200).json(balance);
   } catch (error) {

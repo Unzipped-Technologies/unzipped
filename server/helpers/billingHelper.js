@@ -216,7 +216,7 @@ const createSubscription = async (req, obj, user) => {
       userId: user,
       ipAddress: ip,
       paymentStatus: paymentStatusEnum.INITIATED,
-      paymentType: paymentTypeEnum.SUBSCRIPTION,
+      paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
       paymentAmount: subscriptionType.price
     })
   ])
@@ -259,7 +259,7 @@ const subscriptionPayment = async (obj, user) => {
       userId: current_user.id,
       ipAddress: ip,
       paymentStatus: paymentStatusEnum.SUCCESSFUL,
-      paymentType: paymentTypeEnum.SUBSCRIPTION,
+      paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
       paymentAmount: UserSubscription.product.price
     })
   ])
@@ -366,7 +366,7 @@ async function cronJob() {
         userId: userId,
         invoiceId: invoice._id,
         paymentStatus: paymentStatusEnum.INITIATED,
-        paymentType: paymentTypeEnum.FREELANCER_PAYMENT,
+        paymentType: paymentTypeEnum.ACCOUNT_WITHDRAW,
         paymentAmount: invoice.hoursWorked * invoice.hourlyRate,
         paymentCurrency: 'USD'
       }
@@ -492,15 +492,6 @@ const handleWebhookEvent = event => {
   }
 }
 
-const createVbanAccount = async (customerId, bankAccountData) => {
-  return await stripe.customers.createSource(customerId, {
-    source: {
-      object: 'bank_account',
-      ...bankAccountData,
-    }
-  });
-}
-
 const linkExternalBankAccount = async (customerId, bankAccountToken) => {
   return await stripe.customers.createSource(customerId, {
     source: bankAccountToken,
@@ -610,25 +601,59 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
     //   }
     // ])
     // Step 2: Charge the client
-    const charge = await stripe.charges.create({
-      amount: amountToCharge, // Amount intended to charge the client in cents
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountToCharge,
       currency: 'usd',
-      source: clientPaymentMethodId, // Client's payment method ID
-      description: 'Service charge',
-      // Optionally, specify that the charge is for a connected account
-      // on_behalf_of: freelancerAccountId,
+      customer: customerId,
+      payment_method: paymentMethodId,
+      off_session: true, // Assuming the customer is not present
+      confirm: true, // Automatically confirm the payment intent
+      // Add any other necessary parameters here
     });
 
-    // step 3: create a charge in the db
-    const payment = await PaymentHistoryModel.create({
+    // step 3: create a payment history in the db
+
+    // payment history for client
+    await PaymentHistoryModel.create({
       chargeId: id,
       userId: current_user.id,
       ipAddress: ip,
       paymentStatus: paymentStatusEnum.SUCCESSFUL,
-      paymentType: paymentTypeEnum.SUBSCRIPTION,
-      paymentAmount: UserSubscription.product.price
+      paymentType: paymentTypeEnum.PAYROLL_CHARGE,
+      paymentAmount: UserSubscription.product.price,
+
+      invoiceId: invoice.id, // get invoices
+      description: `Payment to ${freelanceUser.firstName} ${freelanceUser.lastName}`,
+      cardLastFour: String,
+      card: String,
+      payPeriod: String,
+      subtotal: String,
+      paymentAmount: Number,
+    })
+
+    // get user by freelancer id
+    const freelanceUser = {}
+
+    // payment history for freelancer
+    await PaymentHistoryModel.create({
+      chargeId: id,
+      userId: freelanceUser.id,
+      ipAddress: ip,
+      paymentStatus: paymentStatusEnum.SUCCESSFUL,
+      paymentType: paymentTypeEnum.PAYROLL_RECIEPT,
+      paymentAmount: UserSubscription.product.price,
+
+      invoiceId: invoice.id, // get invoices
+      description: `Payment to ${freelanceUser.firstName} ${freelanceUser.lastName}`,
+      cardLastFour: String,
+      card: String,
+      payPeriod: String,
+      subtotal: String,
+      paymentAmount: Number,
     })
     console.log('Charge created:', charge.id);
+    console.log('payment history created:', payment);
     console.log('Transfer created:', transfer.id);
 
     return { charge };
@@ -730,11 +755,53 @@ const retrieveStripeBalance = async () => {
   }
 }
 
+const withdrawFundsToBankAccount = async (accountId, amount, currency = 'usd') => {
+  try {
+    // Create a payout to the connected account's external bank account
+    const payout = await stripe.payouts.create({
+      amount: amount,
+      currency: currency,
+    }, {
+      stripeAccount: accountId, // Specify the connected account ID
+    });
+
+    console.log('Payout successful:', payout);
+    return payout;
+  } catch (error) {
+    console.error('Payout failed:', error);
+    throw error;
+  }
+}
+
+const listTransactions = async (accountId = null, lastObjectId = null, limit = 25) => {
+  try {
+    const params = {
+      limit: limit
+    };
+
+    if (lastObjectId) {
+      params.starting_after = lastObjectId;
+    }
+
+    // If retrieving transactions for a connected account, use the `stripeAccount` option
+    const options = accountId ? { stripeAccount: accountId } : {};
+
+    const transactions = await stripe.balanceTransactions.list(params, options);
+
+    return transactions;
+  } catch (error) {
+    console.error('Error retrieving transactions:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   stripePayment,
   createPromo,
   getPromo,
+  listTransactions,
   receiptMail,
+  withdrawFundsToBankAccount,
   createTestCharge,
   getFreelancerBalance,
   createSubscription,
@@ -745,7 +812,6 @@ module.exports = {
   retrieveExternalBankAccounts,
   retreiveAccountInfo,
   handleWebhookEvent,
-  createVbanAccount,
   linkExternalBankAccount,
   removeExternalBankAccount,
   getAccountOnboardingLink,

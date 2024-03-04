@@ -5,6 +5,8 @@ import {
     GET_PAYMENT_METHODS,
     RETRIEVE_BANK_ACCOUNT,
     GET_ONBOARDING_LINK,
+    GET_ACCOUNT_BALANCE,
+    WITHDRAW_FUNDS,
     DELETE_PAYMENT_METHODS,
 } from './constants';
 import _ from 'lodash';
@@ -114,6 +116,44 @@ export const getAccountOnboardingLink = (token, data) => async (dispatch, getSta
         .then(res => {
             dispatch({
                 type: GET_ONBOARDING_LINK,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: STRIPE_ERROR,
+                payload: err.response
+            })
+        })
+    dispatch(stopLoading());
+};
+
+export const getAccountBalance = (token) => async (dispatch, getState) => {
+    dispatch(startLoading());
+    await axios
+        .post('/api/stripe/retrieve-account-balance', {}, tokenConfig(token))
+        .then(res => {
+            dispatch({
+                type: GET_ACCOUNT_BALANCE,
+                payload: res.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: STRIPE_ERROR,
+                payload: err.response
+            })
+        })
+    dispatch(stopLoading());
+};
+
+export const withdrawAccountFundsToExternalBank = (token, data) => async (dispatch, getState) => {
+    dispatch(startLoading());
+    await axios
+        .post('/api/stripe/withdraw-funds', data, tokenConfig(token))
+        .then(res => {
+            dispatch({
+                type: WITHDRAW_FUNDS,
                 payload: res.data
             });
         })
