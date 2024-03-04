@@ -167,7 +167,6 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
 
   const router = useRouter()
   const { id, tab } = router.query
-  console.log('tab', tab)
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)

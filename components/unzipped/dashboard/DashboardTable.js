@@ -98,13 +98,7 @@ const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role
         {
           text: 'View Invoice',
           onClick: () =>
-            router.push(
-              {
-                pathname: `/dashboard/projects/freelancer/invoice/[_id]`,
-                query: { freelancer: freelancerId, tab: 'invoices' }
-              },
-              `/dashboard/projects/freelancer/invoice/${item._id}?tab=invoices`
-            )
+            router.push(`/dashboard/projects/freelancer/invoice/${item._id}?tab=invoices&freelancer${freelancerId}`)
         }
       ]
     }

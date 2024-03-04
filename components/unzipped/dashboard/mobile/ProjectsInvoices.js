@@ -115,8 +115,6 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
   const allInvoices = useMemo(() => {
     const invoicesData = []
     for (var invoice of invoices) {
-      console.log('invoicesData', invoicesData)
-      console.log('invoice', invoice)
       const invoiceIndex = invoicesData?.findIndex(business => business?.business?._id === invoice?.business?._id)
       if (invoiceIndex === -1) {
         invoicesData.push({
@@ -213,7 +211,7 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
                               }}
                               onClick={() => {
                                 router.push(
-                                  `/dashboard/projects/freelancer/invoice/${invoice?.business.id}?tab=invoices&freelancer=${row?.freelancerId}`
+                                  `/dashboard/projects/freelancer/invoice/${invoice?.business._id}?tab=invoices&freelancer=${row?.freelancerId}`
                                 )
                               }}>
                               View Invoice

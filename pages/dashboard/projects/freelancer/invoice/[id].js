@@ -215,8 +215,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
   const [displayFormat, setDisplayFormat] = useState(false)
 
   const router = useRouter()
-  const { id } = router.query
-  const { tab } = router.query
+  const { id, freelancer, tab } = router.query
 
   const [selectedTab, setSelectedTab] = useState(0)
 
@@ -333,7 +332,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
         {selectedTab === 3 && (
           <>
             {window.innerWidth > 680 ? (
-              <Timesheet businessId={projectDetails?._id} displayFormat={displayFormat} />
+              <Timesheet businessId={projectDetails?._id} displayFormat={displayFormat} freelancer={freelancer} />
             ) : (
               <MobileDisplayBox>
                 <ClientMobileInvoices

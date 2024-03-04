@@ -42,9 +42,7 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
         {
           text: 'View Details',
           onClick: () => {
-            router.push(
-              `/dashboard/projects/client/invoice/${rowData.businessId}?tab=invoices&freelancer=${rowData.freelancerId}`
-            )
+            router.push(`/dashboard/projects/client/invoice/${rowData.businessId}?tab=invoices&invoice=${rowData._id}`)
           }
         },
         {

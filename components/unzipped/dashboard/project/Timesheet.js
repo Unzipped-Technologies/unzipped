@@ -93,7 +93,6 @@ const HoursDiv = styled.div`
 
 const Timesheet = ({
   projectDetails,
-  handleUpdatedAt,
   businessId,
   getInvoices,
   invoices,
@@ -101,14 +100,15 @@ const Timesheet = ({
   createInvoice,
   addInvoiceTasks,
   updateTaskHour,
-  freelancerId,
   role,
   timeSheet = false,
   displayFormat = false,
-  approveInvoice = false
+  invoice = null,
+  freelancer,
+  freelancerId
 }) => {
   const router = useRouter()
-  const { freelancer } = router.query
+  const { week } = router.query
 
   const [tasksModal, setTasksModal] = useState(false)
   const [selectedTaskId, setTaskId] = useState('')
@@ -153,7 +153,11 @@ const Timesheet = ({
   }
 
   useEffect(() => {
-    getInvoices({ businessId: businessId, freelancerId: freelancer })
+    if (+week && week > 0) setSelectedWeek(week)
+  }, [week])
+
+  useEffect(() => {
+    getInvoices({ businessId: businessId, _id: invoice, freelancerId: freelancer })
   }, [businessId])
 
   // Below set week options
@@ -186,7 +190,8 @@ const Timesheet = ({
       setStartDate(startOfWeek)
       const filteredItems = invoices?.filter(item => {
         const itemDate = new Date(item.createdAt)
-        const isCurrentInvoice = itemDate >= startOfWeek && itemDate <= endOfWeek
+
+        const isCurrentInvoice = invoice ? true : itemDate >= startOfWeek && itemDate <= endOfWeek
         if (isCurrentInvoice) {
           setSelectedInvoice(item)
         }
@@ -378,32 +383,34 @@ const Timesheet = ({
               {ConverterUtils.capitalize(`${selectedInvoice?.freelancer?.user?.FullName.slice(0, 15) || 'User'}`)}
               {selectedInvoice?.freelancer?.user?.FullName?.length > 17 && '...'}
             </P>
-            <select
-              onChange={e => {
-                handleWeekChange(e?.target?.value)
-              }}
-              style={{
-                display: 'block',
-                border: '0',
-                width: 'fit-content',
-                backgroundColor: 'transparent',
-                marginLeft: '50px'
-              }}>
-              {weekOptions.map((week, index) => (
-                <option key={index} value={index}>
-                  Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
-                </option>
-              ))}
-            </select>
+            {!invoice && (
+              <select
+                onChange={e => {
+                  handleWeekChange(e?.target?.value)
+                }}
+                style={{
+                  display: 'block',
+                  border: '0',
+                  width: 'fit-content',
+                  backgroundColor: 'transparent',
+                  marginLeft: '50px'
+                }}>
+                {weekOptions.map((week, index) => (
+                  <option key={index} value={index}>
+                    Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
-          {role === 1 && isCurrenWeek && timeSheet ? (
+          {role === 1 && isCurrenWeek && timeSheet && selectedInvoice?.tasks?.length ? (
             <ButtonComp
               onClick={() => {
                 handleSubmit('active')
               }}>
               SUBMIT
             </ButtonComp>
-          ) : approveInvoice ? (
+          ) : selectedInvoice?.status !== 'approved' ? (
             <ButtonComp
               onClick={() => {
                 handleSubmit('approved')
@@ -668,7 +675,7 @@ const mapStateToProps = state => {
   return {
     projectDetails: state.Business.selectedBusiness,
     role: state.Auth.user.role,
-    freelancerId: state.Auth.user.freelancers,
+    freelancerId: state.Auth.user?.freelancers,
     invoices: state.Invoices.invoices
   }
 }

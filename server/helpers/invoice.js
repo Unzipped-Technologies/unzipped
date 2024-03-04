@@ -52,7 +52,7 @@ const getInvoiceById = async id => {
 
 const getAllInvoices = async query => {
   try {
-    const filter = pick(query, ['businessId', 'freelancerId', 'departmentId', 'clientId'])
+    const filter = pick(query, ['businessId', 'freelancerId', 'departmentId', 'clientId', '_id'])
 
     const total = await countInvoices(filter)
 
