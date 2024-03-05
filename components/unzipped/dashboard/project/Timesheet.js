@@ -403,13 +403,17 @@ const Timesheet = ({
               </select>
             )}
           </div>
-          {role === 1 && isCurrenWeek && timeSheet && selectedInvoice?.tasks?.length ? (
-            <ButtonComp
-              onClick={() => {
-                handleSubmit('active')
-              }}>
-              SUBMIT
-            </ButtonComp>
+          {role === 1 ? (
+            isCurrenWeek && timeSheet && selectedInvoice?.tasks?.length ? (
+              <ButtonComp
+                onClick={() => {
+                  handleSubmit('active')
+                }}>
+                SUBMIT
+              </ButtonComp>
+            ) : (
+              ''
+            )
           ) : selectedInvoice?.status !== 'approved' ? (
             <ButtonComp
               onClick={() => {
