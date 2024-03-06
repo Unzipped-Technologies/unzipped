@@ -12,7 +12,7 @@ const InvoiceRecordModel = require('../models/InvoiceRecord')
 const Mailer = require('../../services/Mailer')
 const receiptTemplate = require('../../services/emailTemplates/receipt')
 const { paymentStatusEnum, paymentTypeEnum } = require('../enum/paymentEnum')
-const ThirdPartyApplicationModel = require('../../models/ThirdPartyApplications')
+const ThirdPartyApplicationModel = require('../models/ThirdPartyApplications')
 const { ObjectId } = require('mongoose').Types
 
 const stripePayment = async (obj, user) => {
