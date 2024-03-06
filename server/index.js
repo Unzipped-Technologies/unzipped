@@ -47,8 +47,15 @@ app
       })
     }
 
-    // server.use(bodyParser.json({ limit: '50mb' }))
-    server.use(express.json()) // for json
+    // will check that webhook route is not processed as JSON. 
+    // add any other routes to this that need that treatment.
+    server.use((req, res, next) => {
+      if (req.originalUrl === '/api/payment/webhook') {
+        next();
+      } else {
+        express.json()(req, res, next);
+      }
+    });
     server.use(express.urlencoded({ extended: true }))
     server.use(
       cookieSession({

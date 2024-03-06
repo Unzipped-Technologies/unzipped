@@ -3,7 +3,7 @@ import BackHeader from '../BackHeader';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getPaymentMethods, getBusinessDetails } from '../../../redux/actions';
+import { getPaymentMethods, getBusinessDetails, getAccountBalance } from '../../../redux/actions';
 import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
 import {
     Underline
@@ -108,7 +108,7 @@ const getCardLogoUrl = (cardType) => {
     return stripeLogoEnum[brand];
 };
 
-const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetails, business, token, paymentMethods = []}) => {
+const DesktopAccount = ({email, stripeAccountId, phone, user, getPaymentMethods, getBusinessDetails, balance, getAccountBalance, business, token, paymentMethods = []}) => {
     const primaryPM = paymentMethods.find(e => e.isPrimary)
     const [editName, setEditName] = useState(false)
     const [editAddress, setEditAddress] = useState(false)
@@ -174,9 +174,24 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
         }
     }
 
+    const getAccountOnboardingLink = () => {
+
+    }
+
     useEffect(() => {
         getPaymentMethods(token)
         getBusinessDetails(undefined, token)
+    }, [])
+
+    useEffect(() => {
+        // Call getAccountBalance on component load
+        getAccountBalance(token);
+        // Set up an interval to call getAccountBalance every 5 minutes
+        const intervalId = setInterval(() => {
+            getAccountBalance(token);
+        }, 300000); // 300000 ms = 5 minutes
+    
+        return () => clearInterval(intervalId);
     }, [])
     
     const updateDisabled = () => {
@@ -225,11 +240,15 @@ const DesktopAccount = ({email, phone, user, getPaymentMethods, getBusinessDetai
                     </Rows>
                     <Rows>
                         <Item>Balance</Item>
-                        <Item>$0</Item>
+                        <Item>$ {(balance?.available[0]?.amount/100).toFixed(2).toLocaleString()}</Item>
                     </Rows>
                     <Rows>
-                        <Item></Item>
-                        <Link href='/dashboard/withdrawal/terms'>Withdrawal Funds</Link>
+                        <Item>{stripeAccountId ? '' : 'Withdraw'}</Item>
+                        {stripeAccountId ? (
+                            <Link href='/dashboard/withdrawal/terms'>Withdraw Funds</Link>
+                        ) : (
+                            <EditButton onClick={() => getAccountOnboardingLink()}>Complete Onboarding</EditButton>
+                        )}
                     </Rows>
                 </RightOne>
             </Container>
@@ -693,6 +712,8 @@ const mapStateToProps = state => {
       user: state.Auth.user,
       paymentMethods: state.Stripe.methods,
       business: state.Business.details,
+      stripeAccountId: state.Auth.user.stripeAccountId,
+      balance: state.Stripe?.balance,
     }
 }
 
@@ -700,6 +721,7 @@ const mapDispatchToProps = dispatch => {
     return {
       getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
       getBusinessDetails: bindActionCreators(getBusinessDetails, dispatch),
+      getAccountBalance: bindActionCreators(getAccountBalance, dispatch),
     }
 }
   

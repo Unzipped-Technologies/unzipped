@@ -26,7 +26,8 @@ const userSchema = new Schema(
     isSuspended: { type: Boolean, default: false },
     plan: { type: Number, default: 0 },
     phoneNumber: String,
-    stripeId: String,
+    stripeId: String, // this account is for making payments
+    stripeAccountId: String, // this account is for paying out to user
     isQuestionaireCompleted: { type: Boolean, default: false },
     AddressLineOne: { type: String, default: '' },
     AddressLineTwo: { type: String, default: '' },
