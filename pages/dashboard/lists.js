@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Nav from '../../components/unzipped/header';
+import React, { useEffect, useRef, useState } from 'react'
+import Nav from '../../components/unzipped/header'
 import Icon from '../../components/ui/Icon'
-import ListPanel from '../../components/unzipped/dashboard/ListPanel';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { parseCookies } from "../../services/cookieHelper";
-import { getUserLists } from "../../redux/ListEntries/action"
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
-import MobileProjects from '../../components/unzipped/dashboard/MobileProjects';
-import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard';
-import ViewAllList from '../../components/unzipped/dashboard/ViewAllList';
-import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import ListManagementPanel from '../../components/unzipped/dashboard/ListManagementPanel';
+import ListPanel from '../../components/unzipped/dashboard/ListPanel'
+import { connect, useDispatch, useSelector } from 'react-redux'
+import { parseCookies } from '../../services/cookieHelper'
+import { getUserLists } from '../../redux/ListEntries/action'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
+import MobileProjects from '../../components/unzipped/dashboard/MobileProjects'
+import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard'
+import ViewAllList from '../../components/unzipped/dashboard/ViewAllList'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
+import ListManagementPanel from '../../components/unzipped/dashboard/ListManagementPanel'
 import { deleteList } from '../../redux/Lists/ListsAction'
 import DownArrow from '../../components/icons/downArrow'
 import { WorkIcon } from '../../components/icons';
@@ -19,47 +19,45 @@ import { DarkText, TitleText } from '../../components/unzipped/dashboard/style';
 import Button from '../../components/ui/Button';
 
 const Lists = [
-    {
-        text: 'Favorites',
-        icon: <Icon name="heart" />,
-        padding: true
-    },
-    {
-        text: 'Recently Viewed',
-        icon: <Icon name="eye" />,
-        padding: false
-    },
-    {
-        text: 'My Team',
-        icon: <Icon name="suitcase" />,
-        padding: false
-    },
+  {
+    text: 'Favorites',
+    icon: <Icon name="heart" />,
+    padding: true
+  },
+  {
+    text: 'Recently Viewed',
+    icon: <Icon name="eye" />,
+    padding: false
+  },
+  {
+    text: 'My Team',
+    icon: <Icon name="suitcase" />,
+    padding: false
+  }
 ]
 
 const SelectInputStyled = styled.select`
-    position: relative;
-    border-radius: 3px;
-    border: 0.25px solid #000;
-    background: rgba(217, 217, 217, 0.28);
-    display: block;
-    padding: 5px;
-    width:200px;
-    height: 35px;
-    font-size: 12px;
-   
-`;
-
+  position: relative;
+  border-radius: 3px;
+  border: 0.25px solid #000;
+  background: rgba(217, 217, 217, 0.28);
+  display: block;
+  padding: 5px;
+  width: 200px;
+  height: 35px;
+  font-size: 12px;
+`
 
 const SelectionContainer = styled.div`
-    position: relative;
-    display: inline-block;
-    border: 1px solid #D9D9D9;
-    background: rgba(217, 217, 217, 0.28);
-    border-radius: 3px;
-    padding: 5px;
-    width: 100px;
-    margin-left: auto;
-`;
+  position: relative;
+  display: inline-block;
+  border: 1px solid #d9d9d9;
+  background: rgba(217, 217, 217, 0.28);
+  border-radius: 3px;
+  padding: 5px;
+  width: 100px;
+  margin-left: auto;
+`
 
 const SelectionButton = styled.div`
     border: none;
@@ -75,18 +73,17 @@ const SelectionButton = styled.div`
     //     display : block;
     // }
 
-`;
+`
 
 const DropdownContainer = styled.div`
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    margin-top: 2px;
-    
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  margin-top: 2px;
 `
 
 const DropdownItems = styled.div`
@@ -412,23 +409,21 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
 }
 
 Dashboard.getInitialProps = async ({ req, res }) => {
-    const token = parseCookies(req)
+  const token = parseCookies(req)
 
-    return {
-        token: token && token,
-    }
+  return {
+    token: token && token
+  }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        cookie: state.Auth.token,
-        user: state.Auth.user,
-    }
+const mapStateToProps = state => {
+  return {
+    cookie: state.Auth.token,
+    user: state.Auth.user
+  }
 }
-const mapDispatchToProps = (dispatch) => {
-    return {
-
-    }
+const mapDispatchToProps = dispatch => {
+  return {}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

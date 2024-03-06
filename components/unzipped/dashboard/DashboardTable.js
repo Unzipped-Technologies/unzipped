@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
@@ -7,9 +7,8 @@ import { bindActionCreators } from 'redux'
 
 import Button from '../../ui/Button'
 import { ValidationUtils } from '../../../utils'
-import { updateBusiness } from '../../../redux/Business/actions'
-
 import { TableHeading, TableData } from './style'
+import { updateBusiness, getProjectsList } from '../../../redux/Business/actions'
 
 const Container = styled.div`
   position: relative;
@@ -21,8 +20,16 @@ const Container = styled.div`
   border-radius: 10px;
 `
 
-const Panel = ({ businesses, userType, updateBusiness }) => {
+const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role, limit, page, freelancerId }) => {
   const router = useRouter()
+
+  useEffect(async () => {
+    // Below we are only sending pagination data, Other data we are using from redux store.
+    await getProjectsList({
+      limit: limit,
+      skip: (page - 1) * 25
+    })
+  }, [limit, page])
 
   const archivedProject = async projectID => {
     await Swal.fire({
@@ -53,12 +60,12 @@ const Panel = ({ businesses, userType, updateBusiness }) => {
     })
   }
 
-  const generatePopout = (userType, item) => {
-    if (userType === 0 || userType === 2) {
+  const generatePopout = (role, item) => {
+    if (role === 0 || role === 2) {
       return [
         {
           text: 'Invoice',
-          onClick: () => router.push(`projects/client/invoice/${item._id}`)
+          onClick: () => router.push(`projects/client/invoice/${item._id}?tab=invoices`)
         },
         {
           text: 'View details',
@@ -86,6 +93,12 @@ const Panel = ({ businesses, userType, updateBusiness }) => {
         {
           text: 'View Work',
           onClick: () => console.log('ITEM 3')
+        },
+
+        {
+          text: 'View Invoice',
+          onClick: () =>
+            router.push(`/dashboard/projects/freelancer/invoice/${item._id}?tab=invoices&freelancer${freelancerId}`)
         }
       ]
     }
@@ -109,7 +122,9 @@ const Panel = ({ businesses, userType, updateBusiness }) => {
           {businesses?.length > 0 &&
             businesses?.map(row => (
               <tr key={row._id}>
-                <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>{row.name}</TableData>
+                <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>
+                  {row.name}
+                </TableData>
                 <TableData>{row.budget || 0}</TableData>
                 <TableData>{row.equity || 0}</TableData>
                 <TableData>27</TableData>
@@ -137,7 +152,7 @@ const Panel = ({ businesses, userType, updateBusiness }) => {
                     fontSize="16px"
                     dropDownRight="-104px"
                     background="red"
-                    popout={generatePopout(userType, row)}
+                    popout={generatePopout(role, row)}
                     style={{
                       borderRadius: '3px',
                       border: '0.25px solid #000',
@@ -156,10 +171,20 @@ const Panel = ({ businesses, userType, updateBusiness }) => {
   )
 }
 
+const mapStateToProps = state => {
+  return {
+    businesses: state.Business?.projectList,
+    loading: state.Business?.loading,
+    role: state.Auth.user.role,
+    freelancerId: state.Auth.user?.freelancers
+  }
+}
+
 const mapDispatchToProps = dispatch => {
   return {
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
     updateBusiness: bindActionCreators(updateBusiness, dispatch)
   }
 }
 
-export default connect(null, mapDispatchToProps)(Panel)
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardTable)

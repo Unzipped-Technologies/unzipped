@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components'
 import { ValidationUtils } from '../../../../utils'
 import Button from '../../../../components/ui/Button'
 import Nav from '../../../../components/unzipped/header'
-import { getBusinessList } from '../../../../redux/actions'
+import { getProjectsList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
 import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
@@ -114,7 +114,7 @@ const ProjectDate = styled.div`
   padding-left: 18px;
 `
 
-const AllProjects = ({ businesses = [], getBusinessList, role }) => {
+const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) => {
   const router = useRouter()
 
   const [filter, setFilter] = useState('')
@@ -139,7 +139,7 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
   }
 
   useEffect(() => {
-    getBusinessList({
+    getProjectsList({
       take: 1000,
       skip: 0
     })
@@ -158,7 +158,7 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
         },
         {
           text: 'Invoice',
-          onClick: () => router.push(`/dashboard/projects/client/invoice/${business._id}`)
+          onClick: () => router.push(`/dashboard/projects/details/${business._id}?tab=invoices`)
         },
         {
           text: 'Assign department',
@@ -182,6 +182,13 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
         {
           text: 'View Work',
           onClick: () => console.log('ITEM 3')
+        },
+        {
+          text: 'View Invoice',
+          onClick: () =>
+            router.push(
+              `/dashboard/projects/freelancer/invoice/${business._id}?tab=invoices&freelancer=${freelancerId}`
+            )
         }
       ]
     }
@@ -227,7 +234,7 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
                 </SearchField>
               )}
               <ProjectsList>
-                {businesses?.map(business => {
+                {businesses?.map((business, index) => {
                   return (
                     <ProjectCard key={business._id}>
                       <ProjectName>{business?.name}</ProjectName>
@@ -250,6 +257,7 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
                           noBorder
                           type="lightgrey"
                           fontSize="13px"
+                          zIndex={'auto'}
                           popout={generatePopout(business)}
                           iconRight
                           colors={{
@@ -279,14 +287,15 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
 
 const mapStateToProps = state => {
   return {
-    businesses: state.Business?.businesses,
-    role: state.Auth.user.role
+    businesses: state.Business?.projectList,
+    role: state.Auth.user.role,
+    freelancerId: state.Auth.user?.freelancers
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getBusinessList: bindActionCreators(getBusinessList, dispatch)
+    getProjectsList: bindActionCreators(getProjectsList, dispatch)
   }
 }
 

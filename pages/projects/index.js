@@ -5,7 +5,7 @@ import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getFreelancerSkillsList, getProjectsList } from '../../redux/actions'
+import { getFreelancerSkillsList, getPublicProjectsList } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import MobileSearchBar from '../../components/ui/MobileSearchBar'
 import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects'
@@ -51,8 +51,7 @@ const Projects = ({
   totalCount,
   getFreelancerSkillsList,
   freelancerSkillsList = [],
-  getProjectsList,
-  id,
+  getPublicProjectsList,
   freelancerId
 }) => {
   const containerRef = useRef(null)
@@ -73,7 +72,7 @@ const Projects = ({
 
   useMemo(() => {
     getFreelancerSkillsList()
-    getProjectsList({ take, skip, isActive: true })
+    getPublicProjectsList({ take, skip, isActive: true })
   }, [])
 
   useEffect(() => {
@@ -126,7 +125,7 @@ const Projects = ({
   }
 
   const handleSearch = intersectionObserver => {
-    getProjectsList({
+    getPublicProjectsList({
       intersectionObserver,
       filter,
       take,
@@ -246,7 +245,7 @@ const Projects = ({
               return (
                 <div key={`${project._id}_desktop`}>
                   <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
-                    <ProjectDesktopCard project={project} includeRate id={id} freelancerId={freelancerId} />
+                    <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
                   </WhiteCard>
                   {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
                 </div>
@@ -283,7 +282,6 @@ Projects.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = state => {
   return {
-    id: state.Auth.user._id,
     freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
     freelancerId: state?.Auth?.user?.freelancers,
     totalCount: state.Business.totalCount,
@@ -293,7 +291,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectsList: bindActionCreators(getProjectsList, dispatch),
+    getPublicProjectsList: bindActionCreators(getPublicProjectsList, dispatch),
     getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch)
   }
 }

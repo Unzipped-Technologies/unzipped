@@ -1329,1392 +1329,1390 @@ export default {
 };
 
 export const lpSubscriptionFormInfo = {
-    LOOK_THROUGH_ISSUES: 'Look-Through Issues',
-    REGARDING_LOOK_THROUGH_ISSUES_CHECK_TRUE_FALSE:
-        'Please check the appropriate true or false responses to the following statements regarding the Look-Through Issues to subscribe for an investment in the Fund',
-    REQUIRED_FIELD_STATEMENT: 'All fields marked with an asterisk (*) are required',
-    CHECK_TRUE_FALSE_STATEMENT:
-        'Please check the appropriate true or false response to the following statements regarding the Look-Through Issues to subscribe for an investment in the Fund:',
-    ENTITY_NOT_ORGANIZED_ACQUIRING_INTEREST:
-        'The Entity was not organized for the purpose of acquiring the investment.',
-    ENTITY_MADE_INVESTMENT_PRIOR_DATE:
-        'The Entity has made investments prior to the date hereof or intends to make investments in the near future and each beneficial owner of interests in the Entity has and will share in the same proportion to each such investment.',
-    LOOK_THROUGH_ISSUES_NOT_AVAILABLE:
-        'This response should only be indicated if legally, your entity does not have beneficial owners (for example, a public charity or foundation).',
-    ENTITY_INVESTMENT_PARTNERSHIP_PERCENT:
-        'The Entity’s investment in the Partnership will not constitute more than forty percent (40%) of the Entity’s assets (including for this purpose any committed capital for an Entity that is an investment Fund).',
-    ENTITY_GOVERNING_DOCUMENTS:
-        'The governing documents of the Entity require that each beneficial owner of the Entity, including, but not limited to, shareholders, partners and beneficiaries, participate through such beneficial owner’s interest in the Entity in all of the Entity’s investments and that the profits and losses from each such investment are shared among such beneficial owners in the same proportions as all other investments of the Entity. No such beneficial owner may vary such beneficial owner’s share of the profits and losses or the amount of such beneficial owner’s contribution for any investment made by the Entity.',
-    SELECT_RESIDENCE_COUNTRY: 'Select Country of Residence',
-    TRUST_NOT_ORGANIZED_ACQUIRING_INTEREST: 'The Trust was not organized for the purpose of acquiring the investment.',
-    TRUST_MADE_INVESTMENT_PRIOR_DATE:
-        'The Trust has made investments prior to the date hereof or intends to make investments in the near future and each beneficial owner of interests in the Trust has and will share in the same proportion to each such investment.',
-    TRUST_INVESTMENT_PARTNERSHIP_PERCENT:
-        'The Trust’s investment in the Partnership will not constitute more than forty percent (40%) of the Trust’s assets (including for this purpose any committed capital for an Trust that is an investment Fund).',
-    TRUST_GOVERNING_DOCUMENTS:
-        'The governing documents of the Trust require that each beneficial owner of the Trust, including, but not limited to, shareholders, partners and beneficiaries, participate through such beneficial owner’s interest in the Trust in all of the Trust’s investments and that the profits and losses from each such investment are shared among such beneficial owners in the same proportions as all other investments of the Trust. No such beneficial owner may vary such beneficial owner’s share of the profits and losses or the amount of such beneficial owner’s contribution for any investment made by the Trust.',
-    LLC_TYPE: 'LLC',
-    TRUST_TYPE: 'Trust',
-    ENTER_RESPONSE: 'Enter Response',
-    INDIVIDUAL_SUBTYPE_STATE: 'What is the State of Residence of the Investor?',
+  LOOK_THROUGH_ISSUES: 'Look-Through Issues',
+  REGARDING_LOOK_THROUGH_ISSUES_CHECK_TRUE_FALSE:
+    'Please check the appropriate true or false responses to the following statements regarding the Look-Through Issues to subscribe for an investment in the Fund',
+  REQUIRED_FIELD_STATEMENT: 'All fields marked with an asterisk (*) are required',
+  CHECK_TRUE_FALSE_STATEMENT:
+    'Please check the appropriate true or false response to the following statements regarding the Look-Through Issues to subscribe for an investment in the Fund:',
+  ENTITY_NOT_ORGANIZED_ACQUIRING_INTEREST: 'The Entity was not organized for the purpose of acquiring the investment.',
+  ENTITY_MADE_INVESTMENT_PRIOR_DATE:
+    'The Entity has made investments prior to the date hereof or intends to make investments in the near future and each beneficial owner of interests in the Entity has and will share in the same proportion to each such investment.',
+  LOOK_THROUGH_ISSUES_NOT_AVAILABLE:
+    'This response should only be indicated if legally, your entity does not have beneficial owners (for example, a public charity or foundation).',
+  ENTITY_INVESTMENT_PARTNERSHIP_PERCENT:
+    'The Entity’s investment in the Partnership will not constitute more than forty percent (40%) of the Entity’s assets (including for this purpose any committed capital for an Entity that is an investment Fund).',
+  ENTITY_GOVERNING_DOCUMENTS:
+    'The governing documents of the Entity require that each beneficial owner of the Entity, including, but not limited to, shareholders, partners and beneficiaries, participate through such beneficial owner’s interest in the Entity in all of the Entity’s investments and that the profits and losses from each such investment are shared among such beneficial owners in the same proportions as all other investments of the Entity. No such beneficial owner may vary such beneficial owner’s share of the profits and losses or the amount of such beneficial owner’s contribution for any investment made by the Entity.',
+  SELECT_RESIDENCE_COUNTRY: 'Select Country of Residence',
+  TRUST_NOT_ORGANIZED_ACQUIRING_INTEREST: 'The Trust was not organized for the purpose of acquiring the investment.',
+  TRUST_MADE_INVESTMENT_PRIOR_DATE:
+    'The Trust has made investments prior to the date hereof or intends to make investments in the near future and each beneficial owner of interests in the Trust has and will share in the same proportion to each such investment.',
+  TRUST_INVESTMENT_PARTNERSHIP_PERCENT:
+    'The Trust’s investment in the Partnership will not constitute more than forty percent (40%) of the Trust’s assets (including for this purpose any committed capital for an Trust that is an investment Fund).',
+  TRUST_GOVERNING_DOCUMENTS:
+    'The governing documents of the Trust require that each beneficial owner of the Trust, including, but not limited to, shareholders, partners and beneficiaries, participate through such beneficial owner’s interest in the Trust in all of the Trust’s investments and that the profits and losses from each such investment are shared among such beneficial owners in the same proportions as all other investments of the Trust. No such beneficial owner may vary such beneficial owner’s share of the profits and losses or the amount of such beneficial owner’s contribution for any investment made by the Trust.',
+  LLC_TYPE: 'LLC',
+  TRUST_TYPE: 'Trust',
+  ENTER_RESPONSE: 'Enter Response',
+  INDIVIDUAL_SUBTYPE_STATE: 'What is the State of Residence of the Investor?',
 
-    SELECT_INVESTOR_SUB_TYPE: 'Select Investor Sub-Type',
-    INVESTOR_SUB_TYPE: 'Investor Sub-Type:',
-    ENTITY_TYPE: 'Type of Entity:',
-    ENTER_ENTITY_TYPE: 'Enter the Entity Type',
-    INVESTOR_SUBTYPE_COUNTRY_TOOLTIP:
-        'This is the country in which the primary legal organization of the entity has been undertaken.  You may ignore for purposes of responding secondary registrations to do business in other countries, though that may impact your response to the question on this page regarding the entity’s country of residence.',
-    INVESTOR_SUBTYPE_COUNTRY: 'What is the Country of domicile (legal formation) of the Entity?',
-    SELECT_JURISDICTION: 'Select Jurisdiction',
-    ENTITY_COUNTRY_RESIDENCE: 'What is the Country of residence of the Entity?',
-    SELECT_STATE: 'Select State',
-    ENTITY_DIRECT_INDIRECT_BENEFICIAL_OWNERS_REQUIRED:
-        'Is it the case that either (x) the Entity or (y) any of the Entity’s direct or indirect beneficial owners are required, if requested, under United States or other federal, state, local or non-United States similar regulations to release investment information? For example under the United States Freedom of Information Act (“FOIA”) or any similar statues anywhere else worldwide.',
-    ENTITY_COUNTRY_RESIDENCE_TOOLTIP:
-        'This is the country in which the Entity has its principal place of business.  In general, a principal place of business is the primary location where business is performed, and it is generally where the business keeps its books and records, and where the head of the firm (or upper management, or the majority thereof) work.  The Entity’s legal counsel should be consulted to make a proper determination about the Entity’s country of residence.',
-    INVESTOR_SUBTYPE_COUNTRY_PLACEHOLDER: 'Select Country of Domicile',
-    ENTITY_STATE_RESIDENCE_TOOLTIP:
-        'This is the State in which the Entity has its principal place of business.  In general, a principal place of business is the primary location where business is performed, and it is generally where the business keeps its books and records, and where the head of the firm (or upper management, or the majority thereof) work.  The Entity’s legal counsel should be consulted to make a proper determination about the Entity’s State of residence.  Please take note that among other things, the data in this field will be relied upon and used for State “blue sky” securities law filing purposes.',
-    ENTITY_STATE_RESIDENCE: 'What is the State of residence of the Entity?',
-    ENTER_EXACT_NAME:
-        'Please enter the exact, complete name in which the Entity will hold legal title. This name will appear in the Fund’s records and on tax reporting information.',
-    ENTER_ENTITY_NAME: 'Enter Legal Name',
-    ENTITY_LEGAL_NAME: 'Enter the Entity’s full legal name',
-    INDIVIDUAL_FULL_LEGAL_NAME: 'Individual’s Full Legal Name',
-    ENTITY_VEHICLE_TYPE: 'Is the Entity a fund-of-funds or a similar type vehicle?',
-    TAX_EXEMPT_FOR_US: 'Is the Entity tax exempt for U.S. federal income tax purposes?',
-    ENTITY_US_501_C3: 'Is the Entity a U.S. 501(c)(3)',
-    CHOOSE_ALL_IF_ANY: 'Choose all that apply, if any:',
-    TAX_EXEMPT_ORG: 'Tax-Exempt Organization',
-    EMPLOYEE_BENEFIT_PLAN: 'Employee Benefit Plan',
-    ERISA_PARTNER: 'ERISA Partner',
-    BANK_HOLIDAY_COMPANY: 'Bank Holding Company',
-    FOREIGN_GOVERNMENT_ENTITY: 'Foreign Government Entity',
-    GOVERNMENTAL_PENSION_PLAN: 'Governmental Pension Plan',
-    NON_PENSION_GOVERNMENTAL_ENTITY: 'Non-Pension Governmental Entity',
-    PRIVATE_PENSION_PLAN: 'Private Pension Plan',
-    FUND_OF_FUNDS: 'Fund of Funds',
-    INSURANCE_COMPANY: 'Insurance Company',
-    PRIVATE_FOUNDATION: 'Private Foundation',
-    C_3_501: '501(c)(3)',
-    REGISTERED_SEC: 'Investment Company Registered with SEC',
-    BROKER_DEALER: 'Broker-Dealer',
-    TYPE_OF_ENTITY: 'Type of Entity:',
+  SELECT_INVESTOR_SUB_TYPE: 'Select Investor Sub-Type',
+  INVESTOR_SUB_TYPE: 'Investor Sub-Type:',
+  ENTITY_TYPE: 'Type of Entity:',
+  ENTER_ENTITY_TYPE: 'Enter the Entity Type',
+  INVESTOR_SUBTYPE_COUNTRY_TOOLTIP:
+    'This is the country in which the primary legal organization of the entity has been undertaken.  You may ignore for purposes of responding secondary registrations to do business in other countries, though that may impact your response to the question on this page regarding the entity’s country of residence.',
+  INVESTOR_SUBTYPE_COUNTRY: 'What is the Country of domicile (legal formation) of the Entity?',
+  SELECT_JURISDICTION: 'Select Jurisdiction',
+  ENTITY_COUNTRY_RESIDENCE: 'What is the Country of residence of the Entity?',
+  SELECT_STATE: 'Select State',
+  ENTITY_DIRECT_INDIRECT_BENEFICIAL_OWNERS_REQUIRED:
+    'Is it the case that either (x) the Entity or (y) any of the Entity’s direct or indirect beneficial owners are required, if requested, under United States or other federal, state, local or non-United States similar regulations to release investment information? For example under the United States Freedom of Information Act (“FOIA”) or any similar statues anywhere else worldwide.',
+  ENTITY_COUNTRY_RESIDENCE_TOOLTIP:
+    'This is the country in which the Entity has its principal place of business.  In general, a principal place of business is the primary location where business is performed, and it is generally where the business keeps its books and records, and where the head of the firm (or upper management, or the majority thereof) work.  The Entity’s legal counsel should be consulted to make a proper determination about the Entity’s country of residence.',
+  INVESTOR_SUBTYPE_COUNTRY_PLACEHOLDER: 'Select Country of Domicile',
+  ENTITY_STATE_RESIDENCE_TOOLTIP:
+    'This is the State in which the Entity has its principal place of business.  In general, a principal place of business is the primary location where business is performed, and it is generally where the business keeps its books and records, and where the head of the firm (or upper management, or the majority thereof) work.  The Entity’s legal counsel should be consulted to make a proper determination about the Entity’s State of residence.  Please take note that among other things, the data in this field will be relied upon and used for State “blue sky” securities law filing purposes.',
+  ENTITY_STATE_RESIDENCE: 'What is the State of residence of the Entity?',
+  ENTER_EXACT_NAME:
+    'Please enter the exact, complete name in which the Entity will hold legal title. This name will appear in the Fund’s records and on tax reporting information.',
+  ENTER_ENTITY_NAME: 'Enter Legal Name',
+  ENTITY_LEGAL_NAME: 'Enter the Entity’s full legal name',
+  INDIVIDUAL_FULL_LEGAL_NAME: 'Individual’s Full Legal Name',
+  ENTITY_VEHICLE_TYPE: 'Is the Entity a fund-of-funds or a similar type vehicle?',
+  TAX_EXEMPT_FOR_US: 'Is the Entity tax exempt for U.S. federal income tax purposes?',
+  ENTITY_US_501_C3: 'Is the Entity a U.S. 501(c)(3)',
+  CHOOSE_ALL_IF_ANY: 'Choose all that apply, if any:',
+  TAX_EXEMPT_ORG: 'Tax-Exempt Organization',
+  EMPLOYEE_BENEFIT_PLAN: 'Employee Benefit Plan',
+  ERISA_PARTNER: 'ERISA Partner',
+  BANK_HOLIDAY_COMPANY: 'Bank Holding Company',
+  FOREIGN_GOVERNMENT_ENTITY: 'Foreign Government Entity',
+  GOVERNMENTAL_PENSION_PLAN: 'Governmental Pension Plan',
+  NON_PENSION_GOVERNMENTAL_ENTITY: 'Non-Pension Governmental Entity',
+  PRIVATE_PENSION_PLAN: 'Private Pension Plan',
+  FUND_OF_FUNDS: 'Fund of Funds',
+  INSURANCE_COMPANY: 'Insurance Company',
+  PRIVATE_FOUNDATION: 'Private Foundation',
+  C_3_501: '501(c)(3)',
+  REGISTERED_SEC: 'Investment Company Registered with SEC',
+  BROKER_DEALER: 'Broker-Dealer',
+  TYPE_OF_ENTITY: 'Type of Entity:',
 
-    SELECT_COUNTRY: 'Select Country',
-    INDIVIDUAL_MANNERS_SUBJECT:
-        'Please describe the manner in which the Individual or its direct or indirect beneficial owners are subject to FOIA or similar statutes.',
-    INVESTOR_SUBTYPE_STATE_TOOLTIP:
-        'This is the State in which the primary legal organization of the entity has been undertaken.  You may ignore for purposes of responding secondary registrations to do business in other States, though that may impact your response to the question on this page regarding the entity’s State of residence.  So, for example, if the Entity is legally organized in Delaware but has also registered in California as an out-of-state entity doing business in California, please select Delaware.',
-    INVESTOR_SUBTYPE_STATE: 'What is the State of domicile (legal formation) of the Entity?',
-    DIRECT_INDIRECT_BENEFICIAL_OWNERS_REQUIRED:
-        'Is it the case that either (x) the Entity or (y) any of the Entity’s direct or indirect beneficial owners are required, if requested, under United States or other federal, state, local or non-United States similar regulations to release investment information? For example under the United States Freedom of Information Act (“FOIA”) or any similar statues anywhere else worldwide.',
-    ENTITY_MANNERS_SUBJECT:
-        'Please describe the manner in which the Entity or its direct or indirect beneficial owners are subject to FOIA or similar statutes.',
-    FUND_MANAGER_INFORMATION: 'Fund Manager Information',
-    INVESTOR_OR_BENEFICIAL_OWNER:
-        'Has the Investor or any of its Beneficial Owners been subject to a Disqualifying Event for purpose of Regulation D of Rule 506(d) promulgated under the Securities Act?',
+  SELECT_COUNTRY: 'Select Country',
+  INDIVIDUAL_MANNERS_SUBJECT:
+    'Please describe the manner in which the Individual or its direct or indirect beneficial owners are subject to FOIA or similar statutes.',
+  INVESTOR_SUBTYPE_STATE_TOOLTIP:
+    'This is the State in which the primary legal organization of the entity has been undertaken.  You may ignore for purposes of responding secondary registrations to do business in other States, though that may impact your response to the question on this page regarding the entity’s State of residence.  So, for example, if the Entity is legally organized in Delaware but has also registered in California as an out-of-state entity doing business in California, please select Delaware.',
+  INVESTOR_SUBTYPE_STATE: 'What is the State of domicile (legal formation) of the Entity?',
+  DIRECT_INDIRECT_BENEFICIAL_OWNERS_REQUIRED:
+    'Is it the case that either (x) the Entity or (y) any of the Entity’s direct or indirect beneficial owners are required, if requested, under United States or other federal, state, local or non-United States similar regulations to release investment information? For example under the United States Freedom of Information Act (“FOIA”) or any similar statues anywhere else worldwide.',
+  ENTITY_MANNERS_SUBJECT:
+    'Please describe the manner in which the Entity or its direct or indirect beneficial owners are subject to FOIA or similar statutes.',
+  FUND_MANAGER_INFORMATION: 'Fund Manager Information',
+  INVESTOR_OR_BENEFICIAL_OWNER:
+    'Has the Investor or any of its Beneficial Owners been subject to a Disqualifying Event for purpose of Regulation D of Rule 506(d) promulgated under the Securities Act?',
 
-    INDIVIDUAL_LEGALLY_DOMICILED:
-        'This is the country in which the Investor has legal residence. The Investor should consult with legal counsel if there is any question regarding the proper response.',
-    INDIVIDUAL_LEGALLY_DOMICILED_TOOLTIP:
-        'This is the country in which the Investor has legal residence. The Investor should consult with legal counsel if there is any question regarding the proper response.',
-    JOINT_TENANTS: 'Joint Tenants',
-    JOINT_TENANTS_RIGHTS: 'Joint Tenants with Rights of Survivorship',
-    TENANTS_COMMON: 'Tenants in Common',
-    COMMUNITY_PROPERTY: 'Community Property',
-    LEGAL_OWNERSHIP_TYPE: 'Indicate the Type of Legal Ownership Desired',
-    LEGAL_TITLE_LABLE_TOOLTIP:
-        'Please enter the legal title for your investment in the Fund.  I.E. Bob and Linda Smith, Tenants in Common',
-    LEGAL_TITLE_LABLE:
-        'Enter your Legal Title within the Joint Individual (e.g. Bob and Linda Smith, Tenants in Common)',
-    DISCLOSE_FUND_MANAGER:
-        'The Investor has other information to disclose to the Fund Manager in connection with the investment',
-    TENANTS_ENTIRETY: 'Tenants by the Entirety',
+  INDIVIDUAL_LEGALLY_DOMICILED:
+    'This is the country in which the Investor has legal residence. The Investor should consult with legal counsel if there is any question regarding the proper response.',
+  INDIVIDUAL_LEGALLY_DOMICILED_TOOLTIP:
+    'This is the country in which the Investor has legal residence. The Investor should consult with legal counsel if there is any question regarding the proper response.',
+  JOINT_TENANTS: 'Joint Tenants',
+  JOINT_TENANTS_RIGHTS: 'Joint Tenants with Rights of Survivorship',
+  TENANTS_COMMON: 'Tenants in Common',
+  COMMUNITY_PROPERTY: 'Community Property',
+  LEGAL_OWNERSHIP_TYPE: 'Indicate the Type of Legal Ownership Desired',
+  LEGAL_TITLE_LABLE_TOOLTIP:
+    'Please enter the legal title for your investment in the Fund.  I.E. Bob and Linda Smith, Tenants in Common',
+  LEGAL_TITLE_LABLE: 'Enter your Legal Title within the Joint Individual (e.g. Bob and Linda Smith, Tenants in Common)',
+  DISCLOSE_FUND_MANAGER:
+    'The Investor has other information to disclose to the Fund Manager in connection with the investment',
+  TENANTS_ENTIRETY: 'Tenants by the Entirety',
 
-    ENTER_TRUST_NAME_PLACEHOLDER: 'Enter Name',
-    NUMBER_OF_GRANTORS_TRUST_PLACEHOLDER: 'Enter Number of Grantors:',
-    NUMBER_OF_GRANTORS_TRUST: 'Number of Grantors:',
-    ENTIRE_IRREVOCABLE_TRUST_LEGAL_NAME:
-        'Please use the entire legal name of the Irrevocable Trust (the “Trust”).  This name will appear in the Fund’s records and on tax reporting information. Your estate planning advisor should have supplied you with the exact legal wording to use for this purpose. Most irrevocable trusts hold title through the trustee(s), such as: “John Smith, Trustee of the John and Linda Smith Irrevocable Trust Dated January 1, 2000”. Accordingly, most commonly entries such as “The John and Linda Smith Irrevocable Trust” will not be correct. If you have questions about the correct legal title, contact your estate planning advisor.',
-    ENTER_TRUST_NAME: "Enter the Trust's name:",
-    PLANNING_ADVISOR_SUPPLIED_INFORMATION:
-        'This is the country in which the Trust has legal residence.  For revocable trusts, this is usually the place of residence of the grantor.  For irrevocable trusts, this is usually the place organization of the irrevocable trust.  The Trust’s legal counsel should be consulted to make a proper determination about the Trust’s country of residence.',
-    TRUST_LEGALLY_DOMICILED: 'What is the Country of residence of the Trust?',
-    STATE_RESIDENCE_TRUST_TOOLTIP:
-        'This is the state in which the Trust has legal residence.  For revocable trusts, this is usually the place of residence of the grantor.  For irrevocable trusts, this is usually the place organization of the irrevocable trust.  The Trust’s legal counsel should be consulted to make a proper determination about the Trust’s state of residence.  Please take note that among other things, the data in this field will be relied upon and used for State “blue sky” securities law filing purposes.',
-    STATE_RESIDENCE_TRUST: 'What is the State of residence of the Trust?',
-    TAX_EXEMPT_FEDERAL_PURPOSE: 'Is the Trust tax exempt for United States federal income tax purposes?',
-    IS_C3_504: 'Is the Trust a 501(c)(3)?',
-    TRUST_REQUIRED_FOIA:
-        'Is the Trust required, if requested, under United States or other federal, state, local or non-United States similar regulations to release investment information? For example under the United States Freedom of Information Act (“FOIA”) or any similar statues anywhere else worldwide?',
-    TRUST_MANNERS_SUBJECT:
-        'Please describe the manner in which the Trust or its direct or indirect beneficial owners are subject to FOIA or similar statutes.',
+  ENTER_TRUST_NAME_PLACEHOLDER: 'Enter Name',
+  NUMBER_OF_GRANTORS_TRUST_PLACEHOLDER: 'Enter Number of Grantors:',
+  NUMBER_OF_GRANTORS_TRUST: 'Number of Grantors:',
+  ENTIRE_IRREVOCABLE_TRUST_LEGAL_NAME:
+    'Please use the entire legal name of the Irrevocable Trust (the “Trust”).  This name will appear in the Fund’s records and on tax reporting information. Your estate planning advisor should have supplied you with the exact legal wording to use for this purpose. Most irrevocable trusts hold title through the trustee(s), such as: “John Smith, Trustee of the John and Linda Smith Irrevocable Trust Dated January 1, 2000”. Accordingly, most commonly entries such as “The John and Linda Smith Irrevocable Trust” will not be correct. If you have questions about the correct legal title, contact your estate planning advisor.',
+  ENTER_TRUST_NAME: "Enter the Trust's name:",
+  PLANNING_ADVISOR_SUPPLIED_INFORMATION:
+    'This is the country in which the Trust has legal residence.  For revocable trusts, this is usually the place of residence of the grantor.  For irrevocable trusts, this is usually the place organization of the irrevocable trust.  The Trust’s legal counsel should be consulted to make a proper determination about the Trust’s country of residence.',
+  TRUST_LEGALLY_DOMICILED: 'What is the Country of residence of the Trust?',
+  STATE_RESIDENCE_TRUST_TOOLTIP:
+    'This is the state in which the Trust has legal residence.  For revocable trusts, this is usually the place of residence of the grantor.  For irrevocable trusts, this is usually the place organization of the irrevocable trust.  The Trust’s legal counsel should be consulted to make a proper determination about the Trust’s state of residence.  Please take note that among other things, the data in this field will be relied upon and used for State “blue sky” securities law filing purposes.',
+  STATE_RESIDENCE_TRUST: 'What is the State of residence of the Trust?',
+  TAX_EXEMPT_FEDERAL_PURPOSE: 'Is the Trust tax exempt for United States federal income tax purposes?',
+  IS_C3_504: 'Is the Trust a 501(c)(3)?',
+  TRUST_REQUIRED_FOIA:
+    'Is the Trust required, if requested, under United States or other federal, state, local or non-United States similar regulations to release investment information? For example under the United States Freedom of Information Act (“FOIA”) or any similar statues anywhere else worldwide?',
+  TRUST_MANNERS_SUBJECT:
+    'Please describe the manner in which the Trust or its direct or indirect beneficial owners are subject to FOIA or similar statutes.',
 
-    INVESTOR_INFORMATION: 'Investor Information',
-    PREVIOUS_FUND: 'Use information from previous Fund',
-    INVESTOR_TYPE: 'Investor Type',
-};
+  INVESTOR_INFORMATION: 'Investor Information',
+  PREVIOUS_FUND: 'Use information from previous Fund',
+  INVESTOR_TYPE: 'Investor Type'
+}
 
 export const investorTrustSubTypes = [
-    {
-        isUS: 0,
-        id: 9,
-        name: 'Revocable Trust',
-    },
-    {
-        isUS: 0,
-        id: 10,
-        name: 'Irrevocable Trust',
-    },
-];
+  {
+    isUS: 0,
+    id: 9,
+    name: 'Revocable Trust'
+  },
+  {
+    isUS: 0,
+    id: 10,
+    name: 'Irrevocable Trust'
+  }
+]
 
 export const investorSubTypes = [
-    {
-        isUS: 1,
-        id: 1,
-        name: 'U.S. C Corporation',
-    },
-    {
-        isUS: 1,
-        id: 2,
-        name: 'U.S. S Corporation',
-    },
-    {
-        isUS: 1,
-        id: 3,
-        name: 'U.S. Limited Liability Company',
-    },
-    {
-        isUS: 1,
-        id: 4,
-        name: 'U.S. Limited Partnership',
-    },
-    {
-        isUS: 1,
-        id: 5,
-        name: 'U.S. General Partnership',
-    },
-    {
-        isUS: 0,
-        id: 6,
-        name: 'Non-U.S. Corporation',
-    },
-    {
-        isUS: 0,
-        id: 7,
-        name: 'Non-U.S. LLC or Similar Private Company',
-    },
-    {
-        isUS: 0,
-        id: 8,
-        name: 'Non-U.S. Limited Partnership or Similar',
-    },
-];
+  {
+    isUS: 1,
+    id: 1,
+    name: 'U.S. C Corporation'
+  },
+  {
+    isUS: 1,
+    id: 2,
+    name: 'U.S. S Corporation'
+  },
+  {
+    isUS: 1,
+    id: 3,
+    name: 'U.S. Limited Liability Company'
+  },
+  {
+    isUS: 1,
+    id: 4,
+    name: 'U.S. Limited Partnership'
+  },
+  {
+    isUS: 1,
+    id: 5,
+    name: 'U.S. General Partnership'
+  },
+  {
+    isUS: 0,
+    id: 6,
+    name: 'Non-U.S. Corporation'
+  },
+  {
+    isUS: 0,
+    id: 7,
+    name: 'Non-U.S. LLC or Similar Private Company'
+  },
+  {
+    isUS: 0,
+    id: 8,
+    name: 'Non-U.S. Limited Partnership or Similar'
+  }
+]
 
 export const countriesList = [
-    {
-        id: 231,
-        name: 'United States',
-    },
-    {
-        id: 1,
-        name: 'Afghanistan',
-    },
-    {
-        id: 2,
-        name: 'Albania',
-    },
-    {
-        id: 3,
-        name: 'Algeria',
-    },
-    {
-        id: 4,
-        name: 'American Samoa',
-    },
-    {
-        id: 5,
-        name: 'Andorra',
-    },
-    {
-        id: 6,
-        name: 'Angola',
-    },
-    {
-        id: 7,
-        name: 'Anguilla',
-    },
-    {
-        id: 8,
-        name: 'Antarctica',
-    },
-    {
-        id: 9,
-        name: 'Antigua And Barbuda',
-    },
-    {
-        id: 10,
-        name: 'Argentina',
-    },
-    {
-        id: 11,
-        name: 'Armenia',
-    },
-    {
-        id: 12,
-        name: 'Aruba',
-    },
-    {
-        id: 13,
-        name: 'Australia',
-    },
-    {
-        id: 14,
-        name: 'Austria',
-    },
-    {
-        id: 15,
-        name: 'Azerbaijan',
-    },
-    {
-        id: 16,
-        name: 'Bahamas The',
-    },
-    {
-        id: 17,
-        name: 'Bahrain',
-    },
-    {
-        id: 18,
-        name: 'Bangladesh',
-    },
-    {
-        id: 19,
-        name: 'Barbados',
-    },
-    {
-        id: 20,
-        name: 'Belarus',
-    },
-    {
-        id: 21,
-        name: 'Belgium',
-    },
-    {
-        id: 22,
-        name: 'Belize',
-    },
-    {
-        id: 23,
-        name: 'Benin',
-    },
-    {
-        id: 24,
-        name: 'Bermuda',
-    },
-    {
-        id: 25,
-        name: 'Bhutan',
-    },
-    {
-        id: 26,
-        name: 'Bolivia',
-    },
-    {
-        id: 27,
-        name: 'Bosnia and Herzegovina',
-    },
-    {
-        id: 28,
-        name: 'Botswana',
-    },
-    {
-        id: 29,
-        name: 'Bouvet Island',
-    },
-    {
-        id: 30,
-        name: 'Brazil',
-    },
-    {
-        id: 31,
-        name: 'British Indian Ocean Territory',
-    },
-    {
-        id: 32,
-        name: 'Brunei',
-    },
-    {
-        id: 33,
-        name: 'Bulgaria',
-    },
-    {
-        id: 34,
-        name: 'Burkina Faso',
-    },
-    {
-        id: 35,
-        name: 'Burundi',
-    },
-    {
-        id: 36,
-        name: 'Cambodia',
-    },
-    {
-        id: 37,
-        name: 'Cameroon',
-    },
-    {
-        id: 38,
-        name: 'Canada',
-    },
-    {
-        id: 39,
-        name: 'Cape Verde',
-    },
-    {
-        id: 40,
-        name: 'Cayman Islands',
-    },
-    {
-        id: 41,
-        name: 'Central African Republic',
-    },
-    {
-        id: 42,
-        name: 'Chad',
-    },
-    {
-        id: 43,
-        name: 'Chile',
-    },
-    {
-        id: 44,
-        name: 'China',
-    },
-    {
-        id: 45,
-        name: 'Christmas Island',
-    },
-    {
-        id: 46,
-        name: 'Cocos (Keeling) Islands',
-    },
-    {
-        id: 47,
-        name: 'Colombia',
-    },
-    {
-        id: 48,
-        name: 'Comoros',
-    },
-    {
-        id: 49,
-        name: 'Congo',
-    },
-    {
-        id: 50,
-        name: 'Congo The Democratic Republic Of The',
-    },
-    {
-        id: 51,
-        name: 'Cook Islands',
-    },
-    {
-        id: 52,
-        name: 'Costa Rica',
-    },
-    {
-        id: 53,
-        name: "Cote D''Ivoire (Ivory Coast)",
-    },
-    {
-        id: 54,
-        name: 'Croatia (Hrvatska)',
-    },
-    {
-        id: 55,
-        name: 'Cuba',
-    },
-    {
-        id: 56,
-        name: 'Cyprus',
-    },
-    {
-        id: 57,
-        name: 'Czech Republic',
-    },
-    {
-        id: 58,
-        name: 'Denmark',
-    },
-    {
-        id: 59,
-        name: 'Djibouti',
-    },
-    {
-        id: 60,
-        name: 'Dominica',
-    },
-    {
-        id: 61,
-        name: 'Dominican Republic',
-    },
-    {
-        id: 62,
-        name: 'East Timor',
-    },
-    {
-        id: 63,
-        name: 'Ecuador',
-    },
-    {
-        id: 64,
-        name: 'Egypt',
-    },
-    {
-        id: 65,
-        name: 'El Salvador',
-    },
-    {
-        id: 66,
-        name: 'Equatorial Guinea',
-    },
-    {
-        id: 67,
-        name: 'Eritrea',
-    },
-    {
-        id: 68,
-        name: 'Estonia',
-    },
-    {
-        id: 69,
-        name: 'Ethiopia',
-    },
-    {
-        id: 70,
-        name: 'External Territories of Australia',
-    },
-    {
-        id: 71,
-        name: 'Falkland Islands',
-    },
-    {
-        id: 72,
-        name: 'Faroe Islands',
-    },
-    {
-        id: 73,
-        name: 'Fiji Islands',
-    },
-    {
-        id: 74,
-        name: 'Finland',
-    },
-    {
-        id: 75,
-        name: 'France',
-    },
-    {
-        id: 76,
-        name: 'French Guiana',
-    },
-    {
-        id: 77,
-        name: 'French Polynesia',
-    },
-    {
-        id: 78,
-        name: 'French Southern Territories',
-    },
-    {
-        id: 79,
-        name: 'Gabon',
-    },
-    {
-        id: 80,
-        name: 'Gambia The',
-    },
-    {
-        id: 81,
-        name: 'Georgia',
-    },
-    {
-        id: 82,
-        name: 'Germany',
-    },
-    {
-        id: 83,
-        name: 'Ghana',
-    },
-    {
-        id: 84,
-        name: 'Gibraltar',
-    },
-    {
-        id: 85,
-        name: 'Greece',
-    },
-    {
-        id: 86,
-        name: 'Greenland',
-    },
-    {
-        id: 87,
-        name: 'Grenada',
-    },
-    {
-        id: 88,
-        name: 'Guadeloupe',
-    },
-    {
-        id: 89,
-        name: 'Guam',
-    },
-    {
-        id: 90,
-        name: 'Guatemala',
-    },
-    {
-        id: 91,
-        name: 'Guernsey and Alderney',
-    },
-    {
-        id: 92,
-        name: 'Guinea',
-    },
-    {
-        id: 93,
-        name: 'Guinea-Bissau',
-    },
-    {
-        id: 94,
-        name: 'Guyana',
-    },
-    {
-        id: 95,
-        name: 'Haiti',
-    },
-    {
-        id: 96,
-        name: 'Heard and McDonald Islands',
-    },
-    {
-        id: 97,
-        name: 'Honduras',
-    },
-    {
-        id: 98,
-        name: 'Hong Kong S.A.R.',
-    },
-    {
-        id: 99,
-        name: 'Hungary',
-    },
-    {
-        id: 100,
-        name: 'Iceland',
-    },
-    {
-        id: 101,
-        name: 'India',
-    },
-    {
-        id: 102,
-        name: 'Indonesia',
-    },
-    {
-        id: 103,
-        name: 'Iran',
-    },
-    {
-        id: 104,
-        name: 'Iraq',
-    },
-    {
-        id: 105,
-        name: 'Ireland',
-    },
-    {
-        id: 106,
-        name: 'Israel',
-    },
-    {
-        id: 107,
-        name: 'Italy',
-    },
-    {
-        id: 108,
-        name: 'Jamaica',
-    },
-    {
-        id: 109,
-        name: 'Japan',
-    },
-    {
-        id: 110,
-        name: 'Jersey',
-    },
-    {
-        id: 111,
-        name: 'Jordan',
-    },
-    {
-        id: 112,
-        name: 'Kazakhstan',
-    },
-    {
-        id: 113,
-        name: 'Kenya',
-    },
-    {
-        id: 114,
-        name: 'Kiribati',
-    },
-    {
-        id: 115,
-        name: 'Korea North',
-    },
-    {
-        id: 116,
-        name: 'Korea South',
-    },
-    {
-        id: 117,
-        name: 'Kuwait',
-    },
-    {
-        id: 118,
-        name: 'Kyrgyzstan',
-    },
-    {
-        id: 119,
-        name: 'Laos',
-    },
-    {
-        id: 120,
-        name: 'Latvia',
-    },
-    {
-        id: 121,
-        name: 'Lebanon',
-    },
-    {
-        id: 122,
-        name: 'Lesotho',
-    },
-    {
-        id: 123,
-        name: 'Liberia',
-    },
-    {
-        id: 124,
-        name: 'Libya',
-    },
-    {
-        id: 125,
-        name: 'Liechtenstein',
-    },
-    {
-        id: 126,
-        name: 'Lithuania',
-    },
-    {
-        id: 127,
-        name: 'Luxembourg',
-    },
-    {
-        id: 128,
-        name: 'Macau S.A.R.',
-    },
-    {
-        id: 129,
-        name: 'Macedonia',
-    },
-    {
-        id: 130,
-        name: 'Madagascar',
-    },
-    {
-        id: 131,
-        name: 'Malawi',
-    },
-    {
-        id: 132,
-        name: 'Malaysia',
-    },
-    {
-        id: 133,
-        name: 'Maldives',
-    },
-    {
-        id: 134,
-        name: 'Mali',
-    },
-    {
-        id: 135,
-        name: 'Malta',
-    },
-    {
-        id: 136,
-        name: 'Man (Isle of)',
-    },
-    {
-        id: 137,
-        name: 'Marshall Islands',
-    },
-    {
-        id: 138,
-        name: 'Martinique',
-    },
-    {
-        id: 139,
-        name: 'Mauritania',
-    },
-    {
-        id: 140,
-        name: 'Mauritius',
-    },
-    {
-        id: 141,
-        name: 'Mayotte',
-    },
-    {
-        id: 142,
-        name: 'Mexico',
-    },
-    {
-        id: 143,
-        name: 'Micronesia',
-    },
-    {
-        id: 144,
-        name: 'Moldova',
-    },
-    {
-        id: 145,
-        name: 'Monaco',
-    },
-    {
-        id: 146,
-        name: 'Mongolia',
-    },
-    {
-        id: 147,
-        name: 'Montserrat',
-    },
-    {
-        id: 148,
-        name: 'Morocco',
-    },
-    {
-        id: 149,
-        name: 'Mozambique',
-    },
-    {
-        id: 150,
-        name: 'Myanmar',
-    },
-    {
-        id: 151,
-        name: 'Namibia',
-    },
-    {
-        id: 152,
-        name: 'Nauru',
-    },
-    {
-        id: 153,
-        name: 'Nepal',
-    },
-    {
-        id: 154,
-        name: 'Netherlands Antilles',
-    },
-    {
-        id: 155,
-        name: 'Netherlands The',
-    },
-    {
-        id: 156,
-        name: 'New Caledonia',
-    },
-    {
-        id: 157,
-        name: 'New Zealand',
-    },
-    {
-        id: 158,
-        name: 'Nicaragua',
-    },
-    {
-        id: 159,
-        name: 'Niger',
-    },
-    {
-        id: 160,
-        name: 'Nigeria',
-    },
-    {
-        id: 161,
-        name: 'Niue',
-    },
-    {
-        id: 162,
-        name: 'Norfolk Island',
-    },
-    {
-        id: 163,
-        name: 'Northern Mariana Islands',
-    },
-    {
-        id: 164,
-        name: 'Norway',
-    },
-    {
-        id: 165,
-        name: 'Oman',
-    },
-    {
-        id: 166,
-        name: 'Pakistan',
-    },
-    {
-        id: 167,
-        name: 'Palau',
-    },
-    {
-        id: 168,
-        name: 'Palestinian Territory Occupied',
-    },
-    {
-        id: 169,
-        name: 'Panama',
-    },
-    {
-        id: 170,
-        name: 'Papua new Guinea',
-    },
-    {
-        id: 171,
-        name: 'Paraguay',
-    },
-    {
-        id: 172,
-        name: 'Peru',
-    },
-    {
-        id: 173,
-        name: 'Philippines',
-    },
-    {
-        id: 174,
-        name: 'Pitcairn Island',
-    },
-    {
-        id: 175,
-        name: 'Poland',
-    },
-    {
-        id: 176,
-        name: 'Portugal',
-    },
-    {
-        id: 177,
-        name: 'Puerto Rico',
-    },
-    {
-        id: 178,
-        name: 'Qatar',
-    },
-    {
-        id: 179,
-        name: 'Reunion',
-    },
-    {
-        id: 180,
-        name: 'Romania',
-    },
-    {
-        id: 181,
-        name: 'Russia',
-    },
-    {
-        id: 182,
-        name: 'Rwanda',
-    },
-    {
-        id: 183,
-        name: 'Saint Helena',
-    },
-    {
-        id: 184,
-        name: 'Saint Kitts And Nevis',
-    },
-    {
-        id: 185,
-        name: 'Saint Lucia',
-    },
-    {
-        id: 186,
-        name: 'Saint Pierre and Miquelon',
-    },
-    {
-        id: 187,
-        name: 'Saint Vincent And The Grenadines',
-    },
-    {
-        id: 188,
-        name: 'Samoa',
-    },
-    {
-        id: 189,
-        name: 'San Marino',
-    },
-    {
-        id: 190,
-        name: 'Sao Tome and Principe',
-    },
-    {
-        id: 191,
-        name: 'Saudi Arabia',
-    },
-    {
-        id: 192,
-        name: 'Senegal',
-    },
-    {
-        id: 193,
-        name: 'Serbia',
-    },
-    {
-        id: 194,
-        name: 'Seychelles',
-    },
-    {
-        id: 195,
-        name: 'Sierra Leone',
-    },
-    {
-        id: 196,
-        name: 'Singapore',
-    },
-    {
-        id: 197,
-        name: 'Slovakia',
-    },
-    {
-        id: 198,
-        name: 'Slovenia',
-    },
-    {
-        id: 199,
-        name: 'Smaller Territories of the UK',
-    },
-    {
-        id: 200,
-        name: 'Solomon Islands',
-    },
-    {
-        id: 201,
-        name: 'Somalia',
-    },
-    {
-        id: 202,
-        name: 'South Africa',
-    },
-    {
-        id: 203,
-        name: 'South Georgia',
-    },
-    {
-        id: 204,
-        name: 'South Sudan',
-    },
-    {
-        id: 205,
-        name: 'Spain',
-    },
-    {
-        id: 206,
-        name: 'Sri Lanka',
-    },
-    {
-        id: 207,
-        name: 'Sudan',
-    },
-    {
-        id: 208,
-        name: 'Suriname',
-    },
-    {
-        id: 209,
-        name: 'Svalbard And Jan Mayen Islands',
-    },
-    {
-        id: 210,
-        name: 'Swaziland',
-    },
-    {
-        id: 211,
-        name: 'Sweden',
-    },
-    {
-        id: 212,
-        name: 'Switzerland',
-    },
-    {
-        id: 213,
-        name: 'Syria',
-    },
-    {
-        id: 214,
-        name: 'Taiwan',
-    },
-    {
-        id: 215,
-        name: 'Tajikistan',
-    },
-    {
-        id: 216,
-        name: 'Tanzania',
-    },
-    {
-        id: 217,
-        name: 'Thailand',
-    },
-    {
-        id: 218,
-        name: 'Togo',
-    },
-    {
-        id: 219,
-        name: 'Tokelau',
-    },
-    {
-        id: 220,
-        name: 'Tonga',
-    },
-    {
-        id: 221,
-        name: 'Trinidad And Tobago',
-    },
-    {
-        id: 222,
-        name: 'Tunisia',
-    },
-    {
-        id: 223,
-        name: 'Turkey',
-    },
-    {
-        id: 224,
-        name: 'Turkmenistan',
-    },
-    {
-        id: 225,
-        name: 'Turks And Caicos Islands',
-    },
-    {
-        id: 226,
-        name: 'Tuvalu',
-    },
-    {
-        id: 227,
-        name: 'Uganda',
-    },
-    {
-        id: 228,
-        name: 'Ukraine',
-    },
-    {
-        id: 229,
-        name: 'United Arab Emirates',
-    },
-    {
-        id: 230,
-        name: 'United Kingdom',
-    },
-    {
-        id: 232,
-        name: 'Uruguay',
-    },
-    {
-        id: 233,
-        name: 'Uzbekistan',
-    },
-    {
-        id: 234,
-        name: 'Vanuatu',
-    },
-    {
-        id: 235,
-        name: 'Vatican City State (Holy See)',
-    },
-    {
-        id: 236,
-        name: 'Venezuela',
-    },
-    {
-        id: 237,
-        name: 'Vietnam',
-    },
-    {
-        id: 238,
-        name: 'Virgin Islands (British)',
-    },
-    {
-        id: 239,
-        name: 'Virgin Islands (US)',
-    },
-    {
-        id: 240,
-        name: 'Wallis And Futuna Islands',
-    },
-    {
-        id: 241,
-        name: 'Western Sahara',
-    },
-    {
-        id: 242,
-        name: 'Yemen',
-    },
-    {
-        id: 243,
-        name: 'Yugoslavia',
-    },
-    {
-        id: 244,
-        name: 'Zambia',
-    },
-    {
-        id: 245,
-        name: 'Zimbabwe',
-    },
-];
+  {
+    id: 231,
+    name: 'United States'
+  },
+  {
+    id: 1,
+    name: 'Afghanistan'
+  },
+  {
+    id: 2,
+    name: 'Albania'
+  },
+  {
+    id: 3,
+    name: 'Algeria'
+  },
+  {
+    id: 4,
+    name: 'American Samoa'
+  },
+  {
+    id: 5,
+    name: 'Andorra'
+  },
+  {
+    id: 6,
+    name: 'Angola'
+  },
+  {
+    id: 7,
+    name: 'Anguilla'
+  },
+  {
+    id: 8,
+    name: 'Antarctica'
+  },
+  {
+    id: 9,
+    name: 'Antigua And Barbuda'
+  },
+  {
+    id: 10,
+    name: 'Argentina'
+  },
+  {
+    id: 11,
+    name: 'Armenia'
+  },
+  {
+    id: 12,
+    name: 'Aruba'
+  },
+  {
+    id: 13,
+    name: 'Australia'
+  },
+  {
+    id: 14,
+    name: 'Austria'
+  },
+  {
+    id: 15,
+    name: 'Azerbaijan'
+  },
+  {
+    id: 16,
+    name: 'Bahamas The'
+  },
+  {
+    id: 17,
+    name: 'Bahrain'
+  },
+  {
+    id: 18,
+    name: 'Bangladesh'
+  },
+  {
+    id: 19,
+    name: 'Barbados'
+  },
+  {
+    id: 20,
+    name: 'Belarus'
+  },
+  {
+    id: 21,
+    name: 'Belgium'
+  },
+  {
+    id: 22,
+    name: 'Belize'
+  },
+  {
+    id: 23,
+    name: 'Benin'
+  },
+  {
+    id: 24,
+    name: 'Bermuda'
+  },
+  {
+    id: 25,
+    name: 'Bhutan'
+  },
+  {
+    id: 26,
+    name: 'Bolivia'
+  },
+  {
+    id: 27,
+    name: 'Bosnia and Herzegovina'
+  },
+  {
+    id: 28,
+    name: 'Botswana'
+  },
+  {
+    id: 29,
+    name: 'Bouvet Island'
+  },
+  {
+    id: 30,
+    name: 'Brazil'
+  },
+  {
+    id: 31,
+    name: 'British Indian Ocean Territory'
+  },
+  {
+    id: 32,
+    name: 'Brunei'
+  },
+  {
+    id: 33,
+    name: 'Bulgaria'
+  },
+  {
+    id: 34,
+    name: 'Burkina Faso'
+  },
+  {
+    id: 35,
+    name: 'Burundi'
+  },
+  {
+    id: 36,
+    name: 'Cambodia'
+  },
+  {
+    id: 37,
+    name: 'Cameroon'
+  },
+  {
+    id: 38,
+    name: 'Canada'
+  },
+  {
+    id: 39,
+    name: 'Cape Verde'
+  },
+  {
+    id: 40,
+    name: 'Cayman Islands'
+  },
+  {
+    id: 41,
+    name: 'Central African Republic'
+  },
+  {
+    id: 42,
+    name: 'Chad'
+  },
+  {
+    id: 43,
+    name: 'Chile'
+  },
+  {
+    id: 44,
+    name: 'China'
+  },
+  {
+    id: 45,
+    name: 'Christmas Island'
+  },
+  {
+    id: 46,
+    name: 'Cocos (Keeling) Islands'
+  },
+  {
+    id: 47,
+    name: 'Colombia'
+  },
+  {
+    id: 48,
+    name: 'Comoros'
+  },
+  {
+    id: 49,
+    name: 'Congo'
+  },
+  {
+    id: 50,
+    name: 'Congo The Democratic Republic Of The'
+  },
+  {
+    id: 51,
+    name: 'Cook Islands'
+  },
+  {
+    id: 52,
+    name: 'Costa Rica'
+  },
+  {
+    id: 53,
+    name: "Cote D''Ivoire (Ivory Coast)"
+  },
+  {
+    id: 54,
+    name: 'Croatia (Hrvatska)'
+  },
+  {
+    id: 55,
+    name: 'Cuba'
+  },
+  {
+    id: 56,
+    name: 'Cyprus'
+  },
+  {
+    id: 57,
+    name: 'Czech Republic'
+  },
+  {
+    id: 58,
+    name: 'Denmark'
+  },
+  {
+    id: 59,
+    name: 'Djibouti'
+  },
+  {
+    id: 60,
+    name: 'Dominica'
+  },
+  {
+    id: 61,
+    name: 'Dominican Republic'
+  },
+  {
+    id: 62,
+    name: 'East Timor'
+  },
+  {
+    id: 63,
+    name: 'Ecuador'
+  },
+  {
+    id: 64,
+    name: 'Egypt'
+  },
+  {
+    id: 65,
+    name: 'El Salvador'
+  },
+  {
+    id: 66,
+    name: 'Equatorial Guinea'
+  },
+  {
+    id: 67,
+    name: 'Eritrea'
+  },
+  {
+    id: 68,
+    name: 'Estonia'
+  },
+  {
+    id: 69,
+    name: 'Ethiopia'
+  },
+  {
+    id: 70,
+    name: 'External Territories of Australia'
+  },
+  {
+    id: 71,
+    name: 'Falkland Islands'
+  },
+  {
+    id: 72,
+    name: 'Faroe Islands'
+  },
+  {
+    id: 73,
+    name: 'Fiji Islands'
+  },
+  {
+    id: 74,
+    name: 'Finland'
+  },
+  {
+    id: 75,
+    name: 'France'
+  },
+  {
+    id: 76,
+    name: 'French Guiana'
+  },
+  {
+    id: 77,
+    name: 'French Polynesia'
+  },
+  {
+    id: 78,
+    name: 'French Southern Territories'
+  },
+  {
+    id: 79,
+    name: 'Gabon'
+  },
+  {
+    id: 80,
+    name: 'Gambia The'
+  },
+  {
+    id: 81,
+    name: 'Georgia'
+  },
+  {
+    id: 82,
+    name: 'Germany'
+  },
+  {
+    id: 83,
+    name: 'Ghana'
+  },
+  {
+    id: 84,
+    name: 'Gibraltar'
+  },
+  {
+    id: 85,
+    name: 'Greece'
+  },
+  {
+    id: 86,
+    name: 'Greenland'
+  },
+  {
+    id: 87,
+    name: 'Grenada'
+  },
+  {
+    id: 88,
+    name: 'Guadeloupe'
+  },
+  {
+    id: 89,
+    name: 'Guam'
+  },
+  {
+    id: 90,
+    name: 'Guatemala'
+  },
+  {
+    id: 91,
+    name: 'Guernsey and Alderney'
+  },
+  {
+    id: 92,
+    name: 'Guinea'
+  },
+  {
+    id: 93,
+    name: 'Guinea-Bissau'
+  },
+  {
+    id: 94,
+    name: 'Guyana'
+  },
+  {
+    id: 95,
+    name: 'Haiti'
+  },
+  {
+    id: 96,
+    name: 'Heard and McDonald Islands'
+  },
+  {
+    id: 97,
+    name: 'Honduras'
+  },
+  {
+    id: 98,
+    name: 'Hong Kong S.A.R.'
+  },
+  {
+    id: 99,
+    name: 'Hungary'
+  },
+  {
+    id: 100,
+    name: 'Iceland'
+  },
+  {
+    id: 101,
+    name: 'India'
+  },
+  {
+    id: 102,
+    name: 'Indonesia'
+  },
+  {
+    id: 103,
+    name: 'Iran'
+  },
+  {
+    id: 104,
+    name: 'Iraq'
+  },
+  {
+    id: 105,
+    name: 'Ireland'
+  },
+  {
+    id: 106,
+    name: 'Israel'
+  },
+  {
+    id: 107,
+    name: 'Italy'
+  },
+  {
+    id: 108,
+    name: 'Jamaica'
+  },
+  {
+    id: 109,
+    name: 'Japan'
+  },
+  {
+    id: 110,
+    name: 'Jersey'
+  },
+  {
+    id: 111,
+    name: 'Jordan'
+  },
+  {
+    id: 112,
+    name: 'Kazakhstan'
+  },
+  {
+    id: 113,
+    name: 'Kenya'
+  },
+  {
+    id: 114,
+    name: 'Kiribati'
+  },
+  {
+    id: 115,
+    name: 'Korea North'
+  },
+  {
+    id: 116,
+    name: 'Korea South'
+  },
+  {
+    id: 117,
+    name: 'Kuwait'
+  },
+  {
+    id: 118,
+    name: 'Kyrgyzstan'
+  },
+  {
+    id: 119,
+    name: 'Laos'
+  },
+  {
+    id: 120,
+    name: 'Latvia'
+  },
+  {
+    id: 121,
+    name: 'Lebanon'
+  },
+  {
+    id: 122,
+    name: 'Lesotho'
+  },
+  {
+    id: 123,
+    name: 'Liberia'
+  },
+  {
+    id: 124,
+    name: 'Libya'
+  },
+  {
+    id: 125,
+    name: 'Liechtenstein'
+  },
+  {
+    id: 126,
+    name: 'Lithuania'
+  },
+  {
+    id: 127,
+    name: 'Luxembourg'
+  },
+  {
+    id: 128,
+    name: 'Macau S.A.R.'
+  },
+  {
+    id: 129,
+    name: 'Macedonia'
+  },
+  {
+    id: 130,
+    name: 'Madagascar'
+  },
+  {
+    id: 131,
+    name: 'Malawi'
+  },
+  {
+    id: 132,
+    name: 'Malaysia'
+  },
+  {
+    id: 133,
+    name: 'Maldives'
+  },
+  {
+    id: 134,
+    name: 'Mali'
+  },
+  {
+    id: 135,
+    name: 'Malta'
+  },
+  {
+    id: 136,
+    name: 'Man (Isle of)'
+  },
+  {
+    id: 137,
+    name: 'Marshall Islands'
+  },
+  {
+    id: 138,
+    name: 'Martinique'
+  },
+  {
+    id: 139,
+    name: 'Mauritania'
+  },
+  {
+    id: 140,
+    name: 'Mauritius'
+  },
+  {
+    id: 141,
+    name: 'Mayotte'
+  },
+  {
+    id: 142,
+    name: 'Mexico'
+  },
+  {
+    id: 143,
+    name: 'Micronesia'
+  },
+  {
+    id: 144,
+    name: 'Moldova'
+  },
+  {
+    id: 145,
+    name: 'Monaco'
+  },
+  {
+    id: 146,
+    name: 'Mongolia'
+  },
+  {
+    id: 147,
+    name: 'Montserrat'
+  },
+  {
+    id: 148,
+    name: 'Morocco'
+  },
+  {
+    id: 149,
+    name: 'Mozambique'
+  },
+  {
+    id: 150,
+    name: 'Myanmar'
+  },
+  {
+    id: 151,
+    name: 'Namibia'
+  },
+  {
+    id: 152,
+    name: 'Nauru'
+  },
+  {
+    id: 153,
+    name: 'Nepal'
+  },
+  {
+    id: 154,
+    name: 'Netherlands Antilles'
+  },
+  {
+    id: 155,
+    name: 'Netherlands The'
+  },
+  {
+    id: 156,
+    name: 'New Caledonia'
+  },
+  {
+    id: 157,
+    name: 'New Zealand'
+  },
+  {
+    id: 158,
+    name: 'Nicaragua'
+  },
+  {
+    id: 159,
+    name: 'Niger'
+  },
+  {
+    id: 160,
+    name: 'Nigeria'
+  },
+  {
+    id: 161,
+    name: 'Niue'
+  },
+  {
+    id: 162,
+    name: 'Norfolk Island'
+  },
+  {
+    id: 163,
+    name: 'Northern Mariana Islands'
+  },
+  {
+    id: 164,
+    name: 'Norway'
+  },
+  {
+    id: 165,
+    name: 'Oman'
+  },
+  {
+    id: 166,
+    name: 'Pakistan'
+  },
+  {
+    id: 167,
+    name: 'Palau'
+  },
+  {
+    id: 168,
+    name: 'Palestinian Territory Occupied'
+  },
+  {
+    id: 169,
+    name: 'Panama'
+  },
+  {
+    id: 170,
+    name: 'Papua new Guinea'
+  },
+  {
+    id: 171,
+    name: 'Paraguay'
+  },
+  {
+    id: 172,
+    name: 'Peru'
+  },
+  {
+    id: 173,
+    name: 'Philippines'
+  },
+  {
+    id: 174,
+    name: 'Pitcairn Island'
+  },
+  {
+    id: 175,
+    name: 'Poland'
+  },
+  {
+    id: 176,
+    name: 'Portugal'
+  },
+  {
+    id: 177,
+    name: 'Puerto Rico'
+  },
+  {
+    id: 178,
+    name: 'Qatar'
+  },
+  {
+    id: 179,
+    name: 'Reunion'
+  },
+  {
+    id: 180,
+    name: 'Romania'
+  },
+  {
+    id: 181,
+    name: 'Russia'
+  },
+  {
+    id: 182,
+    name: 'Rwanda'
+  },
+  {
+    id: 183,
+    name: 'Saint Helena'
+  },
+  {
+    id: 184,
+    name: 'Saint Kitts And Nevis'
+  },
+  {
+    id: 185,
+    name: 'Saint Lucia'
+  },
+  {
+    id: 186,
+    name: 'Saint Pierre and Miquelon'
+  },
+  {
+    id: 187,
+    name: 'Saint Vincent And The Grenadines'
+  },
+  {
+    id: 188,
+    name: 'Samoa'
+  },
+  {
+    id: 189,
+    name: 'San Marino'
+  },
+  {
+    id: 190,
+    name: 'Sao Tome and Principe'
+  },
+  {
+    id: 191,
+    name: 'Saudi Arabia'
+  },
+  {
+    id: 192,
+    name: 'Senegal'
+  },
+  {
+    id: 193,
+    name: 'Serbia'
+  },
+  {
+    id: 194,
+    name: 'Seychelles'
+  },
+  {
+    id: 195,
+    name: 'Sierra Leone'
+  },
+  {
+    id: 196,
+    name: 'Singapore'
+  },
+  {
+    id: 197,
+    name: 'Slovakia'
+  },
+  {
+    id: 198,
+    name: 'Slovenia'
+  },
+  {
+    id: 199,
+    name: 'Smaller Territories of the UK'
+  },
+  {
+    id: 200,
+    name: 'Solomon Islands'
+  },
+  {
+    id: 201,
+    name: 'Somalia'
+  },
+  {
+    id: 202,
+    name: 'South Africa'
+  },
+  {
+    id: 203,
+    name: 'South Georgia'
+  },
+  {
+    id: 204,
+    name: 'South Sudan'
+  },
+  {
+    id: 205,
+    name: 'Spain'
+  },
+  {
+    id: 206,
+    name: 'Sri Lanka'
+  },
+  {
+    id: 207,
+    name: 'Sudan'
+  },
+  {
+    id: 208,
+    name: 'Suriname'
+  },
+  {
+    id: 209,
+    name: 'Svalbard And Jan Mayen Islands'
+  },
+  {
+    id: 210,
+    name: 'Swaziland'
+  },
+  {
+    id: 211,
+    name: 'Sweden'
+  },
+  {
+    id: 212,
+    name: 'Switzerland'
+  },
+  {
+    id: 213,
+    name: 'Syria'
+  },
+  {
+    id: 214,
+    name: 'Taiwan'
+  },
+  {
+    id: 215,
+    name: 'Tajikistan'
+  },
+  {
+    id: 216,
+    name: 'Tanzania'
+  },
+  {
+    id: 217,
+    name: 'Thailand'
+  },
+  {
+    id: 218,
+    name: 'Togo'
+  },
+  {
+    id: 219,
+    name: 'Tokelau'
+  },
+  {
+    id: 220,
+    name: 'Tonga'
+  },
+  {
+    id: 221,
+    name: 'Trinidad And Tobago'
+  },
+  {
+    id: 222,
+    name: 'Tunisia'
+  },
+  {
+    id: 223,
+    name: 'Turkey'
+  },
+  {
+    id: 224,
+    name: 'Turkmenistan'
+  },
+  {
+    id: 225,
+    name: 'Turks And Caicos Islands'
+  },
+  {
+    id: 226,
+    name: 'Tuvalu'
+  },
+  {
+    id: 227,
+    name: 'Uganda'
+  },
+  {
+    id: 228,
+    name: 'Ukraine'
+  },
+  {
+    id: 229,
+    name: 'United Arab Emirates'
+  },
+  {
+    id: 230,
+    name: 'United Kingdom'
+  },
+  {
+    id: 232,
+    name: 'Uruguay'
+  },
+  {
+    id: 233,
+    name: 'Uzbekistan'
+  },
+  {
+    id: 234,
+    name: 'Vanuatu'
+  },
+  {
+    id: 235,
+    name: 'Vatican City State (Holy See)'
+  },
+  {
+    id: 236,
+    name: 'Venezuela'
+  },
+  {
+    id: 237,
+    name: 'Vietnam'
+  },
+  {
+    id: 238,
+    name: 'Virgin Islands (British)'
+  },
+  {
+    id: 239,
+    name: 'Virgin Islands (US)'
+  },
+  {
+    id: 240,
+    name: 'Wallis And Futuna Islands'
+  },
+  {
+    id: 241,
+    name: 'Western Sahara'
+  },
+  {
+    id: 242,
+    name: 'Yemen'
+  },
+  {
+    id: 243,
+    name: 'Yugoslavia'
+  },
+  {
+    id: 244,
+    name: 'Zambia'
+  },
+  {
+    id: 245,
+    name: 'Zimbabwe'
+  }
+]
 
 export const usStatesList = [
-    {
-        id: 4121,
-        name: 'Alabama',
-    },
-    {
-        id: 4122,
-        name: 'Alaska',
-    },
-    {
-        id: 4123,
-        name: 'Arizona',
-    },
-    {
-        id: 4124,
-        name: 'Arkansas',
-    },
-    {
-        id: 4125,
-        name: 'California',
-    },
-    {
-        id: 4126,
-        name: 'Colorado',
-    },
-    {
-        id: 4127,
-        name: 'Connecticut',
-    },
-    {
-        id: 4128,
-        name: 'Delaware',
-    },
-    {
-        id: 4129,
-        name: 'District of Columbia',
-    },
-    {
-        id: 4130,
-        name: 'Florida',
-    },
-    {
-        id: 4131,
-        name: 'Georgia',
-    },
-    {
-        id: 4132,
-        name: 'Hawaii',
-    },
-    {
-        id: 4133,
-        name: 'Idaho',
-    },
-    {
-        id: 4134,
-        name: 'Illinois',
-    },
-    {
-        id: 4135,
-        name: 'Indiana',
-    },
-    {
-        id: 4136,
-        name: 'Iowa',
-    },
-    {
-        id: 4137,
-        name: 'Kansas',
-    },
-    {
-        id: 4138,
-        name: 'Kentucky',
-    },
-    {
-        id: 4139,
-        name: 'Louisiana',
-    },
-    {
-        id: 4140,
-        name: 'Maine',
-    },
-    {
-        id: 4141,
-        name: 'Maryland',
-    },
-    {
-        id: 4142,
-        name: 'Massachusetts',
-    },
-    {
-        id: 4143,
-        name: 'Michigan',
-    },
-    {
-        id: 4144,
-        name: 'Minnesota',
-    },
-    {
-        id: 4145,
-        name: 'Mississippi',
-    },
-    {
-        id: 4146,
-        name: 'Missouri',
-    },
-    {
-        id: 4147,
-        name: 'Montana',
-    },
-    {
-        id: 4148,
-        name: 'Nebraska',
-    },
-    {
-        id: 4149,
-        name: 'Nevada',
-    },
-    {
-        id: 4150,
-        name: 'New Hampshire',
-    },
-    {
-        id: 4151,
-        name: 'New Jersey',
-    },
-    {
-        id: 4152,
-        name: 'New Mexico',
-    },
-    {
-        id: 4153,
-        name: 'New York',
-    },
-    {
-        id: 4154,
-        name: 'North Carolina',
-    },
-    {
-        id: 4155,
-        name: 'North Dakota',
-    },
-    {
-        id: 4156,
-        name: 'Ohio',
-    },
-    {
-        id: 4157,
-        name: 'Oklahoma',
-    },
-    {
-        id: 4158,
-        name: 'Oregon',
-    },
-    {
-        id: 4159,
-        name: 'Pennsylvania',
-    },
-    {
-        id: 4160,
-        name: 'Rhode Island',
-    },
-    {
-        id: 4161,
-        name: 'South Carolina',
-    },
-    {
-        id: 4162,
-        name: 'South Dakota',
-    },
-    {
-        id: 4163,
-        name: 'Tennessee',
-    },
-    {
-        id: 4164,
-        name: 'Texas',
-    },
-    {
-        id: 4165,
-        name: 'Utah',
-    },
-    {
-        id: 4166,
-        name: 'Vermont',
-    },
-    {
-        id: 4167,
-        name: 'Virginia',
-    },
-    {
-        id: 4168,
-        name: 'Washington',
-    },
-    {
-        id: 4169,
-        name: 'West Virginia',
-    },
-    {
-        id: 4170,
-        name: 'Wisconsin',
-    },
-    {
-        id: 4171,
-        name: 'Wyoming',
-    },
-];
+  {
+    id: 4121,
+    name: 'Alabama'
+  },
+  {
+    id: 4122,
+    name: 'Alaska'
+  },
+  {
+    id: 4123,
+    name: 'Arizona'
+  },
+  {
+    id: 4124,
+    name: 'Arkansas'
+  },
+  {
+    id: 4125,
+    name: 'California'
+  },
+  {
+    id: 4126,
+    name: 'Colorado'
+  },
+  {
+    id: 4127,
+    name: 'Connecticut'
+  },
+  {
+    id: 4128,
+    name: 'Delaware'
+  },
+  {
+    id: 4129,
+    name: 'District of Columbia'
+  },
+  {
+    id: 4130,
+    name: 'Florida'
+  },
+  {
+    id: 4131,
+    name: 'Georgia'
+  },
+  {
+    id: 4132,
+    name: 'Hawaii'
+  },
+  {
+    id: 4133,
+    name: 'Idaho'
+  },
+  {
+    id: 4134,
+    name: 'Illinois'
+  },
+  {
+    id: 4135,
+    name: 'Indiana'
+  },
+  {
+    id: 4136,
+    name: 'Iowa'
+  },
+  {
+    id: 4137,
+    name: 'Kansas'
+  },
+  {
+    id: 4138,
+    name: 'Kentucky'
+  },
+  {
+    id: 4139,
+    name: 'Louisiana'
+  },
+  {
+    id: 4140,
+    name: 'Maine'
+  },
+  {
+    id: 4141,
+    name: 'Maryland'
+  },
+  {
+    id: 4142,
+    name: 'Massachusetts'
+  },
+  {
+    id: 4143,
+    name: 'Michigan'
+  },
+  {
+    id: 4144,
+    name: 'Minnesota'
+  },
+  {
+    id: 4145,
+    name: 'Mississippi'
+  },
+  {
+    id: 4146,
+    name: 'Missouri'
+  },
+  {
+    id: 4147,
+    name: 'Montana'
+  },
+  {
+    id: 4148,
+    name: 'Nebraska'
+  },
+  {
+    id: 4149,
+    name: 'Nevada'
+  },
+  {
+    id: 4150,
+    name: 'New Hampshire'
+  },
+  {
+    id: 4151,
+    name: 'New Jersey'
+  },
+  {
+    id: 4152,
+    name: 'New Mexico'
+  },
+  {
+    id: 4153,
+    name: 'New York'
+  },
+  {
+    id: 4154,
+    name: 'North Carolina'
+  },
+  {
+    id: 4155,
+    name: 'North Dakota'
+  },
+  {
+    id: 4156,
+    name: 'Ohio'
+  },
+  {
+    id: 4157,
+    name: 'Oklahoma'
+  },
+  {
+    id: 4158,
+    name: 'Oregon'
+  },
+  {
+    id: 4159,
+    name: 'Pennsylvania'
+  },
+  {
+    id: 4160,
+    name: 'Rhode Island'
+  },
+  {
+    id: 4161,
+    name: 'South Carolina'
+  },
+  {
+    id: 4162,
+    name: 'South Dakota'
+  },
+  {
+    id: 4163,
+    name: 'Tennessee'
+  },
+  {
+    id: 4164,
+    name: 'Texas'
+  },
+  {
+    id: 4165,
+    name: 'Utah'
+  },
+  {
+    id: 4166,
+    name: 'Vermont'
+  },
+  {
+    id: 4167,
+    name: 'Virginia'
+  },
+  {
+    id: 4168,
+    name: 'Washington'
+  },
+  {
+    id: 4169,
+    name: 'West Virginia'
+  },
+  {
+    id: 4170,
+    name: 'Wisconsin'
+  },
+  {
+    id: 4171,
+    name: 'Wyoming'
+  }
+]
 
 export const syndicationConstants = {
-    INVESTOR_TYPE: 'Investor Type',
-    ACCR_INVS_ONLY: 'Accredited Investors Only',
-    QUAL_PURC_ONLY: 'Qualified Purchasers Only',
-    NONE: 'None',
-    NARRATIVE_TYPE: 'narrativeType',
-    SYNDICATION_TYPE: 'syndicationType',
-    ACCREDITED_INVESTOR: 'accreditedInvestor',
-    QUALIFIED_PURCHASER: 'qualifiedPurchaser',
-    OFFERED_AMOUNT: 'offeredAmount',
-    REVIEW: 'review',
-    QUESTIONNAIRE: 'questionnaire',
-};
+  INVESTOR_TYPE: 'Investor Type',
+  ACCR_INVS_ONLY: 'Accredited Investors Only',
+  QUAL_PURC_ONLY: 'Qualified Purchasers Only',
+  NONE: 'None',
+  NARRATIVE_TYPE: 'narrativeType',
+  SYNDICATION_TYPE: 'syndicationType',
+  ACCREDITED_INVESTOR: 'accreditedInvestor',
+  QUALIFIED_PURCHASER: 'qualifiedPurchaser',
+  OFFERED_AMOUNT: 'offeredAmount',
+  REVIEW: 'review',
+  QUESTIONNAIRE: 'questionnaire'
+}
 
 export const syndicationTypeOptions = [
     { label: syndicationConstants.ACCR_INVS_ONLY, value: 1 },
@@ -2724,134 +2722,134 @@ export const syndicationTypeOptions = [
 export const defaultNarrativeType = { label: syndicationConstants.NONE, value: 1, narrative: '' };
 
 export const syndicationDocumentTypes = {
-    SYNDICATION_IMAGE: 'SyndicationImage',
-    AI_LONG_OPERATING_AGREEMENT: 'AILongOperatingAgreement',
-    AI_JOINDER_AGREEMENT: 'AIJoinderAgreement',
-    QP_LONG_OPERATING_AGREEMENT: 'QPLongOperatingAgreement',
-    QP_JOINDER_AGREEMENT: 'QPJoinderAgreement',
-    COOLEY_EMPLOYEE_IDS: 'CooleyEmployeeIds',
-    VANILLA_ATTACHMENT: 'NarrativeAttachment',
-    EMAIL_ATTACHMENT: 'EmailNarrativeAttachment',
-};
+  SYNDICATION_IMAGE: 'SyndicationImage',
+  AI_LONG_OPERATING_AGREEMENT: 'AILongOperatingAgreement',
+  AI_JOINDER_AGREEMENT: 'AIJoinderAgreement',
+  QP_LONG_OPERATING_AGREEMENT: 'QPLongOperatingAgreement',
+  QP_JOINDER_AGREEMENT: 'QPJoinderAgreement',
+  COOLEY_EMPLOYEE_IDS: 'CooleyEmployeeIds',
+  VANILLA_ATTACHMENT: 'NarrativeAttachment',
+  EMAIL_ATTACHMENT: 'EmailNarrativeAttachment'
+}
 
 export const narrativeAttachmentConsts = {
-    emailAttachments: {
-        TEXT: 'EMAIL ATTACHMENTS',
-        SUB_TEXT:
-            'If you would like to attach any files to include in the Syndication Opportunity email, please add them here.',
-    },
-    vanillaAttachments: {
-        TEXT: 'VANILLA ATTACHMENTS',
-        SUB_TEXT: 'If you would like to attach any files to include for download in Vanilla, please add them here.',
-    },
-    TEXT: 'NARRATIVE ATTACHMENTS',
-    ACCEPTED_FILE_TYPES: ['pdf', 'doc', 'docx', 'csv', 'xlsx', 'xls', 'ppt', 'pptx'],
-    INVALID_FILE_SIZE: 'File Size Limit - Must not exceed 10 MB',
-    INVALID_FILE_TYPE: 'Invalid File Type.',
-    ERROR_UPLOAD_FILE: 'Error Uploading File.',
-};
+  emailAttachments: {
+    TEXT: 'EMAIL ATTACHMENTS',
+    SUB_TEXT:
+      'If you would like to attach any files to include in the Syndication Opportunity email, please add them here.'
+  },
+  vanillaAttachments: {
+    TEXT: 'VANILLA ATTACHMENTS',
+    SUB_TEXT: 'If you would like to attach any files to include for download in Vanilla, please add them here.'
+  },
+  TEXT: 'NARRATIVE ATTACHMENTS',
+  ACCEPTED_FILE_TYPES: ['pdf', 'doc', 'docx', 'csv', 'xlsx', 'xls', 'ppt', 'pptx'],
+  INVALID_FILE_SIZE: 'File Size Limit - Must not exceed 10 MB',
+  INVALID_FILE_TYPE: 'Invalid File Type.',
+  ERROR_UPLOAD_FILE: 'Error Uploading File.'
+}
 
 export const subscribeUsingPaperConsts = {
-    INVALID_FILE_SIZE: 'Invalid File Size.',
-    INVALID_FILE_TYPE: 'Invalid File Type.',
-    ERROR_UPLOAD_FILE: 'Error Uploading File.',
-    DOCUMENT_SIZE_LIMIT: 50000000, // = 50MB
-};
+  INVALID_FILE_SIZE: 'Invalid File Size.',
+  INVALID_FILE_TYPE: 'Invalid File Type.',
+  ERROR_UPLOAD_FILE: 'Error Uploading File.',
+  DOCUMENT_SIZE_LIMIT: 50000000 // = 50MB
+}
 
 export const csvConsts = {
-    INVALID_FILE_TYPE: 'Invalid File Type.',
-    INVALID_EMPLOYEE_ID: 'Invalid Employee ID.',
-    IDENTICAL_VALUES_FOUND: 'Identical Values Found.',
-    INVALID_EMPLOYEE_DATA: 'Invalid Employee Data.',
-    INVALID_EMPLOYEE_EMAIL: 'Invalid Employee Email.',
-};
+  INVALID_FILE_TYPE: 'Invalid File Type.',
+  INVALID_EMPLOYEE_ID: 'Invalid Employee ID.',
+  IDENTICAL_VALUES_FOUND: 'Identical Values Found.',
+  INVALID_EMPLOYEE_DATA: 'Invalid Employee Data.',
+  INVALID_EMPLOYEE_EMAIL: 'Invalid Employee Email.'
+}
 
-export const cooleyEmployeeIdAcceptedFileTypes = ['csv'];
+export const cooleyEmployeeIdAcceptedFileTypes = ['csv']
 
 export const syndicationUserStatusTypes = {
-    INVITED: 'INVITED',
-    IN_PROGRESS: 'IN PROGRESS',
-    INPUT_COMPLETE: 'INPUT COMPLETE',
-    OFFER_NOT_ACCEPTED: 'OFFER NOT ACCEPTED',
-    PAYMENT_PENDING: 'PAYMENT PENDING',
-    PAYMENT_RECEIVED: 'PAYMENT RECEIVED',
-};
+  INVITED: 'INVITED',
+  IN_PROGRESS: 'IN PROGRESS',
+  INPUT_COMPLETE: 'INPUT COMPLETE',
+  OFFER_NOT_ACCEPTED: 'OFFER NOT ACCEPTED',
+  PAYMENT_PENDING: 'PAYMENT PENDING',
+  PAYMENT_RECEIVED: 'PAYMENT RECEIVED'
+}
 
 export const syndicationUrlToHeading = {
-    [syndicationConstants.ACCREDITED_INVESTOR]: 'Accredited Investor',
-    [syndicationConstants.QUALIFIED_PURCHASER]: 'Qualified Purchaser',
-};
+  [syndicationConstants.ACCREDITED_INVESTOR]: 'Accredited Investor',
+  [syndicationConstants.QUALIFIED_PURCHASER]: 'Qualified Purchaser'
+}
 
 export const syndicationUrlToType = {
-    [syndicationConstants.ACCREDITED_INVESTOR]: 'isAccreditedInvestor',
-    [syndicationConstants.QUALIFIED_PURCHASER]: 'isQualifiedPurchaser',
-};
+  [syndicationConstants.ACCREDITED_INVESTOR]: 'isAccreditedInvestor',
+  [syndicationConstants.QUALIFIED_PURCHASER]: 'isQualifiedPurchaser'
+}
 
 export const dispatchStatuses = {
-    CREATED: 'Created',
-    SENT: 'Sent',
-};
+  CREATED: 'Created',
+  SENT: 'Sent'
+}
 
 export const syndicationStatuses = {
-    INITIATED: 'INITIATED',
-    DISPATCHED: 'DISPATCHED',
-    DEADLINE_PASSED: 'DEADLINE PASSED',
-    ALLOCATED: 'ALLOCATED',
-    FINALIZED: 'FINALIZED',
-    CANCELED: 'CANCELED',
-};
+  INITIATED: 'INITIATED',
+  DISPATCHED: 'DISPATCHED',
+  DEADLINE_PASSED: 'DEADLINE PASSED',
+  ALLOCATED: 'ALLOCATED',
+  FINALIZED: 'FINALIZED',
+  CANCELED: 'CANCELED'
+}
 
 export const capTableSyndicationStatuses = {
-    [syndicationStatuses.INITIATED]: syndicationStatuses.INITIATED,
-    [syndicationStatuses.DISPATCHED]: syndicationStatuses.DISPATCHED,
-    [syndicationStatuses.DEADLINE_PASSED]: 'DEADLINE PASSED - AWAITING ALLOCATION',
-    [syndicationStatuses.ALLOCATED]: 'ALLOCATED - READY TO FINALIZE',
-    [syndicationStatuses.FINALIZED]: 'FINALIZED',
-    [syndicationStatuses.CANCELED]: syndicationStatuses.CANCELED,
-};
+  [syndicationStatuses.INITIATED]: syndicationStatuses.INITIATED,
+  [syndicationStatuses.DISPATCHED]: syndicationStatuses.DISPATCHED,
+  [syndicationStatuses.DEADLINE_PASSED]: 'DEADLINE PASSED - AWAITING ALLOCATION',
+  [syndicationStatuses.ALLOCATED]: 'ALLOCATED - READY TO FINALIZE',
+  [syndicationStatuses.FINALIZED]: 'FINALIZED',
+  [syndicationStatuses.CANCELED]: syndicationStatuses.CANCELED
+}
 
 export const syndicationStatusBadgeColors = {
-    [syndicationStatuses.INITIATED]: 'default',
-    [syndicationStatuses.DISPATCHED]: 'highlight',
-    [syndicationStatuses.DEADLINE_PASSED]: 'success',
-    [syndicationStatuses.ALLOCATED]: 'highlight',
-    [syndicationStatuses.FINALIZED]: 'primary',
-    [syndicationStatuses.CANCELED]: 'darkRed',
-};
+  [syndicationStatuses.INITIATED]: 'default',
+  [syndicationStatuses.DISPATCHED]: 'highlight',
+  [syndicationStatuses.DEADLINE_PASSED]: 'success',
+  [syndicationStatuses.ALLOCATED]: 'highlight',
+  [syndicationStatuses.FINALIZED]: 'primary',
+  [syndicationStatuses.CANCELED]: 'darkRed'
+}
 
 export const syndicationUserStatusBadgeColors = {
-    [syndicationUserStatusTypes.INVITED]: 'highlight',
-    [syndicationUserStatusTypes.IN_PROGRESS]: 'secondaryLight',
-    [syndicationUserStatusTypes.INPUT_COMPLETE]: 'green',
-    [syndicationUserStatusTypes.PAYMENT_PENDING]: 'primary',
-    [syndicationUserStatusTypes.PAYMENT_RECEIVED]: 'primary',
-    [syndicationStatuses.CANCELED]: 'red',
-};
+  [syndicationUserStatusTypes.INVITED]: 'highlight',
+  [syndicationUserStatusTypes.IN_PROGRESS]: 'secondaryLight',
+  [syndicationUserStatusTypes.INPUT_COMPLETE]: 'green',
+  [syndicationUserStatusTypes.PAYMENT_PENDING]: 'primary',
+  [syndicationUserStatusTypes.PAYMENT_RECEIVED]: 'primary',
+  [syndicationStatuses.CANCELED]: 'red'
+}
 
 export const capTableSyndicationUserStatuses = {
-    [syndicationUserStatusTypes.INVITED]: syndicationUserStatusTypes.INVITED,
-    [syndicationUserStatusTypes.IN_PROGRESS]: syndicationUserStatusTypes.IN_PROGRESS,
-    [syndicationUserStatusTypes.INPUT_COMPLETE]: 'INVESTOR INPUT COMPLETE',
-    [syndicationUserStatusTypes.OFFER_NOT_ACCEPTED]: syndicationUserStatusTypes.OFFER_NOT_ACCEPTED,
-    [syndicationUserStatusTypes.PAYMENT_PENDING]: 'CLOSED - PAYMENT PENDING',
-    [syndicationUserStatusTypes.PAYMENT_RECEIVED]: 'CLOSED - PAYMENT RECEIVED',
-};
+  [syndicationUserStatusTypes.INVITED]: syndicationUserStatusTypes.INVITED,
+  [syndicationUserStatusTypes.IN_PROGRESS]: syndicationUserStatusTypes.IN_PROGRESS,
+  [syndicationUserStatusTypes.INPUT_COMPLETE]: 'INVESTOR INPUT COMPLETE',
+  [syndicationUserStatusTypes.OFFER_NOT_ACCEPTED]: syndicationUserStatusTypes.OFFER_NOT_ACCEPTED,
+  [syndicationUserStatusTypes.PAYMENT_PENDING]: 'CLOSED - PAYMENT PENDING',
+  [syndicationUserStatusTypes.PAYMENT_RECEIVED]: 'CLOSED - PAYMENT RECEIVED'
+}
 
 export const syndicationCapTableStatusSortLevels = {
-    [syndicationUserStatusTypes.PAYMENT_RECEIVED]: 1,
-    [syndicationUserStatusTypes.PAYMENT_PENDING]: 2,
-    [syndicationUserStatusTypes.OFFER_NOT_ACCEPTED]: 3,
-    [syndicationUserStatusTypes.INPUT_COMPLETE]: 4,
-    [syndicationUserStatusTypes.IN_PROGRESS]: 5,
-    [syndicationUserStatusTypes.INVITED]: 6,
-};
+  [syndicationUserStatusTypes.PAYMENT_RECEIVED]: 1,
+  [syndicationUserStatusTypes.PAYMENT_PENDING]: 2,
+  [syndicationUserStatusTypes.OFFER_NOT_ACCEPTED]: 3,
+  [syndicationUserStatusTypes.INPUT_COMPLETE]: 4,
+  [syndicationUserStatusTypes.IN_PROGRESS]: 5,
+  [syndicationUserStatusTypes.INVITED]: 6
+}
 
 export const QUESTION_TYPES = Object.freeze({
-    TEXT: 1,
-    TRUE_FALSE: 2,
-    YES_NO: 3,
-    MULTIPLE_CHOICE: 4,
-});
+  TEXT: 1,
+  TRUE_FALSE: 2,
+  YES_NO: 3,
+  MULTIPLE_CHOICE: 4
+})
 
 export const SUBSCRIPTION_STATUSES = Object.freeze({
     OPEN: 1,
@@ -2900,4 +2898,19 @@ export const SELECT_MEETING_TIME = [
     '10.00 PM', '10.30 PM',
     '11.00 PM', '11.30 PM',
 ];
+
+export const TODO_STATUS = 'todo'
+export const IN_PROGRESS = 'inprogress'
+export const DONE = 'done'
+export const DOING = 'doing'
+
+export const TASK_STATUS = [TODO_STATUS, IN_PROGRESS, DONE, DOING]
+
+export const LOWESET_PRIORITY = 'lowest'
+export const LOW_PRIORITY = 'low'
+export const MEDIUM_PRIORITY = 'medium'
+export const HIGH_PRIORITY = 'high'
+export const HIGHEST_PRIORITY = 'highest'
+
+export const TASK_PRIORITY = [LOWESET_PRIORITY, LOW_PRIORITY, MEDIUM_PRIORITY, HIGH_PRIORITY, HIGHEST_PRIORITY]
 

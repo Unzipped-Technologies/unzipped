@@ -1,76 +1,52 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { TitleText, DarkText, Absolute, Grid3 } from '../style'
-import { FaRegCheckCircle } from 'react-icons/fa'
-import Button from '../../../ui/Button'
-import FormField from '../../../ui/FormField'
-import Modal from '../../../ui/Modal'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { useRouter } from 'next/router'
 import AddInvoiceTask from '../../../ui/icons/addInvoiceTask'
 
-const Title = styled.div`
-  display: flex;
-  flex-flow: row;
-  width: 70%;
-  margin: 60px 15% 40px 15%;
-`
+import { FaRegCheckCircle } from 'react-icons/fa'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { FormField } from '../../../ui'
+import { ConverterUtils } from '../../../../utils'
 
-const Toggle = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 260px;
-  height: 34px;
-  background-color: #d8d8d8;
-  border-radius: 5px;
-  overflow: hidden;
-`
+import {
+  getBusinessById,
+  getInvoices,
+  createTaskHour,
+  createInvoice,
+  updateTaskHour,
+  updateInvoice,
+  addInvoiceTasks
+} from '../../../../redux/actions'
+import AddTasksModal from '../tasks/AddTasksModal'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
   color: ${({ color }) => (color ? color : 'black')};
   background: ${({ background }) => (background ? background : '')};
-  padding: ${({ padding }) => (padding ? padding : '')};
-  margin: ${({ margin }) => (margin ? margin : '')};
+  padding: ${({ padding }) => (padding ? padding : '0px !important')};
+  margin: ${({ margin }) => (margin ? margin : '0px !important')};
   text-align: ${({ align }) => (align ? align : '')};
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   right: ${({ right }) => (right ? right : '')};
   width: ${({ width }) => (width ? width : '')};
 `
 
-const Left = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ displayFormat }) => (!displayFormat ? '#5E99D4' : 'transparent')};
-`
-
-const Right = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ displayFormat }) => (displayFormat ? '#5E99D4' : 'transparent')};
-`
-
 const Container = styled.div`
+  width: 98%;
+  margin: 0px auto;
   position: relative;
   display: flex;
-  flex-flow: column;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-flow: row;
   margin-bottom: 100px;
   background: ${({ background }) => (background ? background : '')};
 `
 
 const DragDiv = styled.div`
-  width: 830px;
-  align-self: center;
   border-right: 1px solid #d9d9d9;
   border-left: 1px solid #d9d9d9;
 `
@@ -103,494 +79,621 @@ const DaysDiv = styled.div`
   border-bottom: 1px solid #d9d9d9;
   border-right: 1px solid #d9d9d9;
   background-color: #f7f7f7;
-  justify-content: space-between;
+  // justify-content: space-between;
   border-left: 1px solid #d9d9d9;
 `
 
+const HoursDiv = styled.div`
+  width: 300px;
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  padding: 24px 15px;
+  height: fit-content;
+`
+
 const Timesheet = ({
-  weekOptions,
-  invoiceTags,
-  sortedData,
-  handleWeekChange,
-  projectName,
-  handleShowInvoice,
-  handleUpdatedAt,
-  handleHours,
-  handleTaskStatus,
-  startDate,
-  id,
-  createTaskAndAddToTaskHours
+  projectDetails,
+  businessId,
+  getInvoices,
+  invoices,
+  updateInvoice,
+  createInvoice,
+  addInvoiceTasks,
+  updateTaskHour,
+  role,
+  timeSheet = false,
+  displayFormat = false,
+  invoice = null,
+  freelancer,
+  freelancerId
 }) => {
-  const [createTask, setCreateTask] = useState(false)
-  const [updatedTagsShow, setUpdatedTagsShow] = useState(false)
-  const [data, setData] = useState({ ...sortedData })
-  const [displayFormat, setDisplayFormat] = useState(false)
-  const [updateHoursShow, setUpdateHoursShow] = useState(false)
-  const [selectedTask, setSelectedTask] = useState({})
+  const router = useRouter()
+  const { week } = router.query
+
+  const [tasksModal, setTasksModal] = useState(false)
+  const [selectedTaskId, setTaskId] = useState('')
+  const [selectedDay, setDay] = useState('')
+  const [selectedDayDate, setDayDate] = useState('')
+  const [weekOptions, setWeekOptions] = useState([])
+  const [selectedWeek, setSelectedWeek] = useState(0)
   const [isCurrenWeek, setIsCurrentWeek] = useState(false)
-  const [taskForm, setTaskForm] = useState({
-    departmentId: '',
-    taskName: '',
-    storyPoints: NaN,
-    priority: NaN,
-    description: '',
-    tagName: 'Select Tag',
-    tagId: '',
-    assigneeId: '',
-    updatedAt: '',
-    createdAt: '',
-    hours: NaN
-  })
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const [startDate, setStartDate] = useState()
+  const [filteredData, setFilteredData] = useState([])
+  const [sortedData, setSortedData] = useState({})
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
 
-  useEffect(() => {
-    if (startDate) {
-      const currentDate = new Date()
-      const startOfWeek = new Date(currentDate)
-      startOfWeek.setDate(currentDate.getDate() - currentDate.getDay())
-      const isStartOfWeek = startDate?.toDateString() === startOfWeek?.toDateString()
-      setIsCurrentWeek(isStartOfWeek)
+  const [subTotal, setSubTotal] = useState(0)
+  const [fee, setFee] = useState(0)
+  const [totalAmount, setAmount] = useState(0)
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+  const tableColumns = () => {
+    if (role === 1) {
+      return [
+        {
+          name: 'TIME SPENT'
+        },
+        {
+          name: 'STORY POINTS'
+        }
+      ]
+    } else {
+      return [
+        {
+          name: 'Rate'
+        },
+        {
+          name: 'TIME SPENT'
+        },
+        {
+          name: 'ASSIGNEE'
+        }
+      ]
     }
-  }, [startDate])
-
-  useEffect(() => {
-    setData(sortedData)
-  }, [sortedData])
-
-  const toggleDisplayFormat = () => {
-    setDisplayFormat(!displayFormat)
   }
 
-  const onDragEnd = result => {
-    if (!isCurrenWeek) {
-      return
+  useEffect(() => {
+    if (+week && week > 0) setSelectedWeek(week)
+  }, [week])
+
+  useEffect(() => {
+    getInvoices({ businessId: businessId, _id: invoice, freelancerId: freelancer })
+  }, [businessId])
+
+  // Below set week options
+  useEffect(() => {
+    const options = []
+    const currentDate = new Date()
+
+    for (let i = 10; i >= 0; i--) {
+      const startOfWeek = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() - currentDate.getDay() - i * 7
+      )
+      startOfWeek.setHours(0, 0, 0, 0)
+      const endOfWeek = new Date(startOfWeek)
+      endOfWeek.setDate(endOfWeek.getDate() + 6)
+      endOfWeek.setHours(23, 59, 59, 999)
+      options.unshift({ startOfWeek, endOfWeek })
     }
-    if (!result.destination) {
-      return
+    setWeekOptions(options)
+    setSelectedWeek(0)
+  }, [])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined) {
+      setSelectedInvoice(null)
+      const currentDate = new Date()
+      const startOfWeek = weekOptions[selectedWeek]?.startOfWeek
+      const endOfWeek = weekOptions[selectedWeek]?.endOfWeek
+      setStartDate(startOfWeek)
+      const filteredItems = invoices?.filter(item => {
+        const itemDate = new Date(item.createdAt)
+
+        const isCurrentInvoice = invoice ? true : itemDate >= startOfWeek && itemDate <= endOfWeek
+        if (isCurrentInvoice) {
+          setSelectedInvoice(item)
+        }
+        return isCurrentInvoice
+      })
+      setFilteredData(filteredItems)
+
+      const currentWeekStartDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() - currentDate.getDay()
+      )
+      currentWeekStartDate.setHours(0, 0, 0, 0)
+      const isCurrentWeek = startOfWeek?.getTime() === currentWeekStartDate?.getTime()
+      setIsCurrentWeek(isCurrentWeek)
     }
-    const { source, destination, draggableId } = result
-    const sourceDay = source.droppableId
-    const destinationDay = destination.droppableId
-    const ifExists = data[destinationDay].find(obj => obj._id === draggableId)
-    if (ifExists) return
-    const sourceDayIndex = daysOfWeek.indexOf(sourceDay)
-    const destinationDayIndex = daysOfWeek.indexOf(destinationDay)
-    const objectToMoveIndex = data[sourceDay].findIndex(obj => obj._id === result.draggableId)
-    if (objectToMoveIndex !== -1) {
-      const objectToMove = { ...data[sourceDay][objectToMoveIndex] }
-      const daysDifference = destinationDayIndex - sourceDayIndex
-      const currentDate = new Date(objectToMove.updatedAt)
-      currentDate.setDate(currentDate.getDate() + daysDifference)
-      objectToMove.updatedAt = currentDate.toISOString()
-      objectToMove.date = currentDate.toISOString()
-      handleUpdatedAt(objectToMove)
-      const updatedSourceDay = [...data[sourceDay]]
-      updatedSourceDay.splice(objectToMoveIndex, 1)
-      const updatedDestinationDay = [...data[destinationDay], objectToMove]
-      setData(prevData => ({
-        ...prevData,
-        [sourceDay]: updatedSourceDay,
-        [destinationDay]: updatedDestinationDay
-      }))
+  }, [selectedWeek, weekOptions, invoices])
+
+  useEffect(() => {
+    if (selectedWeek !== null && selectedWeek !== undefined) {
+      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
+      filteredData?.forEach(item => {
+        item?.tasks?.forEach(task => {
+          const taskDate = new Date(task.updatedAt)
+          const dayOfWeek = daysOfWeek[taskDate.getDay()]
+          task['contract'] = item.contract
+          task['freelancer'] = item.freelancer
+          organizedItems[dayOfWeek].push(task)
+        })
+      })
+      setSortedData(organizedItems)
+    }
+  }, [filteredData])
+
+  useEffect(() => {
+    let subTotal = 0
+    let fee = 0
+    let totalAmount = 0
+    if (filteredData?.length) {
+      if (role === 0) {
+        for (var invoice of filteredData) {
+          subTotal += invoice?.contract.hourlyRate * invoice.hoursWorked
+        }
+        fee = subTotal * 0.05
+      } else {
+        subTotal = filteredData[0]?.contract?.hourlyRate * filteredData[0]?.hoursWorked
+        fee = subTotal * 0.05
+      }
+      totalAmount = subTotal - fee
+    }
+    setSubTotal(subTotal)
+    setFee(Math.round(fee))
+    setAmount(totalAmount)
+  }, [filteredData])
+
+  const handleWeekChange = value => {
+    setSelectedWeek(value)
+  }
+
+  const onDragEnd = async result => {
+    if (role === 1 && timeSheet) {
+      if (!isCurrenWeek) {
+        return
+      }
+      if (!result.destination) {
+        return
+      }
+      const { source, destination, draggableId } = result
+      const sourceDay = source.droppableId
+      const destinationDay = destination.droppableId
+      const ifExists = sortedData[destinationDay].find(obj => obj._id === draggableId)
+      if (ifExists) return
+      const sourceDayIndex = daysOfWeek.indexOf(sourceDay)
+      const destinationDayIndex = daysOfWeek.indexOf(destinationDay)
+      const objectToMoveIndex = sortedData[sourceDay].findIndex(obj => obj._id === result.draggableId)
+      if (objectToMoveIndex !== -1) {
+        const objectToMove = { ...sortedData[sourceDay][objectToMoveIndex] }
+        const daysDifference = destinationDayIndex - sourceDayIndex
+        const currentDate = new Date(objectToMove.updatedAt)
+        currentDate.setDate(currentDate.getDate() + daysDifference)
+        objectToMove.updatedAt = currentDate.toISOString()
+        objectToMove.day = destinationDayIndex
+        const updatedSourceDay = [...sortedData[sourceDay]]
+        updatedSourceDay.splice(objectToMoveIndex, 1)
+        const updatedDestinationDay = [...sortedData[destinationDay], objectToMove]
+        await updateTaskHour(objectToMove._id, objectToMove)
+        setFilteredData(prevData => {
+          const newData = [...prevData]
+          const invoiceToUpdate = newData.find(item => item._id === objectToMove.invoiceId)
+
+          if (invoiceToUpdate) {
+            let taskHourtoUpdate = invoiceToUpdate?.tasks?.find(taskHour => taskHour?._id === objectToMove._id)
+            if (taskHourtoUpdate) {
+              taskHourtoUpdate.day = objectToMove.day
+              taskHourtoUpdate.updatedAt = objectToMove.updatedAt
+            }
+          }
+          return newData
+        })
+      }
     }
   }
 
   const handleAddModal = day => {
-    const daysToAdd = daysOfWeek.indexOf(day.slice(0, 3))
+    const daysToAdd = daysOfWeek.indexOf(day)
     if (daysToAdd !== -1) {
       const date = new Date(startDate)
+      date.setHours(0, 0, 0, 0)
+
       date.setDate(date.getDate() + daysToAdd)
       const dateIso = new Date(date)
       const isoString = dateIso.toISOString()
-      setTaskForm(prev => ({
-        ...prev,
-        updatedAt: isoString,
-        createdAt: isoString,
-        departmentId: invoiceTags[0].departmentId,
-        assigneeId: id
-      }))
-      setCreateTask(true)
+      setDayDate(isoString)
     }
-  }
-  const handleSelectedtask = (feildName, e) => {
-    e.preventDefault()
-    const { value } = e.target
-    setSelectedTask(prev => ({
-      ...prev,
-      [feildName]: +value
-    }))
+    setDay(daysToAdd)
+    setTasksModal(true)
   }
 
-  const handleTaskForm = (feildName, e) => {
-    e.preventDefault()
-    var { type, value } = e.target
-    if (type === 'number') {
-      value = +value
-    }
-    setTaskForm({
-      ...taskForm,
-      [feildName]: value
-    })
-  }
-  const generateEditPopout = item => {
-    return [
-      {
-        text: 'Update Hours',
-        onClick: () => {
-          setSelectedTask(item)
-          setUpdateHoursShow(true)
-        }
-      },
-      {
-        text: 'Update Status',
-        onClick: () => {
-          setSelectedTask(item)
-          setUpdatedTagsShow(true)
+  const addHours = (value, invoiceId, taskHourId) => {
+    setFilteredData(prevData => {
+      const newData = [...prevData]
+      const invoiceToUpdate = newData.find(item => item._id === invoiceId)
+
+      if (invoiceToUpdate) {
+        const taskHourtoUpdate = invoiceToUpdate?.tasks?.find(taskHour => taskHour?._id === taskHourId)
+        if (taskHourtoUpdate) {
+          taskHourtoUpdate.hours = value
         }
       }
-    ]
-  }
-  return (
-    <Container>
-      <Title>
-        <TitleText title="true">Timesheet</TitleText>
-        {/* <Toggle>
-          <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-            <DarkText small>As Founder</DarkText>
-          </Left>
-          <Right displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-            <DarkText small>As Investor</DarkText>
-          </Right>
-        </Toggle> */}
-      </Title>
-      <TableTop>
-        <P margin="0px" fontSize="24px" fontWeight="500">
-          {projectName.slice(0, 15)}
-          {projectName?.length > 17 && '...'}
-        </P>
-        <select
-          onChange={handleWeekChange}
-          style={{ display: 'block', border: '0', width: 'fit-content', backgroundColor: 'transparent' }}>
-          {weekOptions.map((week, index) => (
-            <option key={index} value={index}>
-              Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
-            </option>
-          ))}
-        </select>
-        <ButtonComp
-          onClick={() => {
-            handleShowInvoice(true)
-          }}>
-          SUBMIT
-        </ButtonComp>
-      </TableTop>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <DragDiv>
-          {Object.keys(data).map((day, index) => {
-            return (
-              <div key={day} className="day">
-                <DaysDiv>
-                  <P margin="0px" fontWeight="500" width={'20%'}>
-                    {' '}
-                    {day.toUpperCase()}{' '}
-                  </P>
-                  <P margin="0px" fontWeight="500">
-                    {' '}
-                    TIME SPENT{' '}
-                  </P>
-                  <P margin="0px" fontWeight="500">
-                    {' '}
-                    STORY POINTS{' '}
-                  </P>
-                  {isCurrenWeek ? (
-                    <span onClick={() => handleAddModal(day)}>
-                      <AddInvoiceTask />
-                    </span>
-                  ) : (
-                    <span></span>
-                  )}
-                </DaysDiv>
-                <Droppable droppableId={day} key={day}>
-                  {(provided, snapshot) => (
-                    <div
-                      style={{
-                        background: snapshot.isDraggingOver ? 'lightblue' : 'white',
-                        borderRadius: '4px'
-                      }}
-                      ref={provided.innerRef}
-                      className={`droppable-area ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}>
-                      {data[day].map((item, itemIndex) => (
-                        <Draggable key={item._id} draggableId={`${item._id}`} index={itemIndex}>
-                          {(provided, snapshot) => (
-                            <div
-                              style={{
-                                ...provided.draggableProps.style,
-                                background: snapshot.isDragging ? 'red' : 'white',
-                                position: 'relative'
-                              }}
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="d-flex align-items-center draggable-item border bg-white py-3 px-2">
-                              <FaRegCheckCircle
-                                size={15}
-                                color={
-                                  item.tagName.includes('In')
-                                    ? '#FFA500'
-                                    : item.tagName.includes('Done')
-                                    ? '#198754'
-                                    : '#D8D8D8'
-                                }
-                              />
-                              <P margin="0px" padding="0 0 0 10px" width={'38%'} fontWeight="500">
-                                {' '}
-                                {item.taskName}{' '}
-                              </P>
-                              <P margin="0px" width={'33%'} fontWeight="300">
-                                {' '}
-                                {item.hours} HOURS
-                              </P>
-                              <P margin="0px" width={'15%'} fontWeight="500">
-                                {' '}
-                                {item.storyPoints}{' '}
-                              </P>
 
-                              {isCurrenWeek && (
-                                <Button
-                                  icon="largeExpand"
-                                  popoutWidth="150px"
-                                  noBorder
-                                  block
-                                  type="lightgrey"
-                                  fontSize="13px"
-                                  popout={generateEditPopout(item)}
-                                  iconRight>
-                                  Edit
-                                </Button>
-                              )}
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </div>
+      return newData
+    })
+  }
+
+  const hideTasksModal = () => {
+    setTasksModal(false)
+  }
+
+  const addTasks = async tasks => {
+    const taskHours = []
+    const dayOfWeek = daysOfWeek[selectedDay]
+
+    for (var task of tasks) {
+      if (!sortedData[dayOfWeek]?.find(item => item.taskId === task)) {
+        taskHours.push({
+          taskId: task,
+          hours: 0,
+          invoiceId: selectedInvoice?._id || null,
+          day: selectedDay,
+          createdAt: selectedDayDate,
+          updatedAt: selectedDayDate
+        })
+      }
+    }
+    if (taskHours?.length) {
+      if (selectedInvoice?._id) {
+        await addInvoiceTasks(selectedInvoice?._id, {
+          tasksHours: taskHours,
+          freelancerId: freelancerId
+        })
+      } else {
+        await createInvoice({
+          tasks: [],
+          tasksHours: taskHours,
+          businessId: projectDetails?._id,
+          freelancerId: freelancerId,
+          clientId: projectDetails?.userId
+        })
+      }
+      await getInvoices({ businessId: businessId })
+    }
+  }
+
+  const handleSubmit = async status => {
+    await updateInvoice(selectedInvoice?._id, {
+      status: status
+    })
+  }
+
+  return (
+    <Container style={{ justifyContent: timeSheet ? 'center' : 'flex-end' }}>
+      <div
+        style={{
+          width: '830px'
+        }}>
+        <TableTop>
+          <div style={{ display: 'flex' }}>
+            <P margin="0px" fontSize="24px" fontWeight="500" width="182px">
+              {ConverterUtils.capitalize(`${selectedInvoice?.freelancer?.user?.FullName.slice(0, 15) || 'User'}`)}
+              {selectedInvoice?.freelancer?.user?.FullName?.length > 17 && '...'}
+            </P>
+            {!invoice && (
+              <select
+                onChange={e => {
+                  handleWeekChange(e?.target?.value)
+                }}
+                style={{
+                  display: 'block',
+                  border: '0',
+                  width: 'fit-content',
+                  backgroundColor: 'transparent',
+                  marginLeft: '50px'
+                }}>
+                {weekOptions.map((week, index) => (
+                  <option key={index} value={index}>
+                    Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          {role === 1 ? (
+            isCurrenWeek && timeSheet && selectedInvoice?.tasks?.length ? (
+              <ButtonComp
+                onClick={() => {
+                  handleSubmit('active')
+                }}>
+                SUBMIT
+              </ButtonComp>
+            ) : (
+              ''
             )
-          })}
-        </DragDiv>
-      </DragDropContext>
-      {updatedTagsShow && (
-        <Modal onHide={() => setUpdatedTagsShow(false)} height="210px" background="#D9D9D9 " width="370px">
-          <label className="display-5">
-            <b>SELECT STATUS</b>
-          </label>
-          <Button
-            icon="largeExpand"
-            popoutWidth="max-content"
-            popoutMinWidth="max-content"
-            noBorder
-            block
-            type="lightgrey"
-            fontSize="13px"
-            popout={invoiceTags.map(tag => ({
-              text: tag.tagName,
-              onClick: () => {
-                setSelectedTask(prev => ({
-                  ...prev,
-                  tagName: tag.tagName,
-                  tag: tag._id
-                }))
-              }
-            }))}
-            iconRight>
-            {selectedTask.tagName}
-          </Button>
-          <Absolute bottom="20px">
-            <Button oval extraWide type="outlineInverse" onClick={() => setUpdatedTagsShow(false)}>
-              CANCEL
-            </Button>
-            <Button
-              disabled={false}
+          ) : selectedInvoice?.status !== 'approved' ? (
+            <ButtonComp
               onClick={() => {
-                handleTaskStatus(selectedTask)
-                setUpdatedTagsShow(false)
-              }}
-              width="58.25px"
-              oval
-              extraWide
-              margin="0px 37px 0px 20px"
-              type="black">
-              SAVE
-            </Button>
-          </Absolute>
-        </Modal>
-      )}
-      {updateHoursShow && (
-        <Modal onHide={() => setUpdateHoursShow(false)} height="200px" background="#D9D9D9" width="370px">
-          <FormField
-            fieldType="input"
-            inputType="number"
-            margin
-            fontSize="14px"
-            noMargin
-            width="95%"
-            onChange={e => {
-              handleSelectedtask('hours', e)
-            }}
-            handleEnterKey={() => {}}
-            value={selectedTask?.hours}>
-            HOURS
-          </FormField>
-          <Absolute bottom="20px">
-            <Button oval extraWide type="outlineInverse" onClick={() => setUpdateHoursShow(false)}>
-              CANCEL
-            </Button>
-            <Button
-              disabled={false}
-              onClick={() => {
-                handleHours(selectedTask)
-                setUpdateHoursShow(false)
-              }}
-              width="58.25px"
-              oval
-              extraWide
-              margin="0px 37px 0px 20px"
-              type="black">
-              SAVE
-            </Button>
-          </Absolute>
-        </Modal>
-      )}
-      {createTask && (
-        <Modal onHide={() => setCreateTask(false)} height="550px" background="#D9D9D9">
-          <FormField
-            fieldType="input"
-            margin
-            fontSize="14px"
-            noMargin
-            width="95%"
-            onChange={e => {
-              handleTaskForm('taskName', e)
-            }}
-            handleEnterKey={() => {}}
-            value={taskForm?.taskName}>
-            TASK NAME(REQUIRED)
-          </FormField>
-          <Grid3 margin="0px" width="95%" grid="2fr 2fr">
-            <FormField
-              fieldType="input"
-              inputType="number"
-              margin
-              fontSize="14px"
-              noMargin
-              width="95%"
-              onChange={e => {
-                handleTaskForm('hours', e)
-              }}
-              handleEnterKey={() => {}}
-              value={taskForm?.hours}>
-              HOURS
-            </FormField>
-            <FormField
-              fieldType="input"
-              inputType="number"
-              margin
-              fontSize="14px"
-              noMargin
-              width="100%"
-              onChange={e => {
-                if (+e.target.value < 9) {
-                  handleTaskForm('storyPoints', e)
-                }
-              }}
-              handleEnterKey={() => {}}
-              value={taskForm?.storyPoints}>
-              STORY POINTS
-            </FormField>
-          </Grid3>
-          <Grid3 margin="0px" width="95%" grid="2fr 2fr">
-            <FormField
-              fieldType="input"
-              inputType="number"
-              margin
-              fontSize="14px"
-              noMargin
-              width="95%"
-              onChange={e => {
-                if (+e.target.value < 4) {
-                  handleTaskForm('priority', e)
-                }
-              }}
-              handleEnterKey={() => {}}
-              value={taskForm?.priority}>
-              PRIORITY
-            </FormField>
-            <div style={{ height: '-webkit-fill-available' }}>
-              <label className="display-5 m-0">
-                <b>SELECT STATUS</b>
-              </label>
-              <Button
-                icon="largeExpand"
-                popoutWidth="max-content"
-                popoutMinWidth="max-content"
-                noBorder
-                block
-                height={'auto'}
-                type="lightgrey"
-                fontSize="13px"
-                popout={invoiceTags.map(tag => ({
-                  text: tag.tagName,
-                  onClick: () => {
-                    setTaskForm(prev => ({
-                      ...prev,
-                      tagName: tag.tagName,
-                      tagId: tag._id
-                    }))
-                  }
-                }))}
-                iconRight>
-                {taskForm.tagName}
-              </Button>
+                handleSubmit('approved')
+              }}>
+              Approve
+            </ButtonComp>
+          ) : (
+            ''
+          )}
+        </TableTop>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <DragDiv>
+            {Object.keys(sortedData).map((day, index) => {
+              return (
+                <div key={day} className="day">
+                  {!displayFormat ? (
+                    <DaysDiv>
+                      <P margin="0px" fontWeight="500" width={'40%'}>
+                        {' '}
+                        {day.toUpperCase()}{' '}
+                      </P>
+                      {tableColumns().map(column => {
+                        return (
+                          <P
+                            fontWeight="500"
+                            width={`${60 / tableColumns()?.length}%`}
+                            align="center"
+                            key={`${column.name}_${index}`}>
+                            {' '}
+                            {column.name}
+                          </P>
+                        )
+                      })}
+                      {isCurrenWeek && role === 1 && timeSheet ? (
+                        <span onClick={() => handleAddModal(day)}>
+                          <AddInvoiceTask />
+                        </span>
+                      ) : (
+                        ''
+                      )}
+                    </DaysDiv>
+                  ) : (
+                    index === 0 && (
+                      <DaysDiv>
+                        <P margin="0px" fontWeight="500" width={'40%'}>
+                          {' '}
+                          Task
+                        </P>
+                        {tableColumns().map(column => {
+                          return (
+                            <P
+                              fontWeight="500"
+                              width={`${60 / tableColumns()?.length}%`}
+                              align="center"
+                              key={`${column.name}_${index}`}>
+                              {' '}
+                              {column.name}
+                            </P>
+                          )
+                        })}
+                      </DaysDiv>
+                    )
+                  )}
+                  <Droppable droppableId={day} key={day}>
+                    {(provided, snapshot) => (
+                      <div
+                        style={{
+                          background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                          borderRadius: '4px'
+                        }}
+                        ref={provided.innerRef}
+                        className={`droppable-area ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}>
+                        {sortedData[day].map((item, itemIndex) => (
+                          <Draggable key={item._id} draggableId={`${item._id}`} index={itemIndex}>
+                            {(provided, snapshot) => (
+                              <div
+                                style={{
+                                  ...provided.draggableProps.style,
+                                  background: snapshot.isDragging ? 'red' : 'white',
+                                  position: 'relative'
+                                }}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="d-flex  draggable-item border bg-white py-3 px-2"
+                                onClick={() => {
+                                  if (role === 1) setTaskId(item._id)
+                                }}>
+                                <div style={{ alignItems: 'center' }}>
+                                  <FaRegCheckCircle
+                                    size={15}
+                                    color={
+                                      item?.task?.tag?.tagName?.includes('In')
+                                        ? '#FFA500'
+                                        : item?.task?.tag?.tagName?.includes('Done')
+                                        ? '#198754'
+                                        : '#D8D8D8'
+                                    }
+                                  />
+                                </div>
+
+                                <P margin="0px" padding="0 0 0 10px" width={'40%'} fontWeight="500">
+                                  {' '}
+                                  {item?.task?.taskName}{' '}
+                                </P>
+                                {role === 0 && (
+                                  <P
+                                    align="center"
+                                    width={`${60 / tableColumns()?.length}%`}
+                                    fontWeight="500"
+                                    margin="0px 30px 0px 0px">
+                                    {' '}
+                                    {item?.contract?.hourlyRate}{' '}
+                                  </P>
+                                )}
+                                <div style={{ width: `${60 / tableColumns()?.length}%` }}>
+                                  {(!item.hours || selectedTaskId === item._id) && isCurrenWeek && role === 1 ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <FormField
+                                        zIndexUnset
+                                        fieldType="input"
+                                        type="number"
+                                        placeholder="Hours"
+                                        fontSize="14px"
+                                        name={`${item._id}_hours`}
+                                        id={`${item._id}_hours`}
+                                        width="60px"
+                                        margin="0px 10px 0px 0px"
+                                        height="30px  !important"
+                                        borderRadius="4px"
+                                        border="1px solid #A5A0A0"
+                                        value={item.hours}
+                                        maxLength="30"
+                                        onChange={e => addHours(e?.target?.value, item?.invoiceId, item._id)}
+                                        onUpdate={() => {}}
+                                        handleEnterKey={async e => {
+                                          if (e?.keyCode === 13) {
+                                            await updateTaskHour(item._id, item)
+                                            setTaskId('')
+                                          }
+                                        }}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <P
+                                      fontWeight="500"
+                                      align="center"
+                                      margin={`0px ${role === 0 ? '60px' : '10px'} 0px 0px`}>
+                                      {item.hours} Hours
+                                    </P>
+                                  )}
+                                </div>
+                                {role === 1 && (
+                                  <P
+                                    width={`${60 / tableColumns()?.length}%`}
+                                    fontWeight="500"
+                                    align="center"
+                                    margin="0px 30px 0px 0px">
+                                    {' '}
+                                    {item?.task?.storyPoints}{' '}
+                                  </P>
+                                )}
+                                {role === 0 && (
+                                  <P align="left" width={`${60 / tableColumns()?.length}%`}>
+                                    <img
+                                      src={item?.freelancer?.user?.profileImage}
+                                      style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
+                                    />
+                                    {item?.freelancer?.user?.FirstName + ' ' + item?.freelancer?.user?.LastName ??
+                                      'Anonymous'}
+                                  </P>
+                                )}
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              )
+            })}
+          </DragDiv>
+        </DragDropContext>
+      </div>
+      {!timeSheet ? (
+        role === 1 ? (
+          <HoursDiv>
+            <div className="d-flex justify-content-between  mb-3" style={{ borderBottom: '1px solid #777' }}>
+              <P fontWeight="500">DAY</P>
+              <P fontWeight="500">HOURS</P>
             </div>
-          </Grid3>
-          <FormField
-            fieldType="input"
-            margin
-            fontSize="14px"
-            noMargin
-            height="150px"
-            textarea
-            onChange={e => {
-              handleTaskForm('description', e)
-            }}
-            handleEnterKey={() => {}}
-            value={taskForm?.description}>
-            DESCRIPTION
-          </FormField>
-          <Absolute bottom="20px">
-            <Button oval extraWide type="outlineInverse" onClick={() => setCreateTask(false)}>
-              CANCEL
-            </Button>
-            <Button
-              disabled={false}
-              onClick={() => {
-                createTaskAndAddToTaskHours(taskForm)
-                setCreateTask(false)
-              }}
-              width="58.25px"
-              oval
-              extraWide
-              margin="0px 37px 0px 20px"
-              type="black">
-              ADD TASK
-            </Button>
-          </Absolute>
-        </Modal>
+            {sortedData &&
+              Object?.keys(sortedData)?.map((day, index) => {
+                return (
+                  <div className="d-flex justify-content-between pb-3" key={`day_hours_${index}`}>
+                    <P fontWeight="500">{day}</P>
+                    <P fontWeight="500">{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
+                  </div>
+                )
+              })}
+            <div className="d-flex justify-content-between mt-3 pb-3" style={{ borderTop: '1px solid #777' }}>
+              <P fontWeight="500">RATE</P>
+              {filteredData && <P fontWeight="500">${filteredData[0]?.contract?.hourlyRate || 0} /HOUR</P>}
+            </div>
+            <div className="d-flex justify-content-between  pb-3">
+              <P fontWeight="500">FEE</P>
+              <P fontWeight="500">${fee || 0}</P>
+            </div>
+            <div className="d-flex justify-content-between">
+              <P fontWeight="500">TOTAL</P>
+              <P fontWeight="500">${totalAmount || 0} </P>
+            </div>
+          </HoursDiv>
+        ) : (
+          <HoursDiv>
+            <div className="d-flex justify-content-between mb-3 pb-2" style={{ borderBottom: '1px solid #777' }}>
+              <P fontWeight="500">Name</P>
+              <P fontWeight="500">Amount</P>
+            </div>
+            {filteredData?.length
+              ? filteredData?.map((invoice, index) => {
+                  return (
+                    <div className="d-flex justify-content-between pb-3" key={invoice._id}>
+                      <P fontWeight="500">
+                        {ConverterUtils.capitalize(
+                          `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
+                        )}
+                      </P>
+                      <P fontWeight="500">${invoice?.contract?.hourlyRate * invoice?.hoursWorked}</P>
+                    </div>
+                  )
+                })
+              : ''}
+            <div
+              className="d-flex justify-content-between pt-3 pb-3"
+              style={{ borderTop: filteredData?.length ? '1px solid #777' : '' }}>
+              <P fontWeight="500">Subtotal</P>
+              <P fontWeight="500">${subTotal}</P>
+            </div>
+            <div className="d-flex justify-content-between pb-3">
+              <P fontWeight="500">FEE</P>
+              <P fontWeight="500">${fee}</P>
+            </div>
+            <div className="d-flex justify-content-between">
+              <P fontWeight="500">TOTAL</P>
+              <P fontWeight="500">${totalAmount} </P>
+            </div>
+          </HoursDiv>
+        )
+      ) : (
+        ''
       )}
+
+      {tasksModal && <AddTasksModal onHide={hideTasksModal} onAdd={addTasks} />}
     </Container>
   )
 }
 
-export default Timesheet
+const mapStateToProps = state => {
+  return {
+    projectDetails: state.Business.selectedBusiness,
+    role: state.Auth.user.role,
+    freelancerId: state.Auth.user?.freelancers,
+    invoices: state.Invoices.invoices
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getBusinessById: bindActionCreators(getBusinessById, dispatch),
+    getInvoices: bindActionCreators(getInvoices, dispatch),
+    createTaskHour: bindActionCreators(createTaskHour, dispatch),
+    createInvoice: bindActionCreators(createInvoice, dispatch),
+    addInvoiceTasks: bindActionCreators(addInvoiceTasks, dispatch),
+    updateInvoice: bindActionCreators(updateInvoice, dispatch),
+    updateTaskHour: bindActionCreators(updateTaskHour, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Timesheet)

@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 
-import { ValidationUtils } from '../../utils'
 import IconComponent from '../ui/icons/IconComponent'
-import Link from 'next/link'
 import { Badge, Icon } from '../ui'
 import ProfileTab from './ProfileTab'
 
@@ -79,7 +77,7 @@ function MobileProfileCard({ user, handleProfilePage }) {
             style={{ borderRadius: '15px' }}
           />
           <P fontSize="26px" margin="0">
-            {user?.userId?.FirstName || '' + ' ' + user?.userId?.LastName || ''}
+            {user?.userId?.FirstName + ' ' + user?.userId?.LastName || ''}
           </P>
           <P fontSize="15px" fontWeight="400" margin="0">
             {user?.category}
@@ -156,7 +154,6 @@ function MobileProfileCard({ user, handleProfilePage }) {
         </div>
       </div>
       <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
-      <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
       <ProjectCard>
         <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
           Create a Landing page for a react site
@@ -169,7 +166,7 @@ function MobileProfileCard({ user, handleProfilePage }) {
         </P>
         <div style={{ marginBottom: '29px' }}>
           {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => <Badge key={index}>{item?.skill}</Badge>)}
+            user?.user?.freelancerSkills.map((item, index) => <Badge key={item._id}>{item?.skill}</Badge>)}
         </div>
         <div style={{ padding: '0px 19px', display: 'flex' }}>
           <img
@@ -195,7 +192,9 @@ function MobileProfileCard({ user, handleProfilePage }) {
         </P>
         <div style={{ marginBottom: '29px' }}>
           {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => <Badge key={index}>{item?.skill}</Badge>)}
+            user?.user?.freelancerSkills.map((item, index) => (
+              <Badge key={`${item._id}_${index}`}>{item?.skill}</Badge>
+            ))}
         </div>
         <div style={{ padding: '0px 19px', display: 'flex' }}>
           <img
@@ -221,7 +220,9 @@ function MobileProfileCard({ user, handleProfilePage }) {
         </P>
         <div style={{ marginBottom: '29px' }}>
           {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => <Badge key={index}>{item?.skill}</Badge>)}
+            user?.user?.freelancerSkills.map((item, index) => (
+              <Badge key={`${item._id}_${index}_${item.skill}`}>{item?.skill}</Badge>
+            ))}
         </div>
         <div style={{ padding: '0px 19px', display: 'flex' }}>
           <img

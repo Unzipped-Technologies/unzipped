@@ -1,9 +1,9 @@
-const list = require('../../models/List');
-const listItems = require('../../models/ListItems');
-const mongoose = require('mongoose');
+const list = require('../models/List')
+const listItems = require('../models/ListItems')
+const mongoose = require('mongoose')
 
-const createLists = async (data) => {
-    return await list.create(data);
+const createLists = async data => {
+  return await list.create(data)
 }
 
 const updateLists = async (data) => {
@@ -33,21 +33,21 @@ const deleteLists = async (id) => {
 }
 
 const addListItemToList = async (data, listId) => {
-    try {
-        const updateList = await list.findById(listId)
-        const ids = []
-        for (const item of data.items) {
-            const id = await listItems.create({
-                ...item
-            });
-            ids.push(id.id)
-        }
-        updateList.listItems.push(...ids.map(item => mongoose.Types.ObjectId(item.id)))
-        updateList.save()
-        return updateList;
-    } catch (e) {
-        throw Error(`Something went wrong ${e}`);
+  try {
+    const updateList = await list.findById(listId)
+    const ids = []
+    for (const item of data.items) {
+      const id = await listItems.create({
+        ...item
+      })
+      ids.push(id.id)
     }
+    updateList.listItems.push(...ids.map(item => mongoose.Types.ObjectId(item.id)))
+    updateList.save()
+    return updateList
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
 }
 
 const getListById = async (id) => {
@@ -82,10 +82,10 @@ const listLists = async ({ filter, take, skip }) => {
 }
 
 module.exports = {
-    createLists,
-    addListItemToList,
-    listLists,
-    getListById,
-    updateLists,
-    deleteLists,
+  createLists,
+  addListItemToList,
+  listLists,
+  getListById,
+  updateLists,
+  deleteLists
 }
