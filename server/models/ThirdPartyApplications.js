@@ -9,6 +9,12 @@ const thirdPartyApplicationSchema = new Schema({
   googleId: String,
   calendlyId: String,
   meta: Object,
+  github: {
+    userName: String,
+    email: String,
+    avatarUrl: String,
+    githubId: Number,
+  }
 }, {
   timestamps: true
 });

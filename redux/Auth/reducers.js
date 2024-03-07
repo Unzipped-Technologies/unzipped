@@ -22,7 +22,9 @@ import {
   SUBSCRIPTION_CREATED,
   CLEAR_ERRORS,
   VERIFY_USER,
-  UPDATE_REGISTER_CREDENTIALS
+  UPDATE_REGISTER_CREDENTIALS,
+  GET_USER_THIRD_PARTY_DETAILS,
+  GET_USER_THIRD_PARTY_DETAILS_FAILED
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -37,7 +39,7 @@ const setDisabled = data => {
 const INIT_STATE = {
   token: '',
   disabled: true,
-  isAuthenticated: false, //null,
+  isAuthenticated: false, 
   isEmailSent: false,
   userRegistrationForm: {email:"",password:""},
   user: {},
@@ -179,7 +181,8 @@ const INIT_STATE = {
         }
       ]
     }
-  ]
+  ],
+  thirdPartyDetails: {}
 }
 
 const Auth = (state = INIT_STATE, action) => {
@@ -189,9 +192,9 @@ const Auth = (state = INIT_STATE, action) => {
     case SET_LOADING:
       return { ...state, loading: true }
     case USER_CREDENTIALS:
-      return {...state, userRegistrationForm:action.payload,isEmailSent:false}
+      return { ...state, userRegistrationForm: action.payload, isEmailSent: false }
     case UPDATE_REGISTER_CREDENTIALS:
-      return {...state, userRegistrationForm: {...state.userRegistrationForm,email: action.payload}}
+      return { ...state, userRegistrationForm: { ...state.userRegistrationForm, email: action.payload } }
     case CURRENT_USER:
       return {
         ...state,
@@ -215,12 +218,12 @@ const Auth = (state = INIT_STATE, action) => {
     case UPDATE_USER_SUCCESS:
       return { ...state, user: { ...state.user, ...state.userForm }, loading: false, error: { data: '' } }
     case VERIFY_USER:
-      return {...state, isEmailSent:true, loading:false }
+      return { ...state, isEmailSent: true, loading: false }
     case REGISTER_USER:
       let isAuthenticated = true
       if (action.payload.error) {
         isAuthenticated = false
-        
+
       }
       return {
         ...state,
@@ -231,7 +234,7 @@ const Auth = (state = INIT_STATE, action) => {
         token: action.payload.cookie
       }
     case LOGOUT_USER:
-      return {...INIT_STATE, loading: false, error: { data: '' }, isAuthenticated: false, isEmailSent: false}
+      return { ...INIT_STATE, loading: false, error: { data: '' }, isAuthenticated: false, isEmailSent: false }
     case SELECT_A_PLAN:
       return { ...state, loading: false, ...action.payload }
     case UPDATE_SUBSCRIPTION_FORM:
@@ -267,6 +270,12 @@ const Auth = (state = INIT_STATE, action) => {
         token: action.payload.cookie,
         error: ''
       }
+    case GET_USER_THIRD_PARTY_DETAILS:
+      return { ...state, loading: false, thirdPartyDetails: action?.payload }
+
+    case GET_USER_THIRD_PARTY_DETAILS_FAILED:
+      return { ...state, loading: false, thirdPartyDetails: null }
+
     default:
       return state
   }

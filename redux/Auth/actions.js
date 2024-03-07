@@ -24,6 +24,8 @@ import {
     VERIFY_USER,
     UPDATE_SUBSCRIPTION_FORM,
     USER_CREDENTIALS,
+    GET_USER_THIRD_PARTY_DETAILS,
+    GET_USER_THIRD_PARTY_DETAILS_FAILED
 } from './constants';
 import _ from 'lodash';
 import axios from 'axios';
@@ -315,7 +317,6 @@ export const mailingList = (data) => async (dispatch, getState) => {
             payload: res.data,
         }))
         .catch(err => {
-            // dispatch(returnErrors(err.response, err.response))
             dispatch({
                 type: SET_TOKEN,
                 payload: err.response
@@ -323,16 +324,26 @@ export const mailingList = (data) => async (dispatch, getState) => {
         })
 }
 
+export const getUserById = (id) => async (dispatch) => {
+    try {
+        const resp = await axios
+            .get(`/api/user/thirdPartyCredentials/${id}`)
+        if (resp) {
+            dispatch({
+                type: GET_USER_THIRD_PARTY_DETAILS,
+                payload: resp.data,
+            })
+        }
 
-// //Return errors
-// export const returnErrors = (msg, status, id = null) => {
-//     return {
-//         type: GET_ERRORS,
-//         payload: { msg, status, id }
-//     };
-// };
+    } catch (error) {
+        dispatch({
+            type: GET_USER_THIRD_PARTY_DETAILS_FAILED,
+            payload: error.response
+        })
+    }
+}
 
-//Clear Errors
+
 export const clearErrors = () => {
     return {
         type: CLEAR_ERRORS

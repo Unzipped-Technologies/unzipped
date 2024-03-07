@@ -34,8 +34,11 @@ const updateUsersGithubDetails = async id => {
   return await UserModel.findByIdAndUpdate(id, { $set: { isGithubConnected: true } })
 }
 
-const addThirdPartyAppDetails = async (existingUser, res, githubToken) => {
-  return await ThirdPartyApplicationModel.create({ userId: existingUser.id, payload: { ...res, githubToken } })
+const addThirdPartyAppDetails = async (params) => {
+    const thirdPartyCredentials = await ThirdPartyApplicationModel.create(params);
+    if (thirdPartyCredentials) {
+        await UserModel.findByIdAndUpdate(params.userId, { $set: { thirdPartyCredentials: thirdPartyCredentials.id } });
+    }
 }
 
 const bcryptAndHashing = async password => {

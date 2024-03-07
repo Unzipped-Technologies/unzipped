@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Button from '@material-ui/core/Button'
@@ -475,6 +475,7 @@ const Nav = ({
   const seenNames = new Set();
   const otherNames = new Set();
   const dispatch = useDispatch();
+  const businessForm = useSelector(state => state.Business.businessForm);
 
   useEffect(() => {
     setIsProjectMenuEnabled(router.pathname === '/projects')
@@ -808,7 +809,9 @@ const Nav = ({
           ) : isProjectMenuEnabled ? (
             <></>
           ) : (
-            <SubMenu>
+          <>
+           {businessForm && businessForm.stage > 1 ? (<></>): (
+            (<SubMenu>
               {subMenuItems.map((item, key) => (
                 <Link href={item.link} key={key}>
                   <SpanWhite count={key} underline={router.pathname === item.link}>
@@ -816,7 +819,9 @@ const Nav = ({
                   </SpanWhite>
                 </Link>
               ))}
-            </SubMenu>
+            </SubMenu>)
+           )}
+          </>
           )}
         </SubMenTop>
       )}
