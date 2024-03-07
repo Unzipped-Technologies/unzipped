@@ -43,7 +43,10 @@ import {
   CREATE_TASK_AND_TASK_HOURS,
   UPDATE_TASK_HOURS_DATE,
   GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
-
+  SUBMIT_PROJECT_WIZARD_DETAILS,
+  SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+  SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+  UPDATE_WIZARD_SUBMISSION
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -294,7 +297,7 @@ export const getBusinessDetails = (userId, token) => async (dispatch, getState) 
   const id = userId || getState().Auth.user._id
   dispatch({ type: LOAD_STATE })
   await axios
-    .post(`/api/business/details`, {userId: id}, tokenConfig(token))
+    .post(`/api/business/details`, { userId: id }, tokenConfig(token))
     .then(res =>
       dispatch({
         type: GET_BUSINESS_DETAILS,
@@ -309,9 +312,9 @@ export const getBusinessDetails = (userId, token) => async (dispatch, getState) 
     })
 }
 
-export const createBusiness = (data, token) => async (dispatch, getState) => {
+export const createBusiness = (data, token, isWizard = false) => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
-
+  dispatch(startLoading())
   await axios
     .post(`/api/business/create`, data, {
       "headers": {
@@ -320,18 +323,34 @@ export const createBusiness = (data, token) => async (dispatch, getState) => {
       }
 
     })
-    .then(res =>
+    .then(res => {
       dispatch({
         type: CREATE_BUSINESS,
         payload: res.data
       })
+      if (isWizard) {
+        dispatch({
+          type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+          payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+        })
+      }
+      dispatch({ type: RESET_BUSINESS_FORM, })
+    }
+
     )
     .catch(err => {
       dispatch({
         type: DEPARTMENT_ERROR,
         payload: err.response
       })
+      if (isWizard) {
+        dispatch({
+          type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+          payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+        })
+      }
     })
+    dispatch(stopLoading())
 }
 
 export const getBusinessTasksByInvestor =
@@ -647,9 +666,15 @@ export const updateBusiness = data => async (dispatch, getState) => {
   return response
 }
 
-export const nullBusinessForm = (data ={}) =>  (dispatch) => {
+export const nullBusinessForm = (data = {}) => (dispatch) => {
   dispatch({
     type: RESET_BUSINESS_FORM,
-    // payload: null
+  })
+}
+
+export const updateWizardSubmission = (data) => (dispatch) => {
+  dispatch({
+    type: UPDATE_WIZARD_SUBMISSION,
+    payload: data
   })
 }

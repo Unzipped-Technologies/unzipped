@@ -57,7 +57,8 @@ const userSchema = new Schema(
     notifications: { type: Schema.Types.Mixed, ref: 'notifications' },
     files: [{ type: Schema.Types.Mixed, ref: 'file' }],
     totalBalance: { type: Number, default: 0 },
-    totalPending: { type: Number, default: 0 }
+    totalPending: { type: Number, default: 0 },
+    thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' },
   },
   {
     timestamps: true

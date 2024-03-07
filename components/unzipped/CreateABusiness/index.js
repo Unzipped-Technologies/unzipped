@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Card from '../../ui/Card'
 import Image from '../../ui/Image'
@@ -10,11 +10,10 @@ import {
   DarkText,
   Absolute,
   HeadingText,
-  Grid,
 } from '../dashboard/style'
 import { useDispatch, useSelector } from 'react-redux';
 import { nullBusinessForm } from '../../../redux/actions';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
 const CardContainer = styled.div`
     display: flex;
@@ -29,11 +28,29 @@ const CardContainer = styled.div`
 `;
 
 
-const CreateBusiness = ({ mobile, titleFontSize, doubleScreenTop, doubleScreenBottom, title, loading, disabled, submit, skip, sub, children, stage, progress = 10, onBack, onSubmit, onUpdate, noMargin, noTitle,  projectType }) => {
+const CreateBusiness = ({ mobile,
+  titleFontSize,
+  doubleScreenTop,
+  doubleScreenBottom,
+  title,
+  loading,
+  disabled,
+  submit,
+  skip,
+  sub,
+  children,
+  stage,
+  progress = 10,
+  onBack,
+  onSubmit,
+  onUpdate,
+  noMargin,
+  noTitle,
+  projectType }) => {
   const store = useSelector(state => state);
   const dispatch = useDispatch();
   const router = useRouter();
-  // console.log('store', store)
+
   return (
     <CardContainer>
       <Card
@@ -90,8 +107,8 @@ const CreateBusiness = ({ mobile, titleFontSize, doubleScreenTop, doubleScreenBo
             onClick={() => {
               dispatch(nullBusinessForm())
               router.push('/dashboard')
-              }
-              }>
+            }
+            }>
             Cancel
           </Button>)}
           <Button

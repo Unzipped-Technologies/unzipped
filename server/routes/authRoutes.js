@@ -287,10 +287,20 @@ router.get('/github', async (req, res) => {
     } else {
       githubUser.emails = [githubUser.email]
     }
+    let isGithubVerified = false;
     const existingUser = await AuthService.isExistingUser(githubUser.email, false)
-    await AuthService.updateUsersGithubDetails(existingUser.id)
-    await AuthService.addThirdPartyAppDetails(existingUser, res, githubToken)
-    res.redirect(`/create-your-business?github-connect=true`)
+    if (existingUser) {
+      await AuthService.updateUsersGithubDetails(existingUser.id)
+      await AuthService.addThirdPartyAppDetails({
+        userId: existingUser.id, github: {
+          githubId: githubUser.id, 
+          userName: githubUser.login, 
+          avatarUrl: githubUser.avatar_url
+        },
+      })
+      isGithubVerified = true;
+    }
+    res.redirect(`/create-your-business?github-connect=${isGithubVerified}`)
   } catch (error) {
     res.status(400).send({ message: 'Exception occured when retrieving github user details' })
   }

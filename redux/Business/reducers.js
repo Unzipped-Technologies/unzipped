@@ -42,9 +42,18 @@ import {
   CREATE_BUSINESS_DETAILS,
   UPDATE_BUSINESS_DETAILS,
   GET_BUSINESS_DETAILS,
+  SUBMIT_PROJECT_WIZARD_DETAILS,
+  SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+  SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+  UPDATE_WIZARD_SUBMISSION
 } from './constants'
 
 const INIT_STATE = {
+  wizardSubmission: {
+    isSuccessfull: false,
+    error: '',
+    projectName: ''
+  },
   departments: [],
   businesses: [],
   details: {},
@@ -89,9 +98,19 @@ const INIT_STATE = {
 
 const Business = (state = INIT_STATE, action = {}) => {
   switch (action.type) {
-    // case RESET_BUSINESS_FORM: {
-    //   return { ...state, businessForm: INIT_STATE.businessForm }
-    // }
+    case RESET_BUSINESS_FORM: {
+      return { ...state, businessForm: INIT_STATE.businessForm }
+    }
+    case UPDATE_WIZARD_SUBMISSION: {
+      return { ...state, wizardSubmission: { ...state.wizardSubmission, ...action.payload } }
+    }
+    case SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS: {
+      return { ...state, loading: true, wizardSubmission: { ...state.wizardSubmission, ...action.payload } }
+    }
+
+    case SUBMIT_PROJECT_WIZARD_DETAILS_ERROR: {
+      return { ...state, loading: false, wizardSubmission: { ...state.wizardSubmission, ...action.payload } }
+    }
     case CREATE_BUSINESS:
       return {
         ...state,
@@ -311,29 +330,32 @@ const Business = (state = INIT_STATE, action = {}) => {
       const projectName = action.payload.businessDetails.name
       return { ...state, loading: false, invoiceTaskHours: taskHoursByFounderBusiness, projectName: projectName }
     case GET_TASK_HOURS_BY_BUSINESS:
-      const invoiceTaskHour = action.payload.taskHours.map(task => ({
-        updatedAt: task.updatedAt,
-        isDeleted: task.isDeleted,
-        deletedAt: task.deletedAt,
-        userId: task.userId,
-        storyPoints: task.taskId.storyPoints,
-        taskName: task.taskId.taskName,
-        tagName: task.taskId.tag.tagName,
-        tag: task.taskId.tag._id,
-        hours: task.hours,
-        departmentId: task.departmentId,
-        createdAt: task.createdAt,
-        rate: action.payload.ContractRate.hourlyRate,
-        _id: task._id
-      }))
-      const projName = action.payload?.ContractRate?.businessId?.name
-      return {
-        ...state,
-        loading: false,
-        invoiceTaskHours: invoiceTaskHour,
-        invoiceTags: action.payload.tags,
-        projectName: projName
+      {
+        const invoiceTaskHour = action.payload.taskHours.map(task => ({
+          updatedAt: task.updatedAt,
+          isDeleted: task.isDeleted,
+          deletedAt: task.deletedAt,
+          userId: task.userId,
+          storyPoints: task.taskId.storyPoints,
+          taskName: task.taskId.taskName,
+          tagName: task.taskId.tag.tagName,
+          tag: task.taskId.tag._id,
+          hours: task.hours,
+          departmentId: task.departmentId,
+          createdAt: task.createdAt,
+          rate: action.payload.ContractRate.hourlyRate,
+          _id: task._id
+        }))
+        const projName = action.payload?.ContractRate?.businessId?.name
+        return {
+          ...state,
+          loading: false,
+          invoiceTaskHours: invoiceTaskHour,
+          invoiceTags: action.payload.tags,
+          projectName: projName
+        }
       }
+
     default:
       return state
   }

@@ -1,13 +1,9 @@
 import styled from "styled-components";
 import UploadArrow from "../../icons/uploadArrow";
-import Dropzone, { useDropzone } from 'react-dropzone'
+import Dropzone from 'react-dropzone';
 import React, { useState, useRef, useEffect } from "react";
 
 const ImageWrapper = styled.div`
-    // display: ${({ display }) => display ? display : 'flex'};
-    // flex-direction: ${({ flexDirection }) => flexDirection ? flexDirection : 'row'};
-    // justify-content: ${({ justifyContent }) => justifyContent ? justifyContent : 'center'};
-    // align-items: ${({ alignItems }) => alignItems ? alignItems : 'center'};
     width: ${({ width }) => width ? width : '100%'};
     border-radius: ${({ borderRadius }) => borderRadius ? borderRadius : '10px'};
     background: ${({ background }) => background ? background : '#fff'};
@@ -16,7 +12,6 @@ const ImageWrapper = styled.div`
 `;
 
 const ImageContainer = styled.div`
-    // display: ${({ display }) => display ? display : 'flex'};
     width: ${({ width }) => width ? width : '100%'};
     height: ${({ height }) => height ? height : '100%'};
     padding-top: 40px;
@@ -56,11 +51,9 @@ const UploadImage = ({ setFiles, files }) => {
         closeDropzone();
 
     }
-    console.log('files_array', files)
 
     useEffect(() => {
         if (files.length >= 3) {
-            console.log('setMaxLimit')
             setIsMaxFileLimit(true);
         } else {
             setIsMaxFileLimit(false);

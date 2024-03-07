@@ -1,13 +1,14 @@
 import React from 'react'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
-import Link from 'next/link'
 
 import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 import ScheduleInterview from './ScheduleInterview'
 
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateWizardSubmission } from '../../../redux/actions'
 
 const ExploreContainer = styled.div`
   display: flex;
@@ -100,21 +101,34 @@ const help = [
 
 
 const Notification = ({ type, children, noButton }) => {
-  const router = useRouter()
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { wizardSubmission } = useSelector((state) => state.Business);
+  const handleNotificationDismissal = () => {
+    dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }));
+  }
   switch (type) {
     case 'plan':
       return (
-        <BlackCard>
-          <WhiteText>
-            Build your dream business, grow your following, and collaborate with other professionals to <br />
-            make your vision a reality. Start your free trial now.
-          </WhiteText>
-          <Absolute>
-            <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
-              PICK A PLAN
-            </Button>
-          </Absolute>
-        </BlackCard>
+        <>
+          {wizardSubmission?.isSuccessfull && (<WhiteCard row borderColor="#8EDE64" background="#f4fcef">
+            <DarkText noMargin><span>{`Project ${wizardSubmission?.projectName} successfully created!`}</span></DarkText>
+            <Absolute>
+              <Dismiss onClick={handleNotificationDismissal} >Dismiss</Dismiss>
+            </Absolute>
+          </WhiteCard>)}
+          <BlackCard>
+            <WhiteText>
+              Build your dream business, grow your following, and collaborate with other professionals to <br />
+              make your vision a reality. Start your free trial now.
+            </WhiteText>
+            <Absolute>
+              <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
+                PICK A PLAN
+              </Button>
+            </Absolute>
+          </BlackCard>
+        </>
       )
     case 'github':
       return (

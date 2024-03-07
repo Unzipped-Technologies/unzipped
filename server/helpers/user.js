@@ -124,7 +124,7 @@ const updateUserByEmail = async (email, data) => {
 // get User By Id
 const getUserById = async id => {
   try {
-    return await user.findById(id).select('-password')
+    return await user.findById(id).populate({ path: 'thirdPartyCredentials', model: 'thirdPartyApplications'}).select('-password')
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
