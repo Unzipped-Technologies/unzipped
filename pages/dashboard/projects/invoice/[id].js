@@ -4,13 +4,12 @@ import Nav from '../../../../components/unzipped/header'
 import Invoice from '../../../../components/unzipped/dashboard/project/invoice'
 import Timesheet from '../../../../components/unzipped/dashboard/project/Timesheet'
 import { useRouter } from 'next/router'
-import {
-  addTaskAndAddToTaskHours,
-  getBusinessTasksByInvestor,
-  updateTaskDate,
-  updateTaskHours,
-  updateTaskHoursStatus
-} from '../../../../redux/actions'
+import // addTaskAndAddToTaskHours,
+// getBusinessTasksByInvestor,
+// updateTaskDate,
+// updateTaskHours,
+// updateTaskHoursStatus
+'../../../../redux/actions'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -30,12 +29,12 @@ const YourComponent = ({
   projectName,
   invoiceTags,
   invoiceTaskHours,
-  access_token,
-  getBusinessTasksByInvestor,
-  updateTaskDate,
-  updateTaskHours,
-  updateTaskHoursStatus,
-  addTaskAndAddToTaskHours
+  access_token
+  // getBusinessTasksByInvestor,
+  // updateTaskDate,
+  // updateTaskHours,
+  // updateTaskHoursStatus
+  // addTaskAndAddToTaskHours
 }) => {
   const router = useRouter()
 
@@ -53,7 +52,7 @@ const YourComponent = ({
 
   useMemo(() => {
     if (id !== undefined) {
-      getBusinessTasksByInvestor({ businessId: id, access_token })
+      // getBusinessTasksByInvestor({ businessId: id, access_token })
     }
   }, [id, showInvoice])
 
@@ -139,28 +138,29 @@ const YourComponent = ({
             userType={'Investor'}
           />
         ) : (
-          <Timesheet
-            id={_id}
-            startDate={startDate}
-            weekOptions={weekOptions}
-            invoiceTags={invoiceTags}
-            handleWeekChange={handleWeekChange}
-            sortedData={sortedData}
-            projectName={projectName}
-            handleShowInvoice={value => {
-              handleShowInvoice(value)
-            }}
-            handleUpdatedAt={tasks => updateTaskDate(tasks, access_token)}
-            handleHours={hours => {
-              updateTaskHours(hours, access_token)
-            }}
-            handleTaskStatus={status => {
-              updateTaskHoursStatus(status, access_token)
-            }}
-            createTaskAndAddToTaskHours={task => {
-              addTaskAndAddToTaskHours(task, access_token)
-            }}
-          />
+          <h2>ddd</h2>
+          // <Timesheet
+          //   id={_id}
+          //   startDate={startDate}
+          //   weekOptions={weekOptions}
+          //   invoiceTags={invoiceTags}
+          //   handleWeekChange={handleWeekChange}
+          //   sortedData={sortedData}
+          //   projectName={projectName}
+          //   handleShowInvoice={value => {
+          //     handleShowInvoice(value)
+          //   }}
+          //   handleUpdatedAt={tasks => updateTaskDate(tasks, access_token)}
+          //   handleHours={hours => {
+          //     updateTaskHours(hours, access_token)
+          //   }}
+          //   handleTaskStatus={status => {
+          //     updateTaskHoursStatus(status, access_token)
+          //   }}
+          //   createTaskAndAddToTaskHours={task => {
+          //     addTaskAndAddToTaskHours(task, access_token)
+          //   }}
+          // />
         )}
       </Desktop>
     </>
@@ -182,11 +182,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getBusinessTasksByInvestor: bindActionCreators(getBusinessTasksByInvestor, dispatch),
-    updateTaskDate: bindActionCreators(updateTaskDate, dispatch),
-    updateTaskHours: bindActionCreators(updateTaskHours, dispatch),
-    updateTaskHoursStatus: bindActionCreators(updateTaskHoursStatus, dispatch),
-    addTaskAndAddToTaskHours: bindActionCreators(addTaskAndAddToTaskHours, dispatch)
+    // getBusinessTasksByInvestor: bindActionCreators(getBusinessTasksByInvestor, dispatch),
+    // updateTaskDate: bindActionCreators(updateTaskDate, dispatch),
+    // updateTaskHours: bindActionCreators(updateTaskHours, dispatch),
+    // updateTaskHoursStatus: bindActionCreators(updateTaskHoursStatus, dispatch)
+    // addTaskAndAddToTaskHours: bindActionCreators(addTaskAndAddToTaskHours, dispatch)
   }
 }
 

@@ -85,16 +85,6 @@ router.post('/current/delete', requireLogin, permissionCheckHelper.hasPermission
   }
 })
 
-router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
-  try {
-    const addedSkill = await userHelper.addSkillsToFreelancer(req.body, req.user?.userInfo?.freelancers)
-    if (!addedSkill) throw Error('user does not exist')
-    res.json(addedSkill)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
 router.post('/newsletter/add', async (req, res) => {
   try {
     const newUser = await userHelper.addToNewsletter(req.body.email)
@@ -153,7 +143,17 @@ router.get('/current/payment-methods', requireLogin, async (req, res) => {
 
 router.get('/getAllFreelancers', async (req, res) => {
   try {
-    const freelancers = await userHelper.getAllFreelancers()
+    const { take, skip, minRate, maxRate, skill, name, sort } = req.query;
+    const freelancers = await userHelper.getAllFreelancers(skip, take, minRate, maxRate, skill, name, sort)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.post('/create-freelancer-invite', async (req, res) => {
+  try {
+    const freelancers = await userHelper.createFreelancerInvite(req.body)
     res.json(freelancers)
   } catch (e) {
     res.status(400).json({ msg: e.message })

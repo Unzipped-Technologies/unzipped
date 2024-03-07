@@ -1,8 +1,9 @@
 const paymentTypeEnum = Object.freeze({
-    SUBSCRIPTION: 0,
-    PAYROLL: 1,
+    SUBSCRIPTION_CHARGE: 0,
+    PAYROLL_CHARGE: 1,
     INTERNAL: 2,
-    FREELANCER_PAYMENT: 3,
+    ACCOUNT_WITHDRAW: 3,
+    PAYROLL_RECIEPT: 4,
 })
 
 const paymentStatusEnum = Object.freeze({

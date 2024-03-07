@@ -47,15 +47,11 @@ function DesktopSearchFilterFreelancers({ sortOptions, sort, setSort, maxRate, s
     const [suggestions, setSuggestions] = useState([]);
     const [userInput, setUserInput] = useState();
     const [error, setError] = useState({ maxError: '', minError: '' })
-    const [uniqueSkills, setUniqueSkills] = useState(Object.values(
-        freelancerSkillsList.reduce((accumulator, skill) => {
-            accumulator[skill.skill] = skill;
-            return accumulator;
-        }, {})
-    ))
+    const [uniqueSkills, setUniqueSkills] = useState(freelancerSkillsList)
+   
     useMemo(() => {
         setSkill([...skills])
-    }, [skills])
+    }, [skills]);
 
     const handleSuggestions = (event) => {
         const input = event.target.value.toLowerCase();

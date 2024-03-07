@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+
 import DashboardTable from './DashboardTable'
 
 const Container = styled.div`
@@ -8,20 +9,12 @@ const Container = styled.div`
   border-radius: 10px;
 `
 
-const ListPanel = ({ list, business, selectedList, type, businesses, loading, userType }) => {
+const ProjectsContainer = ({ limit, page }) => {
   return (
     <Container>
-      <DashboardTable
-        list={list}
-        business={business}
-        selectedList={selectedList}
-        businesses={businesses}
-        type={type}
-        loading={loading}
-        userType={userType}
-      />
+      <DashboardTable limit={limit} page={page} />
     </Container>
   )
 }
 
-export default ListPanel
+export default ProjectsContainer

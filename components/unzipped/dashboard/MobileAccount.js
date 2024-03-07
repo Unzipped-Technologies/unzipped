@@ -27,9 +27,11 @@ const Container = styled.div`
 
 const Like = styled.div`
     justify-content: right;
+    display: flex;
+    align-items: center;
 `;
 
-const MobileAccount = ({logoutUser, user}) => {
+const MobileAccount = ({logoutUser, user, balance}) => {
     const router = useRouter()
 
     const linkPush = (link) => {
@@ -58,11 +60,11 @@ const MobileAccount = ({logoutUser, user}) => {
                         <P margin="0" padding="0 0 5px 0" color='#1E70E0' fontSize="18px">View Profile</P>
                         <Like className='d-flex align-items-baseline'>
                             <IconComponent name='thumbUp' width="14" height="14" viewBox="0 0 14 14" fill="#0057FF" />
-                            <P margin="0" padding="0 0 5px 0">101</P>
+                            <P margin="0" padding="0 0px 0px 5px"> {user.likeTotal || 0}</P>
                         </Like>
                     </div>
                 </div>
-                <div onClick={() => linkPush('/billing-details')} className='d-flex align-items-center justify-content-between mb-4 px-3  py-1' onClick={() => linkPush('/pick-a-plan')}>
+                <div onClick={() => linkPush('/billing-details')} className='d-flex align-items-center justify-content-between mb-4 px-3  py-1'>
                     <div className='d-flex align-items-center'>
                         <IconComponent name='membership' width="14" height="14" viewBox="0 0 14 14" fill="black" />
                         <P margin="0" padding='0 0 0 12px' fontSize='20px'>Membership</P>
@@ -82,9 +84,9 @@ const MobileAccount = ({logoutUser, user}) => {
                         <img src='/img/balance.png' height={15} width={14} />
                         <P margin="0" padding='0 0 0 12px' fontSize='20px'>Balance</P>
                     </div>
-                    <P margin="0" padding='0 0 0 12px' fontSize='20px'>$0.00 USD</P>
+                    <P margin="0" padding='0 0 0 12px' fontSize='20px'>$ {(balance?.available[0]?.amount/100).toFixed(2).toLocaleString()} USD</P>
                 </div>
-                <div className='d-flex align-items-center justify-content-between mb-4 px-3  py-1'>
+                <div onClick={() => linkPush('/dashboard/withdrawal/terms')} className='d-flex align-items-center justify-content-between mb-4 px-3  py-1'>
                     <div className='d-flex align-items-center'>
                         <img src='/img/withdraw.png' height={18} width={16} />
                         <P margin="0" padding='0 0 0 12px' fontSize='20px'>Withdraw funds</P>
@@ -126,6 +128,7 @@ const mapStateToProps = state => {
     console.log(state)
     return {
       user: state.Auth.user,
+      balance: state.Stripe?.balance,
     }
   }
   

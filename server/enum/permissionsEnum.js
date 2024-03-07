@@ -46,7 +46,7 @@ const userPermissions = Object.freeze({
   UpdateTag: 'updateTag',
   GetTagById: 'getTagById',
   DeleteTag: 'deleteTag',
-  ListTag: 'listTags',
+  ListTags: 'listTags',
   addComment: 'addComment',
   removeComment: 'removeComment',
   // tasks
@@ -194,6 +194,7 @@ const accountTypePermissions = Object.freeze({
     userPermissions.createBusinessDetails,
     userPermissions.listAllBusinesses,
     userPermissions.getBusinessById,
+    userPermissions.GetDepartmentById,
 
     // likes
     userPermissions.UserLike,

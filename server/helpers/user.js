@@ -1,22 +1,23 @@
 const mongoose = require('mongoose')
-const user = require('../../models/User')
-const taxDataTables = require('../../models/TaxDataTable')
-const thirdPartyApplications = require('../../models/ThirdPartyApplications')
-const freelancerSkills = require('../../models/FreelancerSkills')
-const list = require('../../models/List')
-const freelancer = require('../../models/Freelancer')
-const notifications = require('../../models/Notifications')
-const emailList = require('../../models/EmailList')
-const Subscriptions = require('../../models/Subscription')
-const PaymentMethods = require('../../models/PaymentMethod')
+const user = require('../models/User')
+const taxDataTables = require('../models/TaxDataTable')
+const thirdPartyApplications = require('../models/ThirdPartyApplications')
+const freelancerSkills = require('../models/FreelancerSkills')
+const list = require('../models/List')
+const freelancer = require('../models/Freelancer')
+const notifications = require('../models/Notifications')
+const emailList = require('../models/EmailList')
+const Subscriptions = require('../models/Subscription')
+const PaymentMethods = require('../models/PaymentMethod')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
-const likeHistory = require('../../models/LikeHistory')
+const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../../models/FreelancerSkills')
-const User = require('../../models/User')
+const FreelancerSkills = require('../models/FreelancerSkills')
+const User = require('../models/User')
+const InviteModel = require('../models/Invited')
 
 // create user
 const createUser = async (data, hash) => {
@@ -304,27 +305,6 @@ const createFreelanceAccount = async data => {
     user: await user.findById(data.userId)
   })
 }
-
-// add skills to freelancer
-
-const addSkillsToFreelancer = async (data, freelancerId) => {
-  try {
-    const updateFreelancer = await freelancer.findById(freelancerId)
-    const ids = []
-    for (const item of data.skills) {
-      item['user'] = freelancerId
-      const id = await freelancerSkills.create({
-        ...item
-      })
-      ids.push(id.id)
-    }
-    updateFreelancer.freelancerSkills = [...updateFreelancer.freelancerSkills, ...ids]
-    updateFreelancer.save()
-    return updateFreelancer
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
 // add list to freelancer
 
 const addListsToFreelancer = async (data, id) => {
@@ -437,9 +417,9 @@ const retrieveSubscriptions = async id => {
 }
 
 const retrievePaymentMethods = async id => {
-  const payment = await PaymentMethods.find({userId: id})
+  const payment = await PaymentMethods.find({ userId: id })
   console.log(payment)
-  return await PaymentMethods.find({userId: id})
+  return await PaymentMethods.find({ userId: id })
 }
 
 const setUpNotificationsForUser = async id => {
@@ -474,24 +454,165 @@ const setUpNotificationsForUser = async id => {
   }
 }
 
-const getAllFreelancers = async () => {
-  const freelancers = await freelancer.find().populate(
-    [
+const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name, sort) => {
+  try {
+    const queryFilters = buildQueryFilters(+minRate, +maxRate, skill, name)
+    let sortStage = buildSortStageFilters(sort)
+    const PROJECTION = {
+      $project: {
+        _id: 1,
+        category: 1,
+        rate: 1,
+        likeTotal: 1,
+        dislikeTotal: 1,
+        'userId._id': 1,
+        'userId.FirstName': 1,
+        'userId.LastName': 1,
+        'userId.AddressLineCountry': 1,
+        'userId.profileImage': 1,
+        freelancerSkills: 1,
+        'invites._id': '$invites._id',
+        'invites.userInvited': '$invites.userInvited'
+      }
+    }
+
+    const lookup = [
       {
-        path: 'userId',
-        model: 'users',
-        select: 'AddressLineCountry FirstName LastName profileImage _id' 
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userId'
+        }
       },
       {
-        path: 'freelancerSkills',
-        model: 'freelancerskills',
-        select: 'yearsExperience _id skill' 
+        $lookup: {
+          from: 'invites',
+          localField: 'invites',
+          foreignField: '_id',
+          as: 'invites'
+        }
+      },
+      {
+        $lookup: {
+          from: 'freelancerskills',
+          localField: 'freelancerSkills',
+          foreignField: '_id',
+          as: 'freelancerSkills'
+        }
+      },
+
+      { $unwind: '$userId' },
+      {
+        $project: {
+          _id: 1,
+          category: 1,
+          rate: 1,
+          likeTotal: 1,
+          dislikeTotal: 1,
+          'userId._id': 1,
+          'userId.FirstName': 1,
+          'userId.LastName': 1,
+          'userId.AddressLineCountry': 1,
+          'userId.profileImage': 1,
+          'userId.FullName': 1,
+
+          freelancerSkills: {
+            $map: {
+              input: '$freelancerSkills',
+              as: 'skill',
+              in: {
+                _id: '$$skill._id',
+                yearsExperience: '$$skill.yearsExperience',
+                skill: '$$skill.skill'
+              }
+            }
+          },
+          invites: {
+            $arrayElemAt: ['$invites', 0]
+          }
+        }
+      },
+      {
+        $match: {
+          $or: [queryFilters]
+        }
+      },
+      ...(Object.keys(sortStage).length > 0 && sortStage.rate !== 0 ? [{ $sort: sortStage }] : []),
+      PROJECTION,
+      {
+        $facet: {
+          freelancers: [{ $skip: +skip }, { $limit: +take }],
+          totalCount: [{ $count: 'count' }]
+        }
       }
     ]
-  ).select('_id rate dislike likeTotal category');
 
-  return freelancers;
+    const result = await freelancer.aggregate(lookup)
+    return {
+      freelancers: result[0].freelancers,
+      totalCount: result[0].totalCount[0]?.count || 0
+    }
+  } catch (error) {
+    console.log('error', error)
+  }
+}
 
+const buildSortStageFilters = sort => {
+  let sortStage = {}
+  if (sort === 'Most reviews' || sort === 'recomended') {
+    sortStage = {
+      likeTotal: -1
+    }
+  }
+  if (sort == 'lowest hourly rate' || sort == 'highest hourly rate') {
+    sortStage = {
+      rate: sort === 'lowest hourly rate' ? 1 : -1
+    }
+  }
+  return sortStage
+}
+
+const buildQueryFilters = (minRate, maxRate, skills, name) => {
+  let filter = {}
+
+  if (minRate) filter.rate = { $gte: minRate }
+
+  if (maxRate) filter.rate = { ...filter.rate, $lte: maxRate }
+
+  if (skills && skills.length > 0 && !skills.includes('undefined')) {
+    if (skills.includes(',')) {
+      let skillsArray
+      skillsArray = skills.split(',')
+      filter['freelancerSkills.skill'] = {
+        $in: skillsArray.map(skill => new RegExp(skill, 'i'))
+      }
+    }
+  }
+
+  if (name && !name.includes('undefined')) {
+    filter['$or'] = [
+      { 'userId.FirstName': { $regex: name, $options: 'i' } },
+      { 'userId.LastName': { $regex: name, $options: 'i' } }
+    ]
+  }
+
+  return filter
+}
+
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await freelancer.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
 }
 
 module.exports = {
@@ -501,7 +622,6 @@ module.exports = {
   listUsers,
   deleteUser,
   createFreelanceAccount,
-  addSkillsToFreelancer,
   updateUserByid,
   retrieveSubscriptions,
   listFreelancers,
@@ -513,6 +633,7 @@ module.exports = {
   removeLikeToFreelancer,
   listLikes,
   addToNewsletter,
-  retrievePaymentMethods,
   getAllFreelancers,
+  createFreelancerInvite,
+  retrievePaymentMethods
 }
