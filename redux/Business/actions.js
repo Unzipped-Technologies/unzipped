@@ -21,7 +21,6 @@ import {
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
   UPDATE_WIZARD_SUBMISSION,
-  BUSINESS_ERROR
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -120,7 +119,7 @@ export const createBusiness = (data, token, isWizard = false) => async (dispatch
         })
       }
     })
-    dispatch(stopLoading())
+  dispatch(stopLoading())
 }
 
 export const updateBusiness = data => async (dispatch, getState) => {
@@ -164,13 +163,13 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -188,13 +187,13 @@ export const getPublicProjectsList = queryParams => async (dispatch, getState) =
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -223,3 +222,152 @@ export const getBusinessById = id => async (dispatch, getState) => {
       })
     })
 }
+
+export const addCommentToStory = (data, token) => async (dispatch, getState) => {
+  //department Loading
+  dispatch({ type: LOAD_STATE })
+
+  await axios
+    .post(`/api/business/current/comment/add`, data, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: ADD_COMMENT_TO_STORY,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const getBusinessTasksByInvestor =
+  ({ businessId, access_token }) =>
+    async (dispatch, getState) => {
+      dispatch({ type: LOAD_STATE })
+      const headers = {
+        access_token: access_token
+      }
+      dispatch(startLoading())
+      await axios
+        .get(`/api/business/investor/task/${businessId}`, { headers })
+        .then(res =>
+          dispatch({
+            type: GET_TASK_HOURS_BY_BUSINESS,
+            payload: res.data
+          })
+        )
+        .catch(err => {
+          dispatch({
+            type: DEPARTMENT_ERROR,
+            payload: err.response
+          })
+        })
+      dispatch(stopLoading())
+    }
+
+export const updateTaskHours = (data, token) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+  dispatch(startLoading())
+  dispatch({
+    type: UPDATE_TASK_HOURS,
+    payload: data
+  })
+  dispatch(stopLoading())
+  await axios
+    .patch(`/api/taskHours/${data._id}`, data, tokenConfig(token))
+    .then()
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+
+export const updateTaskHoursStatus = (data, token) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+  dispatch(startLoading())
+  dispatch({
+    type: UPDATE_TASK_STATUS,
+    payload: data
+  })
+  dispatch(stopLoading())
+  await axios
+    .patch(`/api/taskHours/status/${data._id}`, data, tokenConfig(token))
+    .then()
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const addTaskAndAddToTaskHours = (data, token) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+  dispatch(startLoading())
+  await axios
+    .post(`/api/business/current/task/create`, data, tokenConfig(token))
+    .then(res => {
+      dispatch({
+        type: CREATE_TASK_AND_TASK_HOURS,
+        payload: res.data.result
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+
+export const updateTaskDate = (data, token) => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+  dispatch(startLoading())
+  dispatch({
+    type: UPDATE_TASK_HOURS_DATE,
+    payload: data
+  })
+  dispatch(stopLoading())
+  await axios
+    .patch(`/api/taskHours/time/${data._id}`, data, tokenConfig(token))
+    .then()
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const getBusinessTasksByFounder =
+  ({ businessId, access_token }) =>
+    async (dispatch, getState) => {
+      dispatch({ type: LOAD_STATE })
+      const headers = {
+        access_token: access_token
+      }
+      dispatch(startLoading())
+      await axios
+        .get(`/api/business/founder/task/${businessId}`, { headers })
+        .then(res =>
+          dispatch({
+            type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
+            payload: res.data
+          })
+        )
+        .catch(err => {
+          dispatch({
+            type: DEPARTMENT_ERROR,
+            payload: err.response
+          })
+        })
+      dispatch(stopLoading())
+    }
