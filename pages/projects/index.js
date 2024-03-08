@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -7,12 +7,12 @@ import Nav from '../../components/unzipped/header'
 import Footer from '../../components/unzipped/Footer'
 import { parseCookies } from '../../services/cookieHelper'
 import MobileSearchBar from '../../components/ui/MobileSearchBar'
+import MobileSearchFilter from '../../components/unzipped/MobileSearchFilter'
 import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
+import DesktopSearchFilter from '../../components/unzipped/DesktopSearchFilter'
 import { getFreelancerSkillsList, getPublicProjectsList } from '../../redux/actions'
 import MobileProjectCard from '../../components/unzipped/dashboard/MobileProjectCard'
 import ProjectDesktopCard from '../../components/unzipped/dashboard/ProjectsDesktopCard'
-import MobileSearchFilterProjects from '../../components/unzipped/MobileSearchFilterProjects'
-import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects'
 
 const Container = styled.div`
   display: flex;
@@ -47,7 +47,7 @@ const DesktopDisplayBox = styled.div`
     display: none;
   }
 `
-const Projects = ({ projectList, totalCount, freelancerSkillsList = [], getPublicProjectsList, freelancerId }) => {
+const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelancerId }) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -67,15 +67,11 @@ const Projects = ({ projectList, totalCount, freelancerSkillsList = [], getPubli
     skill: [],
     projectBudgetType: ''
   })
-  const [minRate, setMinRate] = useState()
-  const [maxRate, setMaxRate] = useState()
-  const [skill, setSkill] = useState([])
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
-  const [type, setType] = useState('')
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '245px')
 
-  useMemo(() => {
+  useEffect(() => {
     getPublicProjectsList({ take, skip, filter })
   }, [filter])
 
@@ -90,25 +86,6 @@ const Projects = ({ projectList, totalCount, freelancerSkillsList = [], getPubli
       window.removeEventListener('resize', handleResize)
     }
   }, [])
-
-  useEffect(() => {
-    if (marginBottom) {
-      if (maxRate && minRate) {
-        if (+maxRate > +minRate) handleSearch()
-      } else {
-        handleSearch()
-      }
-    }
-  }, [type, minRate, maxRate, skill])
-
-  useEffect(() => {
-    if (skip) {
-      const intersectionObserver = true
-      handleSearch(intersectionObserver)
-      setTake(+skip + 20)
-    }
-    setSkip(0)
-  }, [skip])
 
   useEffect(() => {
     const observer = new IntersectionObserver(callbackFunction, options)
@@ -195,13 +172,13 @@ const Projects = ({ projectList, totalCount, freelancerSkillsList = [], getPubli
           marginBottom={marginBottom}
         />
       )}
-      {!filterOpenClose && (
+      {!filterOpenClose && window?.innerWidth <= 680 && (
         <MobileDisplayBox>
           <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
         </MobileDisplayBox>
       )}
       <Container>
-        {!filterOpenClose ? (
+        {window?.innerWidth <= 680 && !filterOpenClose ? (
           <MobileDisplayBox>
             <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '10px' }}>
               <b style={{ paddingRight: '20px' }}>Top Results</b>
@@ -211,15 +188,12 @@ const Projects = ({ projectList, totalCount, freelancerSkillsList = [], getPubli
           </MobileDisplayBox>
         ) : (
           <MobileDisplayBox>
-            <MobileSearchFilterProjects
-              handleFilterOpenClose={handleFilterOpenClose}
-              filter={filter}
-              setFilters={setFilters}
-            />
+            <MobileSearchFilter handleFilterOpenClose={handleFilterOpenClose} filter={filter} setFilters={setFilters} />
           </MobileDisplayBox>
         )}
+
         <Box>
-          <DesktopSearchFilterProjects filter={filter} setFilters={setFilters} filterType="projects" />
+          <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
           <div className="overflow-auto">
             <div className="d-flex align-items-baseline py-4 bg-white">
               <h5 className="px-4">
@@ -247,7 +221,7 @@ const Projects = ({ projectList, totalCount, freelancerSkillsList = [], getPubli
         {projectList?.map((project, index) => {
           return (
             <div key={`${project._id}_mobile`}>
-              {!filterOpenClose && (
+              {!filterOpenClose && window?.innerWidth <= 680 && (
                 <MobileDisplayBox key={`${project._id}_mobile_listing`}>
                   <MobileProjectCard project={project} includeRate />
                 </MobileDisplayBox>

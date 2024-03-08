@@ -1,27 +1,19 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
-import Nav from '../../components/unzipped/header'
-import SearchBar from '../../components/ui/SearchBar'
-import FreelancerCard from '../../components/unzipped/dashboard/FreelancerCard'
-import Footer from '../../components/unzipped/Footer'
-import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { connect, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import {
-  getFreelancerList,
-  clearSelectedFreelancer,
-  getFreelancerSkillsList,
-  getAllFreelancers
-} from '../../redux/actions'
+import { connect, useSelector } from 'react-redux'
+
+import { getFreelancerList, clearSelectedFreelancer, getAllFreelancers } from '../../redux/actions'
+import Nav from '../../components/unzipped/header'
+import Footer from '../../components/unzipped/Footer'
 import { parseCookies } from '../../services/cookieHelper'
 import MobileSearchBar from '../../components/ui/MobileSearchBar'
-import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard'
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 import MobileSearchFilter from '../../components/unzipped/MobileSearchFilter'
-import DesktopSearchFilterFreelancers from '../../components/unzipped/DesktopSearchFilterFreelancers'
-
-import MobileSearchFilterProjects from '../../components/unzipped/MobileSearchFilterProjects'
-import DesktopSearchFilterProjects from '../../components/unzipped/DesktopSearchFilterProjects'
+import DesktopSearchFilter from '../../components/unzipped/DesktopSearchFilter'
+import FreelancerCard from '../../components/unzipped/dashboard/FreelancerCard'
+import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
+import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard'
 
 const Container = styled.div`
   display: flex;
@@ -65,17 +57,15 @@ const SearchContainer = styled.div`
     margin-top: 78px;
   }
 `
-const Freelancers = ({
-  freelancerList = [],
-  getFreelancerList,
-  access_token,
-  totalCount,
-  clearSelectedFreelancer,
-  getFreelancerSkillsList,
-  freelancerSkillsList = [],
-  allFreelancers = [],
-  getAllFreelancers
-}) => {
+const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelectedFreelancer, getAllFreelancers }) => {
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0
+  }
+
+  const containerRef = useRef(null)
+
   const [filter, setFilter] = useState({
     sort: '',
     searchKey: '',
@@ -83,40 +73,19 @@ const Freelancers = ({
     maxRate: 0,
     skill: []
   })
-  const [take, setTake] = useState(50)
   const [skip] = useState(0)
-  const [sort, setSort] = useState('ALL CATEGORIES')
-  const [minRate, setMinRate] = useState()
-  const [maxRate, setMaxRate] = useState()
-  const [skill, setSkill] = useState([])
+  const [take, setTake] = useState(50)
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
+  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '130px')
+
   const isNavbarExpanded = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
   useEffect(() => {
-    // getFreelancerSkillsList()
     getAllFreelancers({ filter, skip, take })
-  }, [filter])
-
-  useEffect(() => {
-    if (marginBottom) {
-      if (maxRate && minRate) {
-        if (+maxRate > +minRate) handleSearch()
-      } else {
-        handleSearch()
-      }
-    }
-  }, [take, sort, minRate, maxRate, skill])
-  const handleFilterOpenClose = value => {
-    setFilterOpenClose(value)
-  }
-
-  const handleSearch = () => {
-    // getAllFreelancers(access_token, skip, take, minRate, maxRate, skill, '', sort)
-  }
-  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '130px')
+  }, [filter, createdInvitation])
 
   useEffect(() => {
     const handleResize = () => {
@@ -130,7 +99,14 @@ const Freelancers = ({
       window.removeEventListener('resize', handleResize)
     }
   }, [])
-  const containerRef = useRef(null)
+
+  const handleSearch = () => {
+    getAllFreelancers({ filter, skip, take })
+  }
+
+  const handleFilterOpenClose = value => {
+    setFilterOpenClose(value)
+  }
 
   const callbackFunction = entries => {
     const [entry] = entries
@@ -140,12 +116,6 @@ const Freelancers = ({
         setTake(take + 50)
       }
     }
-  }
-
-  const options = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 1.0
   }
 
   useEffect(() => {
@@ -169,10 +139,6 @@ const Freelancers = ({
       return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
     }
   }
-
-  useEffect(() => {
-    // getAllFreelancers(access_token, skip, take)
-  }, [createdInvitation])
 
   const constructFreelancerModel = item => {
     const freelancer = {
@@ -246,7 +212,7 @@ const Freelancers = ({
         ) : (
           window?.innerWidth <= 680 && (
             <MobileDisplayBox>
-              <MobileSearchFilterProjects
+              <MobileSearchFilter
                 handleFilterOpenClose={handleFilterOpenClose}
                 filter={filter}
                 setFilters={setFilters}
@@ -259,7 +225,7 @@ const Freelancers = ({
           style={{
             marginTop: !isNavbarExpanded.isExpanded ? (access_token ? '100px' : '0px') : access_token ? '100px' : '0px'
           }}>
-          <DesktopSearchFilterProjects filter={filter} setFilters={setFilters} filterType="freelancer" />
+          <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           <div className="overflow-auto">
             <div className="d-flex align-items-baseline py-4 bg-white">
               <h5 className="px-4">
@@ -332,9 +298,7 @@ Freelancers.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     freelancerList: state.Freelancers?.freelancers,
-    freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
     access_token: state.Auth.token,
-    // allFreelancers: state.FreelancerSkills?.allFreelancers,
     totalCount: state.FreelancerSkills?.freelancersTotalCount
   }
 }
@@ -343,7 +307,6 @@ const mapDispatchToProps = dispatch => {
   return {
     getFreelancerList: bindActionCreators(getFreelancerList, dispatch),
     clearSelectedFreelancer: bindActionCreators(clearSelectedFreelancer, dispatch),
-    getFreelancerSkillsList: bindActionCreators(getFreelancerSkillsList, dispatch),
     getAllFreelancers: bindActionCreators(getAllFreelancers, dispatch)
   }
 }
