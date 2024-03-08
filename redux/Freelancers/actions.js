@@ -1,9 +1,11 @@
 import {
   FREELANCER_LOADING,
-  GET_LIST_FREELANCERS,
+  GET_ALL_FREELANCERS,
   GET_FREELANCER_BY_ID,
   RESET_SELECTED_FREELANCER,
   FREELANCER_ERROR,
+  CREATE_USER_INVITATION_SUCCESS,
+  CREATE_USER_INVITATION_ERROR,
   SETNAVBAR
 } from './constants'
 import _ from 'lodash'
@@ -27,7 +29,7 @@ export const getFreelancerList = (queryParams, token) => async (dispatch, getSta
       params: queryParams
     })
     dispatch({
-      type: GET_LIST_FREELANCERS,
+      type: GET_ALL_FREELANCERS,
       payload: response.data
     })
   } catch (err) {
@@ -57,6 +59,39 @@ export const getFreelancerById = (id, token) => async (dispatch, getState) => {
         payload: err.response
       })
     })
+}
+
+export const getAllFreelancers = queryParams => async dispatch => {
+  dispatch(startLoading())
+  await axios
+    .post(`/api/freelancer/public/list`, queryParams)
+    .then(res => {
+      dispatch({
+        type: GET_ALL_FREELANCERS,
+        payload: res?.data.limitedRecords
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const createUserInvitation = (params, token) => async dispatch => {
+  dispatch(startLoading())
+  try {
+    const response = await axios.post(`api/user/create-freelancer-invite`, params)
+    dispatch({ type: CREATE_USER_INVITATION_SUCCESS, payload: response.data })
+  } catch (error) {
+    dispatch({
+      type: CREATE_USER_INVITATION_ERROR,
+      payload: error
+    })
+  }
+  dispatch(stopLoading())
 }
 
 export const clearSelectedFreelancer = () => async (dispatch, getState) => {

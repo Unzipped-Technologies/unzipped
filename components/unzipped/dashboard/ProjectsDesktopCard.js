@@ -67,7 +67,6 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
         {includeRate && (
           <Flex>
             <DarkText half>{project?.country}</DarkText>
-            {/* <DarkText small half bold><DarkSpan medium>{project?.projectType?.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText> */}
           </Flex>
         )}
         <div className="d-flex justify-content-between">
@@ -79,8 +78,17 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
         ))}
       </Right>
       <Absolute>
-        <Button color="#000" style={{ padding: '8px 22px' }} normal oval type="green2" noBorder>
-          View Profile
+        <Button
+          color="#000"
+          style={{ padding: '8px 22px' }}
+          normal
+          oval
+          type="green2"
+          noBorder
+          onClick={() => {
+            router.push(`/projects/${project._id}`)
+          }}>
+          View Project
         </Button>
       </Absolute>
     </Container>

@@ -11,13 +11,30 @@ import { getProjectsList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
 import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
+import MobileSearchFilterProjects from '../../../../components/unzipped/MobileSearchFilterProjects'
 import AllProjectHires from '../../../../components/unzipped/dashboard/mobile/AllProjectHires'
 import AllProjectsInvoices from '../../../../components/unzipped/dashboard/mobile/AllProjectsInvoices'
+
+const Container = styled.div`
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  justify-content: center;
+  background: #f7f8f9;
+  padding-top: 21px;
+  @media (max-width: 680px) {
+    padding-top: 0px;
+    background-color: #f6f7f9;
+    margin-bottom: 48px;
+  }
+`
 
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
   margin-bottom: 50px;
+  position: relative;
+
   @media (min-width: 680px) {
     display: none;
   }
@@ -117,7 +134,14 @@ const ProjectDate = styled.div`
 const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) => {
   const router = useRouter()
 
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState({
+    searchKey: '',
+    budget: '',
+    minRate: 0,
+    maxRate: 0,
+    requiredSkills: [],
+    projectBudgetType: ''
+  })
   const [selectedTab, setSelectedTab] = useState(0)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
 
@@ -141,9 +165,10 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
   useEffect(() => {
     getProjectsList({
       take: 1000,
-      skip: 0
+      skip: 0,
+      filter
     })
-  }, [])
+  }, [filter])
 
   const handleFilterOpenClose = value => {
     setFilterOpenClose(value)
@@ -194,6 +219,24 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
     }
   }
 
+  const setFilters = (field, value) => {
+    setFilter(prevFilter => {
+      const updatedFilter = { ...prevFilter }
+
+      if (Array.isArray(updatedFilter[field])) {
+        if (!Array.isArray(value) && !updatedFilter[field].includes(value)) {
+          updatedFilter[field].push(value)
+        } else {
+          updatedFilter[field] = value
+        }
+      } else {
+        updatedFilter[field] = value
+      }
+
+      return updatedFilter
+    })
+  }
+
   return (
     <MobileDisplayBox>
       {!filterOpenClose && (
@@ -207,80 +250,85 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
           marginBottom={'78px'}
         />
       )}
-      <Projects>
-        <Tabs>
-          {projectTabs.map((tab, index) => {
-            return (
-              <TabButton
-                onClick={() => setSelectedTab(tab.index)}
-                active={selectedTab === index}
-                key={`${tab.name}_${index}`}>
-                {tab.name}
-              </TabButton>
-            )
-          })}
-        </Tabs>
-        <TabContent>
-          {selectedTab === 0 && (
-            <div>
-              {!filterOpenClose && (
-                <SearchField>
-                  <MobileSearchBar
-                    handleSearch={() => {}}
-                    filter={filter}
-                    setFilter={setFilter}
-                    handleFilterOpenClose={handleFilterOpenClose}
-                  />
-                </SearchField>
+      {filterOpenClose ? (
+        <MobileSearchFilterProjects
+          handleFilterOpenClose={handleFilterOpenClose}
+          filter={filter}
+          setFilters={setFilters}
+        />
+      ) : (
+        <>
+          <Projects>
+            <Tabs>
+              {projectTabs.map((tab, index) => {
+                return (
+                  <TabButton
+                    onClick={() => setSelectedTab(tab.index)}
+                    active={selectedTab === index}
+                    key={`${tab.name}_${index}`}>
+                    {tab.name}
+                  </TabButton>
+                )
+              })}
+            </Tabs>
+            <TabContent>
+              {selectedTab === 0 && (
+                <div>
+                  {!filterOpenClose && (
+                    <SearchField>
+                      <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
+                    </SearchField>
+                  )}
+                  <ProjectsList>
+                    {businesses?.map((business, index) => {
+                      return (
+                        <ProjectCard key={business._id}>
+                          <ProjectName>{business?.name}</ProjectName>
+                          <ProjectDate>
+                            {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
+                              ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
+                          </ProjectDate>
+                          <Absolute
+                            buttonHeight="33px"
+                            position="none"
+                            style={{
+                              width: '90%',
+                              border: '0.25px solid #000',
+                              margin: '20px auto 20px auto',
+                              background: 'rgba(217, 217, 217, 0.28)'
+                            }}>
+                            <Button
+                              icon="largeExpand"
+                              popoutWidth="324px"
+                              noBorder
+                              type="lightgrey"
+                              fontSize="13px"
+                              zIndex={'auto'}
+                              popout={generatePopout(business)}
+                              iconRight
+                              colors={{
+                                hover: 'none',
+                                background: 'none'
+                              }}
+                              style={{
+                                width: '324px'
+                              }}>
+                              Details
+                            </Button>
+                          </Absolute>
+                        </ProjectCard>
+                      )
+                    })}
+                  </ProjectsList>
+                </div>
               )}
-              <ProjectsList>
-                {businesses?.map((business, index) => {
-                  return (
-                    <ProjectCard key={business._id}>
-                      <ProjectName>{business?.name}</ProjectName>
-                      <ProjectDate>
-                        {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
-                          ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
-                      </ProjectDate>
-                      <Absolute
-                        buttonHeight="33px"
-                        position="none"
-                        style={{
-                          width: '90%',
-                          border: '0.25px solid #000',
-                          margin: '20px auto 20px auto',
-                          background: 'rgba(217, 217, 217, 0.28)'
-                        }}>
-                        <Button
-                          icon="largeExpand"
-                          popoutWidth="324px"
-                          noBorder
-                          type="lightgrey"
-                          fontSize="13px"
-                          zIndex={'auto'}
-                          popout={generatePopout(business)}
-                          iconRight
-                          colors={{
-                            hover: 'none',
-                            background: 'none'
-                          }}
-                          style={{
-                            width: '324px'
-                          }}>
-                          Details
-                        </Button>
-                      </Absolute>
-                    </ProjectCard>
-                  )
-                })}
-              </ProjectsList>
-            </div>
-          )}
-          {selectedTab === 1 && <AllProjectsInvoices />}
-          {selectedTab === 2 && <AllProjectHires />}
-        </TabContent>
-      </Projects>
-      <MobileFreelancerFooter defaultSelected="Projects" />
+              {selectedTab === 1 && <AllProjectsInvoices />}
+              {selectedTab === 2 && <AllProjectHires />}
+            </TabContent>
+          </Projects>
+          <MobileFreelancerFooter defaultSelected="Projects" />
+        </>
+      )}
     </MobileDisplayBox>
   )
 }
