@@ -83,7 +83,7 @@ export const getAllFreelancers = queryParams => async dispatch => {
 export const createUserInvitation = (params, token) => async dispatch => {
   dispatch(startLoading())
   try {
-    const response = await axios.post(`api/user/create-freelancer-invite`, params)
+    const response = await axios.post(`api/freelancer/create-invite`, params)
     dispatch({ type: CREATE_USER_INVITATION_SUCCESS, payload: response.data })
   } catch (error) {
     dispatch({

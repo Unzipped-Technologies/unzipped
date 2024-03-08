@@ -1,4 +1,5 @@
 const FreelancerModel = require('../models/Freelancer')
+const InviteModel = require('../models/Invited')
 const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const UserModel = require('../models/User')
 
@@ -78,7 +79,12 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ['$_id', '$$freelancerSkills'] }
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$freelancerSkills' }, then: '$$freelancerSkills', else: [] } }
+                  ]
+                }
               }
             },
             {
@@ -253,6 +259,21 @@ const deleteSkillFromFreelancer = async (skillId, freelancerId) => {
   }
 }
 
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await FreelancerModel.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
+}
+
 module.exports = {
   getFreelancerById,
   getAllFreelancers,
@@ -260,6 +281,7 @@ module.exports = {
   deleteFreelancer,
   countFreelancers,
   addSkillsToFreelancer,
+  createFreelancerInvite,
   deleteSkillFromFreelancer,
   getFreelancerWithoutPopulate
 }

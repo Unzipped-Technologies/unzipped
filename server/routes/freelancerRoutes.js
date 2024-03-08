@@ -88,9 +88,9 @@ router.post('/public/list', async (req, res) => {
   }
 })
 
-router.post('/create-freelancer-invite', async (req, res) => {
+router.post('/create-invite', async (req, res) => {
   try {
-    const freelancers = await userHelper.createFreelancerInvite(req.body)
+    const freelancers = await freelancerHelper.createFreelancerInvite(req.body)
     res.json(freelancers)
   } catch (e) {
     res.status(400).json({ msg: e.message })

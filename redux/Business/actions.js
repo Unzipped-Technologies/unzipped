@@ -11,17 +11,9 @@ import {
   GET_PROJECT_LIST,
   GET_PROJECT_Error,
   BUSINESS_ERROR,
-  GET_TASK_HOURS_BY_BUSINESS,
-  UPDATE_TASK_HOURS,
-  UPDATE_TASK_STATUS,
-  CREATE_TASK_AND_TASK_HOURS,
-  UPDATE_TASK_HOURS_DATE,
-  GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
-  SUBMIT_PROJECT_WIZARD_DETAILS,
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
-  UPDATE_WIZARD_SUBMISSION,
-  BUSINESS_ERROR
+  UPDATE_WIZARD_SUBMISSION
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -83,45 +75,45 @@ export const getBusinessDetails = (userId, token) => async (dispatch, getState) 
     })
 }
 
-export const createBusiness = (data, token, isWizard = false) => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  dispatch(startLoading())
-  await axios
-    .post(`/api/business/create`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        access_token: token
-      }
-    })
-    .then(res => {
-      dispatch({
-        type: CREATE_BUSINESS,
-        payload: res.data
+export const createBusiness =
+  (data, token, isWizard = false) =>
+  async (dispatch, getState) => {
+    dispatch({ type: LOAD_STATE })
+    dispatch(startLoading())
+    await axios
+      .post(`/api/business/create`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          access_token: token
+        }
       })
-      if (isWizard) {
+      .then(res => {
         dispatch({
-          type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
-          payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+          type: CREATE_BUSINESS,
+          payload: res.data
         })
-      }
-      dispatch({ type: RESET_BUSINESS_FORM, })
-    }
-
-    )
-    .catch(err => {
-      dispatch({
-        type: BUSINESS_ERROR,
-        payload: err.response
+        if (isWizard) {
+          dispatch({
+            type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+            payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+          })
+        }
+        dispatch({ type: RESET_BUSINESS_FORM })
       })
-      if (isWizard) {
+      .catch(err => {
         dispatch({
-          type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
-          payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+          type: BUSINESS_ERROR,
+          payload: err.response
         })
-      }
-    })
+        if (isWizard) {
+          dispatch({
+            type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+            payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+          })
+        }
+      })
     dispatch(stopLoading())
-}
+  }
 
 export const updateBusiness = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
@@ -145,13 +137,15 @@ export const updateBusiness = data => async (dispatch, getState) => {
   return response
 }
 
-export const nullBusinessForm = (data = {}) => (dispatch) => {
-  dispatch({
-    type: RESET_BUSINESS_FORM,
-  })
-}
+export const nullBusinessForm =
+  (data = {}) =>
+  dispatch => {
+    dispatch({
+      type: RESET_BUSINESS_FORM
+    })
+  }
 
-export const updateWizardSubmission = (data) => (dispatch) => {
+export const updateWizardSubmission = data => dispatch => {
   dispatch({
     type: UPDATE_WIZARD_SUBMISSION,
     payload: data
