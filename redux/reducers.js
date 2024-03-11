@@ -15,7 +15,8 @@ import Departments from './Department/reducers'
 import Tags from './Tags/reducers'
 import TaskHours from './TaskHours/reducers'
 import Tasks from './Task/reducers'
-import Meetings from './Meeting/reducers';
+import Meetings from './Meeting/reducers'
+import showCaseProjects from './showCaseProjects/reducers'
 
 const rootReducer = combineReducers({
   // counter: counterReducer
@@ -34,7 +35,8 @@ const rootReducer = combineReducers({
   Departments,
   Tags,
   TaskHours,
-  Tasks
+  Tasks,
+  showCaseProjects
 })
 
 export default rootReducer

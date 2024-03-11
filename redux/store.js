@@ -9,7 +9,7 @@ import Messages from './Messages/reducers'
 import FreelancerSkills from './FreelancerSkills/reducers'
 import Loading from './Loading/reducers'
 import Stripe from './Stripe/reducers'
-import Meetings from './Meeting/reducers';
+import Meetings from './Meeting/reducers'
 import ListEntries from './ListEntries/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'
@@ -18,6 +18,7 @@ import Departments from './Department/reducers'
 import Tags from './Tags/reducers'
 import TaskHours from './TaskHours/reducers'
 import Tasks from './Tasks/reducers'
+import showCaseProjects from './showCaseProjects/reducers'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -37,7 +38,8 @@ const combinedReducer = combineReducers({
   Departments,
   Tags,
   TaskHours,
-  Tasks
+  Tasks,
+  showCaseProjects
   // OTHER REDUCERS WILL BE ADDED HERE
 })
 
@@ -77,7 +79,8 @@ const makeStore = ({ isServer }) => {
         'Departments',
         'Tags',
         'TaskHours',
-        'Tasks'
+        'Tasks',
+        'showCaseProjects'
       ],
       storage // if needed, use a safer storage
     }

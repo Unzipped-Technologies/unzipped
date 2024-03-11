@@ -45,7 +45,9 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
         <div style={{ overflow: 'overlay' }}>
           <ProfileCard user={selectedFreelancer} />
         </div>
-        <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
+        <div style={{ width: '100%' }}>
+          <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
+        </div>
         <ProjectsCard user={selectedFreelancer} />
       </Container>
       <MobileContainer>

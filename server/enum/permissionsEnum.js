@@ -89,7 +89,14 @@ const userPermissions = Object.freeze({
   updateQuestion: 'updateQuestion',
   deleteQuestion: 'deleteQuestion',
   getQuestionById: 'getQuestionById',
-  getAllQuestions: 'getAllQuestions'
+  getAllQuestions: 'getAllQuestions',
+
+  // showcase projects
+  createShowCaseProject: 'createShowCaseProject',
+  updateShowCaseProject: 'updateShowCaseProject',
+  deleteShowCaseProject: 'deleteShowCaseProject',
+  getShowCaseProjectById: 'getShowCaseProjectById',
+  getAllShowCaseProjects: 'getAllShowCaseProjects'
 })
 
 const accountTypePermissions = Object.freeze({
@@ -243,7 +250,14 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // showcase projects
+    userPermissions.createShowCaseProject,
+    userPermissions.updateShowCaseProject,
+    userPermissions.deleteShowCaseProject,
+    userPermissions.getShowCaseProjectById,
+    userPermissions.getAllShowCaseProjects
   ],
   [accountTypeEnum.ADMIN]: [
     // users

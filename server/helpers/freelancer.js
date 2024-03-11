@@ -24,7 +24,7 @@ const getFreelancerById = async id => {
 
 const getFreelancerWithoutPopulate = async filter => {
   try {
-    return await FreelancerModel.findById(filter).exec()
+    return await FreelancerModel.findOne(filter).exec()
   } catch (e) {
     throw new Error(`Could not find freelancer, error: ${e.message}`)
   }
