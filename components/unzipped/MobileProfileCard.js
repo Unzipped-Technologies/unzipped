@@ -37,7 +37,7 @@ const ProjectCard = styled.div`
   padding: 19px 13px;
 `
 
-function MobileProfileCard({ user, handleProfilePage }) {
+function MobileProfileCard({ user, handleProfilePage, role }) {
   const [selected, setSelected] = useState(0)
   const router = useRouter()
 
@@ -153,7 +153,7 @@ function MobileProfileCard({ user, handleProfilePage }) {
           </div>
         </div>
       </div>
-      <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
+      <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} role={role} />
       <ProjectCard>
         <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
           Create a Landing page for a react site

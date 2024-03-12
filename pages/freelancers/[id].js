@@ -25,7 +25,7 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
+const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById, role }) => {
   const router = useRouter()
   const accessId = token?.access_token || cookie
   const { id } = router.query
@@ -46,13 +46,13 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
           <ProfileCard user={selectedFreelancer} />
         </div>
         <div style={{ width: '100%' }}>
-          <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
+          <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} role={role} />
         </div>
         <ProjectsCard user={selectedFreelancer} />
       </Container>
       <MobileContainer>
         {interViewView ? (
-          <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} />
+          <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} role={role} />
         ) : (
           <MobileProfileCardOptions handleProfilePage={handleValueFromChild} />
         )}
@@ -72,6 +72,7 @@ Profile.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
+    role: state.Auth?.user?.role,
     cookie: state.Auth.token
   }
 }

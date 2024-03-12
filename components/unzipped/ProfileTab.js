@@ -25,7 +25,7 @@ const MenuItem = styled.div`
   border-bottom: ${({ selected }) => (selected ? '4px solid #333' : '0px')};
 `
 
-const ProfileTab = ({ tabs, selected, setSelected, children }) => {
+const ProfileTab = ({ tabs, selected, setSelected, children, role }) => {
   const [open, setOpen] = useState(false)
 
   const handleOpen = () => {
@@ -39,7 +39,6 @@ const ProfileTab = ({ tabs, selected, setSelected, children }) => {
   return (
     <Container>
       <Menu style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* <div> */}
         {tabs.map((item, index) => (
           <MenuItem selected={selected === index} onClick={() => setSelected(index)} key={item}>
             <DarkText noMargin key={index}>
@@ -47,22 +46,23 @@ const ProfileTab = ({ tabs, selected, setSelected, children }) => {
             </DarkText>
           </MenuItem>
         ))}
-        {/* </div> */}
-        <div
-          style={{
-            marginRight: '37%',
-            fontFamily: 'Roboto',
-            fontSize: '16px',
-            fontWeight: 500,
-            lineHeight: '19px',
-            letterSpacing: '0.15007999539375305px',
-            textAlign: 'left',
-            color: '#1772EB',
-            cursor: 'pointer'
-          }}
-          onClick={handleOpen}>
-          Add A Project
-        </div>
+        {role === 1 && (
+          <div
+            style={{
+              marginRight: window.innerWidth > 680 ? '37%' : '10%',
+              fontFamily: 'Roboto',
+              fontSize: '16px',
+              fontWeight: 500,
+              lineHeight: '19px',
+              letterSpacing: '0.15007999539375305px',
+              textAlign: 'left',
+              color: '#1772EB',
+              cursor: 'pointer'
+            }}
+            onClick={handleOpen}>
+            Add A Project
+          </div>
+        )}
       </Menu>
       {children}
       {open && <ProjectModal open={open} onHide={handleClose} />}
