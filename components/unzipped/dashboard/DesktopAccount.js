@@ -3,7 +3,8 @@ import BackHeader from '../BackHeader';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getPaymentMethods, getBusinessDetails, getAccountBalance } from '../../../redux/actions';
+import { getPaymentMethods, getAccountOnboardingLink, getBusinessDetails, getAccountBalance } from '../../../redux/actions';
+import { useRouter } from 'next/router';
 import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
 import {
     Underline
@@ -108,7 +109,7 @@ const getCardLogoUrl = (cardType) => {
     return stripeLogoEnum[brand];
 };
 
-const DesktopAccount = ({email, stripeAccountId, phone, user, getPaymentMethods, getBusinessDetails, balance, getAccountBalance, business, token, paymentMethods = []}) => {
+const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMethods, getAccountOnboardingLink, getBusinessDetails, balance, getAccountBalance, business, token, paymentMethods = []}) => {
     const primaryPM = paymentMethods.find(e => e.isPrimary)
     const [editName, setEditName] = useState(false)
     const [editAddress, setEditAddress] = useState(false)
@@ -137,6 +138,8 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, getPaymentMethods,
         businessPhone: business?.businessPhone,
         taxId: business?.taxId,
     }
+    const router = useRouter()
+    const [initialUrl] = useState(url.url);
     const [userData, setUserData] = useState({
         ...initialState
     })
@@ -174,14 +177,20 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, getPaymentMethods,
         }
     }
 
-    const getAccountOnboardingLink = () => {
-
+    const fetchAccountOnboardingLink = () => {
+        getAccountOnboardingLink(token, {url: '/dashboard/account'})
     }
 
     useEffect(() => {
         getPaymentMethods(token)
         getBusinessDetails(undefined, token)
     }, [])
+
+    useEffect(() => {
+        if (url && url.url && url.url !== initialUrl) {
+            router.push(url.url);
+        }
+    }, [url, router]);
 
     useEffect(() => {
         // Call getAccountBalance on component load
@@ -247,7 +256,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, getPaymentMethods,
                         {stripeAccountId ? (
                             <Link href='/dashboard/withdrawal/terms'>Withdraw Funds</Link>
                         ) : (
-                            <EditButton onClick={() => getAccountOnboardingLink()}>Complete Onboarding</EditButton>
+                            <EditButton onClick={() => fetchAccountOnboardingLink()}>Complete Onboarding</EditButton>
                         )}
                     </Rows>
                 </RightOne>
@@ -711,6 +720,7 @@ const mapStateToProps = state => {
       phone: state.Auth.user.phoneNumber,
       user: state.Auth.user,
       paymentMethods: state.Stripe.methods,
+      url: state.Stripe?.url,
       business: state.Business.details,
       stripeAccountId: state.Auth.user.stripeAccountId,
       balance: state.Stripe?.balance,
@@ -720,6 +730,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
       getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
+      getAccountOnboardingLink: bindActionCreators(getAccountOnboardingLink, dispatch),
       getBusinessDetails: bindActionCreators(getBusinessDetails, dispatch),
       getAccountBalance: bindActionCreators(getAccountBalance, dispatch),
     }

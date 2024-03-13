@@ -51,6 +51,7 @@ import CircleNotesIcon from './circleNotes'
 import VerifiedIcon from './verifiedIcon'
 import ReactCodeIcon from './reactIcon'
 import ManIcon from './man'
+import VerifyUserIcon from './verify'
 
 export {
     ClearFitLogo,
@@ -105,5 +106,6 @@ export {
     ReviewHalfSmall,
     UpArrow,
     GoBack,
+    VerifyUserIcon,
     UpdateUserIcon
 };
