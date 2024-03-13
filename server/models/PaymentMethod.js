@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+// filename needs to be renamed
 const paymentMethodSchema = new mongoose.Schema({
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
