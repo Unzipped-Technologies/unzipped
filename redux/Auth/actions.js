@@ -22,6 +22,7 @@ import {
     UPDATE_REGISTER_CREDENTIALS,
     SELECT_A_PLAN,
     VERIFY_USER,
+    INITIATE_VERIFY_IDENTITY,
     UPDATE_SUBSCRIPTION_FORM,
     USER_CREDENTIALS,
     GET_USER_THIRD_PARTY_DETAILS,
@@ -131,6 +132,21 @@ export const updateUser = (data, token) => async (dispatch, getState) => {
         .post(`/api/user/current/update`, data, tokenConfig(token))
         .then(res => dispatch({
             type: UPDATE_USER_SUCCESS,
+            payload: res.data,
+        }))
+        .catch(err => {
+            dispatch({
+                type: AUTH_ERROR,
+                payload: err.response.data
+            })
+        })
+}
+
+export const getVerifyIdentityUrl = (token) => async (dispatch, getState) => {
+    await axios
+        .post(`/api/stripe/verify-identity`, {}, tokenConfig(token))
+        .then(res => dispatch({
+            type: INITIATE_VERIFY_IDENTITY,
             payload: res.data,
         }))
         .catch(err => {

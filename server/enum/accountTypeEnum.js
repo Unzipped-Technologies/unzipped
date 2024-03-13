@@ -3,8 +3,15 @@ const accountTypeEnum = Object.freeze({
     INVESTOR: 1,
     ADMIN: 2
   })
+
+const accountVerificationEnum = Object.freeze({
+  INCOMPLETE: 'INCOMPLETE',
+  SUCCESS: 'SUCCESS',
+  REJECTED: 'REJECTED'
+})
   
   module.exports = {
-    accountTypeEnum
+    accountTypeEnum,
+    accountVerificationEnum
   }
   

@@ -513,6 +513,10 @@ const getUserAccountById = async (userId) => {
   return;
 }
 
+const getUserByAccountId = async (accountId) => {
+  return await UserModel.findOne({stripeAccountId: accountId})
+}
+
 const createAccountOnboarding = async (type, userId) => {
   // Create a new Stripe Connected Account for the user
   const account = await stripe.accounts.create({
@@ -664,7 +668,6 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
 }
 
 const transferPaymentToFreelancers = async (data) => {
-    console.log('///', data.data.object)
     const { amount_captured, id } = data.data.object
     const amountToFreelancer = amount_captured * 0.9
     // step 1: retrieve invoices that are being paid and figure which freelancers are to be paid
@@ -697,14 +700,15 @@ const transferPaymentToFreelancers = async (data) => {
     //     }
     //   }
     // ])
-
+    // you will need to retrieve this info from the transaction history created for this event
+    const accountId = "acct_1OtzJDQmnBKiGech"
     // step 2: get charge from db
     // const charge = await PaymentHistoryModel.findOne({chargeId: id})
     // Step 2: Transfer a portion to the freelancer
     const transfer = await stripe.transfers.create({
-      amount: amountToFreelancer, // Amount to transfer to freelancer in cents
+      amount: 2000, // Amount to transfer to freelancer in cents
       currency: 'usd',
-      destination: "acct_1Oq5X5HBtF1G6Ab3", // Freelancer's Stripe account ID
+      destination: accountId, // Freelancer's Stripe account ID
       transfer_group: data.id, // Group the transfer with the charge for easy reconciliation
     });
 
@@ -795,6 +799,23 @@ const listTransactions = async (accountId = null, lastObjectId = null, limit = 2
   }
 }
 
+// verfify identity session
+const createVerificationSession = async (customerId) => {
+  const verificationSession = await stripe.identity.verificationSessions.create({
+    type: 'document',
+    metadata: {
+      customer: customerId,
+    },
+    options: {
+      document: {
+        require_matching_selfie: true,
+      },
+    },
+  });
+
+  return verificationSession;
+}
+
 module.exports = {
   stripePayment,
   createPromo,
@@ -809,6 +830,7 @@ module.exports = {
   cronJob,
   retrieveStripeBalance,
   getUserAccountById,
+  getUserByAccountId,
   retrieveExternalBankAccounts,
   retreiveAccountInfo,
   handleWebhookEvent,
@@ -817,5 +839,6 @@ module.exports = {
   getAccountOnboardingLink,
   createAccountOnboarding,
   transferPaymentToFreelancers,
+  createVerificationSession,
   createPaymentAndTransfer
 }
