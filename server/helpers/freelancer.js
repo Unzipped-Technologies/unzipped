@@ -6,101 +6,24 @@ const FileModel = require('../models/file')
 
 const getFreelancerById = async id => {
   try {
-    const aggregate = [
+    return await FreelancerModel.findById(id).populate([
       {
-        $match: {
-          _id: mongoose.Types.ObjectId(id)
-        }
-      },
-      { $unwind: '$projects' },
-
-      {
-        $lookup: {
-          from: 'files', // Assuming your files collection is named "files"
-          let: { images: '$projects.images' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $in: ['$_id', '$$images'] }
-              }
-            }
-          ],
-          as: 'projects.images'
+        path: 'projects',
+        populate: {
+          path: 'images',
+          select: ''
         }
       },
       {
-        $group: {
-          _id: '$_id',
-          projects: { $push: '$projects' },
-          otherFields: { $mergeObjects: '$$ROOT' }
-        }
+        path: 'userId',
+        select:
+          'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry'
       },
       {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: ['$otherFields', { projects: '$projects' }]
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$userId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
-              }
-            },
-            {
-              $project: {
-                FirstName: 1,
-                LastName: 1,
-                FullName: 1,
-                email: 1,
-                updatedAt: 1,
-                createdAt: 1,
-                profileImage: 1,
-                likeTotal: 1,
-                dislikeTotal: 1,
-                AddressLineCountry: 1
-              }
-            }
-          ],
-          as: 'user'
-        }
-      },
-      {
-        $unwind: '$user'
-      },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $in: ['$_id', '$$freelancerSkills'] }
-              }
-            },
-            {
-              $project: {
-                skill: 1,
-                isActive: 1,
-                yearsExperience: 1
-              }
-            }
-          ],
-          as: 'skills'
-        }
+        path: 'freelancerSkills',
+        select: 'skill isActive yearsExperience'
       }
-    ]
-    const response = await FreelancerModel.aggregate(aggregate).exec()
-    if (response) {
-      return response[0]
-    } else {
-      throw Error(`Freelancer not found`)
-    }
+    ])
   } catch (e) {
     throw new Error(`Could not find freelancer, error: ${e.message}`)
   }

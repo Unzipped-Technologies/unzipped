@@ -63,7 +63,7 @@ const businessSchema = new Schema(
     isBusinessUpdated: { type: Boolean, default: false },
     isExistingAudience: { type: Boolean, default: false },
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
-    tags: { type: [Schema.Types.ObjectId], refs: 'tags' },
+    tags: { type: [Schema.Types.ObjectId], ref: 'tags' },
     audience: { type: Schema.Types.ObjectId, ref: 'businessAudiences' },
     invoices: { type: Schema.Types.ObjectId, ref: 'invoices' },
     departments: { type: [Schema.Types.ObjectId], ref: 'departments' },
@@ -79,7 +79,8 @@ const businessSchema = new Schema(
     questionsToAsk: { type: [mongoose.Schema.Types.ObjectId], ref: 'questions', default: null },
     projectImagesUrl: [
       {
-        type: Schema.Types.ObjectId, ref: 'file'
+        type: Schema.Types.ObjectId,
+        ref: 'file'
       }
     ]
   },

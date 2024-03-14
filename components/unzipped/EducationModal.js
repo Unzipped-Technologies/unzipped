@@ -58,7 +58,7 @@ const MUIDialogActions = withStyles(theme => ({
 const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById, addEducation }) => {
   const router = useRouter()
   const { id } = router.query
-  const isMobile = window.innerWidth > 680
+  const isMobile = window.innerWidth > 680 ? false : true
   const [stage, setStage] = useState(1)
   const [error, setError] = useState({ startYear: '', institute: '', title: '' })
 
@@ -188,7 +188,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                     setValues('institute', e.target.value)
                   }}
                   onUpdate={() => {}}>
-                  Role On Project
+                  Institute
                 </FormField>
                 {error?.institute && (
                   <TitleText fontSize="10px" lineHeight="10.5px" color="red" margin="40px 0px 0px 0px">
@@ -197,6 +197,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                 )}
                 <div
                   style={{
+                    width: isMobile ? '100%' : '662px',
                     marginTop: error?.institute ? '10px' : '50px',
                     display: 'flex',
                     justifyContent: 'space-between'

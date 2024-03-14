@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Badge } from '../ui'
 import { Image } from '../ui'
-import { ValidationUtils, ConverterUtils } from '../../utils'
+import { ConverterUtils } from '../../utils'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
 import EducationModal from './EducationModal'
 
@@ -64,12 +64,12 @@ function ProjectsCard({ user }) {
 
   const uniqueSkills = useMemo(() => {
     let projectSkills = user?.projects?.map(project => [...new Set(project.skills)])
-    let userSkills = user?.skills?.map(skill => skill?.skill)
-    projectSkills = projectSkills.join(',').split(',')
-    projectSkills = projectSkills.concat(userSkills)
-    projectSkills = [...new Set(projectSkills.map(str => str.toLowerCase()))]
-    const filteredArray = projectSkills.filter(
-      (str, index) => !projectSkills.some((otherStr, otherIndex) => index !== otherIndex && otherStr.includes(str))
+    let userSkills = user?.freelancerSkills?.map(skill => skill?.skill)
+    projectSkills = projectSkills?.join(',').split(',')
+    projectSkills = projectSkills?.concat(userSkills)
+    projectSkills = [...new Set(projectSkills?.map(str => str?.toLowerCase()))]
+    const filteredArray = projectSkills?.filter(
+      (str, index) => !projectSkills?.some((otherStr, otherIndex) => index !== otherIndex && otherStr?.includes(str))
     )
     return filteredArray
   }, [user])
@@ -90,14 +90,16 @@ function ProjectsCard({ user }) {
                   {user?.AddressLineCountry || 'United States'}
                 </P>
                 <div>
-                  {project?.skills?.length > 0 &&
-                    project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)}
+                  {project?.freelancerSkills?.length > 0
+                    ? project?.freelancerSkills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                    : ''}
                 </div>
                 <div style={{ display: 'flex', gap: '21px', width: '176px', height: '93px', borderRadius: '10px' }}>
-                  {project?.images?.length &&
-                    project?.images?.map((image, i) => (
-                      <Image src={image?.url} width="171px" key={image?._id} alt={`Image ${i}`} />
-                    ))}
+                  {project?.images?.length
+                    ? project?.images?.map((image, i) => (
+                        <Image src={image?.url} width="171px" key={image?._id} alt={`Image ${i}`} />
+                      ))
+                    : ''}
                 </div>
               </ProjectInnerCard>
             </ProjectCard>
@@ -117,19 +119,24 @@ function ProjectsCard({ user }) {
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
             Top Skills
           </P>
-          {uniqueSkills?.length &&
+          {uniqueSkills?.length ? (
             uniqueSkills?.map((skill, index) => (
               <P padding="0 10px" key={`${skill}_${index}`}>
                 {ConverterUtils.capitalize(`${skill} `)}
               </P>
-            ))}
+            ))
+          ) : (
+            <P padding="0 10px" align="center">
+              N/A
+            </P>
+          )}
         </OtherInformationCard>
         <OtherInformationCard>
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px" margin="0">
             Browse Similar Freelancers
           </P>
           <div style={{ gap: '6px', display: 'flex', padding: '20px 10px', flexWrap: 'wrap' }}>
-            {uniqueSkills?.length &&
+            {uniqueSkills?.length ? (
               uniqueSkills?.map((skill, index) => (
                 <P
                   border="1px solid #666666"
@@ -140,7 +147,26 @@ function ProjectsCard({ user }) {
                   key={`${skill}_${index}_sim`}>
                   {ConverterUtils.capitalize(`${skill} `)}
                 </P>
-              ))}
+              ))
+            ) : (
+              <>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  React
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  Node
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  TypeScript
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  Nest.js
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  Next.js
+                </P>
+              </>
+            )}
           </div>
         </OtherInformationCard>
         <OtherInformationCard>
@@ -163,20 +189,21 @@ function ProjectsCard({ user }) {
               />
             </P>
           </div>
-          {user?.education?.length &&
-            user.education.map(education => (
-              <div key={education?._id}>
-                <P padding="0 10px" fontWeight="500">
-                  {education?.title}
-                </P>
-                <P padding="0 10px" margin="0">
-                  {education?.institute}
-                </P>
-                <P padding="0 10px">
-                  {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
-                </P>
-              </div>
-            ))}
+          {user?.education?.length
+            ? user.education.map(education => (
+                <div key={education?._id}>
+                  <P padding="0 10px" fontWeight="500">
+                    {education?.title}
+                  </P>
+                  <P padding="0 10px" margin="0">
+                    {education?.institute}
+                  </P>
+                  <P padding="0 10px">
+                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
+                  </P>
+                </div>
+              ))
+            : ''}
         </OtherInformationCard>
       </OtherInformationBox>
       {open && <EducationModal open={open} onHide={handleClose} />}

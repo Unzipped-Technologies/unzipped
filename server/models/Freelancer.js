@@ -19,7 +19,7 @@ const projectsSchema = new Schema(
   {
     role: { type: String, required: true },
     projectName: { type: String, required: true },
-    images: { type: [Schema.Types.ObjectId], ref: 'files', default: [] },
+    images: { type: [Schema.Types.ObjectId], ref: 'file', default: [] },
     skills: { type: [String], default: [], required: true },
     isActive: { type: Boolean, default: true }
   },
@@ -37,7 +37,7 @@ const freelancerSchema = new Schema(
     isPreferedFreelancer: { type: Boolean, default: false },
     isAcceptEquity: { type: Boolean, default: false },
     category: { type: String, default: '' },
-    freelancerSkills: { type: [Schema.Types.ObjectId], refs: 'freelancerskills' },
+    freelancerSkills: { type: [Schema.Types.ObjectId], ref: 'freelancerskills' },
     lists: { type: Schema.Types.ObjectId, ref: 'lists' },
     invites: { type: Schema.Types.Mixed, ref: 'invites' },
     cover: String,

@@ -56,17 +56,19 @@ const ProfileCard = ({ user }) => {
   return (
     <Container>
       <ImageContainer>
-        <Image src={user?.user?.profileImage} alt="profile pic" width="218px" radius="15px" />
+        <Image src={user?.userId?.profileImage} alt="profile pic" width="218px" radius="15px" />
       </ImageContainer>
       <Content>
         <TitleText title="true">
-          {ConverterUtils.capitalize(`${user?.user?.FirstName} ${user?.user?.LastName}`)}
+          {ConverterUtils.capitalize(`${user?.userId?.FirstName} ${user?.userId?.LastName}`)}
         </TitleText>
         <div style={{ width: '600px' }}>
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKIILS
           </DarkText>
-          {user?.skills?.length > 0 ? user?.skills.map(item => <Badge key={item._id}>{item?.skill}</Badge>) : 'N/A'}
+          {user?.freelancerSkills?.length > 0
+            ? user?.freelancerSkills.map(item => <Badge key={item._id}>{item?.skill}</Badge>)
+            : 'N/A'}
         </div>
 
         <Box>
@@ -127,7 +129,7 @@ const ProfileCard = ({ user }) => {
           <Icon name="thumbsUp" />
           <Icon name="thumbsDown" />
         </Likes>
-        <DarkText>{user?.likeTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
+        <DarkText>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
       </LikeBox>
     </Container>
   )
