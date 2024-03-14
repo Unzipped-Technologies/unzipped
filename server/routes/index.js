@@ -29,7 +29,6 @@ router.use('/freelancer', require('./freelancerRoutes'))
 router.use('/list-entries', require('./listEntriesRoute'))
 router.use('/questions', require('./questionRoutes'))
 router.use('/projectApplication', require('./projectApplicationsRoutes'))
-router.use('/showcaseproject', require('./showCaseProjectRoutes'))
 
 router.use('/meeting', require('./meetingRoutes'))
 router.use('/calender', require('./CalenderSettingRoutes'))

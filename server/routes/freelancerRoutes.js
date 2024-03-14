@@ -3,6 +3,7 @@ const router = express.Router()
 const freelancerHelper = require('../helpers/freelancer')
 const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
+const upload = require('../middlewares/multer')
 
 router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getApplicationById'), async (req, res) => {
   try {
@@ -79,4 +80,84 @@ router.delete('/:id', requireLogin, permissionCheckHelper.hasPermission('deleteA
   }
 })
 
+router.post('/add-education', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
+  try {
+    const addedEducation = await freelancerHelper.addEducation(req.body, req.user?.userInfo?.freelancers)
+    if (!addedEducation) throw Error('freelancer does not exist')
+    res.json(addedEducation)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+router.delete(
+  'delete-education/:educationId',
+  requireLogin,
+  permissionCheckHelper.hasPermission('addSkill'),
+  async (req, res) => {
+    try {
+      const removeEducation = await freelancerHelper.deleteEducation(
+        req.params.educationId,
+        req.user?.userInfo?.freelancers
+      )
+      if (!removeEducation) throw Error('freelancer does not exist')
+      res.json(removeEducation)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.post(
+  '/add-project',
+  requireLogin,
+  permissionCheckHelper.hasPermission('createShowCaseProject'),
+  upload.array('projectImages'),
+
+  async (req, res) => {
+    try {
+      const addedEducation = await freelancerHelper.createShowCaseProject(
+        req.body,
+        req.user?.userInfo?.freelancers,
+        req.user.sub,
+        req.files
+      )
+      if (!addedEducation) throw Error('freelancer does not exist')
+      res.json(addedEducation)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.delete(
+  '/delete-project/:id',
+  requireLogin,
+  permissionCheckHelper.hasPermission('deleteShowCaseProject'),
+  async (req, res) => {
+    try {
+      const response = await showCaseProjects.deleteShowCaseProject(req.user?.userInfo?.freelancers, req.params.id)
+      if (response) res.json({ msg: 'Project deleted successfully.' })
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.delete(
+  '/:id/image/:imageId',
+  requireLogin,
+  permissionCheckHelper.hasPermission('deleteShowCaseProject'),
+  async (req, res) => {
+    try {
+      const response = await showCaseProjects.deleteProjectImage(
+        req.params.id,
+        req.params?.imageId,
+        req?.user?.userInfo?.freelancers
+      )
+      if (response) res.json({ msg: 'Project image deleted successfully.' })
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
 module.exports = router

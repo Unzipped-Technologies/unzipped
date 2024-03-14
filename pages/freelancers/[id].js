@@ -7,7 +7,6 @@ import Nav from '../../components/unzipped/header'
 import ProfileCard from '../../components/unzipped/ProfileCard'
 import ProfileTab from '../../components/unzipped/ProfileTab'
 import { getFreelancerById } from '../../redux/actions'
-import { parseCookies } from '../../services/cookieHelper'
 import MobileProfileCard from '../../components/unzipped/MobileProfileCard'
 import MobileProfileCardOptions from '../../components/unzipped/MobileProfileCardOptions'
 import ProjectsCard from '../../components/unzipped/ProjectsCard'
@@ -25,16 +24,16 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById, role }) => {
+const Profile = ({ selectedFreelancer, getFreelancerById, role }) => {
   const router = useRouter()
-  const accessId = token?.access_token || cookie
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
   const [selected, setSelected] = useState(0)
 
   useEffect(() => {
-    getFreelancerById(id, accessId)
+    getFreelancerById(id)
   }, [id])
+
   const handleValueFromChild = value => {
     setInterViewView(value)
   }
@@ -61,19 +60,10 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById, role })
   )
 }
 
-Profile.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-
-  return {
-    token: token && token
-  }
-}
-
 const mapStateToProps = state => {
   return {
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
-    role: state.Auth?.user?.role,
-    cookie: state.Auth.token
+    role: state.Auth?.user?.role
   }
 }
 

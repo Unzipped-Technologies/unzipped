@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useRouter } from 'next/router'
 
 import IconComponent from '../ui/icons/IconComponent'
-import { Badge, Icon } from '../ui'
+import { Badge, Icon, Image } from '../ui'
 import ProfileTab from './ProfileTab'
 
 const P = styled.p`
@@ -154,88 +154,60 @@ function MobileProfileCard({ user, handleProfilePage, role }) {
         </div>
       </div>
       <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} role={role} />
-      <ProjectCard>
-        <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
-          Create a Landing page for a react site
-        </P>
-        <P margin="0 0 5px" fontSize="15px">
-          {user?.category}
-        </P>
-        <P margin="0 0 14px" fontSize="14px" fontWeight="300">
-          {user?.user?.AddressLineCountry || 'United States'}
-        </P>
-        <div style={{ marginBottom: '29px' }}>
-          {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => <Badge key={item._id}>{item?.skill}</Badge>)}
-        </div>
-        <div style={{ padding: '0px 19px', display: 'flex' }}>
-          <img
-            src="/img/projectImages.png"
-            style={{ marginRight: '7px', width: '70%', height: 'auto' }}
-            alt={`Image`}
-          />
-          <div style={{ width: '27%', height: 'auto', gap: '9px 0' }}>
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-          </div>
-        </div>
-      </ProjectCard>
-      <ProjectCard>
-        <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
-          Create a Landing page for a react site
-        </P>
-        <P margin="0 0 5px" fontSize="15px">
-          {user?.category}
-        </P>
-        <P margin="0 0 14px" fontSize="14px" fontWeight="300">
-          {user?.user?.AddressLineCountry || 'United States'}
-        </P>
-        <div style={{ marginBottom: '29px' }}>
-          {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => (
-              <Badge key={`${item._id}_${index}`}>{item?.skill}</Badge>
-            ))}
-        </div>
-        <div style={{ padding: '0px 19px', display: 'flex' }}>
-          <img
-            src="/img/projectImages.png"
-            style={{ marginRight: '7px', width: '70%', height: 'auto' }}
-            alt={`Image`}
-          />
-          <div style={{ width: '27%', height: 'auto', gap: '9px 0' }}>
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-          </div>
-        </div>
-      </ProjectCard>
-      <ProjectCard>
-        <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
-          Create a Landing page for a react site
-        </P>
-        <P margin="0 0 5px" fontSize="15px">
-          {user?.category}
-        </P>
-        <P margin="0 0 14px" fontSize="14px" fontWeight="300">
-          {user?.user?.AddressLineCountry || 'United States'}
-        </P>
-        <div style={{ marginBottom: '29px' }}>
-          {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => (
-              <Badge key={`${item._id}_${index}_${item.skill}`}>{item?.skill}</Badge>
-            ))}
-        </div>
-        <div style={{ padding: '0px 19px', display: 'flex' }}>
-          <img
-            src="/img/projectImages.png"
-            style={{ marginRight: '7px', width: '70%', height: 'auto' }}
-            alt={`Image`}
-          />
-          <div style={{ width: '27%', height: 'auto', gap: '9px 0' }}>
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-          </div>
-        </div>
-      </ProjectCard>
+      {user?.projects?.length &&
+        user?.projects?.map(project => (
+          <ProjectCard key={project?._id}>
+            <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
+              {project?.projectName ?? 'Project Name'}
+            </P>
+            <P margin="0 0 5px" fontSize="15px">
+              {user?.category}
+            </P>
+            <P margin="0 0 14px" fontSize="14px" fontWeight="300">
+              {user?.user?.AddressLineCountry || 'United States'}
+            </P>
+            <div>
+              {project?.skills?.length > 0 &&
+                project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)}
+            </div>
+            <div style={{ padding: '0px 19px', display: 'flex' }}>
+              {project?.projectImages?.[0] && (
+                <Image
+                  src={project?.projectImages[0]?.url}
+                  width="70%"
+                  height="98px"
+                  radius="10px"
+                  key={project?.projectImages[1]?._id}
+                  alt={`Image 0`}
+                />
+              )}
+
+              <div style={{ width: '27%', height: '98px', marginLeft: '5px' }}>
+                {project?.projectImages?.[1] && (
+                  <Image
+                    src={project?.projectImages[1]?.url}
+                    width="100%"
+                    height="50%"
+                    radius="10px"
+                    key={project?.projectImages[1]?._id}
+                    alt={`Image 1`}
+                  />
+                )}
+                {project?.projectImages?.[2] && (
+                  <Image
+                    src={project?.projectImages[2]?.url}
+                    width="100%"
+                    height="50%"
+                    radius="10px"
+                    margin="10px 0px 0px 0px"
+                    key={project?.projectImages[1]?._id}
+                    alt={`Image 2`}
+                  />
+                )}
+              </div>
+            </div>
+          </ProjectCard>
+        ))}
       <OtherInformationBox>
         <OtherInformationCard>
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">

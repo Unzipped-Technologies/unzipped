@@ -10,12 +10,13 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import UploadImage from './image-upload/UploadImage'
 import CloseIcon from '../icons/close'
 import { ConverterUtils } from '../../utils'
-import { createShowCaseProject } from '../../redux/actions'
+import { createShowCaseProject, getFreelancerById } from '../../redux/actions'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import Image from './../ui/Image'
 import Loading from '../loading'
 import DialogActions from '@material-ui/core/DialogActions'
+import { useRouter } from 'next/router'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -50,7 +51,10 @@ const MUIDialogActions = withStyles(theme => ({
   }
 }))(DialogActions)
 
-const ProjectModal = ({ open = false, onHide, loading = false, createShowCaseProject }) => {
+const ProjectModal = ({ open = false, onHide, loading = false, createShowCaseProject, getFreelancerById }) => {
+  const router = useRouter()
+  const { id } = router.query
+
   const [stage, setStage] = useState(1)
   const [errors, setErrors] = useState({})
 
@@ -119,7 +123,13 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
     } else {
       const formData = new FormData()
       for (var field in data) {
-        formData.append(field, data[field])
+        if (Array.isArray(data[field])) {
+          for (var i = 0; i < data[field].length; i++) {
+            formData.append(`skills[${i}]`, data[field][i])
+          }
+        } else {
+          formData.append(field, data[field])
+        }
       }
       if (files?.length) {
         for (var file in files) {
@@ -128,6 +138,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
       }
       await createShowCaseProject(formData)
       await onHide()
+      await getFreelancerById(id)
     }
   }
 
@@ -285,7 +296,9 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
             <div className="mt-3 d-flex mb-3">
               {files?.length
                 ? files?.map((file, index) => (
-                    <div style={{ width: '151px', height: '120px', overflow: 'hidden', marginLeft: '10px' }}>
+                    <div
+                      style={{ width: '151px', height: '120px', overflow: 'hidden', marginLeft: '10px' }}
+                      key={`${file?.name}_${index}`}>
                       <div className="d-flex w-10 items-center" style={{ backgroundColor: '#F0F0F0', height: '24px' }}>
                         <TitleText fontSize="12px" lineHeight="10.09px" paddingTop={mobile ? '5px' : '5px'}>
                           {ConverterUtils.truncateString(file?.name, mobile ? 6 : 13)}
@@ -385,7 +398,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    createShowCaseProject: bindActionCreators(createShowCaseProject, dispatch)
+    createShowCaseProject: bindActionCreators(createShowCaseProject, dispatch),
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
   }
 }
 

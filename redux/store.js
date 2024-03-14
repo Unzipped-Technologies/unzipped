@@ -18,7 +18,6 @@ import Departments from './Department/reducers'
 import Tags from './Tags/reducers'
 import TaskHours from './TaskHours/reducers'
 import Tasks from './Tasks/reducers'
-import showCaseProjects from './showCaseProjects/reducers'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -38,8 +37,7 @@ const combinedReducer = combineReducers({
   Departments,
   Tags,
   TaskHours,
-  Tasks,
-  showCaseProjects
+  Tasks
   // OTHER REDUCERS WILL BE ADDED HERE
 })
 
@@ -79,8 +77,7 @@ const makeStore = ({ isServer }) => {
         'Departments',
         'Tags',
         'TaskHours',
-        'Tasks',
-        'showCaseProjects'
+        'Tasks'
       ],
       storage // if needed, use a safer storage
     }

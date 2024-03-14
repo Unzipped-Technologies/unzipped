@@ -30,7 +30,6 @@ const ProfileTab = ({ tabs, selected, setSelected, children, role }) => {
 
   const handleOpen = () => {
     setOpen(true)
-    console.log('open')
   }
   const handleClose = () => {
     setOpen(false)

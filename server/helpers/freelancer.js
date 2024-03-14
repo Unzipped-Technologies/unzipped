@@ -1,22 +1,106 @@
 const FreelancerModel = require('../models/Freelancer')
 const FreelancerSkillsModel = require('../models/FreelancerSkills')
+const mongoose = require('mongoose')
+const CloudinaryUploadHelper = require('./file')
+const FileModel = require('../models/file')
 
 const getFreelancerById = async id => {
   try {
-    return await FreelancerModel.findById(id)
-      .populate([
-        {
-          path: 'userId',
-          select:
-            'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry'
-        },
-        {
-          path: 'freelancerSkills',
-          model: 'freelancerskills',
-          select: 'skill isActive yearsExperience'
+    const aggregate = [
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(id)
         }
-      ])
-      .exec()
+      },
+      { $unwind: '$projects' },
+
+      {
+        $lookup: {
+          from: 'files', // Assuming your files collection is named "files"
+          let: { images: '$projects.images' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$images'] }
+              }
+            }
+          ],
+          as: 'projects.images'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          projects: { $push: '$projects' },
+          otherFields: { $mergeObjects: '$$ROOT' }
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$otherFields', { projects: '$projects' }]
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          let: { userId: '$userId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] }
+              }
+            },
+            {
+              $project: {
+                FirstName: 1,
+                LastName: 1,
+                FullName: 1,
+                email: 1,
+                updatedAt: 1,
+                createdAt: 1,
+                profileImage: 1,
+                likeTotal: 1,
+                dislikeTotal: 1,
+                AddressLineCountry: 1
+              }
+            }
+          ],
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $lookup: {
+          from: 'freelancerskills',
+          let: { freelancerSkills: '$freelancerSkills' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$freelancerSkills'] }
+              }
+            },
+            {
+              $project: {
+                skill: 1,
+                isActive: 1,
+                yearsExperience: 1
+              }
+            }
+          ],
+          as: 'skills'
+        }
+      }
+    ]
+    const response = await FreelancerModel.aggregate(aggregate).exec()
+    if (response) {
+      return response[0]
+    } else {
+      throw Error(`Freelancer not found`)
+    }
   } catch (e) {
     throw new Error(`Could not find freelancer, error: ${e.message}`)
   }
@@ -219,12 +303,124 @@ const deleteSkillFromFreelancer = async (skillId, freelancerId) => {
   }
 }
 
+const addEducation = async (data, freelancerId) => {
+  try {
+    const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
+
+    if (freelancerData?.education?.length >= 3) throw new Error('You can only create three degrees.')
+
+    if (freelancerData?.education?.length) {
+      freelancerData.education = [...freelancerData.education, data]
+    } else {
+      freelancerData['education'] = [data]
+    }
+    await freelancerData.save()
+    return freelancerData
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
+const deleteEducation = async (educationId, freelancerId) => {
+  try {
+    const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
+    if (!freelancerData) throw Error(`Freelancer not found.`)
+
+    if (freelancerData?.education?.length) {
+      freelancerData.education = freelancerData?.education.filter(education => education !== educationId)
+      await freelancerData.save()
+    }
+    return freelancerData
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
+const createShowCaseProject = async (data, freelancerId, userId, files) => {
+  try {
+    const { getFreelancerWithoutPopulate } = require('./freelancer')
+
+    const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
+    if (!freelancerData) throw new Error('Invalid freelancer ID.')
+
+    if (freelancerData?.projects?.length >= 3) throw new Error('You can only create three projects.')
+
+    // upload file to cloudinary platform
+    const uploadResult = await CloudinaryUploadHelper.createFile(files, userId)
+    let cloudinaryIds = []
+    if (uploadResult && uploadResult.length > 0) {
+      cloudinaryIds = uploadResult.map(elem => elem._id)
+      data['images'] = cloudinaryIds
+    }
+
+    if (freelancerData?.projects?.length) {
+      freelancerData.projects = [...freelancerData.projects, data]
+    } else {
+      freelancerData['projects'] = [data]
+    }
+    await freelancerData.save()
+
+    return freelancerData
+  } catch (e) {
+    throw new Error(`Something went wrong: ${e.message}`)
+  }
+}
+
+const deleteShowCaseProject = async (freelancerId, projectId) => {
+  try {
+    const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
+    if (!freelancerData) throw Error(`Freelancer not found.`)
+
+    if (freelancerData?.projects?.length) {
+      freelancerData.projects = freelancerData?.projects.filter(project => project !== projectId)
+      await freelancerData.save()
+    }
+    return freelancerData
+  } catch (e) {
+    throw new Error(`Could not delete project, error: ${e.message}`)
+  }
+}
+
+const deleteProjectImage = async (projectId, imageId, freelancerId) => {
+  try {
+    const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
+    const projectIndex = freelancerData?.projects?.findIndex(project => project._id !== projectId)
+    if (projectIndex === -1) throw new Error(`Project not exist.`)
+
+    if (!freelancerData?.projects[projectIndex]?.images.includes(imageId))
+      throw new Error(`Image not exist in this project.`)
+
+    const imageData = await FileModel.findById(imageId)
+    if (!imageData) throw new Error(`Image not exist.`)
+    await CloudinaryUploadHelper.deleteFile(imageData?.cloudinaryId)
+
+    await FileModel.findByIdAndDelete(imageId)
+
+    freelancerData.projects[projectIndex].images = freelancerData?.projects[projectIndex]?.images.filter(
+      image => image !== imageId
+    )
+
+    await freelancerData.save()
+
+    return {
+      msg: 'Image deleted successfully'
+    }
+  } catch (e) {
+    throw new Error(`Could not delete image, error: ${e.message}`)
+  }
+}
+
 module.exports = {
   getFreelancerById,
   getAllFreelancers,
   updateFreelancer,
   deleteFreelancer,
   countFreelancers,
+  addEducation,
+  createShowCaseProject,
+  deleteShowCaseProject,
+  deleteProjectImage,
+  deleteEducation,
   addSkillsToFreelancer,
   deleteSkillFromFreelancer,
   getFreelancerWithoutPopulate
