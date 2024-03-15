@@ -6,7 +6,7 @@ const { Schema } = mongoose
 const freelancerSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
-    rate: { type: Number, default: 0 },
+    rate: { type: Number, default: 0, required: true },
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },
     isPreferedFreelancer: { type: Boolean, default: false },

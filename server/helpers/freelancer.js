@@ -1,5 +1,7 @@
 const FreelancerModel = require('../models/Freelancer')
+const InviteModel = require('../models/Invited')
 const FreelancerSkillsModel = require('../models/FreelancerSkills')
+const UserModel = require('../models/User')
 
 const getFreelancerById = async id => {
   try {
@@ -30,32 +32,74 @@ const getFreelancerWithoutPopulate = async filter => {
   }
 }
 
-const getAllFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, skill }) => {
+const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
   try {
-    const regexQuery = new RegExp(filter, 'i')
-    const existingIndexes = await freelancer.collection.getIndexes()
-    const existingFreelancerSkillsIndexes = await FreelancerSkills.collection.getIndexes()
-    const existingUserIndexes = await User.collection.getIndexes()
+    const regexQuery = new RegExp(filter?.searchKey, 'i')
+    const existingIndexes = await FreelancerModel.collection.getIndexes()
+    const existingFreelancerSkillsIndexes = await FreelancerSkillsModel.collection.getIndexes()
+    const existingUserIndexes = await UserModel.collection.getIndexes()
     const indexExists = existingIndexes && 'user_1_rate_1' in existingIndexes
     const indexExistsFreelancerSkillsIndexes =
       existingFreelancerSkillsIndexes && 'skill_1' in existingFreelancerSkillsIndexes
     const indexExistsUserIndexes = existingUserIndexes && 'FullName_1' in existingUserIndexes
     if (!indexExists) {
-      await freelancer.createIndex({ user: 1, rate: 1 })
+      await FreelancerModel.collection.createIndex({ user: 1, rate: 1 })
     }
     if (!indexExistsFreelancerSkillsIndexes) {
-      await FreelancerSkills.createIndex({ skill: 1 })
+      await FreelancerSkillsModel.collection.createIndex({ skill: 1 })
     }
     if (!indexExistsUserIndexes) {
-      await User.createIndex({ FullName: 1 })
-      await User.createIndex({ freelancerSkills: 1 })
+      await UserModel.collection.createIndex({ FullName: 1 })
+      await UserModel.collection.createIndex({ freelancerSkills: 1 })
     }
+
+    const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
+    const regexPattern = regexPatterns?.join('|')
+    const limitValue = limit === 'all' ? await countFreelancers(filter) : Number(limit)
+    const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
 
     const aggregationPipeline = [
       {
+        $project: {
+          userId: 1,
+          rate: 1,
+          category: 1,
+          cover: 1,
+          isPreferedFreelancer: 1,
+          freelancerSkills: 1,
+          likeTotal: 1,
+          dislikeTotal: 1,
+          invites: 1
+        }
+      },
+      {
+        $lookup: {
+          from: 'freelancerskills',
+          let: { freelancerSkills: '$freelancerSkills' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$freelancerSkills' }, then: '$$freelancerSkills', else: [] } }
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                skill: 1
+              }
+            }
+          ],
+          as: 'freelancerSkills'
+        }
+      },
+      {
         $lookup: {
           from: 'users',
-          let: { userId: '$user' },
+          let: { userId: '$userId' },
           pipeline: [
             {
               $match: {
@@ -64,12 +108,11 @@ const getAllFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, s
             },
             {
               $project: {
-                AddressLineCountry: 1,
-                freelancerSkills: 1,
                 FirstName: 1,
                 LastName: 1,
+                FullName: 1,
                 profileImage: 1,
-                FullName: 1
+                AddressLineCountry: 1
               }
             }
           ],
@@ -80,62 +123,59 @@ const getAllFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, s
         $unwind: '$user'
       },
       {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$user.freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ['$_id', '$$freelancerSkills']
-                }
-              }
-            },
-            {
-              $project: {
-                skill: 1
-              }
-            }
-          ],
-          as: 'user.freelancerSkills'
-        }
-      },
-      {
         $match: {
-          $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
-          ...(skill?.length > 0
+          ...(filter?.minRate &&
+            +filter?.minRate > 0 && {
+              rate: { $gte: +filter?.minRate }
+            }),
+          ...(filter?.maxRate &&
+            +filter?.maxRate > 0 && {
+              rate: { $lte: +filter?.maxRate }
+            }),
+          ...(filter?.skill?.length > 0
             ? {
-                'user.freelancerSkills.skill': {
-                  $in: skill
+                freelancerSkills: {
+                  $elemMatch: {
+                    skill: { $regex: new RegExp(regexPattern, 'i') }
+                  }
                 }
               }
             : {}),
-          ...(minRate && {
-            rate: { $gte: +minRate }
-          }),
-          ...(maxRate && {
-            rate: { $lte: +maxRate }
-          })
+          'user.FullName': { $regex: regexQuery }
         }
       },
-      ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
-        ? [
-            {
-              $sort: {
-                rate: sort === 'lowest hourly rate' ? 1 : -1
-              }
-            }
-          ]
-        : []),
+      {
+        $sort: {
+          ...(filter?.sort &&
+            filter?.sort === 'highest_hourly_rate' && {
+              rate: -1
+            }),
+          ...(filter?.sort &&
+            filter?.sort === 'lowest_hourly_rate' && {
+              rate: 1
+            }),
+          ...(filter?.sort &&
+            filter?.sort === 'most_reviews' && {
+              likeTotal: -1
+            }),
+          ...(filter?.sort &&
+            filter?.sort === 'recomended' && {
+              isPreferedFreelancer: -1
+            }),
+          ...(filter?.sort &&
+            filter?.sort === 'most_relavent' && {
+              isPreferedFreelancer: -1
+            }),
+          createdAt: 1
+        }
+      },
       {
         $facet: {
           limitedRecords: [
             {
               $skip: +skip
             },
-            {
-              $limit: +take
-            }
+            limitStage
           ],
           totalCount: [
             {
@@ -146,7 +186,7 @@ const getAllFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, s
       }
     ]
 
-    const list = await freelancer.aggregate(aggregationPipeline).exec()
+    const list = await FreelancerModel.aggregate(aggregationPipeline).exec()
     return list[0]
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
@@ -219,6 +259,21 @@ const deleteSkillFromFreelancer = async (skillId, freelancerId) => {
   }
 }
 
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await FreelancerModel.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
+}
+
 module.exports = {
   getFreelancerById,
   getAllFreelancers,
@@ -226,6 +281,7 @@ module.exports = {
   deleteFreelancer,
   countFreelancers,
   addSkillsToFreelancer,
+  createFreelancerInvite,
   deleteSkillFromFreelancer,
   getFreelancerWithoutPopulate
 }
