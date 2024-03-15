@@ -52,7 +52,7 @@ const OtherInformationCard = styled.div`
   display: ${({ display }) => (display ? display : '')};
 `
 
-function ProjectsCard({ user }) {
+function ProjectsCard({ user, freelancerId }) {
   const [open, setOpen] = useState(false)
 
   const handleOpen = () => {
@@ -65,7 +65,7 @@ function ProjectsCard({ user }) {
   const uniqueSkills = useMemo(() => {
     let projectSkills = user?.projects?.map(project => [...new Set(project.skills)])
     let userSkills = user?.freelancerSkills?.map(skill => skill?.skill)
-    projectSkills = projectSkills?.join(',').split(',')
+    projectSkills = projectSkills?.length ? projectSkills?.join(',').split(',') : []
     projectSkills = projectSkills?.concat(userSkills)
     projectSkills = [...new Set(projectSkills?.map(str => str?.toLowerCase()))]
     const filteredArray = projectSkills?.filter(
@@ -179,15 +179,17 @@ function ProjectsCard({ user }) {
               Education
             </P>
 
-            <P color="#2F76FF" onClick={handleOpen}>
-              <AiOutlinePlusCircle
-                style={{
-                  fontSize: '18px',
-                  marginRight: '20px',
-                  color: '#2F76FF'
-                }}
-              />
-            </P>
+            {user?.userId?.role === 1 && freelancerId === user?._id && (
+              <P color="#2F76FF" onClick={handleOpen}>
+                <AiOutlinePlusCircle
+                  style={{
+                    fontSize: '18px',
+                    marginRight: '20px',
+                    color: '#2F76FF'
+                  }}
+                />
+              </P>
+            )}
           </div>
           {user?.education?.length
             ? user.education.map(education => (

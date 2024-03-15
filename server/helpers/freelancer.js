@@ -17,7 +17,7 @@ const getFreelancerById = async id => {
       {
         path: 'userId',
         select:
-          'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry'
+          'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry role'
       },
       {
         path: 'freelancerSkills',

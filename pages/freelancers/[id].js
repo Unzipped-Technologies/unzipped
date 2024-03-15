@@ -24,7 +24,7 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ selectedFreelancer, getFreelancerById, role }) => {
+const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId }) => {
   const router = useRouter()
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
@@ -45,13 +45,25 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role }) => {
           <ProfileCard user={selectedFreelancer} />
         </div>
         <div style={{ width: '100%' }}>
-          <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} role={role} />
+          <ProfileTab
+            tabs={['PROJECTS']}
+            selected={selected}
+            setSelected={setSelected}
+            role={role}
+            freelancerId={freelancerId}
+            userId={selectedFreelancer?._id}
+          />
         </div>
-        <ProjectsCard user={selectedFreelancer} />
+        <ProjectsCard user={selectedFreelancer} freelancerId={freelancerId} />
       </Container>
       <MobileContainer>
         {interViewView ? (
-          <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} role={role} />
+          <MobileProfileCard
+            user={selectedFreelancer}
+            handleProfilePage={handleValueFromChild}
+            role={role}
+            freelancerId={freelancerId}
+          />
         ) : (
           <MobileProfileCardOptions handleProfilePage={handleValueFromChild} />
         )}
@@ -63,7 +75,8 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role }) => {
 const mapStateToProps = state => {
   return {
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
-    role: state.Auth?.user?.role
+    role: state.Auth?.user?.role,
+    freelancerId: state.Auth?.user?.freelancers
   }
 }
 

@@ -25,7 +25,7 @@ const MenuItem = styled.div`
   border-bottom: ${({ selected }) => (selected ? '4px solid #333' : '0px')};
 `
 
-const ProfileTab = ({ tabs, selected, setSelected, children, role }) => {
+const ProfileTab = ({ tabs, selected, setSelected, children, role, freelancerId, userId }) => {
   const [open, setOpen] = useState(false)
 
   const handleOpen = () => {
@@ -45,7 +45,7 @@ const ProfileTab = ({ tabs, selected, setSelected, children, role }) => {
             </DarkText>
           </MenuItem>
         ))}
-        {role === 1 && (
+        {role === 1 && freelancerId === userId && (
           <div
             style={{
               marginRight: window.innerWidth > 680 ? '37%' : '10%',

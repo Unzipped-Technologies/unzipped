@@ -40,7 +40,7 @@ const ProjectCard = styled.div`
   padding: 19px 13px;
 `
 
-function MobileProfileCard({ user, handleProfilePage, role }) {
+function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
   const router = useRouter()
   const [selected, setSelected] = useState(0)
   const [open, setOpen] = useState(false)
@@ -287,15 +287,17 @@ function MobileProfileCard({ user, handleProfilePage, role }) {
             <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
               Education
             </P>
-            <P color="#2F76FF" onClick={handleOpen}>
-              <AiOutlinePlusCircle
-                style={{
-                  fontSize: '18px',
-                  marginRight: '20px',
-                  color: '#2F76FF'
-                }}
-              />
-            </P>
+            {role === 1 && freelancerId === user?._id && (
+              <P color="#2F76FF" onClick={handleOpen}>
+                <AiOutlinePlusCircle
+                  style={{
+                    fontSize: '18px',
+                    marginRight: '20px',
+                    color: '#2F76FF'
+                  }}
+                />
+              </P>
+            )}
           </div>
 
           {user?.education?.length
