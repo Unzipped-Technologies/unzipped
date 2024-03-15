@@ -62,7 +62,6 @@ router.post('/subscription/create', requireLogin, async (req, res) => {
 });
 
 router.post('/subscription/payment/webhook', async (req, res) => {
-  console.log(req.body)
   try{
     await billingHelper.subscriptionPayment( req.body, req.user.sub );
     res.send(req.body);

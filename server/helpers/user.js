@@ -125,7 +125,10 @@ const updateUserByEmail = async (email, data) => {
 // get User By Id
 const getUserById = async id => {
   try {
-    return await user.findById(id).populate({ path: 'thirdPartyCredentials', model: 'thirdPartyApplications'}).select('-password')
+    return await user
+      .findById(id)
+      .populate({ path: 'thirdPartyCredentials', model: 'thirdPartyApplications' })
+      .select('-password')
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
@@ -600,21 +603,6 @@ const buildQueryFilters = (minRate, maxRate, skills, name) => {
   return filter
 }
 
-const createFreelancerInvite = async params => {
-  const createInvite = await InviteModel.create(params)
-  const updateFreelancer = await freelancer.findByIdAndUpdate(
-    params.freelancer,
-    {
-      $set: {
-        invites: createInvite._doc._id
-      }
-    },
-    { new: true }
-  )
-
-  return updateFreelancer
-}
-
 module.exports = {
   createUser,
   updateUserByEmail,
@@ -634,6 +622,5 @@ module.exports = {
   listLikes,
   addToNewsletter,
   getAllFreelancers,
-  createFreelancerInvite,
   retrievePaymentMethods
 }

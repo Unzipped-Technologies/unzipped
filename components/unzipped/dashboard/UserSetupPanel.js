@@ -4,6 +4,8 @@ import { TitleText, DarkText, Absolute, WhiteCard } from './style'
 import Link from 'next/link'
 import ProgressBar from '../../ui/ProgressBar'
 import UpdateUserIcon from '../../icons/updateUser'
+import { VerifyUserIcon } from '../../icons'
+import { accountVerificationEnum } from '../../../server/enum/accountTypeEnum'
 // import UserInstallmentPlanIcon from '../../icons/userInstallmentPlan'
 import { useRouter } from 'next/router'
 import Dropzone from 'react-dropzone'
@@ -48,6 +50,7 @@ const AccountSetupContainer = styled.div`
   width: 100%;
   gap: 10px;
   margin-top: 20px;
+  align-items: center;
 `
 
 const AccountSetup = styled.div`
@@ -65,6 +68,7 @@ const Text = styled.p`
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
+  cursor: pointer;
   color: ${({ color }) => (color ? color : '#000')};
   margin: ${({ margin }) => (margin ? margin : '0')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '40px')};
@@ -83,13 +87,36 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
-const Panel = ({ userProps }) => {
+const Panel = ({ userProps, verifyIdentity }) => {
   const { user } = useSelector(state => state.Auth)
 
   const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
   const [trackProgress, setTrackProgress] = useState(0)
   const [hasUserInfo, setHasUserInfo] = useState(false)
   const dropzoneRef = useRef(null)
+
+  const completeSetup = () => {
+    const firstActionItem = document.querySelector('.verify-identity');
+    if (firstActionItem) {
+      firstActionItem.click();
+      return;
+    }
+    const secondActionItem = document.querySelector('.update-account-details');
+    if (secondActionItem) {
+      secondActionItem.click();
+      return;
+    }
+    const thirdActionItem = document.querySelector('.upload-profile-pic');
+    if (thirdActionItem) {
+      thirdActionItem.click();
+      return;
+    }
+    const fourthActionItem = document.querySelector('.select-a-plan');
+    if (fourthActionItem) {
+      fourthActionItem.click();
+      return;
+    }
+  };
 
   useEffect(() => {
     if (user.role != '0' && user.FirstName && user.AddressCity) {
@@ -111,6 +138,9 @@ const Panel = ({ userProps }) => {
         incrementalProgress += 25
       }
       if (user.plan > 0) {
+        incrementalProgress += 25
+      }
+      if (user.isIdentityVerified === accountVerificationEnum.SUCCESS) {
         incrementalProgress += 25
       }
 
@@ -144,11 +174,24 @@ const Panel = ({ userProps }) => {
           </Text>
         </ProgressBarFiller>
       </ProgressBarContainer>
+      {user.isIdentityVerified !== accountVerificationEnum.SUCCESS && (
+        <AccountSetupContainer>
+          <VerifyUserIcon />
+          <AccountSetup>
+            <Text
+              className="verify-identity"
+              onClick={() => verifyIdentity()}>
+              Verify identity
+            </Text>
+          </AccountSetup>
+        </AccountSetupContainer>
+      )}
       {!hasUserInfo && (
         <AccountSetupContainer>
           <UpdateUserIcon />
           <AccountSetup>
             <Text
+              className="update-account-details"
               onClick={() => {
                 router.push('/signup')
               }}>
@@ -169,7 +212,7 @@ const Panel = ({ userProps }) => {
           />
 
           <AccountSetup>
-            <Text onClick={openDropzone}>Upload a profile picture</Text>
+            <Text className="upload-profile-pic" onClick={openDropzone}>Upload a profile picture</Text>
           </AccountSetup>
           <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true}>
             {({ getRootProps, getInputProps }) => (
@@ -186,6 +229,7 @@ const Panel = ({ userProps }) => {
           <img width="30" height="30" src="/img/InstallmentPlan.png" alt="installment plan" />
           <AccountSetup>
             <Text
+              className="select-a-plan"
               onClick={() => {
                 router.push('/pick-a-plan')
               }}>
@@ -197,7 +241,7 @@ const Panel = ({ userProps }) => {
 
       <AccountSetupContainer>
         <AccountSetup>
-          <CompleteSetupButton>Complete Setup</CompleteSetupButton>
+          <CompleteSetupButton onClick={completeSetup}>Complete Setup</CompleteSetupButton>
         </AccountSetup>
       </AccountSetupContainer>
 

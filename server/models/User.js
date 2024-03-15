@@ -21,7 +21,7 @@ const userSchema = new Schema(
     isGithubConnected: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
     isUserSubscribed: { type: Boolean, default: false },
-    isIdentityVerified: { type: Boolean, default: false },
+    isIdentityVerified: { type: String, default: 'INCOMPLETE' },
     isPhoneVerified: { type: Boolean, default: false },
     isSuspended: { type: Boolean, default: false },
     plan: { type: Number, default: 0 },

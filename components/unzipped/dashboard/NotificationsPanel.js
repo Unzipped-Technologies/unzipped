@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import {
+  getVerifyIdentityUrl,
+} from '../../../redux/actions';
+import router from 'next/router';
 import Notification from './Notification'
 import Panel from './UserSetupPanel'
 import { useDispatch } from 'react-redux'
@@ -19,8 +23,9 @@ const Notifications = styled.div`
   padding: 0px 10px;
 `
 
-const NotificationsPanel = ({ notifications, user, success }) => {
+const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl, url, token }) => {
   const dispatch = useDispatch()
+  const [initialUrl] = useState(url);
 
   const hideSuccessAlert = () => {
     dispatch({
@@ -33,6 +38,16 @@ const NotificationsPanel = ({ notifications, user, success }) => {
       hideSuccessAlert()
     }
   }, 5000)
+
+  const verifyIdentity = () => {
+    getVerifyIdentityUrl(token)
+  }
+
+  useEffect(() => {
+    if (url && url !== initialUrl) {
+        window.open(url, '_blank');
+    }
+  }, [url, router]);
 
   return (
     <Container>
@@ -60,19 +75,23 @@ const NotificationsPanel = ({ notifications, user, success }) => {
           </Notification>
         ))}
       </Notifications>
-      <Panel user={user} />
+      <Panel user={user} verifyIdentity={verifyIdentity} />
     </Container>
   )
 }
 
 const mapStateToProps = state => {
   return {
-    success: state?.ProjectApplications?.success
+    success: state?.ProjectApplications?.success,
+    token: state.Auth.token,
+    url: state?.Auth?.verifyUrl
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    getVerifyIdentityUrl: bindActionCreators(getVerifyIdentityUrl, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotificationsPanel)

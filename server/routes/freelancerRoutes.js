@@ -15,7 +15,7 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.get('/', requireLogin, permissionCheckHelper.hasPermission('getAllApplications'), async (req, res) => {
+router.get('/list', requireLogin, permissionCheckHelper.hasPermission('getAllApplications'), async (req, res) => {
   try {
     const { filter, take, skip, sort, maxRate, minRate, skill } = req.query
     const response = await userHelper.getAllFreelancers({ filter, take, skip, sort, maxRate, minRate, skill })
@@ -80,6 +80,14 @@ router.delete('/:id', requireLogin, permissionCheckHelper.hasPermission('deleteA
   }
 })
 
+router.post('/public/list', async (req, res) => {
+  try {
+    const freelancers = await freelancerHelper.getAllFreelancers(req?.body)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
 router.post('/add-education', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
   try {
     const addedEducation = await freelancerHelper.addEducation(req.body, req.user?.userInfo?.freelancers)
@@ -160,4 +168,12 @@ router.delete(
     }
   }
 )
+router.post('/create-invite', async (req, res) => {
+  try {
+    const freelancers = await freelancerHelper.createFreelancerInvite(req.body)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
 module.exports = router

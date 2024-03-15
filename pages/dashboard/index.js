@@ -120,6 +120,7 @@ Dashboard.getInitialProps = async ({ req }) => {
 }
 
 const mapStateToProps = state => {
+  console.log(state)
   return {
     businesses: state.Business?.businesses,
     loading: state.Business?.loading,

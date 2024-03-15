@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const { BUDGET_TYPE, FIXED_BUDGET, PROJECT_TYPE, SHORT_TERM_PROJECT } = require('../utils/constants')
+
 const { Schema } = mongoose
 
 const businessSchema = new Schema(
@@ -32,7 +34,7 @@ const businessSchema = new Schema(
     requiredSkills: [String],
     goals: String,
     companyBackground: String,
-    budget: String,
+    budget: { type: Number, required: true },
     paymentMethod: {
       card: String,
       id: String
@@ -47,11 +49,16 @@ const businessSchema = new Schema(
     likeTotal: { type: Number, default: 0 },
     projectBudgetType: {
       type: String,
-      enum: ['Hourly Rate', 'Fixed Price']
+      required: true,
+      default: FIXED_BUDGET,
+      enum: [...BUDGET_TYPE]
     },
     projectType: {
       type: String,
-      enum: ['Short Term Business', 'Long Term Collaboration']
+      required: true,
+      default: SHORT_TERM_PROJECT,
+
+      enum: [...PROJECT_TYPE]
     },
     dislikeTotal: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
