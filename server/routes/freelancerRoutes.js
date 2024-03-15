@@ -5,7 +5,7 @@ const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
 const upload = require('../middlewares/multer')
 
-router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getApplicationById'), async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const response = await freelancerHelper.getFreelancerById(req.params.id)
     if (!response) throw new Error('Application not found')
