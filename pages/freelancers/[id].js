@@ -7,7 +7,6 @@ import Nav from '../../components/unzipped/header'
 import ProfileCard from '../../components/unzipped/ProfileCard'
 import ProfileTab from '../../components/unzipped/ProfileTab'
 import { getFreelancerById } from '../../redux/actions'
-import { parseCookies } from '../../services/cookieHelper'
 import MobileProfileCard from '../../components/unzipped/MobileProfileCard'
 import MobileProfileCardOptions from '../../components/unzipped/MobileProfileCardOptions'
 import ProjectsCard from '../../components/unzipped/ProjectsCard'
@@ -25,16 +24,16 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
+const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId }) => {
   const router = useRouter()
-  const accessId = token?.access_token || cookie
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
   const [selected, setSelected] = useState(0)
 
   useEffect(() => {
-    getFreelancerById(id, accessId)
+    getFreelancerById(id)
   }, [id])
+
   const handleValueFromChild = value => {
     setInterViewView(value)
   }
@@ -45,12 +44,26 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
         <div style={{ overflow: 'overlay' }}>
           <ProfileCard user={selectedFreelancer} />
         </div>
-        <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
-        <ProjectsCard user={selectedFreelancer} />
+        <div style={{ width: '100%' }}>
+          <ProfileTab
+            tabs={['PROJECTS']}
+            selected={selected}
+            setSelected={setSelected}
+            role={role}
+            freelancerId={freelancerId}
+            userId={selectedFreelancer?._id}
+          />
+        </div>
+        <ProjectsCard user={selectedFreelancer} freelancerId={freelancerId} />
       </Container>
       <MobileContainer>
         {interViewView ? (
-          <MobileProfileCard user={selectedFreelancer} handleProfilePage={handleValueFromChild} />
+          <MobileProfileCard
+            user={selectedFreelancer}
+            handleProfilePage={handleValueFromChild}
+            role={role}
+            freelancerId={freelancerId}
+          />
         ) : (
           <MobileProfileCardOptions handleProfilePage={handleValueFromChild} />
         )}
@@ -59,18 +72,11 @@ const Profile = ({ token, cookie, selectedFreelancer, getFreelancerById }) => {
   )
 }
 
-Profile.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-
-  return {
-    token: token && token
-  }
-}
-
 const mapStateToProps = state => {
   return {
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
-    cookie: state.Auth.token
+    role: state.Auth?.user?.role,
+    freelancerId: state.Auth?.user?.freelancers
   }
 }
 

@@ -17,7 +17,7 @@ const ClearIcon = styled.span`
   display: ${({ $show }) => ($show ? 'inherit' : 'none')};
 `
 
-function MobileSearchFilterProjects({ handleFilterOpenClose, filter, setFilters, filterType = 'projects' }) {
+function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterType = 'projects' }) {
   const minRef = React.useRef()
   const maxRef = React.useRef()
   const [filters, setMobileFilters] = useState({
@@ -438,4 +438,4 @@ function MobileSearchFilterProjects({ handleFilterOpenClose, filter, setFilters,
   )
 }
 
-export default MobileSearchFilterProjects
+export default MobileSearchFilter

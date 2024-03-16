@@ -2,33 +2,28 @@ import React from 'react'
 import styled from 'styled-components'
 import Card from '../../ui/Card'
 import Image from '../../ui/Image'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress'
 import ProgressBar from '../../ui/ProgressBar'
 import Button from '../../ui/Button'
-import {
-  TitleText,
-  DarkText,
-  Absolute,
-  HeadingText,
-} from '../dashboard/style'
-import { useDispatch, useSelector } from 'react-redux';
-import { nullBusinessForm } from '../../../redux/actions';
-import { useRouter } from 'next/router';
+import { TitleText, DarkText, Absolute, HeadingText } from '../dashboard/style'
+import { useDispatch, useSelector } from 'react-redux'
+import { nullBusinessForm } from '../../../redux/actions'
+import { useRouter } from 'next/router'
 
 const CardContainer = styled.div`
-    display: flex;
-    width: 90vw;
-    max-width: 952px;
-    height: 611px;
+  display: flex;
+  width: 90vw;
+  max-width: 952px;
+  height: 611px;
 
-    @media (max-width: 680px) {
-        width: 100%;
-        height: ${props => props.doubleScreenTop || props.doubleScreenBottom ? 'auto' : '100%'};
-    }
-`;
+  @media (max-width: 680px) {
+    width: 100%;
+    height: ${props => (props.doubleScreenTop || props.doubleScreenBottom ? 'auto' : '100%')};
+  }
+`
 
-
-const CreateBusiness = ({ mobile,
+const CreateBusiness = ({
+  mobile,
   titleFontSize,
   doubleScreenTop,
   doubleScreenBottom,
@@ -46,10 +41,11 @@ const CreateBusiness = ({ mobile,
   onUpdate,
   noMargin,
   noTitle,
-  projectType }) => {
-  const store = useSelector(state => state);
-  const dispatch = useDispatch();
-  const router = useRouter();
+  projectType
+}) => {
+  const store = useSelector(state => state)
+  const dispatch = useDispatch()
+  const router = useRouter()
 
   return (
     <CardContainer>
@@ -73,7 +69,11 @@ const CreateBusiness = ({ mobile,
           bar="#37DEC5"
         />
         {title ? (
-          <TitleText mobile={mobile} titleFontSize={titleFontSize} noMargin={noTitle} marginTop={mobile ? '0px' : '40px'}>
+          <TitleText
+            mobile={mobile}
+            titleFontSize={titleFontSize}
+            noMargin={noTitle}
+            marginTop={mobile ? '0px' : '40px'}>
             {title}
           </TitleText>
         ) : null}
@@ -97,20 +97,20 @@ const CreateBusiness = ({ mobile,
                 onClick={onBack}>
                 BACK
               </Button>
-
             </>
-          ) : (<Button
-            oval
-            extraWide={porps => (porps.mobile ? false : true)}
-            mobile={mobile}
-            type="outlineInverse2"
-            onClick={() => {
-              dispatch(nullBusinessForm())
-              router.push('/dashboard')
-            }
-            }>
-            Cancel
-          </Button>)}
+          ) : (
+            <Button
+              oval
+              extraWide={porps => (porps.mobile ? false : true)}
+              mobile={mobile}
+              type="outlineInverse2"
+              onClick={() => {
+                dispatch(nullBusinessForm())
+                router.push('/dashboard')
+              }}>
+              Cancel
+            </Button>
+          )}
           <Button
             disabled={disabled || loading}
             onClick={() => onSubmit(stage)}

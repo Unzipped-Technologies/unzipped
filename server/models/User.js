@@ -49,7 +49,7 @@ const userSchema = new Schema(
     freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
     lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
     freelancerSkills: [{ type: Schema.Types.Mixed, ref: 'freelancerSkills' }],
-    business: { type: Schema.Types.Mixed, refs: 'businesses' },
+    business: { type: Schema.Types.Mixed, ref: 'businesses' },
     // these refer times the user liked freelancers or businesses
     likeTotal: { type: Number, default: 0 },
     dislikeTotal: { type: Number, default: 0 },
@@ -59,7 +59,7 @@ const userSchema = new Schema(
     files: [{ type: Schema.Types.Mixed, ref: 'file' }],
     totalBalance: { type: Number, default: 0 },
     totalPending: { type: Number, default: 0 },
-    thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' },
+    thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' }
   },
   {
     timestamps: true

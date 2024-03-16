@@ -2,6 +2,10 @@ import {
   FREELANCER_LOADING,
   GET_ALL_FREELANCERS,
   GET_FREELANCER_BY_ID,
+  CREATE_SHOWCASE_PROJECT,
+  ADD_EDUCATION,
+  DELETE_SHOWCASE_PROJECT,
+  DELETE_EDUCATION,
   RESET_SELECTED_FREELANCER,
   FREELANCER_ERROR,
   CREATE_USER_INVITATION_SUCCESS,
@@ -41,15 +45,55 @@ export const getFreelancerList = (queryParams, token) => async (dispatch, getSta
   dispatch(stopLoading())
 }
 
-export const getFreelancerById = (id, token) => async (dispatch, getState) => {
+export const getFreelancerById = id => async (dispatch, getState) => {
   dispatch({
     type: FREELANCER_LOADING
   })
   await axios
-    .get(`/api/freelancer/${id}`, tokenConfig(token))
-    .then(res =>
+    .get(`/api/freelancer/${id}`)
+    .then(res => {
       dispatch({
         type: GET_FREELANCER_BY_ID,
+        payload: res.data
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const addEducation = data => async (dispatch, getState) => {
+  dispatch({
+    type: FREELANCER_LOADING
+  })
+  await axios
+    .post(`/api/freelancer/add-education`, data, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: ADD_EDUCATION,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+export const deleteEducation = educationId => async (dispatch, getState) => {
+  dispatch({
+    type: FREELANCER_LOADING
+  })
+  await axios
+    .delete(`/api/freelancer/delete-education/${educationId}`, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: DELETE_EDUCATION,
         payload: res.data
       })
     )
@@ -102,4 +146,63 @@ export const clearSelectedFreelancer = () => async (dispatch, getState) => {
 
 export const freelancerExpandedOpts = params => dispatch => {
   dispatch({ type: SETNAVBAR, payload: params })
+}
+
+export const createShowCaseProject = data => async (dispatch, getState) => {
+  dispatch(startLoading())
+  await axios
+    .post(`/api/freelancer/add-project`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+    .then(res => {
+      dispatch({
+        type: CREATE_SHOWCASE_PROJECT,
+        payload: res.data
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const deleteShowCaseProject = projectID => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  await axios
+    .patch(`/api/freelancer/delete-project/${projectID}`, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: DELETE_SHOWCASE_PROJECT,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const deleteProjectImage = (projectID, imageId) => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  await axios
+    .patch(`/api/freelancer/${projectID}/image/${imageId}`, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: DELETE_SHOWCASE_PROJECT,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
 }
