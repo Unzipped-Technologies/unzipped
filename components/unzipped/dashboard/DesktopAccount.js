@@ -139,7 +139,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
         taxId: business?.taxId,
     }
     const router = useRouter()
-    const [initialUrl] = useState(url.url);
+    const [initialUrl] = useState(url?.url);
     const [userData, setUserData] = useState({
         ...initialState
     })
@@ -187,8 +187,8 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
     }, [])
 
     useEffect(() => {
-        if (url && url.url && url.url !== initialUrl) {
-            router.push(url.url);
+        if (url && url?.url && url?.url !== initialUrl) {
+            router.push(url?.url);
         }
     }, [url, router]);
 
