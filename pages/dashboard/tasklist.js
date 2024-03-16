@@ -45,12 +45,13 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
   const [selectedDepartment, setSelectedDepartment] = useState({})
 
   useEffect(() => {
-    setCurrentBusiness(businesses[0]?._id)
-    setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
-  }, [currentDepartment])
+    if (!access) {
+      router.push('/login')
+    }
+  }, [])
 
-  useEffect(() => {
-    getProjectsList({
+  useEffect(async () => {
+    await getProjectsList({
       take: 'all',
       skip: 0,
       populate: false
@@ -58,10 +59,9 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
   }, [])
 
   useEffect(() => {
-    if (!access) {
-      router.push('/login')
-    }
-  }, [])
+    setCurrentBusiness(businesses[0]?._id)
+    setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
+  }, [businesses])
 
   return (
     <>
