@@ -107,61 +107,46 @@ const getCardLogoUrl = cardType => {
   return stripeLogoEnum[brand]
 }
 
-const DesktopAccount = ({
-  email,
-  stripeAccountId,
-  phone,
-  user,
-  url,
-  getPaymentMethods,
-  getAccountOnboardingLink,
-  getBusinessDetails,
-  balance,
-  getAccountBalance,
-  business,
-  token,
-  paymentMethods = []
-}) => {
-  const primaryPM = paymentMethods.find(e => e.isPrimary)
-  const [editName, setEditName] = useState(false)
-  const [editAddress, setEditAddress] = useState(false)
-  const [editCompany, setEditCompany] = useState(false)
-  const [firstNameError, setFirstNameError] = useState('')
-  const [lastNameError, setLastNameError] = useState('')
-  const [addressLineOneError, setAddressLineOneError] = useState('')
-  const [addressLineTwoError, setAddressLineTwoError] = useState('')
-  const [addressStateError, setAddressStateError] = useState('')
-  const [addressCityError, setAddressCityError] = useState('')
-  const [addressZipError, setAddressZipError] = useState('')
-  const [businessNameError, setBusinessNameError] = useState('')
-  const [businessTypeError, setBusinessTypeError] = useState('')
-  const [businessPhoneError, setBusinessPhoneError] = useState('')
-  const [taxIdError, setTaxIdError] = useState('')
-  const initialState = {
-    firstName: user?.FirstName,
-    lastName: user?.LastName,
-    addressLineOne: user?.AddressLineOne,
-    addressLineTwo: user?.AddressLineTwo,
-    addressState: user?.AddressState,
-    addressCity: user?.AddressCity,
-    addressZip: user?.AddressZip,
-    businessName: business?.name,
-    businessType: business?.type,
-    businessPhone: business?.businessPhone,
-    taxId: business?.taxId
-  }
-  const router = useRouter()
-  const [initialUrl] = useState(url.url)
-  const [userData, setUserData] = useState({
-    ...initialState
-  })
-
-  const updateForm = (type, data) => {
-    setUserData({
-      ...userData,
-      [type]: data
+const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMethods, getAccountOnboardingLink, getBusinessDetails, balance, getAccountBalance, business, token, paymentMethods = []}) => {
+    const primaryPM = paymentMethods.find(e => e.isPrimary)
+    const [editName, setEditName] = useState(false)
+    const [editAddress, setEditAddress] = useState(false)
+    const [editCompany, setEditCompany] = useState(false)
+    const [firstNameError, setFirstNameError] = useState('')
+    const [lastNameError, setLastNameError] = useState('')
+    const [addressLineOneError, setAddressLineOneError] = useState('')
+    const [addressLineTwoError, setAddressLineTwoError] = useState('')
+    const [addressStateError, setAddressStateError] = useState('')
+    const [addressCityError, setAddressCityError] = useState('')
+    const [addressZipError, setAddressZipError] = useState('')
+    const [businessNameError, setBusinessNameError] = useState('')
+    const [businessTypeError, setBusinessTypeError] = useState('')
+    const [businessPhoneError, setBusinessPhoneError] = useState('')
+    const [taxIdError, setTaxIdError] = useState('')
+    const initialState = {
+        firstName: user?.FirstName,
+        lastName: user?.LastName,
+        addressLineOne: user?.AddressLineOne,
+        addressLineTwo: user?.AddressLineTwo,
+        addressState: user?.AddressState,
+        addressCity: user?.AddressCity,
+        addressZip: user?.AddressZip,
+        businessName: business?.name,
+        businessType: business?.type,
+        businessPhone: business?.businessPhone,
+        taxId: business?.taxId,
+    }
+    const router = useRouter()
+    const [initialUrl] = useState(url?.url);
+    const [userData, setUserData] = useState({
+        ...initialState
     })
-  }
+
+    const updateForm = (type, data) => {
+        setUserData({
+          ...userData,
+          [type]: data
+    })
 
   const validateString = ({ item, min, max, message }, setError) => {
     if (item === '') {
@@ -176,12 +161,7 @@ const DesktopAccount = ({
     }
   }
 
-  const validateEin = ({ item, message }, setError) => {
-    if (item === '') {
-      setError('This field is required!')
-      return
-    }
-    const isValid = ValidationUtils._validateEIN(item)
+  const isValid = ValidationUtils._validateEIN(item)
     if (isValid) {
       setError('')
     } else {
@@ -197,6 +177,12 @@ const DesktopAccount = ({
     getPaymentMethods(token)
     getBusinessDetails(undefined, token)
   }, [])
+
+  useEffect(() => {
+      if (url && url?.url && url?.url !== initialUrl) {
+        router.push(url?.url);
+      }
+  }, [url, router]);
 
   useEffect(() => {
     if (url && url.url && url.url !== initialUrl) {
