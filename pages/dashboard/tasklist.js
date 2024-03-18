@@ -37,7 +37,7 @@ const Container = styled.div`
   }
 `
 
-const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
+const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
   const router = useRouter()
 
   const access = token?.access_token || cookie
@@ -98,7 +98,7 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
           {window.innerWidth > 600 && <TasksPanel selectedDepartment={selectedDepartment} />}
         </Container>
       ) : (
-        <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+        !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
       )}
     </>
   )
@@ -116,7 +116,8 @@ const mapStateToProps = state => {
   return {
     businesses: state?.Business?.projectList,
     cookie: state.Auth.token,
-    currentDepartment: state.Tasks.currentDepartment
+    currentDepartment: state.Tasks.currentDepartment,
+    loading: state.Loading?.loading
   }
 }
 

@@ -15,8 +15,10 @@ router.post(
   upload.array('images', 3),
   async (req, res) => {
     try {
-      req.body['userId'] = req.user.sub
-      const createBusiness = await businessHelper.createBusiness(req.body, req.user.sub, req.files)
+      const data = JSON.parse(req.body?.projectDetails)
+      console.log('data', data)
+      data['userId'] = req.user.sub
+      const createBusiness = await businessHelper.createBusiness(data, req.user.sub, req.files)
       if (!createBusiness) throw Error('business already exists')
       res.json(createBusiness)
     } catch (e) {
@@ -165,7 +167,8 @@ router.get(
   }
 )
 
-router.post('/details',
+router.post(
+  '/details',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
@@ -177,12 +180,15 @@ router.post('/details',
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  }
+)
 
-router.post('/details/create',
+router.post(
+  '/details/create',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
+    req.body.userId = req.user.sub
     const id = req.body.userId || req.user.sub
     try {
       const businessDetails = await businessHelper.createBusinessDetails(req.body, id)
@@ -191,9 +197,11 @@ router.post('/details/create',
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  }
+)
 
-router.post('/details/update',
+router.post(
+  '/details/update',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
@@ -205,6 +213,7 @@ router.post('/details/update',
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  }
+)
 
 module.exports = router

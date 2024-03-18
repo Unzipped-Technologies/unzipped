@@ -30,16 +30,8 @@ router.get('/google/callback', passport.authenticate('google'), (req, res) => {
 })
 
 router.post('/register', async (req, res, next) => {
-
-
   try {
-    const { user } = req.body;
-    const decodeUserCredentials = Buffer.from(user, 'base64').toString('utf-8');
-    const userCredentials = JSON.parse(decodeUserCredentials);
-    const { email, password } = userCredentials;
-    const data = userCredentials;
-
-    const existingUser = await AuthService.isExistingUser(email, false)
+    const existingUser = await AuthService.isExistingUser(req.body?.email, false)
 
     if (existingUser) {
       if (existingUser.googleId) {
@@ -48,10 +40,10 @@ router.post('/register', async (req, res, next) => {
         throw Error('User with this email already exists')
       }
     } else {
-      data.isEmailVerified = true
-      const hash = await AuthService.bcryptAndHashing(password)
-      let newuser = await userHelper.createUser(data, hash)
-      const existingUsers = await AuthService.isExistingUser(email, false)
+      req.body.isEmailVerified = true
+      const hash = await AuthService.bcryptAndHashing(req.body?.password)
+      let newuser = await userHelper.createUser(req.body, hash)
+      const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
       res.cookie('access_token', token.signToken(newuser._id), { httpOnly: true })
@@ -287,18 +279,19 @@ router.get('/github', async (req, res) => {
     } else {
       githubUser.emails = [githubUser.email]
     }
-    let isGithubVerified = false;
+    let isGithubVerified = false
     const existingUser = await AuthService.isExistingUser(githubUser.email, false)
     if (existingUser) {
       await AuthService.updateUsersGithubDetails(existingUser.id)
       await AuthService.addThirdPartyAppDetails({
-        userId: existingUser.id, github: {
-          githubId: githubUser.id, 
-          userName: githubUser.login, 
+        userId: existingUser.id,
+        github: {
+          githubId: githubUser.id,
+          userName: githubUser.login,
           avatarUrl: githubUser.avatar_url
-        },
+        }
       })
-      isGithubVerified = true;
+      isGithubVerified = true
     }
     res.redirect(`/create-your-business?github-connect=${isGithubVerified}`)
   } catch (error) {
