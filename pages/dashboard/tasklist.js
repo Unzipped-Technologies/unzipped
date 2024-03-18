@@ -78,24 +78,28 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
           router.back()
         }}
       />
-      <Container>
-        <ProjectsPanel
-          businesses={businesses}
-          currentBusiness={currentBusiness}
-          selectedDepartment={selectedDepartment}
-          onSelectDepartment={value => {
-            setSelectedDepartment(value)
-            setDepartment(value)
-            if (window.innerWidth <= 600) {
-              router.push(`department/${value._id}`)
-            }
-          }}
-          onSelectBusiness={value => {
-            setCurrentBusiness(value)
-          }}
-        />
-        {window.innerWidth > 600 && <TasksPanel selectedDepartment={selectedDepartment} />}
-      </Container>
+      {!businesses?.length ? (
+        <Container>
+          <ProjectsPanel
+            businesses={businesses}
+            currentBusiness={currentBusiness}
+            selectedDepartment={selectedDepartment}
+            onSelectDepartment={value => {
+              setSelectedDepartment(value)
+              setDepartment(value)
+              if (window.innerWidth <= 600) {
+                router.push(`department/${value._id}`)
+              }
+            }}
+            onSelectBusiness={value => {
+              setCurrentBusiness(value)
+            }}
+          />
+          {window.innerWidth > 600 && <TasksPanel selectedDepartment={selectedDepartment} />}
+        </Container>
+      ) : (
+        <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+      )}
     </>
   )
 }
