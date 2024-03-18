@@ -78,7 +78,7 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
           router.back()
         }}
       />
-      {!businesses?.length ? (
+      {businesses?.length ? (
         <Container>
           <ProjectsPanel
             businesses={businesses}
