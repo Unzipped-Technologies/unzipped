@@ -593,7 +593,7 @@ const Panel = ({
         }}>
         <div className="d-flex align-items-center">
           <TitleText width="max-content" noMargin size="24px" paddingRight="20px">
-            {listInfo.listTitle}hhhhhh
+            {listInfo.listTitle}
           </TitleText>
           {type === 'department' && (
             <Button
@@ -679,9 +679,9 @@ const Panel = ({
         </NoUsersInList>
       )}
 
-      { 
+      {
         !isFavLoading ? (isFavourite && freelancer.length > 0) ? (
-          <>{ 
+          <>{
             freelancer.map((item, index) => (
               <FreelancerListingCard user={item} width={'650px'} key={index} includeRate={10} />
             ))
@@ -689,35 +689,34 @@ const Panel = ({
           </>
         ) : (
           ((isFavourite && freelancer.length < 1) ? (
-            <> 
+            <>
               <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            paddingBottom: '15px'
-                        }}>
-                            <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
-                            <FreelancerNotFound />
-                            <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
-                            <p>Add freelancer to your list to quickly find them later. </p>
-                            <Button onClick={hanleFreelancersBrowsing} style={{
-                                background: '#37DEC5',
-                                color: '#363636',
-                                lineHeight: '24.5px',
-                                fontSize: '15px',
-                                fontFamily: 'Roboto',
-                                border: '0',
-                                borderRadius: '32px'
-                            }}>
-                                Browse Freelancers
-                            </Button>
-                        </div>
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                alignItems: 'center',
+                paddingBottom: '15px'
+              }}>
+                <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
+                <FreelancerNotFound />
+                <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+                <p>Add freelancer to your list to quickly find them later. </p>
+                <Button onClick={hanleFreelancersBrowsing} style={{
+                  background: '#37DEC5',
+                  color: '#363636',
+                  lineHeight: '24.5px',
+                  fontSize: '15px',
+                  fontFamily: 'Roboto',
+                  border: '0',
+                  borderRadius: '32px'
+                }}>
+                  Browse Freelancers
+                </Button>
+              </div>
             </>
           ) : (<></>))
         ) : (<></>)
       }
-      {/* {(isFavourite || isMyTeam || isRecentlyViewed) && ( */}
       <ListManagementPanel
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -727,7 +726,6 @@ const Panel = ({
         userId={userInfo}
         setSelectedValue={setSelectedValue}
       />
-      {/* )}*/}
       {isRecentlyViewed && recentlyViewedList.length > 0 ? (
         <UserContainer>
           {recentlyViewedList.map((item, index) => (

@@ -118,9 +118,7 @@ const SelectIconLabel = styled.span`
         fontStyle: 'normal',
         lineHeight: '4.5rem',
         letterSpacing: LETTER_SPACING,
-    })};
-    // margin-top: 12px;
-    // margin-bottom: 6px;
+    })};<
 `;
 
 const useStyles = makeStyles((theme) => ({
@@ -253,6 +251,7 @@ const ListManagementPanel = ({
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{ timeout: 500, }}
+                onClose={handleClose}
             >
                 <Fade in={isModalOpen}>
                     <div className={classes.paper}>

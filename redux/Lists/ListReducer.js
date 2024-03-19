@@ -6,6 +6,8 @@ import {
     EDIT_USER_LIST,
     EDIT_USER_LIST_ERROR,
     EDIT_USER_LIST_SUCCESS,
+
+    ON_UPDATE_LIST
 } from "./constant";
 
 
@@ -13,6 +15,7 @@ const INIT_STATE = {
     loading: false,
     list: null,
     error: null,
+    updatedList: null
 }
 
 
@@ -48,6 +51,11 @@ const Lists = (state = INIT_STATE, action) => {
         case EDIT_USER_LIST_ERROR:
             {
                 return { ...state, loading: false, error: action.payload };
+            }
+        
+        case ON_UPDATE_LIST:
+            {
+                return { ...state, updatedList: { ...action?.payload } }
             }
         default:
             return state;

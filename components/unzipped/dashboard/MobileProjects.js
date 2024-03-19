@@ -83,7 +83,6 @@ function MobileProjects({
     setIsViewable(true)
     setListName(item.name)
     setIsLogoHidden(true)
-    console.log('mobile_view_items', item)
     setListInfo({ listId: item._id, listTitle: item.name, listIcon: item.icon })
   }
 

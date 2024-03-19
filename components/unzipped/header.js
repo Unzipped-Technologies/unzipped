@@ -686,9 +686,8 @@ const Nav = ({
                 setIsViewable(false)
                 setListName('')
                 setIsLogoHidden(false)
-                onBackArrowClick()
               }}>
-              <BackArrow />
+              {!isListViewable && (<BackArrow />)}
             </div>
             <span
               style={{

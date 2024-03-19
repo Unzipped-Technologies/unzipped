@@ -30,7 +30,6 @@ const createUser = async (data, hash) => {
     plan: planEnum.UNSUBSCRIBED
   })
   // create favorites and recently viewed list
-  if (accountTypeEnum.FOUNDER === data.role || accountTypeEnum.ADMIN === data.role) {
     const listsToCreate = [
       {
         name: 'Favorites',
@@ -50,6 +49,7 @@ const createUser = async (data, hash) => {
         name: item.name,
         icon: item.icon,
         userId: newUser.id,
+        isDefault: true,
         user: await user.findById(newUser.id)
       }
       await listHelper.createLists(list)
@@ -59,7 +59,6 @@ const createUser = async (data, hash) => {
     await user.findByIdAndUpdate(newUser.id, {
       lists: ids.map(item => mongoose.Types.ObjectId(item.id))
     })
-  }
 
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
