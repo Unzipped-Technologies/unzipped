@@ -93,7 +93,7 @@ const HireDivider = ({ title }) => {
             <ResponsiveHeader>
                 <BackIcon color='#000' />
                 <NotificationText fontSize="16px" fontWeight="500" width="100%" marginLeft="20px">
-                    Confirm Payment Details
+                    {title ? title : 'Confirm Payment Details'}
                 </NotificationText>
             </ResponsiveHeader>
         </>

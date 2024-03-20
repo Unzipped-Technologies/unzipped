@@ -56,6 +56,8 @@ const TitleText = styled.div`
   @media screen and (max-width: 600px) {
     width: ${({ width }) => (width ? width : '100%')};
     display: flex;
+    margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '10px')};
+    margin-top: ${({ marginTop }) => (marginTop ? marginTop : '10px')};
   }
 `
 
@@ -114,7 +116,7 @@ const DarkText = styled.div`
 
   @media screen and (max-width: 600px) {
     padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
-    margin-left: 10px;
+    margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '10px')};
     font-size: 16px;
     line-height: '18px';
   }
@@ -223,6 +225,7 @@ const WhiteCard = styled.div`
     display: flex;
     width: 100%;
     justify-content: space-between;
+    padding:10px;
   }
 `
 
@@ -269,6 +272,7 @@ const Grid2 = styled.div`
   grid-template-columns: 1fr 1fr;
   width: ${({ block }) => (block ? '100%' : '80%')};
   margin: ${({ margin }) => (margin ? margin : '75px 0px')};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
   @media screen and (max-width: 600px) {
     display: flex;
     flex-direction: column;

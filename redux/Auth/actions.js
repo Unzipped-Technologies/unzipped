@@ -84,6 +84,7 @@ export const selectAPlan = (data) => async (dispatch) => {
 };
 
 export const updateSubscriptionForm = (data) => async (dispatch) => {
+    console.log('dispatch', data)
     dispatch({
         type: UPDATE_SUBSCRIPTION_FORM,
         payload: data,

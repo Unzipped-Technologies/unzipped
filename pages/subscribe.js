@@ -172,7 +172,6 @@ Subscribe.getInitialProps = async ({ req, res }) => {
     }
 
 const mapStateToProps = (state) => {
-    console.log(state)
     return {
         token: state.Auth.token,
         selectedPlan: state.Auth.selectedPlan,

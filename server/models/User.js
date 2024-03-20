@@ -60,6 +60,7 @@ const userSchema = new Schema(
     totalBalance: { type: Number, default: 0 },
     totalPending: { type: Number, default: 0 },
     thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' },
+    isAgreeTransferTerms: { type: Boolean, default: false },
   },
   {
     timestamps: true
