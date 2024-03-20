@@ -13,7 +13,7 @@ import WithdrawalTerms from './WithdrawalTerms';
 const useStyles = makeStyles((theme) => ({
     formControl: {
         marginTop: theme.spacing(1),
-        width: 200,
+        width: 250,
         border: '1px solid #ccc',
         borderRadius: '5px',
         padding: '10px',
@@ -100,9 +100,9 @@ const Label = styled.label`
 `
 
 const InputStyled = styled.input`
-    width: 200px !important;
+    width: 250px !important;
     height: 40px;
-    padding: 10px;
+    padding-left: 10px !important;
     border-radius: 5px !important;
     border: 1px solid #ccc !important;
     margin-top: 5px !important;
@@ -174,6 +174,12 @@ const PolicyCompliance = styled.div`
     border: 1px solid blue;
     display: flex;
     gap: 10px;
+`;
+const PaymentMethodInfo = styled.span`
+    font-size: 9px;
+    color: #17a2b8;
+    display: inline-block;
+    margin-left: 10px
 `
 const WithdrawalComponent = ({ user, token, form, updateSubscription }) => {
     const classes = useStyles();
@@ -190,7 +196,7 @@ const WithdrawalComponent = ({ user, token, form, updateSubscription }) => {
     return (
         <RecurringWrapper>
             <HireDivider title="Express withdrawal" />
-            {(user?.isAgreeTransferTerms && user?.isAgreeTransferTerms == true) ? (
+            {!(user?.isAgreeTransferTerms && user?.isAgreeTransferTerms == true) ? (
                 <WithdrawalContainer>
                     <PolicyCompliance>
                         <div>
@@ -251,10 +257,22 @@ const WithdrawalComponent = ({ user, token, form, updateSubscription }) => {
                                         value={withdrawalType}
                                         onChange={handelePaymentWithrawalType}
                                     >
-                                        <MenuItem value={"express"}>Express Withdrawal</MenuItem>
-                                        <MenuItem value={"payoneer"}>Payoneer</MenuItem>
-                                        <MenuItem value={"wire"}>Wire Transfer</MenuItem>
-                                        <MenuItem value={"debit"}>Freelancer Debit Card</MenuItem>
+                                        <MenuItem value={"express"}>
+                                            Express Withdrawal
+                                            <PaymentMethodInfo> No Fee</PaymentMethodInfo>
+                                        </MenuItem>
+                                        <MenuItem value={"payoneer"}>
+                                            Payoneer
+                                            <PaymentMethodInfo>1.5% Fees</PaymentMethodInfo>
+                                        </MenuItem>
+                                        <MenuItem value={"wire"}>
+                                            Wire Transfer
+                                            <PaymentMethodInfo>Fees vary</PaymentMethodInfo>
+                                        </MenuItem>
+                                        <MenuItem value={"debit"}>
+                                            Freelancer Debit Card
+                                            <PaymentMethodInfo>No Fee</PaymentMethodInfo>
+                                        </MenuItem>
                                     </Select>
                                 </FormControl>
                             </div>
