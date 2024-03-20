@@ -1,10 +1,14 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react'
-import IconComponent from '../ui/icons/IconComponent'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
+import Checkbox from '@mui/material/Checkbox'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+
 import { Icon } from '../ui'
+import IconComponent from '../ui/icons/IconComponent'
+import { BUDGET_TYPE, RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
 
 const Container = styled.div`
-  // position: sticky;
   top: 265px;
   height: fit-content;
   color: #343a40 !important;
@@ -49,61 +53,17 @@ const ClearIcon = styled.span`
   display: ${({ $show }) => ($show ? 'inherit' : 'none')};
 `
 
-const CheckBox = styled.div`
-  max-width: 18px;
-  min-width: 18px;
-  min-height: 18px;
-  max-height: 18px;
-  border: 1px solid;
-  border-color: ${({ borderColor }) => (borderColor ? borderColor : 'rgba(102, 102, 102, 0.70)')};
-  background-color: ${({ backgroundColor }) => backgroundColor && backgroundColor};
-  border-radius: 2px;
-`
-
-function DesktopSearchFilterProjects({
-  handleProjectTypes,
-  maxRate,
-  setMaxRate,
-  setMinRate,
-  minRate,
-  freelancerSkillsList,
-  setSkill
-}) {
-  const minRef = useRef()
-  const maxRef = useRef()
-
-  const [skillData, setSkillData] = useState([
-    ...freelancerSkillsList.slice(+freelancerSkillsList.length - 4, freelancerSkillsList.length)
-  ])
-  const [skills, setSkills] = useState([])
+function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'projects' }) {
+  const [minRate, setMinRate] = useState(0)
+  const [maxRate, setMaxRate] = useState(0)
   const [suggestions, setSuggestions] = useState([])
   const [userInput, setUserInput] = useState('')
   const [error, setError] = useState({ maxError: '', minError: '' })
-  const [uniqueSkills, setUniqueSkills] = useState(
-    Object.values(
-      freelancerSkillsList.reduce((accumulator, skill) => {
-        accumulator[skill.skill] = skill
-        return accumulator
-      }, {})
-    )
-  )
-  const [projectTypes, setProjectTypes] = useState({
-    hourlyRate: false,
-    fixedPrice: false
-  })
-
-  useEffect(() => {
-    handleType()
-  }, [projectTypes])
-
-  useMemo(() => {
-    setSkill([...skills])
-  }, [skills])
 
   const handleSuggestions = event => {
     const input = event.target.value.toLowerCase()
     setUserInput(input)
-    var matchingSkills = uniqueSkills.filter(skill => skill.skill.toLowerCase().includes(input))
+    var matchingSkills = RECENT_SKILLS.filter(skill => skill.value.toLowerCase().includes(input))
     if (!input) {
       setSuggestions([])
     } else {
@@ -111,16 +71,15 @@ function DesktopSearchFilterProjects({
     }
   }
 
-  const handleSuggestionClick = value => {
-    setSkills(prev => [...prev, value?.skill])
-    setUserInput(value?.skill)
-    setSkillData(prev => [...prev.filter(skill => skill.skill !== value.skill), value])
-    setUniqueSkills(prev => [...prev.filter(skill => skill.skill !== value.skill)])
+  const handleSuggestionClick = ({ value }) => {
+    setFilters('skill', value)
+    setUserInput(value)
   }
 
   const handleBlur = e => {
     const { name, value } = e.target
-    if (name === 'min') {
+    const { minRate, maxRate } = filter
+    if (name === 'minRate') {
       if (+value > +maxRate && +maxRate) {
         setError(prev => ({
           ...prev,
@@ -139,7 +98,7 @@ function DesktopSearchFilterProjects({
           minError: ''
         }))
       }
-    } else if (name === 'max') {
+    } else if (name === 'maxRate') {
       if (+value < +minRate && +minRate) {
         setError(prev => ({
           ...prev,
@@ -159,40 +118,11 @@ function DesktopSearchFilterProjects({
         }))
       }
     }
-    if (name === 'min') {
+    if (name === 'minRate') {
       setMinRate(value)
     } else {
       setMaxRate(value)
     }
-  }
-
-  const handleType = () => {
-    const filteredTypes = Object.keys(projectTypes).filter(val => projectTypes[val] === true)
-    if (filteredTypes.length && filteredTypes.length === 1) {
-      if (filteredTypes.includes('hourlyRate')) {
-        handleProjectTypes('Hourly Rate')
-      } else {
-        handleProjectTypes('Fixed Price')
-      }
-    } else {
-      handleProjectTypes('')
-    }
-  }
-
-  const handleProjectType = feildName => {
-    setProjectTypes(prevData => ({
-      ...prevData,
-      [feildName]: !prevData[feildName]
-    }))
-  }
-
-  const handleClearProjectType = () => {
-    setProjectTypes({
-      ...projectTypes,
-      hourlyRate: false,
-      fixedPrice: false
-    })
-    handleProjectTypes('')
   }
 
   return (
@@ -201,36 +131,82 @@ function DesktopSearchFilterProjects({
         <P fontSize="20px" fontWeight="600">
           Filters
         </P>
-        <div className="d-flex justify-content-between pt-4 pb-4">
-          <P fontSize="20px" fontWeight="600">
-            Project type
-          </P>
-          <P cursor="pointer" fontSize="18px" fontWeight="500" color="#0057FF" onClick={handleClearProjectType}>
-            Clear
-          </P>
-        </div>
-        {Object.keys(projectTypes).map((type, index) => {
-          return (
-            <div className="d-flex " key={`${type}_index`} onClick={() => handleProjectType(type)}>
-              {projectTypes[type] ? (
-                <CheckBox backgroundColor="rgba(102, 102, 102, 0.1)">
-                  <span
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      fontSize: 'smaller',
-                      fontWeight: 'bolder'
-                    }}>
-                    ✓
-                  </span>
-                </CheckBox>
-              ) : (
-                <CheckBox borderColor="rgba(102, 102, 102, 0.20)"></CheckBox>
-              )}
-              <p className="mx-3">{index === 0 ? 'Hourly Rate' : 'Fixed Price'}</p>
+        {filterType === 'freelancer' && (
+          <>
+            <div className="d-flex justify-content-between">
+              <P fontSize="20px" fontWeight="600">
+                Sort By
+              </P>
+              <P
+                cursor="pointer"
+                fontSize="18px"
+                fontWeight="500"
+                color="#0057FF"
+                onClick={() => {
+                  setFilters('sort', '')
+                }}>
+                Clear
+              </P>
             </div>
-          )
-        })}
+            <select
+              style={{ display: 'block', border: '1px solid #BCC5D3', height: '45px' }}
+              value={filter?.sort}
+              onChange={e => setFilters('sort', e?.target?.value)}>
+              {SORT_OPTIONS.map((category, index) => (
+                <option key={index} value={category?.value}>
+                  {category?.text}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
+
+        {filterType === 'projects' && (
+          <>
+            <div className="d-flex justify-content-between pt-4">
+              <P fontSize="20px" fontWeight="600">
+                Project type
+              </P>
+              <P
+                cursor="pointer"
+                fontSize="18px"
+                fontWeight="500"
+                color="#0057FF"
+                onClick={() => {
+                  setFilters('projectBudgetType', '')
+                }}>
+                Clear
+              </P>
+            </div>
+            <FormGroup>
+              {BUDGET_TYPE?.map((type, index) => (
+                <FormControlLabel
+                  key={index}
+                  style={{
+                    fontFamily: 'Roboto',
+                    fontSize: '18px',
+                    fontWeight: 400,
+                    lineHeight: '20px',
+                    letterSpacing: '0.15007999539375305px',
+                    textAlign: 'left',
+                    color: '#000000'
+                  }}
+                  control={
+                    <Checkbox
+                      checked={type === filter?.projectBudgetType}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                      onChange={e => {
+                        setFilters('projectBudgetType', e?.target?.checked ? type : '')
+                      }}
+                    />
+                  }
+                  label={type}
+                />
+              ))}
+            </FormGroup>
+          </>
+        )}
+
         <div className="d-flex justify-content-between align-items-center pt-3">
           <P fontSize="20px" fontWeight="600">
             Rate
@@ -241,8 +217,10 @@ function DesktopSearchFilterProjects({
             fontWeight="500"
             color="#0057FF"
             onClick={() => {
-              setMaxRate('')
+              setFilters('minRate', '')
+              setFilters('maxRate', '')
               setMinRate('')
+              setMaxRate('')
               setError({ maxError: '', minError: '' })
             }}>
             Clear
@@ -259,12 +237,17 @@ function DesktopSearchFilterProjects({
               </svg>
             </span>
             <input
-              ref={minRef}
               type="number"
               value={minRate}
-              name="min"
+              id="minRate"
+              name="minRate"
               onBlur={handleBlur}
               onChange={handleBlur}
+              onKeyDown={event => {
+                if (event?.key === 'Enter') {
+                  setFilters('minRate', event?.target?.value)
+                }
+              }}
               style={{ margin: '0', border: '0', height: '37px' }}></input>
             <span className="px-2">
               <b>USD</b>
@@ -272,7 +255,6 @@ function DesktopSearchFilterProjects({
           </div>
           {error?.minError && <p style={{ fontSize: '12px', color: 'red' }}>{error?.minError}</p>}
         </div>
-
         <div>
           <P margin="24px 0 0 0" fontSize="18px" fontWeight="600">
             max
@@ -284,12 +266,17 @@ function DesktopSearchFilterProjects({
               </svg>
             </span>
             <input
-              ref={maxRef}
               type="number"
               value={maxRate}
-              name="max"
+              id="maxRate"
+              name="maxRate"
               onBlur={handleBlur}
               onChange={handleBlur}
+              onKeyPress={event => {
+                if (event?.key === 'Enter') {
+                  setFilters('maxRate', event?.target?.value)
+                }
+              }}
               style={{ margin: '0', border: '0', height: '37px' }}></input>
             <span className="px-2">
               <b>USD</b>
@@ -297,7 +284,6 @@ function DesktopSearchFilterProjects({
           </div>
           {error?.maxError && <p style={{ fontSize: '12px', color: 'red' }}>{error?.maxError}</p>}
         </div>
-
         <div className="d-flex justify-content-between align-items-center pt-5">
           <P fontSize="20px" fontWeight="600">
             Skills
@@ -308,20 +294,7 @@ function DesktopSearchFilterProjects({
             fontWeight="500"
             color="#0057FF"
             onClick={() => {
-              setUniqueSkills(
-                Object.values(
-                  freelancerSkillsList.reduce((accumulator, skill) => {
-                    accumulator[skill.skill] = skill
-                    return accumulator
-                  }, {})
-                )
-              )
-              setSuggestions([])
-              setUserInput('')
-              setSkills([])
-              setSkillData([
-                ...freelancerSkillsList.slice(+freelancerSkillsList.length - 4, freelancerSkillsList.length)
-              ])
+              setFilters('skill', [])
             }}>
             Clear
           </P>
@@ -356,51 +329,50 @@ function DesktopSearchFilterProjects({
                   setUserInput('')
                   setSuggestions([])
                 }}>
-                {skill?.skill}
+                {skill?.text}
               </Li>
             ))}
           </ul>
         </div>
-        {skillData?.map((skill, index) => (
-          <div className="d-flex" style={{ lineHeight: 'normal' }} key={`${skill.skill}_${index}`}>
-            {skills.includes(skill?.skill) ? (
-              <div
-                onClick={() => {
-                  setSkills(skills.filter(data => data !== skill?.skill))
-                  setUniqueSkills(prev => [...prev, skill])
-                  setSkillData(prev => [...prev.filter(data => data.skill !== skill.skill)])
-                }}
+        <FormGroup>
+          {RECENT_SKILLS?.map((skill, index) => (
+            <div className="d-flex" style={{ lineHeight: 'normal' }} key={`${skill.value}_${index}`}>
+              <FormControlLabel
                 style={{
-                  maxWidth: '18px',
-                  minWidth: '18px',
-                  minHeight: '18px',
-                  maxHeight: '18px',
-                  border: '1px solid rgba(102, 102, 102, 0.70)',
-                  backgroundColor: 'rgba(102, 102, 102, 0.1)',
-                  borderRadius: '2px'
-                }}>
-                <span style={{ display: 'flex', justifyContent: 'center', fontSize: 'smaller', fontWeight: 'bolder' }}>
-                  ✓
-                </span>
-              </div>
-            ) : (
-              <div
-                onClick={() => {
-                  setSkills(prev => [...prev, skill?.skill])
-                  setUniqueSkills(prev => [...prev.filter(data => data.skill !== skill.skill)])
+                  fontFamily: 'Roboto',
+                  fontSize: '18px',
+                  fontWeight: 400,
+                  lineHeight: '20px',
+                  letterSpacing: '0.15007999539375305px',
+                  textAlign: 'left',
+                  color: '#000000'
                 }}
-                style={{
-                  maxWidth: '18px',
-                  minWidth: '18px',
-                  minHeight: '18px',
-                  maxHeight: '18px',
-                  border: '1px solid rgba(102, 102, 102, 0.20)',
-                  borderRadius: '2px'
-                }}></div>
-            )}
-            <p className="mx-3">{skill?.skill}</p>
-          </div>
-        ))}
+                control={
+                  <Checkbox
+                    checked={filter?.skill?.includes(skill?.value)}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                    onChange={e => {
+                      const updatedSkills = [...filter?.skill]
+
+                      if (e.target.checked) {
+                        updatedSkills.push(skill.value)
+                      } else {
+                        const index = updatedSkills.indexOf(skill.value)
+                        if (index !== -1) {
+                          updatedSkills.splice(index, 1)
+                        }
+                      }
+                      setFilters('skill', updatedSkills)
+                    }}
+                  />
+                }
+                label={skill.text}
+              />
+
+              <p className="mx-3">{skill?.skill}</p>
+            </div>
+          ))}
+        </FormGroup>
       </div>
     </Container>
   )

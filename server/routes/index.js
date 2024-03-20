@@ -7,7 +7,7 @@ router.use('/freelancerSkills', require('./freelancerSkillsRoutes'))
 router.use('/product', require('./productRoutes'))
 router.use('/payment', require('./billingRoutes'))
 router.use('/contract', require('./contractRoutes'))
-router.use('/stripe', require('./bankingRoutes'));
+router.use('/stripe', require('./bankingRoutes'))
 router.use('/dashboard', require('./dashboardRoutes'))
 router.use('/facebook', require('./facebookRoutes'))
 router.use('/list', require('./listRoutes'))
@@ -26,11 +26,11 @@ router.use('/tasks', require('./taskRoutes'))
 router.use('/tags', require('./tagRoutes'))
 router.use('/department', require('./departmentRoutes'))
 router.use('/freelancer', require('./freelancerRoutes'))
-router.use('/list-entries', require('./listEntriesRoute'));
+router.use('/list-entries', require('./listEntriesRoute'))
 router.use('/questions', require('./questionRoutes'))
 router.use('/projectApplication', require('./projectApplicationsRoutes'))
 
-router.use('/meeting', require('./meetingRoutes'));
-router.use('/calender', require('./CalenderSettingRoutes'));
+router.use('/meeting', require('./meetingRoutes'))
+router.use('/calender', require('./CalenderSettingRoutes'))
 
 module.exports = router

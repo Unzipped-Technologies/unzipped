@@ -7,7 +7,7 @@ const freelancerSkillsSchema = new Schema(
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },
     yearsExperience: { type: Number, default: 0 },
-    freelancerId: { type: Schema.Types.ObjectId, refs: 'users' }
+    freelancerId: { type: Schema.Types.ObjectId, ref: 'users' }
   },
   {
     timestamps: true

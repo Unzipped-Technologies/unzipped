@@ -4,45 +4,14 @@ import {
   DELETE_BUSINESS,
   GET_BUSINESSES,
   SELECT_BUSINESS,
-  CREATE_DEPARTMENT,
-  UPDATE_DEPARTMENT,
-  DELETE_DEPARTMENT,
-  GET_DEPARTMENTS,
-  GET_DEPARTMENT_BY_ID,
-  CREATE_TAG,
-  UPDATE_TAG,
-  GET_TAGS,
-  DELETE_TAG,
-  CREATE_STORY,
-  UPDATE_STORY,
-  DELETE_STORY,
-  SELECT_DEPARTMENT,
-  GET_STORIES,
-  REORDER_STORIES,
-  SORT_STORIES_ON_DRAG,
-  DEPARTMENT_ERROR,
   RESET_BUSINESS_FORM,
   UPDATE_BUSINESS_FORM,
   LOAD_STATE,
   SUCCESS,
-  ADD_COMMENT_TO_STORY,
   CREATE_FILE,
-  REMOVE_COMMENT_FROM_STORY,
-  UPDATE_CREATE_STORY,
   GET_PROJECT_LIST,
-  GET_PROJECT_SUCCESS,
-  GET_TASK_HOURS_BY_BUSINESS,
-  UPDATE_TASK_HOURS_DATE,
-  UPDATE_TASK_HOURS,
-  UPDATE_TASK_STATUS,
-  CREATE_TASK_AND_TASK_HOURS,
-  GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
   GET_PROJECT_Error,
   GET_PROJECT_LIST_AND_APPEND,
-  CREATE_BUSINESS_DETAILS,
-  UPDATE_BUSINESS_DETAILS,
-  GET_BUSINESS_DETAILS,
-  SUBMIT_PROJECT_WIZARD_DETAILS,
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
   UPDATE_WIZARD_SUBMISSION
@@ -141,88 +110,6 @@ const Business = (state = INIT_STATE, action = {}) => {
         stories: action.payload?.stories || [],
         employees: action.payload?.employees || []
       }
-    case CREATE_DEPARTMENT:
-      return { ...state, loading: false, departments: action.payload }
-    case UPDATE_DEPARTMENT:
-      const RemoveUpdateItem = state.departments.filter(item => item.id !== action.payload.id)
-      return { ...state, loading: false, departments: [action.payload, ...RemoveUpdateItem] }
-    case DELETE_DEPARTMENT:
-      let newList = state.departments.filter(item => action.payload.id !== item.id)
-      return { ...state, loading: false, departments: [...newList] }
-    case GET_DEPARTMENT_BY_ID:
-      const depart = state.departments.map(e => {
-        return {
-          ...e,
-          isSelected: action.payload._id === e._id
-        }
-      })
-      return {
-        ...state,
-        loading: false,
-        selectedDepartment: action.payload,
-        departments: depart,
-        tags: action.payload.tags,
-        stories: action.payload?.tasks
-      }
-    case GET_DEPARTMENTS:
-      const selectedDepartment = action.payload.find(e => e.isSelected) || action.payload[0]
-      return { ...state, loading: false, departments: action.payload, selectedDepartment }
-    case CREATE_TAG:
-      return { ...state, loading: false, tags: [...state.tags, action.payload] }
-    case UPDATE_TAG:
-      const RemoveUpdateItems = state.tags.filter(item => item.id !== action.payload.id)
-      return { ...state, loading: false, tags: [action.payload, ...RemoveUpdateItems] }
-    case DELETE_TAG:
-      const RemoveTag = state.tags.filter(item => item.id !== action.payload.id)
-      return { ...state, loading: false, tags: [...RemoveTag] }
-    case GET_TAGS:
-      return { ...state, loading: false, tags: [...action.payload] }
-    case UPDATE_CREATE_STORY:
-      return { ...state, loading: false, createStoryForm: { ...state.createStoryForm, ...action.payload } }
-    case CREATE_STORY:
-      return {
-        ...state,
-        loading: false,
-        stories: [action.payload, ...state.stories],
-        createStoryForm: INIT_STATE.createStoryForm
-      }
-    case UPDATE_STORY:
-      const RemoveUpdateStories = state.stories.filter(item => item.id !== action.payload.id)
-      return { ...state, loading: false, stories: [action.payload, ...RemoveUpdateStories] }
-    case REORDER_STORIES:
-      return { ...state, loading: false, stories: action.payload }
-    case DELETE_STORY:
-      const RemoveStories = state.stories.filter(item => item.id !== action.payload.id)
-      return { ...state, loading: false, stories: [...RemoveStories] }
-    case SORT_STORIES_ON_DRAG:
-      return { ...state, loading: false, stories: action.payload }
-    case GET_STORIES:
-      return { ...state, loading: false, stories: [...action.payload] }
-    case GET_BUSINESS_DETAILS:
-      return { ...state, loading: false, details: action.payload }
-    case CREATE_BUSINESS_DETAILS:
-      return { ...state, loading: false, details: action.payload }
-    case UPDATE_BUSINESS_DETAILS:
-      return { ...state, loading: false, details: action.payload }
-    case ADD_COMMENT_TO_STORY:
-      const updatedStories = state.stories || []
-      const index = updatedStories.map(e => e._id).indexOf(action.payload._id)
-      if (index !== -1) {
-        updatedStories[index] = action.payload
-      }
-      return { ...state, loading: false, stories: [...updatedStories] }
-    case REMOVE_COMMENT_FROM_STORY:
-      const removeStory = state.stories.filter(e => e._id !== action.payload._id)
-      return { ...state, loading: false, stories: removeStory }
-    case SELECT_DEPARTMENT:
-      return {
-        ...state,
-        loading: false,
-        selectedDepartment: action.payload.selected,
-        stories: [...action.payload.stories]
-      }
-    case DEPARTMENT_ERROR:
-      return { ...state, loading: false, error: action.payload }
     case UPDATE_BUSINESS_FORM:
       return { ...state, loading: false, businessForm: { ...state.businessForm, ...action.payload } }
     case RESET_BUSINESS_FORM:
@@ -249,112 +136,6 @@ const Business = (state = INIT_STATE, action = {}) => {
       }
     case GET_PROJECT_Error:
       return { ...state, loading: false, error: action.payload }
-    case CREATE_TASK_AND_TASK_HOURS:
-      const createdTask = {
-        updatedAt: action.payload.updatedAt,
-        isDeleted: action.payload.isDeleted,
-        deletedAt: action.payload.deletedAt,
-        userId: action.payload.userId,
-        storyPoints: action.payload.taskId.storyPoints,
-        taskName: action.payload.taskId.taskName,
-        tagName: action.payload.taskId.tag.tagName,
-        tag: action.payload.taskId.tag._id,
-        hours: action.payload.hours,
-        departmentId: action.payload.departmentId,
-        createdAt: action.payload.createdAt,
-        _id: action.payload._id
-      }
-      return { ...state, loading: false, invoiceTaskHours: [...state.invoiceTaskHours, createdTask] }
-    case UPDATE_TASK_STATUS:
-      const updatedStatus = state.invoiceTaskHours.map(task => {
-        const updatedTask = {
-          ...task
-        }
-
-        if (task._id === action.payload._id) {
-          updatedTask.tagName = action.payload.tagName
-          updatedTask.tag = action.payload.tag
-        }
-
-        return updatedTask
-      })
-      return { ...state, loading: false, invoiceTaskHours: updatedStatus }
-    case UPDATE_TASK_HOURS:
-      const updatedHours = state.invoiceTaskHours.map(task => {
-        const updatedTask = {
-          ...task
-        }
-
-        if (task._id === action.payload._id) {
-          updatedTask.hours = action.payload.hours
-        }
-
-        return updatedTask
-      })
-      return { ...state, loading: false, invoiceTaskHours: updatedHours }
-    case UPDATE_TASK_HOURS_DATE:
-      const updatedTasks = state.invoiceTaskHours.map(task => {
-        const updatedTask = {
-          ...task
-        }
-
-        if (task._id === action.payload._id) {
-          updatedTask.updatedAt = action.payload.updatedAt
-        }
-
-        return updatedTask
-      })
-      return { ...state, loading: false, invoiceTaskHours: updatedTasks }
-    case GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER:
-      const findEmployeeRate = (dep, user) => {
-        const employee = action.payload.businessDetails.employees.find(
-          emp => emp.departmentId === dep && emp.freelancerId.userId === user
-        )
-        return employee ? employee.hourlyRate : undefined
-      }
-      const taskHoursByFounderBusiness = action?.payload?.results?.map(task => ({
-        updatedAt: task.updatedAt,
-        isDeleted: task.isDeleted,
-        deletedAt: task.deletedAt,
-        userId: task.userId,
-        storyPoints: task.taskId.storyPoints,
-        taskName: task.taskId.taskName,
-        tagName: task.taskId.tag.tagName,
-        tag: task.taskId.tag._id,
-        hours: task.hours,
-        departmentId: task.departmentId,
-        createdAt: task.createdAt,
-        rate: findEmployeeRate(task.departmentId, task.userId._id),
-        _id: task._id
-      }))
-      const projectName = action.payload.businessDetails.name
-      return { ...state, loading: false, invoiceTaskHours: taskHoursByFounderBusiness, projectName: projectName }
-    case GET_TASK_HOURS_BY_BUSINESS:
-      {
-        const invoiceTaskHour = action.payload.taskHours.map(task => ({
-          updatedAt: task.updatedAt,
-          isDeleted: task.isDeleted,
-          deletedAt: task.deletedAt,
-          userId: task.userId,
-          storyPoints: task.taskId.storyPoints,
-          taskName: task.taskId.taskName,
-          tagName: task.taskId.tag.tagName,
-          tag: task.taskId.tag._id,
-          hours: task.hours,
-          departmentId: task.departmentId,
-          createdAt: task.createdAt,
-          rate: action.payload.ContractRate.hourlyRate,
-          _id: task._id
-        }))
-        const projName = action.payload?.ContractRate?.businessId?.name
-        return {
-          ...state,
-          loading: false,
-          invoiceTaskHours: invoiceTaskHour,
-          invoiceTags: action.payload.tags,
-          projectName: projName
-        }
-      }
 
     default:
       return state

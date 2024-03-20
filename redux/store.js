@@ -9,7 +9,7 @@ import Messages from './Messages/reducers'
 import FreelancerSkills from './FreelancerSkills/reducers'
 import Loading from './Loading/reducers'
 import Stripe from './Stripe/reducers'
-import Meetings from './Meeting/reducers';
+import Meetings from './Meeting/reducers'
 import ListEntries from './ListEntries/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'

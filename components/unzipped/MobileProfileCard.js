@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
+import { ConverterUtils } from '../../utils'
+import { AiOutlinePlusCircle } from 'react-icons/ai'
+import EducationModal from './EducationModal'
 
 import IconComponent from '../ui/icons/IconComponent'
-import { Badge, Icon } from '../ui'
+import { Badge, Icon, Image } from '../ui'
 import ProfileTab from './ProfileTab'
 
 const P = styled.p`
@@ -37,9 +40,28 @@ const ProjectCard = styled.div`
   padding: 19px 13px;
 `
 
-function MobileProfileCard({ user, handleProfilePage }) {
-  const [selected, setSelected] = useState(0)
+function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
   const router = useRouter()
+  const [selected, setSelected] = useState(0)
+  const [open, setOpen] = useState(false)
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
+  const uniqueSkills = useMemo(() => {
+    let projectSkills = user?.projects?.map(project => [...new Set(project.skills)])
+    let userSkills = user?.freelancerSkills?.map(skill => skill?.skill)
+    projectSkills = projectSkills?.join(',').split(',')
+    projectSkills = projectSkills?.concat(userSkills)
+    projectSkills = [...new Set(projectSkills?.map(str => str?.toLowerCase()))]
+    const filteredArray = projectSkills?.filter(
+      (str, index) => !projectSkills?.some((otherStr, otherIndex) => index !== otherIndex && otherStr?.includes(str))
+    )
+    return filteredArray
+  }, [user])
 
   function formatDate(inputDate) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' }
@@ -153,132 +175,149 @@ function MobileProfileCard({ user, handleProfilePage }) {
           </div>
         </div>
       </div>
-      <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} />
-      <ProjectCard>
-        <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
-          Create a Landing page for a react site
-        </P>
-        <P margin="0 0 5px" fontSize="15px">
-          {user?.category}
-        </P>
-        <P margin="0 0 14px" fontSize="14px" fontWeight="300">
-          {user?.user?.AddressLineCountry || 'United States'}
-        </P>
-        <div style={{ marginBottom: '29px' }}>
-          {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => <Badge key={item._id}>{item?.skill}</Badge>)}
-        </div>
-        <div style={{ padding: '0px 19px', display: 'flex' }}>
-          <img
-            src="/img/projectImages.png"
-            style={{ marginRight: '7px', width: '70%', height: 'auto' }}
-            alt={`Image`}
-          />
-          <div style={{ width: '27%', height: 'auto', gap: '9px 0' }}>
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-          </div>
-        </div>
-      </ProjectCard>
-      <ProjectCard>
-        <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
-          Create a Landing page for a react site
-        </P>
-        <P margin="0 0 5px" fontSize="15px">
-          {user?.category}
-        </P>
-        <P margin="0 0 14px" fontSize="14px" fontWeight="300">
-          {user?.user?.AddressLineCountry || 'United States'}
-        </P>
-        <div style={{ marginBottom: '29px' }}>
-          {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => (
-              <Badge key={`${item._id}_${index}`}>{item?.skill}</Badge>
-            ))}
-        </div>
-        <div style={{ padding: '0px 19px', display: 'flex' }}>
-          <img
-            src="/img/projectImages.png"
-            style={{ marginRight: '7px', width: '70%', height: 'auto' }}
-            alt={`Image`}
-          />
-          <div style={{ width: '27%', height: 'auto', gap: '9px 0' }}>
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-          </div>
-        </div>
-      </ProjectCard>
-      <ProjectCard>
-        <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
-          Create a Landing page for a react site
-        </P>
-        <P margin="0 0 5px" fontSize="15px">
-          {user?.category}
-        </P>
-        <P margin="0 0 14px" fontSize="14px" fontWeight="300">
-          {user?.user?.AddressLineCountry || 'United States'}
-        </P>
-        <div style={{ marginBottom: '29px' }}>
-          {user?.user?.freelancerSkills?.length > 0 &&
-            user?.user?.freelancerSkills.map((item, index) => (
-              <Badge key={`${item._id}_${index}_${item.skill}`}>{item?.skill}</Badge>
-            ))}
-        </div>
-        <div style={{ padding: '0px 19px', display: 'flex' }}>
-          <img
-            src="/img/projectImages.png"
-            style={{ marginRight: '7px', width: '70%', height: 'auto' }}
-            alt={`Image`}
-          />
-          <div style={{ width: '27%', height: 'auto', gap: '9px 0' }}>
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-            <img src="/img/projectImages.png" style={{ width: '100%', height: '50%' }} alt={`Image`} />
-          </div>
-        </div>
-      </ProjectCard>
+      <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} role={role} />
+      {user?.projects?.length ? (
+        user?.projects?.map(project => (
+          <ProjectCard key={project?._id}>
+            <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
+              {project?.projectName ?? 'Project Name'}
+            </P>
+            <P margin="0 0 5px" fontSize="15px">
+              {user?.category}
+            </P>
+            <P margin="0 0 14px" fontSize="14px" fontWeight="300">
+              {user?.userId?.AddressLineCountry || 'United States'}
+            </P>
+            <div>
+              {project?.freelancerSkills?.length > 0
+                ? project?.freelancerSkills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                : ''}
+            </div>
+            <div style={{ padding: '0px 19px', display: 'flex' }}>
+              {project?.images?.[0] && (
+                <Image src={project?.images[0]?.url} width="70%" height="98px" radius="10px" alt={`Image 0`} />
+              )}
+
+              <div style={{ width: '27%', height: '98px', marginLeft: '5px' }}>
+                {project?.images?.[1] && (
+                  <Image src={project?.images[1]?.url} width="100%" height="50%" radius="10px" alt={`Image 1`} />
+                )}
+                {project?.images?.[2] && (
+                  <Image
+                    src={project?.images[2]?.url}
+                    width="100%"
+                    height="50%"
+                    radius="10px"
+                    margin="10px 0px 0px 0px"
+                    alt={`Image 2`}
+                  />
+                )}
+              </div>
+            </div>
+          </ProjectCard>
+        ))
+      ) : (
+        <ProjectCard>
+          <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500" align="center">
+            No Projects
+          </P>
+        </ProjectCard>
+      )}
       <OtherInformationBox>
         <OtherInformationCard>
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
             Top Skills
           </P>
-          <P padding="0 10px">C Programming</P>
-          <P padding="0 10px">Algorithm</P>
-          <P padding="0 10px">C++ Programming</P>
-          <P padding="0 10px">Database Development</P>
-          <P padding="0 10px">Cryptocurrency</P>
+          {uniqueSkills?.length ? (
+            uniqueSkills?.map((skill, index) => (
+              <P padding="0 10px" key={`${skill}_${index}`}>
+                {ConverterUtils.capitalize(`${skill} `)}
+              </P>
+            ))
+          ) : (
+            <P padding="0 10px" align="center">
+              N/A
+            </P>
+          )}
         </OtherInformationCard>
         <OtherInformationCard>
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px" margin="0">
             Browse Similar Freelancers
           </P>
           <div style={{ gap: '6px', display: 'flex', padding: '20px 10px', flexWrap: 'wrap' }}>
-            <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-              C Programmers in France
-            </P>
-            <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-              C Programmers
-            </P>
-            <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-              Algorithm Experts
-            </P>
-            <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-              C++ Programming
-            </P>
+            {uniqueSkills?.length ? (
+              uniqueSkills?.map((skill, index) => (
+                <P
+                  border="1px solid #666666"
+                  fontSize="14px"
+                  margin="0"
+                  radius="4px"
+                  padding="5px 10px"
+                  key={`${skill}_${index}_sim`}>
+                  {ConverterUtils.capitalize(`${skill} `)}
+                </P>
+              ))
+            ) : (
+              <>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  React
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  Node
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  TypeScript
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  Nest.js
+                </P>
+                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+                  Next.js
+                </P>
+              </>
+            )}
           </div>
         </OtherInformationCard>
         <OtherInformationCard>
-          <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
-            Education
-          </P>
-          <P padding="0 10px" fontWeight="500">
-            Engineer
-          </P>
-          <P padding="0 10px" margin="0">
-            Ecole centrale de Lyon, France
-          </P>
-          <P padding="0 10px">1984-1987 (3 years)</P>
+          <div
+            className="d-flex justify-content-between align-items-center"
+            style={{
+              borderBottom: '1px solid #D9D9D9'
+            }}>
+            <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
+              Education
+            </P>
+            {role === 1 && freelancerId === user?._id && (
+              <P color="#2F76FF" onClick={handleOpen}>
+                <AiOutlinePlusCircle
+                  style={{
+                    fontSize: '18px',
+                    marginRight: '20px',
+                    color: '#2F76FF'
+                  }}
+                />
+              </P>
+            )}
+          </div>
+
+          {user?.education?.length
+            ? user.education.map(education => (
+                <div key={education?._id}>
+                  <P padding="0 10px" fontWeight="500">
+                    {education?.title}
+                  </P>
+                  <P padding="0 10px" margin="0">
+                    {education?.institute}
+                  </P>
+                  <P padding="0 10px">
+                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
+                  </P>
+                </div>
+              ))
+            : ''}
         </OtherInformationCard>
       </OtherInformationBox>
+      {open && <EducationModal open={open} onHide={handleClose} />}
     </>
   )
 }

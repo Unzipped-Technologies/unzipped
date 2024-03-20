@@ -23,6 +23,7 @@ import {
   CLEAR_ERRORS,
   VERIFY_USER,
   UPDATE_REGISTER_CREDENTIALS,
+  INITIATE_VERIFY_IDENTITY,
   GET_USER_THIRD_PARTY_DETAILS,
   GET_USER_THIRD_PARTY_DETAILS_FAILED
 } from './constants'
@@ -43,6 +44,7 @@ const INIT_STATE = {
   isEmailSent: false,
   userRegistrationForm: { email: "", password: "" },
   user: {},
+  verifyUrl: '',
   userForm: {
     role: -1,
     FirstName: '',
@@ -280,6 +282,8 @@ const Auth = (state = INIT_STATE, action) => {
         token: action.payload.cookie,
         error: ''
       }
+    case INITIATE_VERIFY_IDENTITY:
+      return { ...state, loading: false, verifyUrl: action?.payload?.url }
     case GET_USER_THIRD_PARTY_DETAILS:
       return { ...state, loading: false, thirdPartyDetails: action?.payload }
 

@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import IconComponent from '../icons/IconComponent'
 
-function MobileSearchBar({ handleFilterOpenClose, setFilter, filter, handleSearch }) {
+function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey }) {
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    if (searchKey !== undefined && searchKey !== null) setSearch(searchKey)
+  }, [searchKey])
+
   const handleEnter = e => {
-    if (e.keyCode === 13) {
-      handleSearch()
+    if (e?.key === 'Enter') {
+      setFilters('searchKey', e?.target?.value)
     }
   }
   return (
@@ -22,15 +28,15 @@ function MobileSearchBar({ handleFilterOpenClose, setFilter, filter, handleSearc
         <div className="d-flex align-items-center w-100">
           <span
             onClick={() => {
-              handleSearch()
+              setFilters('searchKey', search)
             }}>
             <IconComponent name="mobileSearchicon" width="20" height="18" viewBox="0 0 20 18" fill="#333333" />
           </span>
           <input
             type="text"
-            value={filter}
+            value={search}
             onKeyDown={handleEnter}
-            onChange={e => setFilter(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
             placeholder="SEARCH"
             style={{ borderBottom: '0', margin: '0 0 0 16px' }}
           />

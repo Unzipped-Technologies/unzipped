@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const { BUDGET_TYPE, FIXED_BUDGET, PROJECT_TYPE, SHORT_TERM_PROJECT } = require('../utils/constants')
+
 const { Schema } = mongoose
 
 const businessSchema = new Schema(
@@ -32,7 +34,7 @@ const businessSchema = new Schema(
     requiredSkills: [String],
     goals: String,
     companyBackground: String,
-    budget: String,
+    budget: { type: Number, required: true },
     paymentMethod: {
       card: String,
       id: String
@@ -47,11 +49,16 @@ const businessSchema = new Schema(
     likeTotal: { type: Number, default: 0 },
     projectBudgetType: {
       type: String,
-      enum: ['Hourly Rate', 'Fixed Price']
+      required: true,
+      default: FIXED_BUDGET,
+      enum: [...BUDGET_TYPE]
     },
     projectType: {
       type: String,
-      enum: ['Short Term Business', 'Long Term Collaboration']
+      required: true,
+      default: SHORT_TERM_PROJECT,
+
+      enum: [...PROJECT_TYPE]
     },
     dislikeTotal: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
@@ -63,7 +70,7 @@ const businessSchema = new Schema(
     isBusinessUpdated: { type: Boolean, default: false },
     isExistingAudience: { type: Boolean, default: false },
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
-    tags: { type: [Schema.Types.ObjectId], refs: 'tags' },
+    tags: { type: [Schema.Types.ObjectId], ref: 'tags' },
     audience: { type: Schema.Types.ObjectId, ref: 'businessAudiences' },
     invoices: { type: Schema.Types.ObjectId, ref: 'invoices' },
     departments: { type: [Schema.Types.ObjectId], ref: 'departments' },
@@ -79,7 +86,8 @@ const businessSchema = new Schema(
     questionsToAsk: { type: [mongoose.Schema.Types.ObjectId], ref: 'questions', default: null },
     projectImagesUrl: [
       {
-        type: Schema.Types.ObjectId, ref: 'file'
+        type: Schema.Types.ObjectId,
+        ref: 'file'
       }
     ]
   },

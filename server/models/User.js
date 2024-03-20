@@ -21,7 +21,7 @@ const userSchema = new Schema(
     isGithubConnected: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
     isUserSubscribed: { type: Boolean, default: false },
-    isIdentityVerified: { type: Boolean, default: false },
+    isIdentityVerified: { type: String, default: 'INCOMPLETE' },
     isPhoneVerified: { type: Boolean, default: false },
     isSuspended: { type: Boolean, default: false },
     plan: { type: Number, default: 0 },
@@ -49,7 +49,7 @@ const userSchema = new Schema(
     freelancers: { type: Schema.Types.ObjectId, ref: 'freelancers' },
     lists: { type: Schema.Types.Mixed, ref: 'lists', default: [] },
     freelancerSkills: [{ type: Schema.Types.Mixed, ref: 'freelancerSkills' }],
-    business: { type: Schema.Types.Mixed, refs: 'businesses' },
+    business: { type: Schema.Types.Mixed, ref: 'businesses' },
     // these refer times the user liked freelancers or businesses
     likeTotal: { type: Number, default: 0 },
     dislikeTotal: { type: Number, default: 0 },

@@ -68,7 +68,7 @@ const Withdrawal = ({
 }) => {
     const [windowSize, setWindowsize] = useState('126px');
     const [selectedMembership, setSelectedMembership] = useState(false);
-    const [initialUrl] = useState(url.url);
+    const [initialUrl] = useState(url?.url);
     const router = useRouter()
     const isPrimaryBank = false;
 
@@ -114,8 +114,8 @@ const Withdrawal = ({
     }, [])
 
     useEffect(() => {
-        if (url && url.url && url.url !== initialUrl) {
-            router.push(url.url);
+        if (url && url?.url && url?.url !== initialUrl) {
+            router.push(url?.url);
         }
     }, [url, router]);
 

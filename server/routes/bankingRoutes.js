@@ -159,4 +159,16 @@ router.post('/retrieve-main-stripe-balance', requireLogin, async (req, res) => {
   }
 });
 
+router.post('/verify-identity', requireLogin, async (req, res) => {
+  try {
+    const userId = req.body.id || req.user.sub
+
+    const session = await billingHelper.createVerificationSession(userId)
+
+    res.status(200).json(session);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 module.exports = router;

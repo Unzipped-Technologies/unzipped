@@ -157,7 +157,7 @@ const getBusinessById = async (id, user) => {
 }
 
 // list lists
-const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, skill, type, populate = true }) => {
+const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
   try {
     const existingNameIndex = await business.collection.indexes()
     const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
@@ -169,31 +169,37 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0, maxRate, minRate, 
       await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
     }
     const filters = pick(filter, ['userId', 'isActive', 'applicants'])
-
     const regexQuery = new RegExp(filter?.searchKey, 'i')
-    const regexType = new RegExp(type, 'i')
+    const regexType = new RegExp(filter?.projectBudgetType, 'i')
+
     const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
     const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
+    const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
+    const regexPattern = regexPatterns?.join('|')
     const aggregationPipeline = [
       {
         $match: {
           name: { $regex: regexQuery },
-          ...(skill?.length > 0
+          ...(filter?.skill?.length > 0
             ? {
                 requiredSkills: {
-                  $all: skill
+                  $elemMatch: {
+                    $regex: new RegExp(regexPattern, 'i')
+                  }
                 }
               }
             : {}),
-          ...(type && {
-            projectType: { $regex: regexType }
+          ...(filter?.projectBudgetType && {
+            projectBudgetType: { $regex: regexType }
           }),
-          ...(minRate && {
-            budget: { $gte: +minRate }
-          }),
-          ...(maxRate && {
-            budget: { $lte: +maxRate }
-          }),
+          ...(filter?.minRate &&
+            +filter?.minRate > 0 && {
+              budget: { $gte: +filter?.minRate }
+            }),
+          ...(filter?.maxRate &&
+            +filter?.maxRate > 0 && {
+              budget: { $lte: +filter?.maxRate }
+            }),
           ...filters
         }
       },
@@ -478,22 +484,24 @@ const addLikeToBusiness = async (data, id) => {
 }
 
 const createBusinessDetails = async (data, id) => {
-  return await businessDetail.create(
-    {
-      ...data,
-      userId: id,
-    }
-  )
+  return await businessDetail.create({
+    ...data,
+    userId: id
+  })
 }
 
-const getBusinessDetailsByUserId = async (id) => {
+const getBusinessDetailsByUserId = async id => {
   return await businessDetail.findOne({ userId: id })
 }
 
 const updateBusinessDetails = async (data, id) => {
-  return await businessDetail.findOneAndUpdate({ userId: id }, {
-    ...data
-  }, { new: true })
+  return await businessDetail.findOneAndUpdate(
+    { userId: id },
+    {
+      ...data
+    },
+    { new: true }
+  )
 }
 
 module.exports = {
@@ -510,5 +518,5 @@ module.exports = {
   getBusinessWithoutPopulate,
   createBusinessDetails,
   updateBusinessDetails,
-  getBusinessDetailsByUserId,
+  getBusinessDetailsByUserId
 }

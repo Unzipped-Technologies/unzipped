@@ -11,16 +11,9 @@ import {
   GET_PROJECT_LIST,
   GET_PROJECT_Error,
   BUSINESS_ERROR,
-  GET_TASK_HOURS_BY_BUSINESS,
-  UPDATE_TASK_HOURS,
-  UPDATE_TASK_STATUS,
-  CREATE_TASK_AND_TASK_HOURS,
-  UPDATE_TASK_HOURS_DATE,
-  GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
-  SUBMIT_PROJECT_WIZARD_DETAILS,
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
-  UPDATE_WIZARD_SUBMISSION,
+  UPDATE_WIZARD_SUBMISSION
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -82,45 +75,45 @@ export const getBusinessDetails = (userId, token) => async (dispatch, getState) 
     })
 }
 
-export const createBusiness = (data, token, isWizard = false) => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  dispatch(startLoading())
-  await axios
-    .post(`/api/business/create`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        access_token: token
-      }
-    })
-    .then(res => {
-      dispatch({
-        type: CREATE_BUSINESS,
-        payload: res.data
+export const createBusiness =
+  (data, token, isWizard = false) =>
+  async (dispatch, getState) => {
+    dispatch({ type: LOAD_STATE })
+    dispatch(startLoading())
+    await axios
+      .post(`/api/business/create`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          access_token: token
+        }
       })
-      if (isWizard) {
+      .then(res => {
         dispatch({
-          type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
-          payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+          type: CREATE_BUSINESS,
+          payload: res.data
         })
-      }
-      dispatch({ type: RESET_BUSINESS_FORM, })
-    }
-
-    )
-    .catch(err => {
-      dispatch({
-        type: BUSINESS_ERROR,
-        payload: err.response
+        if (isWizard) {
+          dispatch({
+            type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+            payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+          })
+        }
+        dispatch({ type: RESET_BUSINESS_FORM })
       })
-      if (isWizard) {
+      .catch(err => {
         dispatch({
-          type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
-          payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+          type: BUSINESS_ERROR,
+          payload: err.response
         })
-      }
-    })
-  dispatch(stopLoading())
-}
+        if (isWizard) {
+          dispatch({
+            type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+            payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+          })
+        }
+      })
+    dispatch(stopLoading())
+  }
 
 export const updateBusiness = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
@@ -144,13 +137,15 @@ export const updateBusiness = data => async (dispatch, getState) => {
   return response
 }
 
-export const nullBusinessForm = (data = {}) => (dispatch) => {
-  dispatch({
-    type: RESET_BUSINESS_FORM,
-  })
-}
+export const nullBusinessForm =
+  (data = {}) =>
+  dispatch => {
+    dispatch({
+      type: RESET_BUSINESS_FORM
+    })
+  }
 
-export const updateWizardSubmission = (data) => (dispatch) => {
+export const updateWizardSubmission = data => dispatch => {
   dispatch({
     type: UPDATE_WIZARD_SUBMISSION,
     payload: data
@@ -222,152 +217,3 @@ export const getBusinessById = id => async (dispatch, getState) => {
       })
     })
 }
-
-export const addCommentToStory = (data, token) => async (dispatch, getState) => {
-  //department Loading
-  dispatch({ type: LOAD_STATE })
-
-  await axios
-    .post(`/api/business/current/comment/add`, data, tokenConfig(token))
-    .then(res =>
-      dispatch({
-        type: ADD_COMMENT_TO_STORY,
-        payload: res.data
-      })
-    )
-    .catch(err => {
-      dispatch({
-        type: DEPARTMENT_ERROR,
-        payload: err.response
-      })
-    })
-}
-
-export const getBusinessTasksByInvestor =
-  ({ businessId, access_token }) =>
-    async (dispatch, getState) => {
-      dispatch({ type: LOAD_STATE })
-      const headers = {
-        access_token: access_token
-      }
-      dispatch(startLoading())
-      await axios
-        .get(`/api/business/investor/task/${businessId}`, { headers })
-        .then(res =>
-          dispatch({
-            type: GET_TASK_HOURS_BY_BUSINESS,
-            payload: res.data
-          })
-        )
-        .catch(err => {
-          dispatch({
-            type: DEPARTMENT_ERROR,
-            payload: err.response
-          })
-        })
-      dispatch(stopLoading())
-    }
-
-export const updateTaskHours = (data, token) => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  dispatch(startLoading())
-  dispatch({
-    type: UPDATE_TASK_HOURS,
-    payload: data
-  })
-  dispatch(stopLoading())
-  await axios
-    .patch(`/api/taskHours/${data._id}`, data, tokenConfig(token))
-    .then()
-    .catch(err => {
-      dispatch({
-        type: DEPARTMENT_ERROR,
-        payload: err.response
-      })
-    })
-}
-
-
-export const updateTaskHoursStatus = (data, token) => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  dispatch(startLoading())
-  dispatch({
-    type: UPDATE_TASK_STATUS,
-    payload: data
-  })
-  dispatch(stopLoading())
-  await axios
-    .patch(`/api/taskHours/status/${data._id}`, data, tokenConfig(token))
-    .then()
-    .catch(err => {
-      dispatch({
-        type: DEPARTMENT_ERROR,
-        payload: err.response
-      })
-    })
-}
-
-export const addTaskAndAddToTaskHours = (data, token) => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  dispatch(startLoading())
-  await axios
-    .post(`/api/business/current/task/create`, data, tokenConfig(token))
-    .then(res => {
-      dispatch({
-        type: CREATE_TASK_AND_TASK_HOURS,
-        payload: res.data.result
-      })
-    })
-    .catch(err => {
-      dispatch({
-        type: DEPARTMENT_ERROR,
-        payload: err.response
-      })
-    })
-  dispatch(stopLoading())
-}
-
-
-export const updateTaskDate = (data, token) => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  dispatch(startLoading())
-  dispatch({
-    type: UPDATE_TASK_HOURS_DATE,
-    payload: data
-  })
-  dispatch(stopLoading())
-  await axios
-    .patch(`/api/taskHours/time/${data._id}`, data, tokenConfig(token))
-    .then()
-    .catch(err => {
-      dispatch({
-        type: DEPARTMENT_ERROR,
-        payload: err.response
-      })
-    })
-}
-
-export const getBusinessTasksByFounder =
-  ({ businessId, access_token }) =>
-    async (dispatch, getState) => {
-      dispatch({ type: LOAD_STATE })
-      const headers = {
-        access_token: access_token
-      }
-      dispatch(startLoading())
-      await axios
-        .get(`/api/business/founder/task/${businessId}`, { headers })
-        .then(res =>
-          dispatch({
-            type: GET_TASK_HOURS_BY_BUSINESS_BY_FOUNDER,
-            payload: res.data
-          })
-        )
-        .catch(err => {
-          dispatch({
-            type: DEPARTMENT_ERROR,
-            payload: err.response
-          })
-        })
-      dispatch(stopLoading())
-    }

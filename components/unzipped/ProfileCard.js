@@ -67,7 +67,7 @@ const ProfileCard = ({ user }) => {
             SKIILS
           </DarkText>
           {user?.freelancerSkills?.length > 0
-            ? user?.freelancerSkills.map((item, index) => <Badge key={item._id}>{item?.skill}</Badge>)
+            ? user?.freelancerSkills.map(item => <Badge key={item._id}>{item?.skill}</Badge>)
             : 'N/A'}
         </div>
 
@@ -129,7 +129,7 @@ const ProfileCard = ({ user }) => {
           <Icon name="thumbsUp" />
           <Icon name="thumbsDown" />
         </Likes>
-        <DarkText>{user?.likeTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
+        <DarkText>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
       </LikeBox>
     </Container>
   )
