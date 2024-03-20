@@ -23,7 +23,10 @@ const notifications = [
   { type: 'plan' },
   { type: 'github' },
   { type: 'browse' },
-  { type: 'meetingCalender', text: 'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.' },
+  {
+    type: 'meetingCalender',
+    text: 'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
+  },
   { type: 'dismiss', text: 'Update types of professionals you are seeking for your business' },
   {
     type: 'blue',
@@ -33,7 +36,7 @@ const notifications = [
   { type: 'faq' },
   { type: 'updateBusiness' },
   { type: 'freeTrial' },
-  { type: 'explore' },
+  { type: 'explore' }
 ]
 
 const MobileDisplayBox = styled.div`
@@ -124,12 +127,11 @@ Dashboard.getInitialProps = async ({ req }) => {
 }
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
     businesses: state.Business?.businesses,
     loading: state.Business?.loading,
     role: state.Auth.user.role,
-    token: state.Auth.token,
+    token: state.Auth.token
   }
 }
 

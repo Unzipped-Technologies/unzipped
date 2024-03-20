@@ -30,7 +30,8 @@ import {
   UPDATE_USER_EMAIL,
   UPDATE_EMAIL_ERROR,
   RESET_PASSWORD_SUCCESS,
-  RESET_PASSWORD_ERROR
+  RESET_PASSWORD_ERROR,
+  UPDATE_USER_ERROR
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -199,17 +200,16 @@ export const resendVerify = user => async (dispatch, getState) => {
   return data
 }
 //Check token & Load User
-export const googleUser = token => async (dispatch, getState) => {
-  dispatch({ type: USER_LOADING })
-
+export const getCurrentUserData = () => async (dispatch, getState) => {
+  // dispatch({ type: USER_LOADING })
   await axios
-    .get(`/api/auth/current_user`, tokenConfig(token))
-    .then(res =>
+    .get(`/api/auth/current_user`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
       dispatch({
         type: USER_LOADED,
         payload: res.data
       })
-    )
+    })
     .catch(err => {
       // dispatch(returnErrors(err.response, err.response))
       dispatch({
@@ -325,25 +325,23 @@ export const forgotPassword = user => async (dispatch, getState) => {
 
 export const changePassword = data => async (dispatch, getState) => {
   //User Loading
-  // dispatch({ type: USER_LOADING })
-  console.log('userDatauserData', data, getState()?.Auth, tokenConfig(getState()?.Auth.token))
-  await axios
+  const response = await axios
     .post(`/api/auth/change-password`, data, tokenConfig(getState()?.Auth.token))
     .then(res => {
-      console.log('res', res)
       dispatch({
         type: RESET_PASSWORD_SUCCESS,
         payload: res.data
       })
+      return res
     })
     .catch(err => {
-      console.log('err', err)
-      // dispatch(returnErrors(err.response, err.response))
       dispatch({
         type: RESET_PASSWORD_ERROR,
         payload: err.response
       })
+      return err.response
     })
+  return response
 }
 
 export const contactEmail = contact => async (dispatch, getState) => {
@@ -404,4 +402,25 @@ export const clearErrors = () => {
   return {
     type: CLEAR_ERRORS
   }
+}
+
+export const updateCurrentUser = data => async (dispatch, getState) => {
+  const response = await axios
+    .post(`/api/user/update`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: err.response
+      })
+      console.log('err.response', err.response)
+      return err.response
+    })
+  return response
 }

@@ -87,19 +87,22 @@ router.post('/change-password', requireLogin, async (req, res, next) => {
     const existingUser = await userHelper.getSingleUser({ _id: req.user.sub }, 'password email')
     if (!existingUser) throw new Error('User not found')
 
-    const isCorrectPassword = await AuthService.passwordComparing(existingUser?.email, req.body?.password)
+    const isCorrectPassword = await AuthService.passwordComparing(existingUser?.email, req.body?.currentPassword)
     if (!isCorrectPassword) throw new Error('Incorrect password')
 
-    if (!token.signToken(existingUser._id)) throw Error('Invalid Password')
+    if (!token.signToken(existingUser._id)) throw new Error('Invalid Password')
 
-    if (req.body?.newPassword === req.body?.password)
+    if (req.body?.newPassword === req.body?.currentPassword)
       throw new Error('New password must be different from current password')
+
     if (req.body?.newPassword !== req.body?.confirmNewPassword)
       throw new Error('Password and confirm password do not match')
+
     const hash = await AuthService.bcryptAndHashing(req.body?.newPassword)
     if (!hash) throw new Error('Something went wrong hashing the password')
 
     await userHelper.updateUserByid(existingUser?._id, { password: hash })
+
     const existingUsers = await AuthService.isExistingUser(req.user.sub, true)
     res.cookie('access_token', token.signToken(req.user.sub), { httpOnly: true })
     res.send({ ...existingUsers._doc, cookie: token.signToken(existingUser._id) })
@@ -224,7 +227,7 @@ router.get('/current_user', requireLogin, async (req, res) => {
   try {
     const existinguser = await userHelper.getUserById(req.user.sub)
     if (!existinguser) throw Error('user does not exist')
-    res.json(existinguser)
+    res.json({ ...existinguser._doc, cookie: token.signToken(existinguser._id) })
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }

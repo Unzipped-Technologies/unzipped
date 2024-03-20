@@ -37,7 +37,7 @@ const Projects = () => {
 
   return (
     <React.Fragment>
-      <Nav isSubMenu marginBottom={'86px'} />
+      <Nav isSubMenu handleSearch marginBottom={'86px'} />
       {window.innerWidth > 680 && (
         <Desktop>
           <Title>

@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: ${({ alignItems }) => (alignItems ? alignItems : 'center')};
   justify-content: center;
   flex-flow: column;
-  padding: ${({ margin }) => (margin ? margin : '45px 0px 0px 0px')};
+  padding: ${({ margin }) => (margin ? margin : '0px 0px 0px 0px')};
   @media (max-width: 680px) {
     width: -webkit-fill-available;
   }

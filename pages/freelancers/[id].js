@@ -29,10 +29,31 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId }) 
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
   const [selected, setSelected] = useState(0)
+  const [userData, setUserData] = useState({})
+
+  useEffect(async () => {
+    await getFreelancerById(id)
+  }, [])
 
   useEffect(() => {
-    getFreelancerById(id)
-  }, [id])
+    setUserData({
+      ...selected,
+      FirstName: selectedFreelancer?.userId?.FirstName,
+      profileImage: selectedFreelancer?.userId?.profileImage,
+      LastName: selectedFreelancer?.userId?.LastName,
+      AddressLineCountry: selectedFreelancer?.userId?.AddressLineCountry,
+      projects: selectedFreelancer?.projects,
+      freelancerSkills: selectedFreelancer?.freelancerSkills,
+      category: selectedFreelancer?.category,
+      likeTotal: selectedFreelancer?.likeTotal,
+      rate: selectedFreelancer?.rate,
+      updatedAt: selectedFreelancer?.updatedAt,
+      education: selectedFreelancer?.education,
+      rate: selectedFreelancer?.rate,
+      isAcceptEquity: selectedFreelancer?.isAcceptEquity,
+      _id: selectedFreelancer?._id
+    })
+  }, [selectedFreelancer])
 
   const handleValueFromChild = value => {
     setInterViewView(value)
@@ -42,7 +63,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId }) 
       <Container>
         <Nav marginBottom={'0px'} />
         <div style={{ overflow: 'overlay' }}>
-          <ProfileCard user={selectedFreelancer} />
+          <ProfileCard user={userData} />
         </div>
         <div style={{ width: '100%' }}>
           <ProfileTab
@@ -51,15 +72,15 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId }) 
             setSelected={setSelected}
             role={role}
             freelancerId={freelancerId}
-            userId={selectedFreelancer?._id}
+            userId={userData?._id}
           />
         </div>
-        <ProjectsCard user={selectedFreelancer} freelancerId={freelancerId} />
+        <ProjectsCard user={userData} freelancerId={freelancerId} />
       </Container>
       <MobileContainer>
         {interViewView ? (
           <MobileProfileCard
-            user={selectedFreelancer}
+            user={userData}
             handleProfilePage={handleValueFromChild}
             role={role}
             freelancerId={freelancerId}

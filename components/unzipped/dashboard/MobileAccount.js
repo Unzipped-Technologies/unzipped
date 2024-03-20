@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import IconComponent from '../../ui/icons/IconComponent'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { logoutUser } from '../../../redux/actions'
+import { logoutUser, getCurrentUserData, updateCurrentUser } from '../../../redux/actions'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
@@ -34,12 +34,16 @@ const Like = styled.div`
   align-items: center;
 `
 
-const MobileAccount = ({ logoutUser, user, balance, email, phone }) => {
+const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCurrentUser }) => {
   const router = useRouter()
 
   const [showSettings, setShowSettings] = useState(false)
+
+  useEffect(async () => {
+    await getCurrentUserData()
+  }, [])
+
   const linkPush = link => {
-    console.log('link', link)
     router.push(link)
   }
 
@@ -63,11 +67,18 @@ const MobileAccount = ({ logoutUser, user, balance, email, phone }) => {
                 {user.FullName}
               </P>
               <P margin="0" padding="0 0 5px 0" fontSize="16px">
-                Full stack web developer
+                {user?.freelancers?.category}
               </P>
             </div>
           </div>
-          <div onClick={() => linkPush(`/freelancers/${user._id}`)}>
+          <div
+            onClick={() => {
+              if (user?.role === 1) {
+                linkPush(`/freelancers/${user.freelancers?._id}`)
+              } else {
+                linkPush(`/client/${user._id}`)
+              }
+            }}>
             <P margin="0" padding="0 0 5px 0" color="#1E70E0" fontSize="18px">
               View Profile
             </P>
@@ -123,13 +134,13 @@ const MobileAccount = ({ logoutUser, user, balance, email, phone }) => {
                 <P fontSize="16px" margin="5px 0px 0px 20px">
                   {user?.phoneNumber}
                 </P>
-                <Link href="/change-email">Change Phone</Link>
+                <Link href="/change-phone">Change Phone</Link>
               </div>
               <div className="d-flex align-items-center justify-content-between mt-3">
                 <P fontSize="16px" margin="5px 0px 0px 20px">
                   Password *****
                 </P>
-                <Link href="/change-email">Update Password</Link>
+                <Link href="/change-password">Update Password</Link>
               </div>
             </>
           )}
@@ -203,15 +214,14 @@ const MobileAccount = ({ logoutUser, user, balance, email, phone }) => {
 const mapStateToProps = state => {
   return {
     user: state.Auth.user,
-    balance: state.Stripe?.balance,
-    email: state.Auth.user.email,
-    phone: state.Auth.user.phoneNumber
+    balance: state.Stripe?.balance
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    logoutUser: bindActionCreators(logoutUser, dispatch)
+    logoutUser: bindActionCreators(logoutUser, dispatch),
+    getCurrentUserData: bindActionCreators(getCurrentUserData, dispatch)
   }
 }
 
