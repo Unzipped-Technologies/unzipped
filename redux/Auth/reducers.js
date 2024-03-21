@@ -64,7 +64,8 @@ const INIT_STATE = {
     taxEIN: '',
     socialSecurityNumber: '',
     businessType: '',
-    stage: 1
+    isAgreeTransferTerms: false,
+    stage: 1,
   },
   loading: false,
   error: { data: '' },
@@ -93,6 +94,13 @@ const INIT_STATE = {
       BillingAddressState: '',
       BillingAddressZip: '',
       card: undefined
+    },
+    bankInformation: {
+      bankName: '',
+      routingNumber: '',
+      accountNumber: '',
+      cityOrState: '',
+      accountType: '',
     }
   },
   email: '',
@@ -222,7 +230,9 @@ const Auth = (state = INIT_STATE, action) => {
     case LOGIN_USER_SUCCESS:
       return { ...state, user: action.payload, loading: false, error: { data: '' } }
     case UPDATE_USER_SUCCESS:
-      return { ...state, user: { ...state.user, ...state.userForm }, loading: false, error: { data: '' } }
+      {
+        return { ...state, user: { ...state.user, ...action.payload }, loading: false, error: { data: '' } }
+      }
     case VERIFY_USER:
       return { ...state, isEmailSent: true, loading: false }
     case REGISTER_USER:

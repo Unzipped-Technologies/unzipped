@@ -39,6 +39,7 @@ const FormFieldContainer = styled.div`
   margin: ${({ margin }) => (margin ? margin : 'unset')};
   padding-bottom: ${({ $bottom }) => $bottom};
   borderradius: ${props => (props.borderRadius ? props.borderRadius : '0px')};
+  margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '0px')};
   position: relative;
   ::placeholder {
     font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
@@ -134,6 +135,7 @@ const FormField = ({
   border,
   height,
   placeholder,
+  marginLeft,
   ...rest
 }) => {
   const Control = types[fieldType]
@@ -231,6 +233,7 @@ const FormField = ({
       margin={margin}
       $bottom={bottom}
       width={width}
+      marginLeft={marginLeft}
       height={handleHeight()}
       maxWidth={maxWidth}>
       {children && (

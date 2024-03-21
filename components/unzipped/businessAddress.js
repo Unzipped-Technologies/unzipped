@@ -75,7 +75,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                         margin
                         fontSize='14px'
                         noMargin
-                        width= {isSmallWindow ? "100%" : "90%"}
+                        width={isSmallWindow ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressLineCountry: e.target.value })}
                         value={form?.BusinessAddressLineCountry}
                     >
@@ -86,8 +86,8 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                             fieldType="input"
                             margin
                             fontSize='14px'
-                            noMargin
-                            width={ width <= 600 ? "100%" : "80%"}
+                            marginLeft={width <= 600 ? '0px' : '35px'}
+                            width={width <= 600 ? "100%" : "80%"}
                             onChange={(e) => updateSubscription({ BusinessFirstName: e.target.value })}
                             value={form?.BusinessFirstName}
                         >
@@ -97,8 +97,8 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                             fieldType="input"
                             margin
                             fontSize='14px'
-                            noMargin
-                            width={ width <= 600 ? "100%" : "80%"}
+                            marginLeft={width <= 600 ? '0px' : '30px'}
+                            width={width <= 600 ? "100%" : "80%"}
                             onChange={(e) => updateSubscription({ BusinessLastName: e.target.value })}
                             value={form?.BusinessLastName}
                         >
@@ -110,7 +110,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                         margin
                         fontSize='14px'
                         noMargin
-                        width={ width <= 600 ? "100%" : "90%"}
+                        width={width <= 600 ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressLineOne: e.target.value })}
                         value={form?.BusinessAddressLineOne}
                     >
@@ -121,7 +121,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                         margin
                         fontSize='14px'
                         noMargin
-                        width={ width <= 600 ? "100%" : "90%"}
+                        width={width <= 600 ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressLineTwo: e.target.value })}
                         value={form?.BusinessAddressLineTwo}
                     >
@@ -132,8 +132,8 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                             fieldType="input"
                             margin
                             fontSize='14px'
-                            noMargin
-                            width={ width <= 600 ? "100%" : "80%"}
+                            marginLeft={width <= 600 ? '0px' : '40px'}
+                            width={width <= 600 ? "100%" : "80%"}
                             onChange={(e) => updateSubscription({ BusinessAddressCity: e.target.value })}
                             value={form?.BusinessAddressCity}
                         >
@@ -144,7 +144,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                             margin
                             fontSize='14px'
                             noMargin
-                            width={ width <= 600 ? "100%" : "80%"}
+                            width={width <= 600 ? "100%" : "80%"}
                             onChange={(e) => updateSubscription({ BusinessAddressState: e.target.value })}
                             value={form?.BusinessAddressState}
                         >
@@ -154,8 +154,8 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                             fieldType="input"
                             margin
                             fontSize='14px'
-                            noMargin
-                            width={ width <= 600 ? "100%" : "70%"}
+                            marginLeft='5px'
+                            width={width <= 600 ? "100%" : "70%"}
                             onChange={(e) => updateSubscription({ BusinessAddressZip: e.target.value })}
                             value={form?.BusinessAddressZip}
                         >
@@ -167,7 +167,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                         margin
                         fontSize='14px'
                         noMargin
-                        width={ width <= 600 ? "100%" : "90%"}
+                        width={width <= 600 ? "100%" : "90%"}
                         onChange={(e) => updateSubscription({ BusinessAddressPhone: e.target.value })}
                         value={form?.BusinessAddressPhone}
                     >

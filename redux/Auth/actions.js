@@ -324,21 +324,15 @@ export const forgotPassword = user => async (dispatch, getState) => {
 }
 
 export const changePassword = data => async (dispatch, getState) => {
-  //User Loading
-  // dispatch({ type: USER_LOADING })
-  console.log('userDatauserData', data, getState()?.Auth, tokenConfig(getState()?.Auth.token))
   await axios
     .post(`/api/auth/change-password`, data, tokenConfig(getState()?.Auth.token))
     .then(res => {
-      console.log('res', res)
       dispatch({
         type: RESET_PASSWORD_SUCCESS,
         payload: res.data
       })
     })
     .catch(err => {
-      console.log('err', err)
-      // dispatch(returnErrors(err.response, err.response))
       dispatch({
         type: RESET_PASSWORD_ERROR,
         payload: err.response
@@ -357,7 +351,6 @@ export const contactEmail = contact => async (dispatch, getState) => {
       })
     )
     .catch(err => {
-      // dispatch(returnErrors(err.response, err.response))
       dispatch({
         type: SET_TOKEN,
         payload: err.response
