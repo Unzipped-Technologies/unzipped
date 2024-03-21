@@ -22,7 +22,6 @@ const createBusiness = async (data, id, files = []) => {
   if (uploadResult && uploadResult.length > 0) {
     cloudinaryIds = uploadResult.map(elem => elem._id)
   }
-
   // create business
   const newBusiness = await business.create({
     ...data,

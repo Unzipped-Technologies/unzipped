@@ -32,13 +32,7 @@ router.get('/google/callback', passport.authenticate('google'), (req, res) => {
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { user } = req.body
-    const decodeUserCredentials = Buffer.from(user, 'base64').toString('utf-8')
-    const userCredentials = JSON.parse(decodeUserCredentials)
-    const { email, password } = userCredentials
-    const data = userCredentials
-
-    const existingUser = await AuthService.isExistingUser(email, false)
+    const existingUser = await AuthService.isExistingUser(req.body?.email, false)
 
     if (existingUser) {
       if (existingUser.googleId) {
@@ -47,10 +41,10 @@ router.post('/register', async (req, res, next) => {
         throw Error('User with this email already exists')
       }
     } else {
-      data.isEmailVerified = true
-      const hash = await AuthService.bcryptAndHashing(password)
-      let newuser = await userHelper.createUser(data, hash)
-      const existingUsers = await AuthService.isExistingUser(email, false)
+      req.body.isEmailVerified = true
+      const hash = await AuthService.bcryptAndHashing(req.body?.password)
+      let newuser = await userHelper.createUser(req.body, hash)
+      const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
       res.cookie('access_token', token.signToken(newuser._id), { httpOnly: true })

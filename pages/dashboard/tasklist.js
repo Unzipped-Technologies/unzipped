@@ -37,7 +37,7 @@ const Container = styled.div`
   }
 `
 
-const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
+const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
   const router = useRouter()
 
   const access = token?.access_token || cookie
@@ -45,12 +45,13 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
   const [selectedDepartment, setSelectedDepartment] = useState({})
 
   useEffect(() => {
-    setCurrentBusiness(businesses[0]?._id)
-    setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
-  }, [currentDepartment])
+    if (!access) {
+      router.push('/login')
+    }
+  }, [])
 
-  useEffect(() => {
-    getProjectsList({
+  useEffect(async () => {
+    await getProjectsList({
       take: 'all',
       skip: 0,
       populate: false
@@ -58,10 +59,19 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
   }, [])
 
   useEffect(() => {
-    if (!access) {
-      router.push('/login')
+    setCurrentBusiness(businesses[0]?._id)
+    if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
+    else {
+      setSelectedDepartment({})
     }
-  }, [])
+  }, [businesses])
+
+  useEffect(() => {
+    if (currentBusiness?.businessDepartments?.length) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
+    else {
+      setSelectedDepartment({})
+    }
+  }, [currentBusiness])
 
   return (
     <>
@@ -78,24 +88,30 @@ const Tasklist = ({ token, cookie, businesses = [], getProjectsList, setDepartme
           router.back()
         }}
       />
-      <Container>
-        <ProjectsPanel
-          businesses={businesses}
-          currentBusiness={currentBusiness}
-          selectedDepartment={selectedDepartment}
-          onSelectDepartment={value => {
-            setSelectedDepartment(value)
-            setDepartment(value)
-            if (window.innerWidth <= 600) {
-              router.push(`department/${value._id}`)
-            }
-          }}
-          onSelectBusiness={value => {
-            setCurrentBusiness(value)
-          }}
-        />
-        {window.innerWidth > 600 && <TasksPanel selectedDepartment={selectedDepartment} />}
-      </Container>
+      {businesses?.length ? (
+        <Container>
+          <ProjectsPanel
+            businesses={businesses}
+            currentBusiness={currentBusiness}
+            selectedDepartment={selectedDepartment}
+            onSelectDepartment={value => {
+              setSelectedDepartment(value)
+              setDepartment(value)
+              if (window.innerWidth <= 600) {
+                router.push(`department/${value._id}`)
+              }
+            }}
+            onSelectBusiness={value => {
+              setCurrentBusiness(value)
+            }}
+          />
+          {window.innerWidth > 600 && (
+            <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+          )}
+        </Container>
+      ) : (
+        !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+      )}
     </>
   )
 }
@@ -112,7 +128,8 @@ const mapStateToProps = state => {
   return {
     businesses: state?.Business?.projectList,
     cookie: state.Auth.token,
-    currentDepartment: state.Tasks.currentDepartment
+    currentDepartment: state.Tasks.currentDepartment,
+    loading: state.Loading?.loading
   }
 }
 
