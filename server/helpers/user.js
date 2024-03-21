@@ -98,7 +98,7 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    return await user.findByIdAndUpdate(id, { $set: { ...data } })
+    return await user.updateOne({ _id: id }, { $set: { ...data } })
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
   }
@@ -421,7 +421,6 @@ const retrieveSubscriptions = async id => {
 
 const retrievePaymentMethods = async id => {
   const payment = await PaymentMethods.find({ userId: id })
-  console.log(payment)
   return await PaymentMethods.find({ userId: id })
 }
 
@@ -556,9 +555,7 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
       freelancers: result[0].freelancers,
       totalCount: result[0].totalCount[0]?.count || 0
     }
-  } catch (error) {
-    console.log('error', error)
-  }
+  } catch (error) {}
 }
 
 const buildSortStageFilters = sort => {
@@ -603,7 +600,44 @@ const buildQueryFilters = (minRate, maxRate, skills, name) => {
   return filter
 }
 
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await freelancer.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
+}
+
+const changeEmail = async (userId, data) => {
+  const userData = await user.findById(userId)
+  if (!userData) throw Error(`User not exist`)
+  if (userData.email !== data.currentEmail) throw Error(`User with this email not exist.`)
+
+  const newEmailUser = await user.findOne({ email: data.email })
+  if (newEmailUser) throw Error(`New email already registered.`)
+
+  userData.email = data.email
+  await userData.save()
+  return userData
+}
+
+const getSingleUser = async (filter, fields) => {
+  try {
+    return await User.findOne(filter).select(fields)
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
 module.exports = {
+  changeEmail,
   createUser,
   updateUserByEmail,
   getUserById,
@@ -622,5 +656,6 @@ module.exports = {
   listLikes,
   addToNewsletter,
   getAllFreelancers,
+  getSingleUser,
   retrievePaymentMethods
 }

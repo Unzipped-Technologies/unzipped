@@ -25,7 +25,11 @@ import {
   UPDATE_REGISTER_CREDENTIALS,
   INITIATE_VERIFY_IDENTITY,
   GET_USER_THIRD_PARTY_DETAILS,
-  GET_USER_THIRD_PARTY_DETAILS_FAILED
+  GET_USER_THIRD_PARTY_DETAILS_FAILED,
+  UPDATE_USER_EMAIL,
+  UPDATE_EMAIL_ERROR,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_ERROR
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -42,7 +46,7 @@ const INIT_STATE = {
   disabled: true,
   isAuthenticated: false,
   isEmailSent: false,
-  userRegistrationForm: { email: "", password: "" },
+  userRegistrationForm: { email: '', password: '' },
   user: {},
   verifyUrl: '',
   userForm: {
@@ -235,7 +239,6 @@ const Auth = (state = INIT_STATE, action) => {
       let isAuthenticated = true
       if (action.payload.error) {
         isAuthenticated = false
-
       }
       return {
         ...state,
@@ -290,6 +293,28 @@ const Auth = (state = INIT_STATE, action) => {
     case GET_USER_THIRD_PARTY_DETAILS_FAILED:
       return { ...state, loading: false, thirdPartyDetails: null }
 
+    case UPDATE_USER_EMAIL:
+      return {
+        ...state,
+        loading: false,
+        user: action.payload,
+        email: action.payload.email
+      }
+    case RESET_PASSWORD_SUCCESS:
+      console.log('payload', action.payload)
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false,
+        error: ''
+      }
+    case RESET_PASSWORD_ERROR:
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false
+        // error: action?.payload
+      }
     default:
       return state
   }

@@ -114,4 +114,46 @@ router.get('/current/payment-methods', requireLogin, async (req, res) => {
   }
 })
 
+router.get('/getAllFreelancers', async (req, res) => {
+  try {
+    const { take, skip, minRate, maxRate, skill, name, sort } = req.query
+    const freelancers = await userHelper.getAllFreelancers(skip, take, minRate, maxRate, skill, name, sort)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.post('/create-freelancer-invite', async (req, res) => {
+  try {
+    const freelancers = await userHelper.createFreelancerInvite(req.body)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/thirdPartyCredentials/:id', async (req, res) => {
+  try {
+    const { thirdPartyCredentials } = await userHelper.getUserById(req.params.id)
+    res.json(thirdPartyCredentials.github)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.patch(
+  '/change-email',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateCurrentUsers'),
+  async (req, res) => {
+    try {
+      const updateUser = await userHelper.changeEmail(req.user.sub, req.body)
+      if (!updateUser) throw Error('user does not exist')
+      res.json(updateUser)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
 module.exports = router
