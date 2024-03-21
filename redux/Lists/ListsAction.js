@@ -9,7 +9,9 @@ import {
 
     DELETE_USER_LIST,
     DELETE_USER_LIST_SUCCESS,
-    DELETE_USER_LIST_ERROR
+    DELETE_USER_LIST_ERROR,
+
+    ON_UPDATE_LIST
 } from "./constant";
 import axios from 'axios';
 import { startLoading, stopLoading } from '../Loading/actions';
@@ -25,6 +27,10 @@ const createList = (params, token, cb) => async (dispatch) => {
         const response = await axios.post(`/api/list/create/`, params, tokenConfig(token));
         dispatch({
             type: CREATE_USER_LIST_SUCCESS,
+            payload: response.data
+        });
+        dispatch({
+            type: ON_UPDATE_LIST,
             payload: response.data
         });
         cb()
@@ -48,6 +54,11 @@ const updateList = (params, token, cb) => async (dispatch) => {
         const response = await axios.post(`/api/list/update/`, params, tokenConfig(token));
         dispatch({
             type: EDIT_USER_LIST_SUCCESS,
+            payload: response.data
+        });
+
+        dispatch({
+            type: ON_UPDATE_LIST,
             payload: response.data
         });
         cb()
@@ -85,8 +96,27 @@ const deleteList = (listId, cb) => async (dispatch) => {
 
 }
 
+const setLitItemsAction = (params) => async (dispatch) => {
+
+    dispatch({ type: EDIT_USER_LIST });
+
+    try {
+        dispatch({
+            type: ON_UPDATE_LIST,
+            payload: params
+        });
+    } catch (error) {
+        dispatch({
+            type: EDIT_USER_LIST_ERROR,
+            payload: null
+        });
+    }
+
+}
+
 export {
     createList,
     updateList,
-    deleteList
+    deleteList,
+    setLitItemsAction
 }

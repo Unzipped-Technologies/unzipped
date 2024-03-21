@@ -40,7 +40,13 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
     const [defaultList, setDefaultList] = useState(null);
     const dispatch = useDispatch();
     const userRoleInfo = useSelector(state => state.Auth.user);
+    const { updatedList } = useSelector(state => state.Lists);
     useEffect(() => {
+        if (updatedList) {
+            setListInfo({ listId: updatedList._id, listTitle: updatedList.name, listIcon: updatedList.icon });
+            setDefaultList({ _id: updatedList._id, name: updatedList.name, icon: updatedList.icon })
+            return;
+        }
         if (userListItems && userListItems.length > 0) {
             const selectedListObj = userListItems?.find(list => list.name == 'Favorites');
             if (selectedListObj) {
@@ -48,7 +54,7 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
                 setDefaultList({ _id: selectedListObj._id, name: selectedListObj.name, icon: selectedListObj.icon })
             }
         }
-    }, [userListItems])
+    }, [userListItems, updatedList])
 
     useEffect(() => {
         if (defaultList) {
@@ -58,7 +64,7 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
 
     return (
         <>
-            {userRoleInfo && userRoleInfo?.role && (userRoleInfo.role === 0 || userRoleInfo.role === 2) && (<Container>
+            <Container>
                 <LeftListPanel
                     selectList={selectList}
                     list={list}
@@ -96,7 +102,7 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
                     listInfo={listInfo}
                     setIsFavourite={setIsFavourite}
                 />
-            </Container>)}
+            </Container>
         </>
     )
 }

@@ -378,7 +378,7 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
                     }
                 </>
             )}
-            {userState && userState?.role && (userState.role === 0 || userState.role === 2) &&isListViewable && (<ViewAllList
+            {userListItems?.length > 0 && isListViewable && (<ViewAllList
                 userLists={userListItems}
                 setIsViewable={setIsViewable}
                 setIsFavourite={setIsFavourite}
