@@ -4,6 +4,8 @@ import {
   DELETE_DEPARTMENT,
   GET_DEPARTMENTS,
   GET_DEPARTMENT_BY_ID,
+  UPDATE_DEPARTMENT_FORM,
+  RESET_DEPARTMENT_FORM,
   DEPARTMENT_ERROR,
   LOAD_STATE
 } from './constants'
@@ -114,4 +116,18 @@ export const deleteDepartment = departmentId => async (dispatch, getState) => {
         payload: err.response
       })
     })
+}
+
+export const updateDepartmentForm = data => async (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_DEPARTMENT_FORM,
+    payload: data
+  })
+}
+
+export const resetDepartmentForm = () => async (dispatch, getState) => {
+  dispatch({
+    type: RESET_DEPARTMENT_FORM,
+    payload: {}
+  })
 }

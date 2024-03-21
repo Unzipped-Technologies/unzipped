@@ -16,7 +16,6 @@ router.post(
   async (req, res) => {
     try {
       const data = JSON.parse(req.body?.projectDetails)
-      console.log('data', data)
       data['userId'] = req.user.sub
       const createBusiness = await businessHelper.createBusiness(data, req.user.sub, req.files)
       if (!createBusiness) throw Error('business already exists')
