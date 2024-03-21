@@ -7,7 +7,9 @@ import {
   getPaymentMethods,
   getAccountOnboardingLink,
   getBusinessDetails,
-  getAccountBalance
+  getAccountBalance,
+  getCurrentUserData,
+  updateCurrentUser
 } from '../../../redux/actions'
 import { useRouter } from 'next/router'
 import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
@@ -107,86 +109,74 @@ const getCardLogoUrl = cardType => {
   return stripeLogoEnum[brand]
 }
 
-const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMethods, getAccountOnboardingLink, getBusinessDetails, balance, getAccountBalance, business, token, paymentMethods = []}) => {
-    const primaryPM = paymentMethods.find(e => e.isPrimary)
-    const [editName, setEditName] = useState(false)
-    const [editAddress, setEditAddress] = useState(false)
-    const [editCompany, setEditCompany] = useState(false)
-    const [firstNameError, setFirstNameError] = useState('')
-    const [lastNameError, setLastNameError] = useState('')
-    const [addressLineOneError, setAddressLineOneError] = useState('')
-    const [addressLineTwoError, setAddressLineTwoError] = useState('')
-    const [addressStateError, setAddressStateError] = useState('')
-    const [addressCityError, setAddressCityError] = useState('')
-    const [addressZipError, setAddressZipError] = useState('')
-    const [businessNameError, setBusinessNameError] = useState('')
-    const [businessTypeError, setBusinessTypeError] = useState('')
-    const [businessPhoneError, setBusinessPhoneError] = useState('')
-    const [taxIdError, setTaxIdError] = useState('')
-    const initialState = {
-        firstName: user?.FirstName,
-        lastName: user?.LastName,
-        addressLineOne: user?.AddressLineOne,
-        addressLineTwo: user?.AddressLineTwo,
-        addressState: user?.AddressState,
-        addressCity: user?.AddressCity,
-        addressZip: user?.AddressZip,
-        businessName: business?.name,
-        businessType: business?.type,
-        businessPhone: business?.businessPhone,
-        taxId: business?.taxId,
-    }
-    const router = useRouter()
-    const [initialUrl] = useState(url?.url);
-    const [userData, setUserData] = useState({
-        ...initialState
-    })
+const DesktopAccount = ({
+  stripeAccountId,
+  user,
+  url,
+  getPaymentMethods,
+  getAccountOnboardingLink,
+  getBusinessDetails,
+  balance,
+  getAccountBalance,
+  business,
+  token,
+  paymentMethods = [],
+  getCurrentUserData,
+  updateCurrentUser
+}) => {
+  const router = useRouter()
 
-    const updateForm = (type, data) => {
-        setUserData({
-          ...userData,
-          [type]: data
-    })
-
-  const validateString = ({ item, min, max, message }, setError) => {
-    if (item === '') {
-      setError('This field is required!')
-      return
-    }
-    const isValid = ValidationUtils._validateString(item, { min, max })
-    if (isValid) {
-      setError('')
-    } else {
-      setError(message)
-    }
+  const initialState = {
+    email: user?.email,
+    phoneNumber: user?.phoneNumber,
+    FirstName: user?.FirstName,
+    LastName: user?.LastName,
+    AddressLineOne: user?.AddressLineOne,
+    AddressLineTwo: user?.AddressLineTwo,
+    AddressState: user?.AddressState,
+    AddressCity: user?.AddressCity,
+    AddressZip: user?.AddressZip,
+    businessName: business?.name,
+    businessType: business?.type,
+    businessPhone: business?.businessPhone,
+    taxId: business?.taxId
   }
 
-  const isValid = ValidationUtils._validateEIN(item)
-    if (isValid) {
-      setError('')
-    } else {
-      setError(message)
-    }
-  }
+  const primaryPM = paymentMethods.find(e => e.isPrimary)
 
-  const fetchAccountOnboardingLink = () => {
-    getAccountOnboardingLink(token, { url: '/dashboard/account' })
-  }
+  const [firstNameError, setFirstNameError] = useState('')
+  const [lastNameError, setLastNameError] = useState('')
+  const [addressLineOneError, setAddressLineOneError] = useState('')
+  const [addressLineTwoError, setAddressLineTwoError] = useState('')
+  const [addressStateError, setAddressStateError] = useState('')
+  const [addressCityError, setAddressCityError] = useState('')
+  const [addressZipError, setAddressZipError] = useState('')
+  const [businessNameError, setBusinessNameError] = useState('')
+  const [businessTypeError, setBusinessTypeError] = useState('')
+  const [businessPhoneError, setBusinessPhoneError] = useState('')
+  const [taxIdError, setTaxIdError] = useState('')
+  const [error, setError] = useState('')
+  const [initialUrl] = useState(url?.url)
 
-  useEffect(() => {
-    getPaymentMethods(token)
-    getBusinessDetails(undefined, token)
+  const [editMode, setMode] = useState({
+    editName: false,
+    editAddress: false,
+    editCompany: false
+  })
+
+  const [userData, setUserData] = useState({
+    ...initialState
+  })
+
+  useEffect(async () => {
+    await getCurrentUserData()
+    await getPaymentMethods(token)
+    await getBusinessDetails(undefined, token)
   }, [])
 
   useEffect(() => {
-      if (url && url?.url && url?.url !== initialUrl) {
-        router.push(url?.url);
-      }
-  }, [url, router]);
-
-  useEffect(() => {
-    if (url && url.url && url.url !== initialUrl) {
-      router.push(url.url)
+    if (url && url?.url !== initialUrl) {
+      router.push(url?.url)
     }
   }, [url, router])
 
@@ -201,12 +191,61 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
     return () => clearInterval(intervalId)
   }, [])
 
+  const enableEditing = (field, value) => {
+    setMode({
+      ...editMode,
+      [field]: value
+    })
+  }
+
+  const validateString = ({ item, min, max, message }, setError) => {
+    if (item === '') {
+      setError('This field is required!')
+      return
+    }
+    const isValid = ValidationUtils._validateString(item, { min, max })
+    if (isValid) {
+      setError('')
+    } else {
+      setError(message)
+    }
+  }
+
+  const updateForm = (type, data) => {
+    setUserData({
+      ...userData,
+      [type]: data
+    })
+  }
+
+  const fetchAccountOnboardingLink = () => {
+    getAccountOnboardingLink(token, { url: '/dashboard/account' })
+  }
+
   const updateDisabled = () => {
     const isDirty = areObjectsEqual(userData, initialState)
     if (isDirty) {
-      setEditName(false)
-      setEditAddress(false)
-      setEditCompany(false)
+      setMode({
+        ...editMode,
+        editName: false,
+        editAddress: false,
+        editCompany: false
+      })
+    }
+  }
+
+  const onSubmit = async () => {
+    const response = await updateCurrentUser(userData)
+    if (response?.status === 200) {
+      await router.push('/dashboard/account')
+      setMode({
+        ...editMode,
+        editName: false,
+        editAddress: false,
+        editCompany: false
+      })
+    } else {
+      setError(response?.data?.message ?? 'Something went wrong')
     }
   }
 
@@ -220,7 +259,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
         </LeftOne>
         <RightOne>
           <Rows>
-            <Item>{email}</Item>
+            <Item>{userData?.email}</Item>
             <Link href="/change-email">Change email</Link>
           </Rows>
           <Rows>
@@ -228,7 +267,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
             <Link href="/change-password">Change password</Link>
           </Rows>
           <Rows>
-            <Item>Phone: {phone}</Item>
+            <Item>Phone: {userData?.phoneNumber}</Item>
             <Link href="/change-phone">Change number</Link>
           </Rows>
           <Underline color="#333" />
@@ -240,7 +279,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
             <Link href="/manage-payment-method">Manage payment method</Link>
           </Rows>
           <Rows>
-            <Item>Your next billing date is {phone}</Item>
+            <Item>Your next billing date is </Item>
             <Link href="/billing-details">Billing details</Link>
           </Rows>
           <Rows>
@@ -263,7 +302,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
         </LeftOne>
         <RightOne>
           <Rows fullHeight>
-            <Item>{email}</Item>
+            <Item>{userData?.email}</Item>
             <Link href={'/pick-a-plan'}>Change plan</Link>
           </Rows>
         </RightOne>
@@ -275,7 +314,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
         <RightOne>
           <Rows>
             <SubTitle>Name</SubTitle>
-            <EditButton onClick={() => setEditName(true)}>Edit</EditButton>
+            <EditButton onClick={() => enableEditing('editName', true)}>Edit</EditButton>
           </Rows>
           <Rows>
             <Align>
@@ -283,13 +322,13 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 fieldType="input"
                 placeholder="First Name"
                 borderRadius="10px"
-                name="firstName"
+                name="FirstName"
                 width="100%"
                 zIndexUnset
                 validate={() => {
                   validateString(
                     {
-                      item: userData?.firstName,
+                      item: userData?.FirstName,
                       min: 1,
                       max: 45,
                       message: 'Please enter a valid first name!'
@@ -303,7 +342,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                   updateDisabled()
                   validateString(
                     {
-                      item: userData?.firstName,
+                      item: userData?.FirstName,
                       min: 1,
                       max: 45,
                       message: 'Please enter a valid first name!'
@@ -311,9 +350,9 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                     setFirstNameError
                   )
                 }}
-                disabled={!editName}
-                onChange={e => updateForm('firstName', e.target.value)}
-                value={userData?.firstName}>
+                disabled={!editMode?.editName}
+                onChange={e => updateForm('FirstName', e.target.value)}
+                value={userData?.FirstName}>
                 First Name
               </FormField>
             </Align>
@@ -322,7 +361,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 fieldType="input"
                 placeholder="Last Name"
                 borderRadius="10px"
-                name="lastName"
+                name="LastName"
                 width="100%"
                 zIndexUnset
                 error={lastNameError}
@@ -330,7 +369,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                   updateDisabled()
                   validateString(
                     {
-                      item: userData?.lastName,
+                      item: userData?.LastName,
                       min: 1,
                       max: 45,
                       message: 'Please enter a valid last name!'
@@ -341,7 +380,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 validate={() => {
                   validateString(
                     {
-                      item: userData?.lastName,
+                      item: userData?.LastName,
                       min: 1,
                       max: 45,
                       message: 'Please enter a valid last name!'
@@ -349,9 +388,9 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                     setLastNameError
                   )
                 }}
-                onChange={e => updateForm('lastName', e.target.value)}
-                value={userData?.lastName}
-                disabled={!editName}>
+                onChange={e => updateForm('LastName', e.target.value)}
+                value={userData?.LastName}
+                disabled={!editMode?.editName}>
                 Last Name
               </FormField>
             </Align>
@@ -359,7 +398,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
           <Underline color="#333" margin="15px 0px 5px 0px" />
           <Rows>
             <SubTitle>Address</SubTitle>
-            <EditButton onClick={() => setEditAddress(true)}>Edit</EditButton>
+            <EditButton onClick={() => enableEditing('editAddress', true)}>Edit</EditButton>
           </Rows>
           <Rows>
             <FormField
@@ -373,7 +412,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 updateDisabled()
                 validateString(
                   {
-                    item: userData?.addressLineOne,
+                    item: userData?.AddressLineOne,
                     min: 1,
                     max: 32,
                     message: 'Please enter a valid address!'
@@ -384,7 +423,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
               validate={() => {
                 validateString(
                   {
-                    item: userData?.addressLineOne,
+                    item: userData?.AddressLineOne,
                     min: 1,
                     max: 32,
                     message: 'Please enter a valid address!'
@@ -392,9 +431,9 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                   setAddressLineOneError
                 )
               }}
-              disabled={!editAddress}
-              onChange={e => updateForm('addressLineOne', e.target.value)}
-              value={userData?.addressLineOne}>
+              disabled={!editMode?.editAddress}
+              onChange={e => updateForm('AddressLineOne', e.target.value)}
+              value={userData?.AddressLineOne}>
               Address Line 1
             </FormField>
           </Rows>
@@ -409,7 +448,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 updateDisabled()
                 validateString(
                   {
-                    item: userData?.addressLineTwo,
+                    item: userData?.AddressLineTwo,
                     min: 1,
                     max: 32,
                     message: 'Please enter a valid address!'
@@ -420,7 +459,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
               validate={() => {
                 validateString(
                   {
-                    item: userData?.addressLineTwo,
+                    item: userData?.AddressLineTwo,
                     min: 1,
                     max: 32,
                     message: 'Please enter a valid address!'
@@ -428,9 +467,9 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                   setAddressLineTwoError
                 )
               }}
-              onChange={e => updateForm('addressLineTwo', e.target.value)}
-              value={userData?.addressLineTwo}
-              disabled={!editAddress}
+              onChange={e => updateForm('AddressLineTwo', e.target.value)}
+              value={userData?.AddressLineTwo}
+              disabled={!editMode?.editAddress}
               zIndexUnset>
               Address Line 2
             </FormField>
@@ -443,13 +482,13 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 placeholder="Columbus"
                 borderRadius="10px"
                 zIndexUnset
-                disabled={!editAddress}
+                disabled={!editMode?.editAddress}
                 error={addressCityError}
                 onBlur={() => {
                   updateDisabled()
                   validateString(
                     {
-                      item: userData?.addressCity,
+                      item: userData?.AddressCity,
                       min: 1,
                       max: 40,
                       message: 'Please enter a valid city!'
@@ -460,7 +499,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 validate={() => {
                   validateString(
                     {
-                      item: userData?.addressCity,
+                      item: userData?.AddressCity,
                       min: 1,
                       max: 40,
                       message: 'Please enter a valid city!'
@@ -468,8 +507,8 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                     setAddressCityError
                   )
                 }}
-                onChange={e => updateForm('addressCity', e.target.value)}
-                value={userData?.addressCity}>
+                onChange={e => updateForm('AddressCity', e.target.value)}
+                value={userData?.AddressCity}>
                 City
               </FormField>
             </Align2>
@@ -480,13 +519,13 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 placeholder="OH"
                 borderRadius="10px"
                 zIndexUnset
-                disabled={!editAddress}
+                disabled={!editMode?.editAddress}
                 error={addressStateError}
                 onBlur={() => {
                   updateDisabled()
                   validateString(
                     {
-                      item: userData?.addressState,
+                      item: userData?.AddressState,
                       min: 1,
                       max: 30,
                       message: 'Please enter a valid state!'
@@ -497,7 +536,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 validate={() => {
                   validateString(
                     {
-                      item: userData?.addressState,
+                      item: userData?.AddressState,
                       min: 1,
                       max: 30,
                       message: 'Please enter a valid state!'
@@ -505,8 +544,8 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                     setAddressStateError
                   )
                 }}
-                onChange={e => updateForm('addressState', e.target.value)}
-                value={userData?.addressState}>
+                onChange={e => updateForm('AddressState', e.target.value)}
+                value={userData?.AddressState}>
                 State
               </FormField>
             </Align2>
@@ -517,13 +556,13 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 placeholder="43220"
                 borderRadius="10px"
                 zIndexUnset
-                disabled={!editAddress}
+                disabled={!editMode?.editAddress}
                 error={addressZipError}
                 onBlur={() => {
                   updateDisabled()
                   validateString(
                     {
-                      item: userData?.addressZip,
+                      item: userData?.AddressZip,
                       min: 1,
                       max: 6,
                       message: 'Please enter a valid zip!'
@@ -534,7 +573,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 validate={() => {
                   validateString(
                     {
-                      item: userData?.addressZip,
+                      item: userData?.AddressZip,
                       min: 1,
                       max: 6,
                       message: 'Please enter a valid zip!'
@@ -542,8 +581,8 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                     setAddressZipError
                   )
                 }}
-                onChange={e => updateForm('addressZip', e.target.value)}
-                value={userData?.addressZip}>
+                onChange={e => updateForm('AddressZip', e.target.value)}
+                value={userData?.AddressZip}>
                 Zip Code
               </FormField>
             </Align2>
@@ -551,7 +590,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
           <Underline color="#333" margin="15px 0px 5px 0px" />
           <Rows>
             <SubTitle>Company</SubTitle>
-            <EditButton onClick={() => setEditCompany(true)}>
+            <EditButton onClick={() => enableEditing('editCompany', true)}>
               {!business ? 'verify business details' : 'Edit'}
             </EditButton>
           </Rows>
@@ -562,7 +601,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 width="100%"
                 placeholder="Unzipped"
                 zIndexUnset
-                disabled={!editCompany}
+                disabled={!editMode?.editCompany}
                 error={businessNameError}
                 onBlur={() => {
                   updateDisabled()
@@ -601,7 +640,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
                 width="100%"
                 placeholder="LLC"
                 borderRadius="10px"
-                disabled={!editCompany}
+                disabled={!editMode?.editCompany}
                 zIndexUnset
                 error={businessTypeError}
                 onBlur={() => {
@@ -638,7 +677,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
               <Align>
                 <FormField
                   fieldType="input"
-                  disabled={!editCompany}
+                  disabled={!editMode?.editCompany}
                   width="100%"
                   placeholder="1 (833) 366-4285"
                   borderRadius="10px"
@@ -675,7 +714,7 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
               <Align>
                 <FormField
                   fieldType="input"
-                  disabled={!editCompany}
+                  disabled={!editMode?.editCompany}
                   width="100%"
                   placeholder="**-*****42"
                   borderRadius="10px"
@@ -710,11 +749,14 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
           )}
         </RightOne>
       </Container>
+      {error && <p className="red-text">{error}</p>}
       <Container border>
         <div></div>
         <Rows>
           <div></div>
-          <ButtonSubmit disabled={areObjectsEqual(userData, initialState)}>Save Settings</ButtonSubmit>
+          <ButtonSubmit disabled={areObjectsEqual(userData, initialState)} onClick={onSubmit}>
+            Save Settings
+          </ButtonSubmit>
         </Rows>
       </Container>
       <Container border></Container>
@@ -725,8 +767,6 @@ const DesktopAccount = ({email, stripeAccountId, phone, user, url, getPaymentMet
 const mapStateToProps = state => {
   return {
     token: state.Auth.token,
-    email: state.Auth.email,
-    phone: state.Auth.user.phoneNumber,
     user: state.Auth.user,
     paymentMethods: state.Stripe.methods,
     url: state.Stripe?.url,
@@ -741,7 +781,9 @@ const mapDispatchToProps = dispatch => {
     getPaymentMethods: bindActionCreators(getPaymentMethods, dispatch),
     getAccountOnboardingLink: bindActionCreators(getAccountOnboardingLink, dispatch),
     getBusinessDetails: bindActionCreators(getBusinessDetails, dispatch),
-    getAccountBalance: bindActionCreators(getAccountBalance, dispatch)
+    getAccountBalance: bindActionCreators(getAccountBalance, dispatch),
+    getCurrentUserData: bindActionCreators(getCurrentUserData, dispatch),
+    updateCurrentUser: bindActionCreators(updateCurrentUser, dispatch)
   }
 }
 

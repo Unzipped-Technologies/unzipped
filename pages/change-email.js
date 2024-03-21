@@ -7,6 +7,8 @@ import UpdateKeyDataForm from '../components/unzipped/UpdateEmailForm'
 import { updateUserEmail } from '../redux/actions'
 import Nav from '../components/unzipped/header'
 import { parseCookies } from '../services/cookieHelper'
+import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
+import Footer from '../components/unzipped/Footer'
 
 const Reset = ({ error, token, email, updateUserEmail }) => {
   const [emailError, setEmailError] = useState('')
@@ -57,7 +59,7 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
         <title>Change Email | Unzipped</title>
         <meta name="Change Email | Unzipped" content="Change Email" />
       </Head>
-      <Nav token={token} marginBottom={marginBottom} />
+      <Nav token={token} marginBottom={marginBottom} onBackArrowClick={() => linkPush('/dashboard/account')} />
       <UpdateKeyDataForm
         title="Change Email"
         onBack={() => linkPush('/dashboard/account')}
@@ -65,6 +67,7 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
         email={email}
         error={emailError}
       />
+      {window.innerWidth >= 680 ? <Footer /> : <MobileFreelancerFooter defaultSelected="Account" />}
     </React.Fragment>
   )
 }

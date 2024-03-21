@@ -18,7 +18,7 @@ const { likeEnum } = require('../enum/likeEnum')
 const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
-
+const { _isValidPhoneNumber } = require('../utils/validations')
 // create user
 const createUser = async (data, hash) => {
   // create User
@@ -97,9 +97,30 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    return await user.updateOne({ _id: id }, { $set: { ...data } })
+    const userData = await getSingleUser({ _id: id }, '-password')
+    if (userData && userData?.phoneNumber && data?.currentPhone) {
+      if (data?.currentPhone !== userData.phoneNumber) {
+        throw new Error(`Incorrect phone number.`)
+      } else if (data?.currentPhone === data.phoneNumber) {
+        throw new Error(`New and current phone numbers must be different.`)
+      } else if (_isValidPhoneNumber(data.phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      }
+    } else {
+      if (data?.phoneNumber && _isValidPhoneNumber(data.phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      }
+    }
+    for (var field in data) {
+      userData[field] = data[field]
+    }
+
+    await userData.save()
+
+    return userData
+    // return await user.findOneAndUpdate({ _id: id }, { $set: { ...data } })
   } catch (e) {
-    throw Error(`Something went wrong ${e}`)
+    throw new Error(`${e}`)
   }
 }
 
@@ -126,7 +147,12 @@ const getUserById = async id => {
   try {
     return await user
       .findById(id)
-      .populate({ path: 'thirdPartyCredentials', model: 'thirdPartyApplications' })
+      .populate([
+        { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
+        {
+          path: 'freelancers'
+        }
+      ])
       .select('-password')
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)

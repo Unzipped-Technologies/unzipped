@@ -13,29 +13,29 @@ import { updateWizardSubmission } from '../../../redux/actions'
 const ExploreContainer = styled.div`
   display: flex;
   width: 100%;
-  background: #FAFAFA;
+  background: #fafafa;
   flex-direction: column;
   border-radius: 5px;
-  border: 1px solid #D8D8D8;
+  border: 1px solid #d8d8d8;
   padding: 25px;
-`;
+`
 
 const TextContent = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
   margin-bottom: 20px;
-`;
+`
 
 const ExploreItems = styled.div`
   display: flex;
   width: 100%;
-  border-radius:  ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
   // border-radius: 10px 10px 0px 0px;
-  border: 1px solid #D8D8D8;
-  background: #F1F0F0;
+  border: 1px solid #d8d8d8;
+  background: #f1f0f0;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-`;
+`
 
 const ExploreIconContainer = styled.div`
   display: flex;
@@ -47,13 +47,13 @@ const HeadingStyled = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
   display: block;
-`;
+`
 
 const ExploreItemTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 5px 20px;
-`;
+`
 
 const FontStyled = styled.span`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -99,24 +99,27 @@ const help = [
   }
 ]
 
-
 const Notification = ({ type, children, noButton, smallMargin }) => {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { wizardSubmission } = useSelector((state) => state.Business);
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const { wizardSubmission } = useSelector(state => state.Business)
   const handleNotificationDismissal = () => {
-    dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }));
+    dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }))
   }
   switch (type) {
     case 'plan':
       return (
         <>
-          {wizardSubmission?.isSuccessfull && (<WhiteCard row borderColor="#8EDE64" background="#f4fcef">
-            <DarkText noMargin><span>{`Project ${wizardSubmission?.projectName} successfully created!`}</span></DarkText>
-            <Absolute>
-              <Dismiss onClick={handleNotificationDismissal} >Dismiss</Dismiss>
-            </Absolute>
-          </WhiteCard>)}
+          {wizardSubmission?.isSuccessfull && (
+            <WhiteCard row borderColor="#8EDE64" background="#f4fcef">
+              <DarkText noMargin>
+                <span>{`Project ${wizardSubmission?.projectName} successfully created!`}</span>
+              </DarkText>
+              <Absolute>
+                <Dismiss onClick={handleNotificationDismissal}>Dismiss</Dismiss>
+              </Absolute>
+            </WhiteCard>
+          )}
           <BlackCard mallMargin={smallMargin}>
             <WhiteText>
               Build your dream business, grow your following, and collaborate with other professionals to <br />
@@ -144,7 +147,6 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
       )
     case 'browse':
       return (
-
         <WhiteCard row>
           <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
           <Absolute>
@@ -243,24 +245,20 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
             </div>
           </TextContent>
           {help.map((item, index) => (
-            <ExploreItems borderRadius={(index === 0) ? "10px 10px 0px 0px" : "0px"}>
+            <ExploreItems borderRadius={index === 0 ? '10px 10px 0px 0px' : '0px'} key={`${item.name}_${index}`}>
               <div style={{ display: 'flex' }}>
-
                 <ExploreIconContainer>
                   <Icon name={item.icon} />
                 </ExploreIconContainer>
 
                 <ExploreItemTextContainer>
-
-                  <HeadingStyled fontWeight={400}>
-                    {item.name}
-                  </HeadingStyled>
+                  <HeadingStyled fontWeight={400}>{item.name}</HeadingStyled>
                   <div>
                     <span style={{ display: 'inline' }}> {item.text} </span>
                     <span
                       style={{
-                        color: "#001AFF",
-                        cursor: "pointer",
+                        color: '#001AFF',
+                        cursor: 'pointer',
                         display: 'inline',
                         fontSize: 13
                       }}
@@ -272,7 +270,6 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
               </div>
             </ExploreItems>
           ))}
-
         </ExploreContainer>
       )
     default:

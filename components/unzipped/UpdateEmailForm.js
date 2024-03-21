@@ -69,7 +69,9 @@ const ButtonBack = styled.button`
 const ButtonContainer = styled.div`
   padding: 20px 0px;
   display: flex;
-  justify-content: ${({ mobile }) => (mobile ? 'center' : 'start')}; ;
+  justify-content: ${({ mobile }) => (mobile ? 'flex-end' : 'start')};
+  margin-top: ${({ mobile }) => (mobile ? '45%' : '0px')};
+  margin-bottom: ${({ mobile }) => (mobile ? '30px' : '0px')};
 `
 
 const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
@@ -166,7 +168,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
           </FormField>
           <FormField
             fieldType="input"
-            placeholder="email"
+            placeholder="New Email"
             borderRadius="10px"
             name="email"
             width="100%"

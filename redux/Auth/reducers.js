@@ -29,7 +29,9 @@ import {
   UPDATE_USER_EMAIL,
   UPDATE_EMAIL_ERROR,
   RESET_PASSWORD_SUCCESS,
-  RESET_PASSWORD_ERROR
+  RESET_PASSWORD_ERROR,
+  UPDATE_USER_ERROR,
+  HIDE_AUTH_NOTIFICATION
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -46,6 +48,7 @@ const INIT_STATE = {
   disabled: true,
   isAuthenticated: false,
   isEmailSent: false,
+  passwordChanged: false,
   userRegistrationForm: { email: '', password: '' },
   user: {},
   verifyUrl: '',
@@ -222,7 +225,12 @@ const Auth = (state = INIT_STATE, action) => {
     case LOGIN_USER_SUCCESS:
       return { ...state, user: action.payload, loading: false, error: { data: '' } }
     case UPDATE_USER_SUCCESS:
-      return { ...state, user: { ...state.user, ...state.userForm }, loading: false, error: { data: '' } }
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload },
+        loading: false,
+        error: { data: '' }
+      }
     case VERIFY_USER:
       return { ...state, isEmailSent: true, loading: false }
     case REGISTER_USER:
@@ -291,11 +299,11 @@ const Auth = (state = INIT_STATE, action) => {
         email: action.payload.email
       }
     case RESET_PASSWORD_SUCCESS:
-      console.log('payload', action.payload)
       return {
         ...state,
         isAuthenticated: true,
         loading: false,
+        passwordChanged: true,
         error: ''
       }
     case RESET_PASSWORD_ERROR:
@@ -304,6 +312,21 @@ const Auth = (state = INIT_STATE, action) => {
         isAuthenticated: true,
         loading: false
         // error: action?.payload
+      }
+    case UPDATE_USER_ERROR:
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false,
+        error: ''
+      }
+    case HIDE_AUTH_NOTIFICATION:
+      return {
+        ...state,
+        isAuthenticated: true,
+        loading: false,
+        passwordChanged: false,
+        error: ''
       }
     default:
       return state
