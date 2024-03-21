@@ -50,6 +50,10 @@ const BankInformation = ({ form, updateSubscription }) => {
     }
   }, [width])
 
+  useEffect(() => {
+    updateSubscription({ bankInformation: bankObj })
+  }, [bankObj])
+
 
 
   return (
@@ -69,7 +73,7 @@ const BankInformation = ({ form, updateSubscription }) => {
           >
             BANK NAME
           </FormField>
-          <Grid2 margin="10px" paddingLeft={ width <= 600 ? "0px" :"35px"} block>
+          <Grid2 margin="10px" paddingLeft={width <= 600 ? "0px" : "35px"} block>
             <FormField
               fieldType="input"
               margin

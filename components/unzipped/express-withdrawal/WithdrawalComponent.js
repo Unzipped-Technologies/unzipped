@@ -196,7 +196,7 @@ const WithdrawalComponent = ({ user, token, form, updateSubscription }) => {
     return (
         <RecurringWrapper>
             <HireDivider title="Express withdrawal" />
-            {!(user?.isAgreeTransferTerms && user?.isAgreeTransferTerms == true) ? (
+            {(user?.isAgreeTransferTerms && user?.isAgreeTransferTerms == true) ? (
                 <WithdrawalContainer>
                     <PolicyCompliance>
                         <div>

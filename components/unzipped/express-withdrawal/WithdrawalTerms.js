@@ -28,7 +28,6 @@ const TopContent = styled.div`
     align-items: center;
     gap: 20px;
     width: 100%;
-    // background-color: #f5f5f5;
     width: 1070px;
     @media screen and (max-width: 600px) {
         width: 100%;
@@ -100,6 +99,8 @@ const SubmitButton = styled.button`
 
 const TextContainer = styled.div`
     display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
 `;
 
@@ -119,7 +120,8 @@ const WithdrawalTerms = ({ user, token }) => {
         <TopContent>
             <HeadingStyled>Transfer Money</HeadingStyled>
             <TopContent>
-                <img src='https://s3-alpha-sig.figma.com/img/da97/d34d/25fe1722144c7fcb40d5ed89aa7c0dd6?Expires=1710720000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qAcUM5gO7xKmLKsLu2IyOnE~tpaprw1qiwVk1~jR6U0DhQuhVI~mhZ6RK6JUEDqSLP78vnukbG2ydPtO4mbInNdnpQHr86h74X-XxYjuCykIOgI6p09d~TNOsnChGxX0A9--mxRa0duTacCi2jNkXqVdqHo-Wbeoil7xUegE-nuTFeGxpDbm1adgp3WgjYxfBa~ql7WIdPTrdL8R4qrp0JBCEmWEJecxsqVMUrJDD4GRoGOOlXwJhv8JDKthTyfMkB436YZ~K~yWlPLIntgYK-LFwhKQ3zqvGmTkY1p7qI7LH-L4dQn5QzF6y~-gIpksb6JpiBInvTC1MLU3V0gbJQ__' />
+
+                <img src='http://res.cloudinary.com/dghsmwkfq/image/upload/v1711042882/6396408a63b1433960a39821/ci4k80hagztaj8ffxaf1.png' />
             </TopContent>
             <HeadingStyled style={{ marginTop: '5px' }}>Activate Money Transfer</HeadingStyled>
             <Divider></Divider>
@@ -129,7 +131,7 @@ const WithdrawalTerms = ({ user, token }) => {
                         <img
                             width={"32px"}
                             height={"32px"}
-                            src='https://s3-alpha-sig.figma.com/img/0d2e/5fb0/ab22452d5ddd4b857e9b58b642960621?Expires=1710720000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=HNaStCLdkfkCaNjVnzLZXR3im-22nLuc1zUdDpo9V0oSDYdYSWBUVP18sbERj3YOthk882F6s6~MPKPWWx1ymEyOKCeX8yLvRDWlHofPrvt2aVXLhzMMmhqS2MKWE4NmXNt-Q1uJmgdeblG~ORg3ZKaFMixfrXUmP7WwJI0QU8NceX3GErLklVjgc4tbLruOBiku7XpPcAIu5~5s7aKcWVEX2E2LB9JWrm1zpUvFaS4V7mr3F7152ViUaScU562k~ZuPAr-flCBkprl1zg84W3ZdYAXKiXXZSbuw3pwIEIDo40gr4AUqv3HAZEnG7K1gLTsP7kZreFMU57mDsSSckw__' />
+                            src='https://res.cloudinary.com/dghsmwkfq/image/upload/v1711043089/6396408a63b1433960a39821/uv1puao8axrtf7ci3y8k.png' />
                     </span>
                     <Span>
                         Transfer money securely from your unzipped account into your PayPal or your linked bank account.
@@ -140,7 +142,7 @@ const WithdrawalTerms = ({ user, token }) => {
                         <img
                             width={"32px"}
                             height={"32px"}
-                            src='https://s3-alpha-sig.figma.com/img/203b/d294/4c272b00147bcea778081f6598521699?Expires=1710720000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ippICRhDsSASswl084Pe4S5kls3jALyc8sKXo4SEu0a6~WXk9PQ6lGbpfLARg15C9T4iFVYP6yKS3kNZyMZnUvixXaxJenXazqt~2q8M6TS91kWJ5eQ6bro1fjDwNZTpKQpNgwUncmuIUeKMxJCxjHWQLXzhmY5VTsLM~RXlYdCxjmxms2zmJ-DouxOoO7j1I2n3FysX~EWTTX6rr9EkEEsR8AUrjpocb-hR8u7itTNwb3~lSafgGGhmo5Hj5LF8xnlbdMhAzuko8JTdgyKg--fujEG-0TQyDAAZ3FoQmboYNf-oUfDZNB4K3-fYamZcMp9yO-sdQctt486bgMIxYg__' />
+                            src="http://res.cloudinary.com/dghsmwkfq/image/upload/v1711043265/6396408a63b1433960a39821/ip5wyj2jhmg0f0kkqmmk.png" />
                     </span>
                     <Span>
                         Save time by setting up future dated or repeating withdrawals from your account.
@@ -151,7 +153,7 @@ const WithdrawalTerms = ({ user, token }) => {
                         <img
                             width={"32px"}
                             height={"32px"}
-                            src='https://s3-alpha-sig.figma.com/img/da97/d34d/25fe1722144c7fcb40d5ed89aa7c0dd6?Expires=1710720000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qAcUM5gO7xKmLKsLu2IyOnE~tpaprw1qiwVk1~jR6U0DhQuhVI~mhZ6RK6JUEDqSLP78vnukbG2ydPtO4mbInNdnpQHr86h74X-XxYjuCykIOgI6p09d~TNOsnChGxX0A9--mxRa0duTacCi2jNkXqVdqHo-Wbeoil7xUegE-nuTFeGxpDbm1adgp3WgjYxfBa~ql7WIdPTrdL8R4qrp0JBCEmWEJecxsqVMUrJDD4GRoGOOlXwJhv8JDKthTyfMkB436YZ~K~yWlPLIntgYK-LFwhKQ3zqvGmTkY1p7qI7LH-L4dQn5QzF6y~-gIpksb6JpiBInvTC1MLU3V0gbJQ__' />
+                            src='http://res.cloudinary.com/dghsmwkfq/image/upload/v1711042882/6396408a63b1433960a39821/ci4k80hagztaj8ffxaf1.png' />
                     </span>
                     <Span>
                         Manage your upcoming withdrawals in one place conveniently.
