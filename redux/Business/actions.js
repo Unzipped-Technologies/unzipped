@@ -147,7 +147,11 @@ export const updateWizardSubmission = data => dispatch => {
   })
 }
 export const getProjectsList = queryParams => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
+  await dispatch({
+    type: GET_PROJECT_LIST,
+    payload: { limitedRecords: [], totalCount: [{ count: 0 }] }
+  })
+  await dispatch(startLoading())
   await axios
     .post(`/api/business/list`, queryParams, tokenConfig(getState()?.Auth.token))
     .then(res => {
@@ -167,11 +171,17 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+    .finally(() => {
+      dispatch(stopLoading())
+    })
 }
 
 export const getPublicProjectsList = queryParams => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
+  await dispatch({
+    type: GET_PROJECT_LIST,
+    payload: { limitedRecords: [], totalCount: [{ count: 0 }] }
+  })
+  await dispatch(startLoading())
   await axios
     .post(`/api/business/public/list`, queryParams)
     .then(res => {
@@ -191,12 +201,19 @@ export const getPublicProjectsList = queryParams => async (dispatch, getState) =
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+    .finally(() => {
+      dispatch(stopLoading())
+    })
 }
 
 export const getBusinessById = id => async (dispatch, getState) => {
   //business list Loading
-  dispatch({ type: LOAD_STATE })
+  await dispatch(startLoading())
+
+  await dispatch({
+    type: SELECT_BUSINESS,
+    payload: null
+  })
   await axios
     .get(`/api/business/${id}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
@@ -211,4 +228,5 @@ export const getBusinessById = id => async (dispatch, getState) => {
         payload: err.response
       })
     })
+  await dispatch(stopLoading())
 }

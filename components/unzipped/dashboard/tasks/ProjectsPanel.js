@@ -32,7 +32,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                       paddingTop: '20px'
                     }}
                     onClick={() => {
-                      if (business._id === currentBusiness._id) {
+                      if (business._id === currentBusiness?._id) {
                         onSelectBusiness('')
                       } else {
                         onSelectBusiness(business)
@@ -50,8 +50,8 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                       }}
                     />
                   </div>
-                  {business._id !== currentBusiness._id && <Underline />}
-                  {business?.businessDepartments?.length && currentBusiness._id === business?._id
+                  {business._id !== currentBusiness?._id && <Underline />}
+                  {business?.businessDepartments?.length && currentBusiness?._id === business?._id
                     ? business?.businessDepartments?.map(department => {
                         return (
                           <div key={department._id}>
@@ -112,7 +112,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                         )
                       })
                     : ''}
-                  {business._id === currentBusiness._id && <Underline />}
+                  {business._id === currentBusiness?._id && <Underline />}
                 </div>
               )
             })

@@ -47,7 +47,7 @@ const DesktopDisplayBox = styled.div`
     display: none;
   }
 `
-const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelancerId }) => {
+const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelancerId, loading }) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -69,7 +69,7 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
   })
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
-  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '245px')
+  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
 
   useEffect(() => {
     getPublicProjectsList({ take, skip, filter })
@@ -79,7 +79,7 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
     const handleResize = () => {
       if (window && window.innerWidth < 680) {
         setMarginBottom('80px')
-      } else setMarginBottom('245px')
+      } else setMarginBottom('70px')
     }
     window.addEventListener('resize', handleResize)
     return () => {
@@ -163,7 +163,6 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
     <div>
       {!filterOpenClose && (
         <Nav
-          isSubMenu
           searchValue={filter}
           handleSearchValue={setSearchKey}
           handleSearch={handleSearch}
@@ -194,29 +193,33 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
 
         <Box>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
-          <div className="overflow-auto">
-            <div className="d-flex align-items-baseline py-4 bg-white">
-              <h5 className="px-4">
-                <b>Top Results</b>
-              </h5>
-              <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+          {!loading ? (
+            <div className="overflow-auto">
+              <div className="d-flex align-items-baseline py-4 bg-white">
+                <h5 className="px-4">
+                  <b>Top Results</b>
+                </h5>
+                <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+              </div>
+              {projectList?.length === 0 && (
+                <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                  No Proejcts found for this search
+                </DarkText>
+              )}
+              {projectList?.map((project, index) => {
+                return (
+                  <div key={`${project._id}_desktop`}>
+                    <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
+                      <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
+                    </WhiteCard>
+                    {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
+                  </div>
+                )
+              })}
             </div>
-            {projectList?.length === 0 && (
-              <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                No freelancers found for this search
-              </DarkText>
-            )}
-            {projectList?.map((project, index) => {
-              return (
-                <div key={`${project._id}_desktop`}>
-                  <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
-                    <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
-                  </WhiteCard>
-                  {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
-                </div>
-              )
-            })}
-          </div>
+          ) : (
+            ''
+          )}
         </Box>
         {projectList?.map((project, index) => {
           return (
@@ -250,7 +253,8 @@ const mapStateToProps = state => {
     freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
     freelancerId: state?.Auth?.user?.freelancers,
     totalCount: state.Business.totalCount,
-    projectList: state.Business.projectList
+    projectList: state.Business.projectList,
+    loading: state.Loading.loading
   }
 }
 
