@@ -22,13 +22,13 @@ import {
 } from '../../../../redux/actions'
 
 const Container = styled.div`
-  // position: relative;
-  // display: flex;
-  // flex-flow: column;
-  // background: ${({ background }) => (background ? background : '#D9D9D930')};
-  // padding: 0px 20px 20px 0px;
-  // margin-left: 34px;
-  // border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  background: ${({ background }) => (background ? background : '#D9D9D930')};
+  padding: 0px 20px 20px 0px;
+  margin-left: 34px;
+  border-radius: 10px;
 `
 
 const StoryTable = styled.div`
