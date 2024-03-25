@@ -104,7 +104,7 @@ const TaskForm = ({
               letterSpacing: '0.4px',
               textTransform: 'capitalize'
             }}>
-            {contract?.freelancer?.user?.FullName}
+            {contract?.freelancer?.user?.FullName ?? 'Name'}
           </div>
           <div
             style={{
@@ -137,7 +137,7 @@ const TaskForm = ({
               letterSpacing: '0.4px',
               textTransform: 'capitalize'
             }}>
-            {departmentData?.client?.FullName}
+            {departmentData?.client?.FullName || 'Client'}
           </div>
           <div
             style={{

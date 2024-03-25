@@ -28,7 +28,9 @@ const createTask = async data => {
     }
     // Get count of current business tasks
     const totalBusinessTasks = await countTasks({ businessId: departmentData.businessId })
-    const preCode = businessData?.businessCode ? businessData?.businessCode?.replace(' ', '') : 'task'
+    const preCode = businessData?.businessCode
+      ? businessData?.businessCode?.replace(' ', '')
+      : businessData?.name?.substring(0, 3)?.replace(' ', '')?.toLowerCase()
     data.ticketCode = `${preCode}-${totalBusinessTasks + 1}`
 
     // Create new tasks
@@ -52,13 +54,17 @@ const createTask = async data => {
 const createManyTask = async (tasks, freelancerId = null) => {
   try {
     const { getBusinessWithoutPopulate } = require('./business')
-    const { getDepartmentWithoutPopulate } = require('./department')
     const { getTagsWithoutPopulate } = require('./tags')
+    const { getDepartmentWithoutPopulate } = require('./department')
+
+    const businessData = await getBusinessWithoutPopulate(tasks[0]?.businessId, 'businessCode name departments')
+    if (!businessData) throw new Error(`Business not exist.`)
 
     // Check whether the department against departmentId exist OR not
-    const departmentData = await getDepartmentWithoutPopulate({ _id: tasks[0]?.departmentId }, '')
+    const departmentData = await getDepartmentWithoutPopulate({ _id: businessData?.departments[0] }, '')
     if (!departmentData) throw new Error(`Department not exist.`)
-    const tagData = await getTagsWithoutPopulate({ departmentId: tasks[0]?.departmentId, tagName: 'To Do' }, '')
+
+    const tagData = await getTagsWithoutPopulate({ departmentId: businessData?.departments[0], tagName: 'To Do' }, '')
     if (!tagData) throw new Error(`Tag of this department not exist.`)
     // Get count of current business tasks
     const totalBusinessTasks = await countTasks({ businessId: tasks[0].businessId })
@@ -66,14 +72,14 @@ const createManyTask = async (tasks, freelancerId = null) => {
     // Check whether the business against businessId exist OR not
     if (!tasks?.[0]?.businessId) throw Error(`Business Id not exist in task data.`)
 
-    const businessData = await getBusinessWithoutPopulate(tasks[0]?.businessId, 'businessCode name')
-    if (!businessData) throw new Error(`Business not exist.`)
     for (var task of tasks) {
       count = count + 1
-      const preCode = businessData?.businessCode ? businessData?.businessCode?.replace(' ', '') : 'task'
+      const preCode = businessData?.businessCode
+        ? businessData?.businessCode?.replace(' ', '')
+        : businessData?.name?.substring(0, 3)?.replace(' ', '')?.toLowerCase()
 
       task['assignee'] = freelancerId
-      task['departmentId'] = tasks[0]?.departmentId
+      task['departmentId'] = businessData?.departments[0]
       task['tag'] = tagData?._id
       task['ticketCode'] = `${preCode}-${totalBusinessTasks + count}`
     }
@@ -146,34 +152,12 @@ const getAllTasks = async query => {
       },
       {
         $lookup: {
-          from: 'freelancers',
+          from: 'users',
           let: { assignee: '$assignee' },
           pipeline: [
             {
               $match: {
                 $expr: { $eq: ['$_id', '$$assignee'] }
-              }
-            },
-            {
-              $project: {
-                userId: 1
-              }
-            }
-          ],
-          as: 'assigneeData'
-        }
-      },
-      {
-        $unwind: '$assigneeData'
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$assigneeData.userId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
               }
             },
             {

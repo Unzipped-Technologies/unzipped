@@ -18,7 +18,7 @@ const taskSchema = new Schema(
       maxlength: 5
     },
     tag: { type: Schema.Types.ObjectId, ref: 'tags' },
-    assignee: { type: Schema.Types.Mixed, ref: 'freelancers', default: null },
+    assignee: { type: Schema.Types.ObjectId, ref: 'users', default: null },
     businessId: { type: Schema.Types.ObjectId, ref: 'businesses' },
     departmentId: { type: Schema.Types.ObjectId, ref: 'departments' },
     status: { type: String, default: TODO_STATUS, enum: [...TASK_STATUS] },

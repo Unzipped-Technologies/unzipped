@@ -22,7 +22,7 @@ const { _isValidPhoneNumber } = require('../utils/validations')
 // create user
 const createUser = async (data, hash) => {
   // create User
-  data.FullName = data.FirstName + ' ' + data.LastName
+  data.FullName = (data.FirstName || '') + (data.FirstName && data.LastName ? ' ' : '') + (data.LastName || '')
   const newUser = await user.create({
     ...data,
     // TODO: needs to be removed once email is back online
@@ -64,34 +64,35 @@ const createUser = async (data, hash) => {
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
   // if (accountTypeEnum.INVESTOR === data.role) {
-  const response = await createFreelanceAccount({
-    isAcceptEquity: data.isAcceptEquity,
-    rate: data?.rate ?? 0,
-    category: data?.category ?? '',
-    userId: newUser?.id
-  })
-  if (data?.skills?.length) {
-    for (const skill of data.skills) {
-      await freelancerSkills.create({
-        ...skill,
-        profileId: newUser.id,
-        user: await user.findById(newUser.id)
+  if (accountTypeEnum.INVESTOR === data.role) {
+    const response = await createFreelanceAccount({
+      isAcceptEquity: data.isAcceptEquity,
+      rate: data.rate,
+      category: data.category,
+      userId: newUser.id
+    })
+    if (data.skills && data.skills.length > 0) {
+      for (const skill of data.skills) {
+        await freelancerSkills.create({
+          ...skill,
+          profileId: newUser.id,
+          user: await user.findById(newUser.id)
+        })
+      }
+      const ids = await freelancerSkills.find({ profileId: newUser.id })
+      // update users to have skills
+      await user.findByIdAndUpdate(newUser.id, {
+        freelancerSkills: ids.map(item => mongoose.Types.ObjectId(item.id)),
+        freelancers: response.id
       })
+      newUser.freelancers = response.id
+    } else {
+      await updateUserByid(newUser.id, {
+        freelancers: response.id
+      })
+      newUser.freelancers = response.id
     }
-    const ids = await freelancerSkills.find({ profileId: newUser.id })
-    // update users to have skills
-    await user.findByIdAndUpdate(newUser.id, {
-      freelancerSkills: ids.map(item => mongoose.Types.ObjectId(item.id)),
-      freelancers: response.id
-    })
-    newUser.freelancers = response.id
-  } else {
-    await updateUserByid(newUser.id, {
-      freelancers: response.id
-    })
-    newUser.freelancers = response.id
   }
-  // }
   return newUser
 }
 

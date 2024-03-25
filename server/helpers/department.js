@@ -122,7 +122,6 @@ const getDepartmentById = async (id, filters) => {
                 pipeline: [
                   {
                     $match: {
-                      // $expr: { $eq: ['$tag', '$$tagId'] }
                       $expr: {
                         $and: [{ $eq: ['$tag', '$$tagId'] }, { ...filters.assignee }]
                       }
@@ -148,7 +147,7 @@ const getDepartmentById = async (id, filters) => {
                       pipeline: [
                         {
                           $match: {
-                            $expr: { $eq: ['$freelancers', '$$assigneeId'] }
+                            $expr: { $eq: ['$_id', '$$assigneeId'] }
                           }
                         },
                         {
@@ -166,9 +165,7 @@ const getDepartmentById = async (id, filters) => {
                     }
                   },
                   {
-                    $addFields: {
-                      'assignee.user': { $arrayElemAt: ['$assignee.user', 0] }
-                    }
+                    $unwind: '$assignee.user'
                   }
                 ],
                 as: 'tasks'

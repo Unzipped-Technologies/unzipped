@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react'
-import styled from 'styled-components'
-
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Dialog } from '@material-ui/core'
@@ -12,7 +10,7 @@ import Button from '../../ui/Button'
 import { FormField } from '../../ui'
 import { DIV } from './style'
 
-import { updateCreateTagForm, resetTagForm, createTag } from '../../../redux/actions'
+import { updateCreateTagForm, resetTagForm, createTag, getDepartmentById } from '../../../redux/actions'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -31,7 +29,7 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent)
 
-const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm }) => {
+const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
   useEffect(() => {
     updateCreateTagForm({
       departmentId: departmentId,
@@ -49,6 +47,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
 
   const onSubmit = async () => {
     await createTag(tagForm)
+    await getDepartmentById(departmentId)
     await onHide()
   }
 
@@ -140,6 +139,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     updateCreateTagForm: bindActionCreators(updateCreateTagForm, dispatch),
+    getDepartmentById: bindActionCreators(getDepartmentById, dispatch),
     resetTagForm: bindActionCreators(resetTagForm, dispatch),
     createTag: bindActionCreators(createTag, dispatch)
   }

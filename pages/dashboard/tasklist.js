@@ -59,10 +59,12 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, [])
 
   useEffect(() => {
-    setCurrentBusiness(businesses[0])
-    if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
-    else {
-      setSelectedDepartment({})
+    if (!selectedDepartment?._id) {
+      setCurrentBusiness(businesses[0])
+      if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
+      else {
+        setSelectedDepartment({})
+      }
     }
   }, [businesses])
 

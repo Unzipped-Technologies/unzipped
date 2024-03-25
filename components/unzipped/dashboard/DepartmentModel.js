@@ -53,11 +53,6 @@ const DepartmentModel = ({
 
   const onSubmit = async () => {
     await createDepartment(departmentForm)
-    await getProjectsList({
-      take: 'all',
-      skip: 0,
-      populate: false
-    })
     await onHide()
   }
 
