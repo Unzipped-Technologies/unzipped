@@ -11,7 +11,7 @@ import { getProjectsList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
 import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
-import MobileSearchFilterProjects from '../../../../components/unzipped/MobileSearchFilterProjects'
+import MobileSearchFilter from '../../../../components/unzipped/MobileSearchFilter'
 import AllProjectHires from '../../../../components/unzipped/dashboard/mobile/AllProjectHires'
 import AllProjectsInvoices from '../../../../components/unzipped/dashboard/mobile/AllProjectsInvoices'
 
@@ -251,11 +251,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
         />
       )}
       {filterOpenClose ? (
-        <MobileSearchFilterProjects
-          handleFilterOpenClose={handleFilterOpenClose}
-          filter={filter}
-          setFilters={setFilters}
-        />
+        <MobileSearchFilter handleFilterOpenClose={handleFilterOpenClose} filter={filter} setFilters={setFilters} />
       ) : (
         <>
           <Projects>

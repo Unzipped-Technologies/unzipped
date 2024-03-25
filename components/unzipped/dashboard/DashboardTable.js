@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
+import Loading from '../../loading'
 
 import Button from '../../ui/Button'
 import { ValidationUtils } from '../../../utils'
@@ -20,7 +21,16 @@ const Container = styled.div`
   border-radius: 10px;
 `
 
-const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role, limit, page, freelancerId }) => {
+const DashboardTable = ({
+  businesses = [],
+  getProjectsList,
+  updateBusiness,
+  role,
+  limit,
+  page,
+  freelancerId,
+  loading
+}) => {
   const router = useRouter()
 
   useEffect(async () => {
@@ -118,54 +128,61 @@ const DashboardTable = ({ businesses = [], getProjectsList, updateBusiness, role
             <TableHeading>ACTIONS</TableHeading>
           </tr>
         </thead>
-        <tbody>
-          {businesses?.length > 0 &&
-            businesses?.map(row => (
-              <tr key={row._id}>
-                <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>
-                  {row.name}
-                </TableData>
-                <TableData>{row.budget || 0}</TableData>
-                <TableData>{row.equity || 0}</TableData>
-                <TableData>27</TableData>
-                <TableData>{row.valueEstimate || 'N/A'}</TableData>
-                <TableData>
-                  {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
-                    ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
-                </TableData>
+        {!loading ? (
+          businesses?.length > 0 && (
+            <tbody>
+              {businesses?.map(row => (
+                <tr key={row._id}>
+                  <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>
+                    {row.name}
+                  </TableData>
+                  <TableData>{row.budget || 0}</TableData>
+                  <TableData>{row.equity || 0}</TableData>
+                  <TableData>27</TableData>
+                  <TableData>{row.valueEstimate || 'N/A'}</TableData>
+                  <TableData>
+                    {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
+                      ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
+                  </TableData>
 
-                <TableData
-                  textTransform="lowercase"
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    marginRight: '10px',
-                    textTransform: 'lowercase'
-                  }}>
-                  <Button
-                    icon="largeExpand"
-                    popoutWidth="220px"
-                    noBorder
-                    noUppercase
-                    block
-                    type="lightgrey"
-                    fontSize="16px"
-                    dropDownRight="-104px"
-                    background="red"
-                    popout={generatePopout(role, row)}
+                  <TableData
+                    textTransform="lowercase"
                     style={{
-                      borderRadius: '3px',
-                      border: '0.25px solid #000',
-                      background: 'rgba(217, 217, 217, 0.28)',
-                      zIndex: 'auto'
-                    }}
-                    iconRight>
-                    Details
-                  </Button>
-                </TableData>
-              </tr>
-            ))}
-        </tbody>
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      marginRight: '10px',
+                      textTransform: 'lowercase'
+                    }}>
+                    <Button
+                      icon="largeExpand"
+                      popoutWidth="220px"
+                      noBorder
+                      noUppercase
+                      block
+                      type="lightgrey"
+                      fontSize="16px"
+                      dropDownRight="-104px"
+                      background="red"
+                      popout={generatePopout(role, row)}
+                      style={{
+                        borderRadius: '3px',
+                        border: '0.25px solid #000',
+                        background: 'rgba(217, 217, 217, 0.28)',
+                        zIndex: 'auto'
+                      }}
+                      iconRight>
+                      Details
+                    </Button>
+                  </TableData>
+                </tr>
+              ))}
+            </tbody>
+          )
+        ) : (
+          <>
+            <Loading />
+          </>
+        )}
       </table>
     </Container>
   )

@@ -323,6 +323,27 @@ export const forgotPassword = user => async (dispatch, getState) => {
     })
 }
 
+//Check token & Load User
+export const googleUser = token => async (dispatch, getState) => {
+  dispatch({ type: USER_LOADING })
+
+  await axios
+    .get(`/api/auth/current_user`, tokenConfig(token))
+    .then(res =>
+      dispatch({
+        type: USER_LOADED,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      // dispatch(returnErrors(err.response, err.response))
+      dispatch({
+        type: AUTH_ERROR,
+        payload: err.response.data
+      })
+    })
+}
+
 export const changePassword = data => async (dispatch, getState) => {
   //User Loading
   const response = await axios

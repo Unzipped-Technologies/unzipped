@@ -47,7 +47,13 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
   return (
     <Container includeRate={includeRate}>
       <Left>
-        <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
+        <Image
+          src={project?.projectImages?.[0]?.url}
+          alt={project?.name + ' profile'}
+          height="94px"
+          width="94px"
+          radius="50%"
+        />
         {project?.applicants?.includes(freelancerId) && (
           <Button margin="20px 0px" type={!project.applicants.includes(freelancerId) ? 'default' : 'grey'} noBorder>
             Applied

@@ -31,7 +31,7 @@ const INIT_STATE = {
   stories: [],
   loading: false,
   selectedDepartment: 0,
-  selectedBusiness: {},
+  selectedBusiness: null,
   employees: [],
   invoiceTaskHours: [],
   invoiceTags: [],

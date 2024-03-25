@@ -46,9 +46,12 @@ export const getFreelancerList = (queryParams, token) => async (dispatch, getSta
 }
 
 export const getFreelancerById = id => async (dispatch, getState) => {
-  dispatch({
-    type: FREELANCER_LOADING
+  await dispatch({
+    type: GET_FREELANCER_BY_ID,
+    payload: null
   })
+  await dispatch(startLoading())
+
   await axios
     .get(`/api/freelancer/${id}`)
     .then(res => {
@@ -63,6 +66,7 @@ export const getFreelancerById = id => async (dispatch, getState) => {
         payload: err.response
       })
     })
+  await dispatch(stopLoading())
 }
 
 export const addEducation = data => async (dispatch, getState) => {
@@ -106,13 +110,17 @@ export const deleteEducation = educationId => async (dispatch, getState) => {
 }
 
 export const getAllFreelancers = queryParams => async dispatch => {
-  dispatch(startLoading())
+  dispatch({
+    type: GET_ALL_FREELANCERS,
+    payload: { limitedRecords: [], totalCount: [{ count: 0 }] }
+  })
+  await dispatch(startLoading())
   await axios
     .post(`/api/freelancer/public/list`, queryParams)
     .then(res => {
       dispatch({
         type: GET_ALL_FREELANCERS,
-        payload: res?.data.limitedRecords
+        payload: res?.data
       })
     })
     .catch(err => {
@@ -121,7 +129,7 @@ export const getAllFreelancers = queryParams => async dispatch => {
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+  await dispatch(stopLoading())
 }
 
 export const createUserInvitation = (params, token) => async dispatch => {
@@ -149,7 +157,7 @@ export const freelancerExpandedOpts = params => dispatch => {
 }
 
 export const createShowCaseProject = data => async (dispatch, getState) => {
-  dispatch(startLoading())
+  await dispatch(startLoading())
   await axios
     .post(`/api/freelancer/add-project`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
     .then(res => {
@@ -164,11 +172,11 @@ export const createShowCaseProject = data => async (dispatch, getState) => {
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+  await dispatch(stopLoading())
 }
 
 export const deleteShowCaseProject = projectID => async (dispatch, getState) => {
-  dispatch(startLoading())
+  await dispatch(startLoading())
 
   await axios
     .patch(`/api/freelancer/delete-project/${projectID}`, tokenConfig(getState()?.Auth.token))
@@ -184,11 +192,11 @@ export const deleteShowCaseProject = projectID => async (dispatch, getState) => 
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+  await dispatch(stopLoading())
 }
 
 export const deleteProjectImage = (projectID, imageId) => async (dispatch, getState) => {
-  dispatch(startLoading())
+  await dispatch(startLoading())
 
   await axios
     .patch(`/api/freelancer/${projectID}/image/${imageId}`, tokenConfig(getState()?.Auth.token))
@@ -204,5 +212,5 @@ export const deleteProjectImage = (projectID, imageId) => async (dispatch, getSt
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+  await dispatch(stopLoading())
 }
