@@ -16,7 +16,7 @@ router.post('/', requireLogin, permissionCheckHelper.hasPermission('createTask')
     if (!response) throw new Error(`${req.body?.tasks?.length ? 'Tasks' : 'Task'} not created`)
     res.json(response)
   } catch (e) {
-    res.status(400).json({ msg: e.message })
+    res.status(400).json({ message: e.message })
   }
 })
 

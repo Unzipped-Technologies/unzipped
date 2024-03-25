@@ -38,7 +38,8 @@ export const createTask = data => async (dispatch, getState) => {
         type: TASK_ERROR,
         payload: err.response
       })
-      return err
+
+      return err?.response
     })
   dispatch(stopLoading())
   return newTask
@@ -91,21 +92,24 @@ export const getTaskById = taskID => async (dispatch, getState) => {
 
 export const updateTask = (taskID, data) => async (dispatch, getState) => {
   dispatch(startLoading())
-  await axios
+  const updatedTask = await axios
     .patch(`/api/tasks/${taskID}`, data, tokenConfig(getState()?.Auth.token))
     .then(res => {
       dispatch({
         type: UPDATE_TASK,
         payload: res.data
       })
+      return res
     })
     .catch(err => {
       dispatch({
         type: TASK_ERROR,
         payload: err.response
       })
+      return err
     })
   dispatch(stopLoading())
+  return updatedTask
 }
 
 export const deleteTask = taskID => async (dispatch, getState) => {

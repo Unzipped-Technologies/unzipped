@@ -1,18 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { FaRegCheckCircle } from 'react-icons/fa'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import TagModal from '../TagModal'
-import DepartmentModel from '../DepartmentModel'
-import { AiOutlinePlusCircle } from 'react-icons/ai'
-import { TODO_STATUS } from '../../../../utils/constants'
-import TicketPreview from '../TicketPreview'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { TitleText, DarkText, WhiteCard } from '../style'
+import { AiOutlinePlusCircle } from 'react-icons/ai'
+
+import TagModal from '../TagModal'
 import Icon from '../../../ui/Icon'
 import Button from '../../../ui/Button'
+import TicketPreview from '../TicketPreview'
+import { WhiteCard, DIV, TEXT } from '../style'
+import DepartmentModel from '../DepartmentModel'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { TODO_STATUS, DONE, IN_PROGRESS } from '../../../../utils/constants'
 import {
   getProjectsList,
   getDepartmentById,
@@ -20,55 +20,6 @@ import {
   resetStoryForm,
   reorderStories
 } from '../../../../redux/actions'
-
-const Container = styled.div`
-  position: relative;
-  display: flex;
-  flex-flow: column;
-  background: ${({ background }) => (background ? background : '#D9D9D930')};
-  padding: 0px 20px 20px 0px;
-  margin-left: 34px;
-  border-radius: 10px;
-`
-
-const StoryTable = styled.div`
-  border: 1px solid rgba(217, 217, 217, 0.25);
-  border-radius: 0px 0px 15px 15px;
-  background: rgba(217, 217, 217, 0.25);
-  padding-bottom: 10px;
-  z-index: 1000;
-`
-
-const SubmitButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin: ${({ margin }) => (margin ? margin : '0px')};
-`
-
-const SubmitButton = styled.button`
-  color: #fff;
-  text-align: center;
-  font-family: Roboto;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24.5px; /* 163.333% */
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  width: 72px;
-  height: 27px;
-  background: #1976d2 !important;
-  flex-shrink: 0;
-  border-radius: 5px;
-  outline: none !important;
-  border: none !important;
-  ${({ active }) =>
-    active &&
-    css`
-      outline: none !important;
-      border: none !important;
-    `};
-`
 
 const TasksPanel = ({
   getProjectsList,
@@ -179,24 +130,31 @@ const TasksPanel = ({
   }
 
   return (
-    <Container background="#FDFDFD">
-      <div
-        className="d-flex align-items-center justify-content-between pb-3 px-3 h-40"
-        style={{
-          width: '100%',
-          borderRadius: '5px',
-          padding: '10px',
-          borderRadius: '8px 8px 0px 0px',
-          background: ' rgba(255, 255, 255, 0.64)',
-          boxShadow: ' 0px 4px 8px 0px rgba(0, 0, 0, 0.10)'
-        }}>
-        <div className="d-flex align-items-center">
-          <TitleText width="max-content" noMargin size="24px" paddingRight="20px">
+    <DIV
+      position="relative"
+      display="flex"
+      flexDirection="column"
+      flexFlow="column"
+      background="#FDFDFD"
+      padding="0px 20px 20px 0px"
+      borderRadius="10px"
+      margin="0px 0px 0px 34px">
+      <DIV
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        width="100%"
+        padding="10px"
+        borderRadius="8px 8px 0px 0px"
+        background="rgba(255, 255, 255, 0.64)"
+        boxShadow="0px 4px 8px 0px rgba(0, 0, 0, 0.10)">
+        <DIV display="fle" alignItems="center">
+          <TEXT width="max-content" fontSize="24px" padding="0px 20px 0px 0px">
             {selectedDepartment?.name ?? 'Create Department'}
-          </TitleText>
+          </TEXT>
           {userRole === 0 && (
             <Button
-              zIndex="1000"
+              zIndex="auto"
               className="bg-transparent text-dark"
               popoutWidth="200px"
               dropDownRight="-130px"
@@ -222,106 +180,123 @@ const TasksPanel = ({
               <Icon name="actionIcon" color="#333" />
             </Button>
           )}
-        </div>
+        </DIV>
         {selectedDepartment?._id && userRole === 0 && (
-          <SubmitButtonContainer margin="0px 20px 0px 80px">
-            <SubmitButton
+          <DIV width="72px" margin="0px 20px 0px 80px" display="flex" justifyContent="flex-end">
+            <Button
+              small
+              block
+              buttonHeight="27px"
+              colors={{
+                background: '#1976d2',
+                text: '#fff'
+              }}
+              noBorder
               onClick={() => {
                 openTagModal()
               }}>
               <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add
-            </SubmitButton>
-          </SubmitButtonContainer>
+            </Button>
+          </DIV>
         )}
-      </div>
+      </DIV>
 
-      <StoryTable>
+      <DIV
+        border="1px solid rgba(217, 217, 217, 0.25)"
+        borderRadius="0px 0px 15px 15px"
+        background="rgba(217, 217, 217, 0.25)"
+        paddingBottom="10px"
+        zIndex="auto">
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <div>
+          <DIV>
             {selectedDepartment?._id && departmentData?.departmentTags?.length ? (
               departmentData?.departmentTags.map(tag => {
                 return (
-                  <div key={tag._id}>
+                  <DIV key={tag._id}>
                     <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
                       {(provided, snapshot) => (
-                        <div
+                        <DIV
                           {...provided.droppableProps}
                           ref={provided.innerRef}
-                          style={{
-                            background: snapshot.isDraggingOver ? 'lightblue' : 'white',
-                            padding: '1px 0px 0px 0px',
-                            borderRadius: '4px'
-                          }}>
-                          <WhiteCard padding="10px 40px" noMargin borderRadius="0px" row background="#F7F7F7">
-                            <DarkText noMargin bold width="300px">
+                          background={snapshot.isDraggingOver ? 'lightblue' : 'white'}
+                          padding="1px 0px 0px 0px"
+                          borderRadius="4px">
+                          <DIV
+                            width="100%"
+                            padding="10px 40px"
+                            borderRadius="0px"
+                            display="flex"
+                            flexFlow="row"
+                            background="#F7F7F7">
+                            <TEXT fontWeight="bold" width="300px">
                               {tag.tagName} ({tag?.tasks?.length})
-                            </DarkText>
-                            <DarkText noMargin center bold width="200px">
+                            </TEXT>
+                            <TEXT textAlign="center" fontWeight="bold" width="200px">
                               STORY POINTS
-                            </DarkText>
-                            <DarkText noMargin center bold width="100px">
+                            </TEXT>
+                            <TEXT textAlign="right" fontWeight="bold" width="100px">
                               ASSIGNEE
-                            </DarkText>
-                          </WhiteCard>
+                            </TEXT>
+                          </DIV>
 
                           {tag?.tasks?.length
                             ? tag?.tasks.map((task, index) => {
                                 return (
-                                  <div key={task._id}>
+                                  <DIV key={task._id}>
                                     <Draggable key={task._id} draggableId={task._id} index={index}>
                                       {(provided, snapshot) => (
-                                        <div
+                                        <DIV
                                           ref={provided.innerRef}
                                           {...provided.draggableProps}
                                           {...provided.dragHandleProps}>
                                           <WhiteCard
-                                            padding="10px 10px"
+                                            padding="0px 10px"
                                             noMargin
                                             borderRadius="0px"
                                             row
                                             background="#F7F7F7">
-                                            <DarkText
-                                              noMargin
-                                              bold
+                                            <TEXT
+                                              fontWeight="bold"
                                               width="300px"
                                               onClick={async () => {
                                                 setTaskId(task._id)
                                                 openStoryModal()
                                               }}>
-                                              <div
-                                                style={{
-                                                  display: 'flex',
-                                                  flexDirection: 'row',
-                                                  alignItems: 'center'
-                                                }}>
-                                                <div
-                                                  style={{
-                                                    marginRight: '20px'
-                                                  }}>
+                                              <DIV display="flex" flexDirection="row" alignItems="center">
+                                                <DIV padding="0px 10px 0px 0px">
                                                   <FaRegCheckCircle color={getStatusColor(task)} />
-                                                </div>
+                                                </DIV>
                                                 {task.taskName}
-                                              </div>
-                                            </DarkText>
-                                            <DarkText noMargin center bold width="200px" marginLeft="30px">
+                                              </DIV>
+                                            </TEXT>
+                                            <TEXT
+                                              textAlign="center"
+                                              fontWeight="bold"
+                                              width="200px"
+                                              margin="0px 0px 0px 30px">
                                               {task.storyPoints}
-                                            </DarkText>
-                                            <DarkText noMargin center bold width="100px" paddingLeft="50px">
-                                              <img
-                                                src={task?.assignee?.user?.profileImage}
-                                                style={{
-                                                  width: '24px',
-                                                  height: '24px',
-                                                  borderRadius: '50%',
-                                                  marginRight: '6px'
-                                                }}
-                                              />
-                                            </DarkText>
+                                            </TEXT>
+                                            <DIV width="100px" display="flex" justifyContent="center">
+                                              {task?.assignee?.user ? (
+                                                <img
+                                                  src={task?.assignee?.user?.profileImage}
+                                                  style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '50%'
+                                                  }}
+                                                />
+                                              ) : (
+                                                <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
+                                                  Unassigned
+                                                </TEXT>
+                                              )}
+                                            </DIV>
                                           </WhiteCard>
-                                        </div>
+                                        </DIV>
                                       )}
                                     </Draggable>
-                                  </div>
+                                  </DIV>
                                 )
                               })
                             : ''}
@@ -332,43 +307,52 @@ const TasksPanel = ({
                                   businessId: selectedDepartment.businessId,
                                   departmentId: selectedDepartment?._id,
                                   tag: tag._id,
-                                  status: TODO_STATUS
+                                  status: tag.tagName?.toLowerCase().includes('to')
+                                    ? TODO_STATUS
+                                    : tag.tagName?.toLowerCase().includes('in')
+                                    ? IN_PROGRESS
+                                    : tag.tagName?.toLowerCase().includes('done')
+                                    ? DONE
+                                    : TODO_STATUS
                                 })
                                 setIsEditing(false)
                                 setStoryModal(true)
                               }}
                               noMargin
                               borderRadius="0px"
-                              padding="10px 10px"
+                              padding="0px 10px"
                               row
                               background="#FFF">
-                              <DarkText className="d-flex align-items-center" noMargin bold color="#2F76FF" clickable>
+                              <DIV display="flex" alignItems="center" cursor="pointer">
                                 <AiOutlinePlusCircle
                                   style={{
                                     fontSize: '18px',
-                                    marginRight: '20px'
+                                    marginRight: '20px',
+                                    color: '#2F76FF'
                                   }}
                                 />
-                                ADD TASK
-                              </DarkText>
+                                <TEXT fontWeight="bold" textColor="#2F76FF">
+                                  ADD TASK
+                                </TEXT>
+                              </DIV>
                             </WhiteCard>
                           )}
 
                           {provided.placeholder}
-                        </div>
+                        </DIV>
                       )}
                     </Droppable>
-                  </div>
+                  </DIV>
                 )
               })
             ) : (
-              <TitleText size="16px" paddingRight="20px" paddingTop="100px" center large>
-                Create the Department and tags to add tasks
-              </TitleText>
+              <TEXT position="fixed" fontSize="16px" margin="200px 20px 0px 15% !important" textAlign="center">
+                Create the Department and tags to add tasks.
+              </TEXT>
             )}
-          </div>
+          </DIV>
         </DragDropContext>
-      </StoryTable>
+      </DIV>
 
       {storyModal && (
         <TicketPreview
@@ -400,7 +384,7 @@ const TasksPanel = ({
           }}
         />
       )}
-    </Container>
+    </DIV>
   )
 }
 

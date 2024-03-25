@@ -1,26 +1,21 @@
 import React, { useEffect } from 'react'
-import styled from 'styled-components'
-
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Dialog } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import { DIV } from './style'
 
 import Button from '../../ui/Button'
 import { FormField } from '../../ui'
 
 import { updateDepartmentForm, resetDepartmentForm, createDepartment, getProjectsList } from '../../../redux/actions'
 
-const StyledCheckboxInput = styled.input`
-  display: none; /* Hide the default checkbox */
-`
-
 const MUIDialog = withStyles(theme => ({
   paper: {
     width: '100%', // Adjust the width as needed
-    height: '300px'
+    height: '270px'
   },
   root: {
     padding: '0px !important'
@@ -76,13 +71,9 @@ const DepartmentModel = ({
       <DialogTitle id="department-dialog-title">Create Department</DialogTitle>
 
       <DialogContent dividers>
-        <div
-          style={{
-            flex: '0 0 auto',
-            boxSizing: 'border-box'
-          }}>
+        <DIV flex="0 0 auto" boxSizing="border-box">
           <form>
-            <div style={{ display: 'flex', marginTop: '5px', alignItems: 'center' }}>
+            <DIV display="flex" margin="5px 0px 0px 0px" alignItems="center">
               <FormField
                 zIndexUnset
                 placeholder="Department Name"
@@ -100,17 +91,10 @@ const DepartmentModel = ({
                 onUpdate={() => {}}>
                 Name
               </FormField>
-            </div>
+            </DIV>
           </form>
-          <div
-            style={{
-              width: '100%',
-              marginTop: '100px',
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end'
-            }}>
-            <div style={{}}>
+          <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
+            <DIV>
               <Button
                 extraWid
                 type="outlineInverse"
@@ -149,9 +133,9 @@ const DepartmentModel = ({
                 }}>
                 Save
               </Button>
-            </div>
-          </div>
-        </div>
+            </DIV>
+          </DIV>
+        </DIV>
       </DialogContent>
     </MUIDialog>
   )

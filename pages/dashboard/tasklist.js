@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-
 import { bindActionCreators } from 'redux'
+
 import Nav from '../../components/unzipped/header'
-import ProjectsPanel from '../../components/unzipped/dashboard/tasks/ProjectsPanel'
-import TasksPanel from '../../components/unzipped/dashboard/tasks/TasksPanel'
-import { getProjectsList, setDepartment } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
+import { getProjectsList, setDepartment } from '../../redux/actions'
+import TasksPanel from '../../components/unzipped/dashboard/tasks/TasksPanel'
+import ProjectsPanel from '../../components/unzipped/dashboard/tasks/ProjectsPanel'
 
 const Container = styled.div`
   overflow: overlay;
@@ -59,7 +59,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, [])
 
   useEffect(() => {
-    setCurrentBusiness(businesses[0]?._id)
+    setCurrentBusiness(businesses[0])
     if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
     else {
       setSelectedDepartment({})

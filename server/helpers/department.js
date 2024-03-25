@@ -89,6 +89,7 @@ const getDepartmentById = async (id, filters) => {
                 FirstName: 1,
                 LastName: 1,
                 FullName: 1,
+                email: 1,
                 profileImage: 1
               }
             }
