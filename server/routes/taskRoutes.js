@@ -9,7 +9,7 @@ router.post('/', requireLogin, permissionCheckHelper.hasPermission('createTask')
   try {
     let response = null
     if (Array.isArray(req.body?.tasks) && req.body?.tasks?.length) {
-      response = await taskHelper.createManyTask(req.body?.tasks, req.user?.userInfo?.freelancers)
+      response = await taskHelper.createManyTask(req.body?.tasks, req.user?.sub)
     } else {
       response = await taskHelper.createTask(req.body)
     }

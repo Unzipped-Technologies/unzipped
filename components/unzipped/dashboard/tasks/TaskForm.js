@@ -89,7 +89,7 @@ const TaskForm = ({
   const assigneeOptions = useMemo(() => {
     let assignee = []
     assignee = departmentData?.contracts?.map(contract => ({
-      value: contract?.freelancerId,
+      value: contract?.freelancer?.userId,
       label: (
         <div>
           <div

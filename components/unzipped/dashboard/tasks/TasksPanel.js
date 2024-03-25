@@ -227,6 +227,7 @@ const TasksPanel = ({
                             borderRadius="0px"
                             display="flex"
                             flexFlow="row"
+                            border="1px solid rgba(217, 217, 217, 0.25)"
                             background="#F7F7F7">
                             <TEXT fontWeight="bold" width="300px">
                               {tag.tagName} ({tag?.tasks?.length})
