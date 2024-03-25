@@ -16,7 +16,7 @@ const budgetOptions = () => {
 
 const StepEightWizardFlow = (
     {
-        budget,
+        budgetRange,
         updateForm,
         goBack,
         submitForm,
@@ -28,7 +28,7 @@ const StepEightWizardFlow = (
         <CreateABusiness
             title="Budget"
             sub="What size budget are you comfortable with for this hire?"
-            disabled={budget?.length === 0}
+            disabled={budgetRange?.length === 0}
             onUpdate={updateForm}
             onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
             onSubmit={submitForm}
@@ -45,8 +45,8 @@ const StepEightWizardFlow = (
                     fontSize="20px"
                     width="100%"
                     borderRadius="12px"
-                    onChange={e => updateForm({ budget: e.value })}
-                    value={{ label: budget }}
+                    onChange={e => updateForm({ budgetRange: e.value })}
+                    value={{ label: budgetRange }}
                 />
             </Grid>
         </CreateABusiness>

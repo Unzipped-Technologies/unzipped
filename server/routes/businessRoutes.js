@@ -16,7 +16,9 @@ router.post(
   async (req, res) => {
     try {
       req.body['userId'] = req.user.sub
-      const createBusiness = await businessHelper.createBusiness(req.body, req.user.sub, req.files)
+      const businessDetails = JSON.parse(req.body?.projectDetails)
+      if (!businessDetails) throw Error('can not process without business details')
+      const createBusiness = await businessHelper.createBusiness(businessDetails, req.user.sub, req.files)
       if (!createBusiness) throw Error('business already exists')
       res.json(createBusiness)
     } catch (e) {

@@ -4,12 +4,13 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Nav from '../../components/unzipped/header'
-import { updateBusinessForm, createBusiness, getUserById } from '../../redux/actions'
+import { updateBusinessForm, createBusiness, getUserById, businessFieldsValidation } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import { nextPublicGithubClientId } from '../../config/keys'
 import GetCardDesktop from '../../components/unzipped/CreateABusiness/BusinessDesktopCard'
 import GetCardMobile from '../../components/unzipped/CreateABusiness/BusinessMobileCard'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
+import useWindowSize from '../../components/ui/hooks/useWindowSize';
 
 const Container = styled.div`
   display: flex;
@@ -95,7 +96,7 @@ const CreateBusiness = ({
   requiredSkills,
   goals,
   companyBackground,
-  budget,
+  budgetRange,
   questionsToAsk,
   loading,
   createBusiness,
@@ -106,12 +107,30 @@ const CreateBusiness = ({
   const dispatch = useDispatch();
   const businessForm = useSelector(state => state.Business?.businessForm);
   const isGithubConnected = (convertToBoolean(router?.query?.['github-connect']));
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const updateForm = data => updateBusinessForm({ ...data })
   const [inputValue, setInputValue] = useState('')
   const [files, setFiles] = useState([])
+
+  const [isSmallWindow, setIsSmallWindow] = useState(false)
+  const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (width <= 600) {
+      setIsSmallWindow(true)
+    } else {
+      setIsSmallWindow(false)
+    }
+  }, [width])
+
   const submitForm = step => {
+
     if (step < 12) {
+      const isInputValNotValid = handleValidation(step);
+      if (isInputValNotValid) return;
+      dispatch(businessFieldsValidation(false))
+
       updateBusinessForm({
         stage: step ? step + 1 : stage
       })
@@ -147,7 +166,6 @@ const CreateBusiness = ({
         })
     }
   }
-
   const goBack = step => {
     if (stage > 1) {
       updateBusinessForm({
@@ -190,6 +208,28 @@ const CreateBusiness = ({
     }
   }, [isGithubConnected]);
 
+  const handleValidation = (step) => {
+    const roleOrDescriptionStep = isSmallWindow ? 4 : 3;
+    if ((businessForm?.projectType == 'Long Term Collaboration')
+      && businessForm?.role.length < 200
+      && (step === roleOrDescriptionStep)) {
+      dispatch(businessFieldsValidation(true))
+      setIsSubmitted(true);
+      return true;
+    }
+    if ((businessForm?.projectType == 'Short Term Business')
+      && businessForm?.challenge.length < 200
+      && (step === roleOrDescriptionStep)) {
+      dispatch(businessFieldsValidation(true))
+      setIsSubmitted(true);
+      return true;
+    }
+    if (businessForm?.name.length < 100 && step === 2) {
+      dispatch(businessFieldsValidation(true))
+      setIsSubmitted(true);
+      return true;
+    }
+  }
 
   return (
     <>
@@ -217,12 +257,14 @@ const CreateBusiness = ({
             requiredSkills={requiredSkills}
             goals={goals}
             companyBackground={companyBackground}
-            budget={budget}
+            budgetRange={budgetRange}
             questionsToAsk={questionsToAsk}
             files={files}
             setFiles={setFiles}
             handleGithub={handleGithub}
             userDetails={userDetails}
+            isSubmitted={isSubmitted}
+            setIsSubmitted={setIsSubmitted}
           />
         </DesktopBox>
 
@@ -249,7 +291,7 @@ const CreateBusiness = ({
             requiredSkills={requiredSkills}
             goals={goals}
             companyBackground={companyBackground}
-            budget={budget}
+            budgetRange={budgetRange}
             questionsToAsk={questionsToAsk}
             handleGithub={handleGithub}
           />
@@ -279,7 +321,7 @@ const mapStateToProps = state => {
     requiredSkills: state.Business?.businessForm.requiredSkills,
     goals: state.Business?.businessForm.goals,
     companyBackground: state.Business?.businessForm.companyBackground,
-    budget: state.Business?.businessForm.budget,
+    budgetRange: state.Business?.businessForm.budgetRange,
     questionsToAsk: state.Business?.businessForm.questionsToAsk,
     stage: state.Business?.businessForm.stage,
     loading: state.Business?.loading,

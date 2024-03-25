@@ -14,7 +14,8 @@ import {
   GET_PROJECT_LIST_AND_APPEND,
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
-  UPDATE_WIZARD_SUBMISSION
+  UPDATE_WIZARD_SUBMISSION,
+  SET_IS_BUSINESS_FIELD_SUBMITTED
 } from './constants'
 
 const INIT_STATE = {
@@ -48,9 +49,10 @@ const INIT_STATE = {
     requiredSkills: [],
     goals: '',
     companyBackground: '',
-    budget: '',
+    budgetRange: '',
     questionsToAsk: [],
-    stage: 1
+    stage: 1,
+    isFieldSubmitted: false
   },
   createStoryForm: {
     taskName: '',
@@ -137,7 +139,9 @@ const Business = (state = INIT_STATE, action = {}) => {
     case GET_PROJECT_Error:
       return { ...state, loading: false, error: action.payload }
 
-    default:
+    case SET_IS_BUSINESS_FIELD_SUBMITTED: 
+    return { ...state, businessForm: { ...state.businessForm, isFieldSubmitted: action.payload } }
+      default:
       return state
   }
 }
