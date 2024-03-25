@@ -56,6 +56,10 @@ export const getDepartmentsForBusiness = (data, token) => async (dispatch, getSt
 
 export const getDepartmentById = id => async (dispatch, getState) => {
   //department list Loading
+  dispatch({
+    type: GET_DEPARTMENT_BY_ID,
+    payload: null
+  })
   dispatch(startLoading())
 
   await axios

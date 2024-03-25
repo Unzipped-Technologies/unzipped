@@ -72,34 +72,12 @@ const getAllTaskHours = async (query, user) => {
       },
       {
         $lookup: {
-          from: 'freelancers',
+          from: 'users',
           let: { assigneeId: '$task.assignee' },
           pipeline: [
             {
               $match: {
                 $expr: { $eq: ['$_id', '$$assigneeId'] }
-              }
-            },
-            {
-              $project: {
-                userId: 1
-              }
-            }
-          ],
-          as: 'assignee'
-        }
-      },
-      {
-        $unwind: '$assignee'
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$assignee.userId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
               }
             },
             {

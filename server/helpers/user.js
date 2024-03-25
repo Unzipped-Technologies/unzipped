@@ -22,6 +22,7 @@ const { _isValidPhoneNumber } = require('../utils/validations')
 // create user
 const createUser = async (data, hash) => {
   // create User
+  data.FullName = (data.FirstName || '') + (data.FirstName && data.LastName ? ' ' : '') + (data.LastName || '')
   const newUser = await user.create({
     ...data,
     // TODO: needs to be removed once email is back online
@@ -30,38 +31,39 @@ const createUser = async (data, hash) => {
     plan: planEnum.UNSUBSCRIBED
   })
   // create favorites and recently viewed list
-    const listsToCreate = [
-      {
-        name: 'Favorites',
-        icon: 'HeartOutlined'
-      },
-      {
-        name: 'Recently Viewed',
-        icon: 'EyeOutlined'
-      },
-      {
-        name: 'My Team',
-        icon: 'TeamOutlined'
-      }
-    ]
-    for (const item of listsToCreate) {
-      const list = {
-        name: item.name,
-        icon: item.icon,
-        userId: newUser.id,
-        isDefault: true,
-        user: await user.findById(newUser.id)
-      }
-      await listHelper.createLists(list)
+  const listsToCreate = [
+    {
+      name: 'Favorites',
+      icon: 'HeartOutlined'
+    },
+    {
+      name: 'Recently Viewed',
+      icon: 'EyeOutlined'
+    },
+    {
+      name: 'My Team',
+      icon: 'TeamOutlined'
     }
-    const ids = await list.find({ userId: newUser.id })
-    // update users to have skills
-    await user.findByIdAndUpdate(newUser.id, {
-      lists: ids.map(item => mongoose.Types.ObjectId(item.id))
-    })
+  ]
+  for (const item of listsToCreate) {
+    const list = {
+      name: item.name,
+      icon: item.icon,
+      userId: newUser.id,
+      isDefault: true,
+      user: await user.findById(newUser.id)
+    }
+    await listHelper.createLists(list)
+  }
+  const ids = await list.find({ userId: newUser.id })
+  // update users to have skills
+  await user.findByIdAndUpdate(newUser.id, {
+    lists: ids.map(item => mongoose.Types.ObjectId(item.id))
+  })
 
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
+  // if (accountTypeEnum.INVESTOR === data.role) {
   if (accountTypeEnum.INVESTOR === data.role) {
     const response = await createFreelanceAccount({
       isAcceptEquity: data.isAcceptEquity,

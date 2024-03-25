@@ -25,7 +25,6 @@ const INITIAL_TASKS = {
   assignee: '',
   tags: [],
   tag: '',
-  ticketCode: '',
   comments: []
 }
 

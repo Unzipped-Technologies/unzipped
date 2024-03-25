@@ -87,11 +87,78 @@ const MobileTaskForm = ({
   })
 
   const assigneeOptions = useMemo(() => {
-    return (
-      departmentData?.contracts?.map(contract => ({
-        value: contract?.freelancerId,
+    let assignee = []
+    assignee = departmentData?.contracts?.map(contract => ({
+      value: contract?.freelancer?.userId,
+      label: (
+        <div>
+          <div
+            style={{
+              color: '#000',
+              textAlign: 'center',
+              fontFamily: 'Roboto',
+              fontSize: '14px',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+              letterSpacing: '0.4px',
+              textTransform: 'capitalize'
+            }}>
+            {contract?.freelancer?.user?.FullName ?? 'Name'}
+          </div>
+          <div
+            style={{
+              color: '#787878',
+              textAlign: 'center',
+              fontSize: '10px',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+              letterSpacing: '0.4px'
+            }}>
+            {contract?.freelancer?.user?.email}
+          </div>
+        </div>
+      )
+    }))
+    assignee.push({
+      value: departmentData?.client?._id,
+      label: (
+        <div>
+          <div
+            style={{
+              color: '#000',
+              textAlign: 'center',
+              fontFamily: 'Roboto',
+              fontSize: '14px',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+              letterSpacing: '0.4px',
+              textTransform: 'capitalize'
+            }}>
+            {departmentData?.client?.FullName || 'Client'}
+          </div>
+          <div
+            style={{
+              color: '#787878',
+              textAlign: 'center',
+              fontSize: '10px',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              lineHeight: 'normal',
+              letterSpacing: '0.4px'
+            }}>
+            {departmentData?.client?.email}
+          </div>
+        </div>
+      )
+    })
+    if (!taskForm?.assignee) {
+      assignee.push({
+        value: 'unassigned',
         label: (
-          <div key={contract?._id}>
+          <div>
             <div
               style={{
                 color: '#000',
@@ -104,24 +171,16 @@ const MobileTaskForm = ({
                 letterSpacing: '0.4px',
                 textTransform: 'capitalize'
               }}>
-              {contract?.freelancer?.user?.FullName}
-            </div>
-            <div
-              style={{
-                color: '#787878',
-                textAlign: 'center',
-                fontSize: '10px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-                letterSpacing: '0.4px'
-              }}>
-              {contract?.freelancer?.user?.email}
+              Unassigned
             </div>
           </div>
         )
-      })) || []
-    )
+      })
+      updateCreateStoryForm({
+        [`assignee`]: 'unassigned'
+      })
+    }
+    return assignee
   }, [])
 
   const taskPriorityOptions = useMemo(() => {
