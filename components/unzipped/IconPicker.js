@@ -33,7 +33,7 @@ const IconPicker = ({
             </div>)}
 
             {!isIconDropdownOpen && (<div style={{
-                width: '100%',
+                width: '97%',
                 height: "200px",
                 padding: "10px",
                 display: "flex",
@@ -67,7 +67,6 @@ const IconPicker = ({
                         </>
                     ) : (
                         <>
-                            {/* <div style={{ width: '100%', height: '100%', overflowY: "scroll", flexWrap: "wrap", display: "flex", }}> */}
 
                             {Object.keys(Icons).map((icon) => {
                                 const Icon = Icons[icon];
@@ -78,7 +77,6 @@ const IconPicker = ({
                                 );
                             })
                             }
-                            {/* </div> */}
                         </>
                     )}
 

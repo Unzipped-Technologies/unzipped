@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import {
-  getVerifyIdentityUrl,
-} from '../../../redux/actions';
-import router from 'next/router';
+import { getVerifyIdentityUrl } from '../../../redux/actions'
+import router from 'next/router'
 import Notification from './Notification'
 import Panel from './UserSetupPanel'
 import { useDispatch } from 'react-redux'
@@ -23,9 +21,14 @@ const Notifications = styled.div`
   padding: 0px 10px;
 `
 
-const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl, url, token }) => {
+const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl, url, token, passwordChanged }) => {
   const dispatch = useDispatch()
-  const [initialUrl] = useState(url);
+  const [initialUrl] = useState(url)
+
+  const hideAlert = () => {
+    if (success) hideSuccessAlert()
+    if (passwordChanged) hidePasswordAlert()
+  }
 
   const hideSuccessAlert = () => {
     dispatch({
@@ -33,9 +36,16 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
       payload: null
     })
   }
+  const hidePasswordAlert = () => {
+    dispatch({
+      type: 'HIDE_AUTH_NOTIFICATION',
+      payload: null
+    })
+  }
   setTimeout(() => {
-    if (success) {
+    if (success || passwordChanged) {
       hideSuccessAlert()
+      hidePasswordAlert()
     }
   }, 5000)
 
@@ -45,14 +55,14 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
 
   useEffect(() => {
     if (url && url !== initialUrl) {
-        window.open(url, '_blank');
+      window.open(url, '_blank')
     }
-  }, [url, router]);
+  }, [url, router])
 
   return (
     <Container>
       <Notifications>
-        {success && (
+        {(success || passwordChanged) && (
           <WhiteCard
             row
             style={{
@@ -60,10 +70,16 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
               border: '1px solid #8EDE64',
               background: 'rgba(142, 222, 100, 0.10)'
             }}>
-            <DarkText noMargin>You have successfully applied for project!</DarkText>
+            {success ? (
+              <DarkText noMargin>You have successfully applied for project!</DarkText>
+            ) : passwordChanged ? (
+              <DarkText noMargin>Password changed successfully!</DarkText>
+            ) : (
+              ''
+            )}
             <Absolute
               onClick={() => {
-                hideSuccessAlert()
+                hideAlert()
               }}>
               <Dismiss>Dismiss</Dismiss>
             </Absolute>
@@ -83,6 +99,7 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
 const mapStateToProps = state => {
   return {
     success: state?.ProjectApplications?.success,
+    passwordChanged: state?.Auth?.passwordChanged,
     token: state.Auth.token,
     url: state?.Auth?.verifyUrl
   }

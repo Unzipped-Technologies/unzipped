@@ -8,7 +8,7 @@ import { MdLocationOn } from 'react-icons/md'
 import { MdCreditCard } from 'react-icons/md'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
-
+import Loading from '../../loading'
 import Badge from '../../ui/Badge'
 import MobileProjectDetail from './mobile/MobileProjectDetail'
 
@@ -222,98 +222,111 @@ const ImageContainer = styled.div`
   }
 `
 
-const DesktopProjectDetail = ({ projectDetails }) => {
+const DesktopProjectDetail = ({ projectDetails, loading }) => {
   return (
     <>
-      <Desktop>
-        <ProjectDetail>
-          <DetailHeading>
-            <ProjectSummary>Project Hires</ProjectSummary>
-            <ProjectBudget>
-              Budget: {projectDetails?.budget?.includes('$') ? '' : '$'}
-              {projectDetails?.budget || 0}
-            </ProjectBudget>
-          </DetailHeading>
-          <ProjectDescription>{projectDetails?.challenge}</ProjectDescription>
-          <ProjectRequirements>
-            {projectDetails?.objectives?.map((objective, index) => (
-              <li key={`${objective}_${index}`}>{objective}</li>
-            ))}
-          </ProjectRequirements>
-          <SkillsRequired>Skills Required</SkillsRequired>
-          {projectDetails?.requiredSkills?.length
-            ? projectDetails?.requiredSkills?.map((skill, index) => {
-                return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-              })
-            : 'N/A'}
-          <ProjectID>Project ID: {projectDetails?._id || 'N / A'}</ProjectID>
-          <div style={{ display: 'flex', width: '100%', gap: '10px' }}>
-            {projectDetails &&
-              projectDetails?.projectImagesUrl?.length > 0 &&
-              projectDetails.projectImagesUrl.map(item => (
-                <>
-                  <ImageContainer>
-                    <img src={item.url} alt="project image" height={'100%'} />
-                  </ImageContainer>
-                </>
-              ))}
-          </div>
-        </ProjectDetail>
-        <AboutClient>
-          <AboutClientHeading>About client</AboutClientHeading>
-          <ClientInfo>
-            <ClientAddress>
-              <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>{projectDetails?.businessCity || 'N/A'}</span>
-            </ClientAddress>
-            <ClientAddress>
-              <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>{projectDetails?.businessCountry || 'N/A'}</span>
-            </ClientAddress>
-            <ClientVerificationDetail>
-              <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '5px' }}>{projectDetails?.likeTotal} upvotes</span>
-            </ClientVerificationDetail>
-            <ClientVerificationDetail>
-              <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>
-                Member since {moment(projectDetails?.userId?.createdAt).format('MMM DD, YYYY')}
-              </span>
-            </ClientVerificationDetail>
-          </ClientInfo>
+      {!loading ? (
+        <>
+          {projectDetails ? (
+            <>
+              <Desktop>
+                <ProjectDetail>
+                  <DetailHeading>
+                    <ProjectSummary>Project Hires</ProjectSummary>
+                    <ProjectBudget>Budget: ${projectDetails?.budget || 0}</ProjectBudget>
+                  </DetailHeading>
+                  <ProjectDescription>{projectDetails?.challenge}</ProjectDescription>
+                  <ProjectRequirements>
+                    {projectDetails?.objectives?.map((objective, index) => (
+                      <li key={`${objective}_${index}`}>{objective}</li>
+                    ))}
+                  </ProjectRequirements>
+                  <SkillsRequired>Skills Required</SkillsRequired>
+                  {projectDetails?.requiredSkills?.length
+                    ? projectDetails?.requiredSkills?.map((skill, index) => {
+                        return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+                      })
+                    : 'N/A'}
+                  <ProjectID>Project ID: {projectDetails?._id || 'N / A'}</ProjectID>
+                  <div style={{ display: 'flex', width: '100%', gap: '10px' }}>
+                    {projectDetails &&
+                      projectDetails?.projectImagesUrl?.length > 0 &&
+                      projectDetails.projectImagesUrl.map(item => (
+                        <>
+                          <ImageContainer>
+                            <img src={item.url} alt="project image" height={'100%'} />
+                          </ImageContainer>
+                        </>
+                      ))}
+                  </div>
+                </ProjectDetail>
+                <AboutClient>
+                  <AboutClientHeading>About client</AboutClientHeading>
+                  <ClientInfo>
+                    <ClientAddress>
+                      <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>
+                        {projectDetails?.businessCity || 'N/A'}
+                      </span>
+                    </ClientAddress>
+                    <ClientAddress>
+                      <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>
+                        {projectDetails?.businessCountry || 'N/A'}
+                      </span>
+                    </ClientAddress>
+                    <ClientVerificationDetail>
+                      <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '5px' }}>{projectDetails?.likeTotal} upvotes</span>
+                    </ClientVerificationDetail>
+                    <ClientVerificationDetail>
+                      <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>
+                        Member since {moment(projectDetails?.userId?.createdAt).format('MMM DD, YYYY')}
+                      </span>
+                    </ClientVerificationDetail>
+                  </ClientInfo>
 
-          <ClientVerification>
-            <VerificationHeading>Client Verification</VerificationHeading>
-            <ClientVerificationDetail>
-              <MdCreditCard
-                style={{
-                  marginTop: '4px',
-                  fontSize: '24px',
-                  color: projectDetails?.userId?.isIdentityVerified ? '#8EDE64' : 'red'
-                }}
-              />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Identity Verified</span>
-            </ClientVerificationDetail>
+                  <ClientVerification>
+                    <VerificationHeading>Client Verification</VerificationHeading>
+                    <ClientVerificationDetail>
+                      <MdCreditCard
+                        style={{
+                          marginTop: '4px',
+                          fontSize: '24px',
+                          color: projectDetails?.userId?.isIdentityVerified ? '#8EDE64' : 'red'
+                        }}
+                      />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Identity Verified</span>
+                    </ClientVerificationDetail>
 
-            <ClientVerificationDetail>
-              <MdMonetizationOn
-                style={{
-                  marginTop: '4px',
-                  fontSize: '24px',
-                  color: projectDetails?.userId?.stripeSubscription ? '#8EDE64' : 'red'
-                }}
-              />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Payment Verified</span>
-            </ClientVerificationDetail>
+                    <ClientVerificationDetail>
+                      <MdMonetizationOn
+                        style={{
+                          marginTop: '4px',
+                          fontSize: '24px',
+                          color: projectDetails?.userId?.stripeSubscription ? '#8EDE64' : 'red'
+                        }}
+                      />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Payment Verified</span>
+                    </ClientVerificationDetail>
 
-            <ClientVerificationDetail>
-              <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Completed 12 projects</span>
-            </ClientVerificationDetail>
-          </ClientVerification>
-        </AboutClient>
-      </Desktop>
-      <MobileProjectDetail projectDetails={projectDetails} />
+                    <ClientVerificationDetail>
+                      <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
+                      <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Completed 12 projects</span>
+                    </ClientVerificationDetail>
+                  </ClientVerification>
+                </AboutClient>
+              </Desktop>
+              <MobileProjectDetail projectDetails={projectDetails} />
+            </>
+          ) : (
+            <h4 className="text-center mt-5">Project Not Found</h4>
+          )}
+        </>
+      ) : (
+        <Loading />
+      )}
     </>
   )
 }

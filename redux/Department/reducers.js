@@ -5,16 +5,26 @@ import {
   GET_DEPARTMENTS,
   GET_DEPARTMENT_BY_ID,
   DEPARTMENT_ERROR,
+  UPDATE_DEPARTMENT_FORM,
+  RESET_DEPARTMENT_FORM,
   LOAD_STATE,
   SUCCESS
 } from './constants'
+
+const INITIAL_DEPARTMENT_FORM = {
+  businessId: ' ',
+  name: ''
+}
 
 const INIT_STATE = {
   departments: [],
   selectedDepartment: {},
   error: '',
   loading: false,
-  totalCount: 0
+  totalCount: 0,
+  createDepartmentForm: {
+    ...INITIAL_DEPARTMENT_FORM
+  }
 }
 
 const Departments = (state = INIT_STATE, action = {}) => {
@@ -58,6 +68,20 @@ const Departments = (state = INIT_STATE, action = {}) => {
       return { ...state, loading: true }
     case LOAD_STATE:
       return { ...state, loading: true }
+    case UPDATE_DEPARTMENT_FORM:
+      return {
+        ...state,
+        loading: false,
+        createDepartmentForm: { ...state.createDepartmentForm, ...action.payload }
+      }
+    case RESET_DEPARTMENT_FORM:
+      return {
+        ...state,
+        loading: false,
+        tags: [...state.tags],
+        createDepartmentForm: { ...INITIAL_DEPARTMENT_FORM },
+        selectedDepartment: {}
+      }
     default:
       return state
   }

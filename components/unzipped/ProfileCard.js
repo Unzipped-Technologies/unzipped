@@ -56,12 +56,10 @@ const ProfileCard = ({ user }) => {
   return (
     <Container>
       <ImageContainer>
-        <Image src={user?.userId?.profileImage} alt="profile pic" width="218px" radius="15px" />
+        <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" />
       </ImageContainer>
       <Content>
-        <TitleText title="true">
-          {ConverterUtils.capitalize(`${user?.userId?.FirstName} ${user?.userId?.LastName}`)}
-        </TitleText>
+        <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
         <div style={{ width: '600px' }}>
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKIILS

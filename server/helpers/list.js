@@ -8,19 +8,25 @@ const createLists = async data => {
 
 const updateLists = async (data) => {
 
-    const result = await list.find({ _id: data.listId });
-    if (result && result.length > 0 && result[0].isDefault) {
-        return { message: 'Default list can not be edited' }
-    }
+  const result = await list.find({ _id: data.listId });
+  if (result && result.length > 0 && result[0].isDefault) {
+    return { message: 'Default list can not be edited' }
+  }
 
-    const listObj = {
-        listId: data.listId,
-        userId: data.userId,
-        name: data.name,
-        ...(data.icon !== '' && { icon: data.icon }),
-    };
+  const listObj = {
+    listId: data.listId,
+    userId: data.userId,
+    name: data.name,
+    ...(data.icon !== '' && { icon: data.icon }),
+  };
 
-    return await list.findByIdAndUpdate(data.listId, { $set: { ...listObj } });
+  return await list.findByIdAndUpdate(
+    data.listId,
+    {
+      $set: { ...listObj }
+    },
+    { new: true }
+  );
 }
 
 const deleteLists = async (id) => {

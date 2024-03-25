@@ -18,7 +18,7 @@ const { likeEnum } = require('../enum/likeEnum')
 const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
-
+const { _isValidPhoneNumber } = require('../utils/validations')
 // create user
 const createUser = async (data, hash) => {
   // create User
@@ -30,7 +30,6 @@ const createUser = async (data, hash) => {
     plan: planEnum.UNSUBSCRIBED
   })
   // create favorites and recently viewed list
-  if (accountTypeEnum.FOUNDER === data.role || accountTypeEnum.ADMIN === data.role) {
     const listsToCreate = [
       {
         name: 'Favorites',
@@ -50,6 +49,7 @@ const createUser = async (data, hash) => {
         name: item.name,
         icon: item.icon,
         userId: newUser.id,
+        isDefault: true,
         user: await user.findById(newUser.id)
       }
       await listHelper.createLists(list)
@@ -59,7 +59,6 @@ const createUser = async (data, hash) => {
     await user.findByIdAndUpdate(newUser.id, {
       lists: ids.map(item => mongoose.Types.ObjectId(item.id))
     })
-  }
 
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
@@ -98,9 +97,30 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    return await user.findByIdAndUpdate(id, { $set: { ...data } })
+    const userData = await getSingleUser({ _id: id }, '-password')
+    if (userData && userData?.phoneNumber && data?.currentPhone) {
+      if (data?.currentPhone !== userData.phoneNumber) {
+        throw new Error(`Incorrect phone number.`)
+      } else if (data?.currentPhone === data.phoneNumber) {
+        throw new Error(`New and current phone numbers must be different.`)
+      } else if (_isValidPhoneNumber(data.phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      }
+    } else {
+      if (data?.phoneNumber && _isValidPhoneNumber(data.phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      }
+    }
+    for (var field in data) {
+      userData[field] = data[field]
+    }
+
+    await userData.save()
+
+    return userData
+    // return await user.findOneAndUpdate({ _id: id }, { $set: { ...data } })
   } catch (e) {
-    throw Error(`Something went wrong ${e}`)
+    throw new Error(`${e}`)
   }
 }
 
@@ -127,7 +147,12 @@ const getUserById = async id => {
   try {
     return await user
       .findById(id)
-      .populate({ path: 'thirdPartyCredentials', model: 'thirdPartyApplications' })
+      .populate([
+        { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
+        {
+          path: 'freelancers'
+        }
+      ])
       .select('-password')
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
@@ -421,7 +446,6 @@ const retrieveSubscriptions = async id => {
 
 const retrievePaymentMethods = async id => {
   const payment = await PaymentMethods.find({ userId: id })
-  console.log(payment)
   return await PaymentMethods.find({ userId: id })
 }
 
@@ -556,9 +580,7 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
       freelancers: result[0].freelancers,
       totalCount: result[0].totalCount[0]?.count || 0
     }
-  } catch (error) {
-    console.log('error', error)
-  }
+  } catch (error) {}
 }
 
 const buildSortStageFilters = sort => {
@@ -603,7 +625,44 @@ const buildQueryFilters = (minRate, maxRate, skills, name) => {
   return filter
 }
 
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await freelancer.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
+}
+
+const changeEmail = async (userId, data) => {
+  const userData = await user.findById(userId)
+  if (!userData) throw Error(`User not exist`)
+  if (userData.email !== data.currentEmail) throw Error(`User with this email not exist.`)
+
+  const newEmailUser = await user.findOne({ email: data.email })
+  if (newEmailUser) throw Error(`New email already registered.`)
+
+  userData.email = data.email
+  await userData.save()
+  return userData
+}
+
+const getSingleUser = async (filter, fields) => {
+  try {
+    return await User.findOne(filter).select(fields)
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
 module.exports = {
+  changeEmail,
   createUser,
   updateUserByEmail,
   getUserById,
@@ -622,5 +681,6 @@ module.exports = {
   listLikes,
   addToNewsletter,
   getAllFreelancers,
+  getSingleUser,
   retrievePaymentMethods
 }

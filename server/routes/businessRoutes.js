@@ -167,7 +167,8 @@ router.get(
   }
 )
 
-router.post('/details',
+router.post(
+  '/details',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
@@ -179,12 +180,15 @@ router.post('/details',
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  }
+)
 
-router.post('/details/create',
+router.post(
+  '/details/create',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
+    req.body.userId = req.user.sub
     const id = req.body.userId || req.user.sub
     try {
       const businessDetails = await businessHelper.createBusinessDetails(req.body, id)
@@ -193,9 +197,11 @@ router.post('/details/create',
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  }
+)
 
-router.post('/details/update',
+router.post(
+  '/details/update',
   requireLogin,
   permissionCheckHelper.hasPermission('createBusinessDetails'),
   async (req, res) => {
@@ -207,6 +213,7 @@ router.post('/details/update',
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  }
+)
 
 module.exports = router

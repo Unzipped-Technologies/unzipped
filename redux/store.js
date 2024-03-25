@@ -18,6 +18,7 @@ import Departments from './Department/reducers'
 import Tags from './Tags/reducers'
 import TaskHours from './TaskHours/reducers'
 import Tasks from './Tasks/reducers'
+import Lists from './Lists/ListReducer'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -37,7 +38,8 @@ const combinedReducer = combineReducers({
   Departments,
   Tags,
   TaskHours,
-  Tasks
+  Tasks,
+  Lists
   // OTHER REDUCERS WILL BE ADDED HERE
 })
 

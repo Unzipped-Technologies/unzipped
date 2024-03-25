@@ -18,7 +18,7 @@ const Container = styled.div`
   align-items: center;
   background: #d9d9d9;
   height: auto;
-  margin-top:65px;
+  margin-top: 65px;
   width: 100vw;
   @media (max-width: 680px) {
     display: block;
@@ -78,11 +78,11 @@ function handleGithub() {
   router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
 }
 
-const convertToBoolean = (value) => {
-  if (value === 'true') return true;
-  if (value === 'false') return false;
-  return false;
-};
+const convertToBoolean = value => {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  return false
+}
 
 const CreateBusiness = ({
   stage,
@@ -157,13 +157,11 @@ const CreateBusiness = ({
           questionsToAsk
         })
       )
-      createBusiness(formData, accessToken)
+      createBusiness(formData)
         .then(() => {
           router.push('/dashboard')
         })
-        .catch(e => {
-          console.log('error: ', e)
-        })
+        .catch(e => {})
     }
   }
   const goBack = step => {
@@ -233,7 +231,7 @@ const CreateBusiness = ({
 
   return (
     <>
-      {businessForm?.stage > 11 && (<Nav isSubMenu marginBottom={'0px'} zIndex={20} />)}
+      {businessForm?.stage > 11 && <Nav isSubMenu marginBottom={'0px'} zIndex={20} />}
       <Container>
         <DesktopBox>
           <GetCardDesktop

@@ -1,17 +1,17 @@
-import React from 'react';
-import CreateABusiness from '..';
-import { Grid } from '../../dashboard/style';
-import { FormField } from '../../../ui';
+import React from 'react'
+import CreateABusiness from '..'
+import { Grid } from '../../dashboard/style'
+import { FormField } from '../../../ui'
 
 const budgetOptions = () => {
-    return [
-        { label: 'Basic ($7 - $14)', value: 'Basic ($7 - $14)' },
-        { label: 'Standard ($15 - $25)', value: 'Standard ($15 - $25)' },
-        { label: 'Skilled ($25 - $50)', value: 'Skilled ($25 - $50)' },
-        { label: 'Expert ($50 - $70)', value: 'Expert ($50 - $70)' },
-        { label: 'More than a $70 per hour', value: 'More than a $70 per hour' },
-        { label: 'Not Sure (See what my options are)', value: 'Not Sure (See what my options are)' }
-    ]
+  return [
+    { label: 'Basic ($7 - $14)', value: 'Basic ($7 - $14)' },
+    { label: 'Standard ($15 - $25)', value: 'Standard ($15 - $25)' },
+    { label: 'Skilled ($25 - $50)', value: 'Skilled ($25 - $50)' },
+    { label: 'Expert ($50 - $70)', value: 'Expert ($50 - $70)' },
+    { label: 'More than a $70 per hour', value: 'More than a $70 per hour' },
+    { label: 'Not Sure (See what my options are)', value: 'Not Sure (See what my options are)' }
+  ]
 }
 
 const StepEightWizardFlow = (
@@ -45,7 +45,7 @@ const StepEightWizardFlow = (
                     fontSize="20px"
                     width="100%"
                     borderRadius="12px"
-                    onChange={e => updateForm({ budgetRange: e.value })}
+                    onChange={e => updateForm({ budgetRange: e?.target.value })}
                     value={{ label: budgetRange }}
                 />
             </Grid>

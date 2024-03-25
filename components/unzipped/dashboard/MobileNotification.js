@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
-import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
+import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -10,93 +10,43 @@ import ScheduleMeetingModal from './ScheduleMeetingModal';
 import { useDispatch, useSelector } from 'react-redux'
 import { updateWizardSubmission } from '../../../redux/actions'
 
-const ExploreContainer = styled.div`
-  display: flex;
-  width: 100%;
-  background: #FAFAFA;
-  flex-direction: column;
-  border-radius: 5px;
-  border: 1px solid #D8D8D8;
-  padding: 10px;
-`;
-
-const TextContent = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  margin-bottom: 20px;
-`;
-
-const ExploreItems = styled.div`
-  display: flex;
-  width: 100%;
-  border-radius:  ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
-  // border-radius: 10px 10px 0px 0px;
-  border: 1px solid #D8D8D8;
-  background: #F1F0F0;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-`;
-
-const ExploreIconContainer = styled.div`
-  display: flex;
-  padding: 10px;
-  align-items: center;
-`
-
-const HeadingStyled = styled.p`
-  margin: 0px !important;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
-  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
-  display: block;
-`;
-
-const ExploreItemTextContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 5px 10px;
-`;
-
-const FontStyled = styled.span`
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
-  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
-`
 const help = [
-    {
-        name: 'Help Center',
-        icon: 'glasses',
-        text: 'Find documentation and tutorials on how to use Unzipped.',
-        link: {
-            text: 'See our help docs',
-            to: '/'
-        }
-    },
-    {
-        name: 'Unzipped Learn',
-        icon: 'compass',
-        text: 'Get step-by-step guidance on how to best set up your business online.',
-        link: {
-            text: 'Get started',
-            to: '/'
-        }
-    },
-    {
-        name: 'Courses',
-        icon: 'play',
-        text: 'Learn how to run a successful business with video courses taught by industry experts',
-        link: {
-            text: 'Learn more',
-            to: 'https://www.udemy.com/'
-        }
-    },
-    {
-        name: 'Ask us about a topic',
-        icon: 'questionCircle',
-        text: 'Find answers to your questions and review Unzipped resources.',
-        link: {
-            text: 'Ask about a topic.',
-            to: '/'
-        }
+  {
+    name: 'Help Center',
+    icon: 'glasses',
+    text: 'Find documentation and tutorials on how to use Unzipped.',
+    link: {
+      text: 'See our help docs',
+      to: '/'
     }
+  },
+  {
+    name: 'Unzipped Learn',
+    icon: 'compass',
+    text: 'Get step-by-step guidance on how to best set up your business online.',
+    link: {
+      text: 'Get started',
+      to: '/'
+    }
+  },
+  {
+    name: 'Courses',
+    icon: 'play',
+    text: 'Learn how to run a successful business with video courses taught by industry experts',
+    link: {
+      text: 'Learn more',
+      to: 'https://www.udemy.com/'
+    }
+  },
+  {
+    name: 'Ask us about a topic',
+    icon: 'questionCircle',
+    text: 'Find answers to your questions and review Unzipped resources.',
+    link: {
+      text: 'Ask about a topic.',
+      to: '/'
+    }
+  }
 ]
 
 const InnerCard = styled.div`

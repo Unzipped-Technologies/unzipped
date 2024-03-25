@@ -161,7 +161,7 @@ const Select = styled.select`
   margin-right: 10px;
 `
 
-const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
+const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
   const [weekOptions, setWeekOptions] = useState([])
   const [selectedWeek, setSelectedWeek] = useState(0)
 
@@ -235,7 +235,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         <HeaderDetail>
           <Header>
             <ProjectName>
-              {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
+              {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name ?? ''}` : 'PROJECT') : ''}
               {selectedTab === 3 && window.innerWidth > 680 ? (role === 1 ? 'TIMESHEET' : 'Invoice History') : ''}
             </ProjectName>
             {(selectedTab === 3) & (window.innerWidth < 680) ? (
@@ -272,7 +272,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       </Desktop>
 
       <TabContent>
-        {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
+        {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />}
         {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
         {selectedTab === 2 && <HiringTable />}
         {selectedTab === 3 && (
@@ -286,7 +286,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
 const mapStateToProps = state => {
   return {
     projectDetails: state.Business.selectedBusiness,
-    role: state.Auth.user.role
+    role: state.Auth.user.role,
+    loading: state.Loading.loading
   }
 }
 

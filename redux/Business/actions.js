@@ -77,21 +77,16 @@ export const getBusinessDetails = (userId, token) => async (dispatch, getState) 
 }
 
 export const createBusiness =
-  (data, token, isWizard = false) =>
+  (data, isWizard = false) =>
   async (dispatch, getState) => {
     dispatch({ type: LOAD_STATE })
     dispatch(startLoading())
     await axios
-      .post(`/api/business/create`, data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          access_token: token
-        }
-      })
-      .then(res => {
+      .post(`/api/business/create`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+      .then(async res => {
         dispatch({
           type: CREATE_BUSINESS,
-          payload: res.data
+          payload: { projectName: res.data?.business?.name, isSuccessfull: true }
         })
         if (isWizard) {
           dispatch({
@@ -153,19 +148,23 @@ export const updateWizardSubmission = data => dispatch => {
   })
 }
 export const getProjectsList = queryParams => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
+  await dispatch({
+    type: GET_PROJECT_LIST,
+    payload: { limitedRecords: [], totalCount: [{ count: 0 }] }
+  })
+  await dispatch(startLoading())
   await axios
     .post(`/api/business/list`, queryParams, tokenConfig(getState()?.Auth.token))
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-          type: GET_PROJECT_LIST_AND_APPEND,
-          payload: res.data
-        })
+            type: GET_PROJECT_LIST_AND_APPEND,
+            payload: res.data
+          })
         : dispatch({
-          type: GET_PROJECT_LIST,
-          payload: res.data
-        })
+            type: GET_PROJECT_LIST,
+            payload: res.data
+          })
     })
     .catch(err => {
       dispatch({
@@ -173,23 +172,29 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+    .finally(() => {
+      dispatch(stopLoading())
+    })
 }
 
 export const getPublicProjectsList = queryParams => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
+  await dispatch({
+    type: GET_PROJECT_LIST,
+    payload: { limitedRecords: [], totalCount: [{ count: 0 }] }
+  })
+  await dispatch(startLoading())
   await axios
     .post(`/api/business/public/list`, queryParams)
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-          type: GET_PROJECT_LIST_AND_APPEND,
-          payload: res.data
-        })
+            type: GET_PROJECT_LIST_AND_APPEND,
+            payload: res.data
+          })
         : dispatch({
-          type: GET_PROJECT_LIST,
-          payload: res.data
-        })
+            type: GET_PROJECT_LIST,
+            payload: res.data
+          })
     })
     .catch(err => {
       dispatch({
@@ -197,12 +202,19 @@ export const getPublicProjectsList = queryParams => async (dispatch, getState) =
         payload: err.response
       })
     })
-  dispatch(stopLoading())
+    .finally(() => {
+      dispatch(stopLoading())
+    })
 }
 
 export const getBusinessById = id => async (dispatch, getState) => {
   //business list Loading
-  dispatch({ type: LOAD_STATE })
+  await dispatch(startLoading())
+
+  await dispatch({
+    type: SELECT_BUSINESS,
+    payload: null
+  })
   await axios
     .get(`/api/business/${id}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
@@ -217,6 +229,7 @@ export const getBusinessById = id => async (dispatch, getState) => {
         payload: err.response
       })
     })
+  await dispatch(stopLoading())
 }
 
 export const businessFieldsValidation = data =>  (dispatch) => {

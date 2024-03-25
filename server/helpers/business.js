@@ -22,7 +22,6 @@ const createBusiness = async (data, id, files = []) => {
   if (uploadResult && uploadResult.length > 0) {
     cloudinaryIds = uploadResult.map(elem => elem._id)
   }
-
   // create business
   const newBusiness = await business.create({
     ...data,
@@ -221,12 +220,38 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           isActive: 1,
           valueEstimate: 1,
           userId: 1,
-          departments: 1
+          departments: 1,
+          projectImagesUrl: 1
         }
       },
       {
         $sort: {
           createdAt: -1
+        }
+      },
+      {
+        $lookup: {
+          from: 'files',
+          let: { projectImagesUrl: '$projectImagesUrl' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$projectImagesUrl' }, then: '$$projectImagesUrl', else: [] } }
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                name: 1,
+                url: 1
+              }
+            }
+          ],
+          as: 'projectImages'
         }
       },
       {

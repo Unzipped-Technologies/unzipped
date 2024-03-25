@@ -331,7 +331,7 @@ const TaskForm = ({
                 onUpdate={() => {}}
               />
             ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px" marginRight="120px">
+              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px" marginRight="200px" right>
                 {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label || 'assignee'}
               </DarkText>
             )}
@@ -389,7 +389,7 @@ const TaskForm = ({
                 <Plus width="17" height="17" />
               </div>
             )}
-            {editMode && tagShow && (
+            {tagShow && (
               <FormField
                 zIndexUnset
                 fieldType="input"

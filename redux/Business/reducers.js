@@ -32,7 +32,7 @@ const INIT_STATE = {
   stories: [],
   loading: false,
   selectedDepartment: 0,
-  selectedBusiness: {},
+  selectedBusiness: null,
   employees: [],
   invoiceTaskHours: [],
   invoiceTags: [],
@@ -70,7 +70,11 @@ const INIT_STATE = {
 const Business = (state = INIT_STATE, action = {}) => {
   switch (action.type) {
     case RESET_BUSINESS_FORM: {
-      return { ...state, businessForm: INIT_STATE.businessForm }
+      return {
+        ...state,
+        businessForm: INIT_STATE.businessForm,
+        wizardSubmission: { ...state.wizardSubmission, ...action.payload }
+      }
     }
     case UPDATE_WIZARD_SUBMISSION: {
       return { ...state, wizardSubmission: { ...state.wizardSubmission, ...action.payload } }
@@ -113,7 +117,12 @@ const Business = (state = INIT_STATE, action = {}) => {
         employees: action.payload?.employees || []
       }
     case UPDATE_BUSINESS_FORM:
-      return { ...state, loading: false, businessForm: { ...state.businessForm, ...action.payload } }
+      return {
+        ...state,
+        loading: false,
+        businessForm: { ...state.businessForm, ...action.payload },
+        wizardSubmission: { ...state.wizardSubmission, ...action.payload, isSuccessfull: false }
+      }
     case RESET_BUSINESS_FORM:
       return { ...state, loading: false, businessForm: { ...INIT_STATE.businessForm } }
     case CREATE_FILE:

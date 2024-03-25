@@ -28,7 +28,7 @@ const Freelancers = (state = INIT_STATE, action) => {
       return {
         ...state,
         loading: false,
-        freelancers: [...action?.payload],
+        freelancers: [...action?.payload?.limitedRecords],
         totalCount: action?.payload?.totalCount
       }
     case GET_FREELANCER_BY_ID:

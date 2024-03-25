@@ -52,99 +52,110 @@ const Panel = ({
   const handleListChangeEv = item => {
     let isDefaultListItem = false
 
-    if (item.name === 'Favorites') {
+    if (item?.name === 'Favorites') {
       setIsFavourite(true)
       setIsRecentlyViewed(false)
       setIsMyTeam(false)
       isDefaultListItem = true
-      dispatch(getListEntriesById(item._id))
+      dispatch(getListEntriesById(item?._id))
     }
-    if (item.name === 'Recently Viewed') {
+    if (item?.name === 'Recently Viewed') {
       setIsRecentlyViewed(true)
       setIsFavourite(false)
       setIsMyTeam(false)
       isDefaultListItem = true
-      dispatch(getRecentlyViewedList(item._id))
+      dispatch(getRecentlyViewedList(item?._id))
     }
-    if (item.name === 'My Team') {
+    if (item?.name === 'My Team') {
       setIsMyTeam(true)
       setIsRecentlyViewed(false)
       setIsFavourite(false)
       isDefaultListItem = true
       dispatch(getTeamMembers(userId))
     }
-
-    return (
-      <Container>
-        <TitleText paddingLeft clickable>
-          {business}
-          <Absolute top="20px">
-            <Action
-              onClick={() => {
-                console.log('modal_open')
-                setIsModalOpen(true)
-              }}>
-              {isDepartment ? '' : '+ New List'}
-            </Action>
-          </Absolute>
-        </TitleText>
-        <Underline />
-        {userListItems
-          .filter(item => (isDepartment ? item.tags.length > 0 : true))
-          .map((item, index) => (
-            <WhiteCard
-              borderColor="transparent"
-              padding="5px"
-              height="30px"
-              paddingLeft="15px"
-              row
-              noMargin
-              clickable
-              borderLeft={selectedMenuOption?.name == item.name ? '#1976D2' : 'transparent'}
-              borderRadius={selectedMenuOption?.name == item.name ? '0' : ''}
-              key={index}>
-              {item?.isDefault && item.icon == 'EyeOutlined' && (
-                <IconSelector icon={item.icon} size={24} color="#8EDE64" />
-              )}
-
-              {item?.isDefault && item.icon == 'HeartOutlined' && (
-                <IconSelector icon={item.icon} size={24} color="#FA00FF" />
-              )}
-
-              {item?.isDefault && item.icon == 'TeamOutlined' && (
-                <IconSelector icon={item.icon} size={24} color="#FFC24E" />
-              )}
-
-              {item?.icon &&
-                !item?.isDefault &&
-                item.icon !== 'EyeOutlined' &&
-                item.icon !== 'HeartOutlined' &&
-                item.icon !== 'TeamOutlined' && <IconSelector icon={item.icon} size={24} color="#e25050" />}
-
-              <DarkText
-                clickable
-                noMargin
-                paddingLeft
-                hover
-                onClick={() => {
-                  handleListChangeEv(item)
-                  setSelectedMenuOption(item)
-                }}>
-                {item.name}
-              </DarkText>
-            </WhiteCard>
-          ))}
-        <ListManagementPanel
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          isEditMode={isEditMode}
-          setIsEditMode={setIsEditMode}
-          userId={userId}
-          listInfo={listInfo}
-        />
-      </Container>
-    )
+    setListTitle({ listId: item?._id, listTitle: item?.name, listIcon: item?.icon });
+    if (!isDefaultListItem) {
+      setIsMyTeam(false)
+      setIsRecentlyViewed(false);
+      setIsFavourite(false);
+      dispatch(getListEntriesById(item._id))
+    }
   }
+
+    useEffect(() => {
+      setSelectedMenuOption(listInfo)
+  
+  }, [listInfo])
+
+  return (
+    <Container>
+      <TitleText paddingLeft clickable>
+        {business}
+        <Absolute top="20px">
+          <Action
+            onClick={() => {
+              setIsModalOpen(true)
+            }}>
+            {isDepartment ? '' : '+ New List'}
+          </Action>
+        </Absolute>
+      </TitleText>
+      <Underline />
+      {userListItems?.length > 0 && userListItems
+        .filter(item => (isDepartment ? item.tags.length > 0 : true))
+        .map((item, index) => (
+          <WhiteCard
+            borderColor="transparent"
+            padding="5px"
+            height="30px"
+            paddingLeft="15px"
+            row
+            noMargin
+            clickable
+            borderLeft={listInfo?.listTitle == item.name ? '#1976D2' : 'transparent'}
+            borderRadius={listInfo?.listTitle == item.name ? '0' : ''}
+            key={index}>
+            {item?.isDefault && item.icon == 'EyeOutlined' && (
+              <IconSelector icon={item.icon} size={24} color="#8EDE64" />
+            )}
+
+            {item?.isDefault && item.icon == 'HeartOutlined' && (
+              <IconSelector icon={item.icon} size={24} color="#FA00FF" />
+            )}
+
+            {item?.isDefault && item.icon == 'TeamOutlined' && (
+              <IconSelector icon={item.icon} size={24} color="#FFC24E" />
+            )}
+
+            {item?.icon &&
+              !item?.isDefault &&
+              item.icon !== 'EyeOutlined' &&
+              item.icon !== 'HeartOutlined' &&
+              item.icon !== 'TeamOutlined' && <IconSelector icon={item.icon} size={24} color="#e25050" />}
+
+            <DarkText
+              clickable
+              noMargin
+              paddingLeft
+              hover
+              onClick={() => {
+                handleListChangeEv(item)
+                setSelectedMenuOption(item)
+              }}>
+              {item.name}
+            </DarkText>
+          </WhiteCard>
+        ))}
+      <ListManagementPanel
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        isEditMode={isEditMode}
+        setIsEditMode={setIsEditMode}
+        userId={userId}
+        listInfo={listInfo}
+      />
+    </Container>
+  )
 }
 
 export default Panel
