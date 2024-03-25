@@ -45,7 +45,7 @@ const StepEightWizardFlow = (
                     fontSize="20px"
                     width="100%"
                     borderRadius="12px"
-                    onChange={e => updateForm({ budgetRange: e?.target.value })}
+                    onChange={e => updateForm({ budgetRange: e?.value })}
                     value={{ label: budgetRange }}
                 />
             </Grid>
