@@ -13,7 +13,8 @@ import {
   BUSINESS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
-  UPDATE_WIZARD_SUBMISSION
+  UPDATE_WIZARD_SUBMISSION,
+  SET_IS_BUSINESS_FIELD_SUBMITTED
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -229,4 +230,11 @@ export const getBusinessById = id => async (dispatch, getState) => {
       })
     })
   await dispatch(stopLoading())
+}
+
+export const businessFieldsValidation = data =>  (dispatch) => {
+  dispatch({
+    type: SET_IS_BUSINESS_FIELD_SUBMITTED,
+    payload: data
+  })
 }

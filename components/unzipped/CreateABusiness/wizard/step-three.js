@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CreateABusiness from '../../CreateABusiness';
 import { Grid } from '../../../../components/unzipped/dashboard/style';
 import { FormField } from '../../../ui';
+import CharacterCounter from '../CharacterCounter';
+import { useSelector } from 'react-redux';
 
 const StepThreeWizardFlow = ({
     challenge,
@@ -12,6 +14,29 @@ const StepThreeWizardFlow = ({
     role,
     projectType
 }) => {
+
+    const { businessForm } = useSelector(state => state.Business);
+    const [isAlterable, setIsAlterable] = useState(false);
+    const fieldName = businessForm?.projectType === "Short Term Business" ? 'challenge' : 'role';
+
+    const handleInputChangeEvent = e => {
+        if (businessForm?.[fieldName]?.length >= 1000) {
+            if (isAlterable) {
+                setIsAlterable(false)
+                updateForm({ [fieldName]: e.target.value })
+            }
+        } else {
+            updateForm({ [fieldName]: e.target.value })
+
+        }
+    }
+
+    const handleKeydownEvent = e => {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            setIsAlterable(true)
+        }
+    }
+
     return (
         (projectType === "Short Term Business" ? (<CreateABusiness
             title="Describe the project"
@@ -30,10 +55,12 @@ const StepThreeWizardFlow = ({
                     width="100%"
                     placeholder="Enter Project Summary..."
                     borderRadius="10px"
-                    onChange={e => updateForm({ challenge: e.target.value })}
+                    onChange={e => handleInputChangeEvent(e)}
                     value={challenge}
+                    onKeyDown={handleKeydownEvent}
                 />
             </Grid>
+            <CharacterCounter field={'challenge'} />
         </CreateABusiness>)
             :
             (<CreateABusiness
@@ -52,10 +79,12 @@ const StepThreeWizardFlow = ({
                         fontSize="20px"
                         width="100%"
                         borderRadius="10px"
-                        onChange={e => updateForm({ role: e.target.value })}
+                        onChange={e => handleInputChangeEvent(e)}
                         value={role}
+                        onKeyDown={handleKeydownEvent}
                     />
                 </Grid>
+                <CharacterCounter field={fieldName} />
             </CreateABusiness>)
         )
     )

@@ -86,7 +86,7 @@ const ReviewBusinessDetails = ({ files = [], isGithubConnected, stage, isMobileV
         requiredSkills: businessForm.requiredSkills,
         goals: businessForm.goals,
         companyBackground: businessForm.companyBackground,
-        budget: businessForm.budget,
+        budgetRange: businessForm.budgetRange,
         questionsToAsk: businessForm.questionsToAsk
       })
     )
@@ -100,25 +100,23 @@ const ReviewBusinessDetails = ({ files = [], isGithubConnected, stage, isMobileV
   }
 
   useEffect(() => {
-    if (wizardSubmission.isSuccessfull) {
+    if (wizardSubmission?.isSuccessfull) {
       router.push('/dashboard')
     }
-  }, [wizardSubmission.isSuccessfull])
+  }, [wizardSubmission?.isSuccessfull])
 
   return (
     <ReviewContainer>
       <ReviewContent>
         <HeaderTitleStyled>Review Project</HeaderTitleStyled>
-        {!wizardSubmission.isSuccessfull && isFormSubmitted && (
-          <WhiteCard row borderColor="#DE4E4E" background="#FCEDED">
-            <DarkText noMargin>
-              <span>{`Failed to create project ${businessForm?.name}. Please try again later!`}</span>
-            </DarkText>
+        {!wizardSubmission?.isSuccessfull
+          && isFormSubmitted
+          && (<WhiteCard row borderColor="#DE4E4E" background="#FCEDED">
+            <DarkText noMargin><span>{`Failed to create project ${businessForm?.name}. Please try again later!`}</span></DarkText>
             <Absolute>
-              <Dismiss onClick={handleNotificationDismissal}>Dismiss</Dismiss>
+              <Dismiss onClick={handleNotificationDismissal} >Dismiss</Dismiss>
             </Absolute>
-          </WhiteCard>
-        )}
+          </WhiteCard>)}
         {renderSectionContent(400, FONT_SIZE, REVIEW_SECTION_LABEL, '', '', '5px')}
         <ReviewSectionStyled>
           <ReviewHeaderSection
@@ -201,7 +199,7 @@ const ReviewBusinessDetails = ({ files = [], isGithubConnected, stage, isMobileV
           />
           <Items>
             {renderSectionContent(600, FONT_SIZE, BUSINESS_LABEL.project.budget)}
-            {renderSectionContent(400, FONT_SIZE, `${businessForm?.budget}`)}
+            {renderSectionContent(400, FONT_SIZE, `${businessForm?.budgetRange}`)}
           </Items>
           <Items>
             {renderSectionContent(600, FONT_SIZE, 'Interview Questions')}

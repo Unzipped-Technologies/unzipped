@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CreateABusiness from '../CreateABusiness';
 import { Grid } from '../../unzipped/dashboard/style';
 import OptionTileGroup from '../../ui/OptionTileGroup';
@@ -7,6 +7,9 @@ import { ContentContainer, ContainedSpan } from '../../../pages/create-your-busi
 import ClearSharpIcon from '@material-ui/icons/ClearSharp';
 import Button from '../../ui/Button';
 import ReviewBusinessDetails from './ReviewBusinessDetails';
+import CharacterCounter from './CharacterCounter';
+import { useSelector } from 'react-redux';
+
 
 const projectTypeOptions = () => {
     return [
@@ -43,7 +46,7 @@ const GetCardMobile = ({
     requiredSkills,
     goals,
     companyBackground,
-    budget,
+    budgetRange,
     questionsToAsk,
     submitForm,
     updateForm,
@@ -57,6 +60,43 @@ const GetCardMobile = ({
     loading,
     handleGithub
 }) => {
+    const { businessForm } = useSelector(state => state.Business);
+
+    const [isAlterable, setIsAlterable] = useState(false);
+    const fieldName = businessForm?.projectType === "Short Term Business" ? 'challenge' : 'role';
+
+    const handleInputChangeEvent = (e, localField = "") => {
+
+        if (localField == "name") {
+            if (name?.length >= 1000) {
+                if (isAlterable) {
+                    setIsAlterable(false)
+                    updateForm({ name: e.target.value })
+                }
+            } else {
+                updateForm({ name: e.target.value })
+            }
+        }
+        if (localField !== "name") {
+            if (fieldName == "challenge" || fieldName == "role") {
+                if (businessForm?.[fieldName]?.length >= 1000) {
+                    if (isAlterable) {
+                        setIsAlterable(false)
+                        updateForm({ [fieldName]: e.target.value })
+                    }
+                } else {
+                    updateForm({ [fieldName]: e.target.value })
+
+                }
+            }
+        }
+    }
+
+    const handleKeydownEvent = e => {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            setIsAlterable(true)
+        }
+    }
     switch (stage) {
         case 1:
             return (
@@ -104,9 +144,11 @@ const GetCardMobile = ({
                             width="100%"
                             placeholder="Describe your project here..."
                             borderRadius="10px"
-                            onChange={e => updateForm({ name: e.target.value })}
+                            onChange={e => handleInputChangeEvent(e, "name")}
                             value={name}
+                            onKeyDown={e => handleKeydownEvent(e)}
                         />
+                        <CharacterCounter field={'name'} />
                     </Grid>
                 </CreateABusiness>
             )
@@ -137,6 +179,7 @@ const GetCardMobile = ({
                                     onChange={e => updateForm({ challenge: e.target.value })}
                                     value={challenge}
                                 />
+                                <CharacterCounter field={'challenge'} />
                             </Grid>
                         </CreateABusiness>
                         <CreateABusiness
@@ -212,9 +255,11 @@ const GetCardMobile = ({
                                     fontSize="20px"
                                     width="100%"
                                     borderRadius="10px"
-                                    onChange={e => updateForm({ role: e.target.value })}
+                                    onChange={e => handleInputChangeEvent(e)}
                                     value={role}
+                                    onKeyDown={e => handleKeydownEvent(e)}
                                 />
+                                <CharacterCounter field={'role'} />
                             </Grid>
                         </CreateABusiness>
                         <CreateABusiness
@@ -348,6 +393,7 @@ const GetCardMobile = ({
                                     onChange={e => updateForm({ role: e.target.value })}
                                     value={role}
                                 />
+                                <CharacterCounter field={'role'} />
                             </Grid>
                         </CreateABusiness>
                         <CreateABusiness
@@ -555,7 +601,7 @@ const GetCardMobile = ({
                             <FormField
                                 mobile
                                 required
-                                height="45px"
+                                height="65px"
                                 fieldType="select"
                                 isSearchable={false}
                                 name="select"
@@ -564,8 +610,8 @@ const GetCardMobile = ({
                                 fontSize="20px"
                                 width="100%"
                                 borderRadius="12px"
-                                onChange={e => updateForm({ budget: e.value })}
-                                value={{ label: budget }}
+                                onChange={e => updateForm({ budgetRange: e.value })}
+                                value={{ label: budgetRange }}
                             />
                         </Grid>
                     </CreateABusiness>
@@ -575,7 +621,7 @@ const GetCardMobile = ({
                         title="Questions for Potential Hires"
                         titleFontSize="16px"
                         sub="What questions do you have for potential hires? (max three)"
-                        disabled={questionsToAsk?.length === 0 || budget?.length === 0}
+                        disabled={questionsToAsk?.length === 0 || budgetRange?.length === 0}
                         onUpdate={updateForm}
                         onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
                         onSubmit={submitForm}
@@ -650,8 +696,8 @@ const GetCardMobile = ({
                                 fontSize="20px"
                                 width="100%"
                                 borderRadius="12px"
-                                onChange={e => updateForm({ budget: e.value })}
-                                value={{ label: budget }}
+                                onChange={e => updateForm({ budgetRange: e.value })}
+                                value={{ label: budgetRange }}
                             />
                         </Grid>
                     </CreateABusiness>
@@ -661,7 +707,7 @@ const GetCardMobile = ({
                         title="Questions for Potential Hires"
                         titleFontSize="16px"
                         sub="What questions do you have for potential hires? (max three)"
-                        disabled={questionsToAsk?.length === 0 || budget?.length === 0}
+                        disabled={questionsToAsk?.length === 0 || budgetRange?.length === 0}
                         onUpdate={updateForm}
                         onBack={() => goBack(stage - 1)}
                         onSubmit={submitForm}
