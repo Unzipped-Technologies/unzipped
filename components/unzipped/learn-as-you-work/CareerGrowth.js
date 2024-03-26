@@ -32,7 +32,7 @@ const CareerGrowth = () => {
         <>
             <CardWrapper>
                 <CartContainer>
-                    <ContentTitleStyled>Learn As You Workxx</ContentTitleStyled>
+                    <ContentTitleStyled>Learn As You Work</ContentTitleStyled>
                     <ItemContainer>
                         {cardArray.map((item) => (
                             <CardItem>

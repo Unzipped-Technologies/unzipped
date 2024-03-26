@@ -165,7 +165,6 @@ const NewsLetterContainer = styled.div`
     width: 100%;
     padding-left: 0 ;
     display: flex;
-    // margin-left: -100px;
     justify-content: center;
     align-items: center;
     @media screen and (max-width: 600px){
