@@ -14,7 +14,8 @@ const INIT_STATE = {
   selectedFreelancer: null,
   error: null,
   totalCount: '',
-  isExpanded: false
+  isExpanded: false,
+  createdInvitation: null
 }
 
 const Freelancers = (state = INIT_STATE, action) => {

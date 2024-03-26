@@ -64,7 +64,7 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
     const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
     const regexPattern = regexPatterns?.join('|')
     const limitValue = limit === 'all' ? await countFreelancers(filter) : Number(limit)
-    const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
+    const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 }
 
     const aggregationPipeline = [
       {
@@ -129,6 +129,20 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
       },
       {
         $unwind: '$user'
+      },
+      {
+        $lookup: {
+          from: 'invites',
+          localField: 'invites',
+          foreignField: '_id',
+          as: 'invites'
+        }
+      },
+      {
+        $unwind: {
+          path: '$invites',
+          preserveNullAndEmptyArrays: true
+        }
       },
       {
         $match: {
