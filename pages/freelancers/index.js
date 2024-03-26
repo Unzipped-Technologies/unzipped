@@ -251,6 +251,7 @@ const Freelancers = ({
                           user={freelancer}
                           includeRate
                           clearSelectedFreelancer={clearSelectedFreelancer}
+                          filter={filter}
                         />
                       </WhiteCard>
                       {freelancerList.length < 1000 && freelancerList.length < totalCount && (
