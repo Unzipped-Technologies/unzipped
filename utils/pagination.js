@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 const currentPage = options => {
   return options.page && parseInt(options.page, 10) > 0 ? parseInt(options.page, 10) : 1
 }
@@ -14,7 +16,11 @@ const pick = (object, keys) => {
       object[key] !== null &&
       Object.prototype.hasOwnProperty.call(object, key)
     ) {
-      obj[key] = object[key]
+      if (mongoose.Types.ObjectId.isValid(object[key])) {
+        obj[key] = mongoose.Types.ObjectId(object[key])
+      } else {
+        obj[key] = object[key]
+      }
     }
     return obj
   }, {})

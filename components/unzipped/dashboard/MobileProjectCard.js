@@ -1,7 +1,8 @@
 import React from 'react'
-import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
+
+import IconComponent from '../../ui/icons/IconComponent'
 
 const UserSkills = styled.div`
   ::-webkit-scrollbar {
@@ -40,7 +41,6 @@ function MobileProjectCard({ project }) {
         <div className="d-flex justify-content-between align-items-center">
           <p className="mb-0">{project?.country}</p>
           <div className="d-flex">
-            {/* <span style={{ fontSize: "24px" }}>${project?.budget} <span style={{ fontSize: "15px" }}>{project?.projectType.includes('Hourly Rate') ? '/ hour ' : 'fixed rate '}</span></span> */}
             <div className="d-flex align-items-center ps-3">
               <IconComponent name="thumbUp" width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
               <span style={{ fontSize: '16px', paddingLeft: '3px' }}>{project?.likes}</span>
@@ -77,8 +77,11 @@ function MobileProjectCard({ project }) {
             border: '0',
             padding: '10px 0px',
             fontWeight: '600'
+          }}
+          onClick={() => {
+            router.push(`/projects/${project._id}`)
           }}>
-          VIEW PROFILE
+          VIEW PROJECT
         </button>
       </div>
     </div>

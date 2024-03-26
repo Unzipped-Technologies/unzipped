@@ -150,7 +150,15 @@ const SubmitButton = styled.button`
     `};
 `
 
-const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById, createProjectApplication, role }) => {
+const ProjectDetail = ({
+  projectDetails,
+  success,
+  freelancerId,
+  getBusinessById,
+  createProjectApplication,
+  role,
+  loading
+}) => {
   const [filterOpenClose, setFilterOpenClose] = useState(false)
 
   const router = useRouter()
@@ -184,7 +192,7 @@ const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById,
         <Header>
           <ProjectName>PROJECT</ProjectName>
           <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>
-          {window.innerWidth >= 680 && (
+          {window.innerWidth >= 680 && !projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
             <SubmitButtonContainer margin="0px 0px -30px 0px">
               <SubmitButton
                 onClick={() => {
@@ -211,7 +219,7 @@ const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById,
       <TabContent>
         {selectedTab === 0 && (
           <>
-            <DesktopProjectDetail projectDetails={projectDetails} />
+            <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />
             {!projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
               <ProjectApplyForm applyToProject={applyToProject} projectDetails={projectDetails} />
             )}
@@ -227,7 +235,8 @@ const mapStateToProps = state => {
     projectDetails: state.Business.selectedBusiness,
     freelancerId: state?.Auth?.user?.freelancers,
     role: state?.Auth?.user?.role,
-    success: state?.ProjectApplications?.success
+    success: state?.ProjectApplications?.success,
+    loading: state.Loading.loading
   }
 }
 

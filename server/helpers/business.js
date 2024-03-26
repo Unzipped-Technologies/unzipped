@@ -1,50 +1,49 @@
-const business = require('../../models/Business')
-const businessAudience = require('../../models/BusinessAudience')
-const listItems = require('../../models/ListItems')
-const likeHistory = require('../../models/LikeHistory')
-const department = require('../../models/Department')
+const business = require('../models/Business')
+const businessAudience = require('../models/BusinessAudience')
+const listItems = require('../models/ListItems')
+const likeHistory = require('../models/LikeHistory')
+const department = require('../models/Department')
 const departmentHelper = require('./department')
-const tags = require('../../models/tags')
-const businessDetail = require('../../models/BusinessDetails')
-const user = require('../../models/User')
+const tags = require('../models/tags')
+const user = require('../models/User')
 const mongoose = require('mongoose')
 const { likeEnum } = require('../enum/likeEnum')
-const Contracts = require('../../models/Contract')
-const Freelancer = require('../../models/Freelancer')
-const TaskHours = require('../../models/TaskHours')
+const Contracts = require('../models/Contract')
+const Freelancer = require('../models/Freelancer')
+const TaskHours = require('../models/TaskHours')
 const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
-const CloudinaryUploadHelper = require("./file");
+const CloudinaryUploadHelper = require('./file')
 
 const createBusiness = async (data, id, files = []) => {
   // upload file to cloudinary platform
-  const uploadResult = await CloudinaryUploadHelper.createFile(files, id);
-  let cloudinaryIds = [];
+  const uploadResult = await CloudinaryUploadHelper.createFile(files, id)
+  let cloudinaryIds = []
   if (uploadResult && uploadResult.length > 0) {
-    cloudinaryIds = uploadResult.map(elem => elem._id);
+    cloudinaryIds = uploadResult.map(elem => elem._id)
   }
-
   // create business
-  const newBusiness = await business.create(
-    {
-      ...data,
-      userId: id,
-      questionsToAsk: [],
-      projectImagesUrl: cloudinaryIds
-    }
-  )
+  const newBusiness = await business.create({
+    ...data,
+    questionsToAsk: [],
+    applicants: [],
+    projectImagesUrl: cloudinaryIds
+  })
+
+  // Create business audience
   const audience = await businessAudience.create({
     ...data,
     businessId: newBusiness._id
   })
 
+  // Create questions and store their _ids in questions array
   let questions = []
   if (data?.questionsToAsk?.length) {
     let businessQuestions = []
     for (var question of data.questionsToAsk) {
       businessQuestions.push({
         businessId: newBusiness._id,
-        userId: id,
+        userId: data.userId,
         question: question,
         answers: []
       })
@@ -54,15 +53,13 @@ const createBusiness = async (data, id, files = []) => {
     questions = questions?.map(question => question._id)
   }
   // create department management and assign main user to it
-  await departmentHelper.addDepartmentToBusiness({
+  await departmentHelper.createDepartment({
     name: 'Management',
     businessId: newBusiness._id,
-    userId: id,
-    tags: await tags.find({ businessId: newBusiness._id })
+    userId: data.userId
   })
   // associate department with business
   await business.findByIdAndUpdate(newBusiness._id, {
-    // departments: [await department.findById(dep._id)],
     questionsToAsk: questions,
     audience: await businessAudience.findById(audience._id)
   })
@@ -88,8 +85,6 @@ const deleteBusiness = async (businessId, userId) => {
 
 const getBusinessById = async (id, user) => {
   try {
-    await business.updateMany({ userId: user.sub }, { $set: { isSelected: false } })
-    const getBusiness = await business.findByIdAndUpdate(id, { $set: { isSelected: true } })
     let populateData = []
     if (user?.userInfo?.role === 1) {
       populateData = [
@@ -104,13 +99,25 @@ const getBusinessById = async (id, user) => {
           select: 'FirstName LastName profileImage  isIdentityVerified stripeId stripeSubscription createdAt'
         },
         {
-          path: "projectImagesUrl",
-          model: "file",
-          select: "url"
+          path: 'projectImagesUrl',
+          model: 'file',
+          select: 'url'
         }
       ]
     } else {
       populateData = [
+        {
+          path: 'departments',
+          model: 'departments',
+          select: 'name tags',
+          populate: [
+            {
+              path: 'tags',
+              model: 'tags',
+              select: 'tagName'
+            }
+          ]
+        },
         {
           path: 'applicants',
           model: 'freelancers',
@@ -134,21 +141,22 @@ const getBusinessById = async (id, user) => {
           select: 'question answers'
         },
         {
-          path: "projectImagesUrl",
-          model: "file",
-          select: "url"
+          path: 'projectImagesUrl',
+          model: 'file',
+          select: 'url'
         }
       ]
     }
-    const populatedBusiness = await getBusiness.populate(populateData).execPopulate()
-    return { getBusiness: populatedBusiness }
+    const response = await business.findByIdAndUpdate(id, { $set: { isSelected: true } }).populate(populateData)
+
+    return { getBusiness: response }
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
 }
 
 // list lists
-const listBusinesses = async ({ filter, take = 25, skip = 0, maxRate, minRate, skill, type }) => {
+const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
   try {
     const existingNameIndex = await business.collection.indexes()
     const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
@@ -159,63 +167,61 @@ const listBusinesses = async ({ filter, take = 25, skip = 0, maxRate, minRate, s
       await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
       await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
     }
-    let filters = {} // Default query to retrieve all records
-
-    if (filter?.isActive !== undefined) {
-      filters.isActive = filter?.isActive
-    }
+    const filters = pick(filter, ['userId', 'isActive', 'applicants'])
     const regexQuery = new RegExp(filter?.searchKey, 'i')
-    const regexType = new RegExp(type, 'i')
+    const regexType = new RegExp(filter?.projectBudgetType, 'i')
+
+    const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
+    const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
+    const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
+    const regexPattern = regexPatterns?.join('|')
     const aggregationPipeline = [
       {
         $match: {
           name: { $regex: regexQuery },
-          ...(skill?.length > 0
+          ...(filter?.skill?.length > 0
             ? {
-              requiredSkills: {
-                $all: skill
+                requiredSkills: {
+                  $elemMatch: {
+                    $regex: new RegExp(regexPattern, 'i')
+                  }
+                }
               }
-            }
             : {}),
-          ...(type && {
-            projectType: { $regex: regexType }
+          ...(filter?.projectBudgetType && {
+            projectBudgetType: { $regex: regexType }
           }),
-          ...(minRate && {
-            budget: { $gte: +minRate }
-          }),
-          ...(maxRate && {
-            budget: { $lte: +maxRate }
-          }),
+          ...(filter?.minRate &&
+            +filter?.minRate > 0 && {
+              budget: { $gte: +filter?.minRate }
+            }),
+          ...(filter?.maxRate &&
+            +filter?.maxRate > 0 && {
+              budget: { $lte: +filter?.maxRate }
+            }),
           ...filters
         }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: '_id',
-          as: 'userProfile'
-        }
-      },
-      {
-        $unwind: '$userProfile'
       },
       {
         $project: {
           name: 1,
           budget: 1,
+          equity: 1,
+          businessAddressLineOne: 1,
+          businessCountry: 1,
+          businessCity: 1,
+          businessState: 1,
+          businessZip: 1,
           projectType: 1,
-          requiredSkills: 1,
           applicants: 1,
-          description: 1,
           deadline: 1,
-          profileImage: '$userProfile.profileImage',
-          country: '$userProfile.AddressLineCountry',
-          likes: '$userProfile.likeTotal',
           createdAt: 1,
           updatedAt: 1,
           isActive: 1,
-          valueEstimate: 1
+          valueEstimate: 1,
+          userId: 1,
+          departments: 1,
+          projectImagesUrl: 1
         }
       },
       {
@@ -224,14 +230,83 @@ const listBusinesses = async ({ filter, take = 25, skip = 0, maxRate, minRate, s
         }
       },
       {
+        $lookup: {
+          from: 'files',
+          let: { projectImagesUrl: '$projectImagesUrl' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$projectImagesUrl' }, then: '$$projectImagesUrl', else: [] } }
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                name: 1,
+                url: 1
+              }
+            }
+          ],
+          as: 'projectImages'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          let: { userId: '$userId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$userId'] }
+              }
+            },
+            {
+              $project: {
+                FirstName: 1,
+                LastName: 1,
+                FullName: 1
+              }
+            }
+          ],
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $lookup: {
+          from: 'departments',
+          let: { departments: '$departments' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$departments'] }
+              }
+            },
+            {
+              $project: {
+                name: 1,
+                tags: 1,
+                businessId: 1
+              }
+            }
+          ],
+          as: 'businessDepartments'
+        }
+      },
+
+      {
         $facet: {
           limitedRecords: [
             {
               $skip: +skip
             },
-            {
-              $limit: +take
-            }
+            limitStage
           ],
           totalCount: [
             {
@@ -340,7 +415,7 @@ const getBusinessByFounder = async businessId => {
 
     const results = await Promise.all(taskHoursPromises)
     return { businessDetails: businessDetails, results: [].concat(...results) }
-  } catch (error) { }
+  } catch (error) {}
 }
 
 const getAllBusinessByInvestor = async (id, query) => {
@@ -390,6 +465,11 @@ const countContracts = async filter => {
   return await Contracts.countDocuments(filter)
 }
 
+const countBusiness = async filter => {
+  const totalDocuments = await business.countDocuments(filter)
+  return Number(totalDocuments)
+}
+
 // add like to business
 const addLikeToBusiness = async (data, id) => {
   try {
@@ -429,22 +509,24 @@ const addLikeToBusiness = async (data, id) => {
 }
 
 const createBusinessDetails = async (data, id) => {
-  return await businessDetail.create(
-    {
-      ...data,
-      userId: id,
-    }
-  )
+  return await businessDetail.create({
+    ...data,
+    userId: id
+  })
 }
 
-const getBusinessDetailsByUserId = async (id) => {
+const getBusinessDetailsByUserId = async id => {
   return await businessDetail.findOne({ userId: id })
 }
 
 const updateBusinessDetails = async (data, id) => {
-  return await businessDetail.findOneAndUpdate({ userId: id }, {
-    ...data
-  }, { new: true })
+  return await businessDetail.findOneAndUpdate(
+    { userId: id },
+    {
+      ...data
+    },
+    { new: true }
+  )
 }
 
 module.exports = {
@@ -454,11 +536,12 @@ module.exports = {
   updateBusiness,
   deleteBusiness,
   addLikeToBusiness,
+  countBusiness,
   getAllBusinessByInvestor,
   getBusinessByInvestor,
   getBusinessByFounder,
   getBusinessWithoutPopulate,
   createBusinessDetails,
   updateBusinessDetails,
-  getBusinessDetailsByUserId,
+  getBusinessDetailsByUserId
 }

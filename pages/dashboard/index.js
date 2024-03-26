@@ -7,7 +7,7 @@ import NotificationsPanel from '../../components/unzipped/dashboard/Notification
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { resetRegisterForm } from '../../redux/actions'
+import { resetRegisterForm, getVerifyIdentityUrl } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import styled from 'styled-components'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
@@ -23,7 +23,10 @@ const notifications = [
   { type: 'plan' },
   { type: 'github' },
   { type: 'browse' },
-  { type: 'meetingCalender', text: 'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.' },
+  {
+    type: 'meetingCalender',
+    text: 'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
+  },
   { type: 'dismiss', text: 'Update types of professionals you are seeking for your business' },
   {
     type: 'blue',
@@ -33,7 +36,7 @@ const notifications = [
   { type: 'faq' },
   { type: 'updateBusiness' },
   { type: 'freeTrial' },
-  { type: 'explore' },
+  { type: 'explore' }
 ]
 
 const MobileDisplayBox = styled.div`
@@ -55,8 +58,12 @@ const MobileBox = styled.div`
   }
 `
 
-const Dashboard = ({ resetRegisterForm }) => {
+const Dashboard = ({ resetRegisterForm, getVerifyIdentityUrl, token }) => {
   const router = useRouter()
+
+  const verifyIdentity = () => {
+    getVerifyIdentityUrl(token)
+  }
 
   const user = [
     {
@@ -94,7 +101,7 @@ const Dashboard = ({ resetRegisterForm }) => {
       </DesktopBox>
       <MobileBox>
         <div>
-          <Panel user={user} />
+          <Panel user={user} verifyIdentity={verifyIdentity} />
           <Notifications>
             {notifications.map((item, index) => (
               <Notification type={item.type} key={`${index}_mobile`}>
@@ -123,13 +130,15 @@ const mapStateToProps = state => {
   return {
     businesses: state.Business?.businesses,
     loading: state.Business?.loading,
-    role: state.Auth.user.role
+    role: state.Auth.user.role,
+    token: state.Auth.token
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    resetRegisterForm: bindActionCreators(resetRegisterForm, dispatch)
+    resetRegisterForm: bindActionCreators(resetRegisterForm, dispatch),
+    getVerifyIdentityUrl: bindActionCreators(getVerifyIdentityUrl, dispatch)
   }
 }
 

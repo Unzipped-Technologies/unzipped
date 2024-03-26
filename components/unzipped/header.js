@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Button from '@material-ui/core/Button'
@@ -27,7 +27,7 @@ import {
   CircleLightningIcon,
   CircleShipIcon,
   CircleSearchIcon,
-  CircleNotesIcon,
+  CircleNotesIcon
 } from '../icons'
 import FullScreenDropdown from '../ui/FullScreenDropdown'
 import LargeScreenDropdown from '../ui/LargeScreenDropdown'
@@ -243,7 +243,7 @@ const mobileMenuItems = [
         name: 'How it Works',
         sub: 'Learn how to hire & grow your team',
         link: '/how-it-works/client'
-      },
+      }
     ]
   },
   {
@@ -260,7 +260,7 @@ const mobileMenuItems = [
         name: 'Search by Company',
         sub: 'Narrow down your search',
         link: '/projects'
-      },
+      }
     ]
   },
   {
@@ -285,22 +285,22 @@ const mobileMenuItems = [
             name: 'Freelancer',
             sub: 'How to get started as a freelancer?',
             link: '/wiki/getting-started',
-            icon: <CircleNotesIcon />,
+            icon: <CircleNotesIcon />
           },
           {
             name: 'Business',
             sub: 'Hiring & working with independent talent',
             link: '/wiki/working-with-independent-contractors',
-            icon: <CircleSearchIcon />,
+            icon: <CircleSearchIcon />
           },
           {
             name: 'Freelancer',
             sub: 'Growing your freelancing career',
             link: '/wiki/grow-your-career',
-            icon: <CircleShipIcon />,
-          },
-        ],
-      },
+            icon: <CircleShipIcon />
+          }
+        ]
+      }
     ]
   },
   {
@@ -457,6 +457,9 @@ const Nav = ({
   setIsLogoHidden,
   isListViewable,
   setIsListViewable,
+  onBackArrowClick,
+  isViewable,
+  isExpanded,
   setIsExpanded
 }) => {
   const router = useRouter()
@@ -469,9 +472,10 @@ const Nav = ({
   const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
-  const seenNames = new Set();
-  const otherNames = new Set();
-  const dispatch = useDispatch();
+  const seenNames = new Set()
+  const otherNames = new Set()
+  const dispatch = useDispatch()
+  const businessForm = useSelector(state => state.Business.businessForm)
 
   useEffect(() => {
     setIsProjectMenuEnabled(router.pathname === '/projects')
@@ -499,7 +503,6 @@ const Nav = ({
     router.push('/create-your-business')
   }
 
-
   const getButtons = () => {
     if (isAuthenticated) {
       return (
@@ -521,21 +524,21 @@ const Nav = ({
             // <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />
             <Desktop>
               <Absolute right="0px" top="0px" width="400px">
-                  <LargeScreenDropdown 
+                <LargeScreenDropdown
                   menuItems={mobileMenuItems.filter(item => {
                     // Check if the item's name has already been seen
                     if (otherNames.has(item.name)) {
                       // If so, filter this item out
-                      return false;
+                      return false
                     } else {
                       // If not, add the name to the Set and keep the item
-                      otherNames.add(item.name);
-                      return true;
+                      otherNames.add(item.name)
+                      return true
                     }
-                  })} 
-                  startAProject={startAProject} 
-                  isAuth={isAuthenticated} 
-                  logoutUser={signOut} 
+                  })}
+                  startAProject={startAProject}
+                  isAuth={isAuthenticated}
+                  logoutUser={signOut}
                   onClose={() => setMenuOpen(false)}
                 />
               </Absolute>
@@ -635,7 +638,7 @@ const Nav = ({
             name: 'Account',
             sub: 'Manage your account details',
             link: '/dashboard/account'
-          },
+          }
         ]
       })
     }
@@ -643,55 +646,61 @@ const Nav = ({
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
-        {!isLogoHidden && !isListViewable && (<Link href="/">
-          <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
-        </Link>)}
+        {!isLogoHidden && !isListViewable && (
+          <Link href="/">
+            <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
+          </Link>
+        )}
 
-        {(isListViewable) && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-              setIsListViewable(false)
-              setIsExpanded(false);
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
-              Lists
-            </span>
-          </div>
-        </>)}
+        {isListViewable && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+                setIsListViewable(false)
+                setIsExpanded(false)
+              }}>
+              <BackArrow />
+              <span
+                style={{
+                  marginLeft: 10,
+                  fontSize: 20,
+                  fontWeight: 600,
+                  letterSpacing: '0.15px',
+                  lineHeight: '19.5px'
+                }}>
+                Lists
+              </span>
+            </div>
+          </>
+        )}
 
-        {isLogoHidden && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
+        {isLogoHidden && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+              }}>
+              {!isListViewable && (<BackArrow />)}
+            </div>
+            <span
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                fontWeight: 600,
+                letterSpacing: '0.15px',
+                lineHeight: '19.5px'
+              }}>
               {listName ? listName : ''}
             </span>
-          </div>
-        </>)}
+          </>
+        )}
 
         <Menu>
           {menuItems &&
@@ -748,11 +757,11 @@ const Nav = ({
                     // Check if the item's name has already been seen
                     if (seenNames.has(item.name)) {
                       // If so, filter this item out
-                      return false;
+                      return false
                     } else {
                       // If not, add the name to the Set and keep the item
-                      seenNames.add(item.name);
-                      return true;
+                      seenNames.add(item.name)
+                      return true
                     }
                   })}
                   startAProject={startAProject}
@@ -780,13 +789,12 @@ const Nav = ({
                   filter={filter}
                   setFilter={handleSearchValue}
                   searchButton={searchButton}
-                  margin={margin}
                   alignItems={'start'}
                 />
               </div>
             </>
           )}
-          {isProjectMenuEnabled && token ? (
+          {token ? (
             <SubMenu>
               {subMenuItems.map((item, key) => (
                 <Link href={item.link} key={key}>
@@ -796,18 +804,22 @@ const Nav = ({
                 </Link>
               ))}
             </SubMenu>
-          ) : isProjectMenuEnabled ? (
-            <></>
           ) : (
-            <SubMenu>
-              {subMenuItems.map((item, key) => (
-                <Link href={item.link} key={key}>
-                  <SpanWhite count={key} underline={router.pathname === item.link}>
-                    <Sub>{item.name} </Sub>
-                  </SpanWhite>
-                </Link>
-              ))}
-            </SubMenu>
+            <>
+              {businessForm && businessForm.stage > 1 ? (
+                <></>
+              ) : (
+                <SubMenu>
+                  {subMenuItems.map((item, key) => (
+                    <Link href={item.link} key={key}>
+                      <SpanWhite count={key} underline={router.pathname === item.link}>
+                        <Sub>{item.name} </Sub>
+                      </SpanWhite>
+                    </Link>
+                  ))}
+                </SubMenu>
+              )}
+            </>
           )}
         </SubMenTop>
       )}

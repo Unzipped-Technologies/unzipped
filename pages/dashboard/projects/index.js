@@ -31,77 +31,29 @@ const Title = styled.div`
   margin: 60px 15% 40px 15%;
 `
 
-const Toggle = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 260px;
-  height: 34px;
-  background-color: #d8d8d8;
-  border-radius: 5px;
-  overflow: hidden;
-`
-
-const Left = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ selected }) => (selected === accountTypeEnum.INVESTOR ? '#5E99D4' : 'transparent')};
-`
-const Right = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ selected }) =>
-    selected === accountTypeEnum.FOUNDER || selected === accountTypeEnum.ADMIN ? '#5E99D4' : 'transparent'};
-`
-
-const Projects = ({ businesses = [], getBusinessList, role, loading }) => {
-  const [take, setTake] = useState(25)
+const Projects = () => {
+  const [limit, setLimit] = useState(25)
   const [page, setPage] = useState(1)
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
-
-  useEffect(() => {
-    // Below we are only sending pagination data, Other data we are using from redux store.
-    getBusinessList({
-      take: take,
-      skip: (page - 1) * 25
-    })
-  }, [take])
 
   return (
     <React.Fragment>
-      <Nav isSubMenu marginBottom={'86px'} />
-      {screenWidth > 680 && (
+      <Nav isSubMenu handleSearch marginBottom={'86px'} />
+      {window.innerWidth > 680 && (
         <Desktop>
           <Title>
-            <TitleText title>Projects</TitleText>
+            <TitleText title="true">Projects</TitleText>
           </Title>
           <SearchBar
             theme={{ tint3: '#C4C4C4' }}
             placeHolderColor={'#444444'}
             margin="0px"
-            take={take}
-            setTake={setTake}
+            take={limit}
+            setTake={setLimit}
           />
-          <ProjectsContainer
-            type="projects"
-            businesses={businesses}
-            setPage={setPage}
-            page={page}
-            loading={loading}
-            userType={role}
-          />
+          <ProjectsContainer limit={limit} page={page} />
         </Desktop>
       )}
-      {screenWidth < 680 && (
+      {window.innerWidth < 680 && (
         <MobileDisplayBox>
           <MobileProjects />
           <MobileFreelancerFooter defaultSelected="Projects" />
@@ -118,18 +70,4 @@ Projects.getInitialProps = async ({ req, res }) => {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    businesses: state.Business?.businesses,
-    loading: state.Business?.loading,
-    role: state.Auth.user.role
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    getBusinessList: bindActionCreators(getBusinessList, dispatch)
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Projects)
+export default Projects

@@ -11,7 +11,12 @@ import ListEntries from './ListEntries/reducers'
 import ProjectApplications from './ProjectApplications/reducers'
 import Contracts from './Contract/reducers'
 import Invoices from './Invoices/reducers'
-import Meetings from './Meeting/reducers';
+import Departments from './Department/reducers'
+import Tags from './Tags/reducers'
+import TaskHours from './TaskHours/reducers'
+import Tasks from './Task/reducers'
+import Meetings from './Meeting/reducers'
+import Lists from './Lists/ListReducer'
 
 const rootReducer = combineReducers({
   // counter: counterReducer
@@ -27,7 +32,11 @@ const rootReducer = combineReducers({
   ProjectApplications,
   Contracts,
   Invoices,
-  Meetings
+  Departments,
+  Tags,
+  TaskHours,
+  Tasks,
+  Lists
 })
 
 export default rootReducer

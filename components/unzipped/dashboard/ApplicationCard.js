@@ -24,7 +24,7 @@ const ProjectApplications = styled.div`
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  height: 270px;
+  height: auto;
   width: 984px;
   margin-left: 150px;
   border-radius: 5px;
@@ -62,7 +62,7 @@ const InviteButton = styled.button`
 const Grid2 = styled.div`
   display: flex;
   align-items: center;
-`;
+`
 
 const UserInfo = styled.div`
   display: flex;
@@ -143,7 +143,7 @@ const DefaultDisplay = styled.div`
   justify-content: center;
   align-items: center;
   padding-top: 100px;
-`;
+`
 
 const ApplicationCard = ({ projectApplications, getProjectApplications, getFreelancerById, token }) => {
   const router = useRouter()
@@ -260,7 +260,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                       }}>
                       View Profile
                     </ViewProfileButton>
-                    <VerticalDropdown 
+                    <VerticalDropdown
                       dropdownOptions={[
                         {
                           name: 'Hire User',
@@ -271,12 +271,12 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                         },
                         {
                           name: 'View Application',
-                          action: () => {},
+                          action: () => {}
                         },
                         {
                           name: 'Dismiss Application',
-                          action: () => {},
-                        },
+                          action: () => {}
+                        }
                       ]}
                     />
                   </Grid2>

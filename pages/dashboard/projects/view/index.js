@@ -7,17 +7,34 @@ import styled, { css } from 'styled-components'
 import { ValidationUtils } from '../../../../utils'
 import Button from '../../../../components/ui/Button'
 import Nav from '../../../../components/unzipped/header'
-import { getBusinessList } from '../../../../redux/actions'
+import { getProjectsList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
 import { Absolute } from '../../../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
+import MobileSearchFilter from '../../../../components/unzipped/MobileSearchFilter'
 import AllProjectHires from '../../../../components/unzipped/dashboard/mobile/AllProjectHires'
 import AllProjectsInvoices from '../../../../components/unzipped/dashboard/mobile/AllProjectsInvoices'
+
+const Container = styled.div`
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  justify-content: center;
+  background: #f7f8f9;
+  padding-top: 21px;
+  @media (max-width: 680px) {
+    padding-top: 0px;
+    background-color: #f6f7f9;
+    margin-bottom: 48px;
+  }
+`
 
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
   margin-bottom: 50px;
+  position: relative;
+
   @media (min-width: 680px) {
     display: none;
   }
@@ -114,10 +131,17 @@ const ProjectDate = styled.div`
   padding-left: 18px;
 `
 
-const AllProjects = ({ businesses = [], getBusinessList, role }) => {
+const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) => {
   const router = useRouter()
 
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState({
+    searchKey: '',
+    budget: '',
+    minRate: 0,
+    maxRate: 0,
+    requiredSkills: [],
+    projectBudgetType: ''
+  })
   const [selectedTab, setSelectedTab] = useState(0)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
 
@@ -139,11 +163,12 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
   }
 
   useEffect(() => {
-    getBusinessList({
+    getProjectsList({
       take: 1000,
-      skip: 0
+      skip: 0,
+      filter
     })
-  }, [])
+  }, [filter])
 
   const handleFilterOpenClose = value => {
     setFilterOpenClose(value)
@@ -158,7 +183,7 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
         },
         {
           text: 'Invoice',
-          onClick: () => router.push(`/dashboard/projects/client/invoice/${business._id}`)
+          onClick: () => router.push(`/dashboard/projects/details/${business._id}?tab=invoices`)
         },
         {
           text: 'Assign department',
@@ -182,9 +207,34 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
         {
           text: 'View Work',
           onClick: () => console.log('ITEM 3')
+        },
+        {
+          text: 'View Invoice',
+          onClick: () =>
+            router.push(
+              `/dashboard/projects/freelancer/invoice/${business._id}?tab=invoices&freelancer=${freelancerId}`
+            )
         }
       ]
     }
+  }
+
+  const setFilters = (field, value) => {
+    setFilter(prevFilter => {
+      const updatedFilter = { ...prevFilter }
+
+      if (Array.isArray(updatedFilter[field])) {
+        if (!Array.isArray(value) && !updatedFilter[field].includes(value)) {
+          updatedFilter[field].push(value)
+        } else {
+          updatedFilter[field] = value
+        }
+      } else {
+        updatedFilter[field] = value
+      }
+
+      return updatedFilter
+    })
   }
 
   return (
@@ -200,93 +250,96 @@ const AllProjects = ({ businesses = [], getBusinessList, role }) => {
           marginBottom={'78px'}
         />
       )}
-      <Projects>
-        <Tabs>
-          {projectTabs.map((tab, index) => {
-            return (
-              <TabButton
-                onClick={() => setSelectedTab(tab.index)}
-                active={selectedTab === index}
-                key={`${tab.name}_${index}`}>
-                {tab.name}
-              </TabButton>
-            )
-          })}
-        </Tabs>
-        <TabContent>
-          {selectedTab === 0 && (
-            <div>
-              {!filterOpenClose && (
-                <SearchField>
-                  <MobileSearchBar
-                    handleSearch={() => {}}
-                    filter={filter}
-                    setFilter={setFilter}
-                    handleFilterOpenClose={handleFilterOpenClose}
-                  />
-                </SearchField>
+      {filterOpenClose ? (
+        <MobileSearchFilter handleFilterOpenClose={handleFilterOpenClose} filter={filter} setFilters={setFilters} />
+      ) : (
+        <>
+          <Projects>
+            <Tabs>
+              {projectTabs.map((tab, index) => {
+                return (
+                  <TabButton
+                    onClick={() => setSelectedTab(tab.index)}
+                    active={selectedTab === index}
+                    key={`${tab.name}_${index}`}>
+                    {tab.name}
+                  </TabButton>
+                )
+              })}
+            </Tabs>
+            <TabContent>
+              {selectedTab === 0 && (
+                <div>
+                  {!filterOpenClose && (
+                    <SearchField>
+                      <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
+                    </SearchField>
+                  )}
+                  <ProjectsList>
+                    {businesses?.map((business, index) => {
+                      return (
+                        <ProjectCard key={business._id}>
+                          <ProjectName>{business?.name}</ProjectName>
+                          <ProjectDate>
+                            {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
+                              ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
+                          </ProjectDate>
+                          <Absolute
+                            buttonHeight="33px"
+                            position="none"
+                            style={{
+                              width: '90%',
+                              border: '0.25px solid #000',
+                              margin: '20px auto 20px auto',
+                              background: 'rgba(217, 217, 217, 0.28)'
+                            }}>
+                            <Button
+                              icon="largeExpand"
+                              popoutWidth="324px"
+                              noBorder
+                              type="lightgrey"
+                              fontSize="13px"
+                              zIndex={'auto'}
+                              popout={generatePopout(business)}
+                              iconRight
+                              colors={{
+                                hover: 'none',
+                                background: 'none'
+                              }}
+                              style={{
+                                width: '324px'
+                              }}>
+                              Details
+                            </Button>
+                          </Absolute>
+                        </ProjectCard>
+                      )
+                    })}
+                  </ProjectsList>
+                </div>
               )}
-              <ProjectsList>
-                {businesses?.map(business => {
-                  return (
-                    <ProjectCard key={business._id}>
-                      <ProjectName>{business?.name}</ProjectName>
-                      <ProjectDate>
-                        {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
-                          ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
-                      </ProjectDate>
-                      <Absolute
-                        buttonHeight="33px"
-                        position="none"
-                        style={{
-                          width: '90%',
-                          border: '0.25px solid #000',
-                          margin: '20px auto 20px auto',
-                          background: 'rgba(217, 217, 217, 0.28)'
-                        }}>
-                        <Button
-                          icon="largeExpand"
-                          popoutWidth="324px"
-                          noBorder
-                          type="lightgrey"
-                          fontSize="13px"
-                          popout={generatePopout(business)}
-                          iconRight
-                          colors={{
-                            hover: 'none',
-                            background: 'none'
-                          }}
-                          style={{
-                            width: '324px'
-                          }}>
-                          Details
-                        </Button>
-                      </Absolute>
-                    </ProjectCard>
-                  )
-                })}
-              </ProjectsList>
-            </div>
-          )}
-          {selectedTab === 1 && <AllProjectsInvoices />}
-          {selectedTab === 2 && <AllProjectHires />}
-        </TabContent>
-      </Projects>
-      <MobileFreelancerFooter defaultSelected="Projects" />
+              {selectedTab === 1 && <AllProjectsInvoices />}
+              {selectedTab === 2 && <AllProjectHires />}
+            </TabContent>
+          </Projects>
+          <MobileFreelancerFooter defaultSelected="Projects" />
+        </>
+      )}
     </MobileDisplayBox>
   )
 }
 
 const mapStateToProps = state => {
   return {
-    businesses: state.Business?.businesses,
-    role: state.Auth.user.role
+    businesses: state.Business?.projectList,
+    role: state.Auth.user.role,
+    freelancerId: state.Auth.user?.freelancers
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getBusinessList: bindActionCreators(getBusinessList, dispatch)
+    getProjectsList: bindActionCreators(getProjectsList, dispatch)
   }
 }
 
