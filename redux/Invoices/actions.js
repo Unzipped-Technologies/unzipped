@@ -4,7 +4,8 @@ import {
   GET_INVOICE_BY_ID,
   UPDATE_INVOICE,
   DELETE_INVOICE,
-  INVOICE_ERROR
+  INVOICE_ERROR,
+  GET_UNPAID_INVOICES
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -15,7 +16,7 @@ export const createInvoice = data => async (dispatch, getState) => {
   dispatch(startLoading())
 
   await axios
-    .post(`/api/invoice`, data, tokenConfig(getState()?.Auth.token))
+    .post(`/api/invoice/create`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: CREATE_INVOICE,
@@ -32,12 +33,29 @@ export const createInvoice = data => async (dispatch, getState) => {
 }
 
 export const getInvoices =
-  ({ businessId, limit = 25, page = 1 }) =>
+  ({ businessId = '', freelancerId = '', _id = '', limit = 25, page = 1 }) =>
   async (dispatch, getState) => {
     dispatch(startLoading())
+    let params = {
+      limit: limit,
+      page: page
+    }
 
+    // Add parameters based on variable values
+    if (_id) {
+      params._id = _id
+    }
+    if (businessId) {
+      params.businessId = businessId
+    }
+    if (freelancerId) {
+      params.freelancerId = freelancerId
+    }
+
+    // Build the URL with query parameters
+    const url = `/api/invoice` + '?' + new URLSearchParams(params)
     await axios
-      .get(`/api/invoice?businessId=${businessId}&limit=${limit}&page=${page}`, tokenConfig(getState()?.Auth.token))
+      .get(url, tokenConfig(getState()?.Auth.token))
       .then(res => {
         dispatch({
           type: GET_INVOICES,
@@ -52,6 +70,26 @@ export const getInvoices =
       })
     dispatch(stopLoading())
   }
+
+export const getUnpaidInvoices = () => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  await axios
+    .get(`/api/invoice/fetch/unpaid`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: GET_UNPAID_INVOICES,
+        payload: res.data
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: INVOICE_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
 
 export const getInvoiceById = invoiceID => async (dispatch, getState) => {
   dispatch(startLoading())
@@ -77,6 +115,25 @@ export const updateInvoice = (invoiceID, data) => async (dispatch, getState) => 
   dispatch(startLoading())
   await axios
     .put(`/api/invoice/update/${invoiceID}`, data, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: UPDATE_INVOICE,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: INVOICE_ERROR,
+        payload: err.response
+      })
+    })
+  dispatch(stopLoading())
+}
+
+export const addInvoiceTasks = (invoiceID, data) => async (dispatch, getState) => {
+  dispatch(startLoading())
+  await axios
+    .put(`/api/invoice/update/${invoiceID}/add-tasks`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: UPDATE_INVOICE,

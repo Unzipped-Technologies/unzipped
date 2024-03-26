@@ -41,15 +41,21 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const ProjectDesktopCard = ({ project, includeRate, width, id, freelancerId }) => {
+const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
   const router = useRouter()
 
   return (
     <Container includeRate={includeRate}>
       <Left>
-        <Image src={project?.profileImage} alt={project?.name + ' profile'} height="94px" width="94px" radius="50%" />
+        <Image
+          src={project?.projectImages?.[0]?.url}
+          alt={project?.name + ' profile'}
+          height="94px"
+          width="94px"
+          radius="50%"
+        />
         {project?.applicants?.includes(freelancerId) && (
-          <Button margin="20px 0px" type={!project.applicants.includes(id) ? 'default' : 'grey'} noBorder>
+          <Button margin="20px 0px" type={!project.applicants.includes(freelancerId) ? 'default' : 'grey'} noBorder>
             Applied
           </Button>
         )}
@@ -67,7 +73,6 @@ const ProjectDesktopCard = ({ project, includeRate, width, id, freelancerId }) =
         {includeRate && (
           <Flex>
             <DarkText half>{project?.country}</DarkText>
-            {/* <DarkText small half bold><DarkSpan medium>{project?.projectType?.includes('Hourly Rate') ? 'Estimated Rate: ' : 'Fixed Rate: '}</DarkSpan><DarkSpan large>${project?.budget}</DarkSpan >{project?.projectType.includes('Hourly Rate') && ' / hour'} </DarkText> */}
           </Flex>
         )}
         <div className="d-flex justify-content-between">
@@ -79,8 +84,17 @@ const ProjectDesktopCard = ({ project, includeRate, width, id, freelancerId }) =
         ))}
       </Right>
       <Absolute>
-        <Button color="#000" style={{ padding: '8px 22px' }} normal oval type="green2" noBorder>
-          View Profile
+        <Button
+          color="#000"
+          style={{ padding: '8px 22px' }}
+          normal
+          oval
+          type="green2"
+          noBorder
+          onClick={() => {
+            router.push(`/projects/${project._id}`)
+          }}>
+          View Project
         </Button>
       </Absolute>
     </Container>

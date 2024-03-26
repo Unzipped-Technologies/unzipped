@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { connect } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Button from '@material-ui/core/Button'
@@ -8,15 +8,29 @@ import { useRouter } from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Search from './input'
-import Icon from '../ui/Icon'
 import Image from '../ui/Image'
 import Dropdowns from '../ui/Dropdowns'
 import { Absolute } from './dashboard/style'
 import { Button as Buttons, SearchBar } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
 import BackArrow from '../../components/icons/backArrow'
-import { logoutUser, resetBusinessForm } from '../../redux/actions'
-import { DownIcon, LightIcon, FolderIcon, BookmarkIcon, WorkIcon } from '../icons'
+import { freelancerExpandedOpts, logoutUser, resetBusinessForm } from '../../redux/actions'
+import {
+  DownIcon,
+  LightIcon,
+  FolderIcon,
+  BookmarkIcon,
+  WorkIcon,
+  CircleBrushIcon,
+  CircleDashboardIcon,
+  CircleHeartIcon,
+  CircleLightningIcon,
+  CircleShipIcon,
+  CircleSearchIcon,
+  CircleNotesIcon
+} from '../icons'
+import FullScreenDropdown from '../ui/FullScreenDropdown'
+import LargeScreenDropdown from '../ui/LargeScreenDropdown'
 
 const Div = styled.div`
   width: 100%;
@@ -192,6 +206,10 @@ const SpanWhite = styled.div`
   }
 `
 
+const Shift = styled.div`
+  margin-right: 15px;
+`
+
 const Sub = styled.div`
   max-height: 90px;
 `
@@ -200,13 +218,96 @@ const ButtonHolder = styled.div`
   display: flex;
   flex-flow: row;
   margin-left: 15px;
-  & div:first-of-type {
-    margin: 0px 15px;
-  }
   & div:last-of-type {
     cursor: pointer;
   }
 `
+
+const mobileMenuItems = [
+  {
+    name: 'Find Talent',
+    subTitle: 'Hire a Pro',
+    subIcon: <CircleHeartIcon />,
+    subItems: [
+      {
+        name: 'Search freelancers',
+        sub: 'Find talented people to hire',
+        link: '/freelancers'
+      },
+      {
+        name: 'Browse by Skill',
+        sub: 'Narrow down your search',
+        link: '/freelancers'
+      },
+      {
+        name: 'How it Works',
+        sub: 'Learn how to hire & grow your team',
+        link: '/how-it-works/client'
+      }
+    ]
+  },
+  {
+    name: 'Find a Projects',
+    subTitle: 'Get Hired',
+    subIcon: <CircleBrushIcon />,
+    subItems: [
+      {
+        name: 'Find a Project',
+        sub: 'Browse projects that match your skills',
+        link: '/projects'
+      },
+      {
+        name: 'Search by Company',
+        sub: 'Narrow down your search',
+        link: '/projects'
+      }
+    ]
+  },
+  {
+    name: 'Why Unzipped',
+    subTitle: 'Guides & More',
+    subIcon: <CircleLightningIcon />,
+    subItems: [
+      {
+        name: 'How to Hire',
+        sub: 'Find talented people to hire',
+        link: '/how-it-works/freelancer'
+      },
+      {
+        name: 'How to find work',
+        sub: 'Narrow down your search',
+        link: '/how-it-works/freelancer'
+      },
+      {
+        name: 'Quick start guides',
+        sub: [
+          {
+            name: 'Freelancer',
+            sub: 'How to get started as a freelancer?',
+            link: '/wiki/getting-started',
+            icon: <CircleNotesIcon />
+          },
+          {
+            name: 'Business',
+            sub: 'Hiring & working with independent talent',
+            link: '/wiki/working-with-independent-contractors',
+            icon: <CircleSearchIcon />
+          },
+          {
+            name: 'Freelancer',
+            sub: 'Growing your freelancing career',
+            link: '/wiki/grow-your-career',
+            icon: <CircleShipIcon />
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: 'Enterprise',
+    link: '/how-it-works/client'
+  }
+]
 
 const menuItems = [
   {
@@ -356,6 +457,7 @@ const Nav = ({
   setIsLogoHidden,
   isListViewable,
   setIsListViewable,
+  onBackArrowClick,
   isViewable,
   isExpanded,
   setIsExpanded
@@ -370,6 +472,10 @@ const Nav = ({
   const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
+  const seenNames = new Set()
+  const otherNames = new Set()
+  const dispatch = useDispatch()
+  const businessForm = useSelector(state => state.Business.businessForm)
 
   useEffect(() => {
     setIsProjectMenuEnabled(router.pathname === '/projects')
@@ -386,46 +492,6 @@ const Nav = ({
     router.push('/login')
   }
 
-  const profileItems = [
-    {
-      name: 'Dashboard',
-      link: '/dashboard',
-      icon: <FolderIcon width={35} height={35} />
-    },
-    {
-      name: 'Membership',
-      link: '/pick-a-plan',
-      icon: <FolderIcon width={35} height={35} />
-    },
-    {
-      name: 'Hire a freelancer',
-      link: '/freelancers',
-      icon: <WorkIcon width={35} height={35} />
-    },
-    {
-      name: 'Work with us',
-      link: '/how-it-works/client',
-      icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
-    },
-    {
-      name: 'Get Ideas',
-      link: '/projects',
-      icon: <LightIcon width={35} height={35} />
-    },
-    { name: '<hr />', link: '/' },
-    {
-      name: 'Sign out',
-      onClick: () => signOut(),
-      link: '/',
-      icon: <LightIcon width={35} height={35} />
-    },
-    {
-      name: 'Help',
-      link: '/wiki',
-      icon: <LightIcon width={35} height={35} />
-    }
-  ]
-
   const setCloseDropdowns = time => {
     setTimeout(function () {
       setMenuOpen(false)
@@ -437,14 +503,15 @@ const Nav = ({
     router.push('/create-your-business')
   }
 
-
   const getButtons = () => {
     if (isAuthenticated) {
       return (
         <ButtonHolder>
-          <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>
-            Start A Project
-          </Buttons>
+          <Shift>
+            <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>
+              Start A Project
+            </Buttons>
+          </Shift>
           <Image
             src={profilePic}
             alt="profile pic"
@@ -454,7 +521,28 @@ const Nav = ({
             onMouseEnter={() => setDropdowns('profile')}
           />
           {menuOpen === 'profile' && (
-            <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />
+            // <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />
+            <Desktop>
+              <Absolute right="0px" top="0px" width="400px">
+                <LargeScreenDropdown
+                  menuItems={mobileMenuItems.filter(item => {
+                    // Check if the item's name has already been seen
+                    if (otherNames.has(item.name)) {
+                      // If so, filter this item out
+                      return false
+                    } else {
+                      // If not, add the name to the Set and keep the item
+                      otherNames.add(item.name)
+                      return true
+                    }
+                  })}
+                  startAProject={startAProject}
+                  isAuth={isAuthenticated}
+                  logoutUser={signOut}
+                  onClose={() => setMenuOpen(false)}
+                />
+              </Absolute>
+            </Desktop>
           )}
         </ButtonHolder>
       )
@@ -478,6 +566,7 @@ const Nav = ({
       const isScrollingDown = scrollPosition > 60
 
       setIsHidden(isScrollingDown)
+      dispatch(freelancerExpandedOpts({ isExpanded: isScrollingDown }))
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -518,58 +607,100 @@ const Nav = ({
     }
   }, [isAuthenticated])
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      mobileMenuItems.push({
+        name: 'Get Started Today',
+        link: '/register'
+      })
+    } else {
+      mobileMenuItems.unshift({
+        name: 'Dashboard',
+        subTitle: 'Manage Your Work',
+        subIcon: <CircleDashboardIcon />,
+        subItems: [
+          {
+            name: 'Notifications',
+            sub: 'Check pending todo items',
+            link: '/dashboard'
+          },
+          {
+            name: 'Browse',
+            sub: 'See potential projects and freelancers',
+            link: '/browse'
+          },
+          {
+            name: 'Messages',
+            sub: 'Manage communication within the app',
+            link: '/dashboard/inbox'
+          },
+          {
+            name: 'Account',
+            sub: 'Manage your account details',
+            link: '/dashboard/account'
+          }
+        ]
+      })
+    }
+  }, [isAuthenticated, menuItems])
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
-        {!isLogoHidden && !isListViewable && (<Link href="/">
-          <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
-        </Link>)}
+        {!isLogoHidden && !isListViewable && (
+          <Link href="/">
+            <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
+          </Link>
+        )}
 
-        {(isListViewable) && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-              setIsListViewable(false)
-              setIsExpanded(false);
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
-              Lists
-            </span>
-          </div>
-        </>)}
+        {isListViewable && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+                setIsListViewable(false)
+                setIsExpanded(false)
+              }}>
+              <BackArrow />
+              <span
+                style={{
+                  marginLeft: 10,
+                  fontSize: 20,
+                  fontWeight: 600,
+                  letterSpacing: '0.15px',
+                  lineHeight: '19.5px'
+                }}>
+                Lists
+              </span>
+            </div>
+          </>
+        )}
 
-        {isLogoHidden && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
+        {isLogoHidden && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+              }}>
+              {!isListViewable && (<BackArrow />)}
+            </div>
+            <span
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                fontWeight: 600,
+                letterSpacing: '0.15px',
+                lineHeight: '19.5px'
+              }}>
               {listName ? listName : ''}
             </span>
-          </div>
-        </>)}
+          </>
+        )}
 
         <Menu>
           {menuItems &&
@@ -619,14 +750,31 @@ const Nav = ({
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </MenuIcon>
             {menuOpen === 'mobile' && (
-              <Absolute right="228px" top="0px">
-                <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} />
+              <Absolute right="0px" top="0px">
+                {/* <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /> */}
+                <FullScreenDropdown
+                  menuItems={mobileMenuItems.filter(item => {
+                    // Check if the item's name has already been seen
+                    if (seenNames.has(item.name)) {
+                      // If so, filter this item out
+                      return false
+                    } else {
+                      // If not, add the name to the Set and keep the item
+                      seenNames.add(item.name)
+                      return true
+                    }
+                  })}
+                  startAProject={startAProject}
+                  isAuth={isAuthenticated}
+                  logoutUser={signOut}
+                  onClose={() => setMenuOpen(false)}
+                />
               </Absolute>
             )}
           </Mobile>
         </Right>
       </Container>
-      {isSubMenu && (
+      {isSubMenu && token && (
         <SubMenTop
           style={{
             transition: 'transform 0.3s ease-in-out',
@@ -641,13 +789,12 @@ const Nav = ({
                   filter={filter}
                   setFilter={handleSearchValue}
                   searchButton={searchButton}
-                  margin={margin}
                   alignItems={'start'}
                 />
               </div>
             </>
           )}
-          {isProjectMenuEnabled && token ? (
+          {token ? (
             <SubMenu>
               {subMenuItems.map((item, key) => (
                 <Link href={item.link} key={key}>
@@ -657,18 +804,22 @@ const Nav = ({
                 </Link>
               ))}
             </SubMenu>
-          ) : isProjectMenuEnabled ? (
-            <></>
           ) : (
-            <SubMenu>
-              {subMenuItems.map((item, key) => (
-                <Link href={item.link} key={key}>
-                  <SpanWhite count={key} underline={router.pathname === item.link}>
-                    <Sub>{item.name} </Sub>
-                  </SpanWhite>
-                </Link>
-              ))}
-            </SubMenu>
+            <>
+              {businessForm && businessForm.stage > 1 ? (
+                <></>
+              ) : (
+                <SubMenu>
+                  {subMenuItems.map((item, key) => (
+                    <Link href={item.link} key={key}>
+                      <SpanWhite count={key} underline={router.pathname === item.link}>
+                        <Sub>{item.name} </Sub>
+                      </SpanWhite>
+                    </Link>
+                  ))}
+                </SubMenu>
+              )}
+            </>
           )}
         </SubMenTop>
       )}

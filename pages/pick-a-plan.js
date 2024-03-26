@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import BackHeader from '../components/unzipped/BackHeader';
 import PlanCard from '../components/unzipped/PlanCard';
@@ -44,6 +44,28 @@ const Plan = ({plans = [], user, selectedPlan, selectAPlan, trialLength = 7, pla
     const router = useRouter()
     const updatedDate = ValidationUtils.addDaysToDate((user?.updatedAt || new Date()), trialLength)
     const month = ValidationUtils.getMonthInText(updatedDate)
+    const [marginBottom, setMarginBottom] = useState('0px');
+
+    useEffect(()=>{
+        const handleResize = () => {
+            if (window.innerWidth < 680) {
+                setMarginBottom('72px');
+            } else {
+                setMarginBottom('77px');
+            }
+        };
+
+        // Add an event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Initial call to set the marginBottom based on the current window width
+        handleResize();
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    },[])
 
     const selectPlan = (id) => {
         selectAPlan({
@@ -55,7 +77,7 @@ const Plan = ({plans = [], user, selectedPlan, selectAPlan, trialLength = 7, pla
 
     return (
         <Container>
-            <Nav />
+            <Nav marginBottom={marginBottom}/>
             <BackHeader 
                 title="Pick a plan"
                 sub={`Cancel before ${month} ${new Date(updatedDate).getDate()} and you won’t be charged.`}

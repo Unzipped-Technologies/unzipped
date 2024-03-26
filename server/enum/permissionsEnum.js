@@ -21,6 +21,7 @@ const userPermissions = Object.freeze({
   DeleteLists: 'deleteLists',
   // businesses
   createBusiness: 'createBusiness',
+  createBusinessDetails: 'createBusinessDetails',
   userCreateBusiness: 'userCreateBusiness',
   updateBusiness: 'updateBusiness',
   userUpdateBusiness: 'userUpdateBusiness',
@@ -45,7 +46,7 @@ const userPermissions = Object.freeze({
   UpdateTag: 'updateTag',
   GetTagById: 'getTagById',
   DeleteTag: 'deleteTag',
-  ListTag: 'listTags',
+  ListTags: 'listTags',
   addComment: 'addComment',
   removeComment: 'removeComment',
   // tasks
@@ -88,7 +89,14 @@ const userPermissions = Object.freeze({
   updateQuestion: 'updateQuestion',
   deleteQuestion: 'deleteQuestion',
   getQuestionById: 'getQuestionById',
-  getAllQuestions: 'getAllQuestions'
+  getAllQuestions: 'getAllQuestions',
+
+  // showcase projects
+  createShowCaseProject: 'createShowCaseProject',
+  updateShowCaseProject: 'updateShowCaseProject',
+  deleteShowCaseProject: 'deleteShowCaseProject',
+  getShowCaseProjectById: 'getShowCaseProjectById',
+  getAllShowCaseProjects: 'getAllShowCaseProjects'
 })
 
 const accountTypePermissions = Object.freeze({
@@ -106,6 +114,7 @@ const accountTypePermissions = Object.freeze({
     // businesses
     userPermissions.userCreateBusiness,
     userPermissions.createBusiness,
+    userPermissions.createBusinessDetails,
     userPermissions.userUpdateBusiness,
     userPermissions.userListBusinesses,
     userPermissions.getBusinessById,
@@ -189,8 +198,10 @@ const accountTypePermissions = Object.freeze({
     // businesses
     userPermissions.userListBusinesses,
     userPermissions.getBusinessByInvestor,
+    userPermissions.createBusinessDetails,
     userPermissions.listAllBusinesses,
     userPermissions.getBusinessById,
+    userPermissions.GetDepartmentById,
 
     // likes
     userPermissions.UserLike,
@@ -239,7 +250,14 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // showcase projects
+    userPermissions.createShowCaseProject,
+    userPermissions.updateShowCaseProject,
+    userPermissions.deleteShowCaseProject,
+    userPermissions.getShowCaseProjectById,
+    userPermissions.getAllShowCaseProjects
   ],
   [accountTypeEnum.ADMIN]: [
     // users
@@ -259,6 +277,7 @@ const accountTypePermissions = Object.freeze({
     // businesses
     userPermissions.createBusiness,
     userPermissions.userCreateBusiness,
+    userPermissions.createBusinessDetails,
     userPermissions.updateBusiness,
     userPermissions.userUpdateBusiness,
     userPermissions.userListBusinesses,

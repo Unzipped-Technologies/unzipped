@@ -56,16 +56,16 @@ const ProfileCard = ({ user }) => {
   return (
     <Container>
       <ImageContainer>
-        <Image src={user?.userId?.profileImage} alt="profile pic" width="218px" radius="15px" />
+        <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" />
       </ImageContainer>
       <Content>
-        <TitleText title>{ConverterUtils.capitalize(`${user?.userId?.FirstName} ${user?.userId?.LastName}`)}</TitleText>
+        <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
         <div style={{ width: '600px' }}>
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKIILS
           </DarkText>
           {user?.freelancerSkills?.length > 0
-            ? user?.freelancerSkills.map((item, index) => <Badge key={item._id}>{item?.skill}</Badge>)
+            ? user?.freelancerSkills.map(item => <Badge key={item._id}>{item?.skill}</Badge>)
             : 'N/A'}
         </div>
 
@@ -80,10 +80,12 @@ const ProfileCard = ({ user }) => {
             <TextBox>
               <Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span>
             </TextBox>
-            {user?.rate && (
+            {user?.rate ? (
               <TextBox>
                 <Span bold>SALARY</Span> <Span>${user?.rate.toFixed(2)} / HOUR</Span>
               </TextBox>
+            ) : (
+              ''
             )}
             <TextBox>
               <Span bold>EQUITY</Span> <Span>{user?.isAcceptEquity ? 'YES' : 'NO'}</Span>
@@ -125,7 +127,7 @@ const ProfileCard = ({ user }) => {
           <Icon name="thumbsUp" />
           <Icon name="thumbsDown" />
         </Likes>
-        <DarkText>{user?.likeTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
+        <DarkText>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
       </LikeBox>
     </Container>
   )

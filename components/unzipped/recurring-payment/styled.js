@@ -23,6 +23,18 @@ const Container = styled.div`
     }
 `;
 
+const ContainerBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 706px;
+    margin: 0px;
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
+`;
+
 const NotificationContainer = styled.div`
     width: 100%;
     padding: 20px;
@@ -317,6 +329,7 @@ export {
     NotificationContainer,
     NotificationContainerText,
     ContentContainer,
+    ContainerBox,
     PaymentContainer,
     PaymentDetailContainer,
     ChargeText,

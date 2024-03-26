@@ -21,41 +21,13 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllU
   }
 })
 
-router.get('/freelancer/list', requireLogin, async (req, res) => {
+router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateCurrentUsers'), async (req, res) => {
   try {
-    const { filter, take, skip, sort, maxRate, minRate, skill } = req.query
-    const listUsers = await userHelper.listFreelancers({ filter, take, skip, sort, maxRate, minRate, skill })
-    if (!listUsers) throw Error('could not find freelancers')
-    res.json(listUsers)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
-router.get(
-  '/freelancer/:id',
-  requireLogin,
-  permissionCheckHelper.hasPermission('getFreelancerById'),
-  async (req, res) => {
-    try {
-      const id = req.params.id
-      const User = await userHelper.getFreelancerById(id)
-      if (!User) throw Error('freelancer does not exist')
-      res.json(User)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
-  }
-)
-
-router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateAllUsers'), async (req, res) => {
-  try {
-    if (!req.body.id) throw Error('user id does not exist')
-    const updatedUser = await userHelper.updateUserByid(req.body.id, req.body)
-    if (!updatedUser) throw Error('user does not exist')
+    const updatedUser = await userHelper.updateUserByid(req.user.sub, req.body)
+    if (!updatedUser) throw new Error('user does not exist')
     res.json(updatedUser)
   } catch (e) {
-    res.status(400).json({ msg: e.message })
+    res.status(400).json({ message: e?.message ?? 'Something went wrong' })
   }
 })
 
@@ -67,7 +39,7 @@ router.post(
     try {
       const updatedUser = await userHelper.updateUserByid(req.user.sub, req.body)
       await userHelper.updateTaxDataByid(req.user.sub, req.body)
-      if (!updatedUser) throw Error('user not updated')
+      if (!updatedUser) throw new Error('user not updated')
       res.json(updatedUser)
     } catch (e) {
       res.status(400).json({ msg: e.message })
@@ -80,16 +52,6 @@ router.post('/current/delete', requireLogin, permissionCheckHelper.hasPermission
     const deletedUser = await userHelper.deleteUser(req.body.id)
     if (!deletedUser) throw Error('user does not exist')
     res.json(deletedUser)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
-router.post('/current/add/skill', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
-  try {
-    const addedSkill = await userHelper.addSkillsToFreelancer(req.body, req.user?.userInfo?.freelancers)
-    if (!addedSkill) throw Error('user does not exist')
-    res.json(addedSkill)
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
@@ -132,4 +94,64 @@ router.get('/newsletter/list', async (req, res) => {
   }
 })
 
+router.get('/current/subscriptions', requireLogin, async (req, res) => {
+  try {
+    const getSubscriptions = await userHelper.retrieveSubscriptions(req.user.sub)
+    res.json(getSubscriptions)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/current/payment-methods', requireLogin, async (req, res) => {
+  try {
+    const getSubscriptions = await userHelper.retrievePaymentMethods(req.user.sub)
+    res.json(getSubscriptions)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/getAllFreelancers', async (req, res) => {
+  try {
+    const { take, skip, minRate, maxRate, skill, name, sort } = req.query
+    const freelancers = await userHelper.getAllFreelancers(skip, take, minRate, maxRate, skill, name, sort)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.post('/create-freelancer-invite', async (req, res) => {
+  try {
+    const freelancers = await userHelper.createFreelancerInvite(req.body)
+    res.json(freelancers)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/thirdPartyCredentials/:id', async (req, res) => {
+  try {
+    const { thirdPartyCredentials } = await userHelper.getUserById(req.params.id)
+    res.json(thirdPartyCredentials.github)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.patch(
+  '/change-email',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateCurrentUsers'),
+  async (req, res) => {
+    try {
+      const updateUser = await userHelper.changeEmail(req.user.sub, req.body)
+      if (!updateUser) throw Error('user does not exist')
+      res.json(updateUser)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
 module.exports = router

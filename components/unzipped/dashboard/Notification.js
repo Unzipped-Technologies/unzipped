@@ -1,40 +1,41 @@
 import React from 'react'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
-import Link from 'next/link'
 
 import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 import ScheduleInterview from './ScheduleInterview'
 
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateWizardSubmission } from '../../../redux/actions'
 
 const ExploreContainer = styled.div`
   display: flex;
   width: 100%;
-  background: #FAFAFA;
+  background: #fafafa;
   flex-direction: column;
   border-radius: 5px;
-  border: 1px solid #D8D8D8;
+  border: 1px solid #d8d8d8;
   padding: 25px;
-`;
+`
 
 const TextContent = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
   margin-bottom: 20px;
-`;
+`
 
 const ExploreItems = styled.div`
   display: flex;
   width: 100%;
-  border-radius:  ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
   // border-radius: 10px 10px 0px 0px;
-  border: 1px solid #D8D8D8;
-  background: #F1F0F0;
+  border: 1px solid #d8d8d8;
+  background: #f1f0f0;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-`;
+`
 
 const ExploreIconContainer = styled.div`
   display: flex;
@@ -46,13 +47,13 @@ const HeadingStyled = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
   display: block;
-`;
+`
 
 const ExploreItemTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 5px 20px;
-`;
+`
 
 const FontStyled = styled.span`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -98,23 +99,39 @@ const help = [
   }
 ]
 
-
-const Notification = ({ type, children, noButton }) => {
+const Notification = ({ type, children, noButton, smallMargin }) => {
   const router = useRouter()
+  const dispatch = useDispatch()
+  const { wizardSubmission } = useSelector(state => state.Business)
+  const handleNotificationDismissal = () => {
+    dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }))
+  }
   switch (type) {
     case 'plan':
       return (
-        <BlackCard>
-          <WhiteText>
-            Build your dream business, grow your following, and collaborate with other professionals to <br />
-            make your vision a reality. Start your free trial now.
-          </WhiteText>
-          <Absolute>
-            <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
-              PICK A PLAN
-            </Button>
-          </Absolute>
-        </BlackCard>
+        <>
+          {wizardSubmission?.isSuccessfull && (
+            <WhiteCard row borderColor="#8EDE64" background="#f4fcef">
+              <DarkText noMargin>
+                <span>{`Project ${wizardSubmission?.projectName} successfully created!`}</span>
+              </DarkText>
+              <Absolute>
+                <Dismiss onClick={handleNotificationDismissal}>Dismiss</Dismiss>
+              </Absolute>
+            </WhiteCard>
+          )}
+          <BlackCard mallMargin={smallMargin}>
+            <WhiteText>
+              Build your dream business, grow your following, and collaborate with other professionals to <br />
+              make your vision a reality. Start your free trial now.
+            </WhiteText>
+            <Absolute>
+              <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
+                PICK A PLAN
+              </Button>
+            </Absolute>
+          </BlackCard>
+        </>
       )
     case 'github':
       return (
@@ -130,7 +147,6 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'browse':
       return (
-
         <WhiteCard row>
           <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
           <Absolute>
@@ -142,7 +158,9 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'meetingCalender':
       return (
-        <ScheduleInterview />
+        <>
+          <ScheduleInterview />
+        </>
       )
     case 'dismiss':
       return (
@@ -172,7 +190,7 @@ const Notification = ({ type, children, noButton }) => {
       )
     case 'blue':
       return (
-        <WhiteCard row borderColor="#0029FF" background="#F8FAFF">
+        <WhiteCard row borderColor="#0029FF" background="#F8FAFF" smallMargin={smallMargin}>
           <Icon name="question" />
           <DarkText noMargin paddingLeft>
             {children}
@@ -227,24 +245,20 @@ const Notification = ({ type, children, noButton }) => {
             </div>
           </TextContent>
           {help.map((item, index) => (
-            <ExploreItems borderRadius={(index === 0) ? "10px 10px 0px 0px" : "0px"}>
+            <ExploreItems borderRadius={index === 0 ? '10px 10px 0px 0px' : '0px'} key={`${item.name}_${index}`}>
               <div style={{ display: 'flex' }}>
-
                 <ExploreIconContainer>
                   <Icon name={item.icon} />
                 </ExploreIconContainer>
 
                 <ExploreItemTextContainer>
-
-                  <HeadingStyled fontWeight={400}>
-                    {item.name}
-                  </HeadingStyled>
+                  <HeadingStyled fontWeight={400}>{item.name}</HeadingStyled>
                   <div>
                     <span style={{ display: 'inline' }}> {item.text} </span>
                     <span
                       style={{
-                        color: "#001AFF",
-                        cursor: "pointer",
+                        color: '#001AFF',
+                        cursor: 'pointer',
                         display: 'inline',
                         fontSize: 13
                       }}
@@ -256,7 +270,6 @@ const Notification = ({ type, children, noButton }) => {
               </div>
             </ExploreItems>
           ))}
-
         </ExploreContainer>
       )
     default:

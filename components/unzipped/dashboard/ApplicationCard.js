@@ -8,8 +8,9 @@ import styled, { css } from 'styled-components'
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
-import { getProjectApplications } from '../../../redux/ProjectApplications/actions'
+import { getProjectApplications, getFreelancerById } from '../../../redux/actions'
 import MobileApplicationCard from './mobile/MobileApplicationsView'
+import VerticalDropdown from '../../VerticalDropdown'
 
 const DesktopContainer = styled.div`
   @media (max-width: 680px) {
@@ -23,7 +24,7 @@ const ProjectApplications = styled.div`
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  height: 270px;
+  height: auto;
   width: 984px;
   margin-left: 150px;
   border-radius: 5px;
@@ -56,6 +57,11 @@ const InviteButton = styled.button`
       background-color: transparent !important;
       display: none;
     `};
+`
+
+const Grid2 = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const UserInfo = styled.div`
@@ -132,7 +138,14 @@ const ViewProfileButton = styled.button`
   background: #8ede64;
 `
 
-const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
+const DefaultDisplay = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+`
+
+const ApplicationCard = ({ projectApplications, getProjectApplications, getFreelancerById, token }) => {
   const router = useRouter()
   const { id } = router.query
 
@@ -190,7 +203,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                     </div>
                   )}
 
-                  <InviteButton>Invite</InviteButton>
+                  <InviteButton>Invited</InviteButton>
                 </ProfileImage>
                 <UserInfo>
                   <div style={{ display: 'flex' }}>
@@ -240,12 +253,33 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
                   </div>
                 </UserInfo>
                 <ViewProfile>
-                  <ViewProfileButton
-                    onClick={() => {
-                      redirectToProfile(application?.freelancerId?._id)
-                    }}>
-                    View Profile
-                  </ViewProfileButton>
+                  <Grid2>
+                    <ViewProfileButton
+                      onClick={() => {
+                        redirectToProfile(application?.freelancerId?._id)
+                      }}>
+                      View Profile
+                    </ViewProfileButton>
+                    <VerticalDropdown
+                      dropdownOptions={[
+                        {
+                          name: 'Hire User',
+                          action: () => {
+                            getFreelancerById(application?.freelancerId?._id, token)
+                            router.push(`/hire`)
+                          }
+                        },
+                        {
+                          name: 'View Application',
+                          action: () => {}
+                        },
+                        {
+                          name: 'Dismiss Application',
+                          action: () => {}
+                        }
+                      ]}
+                    />
+                  </Grid2>
                   <span
                     style={{
                       color: ' #000',
@@ -264,15 +298,9 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
             )
           })
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingTop: '200px'
-            }}>
-            <p>N/A</p>
-          </div>
+          <DefaultDisplay>
+            <p>When someone applies to this project, it will display here!</p>
+          </DefaultDisplay>
         )}
       </DesktopContainer>
       <MobileApplicationCard projectApplications={projectApplications}></MobileApplicationCard>
@@ -281,14 +309,17 @@ const ApplicationCard = ({ projectApplications, getProjectApplications }) => {
 }
 
 const mapStateToProps = state => {
+  console.log(state)
   return {
+    token: state.Auth.token,
     projectApplications: state.ProjectApplications.projectApplications
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectApplications: bindActionCreators(getProjectApplications, dispatch)
+    getProjectApplications: bindActionCreators(getProjectApplications, dispatch),
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
   }
 }
 

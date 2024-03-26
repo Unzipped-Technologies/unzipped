@@ -44,8 +44,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (isLoading) {
       setLoading(true)
-    }
-    else {
+    } else {
       setLoading(false)
     }
   }, [isLoading])

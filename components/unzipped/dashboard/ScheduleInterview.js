@@ -8,7 +8,8 @@ import {
     WhiteCard,
     Dismiss,
     ScheduleInterviewContainer,
-    ScheduleInterviewButtonContainer
+    ScheduleInterviewButtonContainer,
+    CalanderParagraphStyled
 } from './style'
 
 import Button from '../../ui/Button'
@@ -25,7 +26,7 @@ const ScheduleInterview = () => {
     return (
         <ScheduleInterviewContainer>
             <div>
-                <span noMargin>You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.</span>
+                <CalanderParagraphStyled noMargin>You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.</CalanderParagraphStyled>
             </div>
             <ScheduleInterviewButtonContainer>
                 <Dismiss>Dismiss</Dismiss>

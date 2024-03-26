@@ -1,21 +1,24 @@
 const mongoose = require('mongoose')
-const user = require('../../models/User')
-const taxDataTables = require('../../models/TaxDataTable')
-const thirdPartyApplications = require('../../models/ThirdPartyApplications')
-const freelancerSkills = require('../../models/FreelancerSkills')
-const list = require('../../models/List')
-const freelancer = require('../../models/Freelancer')
-const notifications = require('../../models/Notifications')
-const emailList = require('../../models/EmailList')
+const user = require('../models/User')
+const taxDataTables = require('../models/TaxDataTable')
+const thirdPartyApplications = require('../models/ThirdPartyApplications')
+const freelancerSkills = require('../models/FreelancerSkills')
+const list = require('../models/List')
+const freelancer = require('../models/Freelancer')
+const notifications = require('../models/Notifications')
+const emailList = require('../models/EmailList')
+const Subscriptions = require('../models/Subscription')
+const PaymentMethods = require('../models/PaymentMethod')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
-const likeHistory = require('../../models/LikeHistory')
+const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../../models/FreelancerSkills')
-const User = require('../../models/User')
-
+const FreelancerSkills = require('../models/FreelancerSkills')
+const User = require('../models/User')
+const InviteModel = require('../models/Invited')
+const { _isValidPhoneNumber } = require('../utils/validations')
 // create user
 const createUser = async (data, hash) => {
   // create User
@@ -27,19 +30,18 @@ const createUser = async (data, hash) => {
     plan: planEnum.UNSUBSCRIBED
   })
   // create favorites and recently viewed list
-  if (accountTypeEnum.FOUNDER === data.role || accountTypeEnum.ADMIN === data.role) {
     const listsToCreate = [
       {
         name: 'Favorites',
-        icon: 'heart'
+        icon: 'HeartOutlined'
       },
       {
         name: 'Recently Viewed',
-        icon: 'eye'
+        icon: 'EyeOutlined'
       },
       {
         name: 'My Team',
-        icon: 'work'
+        icon: 'TeamOutlined'
       }
     ]
     for (const item of listsToCreate) {
@@ -47,6 +49,7 @@ const createUser = async (data, hash) => {
         name: item.name,
         icon: item.icon,
         userId: newUser.id,
+        isDefault: true,
         user: await user.findById(newUser.id)
       }
       await listHelper.createLists(list)
@@ -56,7 +59,6 @@ const createUser = async (data, hash) => {
     await user.findByIdAndUpdate(newUser.id, {
       lists: ids.map(item => mongoose.Types.ObjectId(item.id))
     })
-  }
 
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
@@ -95,9 +97,30 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    return await user.findByIdAndUpdate(id, { $set: { ...data } })
+    const userData = await getSingleUser({ _id: id }, '-password')
+    if (userData && userData?.phoneNumber && data?.currentPhone) {
+      if (data?.currentPhone !== userData.phoneNumber) {
+        throw new Error(`Incorrect phone number.`)
+      } else if (data?.currentPhone === data.phoneNumber) {
+        throw new Error(`New and current phone numbers must be different.`)
+      } else if (_isValidPhoneNumber(data.phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      }
+    } else {
+      if (data?.phoneNumber && _isValidPhoneNumber(data.phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      }
+    }
+    for (var field in data) {
+      userData[field] = data[field]
+    }
+
+    await userData.save()
+
+    return userData
+    // return await user.findOneAndUpdate({ _id: id }, { $set: { ...data } })
   } catch (e) {
-    throw Error(`Something went wrong ${e}`)
+    throw new Error(`${e}`)
   }
 }
 
@@ -122,7 +145,15 @@ const updateUserByEmail = async (email, data) => {
 // get User By Id
 const getUserById = async id => {
   try {
-    return await user.findById(id).select('-password')
+    return await user
+      .findById(id)
+      .populate([
+        { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
+        {
+          path: 'freelancers'
+        }
+      ])
+      .select('-password')
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
@@ -302,27 +333,6 @@ const createFreelanceAccount = async data => {
     user: await user.findById(data.userId)
   })
 }
-
-// add skills to freelancer
-
-const addSkillsToFreelancer = async (data, freelancerId) => {
-  try {
-    const updateFreelancer = await freelancer.findById(freelancerId)
-    const ids = []
-    for (const item of data.skills) {
-      item['user'] = freelancerId
-      const id = await freelancerSkills.create({
-        ...item
-      })
-      ids.push(id.id)
-    }
-    updateFreelancer.freelancerSkills = [...updateFreelancer.freelancerSkills, ...ids]
-    updateFreelancer.save()
-    return updateFreelancer
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
 // add list to freelancer
 
 const addListsToFreelancer = async (data, id) => {
@@ -430,6 +440,15 @@ const addToNewsletter = async data => {
   return await emailList.findOneAndUpdate({ email: data }, { $set: { email: data, isActive: true } }, { upsert: true })
 }
 
+const retrieveSubscriptions = async id => {
+  return await Subscriptions.findById(id)
+}
+
+const retrievePaymentMethods = async id => {
+  const payment = await PaymentMethods.find({ userId: id })
+  return await PaymentMethods.find({ userId: id })
+}
+
 const setUpNotificationsForUser = async id => {
   const userNotifications = [
     notificationEnum.IS_GITHUB,
@@ -462,15 +481,196 @@ const setUpNotificationsForUser = async id => {
   }
 }
 
+const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name, sort) => {
+  try {
+    const queryFilters = buildQueryFilters(+minRate, +maxRate, skill, name)
+    let sortStage = buildSortStageFilters(sort)
+    const PROJECTION = {
+      $project: {
+        _id: 1,
+        category: 1,
+        rate: 1,
+        likeTotal: 1,
+        dislikeTotal: 1,
+        'userId._id': 1,
+        'userId.FirstName': 1,
+        'userId.LastName': 1,
+        'userId.AddressLineCountry': 1,
+        'userId.profileImage': 1,
+        freelancerSkills: 1,
+        'invites._id': '$invites._id',
+        'invites.userInvited': '$invites.userInvited'
+      }
+    }
+
+    const lookup = [
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userId'
+        }
+      },
+      {
+        $lookup: {
+          from: 'invites',
+          localField: 'invites',
+          foreignField: '_id',
+          as: 'invites'
+        }
+      },
+      {
+        $lookup: {
+          from: 'freelancerskills',
+          localField: 'freelancerSkills',
+          foreignField: '_id',
+          as: 'freelancerSkills'
+        }
+      },
+
+      { $unwind: '$userId' },
+      {
+        $project: {
+          _id: 1,
+          category: 1,
+          rate: 1,
+          likeTotal: 1,
+          dislikeTotal: 1,
+          'userId._id': 1,
+          'userId.FirstName': 1,
+          'userId.LastName': 1,
+          'userId.AddressLineCountry': 1,
+          'userId.profileImage': 1,
+          'userId.FullName': 1,
+
+          freelancerSkills: {
+            $map: {
+              input: '$freelancerSkills',
+              as: 'skill',
+              in: {
+                _id: '$$skill._id',
+                yearsExperience: '$$skill.yearsExperience',
+                skill: '$$skill.skill'
+              }
+            }
+          },
+          invites: {
+            $arrayElemAt: ['$invites', 0]
+          }
+        }
+      },
+      {
+        $match: {
+          $or: [queryFilters]
+        }
+      },
+      ...(Object.keys(sortStage).length > 0 && sortStage.rate !== 0 ? [{ $sort: sortStage }] : []),
+      PROJECTION,
+      {
+        $facet: {
+          freelancers: [{ $skip: +skip }, { $limit: +take }],
+          totalCount: [{ $count: 'count' }]
+        }
+      }
+    ]
+
+    const result = await freelancer.aggregate(lookup)
+    return {
+      freelancers: result[0].freelancers,
+      totalCount: result[0].totalCount[0]?.count || 0
+    }
+  } catch (error) {}
+}
+
+const buildSortStageFilters = sort => {
+  let sortStage = {}
+  if (sort === 'Most reviews' || sort === 'recomended') {
+    sortStage = {
+      likeTotal: -1
+    }
+  }
+  if (sort == 'lowest hourly rate' || sort == 'highest hourly rate') {
+    sortStage = {
+      rate: sort === 'lowest hourly rate' ? 1 : -1
+    }
+  }
+  return sortStage
+}
+
+const buildQueryFilters = (minRate, maxRate, skills, name) => {
+  let filter = {}
+
+  if (minRate) filter.rate = { $gte: minRate }
+
+  if (maxRate) filter.rate = { ...filter.rate, $lte: maxRate }
+
+  if (skills && skills.length > 0 && !skills.includes('undefined')) {
+    if (skills.includes(',')) {
+      let skillsArray
+      skillsArray = skills.split(',')
+      filter['freelancerSkills.skill'] = {
+        $in: skillsArray.map(skill => new RegExp(skill, 'i'))
+      }
+    }
+  }
+
+  if (name && !name.includes('undefined')) {
+    filter['$or'] = [
+      { 'userId.FirstName': { $regex: name, $options: 'i' } },
+      { 'userId.LastName': { $regex: name, $options: 'i' } }
+    ]
+  }
+
+  return filter
+}
+
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await freelancer.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
+}
+
+const changeEmail = async (userId, data) => {
+  const userData = await user.findById(userId)
+  if (!userData) throw Error(`User not exist`)
+  if (userData.email !== data.currentEmail) throw Error(`User with this email not exist.`)
+
+  const newEmailUser = await user.findOne({ email: data.email })
+  if (newEmailUser) throw Error(`New email already registered.`)
+
+  userData.email = data.email
+  await userData.save()
+  return userData
+}
+
+const getSingleUser = async (filter, fields) => {
+  try {
+    return await User.findOne(filter).select(fields)
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
 module.exports = {
+  changeEmail,
   createUser,
   updateUserByEmail,
   getUserById,
   listUsers,
   deleteUser,
   createFreelanceAccount,
-  addSkillsToFreelancer,
   updateUserByid,
+  retrieveSubscriptions,
   listFreelancers,
   getFreelancerById,
   addListsToFreelancer,
@@ -479,5 +679,8 @@ module.exports = {
   addLikeToFreelancer,
   removeLikeToFreelancer,
   listLikes,
-  addToNewsletter
+  addToNewsletter,
+  getAllFreelancers,
+  getSingleUser,
+  retrievePaymentMethods
 }

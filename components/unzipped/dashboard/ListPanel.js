@@ -39,8 +39,14 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
     const [listInfo, setListInfo] = useState({ listId: null, listTitle: null, listIcon: null });
     const [defaultList, setDefaultList] = useState(null);
     const dispatch = useDispatch();
-
+    const userRoleInfo = useSelector(state => state.Auth.user);
+    const { updatedList } = useSelector(state => state.Lists);
     useEffect(() => {
+        if (updatedList) {
+            setListInfo({ listId: updatedList._id, listTitle: updatedList.name, listIcon: updatedList.icon });
+            setDefaultList({ _id: updatedList._id, name: updatedList.name, icon: updatedList.icon })
+            return;
+        }
         if (userListItems && userListItems.length > 0) {
             const selectedListObj = userListItems?.find(list => list.name == 'Favorites');
             if (selectedListObj) {
@@ -48,7 +54,7 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
                 setDefaultList({ _id: selectedListObj._id, name: selectedListObj.name, icon: selectedListObj.icon })
             }
         }
-    }, [userListItems])
+    }, [userListItems, updatedList])
 
     useEffect(() => {
         if (defaultList) {
@@ -57,44 +63,47 @@ const ListPanel = ({ selectList, addCommentToStory, user, access, reorderStories
     }, [defaultList])
 
     return (
-        <Container>
-            <LeftListPanel
-                selectList={selectList}
-                list={list}
-                business={business}
-                selectedList={selectedList}
-                departments={departments}
-                type={type}
-                setIsFavourite={setIsFavourite}
-                setIsRecentlyViewed={setIsRecentlyViewed}
-                setIsMyTeam={setIsMyTeam}
-                userListItems={userListItems}
-                setListTitle={setListInfo}
-                listInfo={listInfo}
-            />
-            <RightListPanel
-                updateTasksOrder={updateTasksOrder}
-                updateCreateStoryForm={updateCreateStoryForm}
-                addCommentToStory={addCommentToStory}
-                reorderStories={reorderStories}
-                tags={tags}
-                dropdownList={dropdownList}
-                stories={stories}
-                list={list}
-                access={access}
-                createNewStory={createNewStory}
-                user={user}
-                business={business}
-                selectedList={selectedList}
-                type={type}
-                form={form}
-                departments={departments}
-                isFavourite={isFavourite}
-                isRecentlyViewed={isRecentlyViewed}
-                isMyTeam={isMyTeam}
-                listInfo={listInfo}
-            />
-        </Container>
+        <>
+            <Container>
+                <LeftListPanel
+                    selectList={selectList}
+                    list={list}
+                    business={business}
+                    selectedList={selectedList}
+                    departments={departments}
+                    type={type}
+                    setIsFavourite={setIsFavourite}
+                    setIsRecentlyViewed={setIsRecentlyViewed}
+                    setIsMyTeam={setIsMyTeam}
+                    userListItems={userListItems}
+                    setListTitle={setListInfo}
+                    listInfo={listInfo}
+                />
+                <RightListPanel
+                    updateTasksOrder={updateTasksOrder}
+                    updateCreateStoryForm={updateCreateStoryForm}
+                    addCommentToStory={addCommentToStory}
+                    reorderStories={reorderStories}
+                    tags={tags}
+                    dropdownList={dropdownList}
+                    stories={stories}
+                    list={list}
+                    access={access}
+                    createNewStory={createNewStory}
+                    user={user}
+                    business={business}
+                    selectedList={selectedList}
+                    type={type}
+                    form={form}
+                    departments={departments}
+                    isFavourite={isFavourite}
+                    isRecentlyViewed={isRecentlyViewed}
+                    isMyTeam={isMyTeam}
+                    listInfo={listInfo}
+                    setIsFavourite={setIsFavourite}
+                />
+            </Container>
+        </>
     )
 }
 

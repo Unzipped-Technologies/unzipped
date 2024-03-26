@@ -32,7 +32,7 @@ const Container = styled.div`
             width: 440px;
         }
     }
-    @media(max-width: 525px) {
+    @media(max-width: 560px) {
         width: 90vw;
         button:nth-child(4) {
             width: 70vw;

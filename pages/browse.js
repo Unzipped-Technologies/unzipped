@@ -7,6 +7,7 @@ import Image from '../components/ui/Image'
 import { useRouter } from 'next/router';
 
 const Browse = () => {
+    const [marginBottom, setMarginBottom] = useState('98px');
     const router = useRouter()
 
     const MobileDisplayBox = styled.div`
@@ -35,7 +36,7 @@ const Browse = () => {
         @media(max-width: 550px) {
             div {
                 margin: 20px 0px;               
-                padding: 5px 20px;
+                padding: 5px 15px;
             }
         }
         @media(max-width: 450px) {
@@ -54,9 +55,25 @@ const Browse = () => {
             width: 100%;
             margin-top: 20px;
         }
+        @media(max-width: 550px) {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            height: 165px;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
         @media(max-width: 450px) {
             width: 100%;
-            margin-top: 80px;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            height: 145px;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 30px;
         }
     `;
 
@@ -78,9 +95,31 @@ const Browse = () => {
         },
     ]
 
+
+    useEffect(()=>{
+        const handleResize = () => {
+            if (window.innerWidth < 680) {
+                setMarginBottom('55px');
+            } else {
+                setMarginBottom('98px');
+            }
+        };
+
+        // Add an event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Initial call to set the marginBottom based on the current window width
+        handleResize();
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    },[])
+
     return (
         <React.Fragment>
-            <Nav isSubMenu marginBottom={'98px'}/>
+            <Nav isSubMenu marginBottom={marginBottom}/>
             <ContentArea>
                 <ImageContainer>
                     <Image src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1696293321/xkiyysuux8ihcarvs44c.png" height="auto" width="100%"/>
