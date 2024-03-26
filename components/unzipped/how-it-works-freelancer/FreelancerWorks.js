@@ -65,7 +65,11 @@ export const FreelancerWorks = () => {
             </TrustedByWrapper>
             <ExploreWaysToEarn />
             <HowPaymentWorksSection />
-            <Faq />
+            {/* <div style={{ display: 'flex', justifyContent: "center", alignItems: "center", width: "100%", background: "red" }}> */}
+
+                <Faq />
+            {/* </div> */}
+
             <LearnAsYouWork />
             <NewsLetter />
         </>

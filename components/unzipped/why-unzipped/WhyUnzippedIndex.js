@@ -142,6 +142,8 @@ const FaqContainerStyled = styled.div`
     padding-left: 0 ;
     display: flex;
     padding-left: 120px;
+    align-items: center;
+    justify-content: center;
     @media screen and (max-width: 600px){
         padding-left: 20px;
     }
@@ -152,6 +154,8 @@ const LearnAsYouWorkContainer = styled.div`
     padding-left: 0 ;
     display: flex;
     padding-left: 120px;
+    justify-content: center;
+    align-items: center;
     @media screen and (max-width: 600px){
          padding-left: 20px;
     }
@@ -161,7 +165,9 @@ const NewsLetterContainer = styled.div`
     width: 100%;
     padding-left: 0 ;
     display: flex;
-    margin-left: -135px;
+    // margin-left: -100px;
+    justify-content: center;
+    align-items: center;
     @media screen and (max-width: 600px){
         margin-left: 0px;
     }
