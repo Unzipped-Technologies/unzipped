@@ -85,7 +85,7 @@ const Freelancers = ({
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '70px')
 
-  const isNavbarExpanded = useSelector(state => state.Freelancers)
+  const { isExpanded } = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
@@ -189,7 +189,9 @@ const Freelancers = ({
   return (
     <SearchContainer>
       <Nav
+       isSubMenu
         searchValue={filter}
+        setFilter={setFilter}
         handleSearchValue={setFilter}
         handleSearch={handleSearch}
         searchButton
@@ -226,7 +228,9 @@ const Freelancers = ({
             </MobileDisplayBox>
           )
         )}
-        <Box>
+        <Box style={{
+          marginTop: !isExpanded ? (access_token ? '170px' : '0px') : access_token ? '170px' : '0px',
+        }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           {!loading && (
             <div className="overflow-auto">

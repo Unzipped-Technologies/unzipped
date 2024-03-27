@@ -438,7 +438,8 @@ const useStyles = makeStyles(theme => ({
 
 const Nav = ({
   isSubMenu,
-  handleSearchValue,
+  searchValue,
+  setFilter,
   filter,
   handleSearch,
   searchButton,
@@ -751,15 +752,12 @@ const Nav = ({
             </MenuIcon>
             {menuOpen === 'mobile' && (
               <Absolute right="0px" top="0px">
-                {/* <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /> */}
                 <FullScreenDropdown
                   menuItems={mobileMenuItems.filter(item => {
-                    // Check if the item's name has already been seen
                     if (seenNames.has(item.name)) {
                       // If so, filter this item out
                       return false
                     } else {
-                      // If not, add the name to the Set and keep the item
                       seenNames.add(item.name)
                       return true
                     }
@@ -786,8 +784,8 @@ const Nav = ({
                 <h4>Browse</h4>
                 <SearchBar
                   handleSearch={handleSearch}
-                  filter={filter}
-                  setFilter={handleSearchValue}
+                  filter={searchValue}
+                  setFilter={setFilter}
                   searchButton={searchButton}
                   alignItems={'start'}
                 />
