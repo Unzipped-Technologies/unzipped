@@ -1,25 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react'
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
-import {
-  DarkText,
-  Span,
-  WhiteCard,
-  Absolute
-} from './dashboard/style'
+import SimpleBar from 'simplebar-react'
+import 'simplebar/dist/simplebar.min.css'
+import { DarkText, Span, WhiteCard, Absolute } from './dashboard/style'
 import Icon from '../ui/Icon'
 import Button from '../ui/Button'
 import FormField from '../ui/FormField'
 import Image from '../ui/Image'
 import AttachmentModal from './AttachmentModal'
 import ProfileContainer from './ProfileContainer'
-import { ValidationUtils } from '../../utils'
+import { ValidationUtils, ConverterUtils } from '../../utils'
 import theme from '../ui/theme'
-import { useSelect } from '@mui/base';
-import { useSelector } from 'react-redux';
-import styled from "styled-components"
-import MeetingTemplate from './MeetingTemplate';
-import Link from 'next/link';
+import { useSelect } from '@mui/base'
+import { useSelector } from 'react-redux'
+import styled from 'styled-components'
+import MeetingTemplate from './MeetingTemplate'
+import Link from 'next/link'
 const Right = styled.div`
   display: grid;
   position: relative;
@@ -72,9 +67,9 @@ export const Div = styled.div`
 `
 
 const Spacer = styled.div`
-    height: 64px;
-    width: 100%;
-`;
+  height: 64px;
+  width: 100%;
+`
 // Message Box
 
 const MessageTemplateContainer = styled.div`
@@ -82,7 +77,7 @@ const MessageTemplateContainer = styled.div`
   width: 100%;
   justify-content: flex-end;
   align-items: end;
-`;
+`
 
 const MessageContentTemplate = styled.div`
   display: flex;
@@ -93,32 +88,32 @@ const MessageContentTemplate = styled.div`
   letter-spacing: 0.15px;
   color: white;
   border-radius: 8px 8px 0px 8px;
-  background: ${({ bgColor }) => bgColor ? bgColor : '#007FED'};
+  background: ${({ bgColor }) => (bgColor ? bgColor : '#007FED')};
   padding: 10px;
 `
 const ButtonContainer = styled.div`
-    display: flex;
-    background: transparent;
-    width: 100%;
-    justify-content: flex-end;
-    padding: 10px;
-`;
+  display: flex;
+  background: transparent;
+  width: 100%;
+  justify-content: flex-end;
+  padding: 10px;
+`
 
 const ButtonStyled = styled.button`
-    color: #fff;
-    text-decoration: ${({ textDecoration }) => textDecoration ? textDecoration : 'none'};
-    border: 0px;
-    background: transparent;
-    &:focus{
-        background: transparent !important;
-    }
-`;
+  color: #fff;
+  text-decoration: ${({ textDecoration }) => (textDecoration ? textDecoration : 'none')};
+  border: 0px;
+  background: transparent;
+  &:focus {
+    background: transparent !important;
+  }
+`
 
 const ParagrapStyled = styled.p`
-    margin: 0 !important;
-    color: ${({ color }) => color ? color : '#fff'}
+  margin: 0 !important;
+  color: ${({ color }) => (color ? color : '#fff')};
 `
-const DECLINE_MESSAGE_TEXT = 'The freelancer has proposed some additional times:';
+const DECLINE_MESSAGE_TEXT = 'The freelancer has proposed some additional times:'
 
 const MessageContainer = ({
   data = {},
@@ -131,6 +126,7 @@ const MessageContainer = ({
   createTempFile,
   access,
   socket,
+  userRole,
   onlineUsers,
   handleUnreadCount,
   handleMessagesOnScroll
@@ -157,7 +153,6 @@ const MessageContainer = ({
   useEffect(() => {
     socket.on('chat message', message => {
       handleUnreadCount(message)
-      console.log('message', message)
       setMessages(prevMessages => [
         ...prevMessages,
         {
@@ -183,7 +178,7 @@ const MessageContainer = ({
     })
   })
 
-  const [userMessage, setUserMessage] = useState('');
+  const [userMessage, setUserMessage] = useState('')
 
   useEffect(() => {
     socket.on('chat message', message => {
@@ -192,7 +187,7 @@ const MessageContainer = ({
         ...prevMessages,
         {
           message: message?.message,
-          attachment: "",
+          attachment: '',
           isAlert: false,
           isRead: false,
           isActive: true,
@@ -203,7 +198,7 @@ const MessageContainer = ({
           updatedAt: message?.updatedAt,
           __v: 0
         }
-      ]);
+      ])
 
       socket.on('typing', typingData => {
         setTyping(typingData)
@@ -233,30 +228,30 @@ const MessageContainer = ({
     }
   }, [messages])
 
-
   useEffect(() => {
-    setMessages(data?.messages?.slice().reverse());
-    setReceiver(data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail))
+    setMessages(data?.messages?.slice().reverse()) || []
+    const receiver = data?.participants.find(e => e?.userId?.email !== userEmail)
+    setReceiver(receiver)
+    setForm({
+      ...form,
+      receiverId: receiver?.userId?._id
+    })
     setSender(data?.participants && data?.participants.find(e => e?.userId?.email === userEmail))
   }, [data])
 
-  useEffect(() => {
-  }, [receiver])
+  useEffect(() => {}, [receiver])
 
   useEffect(() => {
-    socket.on('refreshMessageList', () => {
-      console.log('refreshMessageList',);
-    });
+    socket.on('refreshMessageList', () => {})
 
     return () => {
-      socket.off('refreshMessageList');
-    };
-  }, []);
+      socket.off('refreshMessageList')
+    }
+  }, [])
 
   const handleLastMessageScroll = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
   }
-
 
   const send = () => {
     if (form.message || form.attachment) {
@@ -273,22 +268,20 @@ const MessageContainer = ({
         conversationId: data._id || null,
         updatedAt: new Date().toISOString(),
         access
-      });
+      })
       socket.emit('stop-typing', {
         receiverId: form.receiverId,
         conversationId: data._id || null,
-        isTyping: false,
-      });
+        isTyping: false
+      })
       handleLastMessageScroll()
       setForm({
         ...form,
         message: '',
-        attachment: '',
-      });
-
+        attachment: ''
+      })
     }
   }
-
 
   const handleMute = value => {
     handleChatMute(value)
@@ -328,7 +321,14 @@ const MessageContainer = ({
         <WhiteCard noMargin height="100%" padding="0px">
           <WhiteCard noMargin row padding="10px 40px">
             <DarkText noMargin>
-              <p className="mb-0">{ValidationUtils.getFullNameFromUser(receiver?.userId)}</p>
+              <DarkText className="mb-0" fontSize="16px" color="#000000" lineHeight="23px">
+                {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
+              </DarkText>
+              {receiver?.userId?.freelancers?.category && (
+                <DarkText fontSize="14px" lighter color="#808080" lineHeight="23px" className="mb-0">
+                  {receiver?.userId?.freelancers?.category}
+                </DarkText>
+              )}
               <p className={`mb-0 ${onlineUsers.includes(receiver?.userId?._id) ? 'text-primary' : 'text-warning'}`}>
                 {onlineUsers.includes(receiver?.userId?._id) ? 'Online' : 'Offline'}
               </p>
@@ -361,7 +361,7 @@ const MessageContainer = ({
                             background="#007FED"
                             noMargin
                             maxWidth="50%"
-                            width="20%"
+                            width="436px"
                             unset
                             borderRadius="15px 15px 3px 15px"
                             padding="10px 10px"
@@ -391,7 +391,7 @@ const MessageContainer = ({
                             borderColor="transparent"
                             noMargin
                             maxWidth="50%"
-                            width="20%"
+                            width="306px"
                             unset
                             borderRadius="15px 15px 3px 15px"
                             padding="10px 10px">
@@ -447,7 +447,7 @@ const MessageContainer = ({
                     }}
                     onBlur={handleBlurTyping}
                     message
-                    placeholder="type a message..."
+                    placeholder="Type a message..."
                     width="100%"
                     fieldType="input"
                     autosize></FormField>
@@ -468,6 +468,7 @@ const MessageContainer = ({
             {isProfile && (
               <ProfileContainer
                 data={receiver}
+                userRole={userRole}
                 sender={data}
                 isArchived={data?.isArchived}
                 isMute={data?.isMute}

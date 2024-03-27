@@ -220,7 +220,6 @@ module.exports = createSocket = server => {
     })
 
     socket.on('stop-typing', message => {
-      console.log(message, onlineUsers, onlineUsers[message?.receiverId])
       socket.broadcast.to(onlineUsers[message?.receiverId]).emit('stop-typing', message)
     })
 
