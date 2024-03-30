@@ -31,7 +31,8 @@ import {
   UPDATE_EMAIL_ERROR,
   RESET_PASSWORD_SUCCESS,
   RESET_PASSWORD_ERROR,
-  UPDATE_USER_ERROR
+  UPDATE_USER_ERROR,
+  USER_MAIL_CONFIRMATION
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -264,20 +265,22 @@ export const registerUser = user => async dispatch => {
   //User Loading
   dispatch({ type: USER_LOADING })
 
-  await axios
-    .post(`/api/auth/register`, { user })
-    .then(res =>
-      dispatch({
-        type: REGISTER_USER,
-        payload: res.data
-      })
-    )
-    .catch(err => {
-      dispatch({
-        type: AUTH_ERROR,
-        payload: { data: err.response.data }
-      })
+  const response = await axios.post(`/api/auth/register`, user);
+  if (response.status === 200) {
+    dispatch({
+      type: REGISTER_USER,
+      payload: response.data
     })
+    dispatch({
+      type: VERIFY_USER
+    })
+  }
+  if (response.status !== 200) {
+    dispatch({
+      type: AUTH_ERROR,
+      payload: { data: response.data }
+    })
+  }
 }
 
 export const verifyUser = user => async dispatch => {
@@ -444,4 +447,24 @@ export const updateCurrentUser = data => async (dispatch, getState) => {
       return err.response
     })
   return response
+}
+
+export const emailConfirmation = userId => async dispatch => {
+
+  const response = await axios.get(`/api/auth/verify/${userId}`);
+  if (response.status === 200) {
+    dispatch({
+      type: USER_MAIL_CONFIRMATION,
+      payload: true
+    })
+
+  }
+
+  if (response.status !== 200) {
+    dispatch({
+      type: USER_MAIL_CONFIRMATION,
+      payload: false
+    })
+  }
+
 }

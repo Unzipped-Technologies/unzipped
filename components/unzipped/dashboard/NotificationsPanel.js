@@ -91,7 +91,7 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
           </Notification>
         ))}
       </Notifications>
-      <Panel user={user} verifyIdentity={verifyIdentity} />
+      {token && (<Panel user={user} verifyIdentity={verifyIdentity} />)}
     </Container>
   )
 }

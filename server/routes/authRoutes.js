@@ -41,14 +41,12 @@ router.post('/register', async (req, res, next) => {
         throw Error('User with this email already exists')
       }
     } else {
-      req.body.isEmailVerified = true
-      const hash = await AuthService.bcryptAndHashing(req.body?.password)
-      let newuser = await userHelper.createUser(req.body, hash)
+      const registerUser = await userHelper.registerUser(req.body)
       const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
-      res.cookie('access_token', token.signToken(newuser._id), { httpOnly: true })
-      res.send({ ...existingUsers._doc, cookie: token.signToken(newuser._id) })
+      res.cookie('access_token', token.signToken(registerUser._id), { httpOnly: true })
+      res.send({ ...existingUsers._doc, cookie: token.signToken(registerUser._id) })
       next()
     }
   } catch (e) {
@@ -60,8 +58,7 @@ router.get('/verify/:id', async (req, res, next) => {
   const id = req.params.id
   try {
     await AuthService.verifyUser(id)
-    res.cookie('access_token', token.signToken(id), { httpOnly: true })
-    res.redirect(`/`)
+    res.send({ message: "SUCCESS" })
   } catch {
     res.status(400).send('verify failed')
   }
@@ -110,6 +107,9 @@ router.post('/verify', async (req, res) => {
     const send = await Mailer.sendVerificationMail(req.body)
     if (send) {
       res.send({ send: 'Email sent successfully.' })
+    }else{
+      res.send({ send: 'Failed to send an email.' })
+
     }
   } catch (error) {
     res.status(400).json({ message: error.message })
