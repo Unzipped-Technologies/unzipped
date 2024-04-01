@@ -1,34 +1,37 @@
-const user = require('../models/User')
 const message = require('../models/Message')
 const conversation = require('../models/Conversation')
-const mongoose = require('mongoose')
 
 const sendMessage = async (data, id) => {
   try {
-    const isConversation = await conversation.findById(data?.conversationId)
-    let getConversation = isConversation
+    let conversationData = null
+    conversationData = await conversation.findById(data?.conversationId)
 
     if (!data?.receiver?.userId) return undefined
 
-    if (!isConversation) {
-      getConversation = await conversation.create({
+    if (!conversationData) {
+      conversationData = await conversation.create({
         participants: [{ ...data.sender, userId: id }, { ...data.receiver }]
       })
     }
-    const msg = await message.create({
+
+    const newMessage = await message.create({
       sender: id,
       message: data?.message,
       attachment: data?.attachment,
-      conversationId: getConversation._id,
+      conversationId: conversationData._id,
       ...(data?.meetingId && { meetingId: data.meetingId })
     })
 
-    await conversation.findByIdAndUpdate(getConversation._id, {
-      messages: await message.find({ conversationId: getConversation._id })
-    })
+    if (conversationData?.messages?.length) {
+      conversationData.messages.push(newMessage?._id)
+    } else {
+      conversationData['messages'] = [newMessage?._id]
+    }
+
+    await conversationData.save()
 
     return await conversation
-      .findById(getConversation._id)
+      .findById(conversationData._id)
       .populate('messages')
       .populate({
         path: 'participants.userId',

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import theme from '../../ui/theme'
 
 const BlackCard = styled.div`
@@ -11,7 +11,7 @@ const BlackCard = styled.div`
   align-items: center;
   padding: 0px 40px;
   position: relative;
-  margin-bottom: ${({smallMargin}) => smallMargin ? '10px' : '24px'};
+  margin-bottom: ${({ smallMargin }) => (smallMargin ? '10px' : '24px')};
   @media (max-width: 681px) {
     justify-content: space-between;
     padding: 15px 20px;
@@ -89,9 +89,9 @@ const DarkText = styled.div`
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   padding: ${({ padding }) => (padding ? padding : '')};
   width: ${({ width }) => (width ? width : '96%')};
-  padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? smallPadding ? smallPadding : '20px' : '0px')};
+  padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? (smallPadding ? smallPadding : '20px') : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
-  text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
+  text-align: ${({ center, right, justify }) => (center ? 'center' : right ? 'right' : justify ? 'justify' : 'unset')};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '')};
   &:hover {
@@ -418,6 +418,40 @@ const CalanderParagraphStyled = styled.p`
   width: 87%;
 `
 
+const bounceAnimation = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`
+
+const TypingAnimation = styled.div`
+  width: 100%;
+  padding-left: 10px;
+  span {
+    width: 7px;
+    height: 7px;
+    background-color: #848891;
+    display: inline-block;
+    margin: 1px;
+    border-radius: 50%;
+    &:nth-child(1) {
+      animation: ${bounceAnimation} 1s infinite;
+    }
+    &:nth-child(2) {
+      animation: ${bounceAnimation} 1s infinite 0.2s;
+    }
+    &:nth-child(3) {
+      animation: ${bounceAnimation} 1s infinite 0.4s;
+    }
+  }
+`
+
 module.exports = {
   HeadingText,
   BlackCard,
@@ -438,6 +472,7 @@ module.exports = {
   Span,
   Box,
   PaddingLeft,
+  TypingAnimation,
   Title,
   ScheduleInterviewContainer,
   ScheduleInterviewButtonContainer,

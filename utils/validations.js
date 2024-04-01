@@ -409,7 +409,7 @@ class Validations {
 
   getMostRecentlyUpdated(array) {
     if (Array.isArray(array) && array.length > 0) {
-      return array.reduce((a, b) => (a.updatedAt > b.updatedAt ? a : b))
+      return array.reduce((a, b) => (a?.updatedAt > b?.updatedAt ? a : b))
     }
   }
 

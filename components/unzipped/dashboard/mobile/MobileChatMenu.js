@@ -1,19 +1,15 @@
 import React, { useState } from 'react'
-import { DarkText, Underline, WhiteCard } from './dashboard/style'
+import styled from 'styled-components'
 import { useRouter } from 'next/router'
 
-import Image from '../ui/Image'
-import Toggle from '../ui/Toggle'
-import { ValidationUtils, ConverterUtils } from '../../utils'
-import IconComponent from '../ui/icons/IconComponent'
-import styled from 'styled-components'
-import ScheduleMeetingModal from '../modals/scheduleMeeting'
+import Toggle from '../../../ui/Toggle'
+import IconComponent from '../../../ui/icons/IconComponent'
+import ScheduleMeetingModal from '../../../modals/scheduleMeeting'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
   color: ${({ color }) => (color ? color : 'black')};
-  background: ${({ background }) => (background ? background : '#fff')};
   padding: ${({ padding }) => (padding ? padding : '')};
   margin: ${({ margin }) => (margin ? margin : '')};
   text-align: ${({ align }) => (align ? align : '')};
@@ -30,9 +26,11 @@ const DropDown = styled.div`
   border: 0.5px solid #ccc;
   border-top: 0px;
 `
-const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleChatMute, userRole }) => {
+
+function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute, handleChatArchive, handleChatMute }) {
   const router = useRouter()
 
+  const [openList, setOpenList] = useState(false)
   const [scheduleInterviewModal, setScheduleInterviewModal] = useState(false)
   const handleMute = value => {
     handleChatMute(value)
@@ -44,36 +42,38 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
   const handleScheduleInterviewModal = () => {
     setScheduleInterviewModal(!scheduleInterviewModal)
   }
-  const [openList, setOpenList] = useState(false)
-  return (
-    <div
-      style={{
-        overflow: 'auto',
-        maxHeight: '70vh',
-        width: '333px'
-      }}>
-      <WhiteCard padding="10px 10px">
-        <Image
-          src={data?.userId?.profileImage}
-          radius="15px"
-          width="146.75px"
-          height="146.75px
-"
-        />
-        <DarkText center topMargin="15px" fontSize="28px" lineHeight="23px" color="#000000">
-          {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(data?.userId)}`)}
-        </DarkText>
 
+  return (
+    <div style={{ backgroundColor: 'white', color: 'black' }}>
+      <div
+        className="py-3 px-2 d-flex align-items-center"
+        style={{
+          boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.25)',
+          gap: '11px',
+          background: 'white',
+          width: '-webkit-fill-available',
+          zIndex: '100'
+        }}>
+        <span
+          onClick={() => {
+            handleFilterOpenClose(false)
+          }}
+          style={{ cursor: 'pointer' }}>
+          <IconComponent name="backArrow" width="20" height="20" viewBox="0 0 20 20" fill="black" />
+        </span>
+        <span style={{ fontWeight: '500', fontSize: '18px' }}>Messages</span>
+      </div>
+      <div style={{ padding: '5px' }}>
         <div className="w-100">
-          {userRole === 2 || userRole === 0 ? (
+          {role === 2 || role === 0 ? (
             <P
               fontSize="14px"
               fontWeight="600"
               lineHeight="19.5px"
               color="#000000"
-              padding="25px 0 18px 0"
+              padding="25px 0px 18px 10px"
               margin="7px 0 0 0"
-              borderBottom="3px solid #EFF1F4"
+              borderBottom="2px solid #EFF1F4"
               className="px-1"
               onClick={() => {
                 router.push('/hire')
@@ -86,9 +86,9 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
               fontWeight="600"
               lineHeight="19.5px"
               color="#000000"
-              padding="25px 0 18px 0"
+              padding="25px 0px 18px 10px"
               margin="7px 0 0 0"
-              borderBottom="3px solid #EFF1F4"
+              borderBottom="2px solid #EFF1F4"
               className="px-1"
               onClick={() => {
                 router.push('/projects')
@@ -96,15 +96,15 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
               Apply for Position
             </P>
           )}
-          {userRole === 2 ||
-            (userRole === 0 && (
+          {role === 2 ||
+            (role === 0 && (
               <P
                 fontSize="14px"
                 fontWeight="600"
                 lineHeight="19.5px"
                 color="#000000"
-                padding="12px 0 18px 0"
-                borderBottom="3px solid #EFF1F4"
+                padding="25px 0px 18px 10px"
+                borderBottom="2px solid #EFF1F4"
                 margin="0"
                 className="px-1"
                 onClick={handleScheduleInterviewModal}>
@@ -114,7 +114,7 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
           <div
             onClick={() => setOpenList(!openList)}
             className="d-flex justify-content-between align-items-center pt-4"
-            style={{ padding: '12px 0 18px 0', border: '1px solid #ccc', borderBottom: '3px solid #EFF1F4' }}>
+            style={{ padding: '12px 0 18px 0', borderBottom: '3px solid #EFF1F4' }}>
             <P
               fontSize="14px"
               fontWeight="600"
@@ -221,28 +221,30 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
           </div>
         </DropDown>
 
-        <Toggle
-          className="mt-3"
-          toggled={isArchived}
-          handleSetToggle={handleArchive}
-          title="Archive"
-          sideText="Hide chat from your active list."
-        />
-        <Toggle
-          toggled={isMute}
-          handleSetToggle={handleMute}
-          title="Mute"
-          sideText="Turn off this chat's notifications."
-        />
-        <ScheduleMeetingModal
-          scheduleInterviewModal={scheduleInterviewModal}
-          handleScheduleInterviewModal={handleScheduleInterviewModal}
-          receiver={data}
-          setScheduleInterviewModal={setScheduleInterviewModal}
-        />
-      </WhiteCard>
+        <div style={{ padding: '10px', marginTop: '20px' }}>
+          <Toggle
+            className="mt-3"
+            toggled={isArchived}
+            handleSetToggle={handleArchive}
+            title="Archive"
+            sideText="Hide chat from your active list."
+          />
+          <Toggle
+            toggled={isMute}
+            handleSetToggle={handleMute}
+            title="Mute"
+            sideText="Turn off this chat's notifications."
+          />
+          <ScheduleMeetingModal
+            scheduleInterviewModal={scheduleInterviewModal}
+            handleScheduleInterviewModal={handleScheduleInterviewModal}
+            receiver={data}
+            setScheduleInterviewModal={setScheduleInterviewModal}
+          />
+        </div>
+      </div>
     </div>
   )
 }
 
-export default ProfileContainer
+export default MobileChatMenu

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { DarkText, Absolute, Span } from './dashboard/style'
+import styled from 'styled-components'
+import SimpleBar from 'simplebar-react'
+
+import theme from '../ui/theme'
 import Image from '../../components/ui/Image'
 import SearchBar from '../../components/ui/SearchBar'
 import { ValidationUtils, ConverterUtils } from '../../utils'
-import SimpleBar from 'simplebar-react'
-import styled from 'styled-components'
-import theme from '../ui/theme'
+import { DarkText, Span, TypingAnimation } from './dashboard/style'
 
 const Div = styled.div`
   width: 95%;
@@ -152,22 +153,47 @@ const ItemCard = styled.div`
   }
 `
 
-const ConversationContainer = ({ conversations = [], userId, userEmail, openConversation, isMobile }) => {
-  const [conversation, setConversation] = useState([])
+const ConversationContainer = ({
+  conversations = [],
+  userId,
+  userEmail,
+  openConversation,
+  isMobile,
+  selectedConversation,
+  socket
+}) => {
+  const [conversation, setConversation] = useState(conversations)
   const [selectedItem, setSelectedItem] = useState(null)
   const [archivedChatsShow, setArchivedChatsShow] = useState(false)
+  const [typing, setTyping] = useState({})
 
   useEffect(() => {
     setConversation(conversations)
   }, [conversations])
 
   useEffect(() => {
-    if (conversations.length) {
+    socket.on('typing', typingData => {
+      setTyping(typingData)
+    })
+  })
+
+  useEffect(() => {
+    socket.on('stop-typing', typingData => {
+      setTyping(typingData)
+    })
+  })
+
+  useEffect(() => {
+    if (conversations.length && !selectedConversation) {
       const conversationId = conversations[0]?._id
       openConversation(conversationId)
       setSelectedItem(conversationId)
+    } else if (selectedConversation?._id) {
+      const conversationId = conversations?.find(conversation => conversation?._id === selectedConversation?._id)?._id
+      openConversation(conversationId)
+      setSelectedItem(conversationId)
     }
-  }, [conversations])
+  }, [])
 
   const handleSearch = e => {
     const filteredConversations = conversations.filter(convo => {
@@ -179,6 +205,7 @@ const ConversationContainer = ({ conversations = [], userId, userEmail, openConv
         return participant.userId._id !== userId && searchChars.every(char => fullName.includes(char))
       })
     })
+
     setConversation(filteredConversations)
     if (e === '' || e === undefined || e === null || !e) {
       setConversation(conversations)
@@ -194,7 +221,6 @@ const ConversationContainer = ({ conversations = [], userId, userEmail, openConv
       padding="5px"
       overflow="hidden"
       height="63px"
-      // unset
       onClick={() => {
         openConversation(_id)
         setSelectedItem(_id)
@@ -225,9 +251,34 @@ const ConversationContainer = ({ conversations = [], userId, userEmail, openConv
               {ValidationUtils.formatDateWithDate(updatedAt)}
             </DarkText>
           </span>
-          <DarkText fontSize="11px" color="#000000" topMargin="10px" marginLeft="10px" textOverflow="ellipsis" noMargin>
-            {ValidationUtils.getMostRecentlyUpdated(messages)?.message}
-          </DarkText>
+          <span
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              width: '100%',
+              alignItems: 'flex-start',
+              padding: '0px !important',
+              margin: '15px 0px 0px 10px',
+              height: '23px',
+              float: 'left'
+            }}>
+            <DarkText width="200px" fontSize="11px" color="#000000" noMargin>
+              {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
+            </DarkText>
+
+            {typing?.isTyping &&
+              typing?.receiverId === sender?.userId?._id &&
+              typing?.conversationId === _id &&
+              selectedConversation?._id !== typing?.conversationId && (
+                <DarkText center noMargin width="55px">
+                  <TypingAnimation>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </TypingAnimation>
+                </DarkText>
+              )}
+          </span>
         </ItemCard>
         {+sender?.unreadCount > 0 && (
           <span
@@ -254,8 +305,8 @@ const ConversationContainer = ({ conversations = [], userId, userEmail, openConv
     conversation
       .filter(item => item?.isArchived === (type === 'archived'))
       .map((item, index) => {
-        const receiver = item?.participants?.find(e => e.userId?.email !== userEmail)
-        const sender = item?.participants?.find(e => e.userId?.email === userEmail)
+        const receiver = item?.participants?.find(e => e?.userId?.email !== userEmail)
+        const sender = item?.participants?.find(e => e?.userId?.email === userEmail)
         return <ConversationCard receiver={receiver} sender={sender} item={item} index={index} />
       })
 

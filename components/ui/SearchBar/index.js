@@ -27,6 +27,7 @@ const TitleBlock = styled.div`
 
 const Block = styled.div`
   width: ${({ $width }) => ($width ? $width : '80%')};
+  height: ${({ $height }) => ($height ? $height : '35px')};
   display: flex;
   flex-flow: row;
   justify-content: space-between;
@@ -52,8 +53,11 @@ const SearchBar = ({
   margin,
   alignItems,
   width,
+  height,
   handleSearch,
   setFilter,
+  border,
+  borderRadius,
   searchButton
 }) => {
   return (
@@ -65,13 +69,16 @@ const SearchBar = ({
           </TitleText>
         </TitleBlock>
       )}
-      <Block $width={width}>
+      <Block $width={width} $height={height}>
         <Search
           placeHolderColor={placeHolderColor}
           handleSearch={handleSearch}
           searchButton={searchButton && searchButton}
           width="100%"
+          height={height}
           keys={['name']}
+          border={border}
+          borderRadius={borderRadius}
           onChange={filteredResults => {
             setFilter(filteredResults)
           }}

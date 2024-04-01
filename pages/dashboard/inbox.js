@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import router from 'next/router'
-import { connect, useSelector } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
+import { bindActionCreators } from 'redux'
+
 import Nav from '../../components/unzipped/header'
-import ConversationContainer from '../../components/unzipped/ConversationContainer'
+import socket from '../../components/sockets/index'
+import { parseCookies } from '../../services/cookieHelper'
 import MessageContainer from '../../components/unzipped/MessageContainer'
+import MobileInbox from '../../components/unzipped/dashboard/mobile/MobileInbox'
+import ConversationContainer from '../../components/unzipped/ConversationContainer'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 import {
   getConversationList,
   selectConversation,
   getFreelancerById,
   createTempFile,
   updateChatStatus,
-  handleUnreadMessages
+  handleUnreadMessages,
+  setCountToZero
 } from '../../redux/actions'
-import { parseCookies } from '../../services/cookieHelper'
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
-import socket from '../../components/sockets/index'
 
 const MobileDisplayBox = styled.div`
   position: relative;
@@ -60,7 +63,8 @@ const Inbox = ({
   selectConversation,
   createTempFile,
   updateChatStatus,
-  handleUnreadMessages
+  handleUnreadMessages,
+  setCountToZero
 }) => {
   const [onlineUsers, setOnlineUsers] = useState([])
   const access = token.access_token || cookie
@@ -94,14 +98,20 @@ const Inbox = ({
     }
   }, [])
 
+  useEffect(async () => {
+    if (selectedConversation && conversationId) {
+      setUnreadToZero(conversationId, user?._id)
+    }
+  }, [selectedConversation])
+
   const createNewFile = data => {
     createTempFile(data, access)
   }
 
-  const openConversation = id => {
+  const openConversation = async id => {
     setConversationId(id)
     setMessageLimit(10)
-    selectConversation(id, access, 10)
+    await selectConversation(id, 10)
   }
 
   const handleMute = status => {
@@ -117,7 +127,7 @@ const Inbox = ({
 
   const handleMessagesOnScroll = () => {
     setMessageLimit(prevLimit => prevLimit + 10)
-    selectConversation(conversationId, access, +messageLimit + 10)
+    selectConversation(conversationId, +messageLimit + 10)
   }
 
   useEffect(() => {
@@ -127,6 +137,16 @@ const Inbox = ({
 
     return () => {
       socket.off('refreshConversationList')
+    }
+  }, [])
+
+  useEffect(() => {
+    socket.on('chat unread', response => {
+      setCountToZero(response)
+    })
+
+    return () => {
+      socket.off('chat unread')
     }
   }, [])
 
@@ -161,37 +181,62 @@ const Inbox = ({
     }
   }, [])
 
+  const setUnreadToZero = (conversationId, receiverId) => {
+    socket.emit('chat unread', {
+      conversationId: conversationId,
+      receiverId: receiverId
+    })
+  }
+
   return (
     <Page>
-      <Nav isSubMenu marginBottom={windowSize} />
-      <Container>
-        <ConversationContainer
+      {window.innerWidth >= 680 ? (
+        <>
+          <Nav isSubMenu marginBottom={windowSize} />
+
+          <Container>
+            <ConversationContainer
+              isMobile={isMobile}
+              selectedConversation={selectedConversation}
+              conversations={conversations}
+              userEmail={user.email}
+              userId={user._id}
+              openConversation={openConversation}
+              socket={socket}
+            />
+            <MobileContainer>
+              <MessageContainer
+                selectedConversationId={conversationId}
+                data={selectedConversation}
+                setUnreadToZero={setUnreadToZero}
+                userEmail={user.email}
+                userName={`${user.FirstName} ${user.LastName}` ?? user?.FullName}
+                userId={user._id}
+                userRole={user?.role}
+                createTempFile={createNewFile}
+                handleChatArchive={handleArchive}
+                handleChatMute={handleMute}
+                access={access}
+                socket={socket}
+                onlineUsers={onlineUsers}
+                handleUnreadCount={handleUnreadCount}
+                messagesCount={messagesCount}
+                messageLimit={messageLimit}
+                handleMessagesOnScroll={handleMessagesOnScroll}
+                isMobile={isMobile}
+              />
+            </MobileContainer>
+          </Container>
+        </>
+      ) : (
+        <MobileInbox
           isMobile={isMobile}
           conversations={conversations}
           userEmail={user.email}
           userId={user._id}
           openConversation={openConversation}
         />
-        <MobileContainer>
-          <MessageContainer
-            data={selectedConversation}
-            userEmail={user.email}
-            userId={user._id}
-            userRole={user?.role}
-            createTempFile={createNewFile}
-            handleChatArchive={handleArchive}
-            handleChatMute={handleMute}
-            access={access}
-            socket={socket}
-            onlineUsers={onlineUsers}
-            handleUnreadCount={handleUnreadCount}
-            messagesCount={messagesCount}
-            messageLimit={messageLimit}
-            handleMessagesOnScroll={handleMessagesOnScroll}
-            isMobile={isMobile}
-          />
-        </MobileContainer>
-      </Container>
+      )}
       <MobileDisplayBox>
         <MobileFreelancerFooter defaultSelected="Messages" />
       </MobileDisplayBox>
@@ -224,7 +269,8 @@ const mapDispatchToProps = dispatch => {
     getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
     createTempFile: bindActionCreators(createTempFile, dispatch),
     updateChatStatus: bindActionCreators(updateChatStatus, dispatch),
-    handleUnreadMessages: bindActionCreators(handleUnreadMessages, dispatch)
+    handleUnreadMessages: bindActionCreators(handleUnreadMessages, dispatch),
+    setCountToZero: bindActionCreators(setCountToZero, dispatch)
   }
 }
 

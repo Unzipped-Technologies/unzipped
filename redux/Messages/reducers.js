@@ -4,7 +4,8 @@ import {
   SELECT_CONVERSATION,
   MESSAGE_ERROR,
   UPDATE_CONVERSATION_STATUS,
-  UPDATE_CONVERSATION_MESSAGE
+  UPDATE_CONVERSATION_MESSAGE,
+  SET_COUNT_ZERO
 } from './constants'
 
 const INIT_STATE = {
@@ -27,10 +28,10 @@ const Messages = (state = INIT_STATE, action) => {
     case GET_CONVERSATIONS:
       const convoList = action.payload.sort((a, b) => a?.updatedAt - b?.updatedAt)
       let index = 0
-      if (state.selectedConversation) {
-        index = convoList.map(e => e._id).indexOf(state.selectedConversation._id)
-      }
-      convoList[index] = { ...action.payload[0], isSelected: true }
+      // if (state.selectedConversation) {
+      //   index = convoList.map(e => e._id).indexOf(state.selectedConversation._id)
+      // }
+      // convoList[index] = { ...action.payload[0], isSelected: true }
       return {
         ...state,
         loading: false,
@@ -109,7 +110,32 @@ const Messages = (state = INIT_STATE, action) => {
         }
         return conversation
       })
+
       return { ...state, conversations: updatedMessages }
+
+    case SET_COUNT_ZERO:
+      const newConversations = state.conversations.map(conversation => {
+        if (conversation._id === action.payload.conversationid) {
+          return {
+            ...conversation,
+            participants: conversation?.participants?.map(participant => {
+              if (participant?.userId?._id === action.payload?.receiverId) {
+                return {
+                  ...participant,
+                  unreadCount: 0
+                }
+              } else {
+                return {
+                  ...participant
+                }
+              }
+            })
+          }
+        }
+        return conversation
+      })
+      return { ...state, conversations: newConversations }
+
     default:
       return state
   }
