@@ -262,7 +262,7 @@ const ConversationContainer = ({
               height: '23px',
               float: 'left'
             }}>
-            <DarkText width="200px" fontSize="11px" color="#000000" noMargin>
+            <DarkText width="200px" fontSize="11px" color="#000000" noMargin marginLeft="5px">
               {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
             </DarkText>
 
