@@ -171,4 +171,20 @@ router.post('/verify-identity', requireLogin, async (req, res) => {
   }
 });
 
+router.post('/identity-confirmed', async (req, res) => {
+  try {
+    const { type } = req.body;
+    if (type && type === 'identity.verification_session.verified') {
+
+      const { metadata: { customer }, status } = req.body.data.object;
+
+      const isStripeIdentityVerified = await billingHelper.confirmVerificationSession(customer, status)
+      res.status(200).json(isStripeIdentityVerified);
+    }
+
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 module.exports = router;
