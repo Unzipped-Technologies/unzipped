@@ -329,7 +329,6 @@ export const SimpleText = styled.span`
 export const Span = styled.span`
   display: flex;
   flex-flow: row;
-  position: relative;
   font-family: 'Roboto';
   font-style: normal;
   font-weight: ${({ bold }) => (bold ? 600 : 400)};

@@ -75,6 +75,8 @@ const Inbox = ({
   })
   const [messageLimit, setMessageLimit] = useState(0)
   const [conversationId, setConversationId] = useState(selectedConversationId)
+  const [windowSize, setWindowsize] = useState('126px')
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     if (!access) {
@@ -97,38 +99,6 @@ const Inbox = ({
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
-
-  useEffect(async () => {
-    if (selectedConversation && conversationId) {
-      setUnreadToZero(conversationId, user?._id)
-    }
-  }, [selectedConversation])
-
-  const createNewFile = data => {
-    createTempFile(data, access)
-  }
-
-  const openConversation = async id => {
-    setConversationId(id)
-    setMessageLimit(10)
-    await selectConversation(id, 10)
-  }
-
-  const handleMute = status => {
-    updateChatStatus('isMute', status, selectedConversation._id, access)
-  }
-  const handleArchive = async status => {
-    updateChatStatus('isArchived', status, selectedConversation._id, access)
-  }
-
-  const handleUnreadCount = selectedConversation => {
-    handleUnreadMessages(selectedConversation)
-  }
-
-  const handleMessagesOnScroll = () => {
-    setMessageLimit(prevLimit => prevLimit + 10)
-    selectConversation(conversationId, +messageLimit + 10)
-  }
 
   useEffect(() => {
     socket.on('refreshConversationList', () => {
@@ -158,8 +128,31 @@ const Inbox = ({
     }
   }, [conversations])
 
-  const [windowSize, setWindowsize] = useState('126px')
-  const [isMobile, setIsMobile] = useState(false)
+  const createNewFile = data => {
+    createTempFile(data, access)
+  }
+
+  const openConversation = async id => {
+    setConversationId(id)
+    setMessageLimit(10)
+    await selectConversation(id, 10)
+  }
+
+  const handleMute = status => {
+    updateChatStatus('isMute', status, selectedConversation._id, access)
+  }
+  const handleArchive = async status => {
+    updateChatStatus('isArchived', status, selectedConversation._id, access)
+  }
+
+  const handleUnreadCount = selectedConversation => {
+    handleUnreadMessages(selectedConversation)
+  }
+
+  const handleMessagesOnScroll = () => {
+    setMessageLimit(prevLimit => prevLimit + 10)
+    selectConversation(conversationId, +messageLimit + 10)
+  }
 
   const handleResize = () => {
     let windowSize = window.innerWidth <= 600 ? '85px' : '125px'
@@ -187,7 +180,6 @@ const Inbox = ({
       receiverId: receiverId
     })
   }
-
   return (
     <Page>
       {window.innerWidth >= 680 ? (
@@ -230,11 +222,11 @@ const Inbox = ({
         </>
       ) : (
         <MobileInbox
-          isMobile={isMobile}
           conversations={conversations}
-          userEmail={user.email}
           userId={user._id}
+          userEmail={user.email}
           openConversation={openConversation}
+          handleUnreadCount={handleUnreadCount}
         />
       )}
       <MobileDisplayBox>

@@ -290,8 +290,14 @@ const MessageContainer = ({
                             <DarkText small noMargin color="#fff">
                               {e?.message}
                             </DarkText>
-                            <Absolute right="-65px" bottom="5px" width="100px">
-                              <DarkText noMargin color="#fff" fontSize="12px" topPadding="15px">
+                            <Absolute bottom="5px" width="100px">
+                              <DarkText
+                                noMargin
+                                color="#fff"
+                                fontSize="12px"
+                                right
+                                topPadding="15px"
+                                padding="0px 0px 0px 0px">
                                 {ValidationUtils.getTimeFormated(e?.updatedAt)}
                               </DarkText>
                             </Absolute>

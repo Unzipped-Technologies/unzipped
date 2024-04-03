@@ -131,6 +131,7 @@ const Chat = ({
 
   useEffect(async () => {
     if (id) await openConversation()
+    handleLastMessageScroll()
   }, [])
 
   useEffect(() => {
@@ -215,7 +216,7 @@ const Chat = ({
   }
 
   const handleLastMessageScroll = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' })
+    messagesEndRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' })
   }
 
   const handleEnterKey = e => {

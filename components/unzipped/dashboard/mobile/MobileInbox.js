@@ -2,15 +2,43 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import SimpleBar from 'simplebar-react'
 import { useRouter } from 'next/router'
-
-import { DarkText } from '../style'
+import { DarkText, Span } from '../style'
 import Image from '../../../ui/Image'
 import theme from '../../../ui/theme'
 import BackHeader from '../../BackHeader'
 import SearchBar from '../../../ui/SearchBar'
 import IconComponent from '../../../ui/icons/IconComponent'
 import { ValidationUtils, ConverterUtils } from '../../../../utils'
+import socket from '../../../sockets/index'
 
+const DIV = styled.div`
+  // Display
+  display: ${({ display }) => (display ? display : 'block')};
+  align-items: ${({ alignItems }) => (alignItems ? alignItems : 'stretch')};
+  justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : 'flex-start')};
+  flex-direction: ${({ flexDirection }) => (flexDirection ? flexDirection : 'row')};
+  flex-flow: ${({ position }) => (position ? position : 'row nowrap')};
+  flex: ${({ flex }) => (flex ? flex : '0 1 auto')};
+  box-sizing: ${({ boxSizing }) => (boxSizing ? boxSizing : 'content-box')};
+  // Style
+  width: ${({ width }) => (width ? width : 'auto')};
+  min-width: ${({ minWidth }) => (minWidth ? minWidth : 'auto')};
+  height: ${({ height }) => (height ? height : 'auto')};
+  position: ${({ position }) => (position ? position : 'static')};
+  background: ${({ background }) => (background ? background : 'transparent')};
+  border: ${({ border }) => (border ? border : '#d8d8d8')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
+`
 const Extra = styled.div`
   height: 150px;
 `
@@ -56,17 +84,45 @@ const WhiteCard = styled.div`
   overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
 `
 
-const MobileInbox = ({ conversations = [], userId, userEmail, openConversation, isMobile }) => {
+const UnreadCount = styled.span`
+  color: white;
+  background: green;
+  padding: 3px 6px;
+  margin-top: 5px;
+  border-radius: 10px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  width: maxContent;
+  min-width: maxContent;
+  font-size: 14px;
+  position: absolute;
+  float: left;
+  top: 50%;
+  right: 6%;
+  transform: translate(50%, -50%);
+`
+
+const MobileInbox = ({ conversations, userId, userEmail, openConversation, handleUnreadCount }) => {
   const router = useRouter()
 
   const [conversation, setConversation] = useState(conversations)
   const [archivedChatsShow, setArchivedChatsShow] = useState(false)
 
   useEffect(() => {
-    setConversation(conversations)
-  }, [])
+    socket.on('chat message', message => {
+      handleUnreadCount(message)
+    })
+
+    return () => {
+      socket.off('chat message')
+      // socket.off('typing')
+      // socket.off('stop-typing')
+    }
+  })
 
   useEffect(() => {
+    setConversation(conversations)
     if (conversations.length) {
       const conversationId = conversations[0]?._id
       openConversation(conversationId)
@@ -104,8 +160,31 @@ const MobileInbox = ({ conversations = [], userId, userEmail, openConversation, 
       onClick={() => {
         router.push(`/dashboard/chat/${_id}`)
       }}>
-      <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-      <div>
+      <Span>
+        <DIV display="flex" justifyContent="space-between">
+          <DIV display="flex">
+            <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
+            <DIV width="200px">
+              <DarkText fontSize="16px" style={{ height: '15px' }} marginLeft="10px" lineHeight="23px" color="#000000">
+                {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
+              </DarkText>
+              <DarkText fontSize="11px" color="#000000" noMargin marginLeft="10px">
+                {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 40)}
+              </DarkText>
+            </DIV>
+          </DIV>
+          <div>
+            <DarkText padding="5px 0px 0px 0px" width="130px" center fontSize="11px" lighter noMargin color="#000000">
+              {ValidationUtils.formatDateWithDate(updatedAt)}
+            </DarkText>
+          </div>
+          {+sender?.unreadCount > 0 && (
+            <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
+          )}
+        </DIV>
+      </Span>
+      {/* <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" /> */}
+      {/* <div>
         <span
           style={{
             display: 'flex',
@@ -148,7 +227,7 @@ const MobileInbox = ({ conversations = [], userId, userEmail, openConversation, 
           }}>
           {sender?.unreadCount}
         </span>
-      )}
+      )} */}
     </WhiteCard>
   )
 
@@ -158,7 +237,9 @@ const MobileInbox = ({ conversations = [], userId, userEmail, openConversation, 
       .map((item, index) => {
         const receiver = item?.participants?.find(e => e.userId?.email !== userEmail)
         const sender = item?.participants?.find(e => e.userId?.email === userEmail)
-        return <ConversationCard receiver={receiver} sender={sender} item={item} index={index} />
+        return (
+          <ConversationCard receiver={receiver} sender={sender} item={item} index={index} key={item?._id ?? index} />
+        )
       })
 
   return (
@@ -195,4 +276,5 @@ const MobileInbox = ({ conversations = [], userId, userEmail, openConversation, 
     </>
   )
 }
+
 export default MobileInbox

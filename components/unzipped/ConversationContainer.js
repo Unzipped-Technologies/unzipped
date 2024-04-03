@@ -117,40 +117,52 @@ const WhiteCard = styled.div`
   }
 `
 
-const ItemCard = styled.div`
-  padding-left: ${({ paddingLeft }) => (paddingLeft ? `${paddingLeft} !important` : '0px')};
-  border-left: ${({ borderLeft }) => (borderLeft ? `4px solid ${borderLeft} !important` : '0px')};
-  background: ${({ background }) => (background ? background : '#fff')};
-  border: 1px ${({ borderColor }) => (borderColor ? borderColor : '#d8d8d8')} solid;
-  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '5px')};
-  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : '20vw')};
-  width: ${({ width }) => (width ? width : '20vw')};
-  min-width: ${({ minWidth }) => (minWidth ? minWidth : '275px')};
+const DIV = styled.div`
+  // Display
+  display: ${({ display }) => (display ? display : 'block')};
+  align-items: ${({ alignItems }) => (alignItems ? alignItems : 'stretch')};
+  justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : 'flex-start')};
+  flex-direction: ${({ flexDirection }) => (flexDirection ? flexDirection : 'row')};
+  flex-flow: ${({ position }) => (position ? position : 'row nowrap')};
+  flex: ${({ flex }) => (flex ? flex : '0 1 auto')};
+  box-sizing: ${({ boxSizing }) => (boxSizing ? boxSizing : 'content-box')};
+  // Style
+  width: ${({ width }) => (width ? width : 'auto')};
+  min-width: ${({ minWidth }) => (minWidth ? minWidth : 'auto')};
+  height: ${({ height }) => (height ? height : 'auto')};
+  position: ${({ position }) => (position ? position : 'static')};
+  background: ${({ background }) => (background ? background : 'transparent')};
+  border: ${({ border }) => (border ? border : '#d8d8d8')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
+`
+
+const UnreadCount = styled.span`
+  color: white;
+  background: green;
+  padding: 3px 6px;
+  margin-top: 5px;
+  border-radius: 10px;
+  height: 16px;
   display: flex;
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
-  flex-flow: ${({ row }) => (row ? 'row' : 'column')};
-  min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-    size === 'large'
-      ? '151px'
-      : size === 'extraLarge'
-      ? '370px'
-      : unset
-      ? 'unset'
-      : cardHeightDesktop
-      ? '262px'
-      : height
-      ? height
-      : '63px'};
-  align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
-  justify-content: ${({ center, justifyEnd, justifyStart }) =>
-    center ? 'center' : justifyEnd ? 'flex-end' : justifyStart ? 'flex-start' : 'normal'};
-  padding: ${({ padding }) => (padding ? padding : '20px 20px')};
-  position: relative;
-  box-shadow: ${({ shadow }) => (shadow ? shadow : 'none')};
-  margin-bottom: ${({ noMargin, half }) => (noMargin ? '0px' : half ? '12px' : '24px')};
-  @media (max-width: 600px) {
-    padding: 10px 0px;
-  }
+  align-items: center;
+  width: maxContent;
+  min-width: maxContent;
+  font-size: 14px;
+  position: absolute;
+  float: left;
+  top: 50%;
+  right: 4%;
+  transform: translate(50%, -50%);
 `
 
 const ConversationContainer = ({
@@ -215,57 +227,37 @@ const ConversationContainer = ({
   const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) => (
     <WhiteCard
       key={index}
-      background={_id === selectedItem ? '#F0F0F0' : '#fff'}
+      background={_id === selectedItem ? '#BABABA' : '#fff'}
       noMargin
       minWidth="100%"
       padding="5px"
       overflow="hidden"
       height="63px"
+      style={{
+        border: '0.25px solid #000000'
+      }}
       onClick={() => {
         openConversation(_id)
         setSelectedItem(_id)
       }}>
       <Span>
-        <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-        <ItemCard
-          background={_id === selectedItem ? '#F0F0F0' : '#fff'}
-          borderColor={'transparent'}
-          noMargin
-          padding="0px"
-          maxWidth="80%"
-          minWidth="150px"
-          justifyStart>
-          <span
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              padding: '0px !important',
-              margin: '5px 0px 0px 0px',
-              height: '23px'
-            }}>
-            <DarkText width="300px" fontSize="16px" marginLeft="75px" lineHeight="23px" color="#000000">
-              {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
-            </DarkText>
-            <DarkText padding="5px 10px 0px 0px" center fontSize="11px" lighter noMargin color="#000000">
+        <DIV display="flex" justifyContent="space-between">
+          <DIV display="flex">
+            <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
+            <DIV width="200px">
+              <DarkText fontSize="16px" style={{ height: '20px' }} marginLeft="10px" lineHeight="23px" color="#000000">
+                {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
+              </DarkText>
+              <DarkText fontSize="11px" color="#000000" noMargin marginLeft="10px">
+                {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
+              </DarkText>
+            </DIV>
+          </DIV>
+
+          <div>
+            <DarkText padding="5px 0px 0px 05px" width="85px" center fontSize="11px" lighter noMargin color="#000000">
               {ValidationUtils.formatDateWithDate(updatedAt)}
             </DarkText>
-          </span>
-          <span
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              width: '100%',
-              alignItems: 'flex-start',
-              padding: '0px !important',
-              margin: '15px 0px 0px 10px',
-              height: '23px',
-              float: 'left'
-            }}>
-            <DarkText width="200px" fontSize="11px" color="#000000" noMargin marginLeft="5px">
-              {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
-            </DarkText>
-
             {typing?.isTyping &&
               typing?.receiverId === sender?.userId?._id &&
               typing?.conversationId === _id &&
@@ -278,25 +270,11 @@ const ConversationContainer = ({
                   </TypingAnimation>
                 </DarkText>
               )}
-          </span>
-        </ItemCard>
-        {+sender?.unreadCount > 0 && (
-          <span
-            style={{
-              color: 'white',
-              background: 'green',
-              padding: '3px 6px',
-              marginTop: '5px',
-              borderRadius: '10px',
-              height: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              width: 'maxContent',
-              fontSize: '14px'
-            }}>
-            {sender?.unreadCount}
-          </span>
-        )}
+          </div>
+          {+sender?.unreadCount > 0 && (
+            <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
+          )}
+        </DIV>
       </Span>
     </WhiteCard>
   )
