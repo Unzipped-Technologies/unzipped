@@ -46,13 +46,13 @@ const TaskForm = ({
   const [tagShow, setTagShow] = useState(false)
   const [comments, setComments] = useState([])
   const [tag, setTag] = useState('')
-  const [error, setError] = useState('')
   const [newComment, setComment] = useState({
     comment: '',
     img: '',
     taskId: taskDetail?._id
   })
   const [commentId, setCommentId] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     setComments(taskDetail?.comments)
@@ -219,35 +219,48 @@ const TaskForm = ({
       [`${field}`]: value
     })
   }
-
-  const onSubmit = async () => {
-    if (newComment?.comment) {
-      const comments = [
-        {
-          comment: newComment.comment,
-          userId: userId
-        }
-      ]
-
-      await updateCreateStoryForm({
-        comments: comments
-      })
+  const validateForm = () => {
+    if (!taskForm?.taskName) {
+      setValidationErrors('Task Name is required.')
+      return false
     }
-    if (selectedTaskId) {
-      const response = await updateTask(selectedTaskId, taskForm)
-      if (response?.status === 200) {
-        await onHide()
-        await getDepartmentById(departmentData?._id)
-      } else {
-        setError(response?.data?.message ?? 'Something went wrong')
+    if (!taskForm?.assignee || taskForm?.assignee === 'unassigned') {
+      setValidationErrors('Assignee is required.')
+      return false
+    }
+    setValidationErrors('')
+    return true
+  }
+  const onSubmit = async () => {
+    if (validateForm()) {
+      if (newComment?.comment) {
+        const comments = [
+          {
+            comment: newComment.comment,
+            userId: userId
+          }
+        ]
+
+        await updateCreateStoryForm({
+          comments: comments
+        })
       }
-    } else {
-      const response = await createTask(taskForm)
-      if (response?.status === 200) {
-        await onHide()
-        await getDepartmentById(departmentData?._id)
+      if (selectedTaskId) {
+        const response = await updateTask(selectedTaskId, taskForm)
+        if (response?.status === 200) {
+          await onHide()
+          await getDepartmentById(departmentData?._id)
+        } else {
+          setValidationErrors(response?.data?.message ?? 'Something went wrong')
+        }
       } else {
-        setError(response?.data?.message ?? 'Something went wrong')
+        const response = await createTask(taskForm)
+        if (response?.status === 200) {
+          await onHide()
+          await getDepartmentById(departmentData?._id)
+        } else {
+          setValidationErrors(response?.data?.message ?? 'Something went wrong')
+        }
       }
     }
   }
@@ -281,6 +294,10 @@ const TaskForm = ({
     updateForm('tags', filteredTags)
     taskDetail.tags = filteredTags
     if (selectedTaskId && taskDetail.tags?.includes(tagName)) await updateTask(selectedTaskId, taskDetail)
+  }
+
+  const setValidationErrors = error => {
+    setError(error)
   }
 
   return (
@@ -346,25 +363,27 @@ const TaskForm = ({
               {taskDetail?.ticketCode?.toLowerCase()}
             </TitleText>
           )}
-
-          <FormField
-            zIndexUnset
-            placeholder="Task Name"
-            fieldType="input"
-            name="taskName"
-            fontSize="14px"
-            borderColor="red"
-            disableBorder={!editMode}
-            disabled={userRole === 1}
-            noMargin
-            width="500px"
-            height="36px !important"
-            onChange={e => updateForm('taskName', e?.target?.value)}
-            value={taskForm?.taskName}
-            clickType="taskName"
-            onClick={enableEditMode}
-            onUpdate={() => {}}
-          />
+          <div>
+            <FormField
+              zIndexUnset
+              placeholder="Task Name"
+              fieldType="input"
+              name="taskName"
+              fontSize="14px"
+              borderColor="red"
+              disableBorder={!editMode}
+              disabled={userRole === 1}
+              noMargin
+              width="500px"
+              height="36px !important"
+              onChange={e => updateForm('taskName', e?.target?.value)}
+              value={taskForm?.taskName}
+              clickType="taskName"
+              onClick={enableEditMode}
+              onUpdate={() => {}}
+              onBlur={validateForm}
+            />
+          </div>
         </DIV>
         <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
           <DIV display="flex" width="40%">
@@ -377,30 +396,33 @@ const TaskForm = ({
               <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
             </DIV>
             {editMode ? (
-              <FormField
-                mobile
-                zIndex="10000"
-                disableBorder={!editMode}
-                fieldType="searchField"
-                isSearchable={true}
-                name="assignee"
-                disabled={userRole === 1}
-                options={assigneeOptions}
-                placeholder="assignee"
-                fontSize="14px"
-                margin="0px 0px 0px 30px"
-                width="160px"
-                height={taskForm?.assignee ? '15px' : '36px'}
-                dropdownList={assigneeOptions}
-                onChange={value => {
-                  updateForm('assignee', value?.value)
-                }}
-                value={{
-                  label: assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label
-                }}
-                clickType="assignee"
-                onUpdate={() => {}}
-              />
+              <span>
+                <FormField
+                  mobile
+                  zIndex="10000"
+                  disableBorder={!editMode}
+                  fieldType="searchField"
+                  isSearchable={true}
+                  name="assignee"
+                  disabled={userRole === 1}
+                  options={assigneeOptions}
+                  placeholder="assignee"
+                  fontSize="14px"
+                  margin="0px 0px 0px 30px"
+                  width="160px"
+                  height={taskForm?.assignee ? '15px' : '36px'}
+                  dropdownList={assigneeOptions}
+                  onChange={value => {
+                    updateForm('assignee', value?.value)
+                  }}
+                  value={{
+                    label: assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label
+                  }}
+                  clickType="assignee"
+                  onUpdate={() => {}}
+                  onBlur={validateForm}
+                />
+              </span>
             ) : (
               <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px" marginRight="100px">
                 {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label || 'assignee'}

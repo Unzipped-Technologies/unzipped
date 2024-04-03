@@ -308,6 +308,7 @@ const TasksPanel = ({
                                   businessId: selectedDepartment.businessId,
                                   departmentId: selectedDepartment?._id,
                                   tag: tag._id,
+                                  priority: 'lowest',
                                   status: tag.tagName?.toLowerCase().includes('to')
                                     ? TODO_STATUS
                                     : tag.tagName?.toLowerCase().includes('in')
