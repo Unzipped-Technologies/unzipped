@@ -803,9 +803,9 @@ const Nav = ({
                     underline={
                       router.pathname.includes('projects') && item.link.includes('projects')
                         ? true
-                        : router.pathname === item.link
+                        : (router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard') ? true : router.pathname === item.link
                     }>
-                    <Sub>{item.name} </Sub>
+                    <Sub>{item.name}</Sub>
                   </SpanWhite>
                 </Link>
               ))}
@@ -823,7 +823,7 @@ const Nav = ({
                         underline={
                           router.pathname.includes('projects') && item.link.includes('projects')
                             ? true
-                            : router.pathname === item.link
+                            : (router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard') ? true : router.pathname === item.link
                         }>
                         <Sub>{item.name} </Sub>
                       </SpanWhite>
