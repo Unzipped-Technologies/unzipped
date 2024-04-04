@@ -98,16 +98,27 @@ const createUser = async (data, hash) => {
 const updateUserByid = async (id, data) => {
   try {
     const userData = await getSingleUser({ _id: id }, '-password')
+    if (!userData?.phoneNumber &&
+      !data?.currentPhone &&
+      data?.phoneNumber &&
+      _isValidPhoneNumber(data.phoneNumber)
+    ) {
+      userData["phoneNumber"] = data.phoneNumber
+      await userData.save()
+      return userData;
+    }
     if (userData && userData?.phoneNumber && data?.currentPhone) {
       if (data?.currentPhone !== userData.phoneNumber) {
         throw new Error(`Incorrect phone number.`)
-      } else if (data?.currentPhone === data.phoneNumber) {
+      }
+      if (data?.currentPhone === data.phoneNumber) {
         throw new Error(`New and current phone numbers must be different.`)
-      } else if (_isValidPhoneNumber(data.phoneNumber)) {
+      }
+      if (!_isValidPhoneNumber(data.phoneNumber)) {
         throw new Error(`Invalid phone number.`)
       }
     } else {
-      if (data?.phoneNumber && _isValidPhoneNumber(data.phoneNumber)) {
+      if (!data?.phoneNumber && !_isValidPhoneNumber(data.phoneNumber)) {
         throw new Error(`Invalid phone number.`)
       }
     }
@@ -118,7 +129,6 @@ const updateUserByid = async (id, data) => {
     await userData.save()
 
     return userData
-    // return await user.findOneAndUpdate({ _id: id }, { $set: { ...data } })
   } catch (e) {
     throw new Error(`${e}`)
   }
