@@ -18,8 +18,12 @@ const createTask = async data => {
     const businessData = await getBusinessWithoutPopulate(departmentData.businessId, 'businessCode name')
     if (!businessData) throw new Error(`Business not exist.`)
 
-    const tagData = await getTagsWithoutPopulate({ _id: data.tag }, '')
+    const tagData = await getTagsWithoutPopulate({ departmentId: data.departmentId, tagName: 'To Do' }, '')
     if (!tagData) throw new Error(`Invalid tag Id.`)
+
+    if (!data?.tag) {
+      data['tag'] = tagData?._id
+    }
 
     if (data?.tags?.length > 5) throw new Error(`Tags cannot have more than 5 elements.`)
 

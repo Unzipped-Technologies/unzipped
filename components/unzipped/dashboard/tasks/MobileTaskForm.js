@@ -53,7 +53,7 @@ const Button = styled.button`
 const TaskFormContainer = styled.div`
   margin-left: 20px !important;
   margin-right: 10px !important;
-  padding: 0px 0px 20px 0px;
+  padding: 20px 0px 20px 0px;
 `
 
 const Task = styled.div`
@@ -78,6 +78,7 @@ const MobileTaskForm = ({
   const [commentId, setCommentId] = useState('')
   const [tag, setTag] = useState('')
   const [tagShow, setTagShow] = useState(false)
+  const [error, setError] = useState('')
 
   const [comments, setComments] = useState([])
   const [newComment, setComment] = useState({
@@ -88,39 +89,40 @@ const MobileTaskForm = ({
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
-    assignee = departmentData?.contracts?.map(contract => ({
-      value: contract?.freelancer?.userId,
-      label: (
-        <div>
-          <div
-            style={{
-              color: '#000',
-              textAlign: 'center',
-              fontFamily: 'Roboto',
-              fontSize: '14px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              letterSpacing: '0.4px',
-              textTransform: 'capitalize'
-            }}>
-            {contract?.freelancer?.user?.FullName ?? 'Name'}
+    assignee =
+      departmentData?.contracts?.map(contract => ({
+        value: contract?.freelancer?.userId,
+        label: (
+          <div>
+            <div
+              style={{
+                color: '#000',
+                textAlign: 'center',
+                fontFamily: 'Roboto',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px',
+                textTransform: 'capitalize'
+              }}>
+              {contract?.freelancer?.user?.FullName ?? 'Name'}
+            </div>
+            <div
+              style={{
+                color: '#787878',
+                textAlign: 'center',
+                fontSize: '10px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px'
+              }}>
+              {contract?.freelancer?.user?.email}
+            </div>
           </div>
-          <div
-            style={{
-              color: '#787878',
-              textAlign: 'center',
-              fontSize: '10px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              letterSpacing: '0.4px'
-            }}>
-            {contract?.freelancer?.user?.email}
-          </div>
-        </div>
-      )
-    }))
+        )
+      })) || []
     assignee.push({
       value: departmentData?.client?._id,
       label: (
@@ -181,7 +183,7 @@ const MobileTaskForm = ({
       })
     }
     return assignee
-  }, [])
+  }, [departmentData])
 
   const taskPriorityOptions = useMemo(() => {
     return (
@@ -261,33 +263,44 @@ const MobileTaskForm = ({
   }
 
   const disableEditMode = () => {
-    if (document.activeElement?.tagName?.toLowerCase() === 'div') {
+    if (document.activeElement?.tagName?.toLowerCase() === 'div' && !isCreating) {
       setEditMode(false)
     }
   }
 
   const handleSubmit = async () => {
-    if (newComment?.comment) {
-      const comments = [
-        {
-          comment: newComment.comment,
-          userId: userId
+    if (validateForm()) {
+      if (newComment?.comment) {
+        const comments = [
+          {
+            comment: newComment.comment,
+            userId: userId
+          }
+        ]
+
+        await updateCreateStoryForm({
+          comments: comments
+        })
+      }
+
+      if (isCreating) {
+        const response = await createTask(taskForm)
+        if (response?.status === 200) {
+          resetState()
+          onCancel && onCancel()
+        } else {
+          setValidationErrors(response?.data?.message ?? 'Something went wrong')
         }
-      ]
+      } else {
+        const response = await updateTask(taskDetail?._id, taskForm)
 
-      await updateCreateStoryForm({
-        comments: comments
-      })
-    }
-
-    if (isCreating) {
-      await createTask(taskForm)
-      resetState()
-      onCancel && onCancel()
-    } else {
-      await updateTask(taskDetail?._id, taskForm)
-      resetState()
-      onCancel && onCancel()
+        if (response?.status === 200) {
+          resetState()
+          onCancel && onCancel()
+        } else {
+          setValidationErrors(response?.data?.message ?? 'Something went wrong')
+        }
+      }
     }
   }
 
@@ -304,6 +317,23 @@ const MobileTaskForm = ({
     updateForm('tags', filteredTags)
     taskDetail.tags = filteredTags
     if (taskDetail?._id && taskDetail.tags?.includes(tagName)) await updateTask(taskDetail?._id, taskDetail)
+  }
+
+  const validateForm = () => {
+    if (!taskForm?.taskName) {
+      setValidationErrors('Task Name is required.')
+      return false
+    }
+    if (!taskForm?.assignee || taskForm?.assignee === 'unassigned') {
+      setValidationErrors('Assignee is required.')
+      return false
+    }
+    setValidationErrors('')
+    return true
+  }
+
+  const setValidationErrors = error => {
+    setError(error)
   }
 
   return (
@@ -331,13 +361,14 @@ const MobileTaskForm = ({
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
+              onBlur={validateForm}
               onUpdate={() => {}}>
               <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="20px" paddingRight="10px">
                 Task:
               </TitleText>
             </FormField>
           ) : (
-            <DarkText topMargin="20px" paddingLeft="0px !important" padding="0px !important" onClick={enableEditMode}>
+            <DarkText paddingLeft="0px !important" padding="0px !important" onClick={enableEditMode}>
               {taskForm?.taskName}
             </DarkText>
           )}
@@ -378,16 +409,11 @@ const MobileTaskForm = ({
                 value={assigneeOptions.find(assignee => assignee.value === taskForm?.assignee)}
                 clickType="assignee"
                 onUpdate={() => {}}
+                onBlur={validateForm}
               />
             ) : (
-              <DarkText
-                fontSize="18px"
-                color="#000"
-                lineHeight="normal"
-                width="150px"
-                topMargin="20px"
-                paddingLeft="20px">
-                {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label}
+              <DarkText fontSize="18px" color="#000" lineHeight="normal" width="150px" paddingLeft="20px">
+                {assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label}
               </DarkText>
             )}
             {comments?.length ? (
@@ -683,6 +709,11 @@ const MobileTaskForm = ({
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}></FormField>
           </div>
+          {error && (
+            <TitleText color="red" titleFontSize="12px">
+              {error}
+            </TitleText>
+          )}
           <div
             style={{
               display: 'flex',
@@ -699,13 +730,15 @@ const MobileTaskForm = ({
               style={{
                 marginRight: '10px'
               }}
-              onClick={() => {
+              onClick={e => {
+                e?.preventDefault()
                 if (onCancel) onCancel()
               }}>
               CANCEL
             </Button>
             <Button
-              onClick={async () => {
+              onClick={async e => {
+                e?.preventDefault()
                 await handleSubmit()
               }}
               width="58.25px"

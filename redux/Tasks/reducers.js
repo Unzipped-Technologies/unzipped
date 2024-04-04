@@ -19,7 +19,7 @@ const INITIAL_TASKS = {
   priority: 'lowest',
   order: 1,
   description: '',
-  status: '',
+  status: 'todo',
   businessId: '',
   departmentId: '',
   assignee: '',

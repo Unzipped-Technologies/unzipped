@@ -130,7 +130,9 @@ const MobileTaskDetail = ({
     resetStoryForm()
     updateCreateStoryForm({
       businessId: departmentData?.businessId,
-      departmentId: departmentData?._id
+      departmentId: departmentData?._id,
+      status: 'todo',
+      priority: 'lowest'
     })
     setOpen(true)
   }
