@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const bcrypt = require('bcryptjs')
 const token = require('../../services/jwt')
 const delToken = require('../../services/delCookie')
 const passport = require('passport')
@@ -102,7 +101,7 @@ router.get('/verify/:id', async (req, res, next) => {
   const id = req.params.id
   try {
     await AuthService.verifyUser(id)
-    res.send({ message: "SUCCESS" })
+    res.send({ message: 'SUCCESS' })
   } catch {
     res.status(400).send('verify failed')
   }
@@ -151,9 +150,8 @@ router.post('/verify', async (req, res) => {
     const send = await Mailer.sendVerificationMail(req.body)
     if (send) {
       res.send({ send: 'Email sent successfully.' })
-    }else{
+    } else {
       res.send({ send: 'Failed to send an email.' })
-
     }
   } catch (error) {
     res.status(400).json({ message: error.message })
