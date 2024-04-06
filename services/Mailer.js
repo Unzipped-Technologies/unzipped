@@ -60,18 +60,17 @@ const send = async data => {
 }
 const sendVerificationMail = async data => {
   const { email } = data
+  if(!email) return 'Email is required';
 
   try {
     const existingUser = await User.findOne({ email })
     if (existingUser) {
       if (existingUser.googleId) {
         return res.send('Login with Google')
-      } else {
-        throw Error('User with this email already exists')
       }
     }
 
-    const token = Buffer.from(JSON.stringify(data)).toString('base64')
+    const token = Buffer.from(JSON.stringify(existingUser._id)).toString('base64')
     const subject = 'Unzipped Verification Link'
     const msg = {
       to: email,
@@ -83,7 +82,7 @@ const sendVerificationMail = async data => {
       templateId: 'd-22eb3cf8b01a431ca20ee4a42ec349ad',
       dynamicTemplateData: {
         subject,
-        link: `${keys.redirectDomain}/verified/${token}`
+        link: `${keys.redirectDomain}/verified/${existingUser._id}`
       }
     }
 

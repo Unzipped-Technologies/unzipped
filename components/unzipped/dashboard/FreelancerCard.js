@@ -8,7 +8,7 @@ import { TitleText, DarkText, Absolute, DarkSpan } from './style'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
-import { createUserInvitation } from '../../../redux/actions'
+import { createUserInvitation, getAllFreelancers } from '../../../redux/actions'
 
 const Container = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited }) => {
+const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited, filter }) => {
   const userLists = useSelector(state => state.ListEntries.userLists)
   const userId = useSelector(state => state.Auth.user._id)
   const accessToken = useSelector(state => state.Auth.token)
@@ -45,7 +45,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
     if (listObj) {
       dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
     }
-    // clearSelectedFreelancer()
+  
     if (user?.id) {
       router.push(`/freelancers/${user.id}`)
     }
@@ -57,7 +57,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
         userInvited: userId,
         freelancer: user.id
       }
-      dispatch(createUserInvitation(inviteFreelancer, accessToken))
+      dispatch(createUserInvitation(inviteFreelancer, accessToken, filter))
     }
   }
 

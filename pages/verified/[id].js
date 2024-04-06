@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import styled from 'styled-components';
-import { registerUser } from '../../redux/actions';
+import { emailConfirmation } from '../../redux/actions';
 import { bindActionCreators } from 'redux';
 import { useRouter } from 'next/router';
 import Notification from '../../components/animation/notifications';
@@ -21,28 +21,24 @@ const P = styled.p`
     font-weight: 600;
 `
 
-export const verified = ({ loading, token, registerUser, error }) => {
+export const verified = ({ loading, token, emailConfirmation, error, userMailConfirmation }) => {
     const router = useRouter();
     const [notification, setNotification] = useState();
     const { id } = router.query;
     useEffect(() => {
-        if (!token) {
-            registerUser(id)
-        }
+        if(id) emailConfirmation(id)
     }, [id])
 
     useMemo(() => {
-        if (error?.data && !loading) {
-            setNotification('Redirecting user is already registered.')
-        }
-        else if (!loading) {
+        if (userMailConfirmation && !loading) {
             setNotification('Redirecting you account created successfully.')
         }
-    }, [error])
+    }, [userMailConfirmation])
 
     useEffect(() => {
-            router.push('/dashboard');
-    }, [token])
+        if (userMailConfirmation) router.push('/dashboard');
+    }, [userMailConfirmation])
+
     return (
         <>
             <Container>
@@ -63,13 +59,13 @@ const mapStateToProps = (state) => {
         token: state.Auth.token,
         loading: state.Auth.loading,
         error: state.Auth.error,
-        isEmailSent: state.Auth.isEmailSent,
+        userMailConfirmation: state.Auth.userMailConfirmation
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        registerUser: bindActionCreators(registerUser, dispatch),
+        emailConfirmation: bindActionCreators(emailConfirmation, dispatch),
     }
 }
 

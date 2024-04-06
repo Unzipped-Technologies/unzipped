@@ -816,6 +816,28 @@ const createVerificationSession = async (customerId) => {
   return verificationSession;
 }
 
+const confirmVerificationSession = async (userId, status) => {
+  try {
+
+    if (userId && status && status === 'verified') {
+      const user = await UserModel.findById(userId);
+      if (user && user.isIdentityVerified !== "SUCCESS") {
+        const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
+        if (updateUser) {
+          return true;
+        } else {
+          const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "REJECTED" } }, { new: true });
+        }
+      }
+      return false;
+
+    }
+  } catch (err) {
+    console.log(`Error on verification session: ${err.message}`);
+    return false;
+  }
+}
+
 module.exports = {
   stripePayment,
   createPromo,
@@ -840,5 +862,6 @@ module.exports = {
   createAccountOnboarding,
   transferPaymentToFreelancers,
   createVerificationSession,
-  createPaymentAndTransfer
+  createPaymentAndTransfer,
+  confirmVerificationSession
 }
