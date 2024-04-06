@@ -131,7 +131,7 @@ const VerifyEmail = ({ loading, token, userForm, error, isEmailSent, updateRegis
                     </EmailDiv>
                 </InnerContainer>
             </Container>
-                <Notification error={notifications} />
+            <Notification error={notifications} />
         </>
     )
 };

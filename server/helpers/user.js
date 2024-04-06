@@ -19,46 +19,46 @@ const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
 const { _isValidPhoneNumber } = require('../utils/validations')
+const AuthService = require('./authentication')
+const Mailer = require('../../services/Mailer')
 // create user
 const createUser = async (data, hash) => {
   // create User
   const newUser = await user.create({
     ...data,
-    // TODO: needs to be removed once email is back online
-    isEmailVerified: true,
     password: hash,
     plan: planEnum.UNSUBSCRIBED
   })
   // create favorites and recently viewed list
-    const listsToCreate = [
-      {
-        name: 'Favorites',
-        icon: 'HeartOutlined'
-      },
-      {
-        name: 'Recently Viewed',
-        icon: 'EyeOutlined'
-      },
-      {
-        name: 'My Team',
-        icon: 'TeamOutlined'
-      }
-    ]
-    for (const item of listsToCreate) {
-      const list = {
-        name: item.name,
-        icon: item.icon,
-        userId: newUser.id,
-        isDefault: true,
-        user: await user.findById(newUser.id)
-      }
-      await listHelper.createLists(list)
+  const listsToCreate = [
+    {
+      name: 'Favorites',
+      icon: 'HeartOutlined'
+    },
+    {
+      name: 'Recently Viewed',
+      icon: 'EyeOutlined'
+    },
+    {
+      name: 'My Team',
+      icon: 'TeamOutlined'
     }
-    const ids = await list.find({ userId: newUser.id })
-    // update users to have skills
-    await user.findByIdAndUpdate(newUser.id, {
-      lists: ids.map(item => mongoose.Types.ObjectId(item.id))
-    })
+  ]
+  for (const item of listsToCreate) {
+    const list = {
+      name: item.name,
+      icon: item.icon,
+      userId: newUser.id,
+      isDefault: true,
+      user: await user.findById(newUser.id)
+    }
+    await listHelper.createLists(list)
+  }
+  const ids = await list.find({ userId: newUser.id })
+  // update users to have skills
+  await user.findByIdAndUpdate(newUser.id, {
+    lists: ids.map(item => mongoose.Types.ObjectId(item.id))
+  })
 
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
@@ -661,6 +661,13 @@ const getSingleUser = async (filter, fields) => {
   }
 }
 
+const registerUser = async ({ email, password }) => {
+  const hash = await AuthService.bcryptAndHashing(password)
+  const newuser = await createUser({ email, password }, hash)
+  if(newuser) Mailer.sendVerificationMail({ email})
+  return newuser;
+}
+
 module.exports = {
   changeEmail,
   createUser,
@@ -682,5 +689,6 @@ module.exports = {
   addToNewsletter,
   getAllFreelancers,
   getSingleUser,
-  retrievePaymentMethods
+  retrievePaymentMethods,
+  registerUser
 }
