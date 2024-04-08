@@ -205,7 +205,7 @@ const ConversationContainer = ({
       openConversation(conversationId)
       setSelectedItem(conversationId)
     }
-  }, [])
+  }, [conversations])
 
   const handleSearch = e => {
     const filteredConversations = conversations.filter(convo => {

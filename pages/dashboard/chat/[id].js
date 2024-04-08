@@ -26,6 +26,12 @@ import {
   handleUnreadMessages
 } from '../../../redux/actions'
 
+const Box = styled.div`
+  @media (min-width: 680px) {
+    display: none;
+  }
+`
+
 export const Div = styled.div`
   width: 100%;
   z-index: 1;
@@ -294,7 +300,7 @@ const Chat = ({
     updateChatStatus('isMute', status, selectedConversation._id, access)
   }
   return (
-    <>
+    <Box>
       {showSubMenu ? (
         <MobileChatMenu
           handleFilterOpenClose={closeMenu}
@@ -312,7 +318,7 @@ const Chat = ({
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </span>
           </BackHeader>
-          <WhiteCard noMargin height="100%" borderColor="red" style={{ position: 'static' }}>
+          <WhiteCard noMargin height="100%" style={{ position: 'static' }}>
             <Div
               margin="0px 0px 0px 0px"
               onScroll={() => {
@@ -422,7 +428,7 @@ const Chat = ({
           </WhiteCard>
         </>
       )}
-    </>
+    </Box>
   )
 }
 

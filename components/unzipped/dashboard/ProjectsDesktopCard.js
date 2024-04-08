@@ -6,6 +6,7 @@ import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
 import { TitleText, DarkText, Absolute } from './style'
+import { Diversity1Sharp } from '@mui/icons-material'
 
 const Container = styled.div`
   display: flex;
@@ -22,6 +23,7 @@ const Left = styled.div`
 const Right = styled.div`
   padding: ${({ includeRate }) => (includeRate ? '5px 30px' : '15px 30px')};
   min-width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
+  width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
 `
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -50,8 +52,8 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
         <Image
           src={project?.projectImages?.[0]?.url}
           alt={project?.name + ' profile'}
-          height="94px"
-          width="94px"
+          height="102px"
+          width="102px"
           radius="50%"
         />
         {project?.applicants?.includes(freelancerId) && (
@@ -60,7 +62,7 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           </Button>
         )}
       </Left>
-      <Right minWidth={width} includeRate={includeRate}>
+      <Right includeRate={includeRate} minWidth="62%">
         <TitleText
           half
           clickable
@@ -70,11 +72,14 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           }}>
           {project?.name}
         </TitleText>
-        {includeRate && (
-          <Flex>
-            <DarkText half>{project?.country}</DarkText>
-          </Flex>
-        )}
+        <Flex>
+          <DarkText half fontSize="14px" color="#000000">
+            {project?.businessCountry}
+          </DarkText>
+          <DarkText half fontSize="14px" color="#000000">
+            Estimated Rate: $27 / hour
+          </DarkText>
+        </Flex>
         <div className="d-flex justify-content-between">
           <P fontSize="13px">{project?.description}</P>
           <P fontSize="15px">{project?.likes ? `${project?.likes} Upvotes by Freelancers` : ''}</P>
@@ -96,6 +101,13 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           }}>
           View Project
         </Button>
+      </Absolute>
+      <Absolute>
+        <div className="">
+          <DarkText topMargin="100px" width="100%" fontSize="15px" color="#000000">
+            1,450 Upvotes by Freelancers
+          </DarkText>
+        </div>
       </Absolute>
     </Container>
   )

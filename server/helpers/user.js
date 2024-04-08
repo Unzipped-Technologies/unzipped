@@ -18,12 +18,13 @@ const { likeEnum } = require('../enum/likeEnum')
 const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
-const { _isValidPhoneNumber } = require('../utils/validations')
 const AuthService = require('./authentication')
 const Mailer = require('../../services/Mailer')
 // create user
 const createUser = async (data, hash) => {
   // create User
+  data.FullName = data?.FirstName + ' ' + data?.LastName || ''
+
   const newUser = await user.create({
     ...data,
     password: hash,
@@ -59,7 +60,6 @@ const createUser = async (data, hash) => {
   await user.findByIdAndUpdate(newUser.id, {
     lists: ids.map(item => mongoose.Types.ObjectId(item.id))
   })
-
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
   if (accountTypeEnum.INVESTOR === data.role) {
@@ -69,7 +69,7 @@ const createUser = async (data, hash) => {
       category: data.category,
       userId: newUser.id
     })
-    if (data.skills && data.skills.length > 0) {
+    if (data?.skills?.length) {
       for (const skill of data.skills) {
         await freelancerSkills.create({
           ...skill,
@@ -98,30 +98,7 @@ const createUser = async (data, hash) => {
 const updateUserByid = async (id, data) => {
   try {
     const userData = await getSingleUser({ _id: id }, '-password')
-    if (!userData?.phoneNumber &&
-      !data?.currentPhone &&
-      data?.phoneNumber &&
-      _isValidPhoneNumber(data.phoneNumber)
-    ) {
-      userData["phoneNumber"] = data.phoneNumber
-      await userData.save()
-      return userData;
-    }
-    if (userData && userData?.phoneNumber && data?.currentPhone) {
-      if (data?.currentPhone !== userData.phoneNumber) {
-        throw new Error(`Incorrect phone number.`)
-      }
-      if (data?.currentPhone === data.phoneNumber) {
-        throw new Error(`New and current phone numbers must be different.`)
-      }
-      if (!_isValidPhoneNumber(data.phoneNumber)) {
-        throw new Error(`Invalid phone number.`)
-      }
-    } else {
-      if (!data?.phoneNumber && !_isValidPhoneNumber(data.phoneNumber)) {
-        throw new Error(`Invalid phone number.`)
-      }
-    }
+
     for (var field in data) {
       userData[field] = data[field]
     }
@@ -391,16 +368,16 @@ const addLikeToFreelancer = async (data, id) => {
       await freelancer.findByIdAndUpdate(data.profileId, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length,
+        dislikeTotal: dislikes?.length ?? 0
       })
       await user.findByIdAndUpdate(id, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length ?? 0,
+        dislikeTotal: dislikes?.length ?? 0
       })
-      return { likes: ids.length, msg: 'success' }
+      return { likes: ids?.length, msg: 'success' }
     }
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -420,16 +397,16 @@ const removeLikeToFreelancer = async (data, id) => {
       await freelancer.findByIdAndUpdate(data.profileId, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length ?? 0,
+        dislikeTotal: dislikes?.length ?? 0
       })
       await user.findByIdAndUpdate(id, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length ?? 0,
+        dislikeTotal: dislikes?.length ?? 0
       })
-      return { likes: ids.length, msg: 'success' }
+      return { likes: ids?.length, msg: 'success' }
     }
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -615,7 +592,7 @@ const buildQueryFilters = (minRate, maxRate, skills, name) => {
 
   if (maxRate) filter.rate = { ...filter.rate, $lte: maxRate }
 
-  if (skills && skills.length > 0 && !skills.includes('undefined')) {
+  if (skills && skills?.length > 0 && !skills?.includes('undefined')) {
     if (skills.includes(',')) {
       let skillsArray
       skillsArray = skills.split(',')
@@ -671,11 +648,11 @@ const getSingleUser = async (filter, fields) => {
   }
 }
 
-const registerUser = async ({ email, password }) => {
-  const hash = await AuthService.bcryptAndHashing(password)
-  const newuser = await createUser({ email, password }, hash)
-  if(newuser) Mailer.sendVerificationMail({ email})
-  return newuser;
+const registerUser = async data => {
+  const hash = await AuthService.bcryptAndHashing(data?.password)
+  const newuser = await createUser(data, hash)
+  // if(newuser) Mailer.sendVerificationMail({ email})
+  return newuser
 }
 
 module.exports = {

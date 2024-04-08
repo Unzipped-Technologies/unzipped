@@ -125,6 +125,8 @@ const Inbox = ({
       const conversationId = conversations[0]?._id
 
       openConversation(conversationId)
+    } else {
+      openConversation(selectedConversation?._id)
     }
   }, [conversations])
 

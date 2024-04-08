@@ -5,7 +5,8 @@ import {
   MESSAGE_ERROR,
   UPDATE_CONVERSATION_STATUS,
   UPDATE_CONVERSATION_MESSAGE,
-  SET_COUNT_ZERO
+  SET_COUNT_ZERO,
+  RESET_MESSAGE_STORE
 } from './constants'
 
 const INIT_STATE = {
@@ -27,11 +28,6 @@ const Messages = (state = INIT_STATE, action) => {
       return { ...state, loading: true }
     case GET_CONVERSATIONS:
       const convoList = action.payload.sort((a, b) => a?.updatedAt - b?.updatedAt)
-      let index = 0
-      // if (state.selectedConversation) {
-      //   index = convoList.map(e => e._id).indexOf(state.selectedConversation._id)
-      // }
-      // convoList[index] = { ...action.payload[0], isSelected: true }
       return {
         ...state,
         loading: false,
@@ -135,6 +131,21 @@ const Messages = (state = INIT_STATE, action) => {
         return conversation
       })
       return { ...state, conversations: newConversations }
+
+    case RESET_MESSAGE_STORE:
+      return {
+        ...state,
+        loading: false,
+        conversations: [],
+        selectedConversation: null,
+        messageForm: {
+          attachment: '',
+          message: ''
+        },
+        conversationId: '',
+        messagesCount: null,
+        error: null
+      }
 
     default:
       return state

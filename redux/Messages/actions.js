@@ -5,7 +5,8 @@ import {
   SELECT_CONVERSATION,
   UPDATE_CONVERSATION_STATUS,
   UPDATE_CONVERSATION_MESSAGE,
-  SET_COUNT_ZERO
+  SET_COUNT_ZERO,
+  RESET_MESSAGE_STORE
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -89,6 +90,13 @@ export const handleUnreadMessages = message => async dispatch => {
 export const setCountToZero = data => async dispatch => {
   dispatch({
     type: SET_COUNT_ZERO,
+    payload: data
+  })
+}
+
+export const resetMessageStore = data => async dispatch => {
+  dispatch({
+    type: RESET_MESSAGE_STORE,
     payload: data
   })
 }
