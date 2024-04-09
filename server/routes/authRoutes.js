@@ -42,49 +42,7 @@ router.post('/register', async (req, res, next) => {
       }
     } else {
       const registerUser = await userHelper.registerUser(req.body)
-      const supportUser = await userHelper.getSingleUser({ email: 'jason+support@unzipped.io' })
-      if (!supportUser) {
-        const hash = await AuthService.bcryptAndHashing('Myfirst1')
-        let newSupportUser = await userHelper.createUser(
-          {
-            email: 'jason+support@unzipped.io',
-            FirstName: 'Unzipped',
-            LastName: 'Support',
-            FullName: 'Unzipped Support',
-            role: 2
-          },
-          hash
-        )
-        const message = {
-          conversationId: null,
-          sender: {
-            userId: newSupportUser._id,
-            isInitiated: true
-          },
-          receiver: {
-            userId: newuser._id
-          },
-          attachment: null,
-          message:
-            'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
-        }
-        const response = await messageHelper.sendMessage(message, newSupportUser._id)
-      } else {
-        const message = {
-          conversationId: null,
-          sender: {
-            userId: supportUser._id,
-            isInitiated: true
-          },
-          receiver: {
-            userId: registerUser._id
-          },
-          attachment: null,
-          message:
-            'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
-        }
-        const response = await messageHelper.sendMessage(message, supportUser._id)
-      }
+
       const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
@@ -101,6 +59,49 @@ router.get('/verify/:id', async (req, res, next) => {
   const id = req.params.id
   try {
     await AuthService.verifyUser(id)
+    const supportUser = await userHelper.getSingleUser({ email: keys.supportEmail })
+    if (!supportUser) {
+      const hash = await AuthService.bcryptAndHashing(keys.supportAccountPassword)
+      let newSupportUser = await userHelper.createUser(
+        {
+          email: keys.supportEmail,
+          FirstName: keys.supportFirstName,
+          LastName: keys.supportLastName,
+          FullName: keys.supportFullName,
+          role: keys.supportRole
+        },
+        hash
+      )
+      const message = {
+        conversationId: null,
+        sender: {
+          userId: newSupportUser._id,
+          isInitiated: true
+        },
+        receiver: {
+          userId: id
+        },
+        attachment: null,
+        message:
+          'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
+      }
+      await messageHelper.sendMessage(message, newSupportUser._id)
+    } else {
+      const message = {
+        conversationId: null,
+        sender: {
+          userId: supportUser._id,
+          isInitiated: true
+        },
+        receiver: {
+          userId: id
+        },
+        attachment: null,
+        message:
+          'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
+      }
+      await messageHelper.sendMessage(message, supportUser._id)
+    }
     res.send({ message: 'SUCCESS' })
   } catch {
     res.status(400).send('verify failed')
