@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import { connect, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
 
 import { getFreelancerList, clearSelectedFreelancer, getAllFreelancers } from '../../redux/actions'
 import Nav from '../../components/unzipped/header'
@@ -71,8 +72,11 @@ const Freelancers = ({
   }
 
   const containerRef = useRef(null)
+  const router = useRouter()
+  const { proejct } = router.query
 
   const [filter, setFilter] = useState({
+    businessId: proejct,
     sort: '',
     searchKey: '',
     minRate: 0,
@@ -85,13 +89,16 @@ const Freelancers = ({
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '70px')
 
-  const isNavbarExpanded = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
   useEffect(() => {
     getAllFreelancers({ filter, skip, take })
   }, [filter, createdInvitation])
+
+  const getFreelancersAfterInvitation = () => {
+    getAllFreelancers({ filter, skip, take })
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -163,6 +170,7 @@ const Freelancers = ({
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       rate: item?.rate,
       likes: item?.likeTotal,
+      invites: item?.invites,
       isInvited: item?.invites && item?.invites.userInvited == userId ? true : false
     }
     return freelancer
@@ -252,6 +260,7 @@ const Freelancers = ({
                           includeRate
                           clearSelectedFreelancer={clearSelectedFreelancer}
                           filter={filter}
+                                                    afterInvitation={getFreelancersAfterInvitation}
                         />
                       </WhiteCard>
                       {freelancerList.length < 1000 && freelancerList.length < totalCount && (
@@ -276,6 +285,7 @@ const Freelancers = ({
                         user={freelancerModel}
                         includeRate
                         clearSelectedFreelancer={clearSelectedFreelancer}
+                        afterInvitation={getFreelancersAfterInvitation}
                       />
                     </MobileDisplayBox>
                   )}
