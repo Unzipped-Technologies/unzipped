@@ -28,7 +28,7 @@ class Validations {
   }
 
   getFullNameFromUser(user) {
-    return `${user?.FirstName || ''} ${user?.LastName || ''}`
+    return !user?.FirstName && !user?.LastName ? 'User' : `${user?.FirstName || ''} ${user?.LastName || ''}`
   }
 
   _isNull(value) {

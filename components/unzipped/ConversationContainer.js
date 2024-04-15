@@ -285,7 +285,9 @@ const ConversationContainer = ({
       .map((item, index) => {
         const receiver = item?.participants?.find(e => e?.userId?.email !== userEmail)
         const sender = item?.participants?.find(e => e?.userId?.email === userEmail)
-        return <ConversationCard receiver={receiver} sender={sender} item={item} index={index} />
+        return (
+          <ConversationCard receiver={receiver} sender={sender} item={item} index={index} key={item?._id ?? index} />
+        )
       })
 
   return (
