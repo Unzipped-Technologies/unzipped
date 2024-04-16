@@ -11,10 +11,12 @@ import { MdMonetizationOn } from 'react-icons/md'
 import Loading from '../../loading'
 import Badge from '../../ui/Badge'
 import MobileProjectDetail from './mobile/MobileProjectDetail'
+import { TitleText, DarkText } from './style'
+import { Image } from '../../ui'
 
 const Desktop = styled.div`
   min-width: 82%;
-  margin-left: 10%;
+  margin-left: 9%;
   margin-right: 9%;
   display: flex;
   flex-direction: row;
@@ -27,20 +29,20 @@ const ProjectDetail = styled.div`
   position: relative;
   right: 0px;
   top: 10px;
-  width: 68%;
   flex-shrink: 0;
   border-radius: 8px;
   border: 1px solid #f0f0f0;
   background: #fff;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
   padding: 0px 24px 15px;
+  margin: ${({ margin }) => (margin ? margin : '0px')};
 `
 
 const DetailHeading = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0px 10px 15px 10px;
+  padding: 40px 10px 15px 7px;
 `
 const ProjectSummary = styled.h3`
   color: #12151b;
@@ -76,19 +78,11 @@ const ProjectDescription = styled.p`
 const ProjectRequirements = styled.ul`
   margin-top: 20px;
   margin-left: 10px;
-  color: #12151b;
-  color: #414348;
-  font-family: Roboto;
-  font-size: 20px;
-  line-height: normal;
-  text-align: justify;
-  font-weight: 100;
-  line-height: 1.5;
-  line-spacing: 10px;
 
   /* Use a more specific selector to override Materialize CSS */
   && li {
     list-style-type: disc !important;
+    font-weight: 400;
   }
 `
 
@@ -118,6 +112,7 @@ const AboutClient = styled.div`
   position: relative;
   top: 10px;
   width: 28%;
+  height: fit-content;
   flex-shrink: 0;
   left: 20px;
   border-radius: 8px;
@@ -207,19 +202,26 @@ const ClientVerification = styled.div`
 `
 
 const ImageContainer = styled.div`
-  width: 300px;
-  height: 150px;
+  // width: 100%;
   border-radius: 12px;
-  overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
-  img {
-    width: 100%; /* Make the image try to fill the container width */
-    height: 100%; /* Make the image try to fill the container height */
-    object-fit: cover; /* Cover the container without losing aspect ratio */
-    object-position: center; /* Center the image in the container */
-  }
+`
+
+const P = styled.p`
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
+  font-style: normal;
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
+  color: ${({ textColor }) => (textColor ? textColor : '#000000')};
 `
 
 const DesktopProjectDetail = ({ projectDetails, loading }) => {
@@ -230,36 +232,100 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
           {projectDetails ? (
             <>
               <Desktop>
-                <ProjectDetail>
-                  <DetailHeading>
-                    <ProjectSummary>Project Hires</ProjectSummary>
-                    <ProjectBudget>Budget: ${projectDetails?.budget || 0}</ProjectBudget>
-                  </DetailHeading>
-                  <ProjectDescription>{projectDetails?.challenge}</ProjectDescription>
-                  <ProjectRequirements>
-                    {projectDetails?.objectives?.map((objective, index) => (
-                      <li key={`${objective}_${index}`}>{objective}</li>
-                    ))}
-                  </ProjectRequirements>
-                  <SkillsRequired>Skills Required</SkillsRequired>
-                  {projectDetails?.requiredSkills?.length
-                    ? projectDetails?.requiredSkills?.map((skill, index) => {
-                        return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-                      })
-                    : 'N/A'}
-                  <ProjectID>Project ID: {projectDetails?._id || 'N / A'}</ProjectID>
-                  <div style={{ display: 'flex', width: '100%', gap: '10px' }}>
-                    {projectDetails &&
-                      projectDetails?.projectImagesUrl?.length > 0 &&
-                      projectDetails.projectImagesUrl.map(item => (
-                        <>
-                          <ImageContainer>
-                            <img src={item.url} alt="project image" height={'100%'} />
-                          </ImageContainer>
-                        </>
+                <div style={{ width: '70%' }}>
+                  <ProjectDetail>
+                    <DetailHeading>
+                      <DarkText
+                        fontSize="24px"
+                        bold
+                        lineHeight="23px"
+                        color="#12151B
+">
+                        Project Hires
+                      </DarkText>
+                      <DarkText
+                        fontSize="18px"
+                        lineHeight="24.5px"
+                        color="#12151B
+"
+                        style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        Budget: ${projectDetails?.budget || 0}
+                      </DarkText>
+                    </DetailHeading>
+                    <DarkText fontSize="20px" bold lineHeight="23px" color=" #12151B">
+                      Project Length
+                    </DarkText>
+                    <P fontWeight="300" fontSize="20px" lineHeight="25.78px" color="#12151B">
+                      {projectDetails?.projectType}
+                    </P>
+
+                    <DarkText topMargin="15px" fontSize="20px" bold lineHeight="23px" color=" #12151B">
+                      Description
+                    </DarkText>
+                    <P fontWeight="300" fontSize="20px" lineHeight="25.78px" color="#12151B">
+                      {projectDetails?.description}
+                    </P>
+
+                    <DarkText topMargin="15px" fontSize="20px" bold lineHeight="23px" color=" #12151B">
+                      Requirements
+                    </DarkText>
+                    <ProjectRequirements>
+                      {projectDetails?.objectives?.map((objective, index) => (
+                        <li key={`${objective}_${index}`}>
+                          <P fontWeight="24.5px" fontSize="20px" lineHeight="25.78px" color="#444444">
+                            {objective}
+                          </P>
+                        </li>
                       ))}
-                  </div>
-                </ProjectDetail>
+                    </ProjectRequirements>
+                    <DarkText fontSize="20px" lineHeight="23px" color=" #12151B">
+                      Skills Required
+                    </DarkText>
+                    {projectDetails?.requiredSkills?.length
+                      ? projectDetails?.requiredSkills?.map((skill, index) => {
+                          return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+                        })
+                      : 'N/A'}
+
+                    <DarkText topPadding fontSize="13px" lineHeight="24.5px">
+                      Project ID: {projectDetails?._id || 'N / A'}
+                    </DarkText>
+                  </ProjectDetail>
+                  <ProjectDetail margin="10px 0px 0px 0px">
+                    <DarkText topMargin="20px" fontSize="24px" bold lineHeight="23px" color="#12151B">
+                      Project Goals
+                    </DarkText>
+                    <P fontWeight="300" fontSize="20px" lineHeight="25.78px" color="#12151B">
+                      {projectDetails?.goals}
+                    </P>
+                  </ProjectDetail>
+                  <ProjectDetail margin="10px 0px 0px 0px">
+                    <div style={{ borderBottom: '1px solid #BCC5D3', margin: '0px auto' }}>
+                      <DarkText topMargin="20px" fontSize="24px" bold lineHeight="23px" color="#12151B">
+                        Additional Details
+                      </DarkText>
+                    </div>
+
+                    <P padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
+                      Budget
+                    </P>
+                    <P fontSize="20px" lineHeight="24.5px" fontWeight="300" color="#444444">
+                      ${projectDetails?.budget || 0}{' '}
+                      {projectDetails?.projectBudgetType === 'Hourly Rate' ? 'per Hour' : 'Fixed'}
+                    </P>
+
+                    <P padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
+                      Project Image
+                    </P>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
+                      {projectDetails &&
+                        projectDetails?.projectImagesUrl?.length > 0 &&
+                        projectDetails.projectImagesUrl.map(item => (
+                          <Image src={item.url} alt="project image" width={'100%'} height={'150px'} />
+                        ))}
+                    </div>
+                  </ProjectDetail>
+                </div>
                 <AboutClient>
                   <AboutClientHeading>About client</AboutClientHeading>
                   <ClientInfo>

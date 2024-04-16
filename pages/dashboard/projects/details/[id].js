@@ -19,7 +19,7 @@ const Navbar = styled.div`
 `
 
 const Desktop = styled.div`
-  width: 80%;
+  width: 82%;
   margin: auto;
   @media (max-width: 680px) {
     width: 100%;

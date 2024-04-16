@@ -224,6 +224,9 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           userId: 1,
           departments: 1,
           projectImagesUrl: 1,
+          questionsToAsk: 1,
+          objectives: 1,
+          goals: 1,
           requiredSkills: 1,
           projectBudgetType: 1
         }
@@ -256,6 +259,25 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             }
           ],
           as: 'projectImages'
+        }
+      },
+      {
+        $lookup: {
+          from: 'questions',
+          let: { questionId: '$questionsToAsk' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$questionId'] }
+              }
+            },
+            {
+              $project: {
+                question: 1
+              }
+            }
+          ],
+          as: 'questions'
         }
       },
       {
