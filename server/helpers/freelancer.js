@@ -61,6 +61,7 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
     const regexPattern = regexPatterns?.join('|')
     const limitValue = limit === 'all' ? await countFreelancers(filter) : Number(limit)
     const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 }
+    const ID = mongoose.Types.ObjectId(filter.businessId)
 
     const aggregationPipeline = [
       {
@@ -74,6 +75,27 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
           likeTotal: 1,
           dislikeTotal: 1,
           invites: 1
+        }
+      },
+      {
+        $lookup: {
+          from: 'contracts',
+          let: { freelancerId: '$_id', businessId: ID },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [{ $eq: ['$freelancerId', '$$freelancerId'] }, { $eq: ['$businessId', '$$businessId'] }]
+                }
+              }
+            }
+          ],
+          as: 'contracts'
+        }
+      },
+      {
+        $match: {
+          contracts: { $eq: [] } // Filter freelancers with no contracts
         }
       },
       {
@@ -129,8 +151,19 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
       {
         $lookup: {
           from: 'invites',
-          localField: 'invites',
-          foreignField: '_id',
+          let: { invites: '$invites' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$invites'] }
+              }
+            },
+            {
+              $project: {
+                business: 1
+              }
+            }
+          ],
           as: 'invites'
         }
       },

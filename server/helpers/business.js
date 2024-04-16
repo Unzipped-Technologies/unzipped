@@ -207,6 +207,8 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           name: 1,
           budget: 1,
           equity: 1,
+          description: 1,
+          likeTotal: 1,
           businessAddressLineOne: 1,
           businessCountry: 1,
           businessCity: 1,
@@ -221,7 +223,9 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           valueEstimate: 1,
           userId: 1,
           departments: 1,
-          projectImagesUrl: 1
+          projectImagesUrl: 1,
+          requiredSkills: 1,
+          projectBudgetType: 1
         }
       },
       {
