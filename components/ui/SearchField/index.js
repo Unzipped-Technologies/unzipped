@@ -53,8 +53,9 @@ const SearchField = ({
       margin: margin ? margin : '0px !important',
       display: display ? display : 'flex',
       alignItems: alignItems ? alignItems : 'center',
-      border: disableBorder ? 'none' : border ? border : '1px solid #ccc',
-      borderRadius: borderRadius ? borderRadius : '0px'
+      border: disableBorder ? 'none' : border ? border : '2px solid #CED4DA',
+      borderRadius: borderRadius ? borderRadius : '0px',
+      textAlign: 'center' // Aligning text to center
     }),
     input: (provided, state) => ({
       ...provided,
@@ -91,13 +92,13 @@ const SearchField = ({
     singleValue: (provided, state) => ({
       ...provided,
       display: 'flex',
-      gridArea: 'auto'
+      gridArea: 'auto',
+      textAlign: 'center' // Aligning text to center
     }),
     // Other styles...
     placeholder: (provided, state) => ({
       ...provided,
-      display: 'flex',
-      marginTop: '10px'
+      position: 'absolute'
     })
   }
   return (

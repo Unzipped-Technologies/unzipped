@@ -24,6 +24,7 @@ const Mailer = require('../../services/Mailer')
 // create user
 const createUser = async (data, hash) => {
   // create User
+  data.FullName = (data.FirstName || '') + (data.FirstName && data.LastName ? ' ' : '') + (data.LastName || '')
   const newUser = await user.create({
     ...data,
     password: hash,
@@ -62,6 +63,7 @@ const createUser = async (data, hash) => {
 
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
+  // if (accountTypeEnum.INVESTOR === data.role) {
   if (accountTypeEnum.INVESTOR === data.role) {
     const response = await createFreelanceAccount({
       isAcceptEquity: data.isAcceptEquity,

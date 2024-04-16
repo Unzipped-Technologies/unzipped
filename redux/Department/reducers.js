@@ -54,7 +54,7 @@ const Departments = (state = INIT_STATE, action = {}) => {
       state.departments.map(e => {
         return {
           ...e,
-          isSelected: action.payload._id === e._id
+          isSelected: action.payload?._id === e?._id
         }
       })
       return {
