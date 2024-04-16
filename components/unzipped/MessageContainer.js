@@ -147,8 +147,8 @@ const MessageContainer = ({
 
   useEffect(() => {
     setMessages(data?.messages?.slice().reverse()) || []
-    const receiver = data?.participants.find(e => e?.userId?.email !== userEmail)
-    const sender = data?.participants && data?.participants.find(e => e?.userId?.email === userEmail)
+    const receiver = data?.participants?.length && data?.participants?.find(e => e?.userId?.email !== userEmail)
+    const sender = data?.participants?.length && data?.participants?.find(e => e?.userId?.email === userEmail)
     setReceiver(receiver)
     setSender(sender)
     setForm({

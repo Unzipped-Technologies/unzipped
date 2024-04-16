@@ -4,6 +4,7 @@ const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
+const mongoose = require('mongoose')
 
 const getFreelancerById = async id => {
   try {
