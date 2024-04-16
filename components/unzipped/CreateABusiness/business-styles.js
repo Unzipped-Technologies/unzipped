@@ -3,12 +3,13 @@ import styled from 'styled-components'
 const ReviewContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding:  20px;
   background: #fff;
   width: 100%;
   justify-content: center;
   items-align: center;
   align-items: center;
+  margin-top: 130px;
 
 `
 
@@ -47,9 +48,10 @@ const ParagraphStyled = styled.p`
       height: 5px;
       background: #000;
       border-radius: 50%;
-      margin-left: 15px
+      margin-left: 15px;
     }
   `}
+  cursor: pointer;
   @media screen and (max-width: 600px) {
     line-height: 18px;
     margin: 10px 0px;
@@ -81,7 +83,8 @@ const HeadingSection = styled.div`
         background: #BCC5D3;
         width: 100%;
         height: 1px;
-        // margin-top: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
         
     }
 `;
@@ -93,6 +96,7 @@ const TagStyled = styled.span`
     font-size: 16px;
     margin-right: 10px;
     font-weight: 600;
+    text-transform: uppercase;
     @media screen and (max-width: 600px) {
         padding: 10px 25px;
         font-size: 14px;
@@ -129,7 +133,7 @@ const ReviewContent = styled.div`
 
 const ReviewSubmitSection = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   background: transparent;
   width: 100%;
   position: relative;

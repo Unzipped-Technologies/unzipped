@@ -4,7 +4,7 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Nav from '../../components/unzipped/header'
-import { updateBusinessForm, createBusiness, getUserById, businessFieldsValidation } from '../../redux/actions'
+import { updateBusinessForm, createBusiness, getUserById, businessFieldsValidation, setProjectFiles } from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import { nextPublicGithubClientId } from '../../config/keys'
 import GetCardDesktop from '../../components/unzipped/CreateABusiness/BusinessDesktopCard'
@@ -17,8 +17,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background: #d9d9d9;
-  height: auto;
-  margin-top: 65px;
+  height: ${({ stage }) => stage !== 12 ? '100vh' : 'auto'};
   width: 100vw;
   @media (max-width: 680px) {
     display: block;
@@ -42,11 +41,9 @@ const DesktopBox = styled.div`
 `
 
 export const ContentContainer = styled('div')`
-  max-height: 150px;
   padding: ${({ padding }) => (padding ? padding : '10px 20px')};
   width: ${({ width }) => (width ? width : '90%')};
   margin-bottom: ${({ marginBottom }) => (marginBottom ? marginBottom : '0px')};
-  overflow-y: scroll;
   font-family: 'Roboto';
   line-height: 25px;
   font-weight: 500;
@@ -102,7 +99,8 @@ const CreateBusiness = ({
   createBusiness,
   token,
   accessToken,
-  userDetails
+  userDetails,
+  projectFiles
 }) => {
   const dispatch = useDispatch();
   const businessForm = useSelector(state => state.Business?.businessForm);
@@ -136,8 +134,8 @@ const CreateBusiness = ({
       })
     } else {
       const formData = new FormData()
-      if (files.length > 0) {
-        files.forEach(file => {
+      if (projectFiles.length > 0) {
+        projectFiles.forEach(file => {
           formData.append('images', file)
         })
       }
@@ -174,27 +172,32 @@ const CreateBusiness = ({
     }
   }
 
-  const handleInput = value => setInputValue(value)
+  const handleInput = value => {
+    setInputValue(value)
+  }
 
   const handleSkip = (isFileSkipped = false) => {
-    if (isFileSkipped && files.length > 0) {
-      setFiles([])
-    }
     submitForm(stage)
   }
 
-  const handleCancelIcon = (feildName, data, value) => {
-    if (feildName.split(':')[0] === 'files' && files.length > 0) {
-      const popFiles = [...files]
-      popFiles.splice(parseInt(feildName.split(':')[1]), 1)
+  const handleCancelIcon = (fieldName, data, value) => {
+    if (fieldName.split(':')[0] === 'files' && projectFiles.length > 0) {
+      const popFiles = [...projectFiles]
+      popFiles.splice(parseInt(fieldName.split(':')[1]), 1)
+      dispatch(setProjectFiles(popFiles))
       setFiles(popFiles)
     } else {
-      updateForm({ [feildName]: data.filter(val => val !== value) })
+      updateForm({ [fieldName]: data.filter(val => val !== value) })
     }
   }
 
   const handleEnterKey = (fieldName, data, e) => {
     if (e.keyCode === 13 && e.shiftKey === false) {
+      if (fieldName === 'questionsToAsk' && data[data.length] <= 10) {
+        dispatch(businessFieldsValidation(true))
+        setIsSubmitted(true);
+        return true;
+      };
       updateForm({ [fieldName]: [...data, inputValue] })
       handleInput('')
     }
@@ -222,7 +225,7 @@ const CreateBusiness = ({
       setIsSubmitted(true);
       return true;
     }
-    if (businessForm?.name.length < 100 && step === 2) {
+    if (businessForm?.name.length < 10 && step === 2) {
       dispatch(businessFieldsValidation(true))
       setIsSubmitted(true);
       return true;
@@ -232,7 +235,7 @@ const CreateBusiness = ({
   return (
     <>
       {businessForm?.stage > 11 && <Nav isSubMenu marginBottom={'0px'} zIndex={20} />}
-      <Container>
+      <Container stage={stage}>
         <DesktopBox>
           <GetCardDesktop
             stage={stage}
@@ -263,6 +266,7 @@ const CreateBusiness = ({
             userDetails={userDetails}
             isSubmitted={isSubmitted}
             setIsSubmitted={setIsSubmitted}
+            projectFiles={projectFiles}
           />
         </DesktopBox>
 
@@ -324,7 +328,8 @@ const mapStateToProps = state => {
     stage: state.Business?.businessForm.stage,
     loading: state.Business?.loading,
     accessToken: state.Auth.token,
-    userDetails: state.Auth.user
+    userDetails: state.Auth.user,
+    projectFiles: state.Business?.files
   }
 }
 

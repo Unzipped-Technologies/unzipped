@@ -14,7 +14,9 @@ import {
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
   UPDATE_WIZARD_SUBMISSION,
-  SET_IS_BUSINESS_FIELD_SUBMITTED
+  SET_IS_BUSINESS_FIELD_SUBMITTED,
+  SET_PROJECT_FILES,
+  RESET_PROJECT_FILES
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -78,38 +80,38 @@ export const getBusinessDetails = (userId, token) => async (dispatch, getState) 
 
 export const createBusiness =
   (data, isWizard = false) =>
-  async (dispatch, getState) => {
-    dispatch({ type: LOAD_STATE })
-    dispatch(startLoading())
-    await axios
-      .post(`/api/business/create`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
-      .then(async res => {
-        dispatch({
-          type: CREATE_BUSINESS,
-          payload: { projectName: res.data?.business?.name, isSuccessfull: true }
-        })
-        if (isWizard) {
+    async (dispatch, getState) => {
+      dispatch({ type: LOAD_STATE })
+      dispatch(startLoading())
+      await axios
+        .post(`/api/business/create`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+        .then(async res => {
           dispatch({
-            type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+            type: CREATE_BUSINESS,
             payload: { projectName: res.data?.business?.name, isSuccessfull: true }
           })
-        }
-        dispatch({ type: RESET_BUSINESS_FORM })
-      })
-      .catch(err => {
-        dispatch({
-          type: BUSINESS_ERROR,
-          payload: err.response
+          if (isWizard) {
+            dispatch({
+              type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+              payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+            })
+          }
+          dispatch({ type: RESET_BUSINESS_FORM })
         })
-        if (isWizard) {
+        .catch(err => {
           dispatch({
-            type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
-            payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+            type: BUSINESS_ERROR,
+            payload: err.response
           })
-        }
-      })
-    dispatch(stopLoading())
-  }
+          if (isWizard) {
+            dispatch({
+              type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+              payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+            })
+          }
+        })
+      dispatch(stopLoading())
+    }
 
 export const updateBusiness = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
@@ -135,11 +137,11 @@ export const updateBusiness = data => async (dispatch, getState) => {
 
 export const nullBusinessForm =
   (data = {}) =>
-  dispatch => {
-    dispatch({
-      type: RESET_BUSINESS_FORM
-    })
-  }
+    dispatch => {
+      dispatch({
+        type: RESET_BUSINESS_FORM
+      })
+    }
 
 export const updateWizardSubmission = data => dispatch => {
   dispatch({
@@ -158,13 +160,13 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -188,13 +190,13 @@ export const getPublicProjectsList = queryParams => async (dispatch, getState) =
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -232,9 +234,22 @@ export const getBusinessById = id => async (dispatch, getState) => {
   await dispatch(stopLoading())
 }
 
-export const businessFieldsValidation = data =>  (dispatch) => {
+export const businessFieldsValidation = data => (dispatch) => {
   dispatch({
     type: SET_IS_BUSINESS_FIELD_SUBMITTED,
     payload: data
+  })
+}
+
+export const setProjectFiles = data => (dispatch) => {
+  dispatch({
+    type: SET_PROJECT_FILES,
+    payload: data
+  })
+}
+
+export const resetProjectFiles = () => (dispatch) => {
+  dispatch({
+    type: RESET_PROJECT_FILES,
   })
 }

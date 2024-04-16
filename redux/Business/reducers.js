@@ -15,7 +15,9 @@ import {
   SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
   SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
   UPDATE_WIZARD_SUBMISSION,
-  SET_IS_BUSINESS_FIELD_SUBMITTED
+  SET_IS_BUSINESS_FIELD_SUBMITTED,
+  SET_PROJECT_FILES,
+  RESET_PROJECT_FILES
 } from './constants'
 
 const INIT_STATE = {
@@ -148,9 +150,15 @@ const Business = (state = INIT_STATE, action = {}) => {
     case GET_PROJECT_Error:
       return { ...state, loading: false, error: action.payload }
 
-    case SET_IS_BUSINESS_FIELD_SUBMITTED: 
-    return { ...state, businessForm: { ...state.businessForm, isFieldSubmitted: action.payload } }
-      default:
+    case SET_IS_BUSINESS_FIELD_SUBMITTED:
+      return { ...state, businessForm: { ...state.businessForm, isFieldSubmitted: action.payload } }
+
+    case SET_PROJECT_FILES:
+      return { ...state, files: action.payload }
+    case RESET_PROJECT_FILES:
+      return { ...state, files: [] }
+
+    default:
       return state
   }
 }

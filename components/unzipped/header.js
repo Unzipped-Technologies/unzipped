@@ -778,7 +778,7 @@ const Nav = ({
         <SubMenTop
           style={{
             transition: 'transform 0.3s ease-in-out',
-            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)'
+            transform: isHidden ? 'translateY(-110%)' : 'translateY(0)'
           }}>
           {handleSearch && (
             <>

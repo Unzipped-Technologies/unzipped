@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CreateABusiness from '..';
 import { Grid } from '../../dashboard/style';
 import { FormField } from '../../../ui';
 import Button from '../../../ui/Button';
 import { ContentContainer } from '../../../../pages/create-your-business';
 import ClearSharpIcon from '@material-ui/icons/ClearSharp';
+import CharacterCounter from '../CharacterCounter';
 
 const StepNineWizardFlow = (
     {
@@ -19,6 +20,71 @@ const StepNineWizardFlow = (
         handleCancelIcon
     }
 ) => {
+
+    const [questionLength, setQuestionLength] = useState(0);
+    const [isErrorNotified, setIsErrorNotified] = useState(false);
+    const [isAlterable, setIsAlterable] = useState(false);
+
+    const handleQuestionnaireValidation = (value) => {
+        if (value.length >= 240) {
+            if (isAlterable) {
+                setIsAlterable(false)
+                handleInput(value)
+            }
+        }
+        else {
+            handleInput(value);
+            setQuestionLength(value.length)
+        }
+    }
+
+    const handleOnEnterMethod = (e) => {
+        const fieldName = 'questionsToAsk';
+        if (inputValue !== '' && questionsToAsk.length < 3) {
+            if (e.keyCode === 13 && e.shiftKey === false) {
+                if (inputValue.length < 10) {
+                    setIsErrorNotified(true)
+                    return;
+                }
+                updateForm({ [fieldName]: [...questionsToAsk, inputValue] })
+                handleInput('')
+                setQuestionLength(0)
+                setIsErrorNotified(false)
+            }
+        }
+    }
+
+    const handleOnButtonAdd = () => {
+        if (inputValue.length < 10) {
+            setIsErrorNotified(true)
+            return;
+        }
+        updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
+        handleInput('')
+        setQuestionLength(0)
+        setIsErrorNotified(false)
+    }
+
+    const handleKeydownEvent = e => {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            setIsAlterable(true)
+        } else {
+            if (inputValue !== '' && questionsToAsk.length < 3) {
+                const fieldName = 'questionsToAsk';
+                if (e.keyCode === 13 && e.shiftKey === false) {
+                    if (inputValue.length < 10) {
+                        setIsErrorNotified(true)
+                        return;
+                    }
+                    updateForm({ [fieldName]: [...questionsToAsk, inputValue] })
+                    handleInput('')
+                    setQuestionLength(0)
+                    setIsErrorNotified(false)
+                }
+            }
+        }
+    }
+
     return (
         <CreateABusiness
             title="Questions for Potential Hires"
@@ -38,10 +104,11 @@ const StepNineWizardFlow = (
                     placeholder="Type a question and hit enter..."
                     borderRadius="10px"
                     handleEnterKey={e =>
-                        inputValue !== '' && questionsToAsk.length < 3 && handleEnterKey('questionsToAsk', questionsToAsk, e)
+                        handleOnEnterMethod(e)
                     }
-                    onChange={e => handleInput(e.target.value)}
+                    onChange={e => handleQuestionnaireValidation(e.target.value)}
                     value={inputValue}
+                    onKeyDown={e => handleKeydownEvent(e)}
                 />
                 <Button
                     disabled={inputValue === '' || questionsToAsk.length >= 3}
@@ -50,13 +117,18 @@ const StepNineWizardFlow = (
                     right="50px"
                     type="purple"
                     buttonHeight="42px"
-                    onClick={() => {
-                        updateForm({ questionsToAsk: [...questionsToAsk, inputValue] })
-                        handleInput('')
-                    }}>
+                    onClick={handleOnButtonAdd}>
                     Add
                 </Button>
             </Grid>
+            <CharacterCounter
+                field={'questionsToAsk'}
+                index={questionLength}
+                isQuestionnaire={true}
+                isErrorNotified={isErrorNotified}
+                step={stage}
+            />
+
             <ContentContainer>
                 {questionsToAsk.map(question => (
                     <div className="d-flex mb-3">

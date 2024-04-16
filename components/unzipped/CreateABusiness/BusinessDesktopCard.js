@@ -41,7 +41,8 @@ const GetCardDesktop = ({
     handleGithub,
     userDetails,
     isSubmitted,
-    setIsSubmitted
+    setIsSubmitted,
+    projectFiles
 }) => {
     switch (stage) {
         case 1:
@@ -204,6 +205,7 @@ const GetCardDesktop = ({
                     setFiles={setFiles}
                     handleCancelIcon={handleCancelIcon}
                     SkipNextOutlinedIcon={SkipNextOutlinedIcon}
+                    projectFiles={projectFiles}
                 />
             )
         case 11:
@@ -215,6 +217,8 @@ const GetCardDesktop = ({
                         submitForm={submitForm}
                         stage={stage}
                         handleGithub={handleGithub}
+                        SkipNextOutlinedIcon={SkipNextOutlinedIcon}
+                        handleSkip={handleSkip}
                     />
                 )
             } else {
@@ -223,7 +227,7 @@ const GetCardDesktop = ({
         case 12:
             return (
                 <>
-                    <ReviewBusinessDetails files={files} isGithubConnected={isGithubConnected} stage={stage} />
+                    <ReviewBusinessDetails files={projectFiles} isGithubConnected={isGithubConnected} stage={stage} />
                 </>
             )
 

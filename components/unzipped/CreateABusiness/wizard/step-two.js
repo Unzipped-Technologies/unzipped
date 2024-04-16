@@ -17,7 +17,7 @@ const StepTwoWizardFlow = ({
     const [isAlterable, setIsAlterable] = useState(false);
 
     const handleInputChangeEvent = e => {
-        if (name?.length >= 1000) {
+        if (name?.length >= 240) {
             if (isAlterable) {
                 setIsAlterable(false)
                 updateForm({ name: e.target.value })
