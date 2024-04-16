@@ -1,36 +1,28 @@
 import React from 'react'
-import styled from 'styled-components'
-import { TitleText, DarkText, WhiteCard, Underline } from '../style'
+import { TitleText, DarkText, WhiteCard, Underline, DIV } from '../style'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import MenuIcon from '../../../ui/icons/menu'
 import { FaRegCheckCircle } from 'react-icons/fa'
 
-const Container = styled.div`
-  position: relative;
-  display: flex;
-  flex-flow: column;
-  border: 1px solid #d9d9d9;
-  min-width: 400px;
-  height: fit-content;
-  border-radius: 10px;
-  overflow: hidden;
-`
-
 const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness }) => {
   return (
     <>
-      <Container>
+      <DIV
+        position="relative"
+        border="1px solid #d9d9d9"
+        minWidth="400px"
+        height="fit-content"
+        borderRadius="10px"
+        overflow="hidden">
         {businesses?.length
           ? businesses.map(business => {
               return (
                 <div key={business._id}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      paddingTop: '20px'
-                    }}
+                  <DIV
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="space-between"
+                    padding="20px 0px 0px 0px"
                     onClick={() => {
                       if (business._id === currentBusiness?._id) {
                         onSelectBusiness('')
@@ -49,12 +41,12 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                         marginTop: '-10px'
                       }}
                     />
-                  </div>
+                  </DIV>
                   {business._id !== currentBusiness?._id && <Underline />}
                   {business?.businessDepartments?.length && currentBusiness?._id === business?._id
                     ? business?.businessDepartments?.map(department => {
                         return (
-                          <div key={department._id}>
+                          <DIV key={department._id}>
                             <WhiteCard
                               borderColor="transparent"
                               padding="0px 5px 30px 20px"
@@ -74,16 +66,11 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                                 <span style={{ paddingRight: '25px' }}>
                                   {selectedDepartment?._id === department._id ? (
                                     <>
-                                      <div
-                                        style={{
-                                          position: 'relative',
-                                          display: 'inline-block'
-                                        }}>
-                                        <div style={{}}>
-                                          {' '}
+                                      <DIV position="relative" display="inline-block">
+                                        <DIV>
                                           <MenuIcon width="28px" height="28px" color="#2F76FF" />
-                                        </div>
-                                        <div
+                                        </DIV>
+                                        <DIV
                                           style={{
                                             position: 'absolute',
                                             bottom: 0,
@@ -98,8 +85,8 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                                               color: '#2F76FF'
                                             }}
                                           />
-                                        </div>
-                                      </div>
+                                        </DIV>
+                                      </DIV>
                                     </>
                                   ) : (
                                     <MenuIcon width="28px" height="28px" color="#2F76FF" />
@@ -108,7 +95,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                                 {department.name}
                               </DarkText>
                             </WhiteCard>
-                          </div>
+                          </DIV>
                         )
                       })
                     : ''}
@@ -117,7 +104,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
               )
             })
           : ''}
-      </Container>
+      </DIV>
     </>
   )
 }

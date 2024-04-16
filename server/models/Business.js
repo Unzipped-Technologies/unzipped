@@ -80,7 +80,7 @@ const businessSchema = new Schema(
     applicants: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'projectapplications'
+        ref: 'freelancers'
       }
     ],
     questionsToAsk: { type: [mongoose.Schema.Types.ObjectId], ref: 'questions', default: null },

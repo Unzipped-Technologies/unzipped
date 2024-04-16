@@ -417,6 +417,60 @@ const CalanderParagraphStyled = styled.p`
   width: 87%;
 `
 
+const DIV = styled.div`
+  // Display
+  display: ${({ display }) => (display ? display : 'block')};
+  align-items: ${({ alignItems }) => (alignItems ? alignItems : 'stretch')};
+  justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : 'flex-start')};
+  flex-direction: ${({ flexDirection }) => (flexDirection ? flexDirection : 'row')};
+  flex-flow: ${({ position }) => (position ? position : 'row nowrap')};
+  flex: ${({ flex }) => (flex ? flex : '0 1 auto')};
+  box-sizing: ${({ boxSizing }) => (boxSizing ? boxSizing : 'content-box')};
+  // Style
+  width: ${({ width }) => (width ? width : 'auto')};
+  min-width: ${({ minWidth }) => (minWidth ? minWidth : 'auto')};
+
+  height: ${({ height }) => (height ? height : 'auto')};
+  position: ${({ position }) => (position ? position : 'static')};
+  background: ${({ background }) => (background ? background : 'transparent')};
+  border: ${({ border }) => (border ? border : '#d8d8d8')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
+`
+
+const TEXT = styled.span`
+  width: ${({ width }) => (width ? width : 'auto')};
+  height: ${({ height }) => (height ? height : 'auto')};
+  position: ${({ position }) => (position ? position : 'static')};
+  background: ${({ background }) => (background ? background : 'transparent')};
+  border: ${({ border }) => (border ? border : 'none')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
+  font-family: Roboto;
+  font-style: normal;
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
+  color: ${({ textColor }) => (textColor ? textColor : '#000000')};
+`
 const bounceAnimation = keyframes`
   0% {
     transform: translateY(0px);
@@ -448,10 +502,11 @@ const TypingAnimation = styled.div`
     &:nth-child(3) {
       animation: ${bounceAnimation} 1s infinite 0.4s;
     }
-  }
-`
-
+  }`
+  
 module.exports = {
+  DIV,
+  TEXT,
   HeadingText,
   BlackCard,
   MinWidth,

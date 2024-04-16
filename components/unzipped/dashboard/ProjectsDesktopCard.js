@@ -5,8 +5,7 @@ import { useRouter } from 'next/router'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import { TitleText, DarkText, Absolute } from './style'
-import { Diversity1Sharp } from '@mui/icons-material'
+import { TitleText, DarkText } from './style'
 
 const Container = styled.div`
   display: flex;
@@ -45,7 +44,6 @@ const Flex = styled.div`
 
 const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
   const router = useRouter()
-
   return (
     <Container includeRate={includeRate}>
       <Left>
@@ -73,11 +71,10 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           {project?.name}
         </TitleText>
         <Flex>
-          <DarkText half fontSize="14px" color="#000000">
-            {project?.businessCountry}
-          </DarkText>
-          <DarkText half fontSize="14px" color="#000000">
-            Estimated Rate: $27 / hour
+          <DarkText half>{project?.businessCountry}</DarkText>
+          <DarkText half>
+            Estimated Rate: $
+            {project?.projectBudgetType === 'Hourly Rate' ? project?.budget + ' / hour' : project?.budget ?? 0}
           </DarkText>
         </Flex>
         <div className="d-flex justify-content-between">
@@ -88,27 +85,26 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           <Badge key={`${item}_desktop_card`}>{item}</Badge>
         ))}
       </Right>
-      <Absolute>
+      <div className="" style={{ marginLeft: '10px' }}>
         <Button
           color="#000"
+          margin="0px 0px 0px 70px"
           style={{ padding: '8px 22px' }}
           normal
           oval
           type="green2"
+          buttonHeight="40px"
           noBorder
           onClick={() => {
+            console.log('Hi')
             router.push(`/projects/${project._id}`)
           }}>
           View Project
         </Button>
-      </Absolute>
-      <Absolute>
-        <div className="">
-          <DarkText topMargin="100px" width="100%" fontSize="15px" color="#000000">
-            1,450 Upvotes by Freelancers
-          </DarkText>
-        </div>
-      </Absolute>
+        <DarkText topMargin="20px" width="200px" fontSize="15px" color="#000000" marginLeft="20px">
+          {project?.likeTotal ?? 0} Upvotes by Freelancers
+        </DarkText>
+      </div>
     </Container>
   )
 }

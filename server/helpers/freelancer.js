@@ -1,11 +1,9 @@
 const FreelancerModel = require('../models/Freelancer')
 const InviteModel = require('../models/Invited')
 const FreelancerSkillsModel = require('../models/FreelancerSkills')
-const mongoose = require('mongoose')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
-
 
 const getFreelancerById = async id => {
   try {
@@ -44,18 +42,16 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
   try {
     const regexQuery = new RegExp(filter?.searchKey, 'i')
     const existingIndexes = await FreelancerModel.collection.getIndexes()
-    const existingFreelancerSkillsIndexes = await FreelancerSkillsModel.collection.getIndexes()
-    const existingUserIndexes = await UserModel.collection.getIndexes()
+
+    const existingUserIndexes = await UserModel?.collection?.getIndexes()
+
     const indexExists = existingIndexes && 'user_1_rate_1' in existingIndexes
-    const indexExistsFreelancerSkillsIndexes =
-      existingFreelancerSkillsIndexes && 'skill_1' in existingFreelancerSkillsIndexes
+
     const indexExistsUserIndexes = existingUserIndexes && 'FullName_1' in existingUserIndexes
     if (!indexExists) {
       await FreelancerModel.collection.createIndex({ user: 1, rate: 1 })
     }
-    if (!indexExistsFreelancerSkillsIndexes) {
-      await FreelancerSkillsModel.collection.createIndex({ skill: 1 })
-    }
+
     if (!indexExistsUserIndexes) {
       await UserModel.collection.createIndex({ FullName: 1 })
       await UserModel.collection.createIndex({ freelancerSkills: 1 })
@@ -65,6 +61,7 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
     const regexPattern = regexPatterns?.join('|')
     const limitValue = limit === 'all' ? await countFreelancers(filter) : Number(limit)
     const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 }
+    const ID = mongoose.Types.ObjectId(filter.businessId)
 
     const aggregationPipeline = [
       {
@@ -78,6 +75,27 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
           likeTotal: 1,
           dislikeTotal: 1,
           invites: 1
+        }
+      },
+      {
+        $lookup: {
+          from: 'contracts',
+          let: { freelancerId: '$_id', businessId: ID },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [{ $eq: ['$freelancerId', '$$freelancerId'] }, { $eq: ['$businessId', '$$businessId'] }]
+                }
+              }
+            }
+          ],
+          as: 'contracts'
+        }
+      },
+      {
+        $match: {
+          contracts: { $eq: [] } // Filter freelancers with no contracts
         }
       },
       {
@@ -133,8 +151,19 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
       {
         $lookup: {
           from: 'invites',
-          localField: 'invites',
-          foreignField: '_id',
+          let: { invites: '$invites' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$_id', '$$invites'] }
+              }
+            },
+            {
+              $project: {
+                business: 1
+              }
+            }
+          ],
           as: 'invites'
         }
       },

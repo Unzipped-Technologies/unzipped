@@ -80,13 +80,10 @@ const ProfileCard = ({ user }) => {
             <TextBox>
               <Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span>
             </TextBox>
-            {user?.rate ? (
-              <TextBox>
-                <Span bold>SALARY</Span> <Span>${user?.rate.toFixed(2)} / HOUR</Span>
-              </TextBox>
-            ) : (
-              ''
-            )}
+            <TextBox>
+              <Span bold>SALARY</Span> <Span>{user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
+            </TextBox>
+
             <TextBox>
               <Span bold>EQUITY</Span> <Span>{user?.isAcceptEquity ? 'YES' : 'NO'}</Span>
             </TextBox>

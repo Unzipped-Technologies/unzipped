@@ -16,16 +16,15 @@ import {
 const INITIAL_TASKS = {
   taskName: '',
   storyPoints: 0,
-  priority: '',
+  priority: 'lowest',
   order: 1,
   description: '',
-  status: '',
+  status: 'todo',
   businessId: '',
   departmentId: '',
   assignee: '',
   tags: [],
   tag: '',
-  ticketCode: '',
   comments: []
 }
 

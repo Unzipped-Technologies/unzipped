@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
+
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import { useRouter } from 'next/router'
 import { TitleText, DarkText, Absolute, DarkSpan } from './style'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -33,29 +34,31 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited, filter }) => {
+const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited,filter, afterInvitation }) => {
+  const router = useRouter()
+  const { proejct } = router.query
+
   const userLists = useSelector(state => state.ListEntries.userLists)
   const userId = useSelector(state => state.Auth.user._id)
   const accessToken = useSelector(state => state.Auth.token)
   const dispatch = useDispatch()
 
-  const router = useRouter()
   const redirectToProfile = () => {
     const listObj = userLists?.find(list => list.name === 'Recently Viewed')
     if (listObj) {
       dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
     }
-  
     if (user?.id) {
       router.push(`/freelancers/${user.id}`)
     }
   }
 
-  const handleUserInvite = () => {
+  const handleUserInvite = async () => {
     if (userId && accessToken) {
       const inviteFreelancer = {
         userInvited: userId,
-        freelancer: user.id
+        freelancer: user.id,
+        business: proejct
       }
       dispatch(createUserInvitation(inviteFreelancer, accessToken, filter))
     }
@@ -65,14 +68,16 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
     <Container includeRate={includeRate}>
       <Left>
         <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
-        <Button
-          margin="20px 0px"
-          type={!user.isInvited ? 'default' : 'grey'}
-          disabled={user?.isInvited ? true : false}
-          noBorder
-          onClick={handleUserInvite}>
-          {user.isInvited ? 'Invited' : 'Invite'}
-        </Button>
+        {proejct && (
+          <Button
+            margin="20px 0px"
+            type={user?.invites?.business === proejct ? 'grey' : 'default'}
+            noBorder
+            disabled={user?.invites?.business === proejct}
+            onClick={handleUserInvite}>
+            {user?.invites?.business === proejct ? 'Invited' : 'Invite'}
+          </Button>
+        )}
       </Left>
       <Right minWidth={width} includeRate={includeRate}>
         <TitleText half color="#0057FF" onClick={redirectToProfile}>
@@ -82,9 +87,16 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
         {user?.country && <DarkText half>{user.country}</DarkText>}
         {includeRate && (
           <Flex>
-            <DarkText small half>
-              <DarkSpan large>${user?.rate}</DarkSpan> / hour
-            </DarkText>
+            {user?.rate > 0 ? (
+              <DarkText small half>
+                <DarkSpan large>${user?.rate}</DarkSpan> / hour
+              </DarkText>
+            ) : (
+              <DarkText small half>
+                Negotiable
+              </DarkText>
+            )}
+
             {user?.likes > 0 && (
               <DarkText right color="#000" fontSize="15px" noMargin>
                 {`${user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}  UPVOTES BY CLIENTS `}

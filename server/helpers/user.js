@@ -23,6 +23,7 @@ const Mailer = require('../../services/Mailer')
 // create user
 const createUser = async (data, hash) => {
   // create User
+  data.FullName = (data.FirstName || '') + (data.FirstName && data.LastName ? ' ' : '') + (data.LastName || '')
   const newUser = await user.create({
     ...data,
     password: hash,

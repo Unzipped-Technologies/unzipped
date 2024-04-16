@@ -4,7 +4,7 @@ const UnauthorizedError = require('../exceptions/UnauthorizedError')
 
 const hasPermission = permissions => async (req, _, next) => {
   try {
-    const existingUser = await userHelper.getUserById(req.user.sub)
+    const existingUser = await userHelper.getSingleUser({ _id: req.user.sub })
 
     if (!existingUser) throw Error('user does not existsssss')
     req['user']['userInfo'] = existingUser
