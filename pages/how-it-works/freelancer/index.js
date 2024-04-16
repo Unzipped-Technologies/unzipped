@@ -7,6 +7,9 @@ import Head from 'next/head';
 const Container = styled.div`
     display: flex;
     flex-flow: column;
+    @media screen and (max-width: 600px) {
+        overflow: auto;
+    }
 `;
 
 const HowItWorksFreelancer = () => {
