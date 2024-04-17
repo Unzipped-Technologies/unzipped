@@ -178,7 +178,7 @@ const SubMenTop = styled.div`
   position: fixed;
   top: 78px;
   z-index: 1;
-  padding: 0px 15%;
+  padding: ${({ padding }) => (padding ? padding : '0px')};
   @media (max-width: 680px) {
     display: none;
   }
@@ -772,11 +772,12 @@ const Nav = ({
           </Mobile>
         </Right>
       </Container>
-      {isSubMenu && token && (
+      {isSubMenu && (
         <SubMenTop
+          padding={token ? '0px 0px 0px 15%;' : '0px 0px 25px 15%;'}
           style={{
             transition: 'transform 0.3s ease-in-out',
-            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)'
+            transform: isHidden ? 'translateY(-110%)' : 'translateY(0)'
           }}>
           {handleSearch && (
             <>
@@ -792,7 +793,7 @@ const Nav = ({
               </div>
             </>
           )}
-          {token ? (
+          {token && (
             <SubMenu>
               {subMenuItems.map((item, key) => (
                 <Link href={item.link} key={key}>
@@ -802,23 +803,8 @@ const Nav = ({
                 </Link>
               ))}
             </SubMenu>
-          ) : (
-            <>
-              {businessForm && businessForm.stage > 1 ? (
-                <></>
-              ) : (
-                <SubMenu>
-                  {subMenuItems.map((item, key) => (
-                    <Link href={item.link} key={key}>
-                      <SpanWhite count={key} underline={router.pathname === item.link}>
-                        <Sub>{item.name} </Sub>
-                      </SpanWhite>
-                    </Link>
-                  ))}
-                </SubMenu>
-              )}
-            </>
-          )}
+          ) 
+         }
         </SubMenTop>
       )}
     </Div>

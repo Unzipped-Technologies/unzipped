@@ -80,7 +80,7 @@ const Freelancers = ({
     skill: []
   })
   const [skip] = useState(0)
-  const [take, setTake] = useState(50)
+  const [take, setTake] = useState(20)
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '70px')
@@ -91,7 +91,7 @@ const Freelancers = ({
 
   useEffect(() => {
     getAllFreelancers({ filter, skip, take })
-  }, [filter, createdInvitation])
+  }, [filter, createdInvitation, take])
 
   useEffect(() => {
     const handleResize = () => {
@@ -119,7 +119,7 @@ const Freelancers = ({
     setIsVisible(entry.isIntersecting)
     if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
       if (take < totalCount) {
-        setTake(take + 50)
+        setTake(take + 20)
       }
     }
   }
@@ -229,7 +229,7 @@ const Freelancers = ({
           )
         )}
         <Box style={{
-          marginTop: !isExpanded ? (access_token ? '170px' : '0px') : access_token ? '170px' : '0px',
+          marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px',
         }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           {!loading && (
@@ -311,7 +311,7 @@ const mapStateToProps = state => {
   return {
     freelancerList: state.Freelancers?.freelancers,
     access_token: state.Auth.token,
-    totalCount: state.FreelancerSkills?.freelancersTotalCount,
+    totalCount: state.Freelancers?.totalCount,
     loading: state.Loading.loading
   }
 }
