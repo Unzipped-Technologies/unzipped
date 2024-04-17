@@ -100,12 +100,7 @@ const Register = ({location, date, count, isAuthenticated, token, error, users})
             </Head>
             <div className="service-header-1">
             <Nav popBox="services"/>
-            {/* <div className="service-selector">
-            <Selector />
-            </div> */}
-            {/* <div className="mobile-service-selector">
-            <AppointmentMobile />
-            </div> */}
+            
             </div>
             <div className="service-section-1">
                 <div className="vohnt-register">
@@ -135,9 +130,6 @@ const Register = ({location, date, count, isAuthenticated, token, error, users})
                     </div>
                 </div>
             </div>
-            {/* <div className="alt-footer-2">
-            <Footer />
-            </div> */}
             </div>
         </React.Fragment>
     )

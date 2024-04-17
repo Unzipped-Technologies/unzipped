@@ -797,8 +797,14 @@ const Nav = ({
             <SubMenu>
               {subMenuItems.map((item, key) => (
                 <Link href={item.link} key={key}>
-                  <SpanWhite count={key} underline={router.pathname === item.link}>
-                    <Sub>{item.name} </Sub>
+                  <SpanWhite
+                    count={key}
+                    underline={
+                      router.pathname.includes('projects') && item.link.includes('projects')
+                        ? true
+                        : (router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard') ? true : router.pathname === item.link
+                    }>
+                    <Sub>{item.name}</Sub>
                   </SpanWhite>
                 </Link>
               ))}

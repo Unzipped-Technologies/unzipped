@@ -36,8 +36,6 @@ const identityVerificationFailed = async (event) => {
     const user = await billingHelper.getUserById(event.data.metadata?.customer)
     await userHelper.updateUserByid(user.id, {isIdentityVerified: accountVerificationEnum.REJECTED})
     const user2 = await billingHelper.getUserById(event.data.metadata?.customer)
-
-    console.log('user2: ', user2)
 }
 
 const webhookHandlers = {

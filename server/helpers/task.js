@@ -3,7 +3,6 @@ const mongoose = require('mongoose')
 const file = require('../helpers/file')
 const TaskModel = require('../models/Task')
 const DepartmentModel = require('../models/Department')
-const contractHelper = require('./contract')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
 const createTask = async data => {
@@ -16,28 +15,27 @@ const createTask = async data => {
     if (!departmentData) throw new Error(`Department not exist.`)
 
     // Check whether the business against businessId exist OR not
-    const businessData = await getBusinessWithoutPopulate(departmentData.businessId, 'businessCode')
+    const businessData = await getBusinessWithoutPopulate(departmentData.businessId, 'businessCode name')
     if (!businessData) throw new Error(`Business not exist.`)
 
-    const tagData = await getTagsWithoutPopulate({ _id: data.tag }, '')
+    const tagData = await getTagsWithoutPopulate({ departmentId: data.departmentId, tagName: 'To Do' }, '')
     if (!tagData) throw new Error(`Invalid tag Id.`)
+
+    if (!data?.tag) {
+      data['tag'] = tagData?._id
+    }
 
     if (data?.tags?.length > 5) throw new Error(`Tags cannot have more than 5 elements.`)
 
-    if (data.assignee) {
-      // Check whether the assigne has a contract or not
-      const contractData = await contractHelper.getContractWithoutPopulate({
-        businessId: departmentData.businessId,
-        freelancerId: data.assignee
-      })
-      if (!contractData) {
-        throw new Error(`Selected assignee has not any contract in this business.`)
-      }
+    if (!data?.assignee) {
+      data.assignee = null
     }
-
     // Get count of current business tasks
     const totalBusinessTasks = await countTasks({ businessId: departmentData.businessId })
-    data.ticketCode = `${businessData.businessCode.replace(' ', '')}-${totalBusinessTasks + 1}`
+    const preCode = businessData?.businessCode
+      ? businessData?.businessCode?.replace(' ', '')
+      : businessData?.name?.substring(0, 3)?.replace(' ', '')?.toLowerCase()
+    data.ticketCode = `${preCode}-${totalBusinessTasks + 1}`
 
     // Create new tasks
     const newTask = await TaskModel.create(data)
@@ -53,57 +51,55 @@ const createTask = async data => {
     await departmentData.save()
     return { message: 'Task created successfully.' }
   } catch (err) {
-    throw Error(`Could not create task, error: ${err}`)
+    throw Error(`${err?.message ?? 'Something went wrong'}`)
   }
 }
 
 const createManyTask = async (tasks, freelancerId = null) => {
   try {
     const { getBusinessWithoutPopulate } = require('./business')
-    const { getDepartmentWithoutPopulate } = require('./department')
-    const { getContractWithoutPopulate } = require('./contract')
     const { getTagsWithoutPopulate } = require('./tags')
-    // Check whether the department against departmentId exist OR not
-    const freelancerContracts = await getContractWithoutPopulate(
-      { businessId: tasks[0].businessId, freelancerId: freelancerId },
-      ''
-    )
-    if (freelancerContracts) {
-      // Check whether the department against departmentId exist OR not
-      const departmentData = await getDepartmentWithoutPopulate({ _id: freelancerContracts?.departmentId }, '')
-      const tagData = await getTagsWithoutPopulate(
-        { departmentId: freelancerContracts?.departmentId, tagName: 'To Do' },
-        ''
-      )
-      // Get count of current business tasks
-      const totalBusinessTasks = await countTasks({ businessId: tasks[0].businessId })
-      let count = 0
-      for (var task of tasks) {
-        count = count + 1
-        // Check whether the business against businessId exist OR not
-        const businessData = await getBusinessWithoutPopulate(task.businessId, 'businessCode')
-        if (!businessData) throw new Error(`Business not exist.`)
-        task['assignee'] = freelancerId
-        task['departmentId'] = freelancerContracts?.departmentId
-        task['tag'] = tagData?._id
-        task['ticketCode'] = `${businessData.businessCode.replace(' ', '')}-${totalBusinessTasks + count}`
-      }
-      // Create new tasks
-      const newTasks = await TaskModel.insertMany(tasks)
+    const { getDepartmentWithoutPopulate } = require('./department')
 
-      const newTasksIds = newTasks.map(task => task?._id)
-      // Push tasks to tasks array of department model
-      if (departmentData?.tasks?.length) {
-        departmentData.tasks = [...departmentData?.tasks, ...newTasksIds]
-      } else {
-        departmentData['tasks'] = newTasksIds
-      }
-      // Save department model after made changes
-      await departmentData.save()
-      return { message: 'Tasks created successfully.', data: newTasks }
-    } else {
-      throw Error(`You do not have any contract against this business.`)
+    const businessData = await getBusinessWithoutPopulate(tasks[0]?.businessId, 'businessCode name departments')
+    if (!businessData) throw new Error(`Business not exist.`)
+
+    // Check whether the department against departmentId exist OR not
+    const departmentData = await getDepartmentWithoutPopulate({ _id: businessData?.departments[0] }, '')
+    if (!departmentData) throw new Error(`Department not exist.`)
+
+    const tagData = await getTagsWithoutPopulate({ departmentId: businessData?.departments[0], tagName: 'To Do' }, '')
+    if (!tagData) throw new Error(`Tag of this department not exist.`)
+    // Get count of current business tasks
+    const totalBusinessTasks = await countTasks({ businessId: tasks[0].businessId })
+    let count = 0
+    // Check whether the business against businessId exist OR not
+    if (!tasks?.[0]?.businessId) throw Error(`Business Id not exist in task data.`)
+
+    for (var task of tasks) {
+      count = count + 1
+      const preCode = businessData?.businessCode
+        ? businessData?.businessCode?.replace(' ', '')
+        : businessData?.name?.substring(0, 3)?.replace(' ', '')?.toLowerCase()
+
+      task['assignee'] = freelancerId
+      task['departmentId'] = businessData?.departments[0]
+      task['tag'] = tagData?._id
+      task['ticketCode'] = `${preCode}-${totalBusinessTasks + count}`
     }
+    // Create new tasks
+    const newTasks = await TaskModel.insertMany(tasks)
+
+    const newTasksIds = newTasks.map(task => task?._id)
+    // Push tasks to tasks array of department model
+    if (departmentData?.tasks?.length) {
+      departmentData.tasks = [...departmentData?.tasks, ...newTasksIds]
+    } else {
+      departmentData['tasks'] = newTasksIds
+    }
+    // Save department model after made changes
+    await departmentData.save()
+    return { message: 'Tasks created successfully.', data: newTasks }
   } catch (err) {
     throw Error(`Could not create task, error: ${err}`)
   }
@@ -160,34 +156,12 @@ const getAllTasks = async query => {
       },
       {
         $lookup: {
-          from: 'freelancers',
+          from: 'users',
           let: { assignee: '$assignee' },
           pipeline: [
             {
               $match: {
                 $expr: { $eq: ['$_id', '$$assignee'] }
-              }
-            },
-            {
-              $project: {
-                userId: 1
-              }
-            }
-          ],
-          as: 'assigneeData'
-        }
-      },
-      {
-        $unwind: '$assigneeData'
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$assigneeData.userId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
               }
             },
             {

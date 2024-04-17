@@ -80,42 +80,39 @@ const ProfileCard = ({ user }) => {
             <TextBox>
               <Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span>
             </TextBox>
-            {user?.rate ? (
-              <TextBox>
-                <Span bold>SALARY</Span> <Span>${user?.rate.toFixed(2)} / HOUR</Span>
-              </TextBox>
-            ) : (
-              ''
-            )}
+            <TextBox>
+              <Span bold>SALARY</Span> <Span>{user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
+            </TextBox>
+
             <TextBox>
               <Span bold>EQUITY</Span> <Span>{user?.isAcceptEquity ? 'YES' : 'NO'}</Span>
             </TextBox>
           </Description>
           <Badges>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+            {user?.isIdentityVerified == "SUCCESS" && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
               <Icon name="colorUser" />
               <DarkText clickable noMargin paddingLeft hover padding="3px 0px 0px 5px">
                 Identity Verified
               </DarkText>
-            </WhiteCard>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+            </WhiteCard>)}
+            {user?.isEmailVerified && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
               <Icon name="colorEmail" />
               <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
                 Email Verified
               </DarkText>
-            </WhiteCard>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+            </WhiteCard>)}
+            {user?.isPreferedFreelancer && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
               <Icon name="colorSheild" />
               <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
                 Preferred Verified
               </DarkText>
-            </WhiteCard>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+            </WhiteCard>)}
+            {user?.isPhoneVerified && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
               <Icon name="colorPhone" />
               <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
                 Phone Verified
               </DarkText>
-            </WhiteCard>
+            </WhiteCard>)}
           </Badges>
         </Box>
       </Content>

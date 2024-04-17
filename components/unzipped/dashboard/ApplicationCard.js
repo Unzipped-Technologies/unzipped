@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import { MdVerifiedUser } from 'react-icons/md'
 import styled, { css } from 'styled-components'
+import Button from '../../ui/Button'
 
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
@@ -142,7 +143,7 @@ const DefaultDisplay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 100px;
+  padding-top: 160px;
 `
 
 const ApplicationCard = ({ projectApplications, getProjectApplications, getFreelancerById, token }) => {
@@ -220,18 +221,30 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                   <UserCategory>{application?.freelancerId?.category}</UserCategory>
                   <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
                   <UserRate>
-                    ${application?.rate || 0}{' '}
-                    <span
-                      style={{
-                        fontWeight: '100',
-                        color: ' #000',
-                        fontSize: '15px',
-                        fontWeight: '300',
-                        letterSpacing: '0.4px',
-                        marginTop: '-100px'
-                      }}>
-                      / hour
-                    </span>
+                    {application?.rate > 0 ? (
+                      <div>
+                        {`${application?.rate}`}{' '}
+                        <span
+                          style={{
+                            fontWeight: '100',
+                            color: '#000',
+                            fontSize: '15px',
+                            fontWeight: '300',
+                            letterSpacing: '0.4px',
+                            marginTop: '-100px'
+                          }}>
+                          / hour
+                        </span>
+                      </div>
+                    ) : (
+                      <span
+                        style={{
+                          color: '#000',
+                          fontSize: '15px'
+                        }}>
+                        Negotiable
+                      </span>
+                    )}
                   </UserRate>
                   <Skills>
                     {application?.freelancerId?.freelancerSkills?.length
@@ -299,7 +312,24 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
           })
         ) : (
           <DefaultDisplay>
-            <p>When someone applies to this project, it will display here!</p>
+            <Button
+              extraWid
+              type="outlineInverse"
+              buttonHeight="25px"
+              fontSize="15px"
+              contentMargin="0px !important"
+              colors={{
+                text: '#1976D2',
+                background: 'white',
+                border: '1px',
+                wideBorder: '#1976D2'
+              }}
+              onClick={() => {
+                router.push(`/freelancers?proejct=${id}`)
+              }}>
+              Invite Freelancer
+            </Button>
+            {/* <p>When someone applies to this project, it will display here!</p> */}
           </DefaultDisplay>
         )}
       </DesktopContainer>

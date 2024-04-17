@@ -24,7 +24,7 @@ router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getDepartm
     if (currentUser) {
       if (currentUser?.role === 1) {
         filters['assignee'] = {
-          $eq: ['$assignee', mongoose.Types.ObjectId(currentUser?.freelancers)]
+          $eq: ['$assignee', mongoose.Types.ObjectId(req?.user?.sub)]
         }
       }
     }

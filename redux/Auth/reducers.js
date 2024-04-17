@@ -31,7 +31,8 @@ import {
   RESET_PASSWORD_SUCCESS,
   RESET_PASSWORD_ERROR,
   UPDATE_USER_ERROR,
-  HIDE_AUTH_NOTIFICATION
+  HIDE_AUTH_NOTIFICATION,
+  USER_MAIL_CONFIRMATION
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -191,7 +192,8 @@ const INIT_STATE = {
       ]
     }
   ],
-  thirdPartyDetails: {}
+  thirdPartyDetails: {},
+  userMailConfirmation: false
 }
 
 const Auth = (state = INIT_STATE, action) => {
@@ -327,6 +329,12 @@ const Auth = (state = INIT_STATE, action) => {
         loading: false,
         passwordChanged: false,
         error: ''
+      }
+    case USER_MAIL_CONFIRMATION:
+      return {
+        ...state,
+        userMailConfirmation: action.payload,
+        loading: false
       }
     default:
       return state

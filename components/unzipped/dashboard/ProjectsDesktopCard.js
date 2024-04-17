@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import { TitleText, DarkText, Absolute } from './style'
+import { TitleText, DarkText } from './style'
 
 const Container = styled.div`
   display: flex;
@@ -22,6 +22,7 @@ const Left = styled.div`
 const Right = styled.div`
   padding: ${({ includeRate }) => (includeRate ? '5px 30px' : '15px 30px')};
   min-width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
+  width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
 `
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
@@ -43,15 +44,14 @@ const Flex = styled.div`
 
 const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
   const router = useRouter()
-
   return (
     <Container includeRate={includeRate}>
       <Left>
         <Image
           src={project?.projectImages?.[0]?.url}
           alt={project?.name + ' profile'}
-          height="94px"
-          width="94px"
+          height="102px"
+          width="102px"
           radius="50%"
         />
         {project?.applicants?.includes(freelancerId) && (
@@ -60,7 +60,7 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           </Button>
         )}
       </Left>
-      <Right minWidth={width} includeRate={includeRate}>
+      <Right includeRate={includeRate} minWidth="62%">
         <TitleText
           half
           clickable
@@ -70,11 +70,13 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           }}>
           {project?.name}
         </TitleText>
-        {includeRate && (
-          <Flex>
-            <DarkText half>{project?.country}</DarkText>
-          </Flex>
-        )}
+        <Flex>
+          <DarkText half>{project?.businessCountry}</DarkText>
+          <DarkText half>
+            Estimated Rate: $
+            {project?.projectBudgetType === 'Hourly Rate' ? project?.budget + ' / hour' : project?.budget ?? 0}
+          </DarkText>
+        </Flex>
         <div className="d-flex justify-content-between">
           <P fontSize="13px">{project?.description}</P>
           <P fontSize="15px">{project?.likes ? `${project?.likes} Upvotes by Freelancers` : ''}</P>
@@ -83,20 +85,26 @@ const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
           <Badge key={`${item}_desktop_card`}>{item}</Badge>
         ))}
       </Right>
-      <Absolute>
+      <div className="" style={{ marginLeft: '10px' }}>
         <Button
           color="#000"
+          margin="0px 0px 0px 70px"
           style={{ padding: '8px 22px' }}
           normal
           oval
           type="green2"
+          buttonHeight="40px"
           noBorder
           onClick={() => {
+            console.log('Hi')
             router.push(`/projects/${project._id}`)
           }}>
           View Project
         </Button>
-      </Absolute>
+        <DarkText topMargin="20px" width="200px" fontSize="15px" color="#000000" marginLeft="20px">
+          {project?.likeTotal ?? 0} Upvotes by Freelancers
+        </DarkText>
+      </div>
     </Container>
   )
 }

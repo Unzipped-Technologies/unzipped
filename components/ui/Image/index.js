@@ -15,7 +15,7 @@ const Container = styled.div`
 
 const Img = styled.img`
   width: 100%;
-  height: auto;
+  height: ${({ height }) => (height ? height : 'auto')};
   border-radius: ${({ radius }) => (radius ? radius : '0px')};
 `
 
@@ -30,7 +30,7 @@ const Image = ({ src, alt = 'img', name, radius, height, width, onMouseEnter, on
       name={name}
       onClick={onClick}
       onMouseEnter={onMouseEnter}>
-      <Img radius={radius} src={src} alt={alt} />
+      <Img radius={radius} src={src} alt={alt} height={height} width={width} />
     </Container>
   )
 }
