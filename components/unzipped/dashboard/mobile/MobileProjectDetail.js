@@ -5,237 +5,171 @@ import { MdPerson } from 'react-icons/md'
 import { MdCreditCard } from 'react-icons/md'
 import { MdAccessTime } from 'react-icons/md'
 import { MdLocationOn } from 'react-icons/md'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
+import { TEXT, DIV } from '../style'
+import { Image } from '../../../ui'
 
 import Badge from '../../../ui/Badge'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 
-const MobileView = styled.div`
-  width: 100%;
-  flex-wrap: wrap;
+const MobileView = styled(DIV)`
   @media (min-width: 680px) {
     display: none;
   }
 `
 
-const ProjectDetail = styled.div`
-  background: #fff;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 80px;
-`
-
-const ProjectBudget = styled.h3`
-  color: #12151b;
-  font-family: Roboto;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 24.5px; /* 136.111% */
-  letter-spacing: 0.4px;
-  margin-top: 10px;
-`
-
-const ProjectDescription = styled.p`
-  color: #12151b;
-  font-family: Roboto;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  text-align: justify;
-`
-
 const ProjectRequirements = styled.ul`
   margin-left: 10px;
-  color: #12151b;
-  font-family: Roboto;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-
+  margin-top: 10px;
   /* Use a more specific selector to override Materialize CSS */
   && li {
     list-style-type: disc !important;
   }
 `
 
-const SkillsRequired = styled.p`
-  color: #12151b;
-  color: #12151b;
-  font-family: Roboto;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 23px; /* 115% */
-  letter-spacing: 0.15px;
-`
-
-const ProjectID = styled.p`
-  padding-top: 15px;
-  color: #12151b;
-  font-family: Roboto;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 24.5px; /* 188.462% */
-  letter-spacing: 0.4px;
-`
-
-const AboutClient = styled.div`
-  flex-shrink: 0;
-  color: #123456;
-  font-family: Roboto;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-`
-
-const AboutClientHeading = styled.h3`
-  color: #123456;
-  font-family: Roboto;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 24.5px; /* 122.5% */
-  letter-spacing: 0.4px;
-`
-
-const ClientInfo = styled.div`
-  margin-top: 15px;
-  display: flex;
-  flex-direction: column;
-  color: #123456;
-  font-family: Roboto;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24.5px; /* 122.5% */
-  letter-spacing: 0.4px;
-`
-
-const ClientAddress = styled.div`
-  display: flex;
-  flex-direction: row;
-  color: #123456;
-  font-family: Roboto;
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 24.5px; /* 122.5% */
-  letter-spacing: 0.4px;
-  margin-top: 10px;
-`
-
-const VerificationHeading = styled.div`
-  margin-top: 30px;
-  color: #123456;
-  font-family: Roboto;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24.5px; /* 122.5% */
-  letter-spacing: 0.4px;
-`
-const ClientVerificationDetail = styled.div`
-  display: flex;
-  flex-direction: row;
-  color: #123456;
-  font-size: 18px;
-  line-height: 24.5px; /* 122.5% */
-  letter-spacing: 0.4px;
-  margin-top: 10px;
-`
-
-const ClientVerification = styled.div`
-  padding-top: 0px;
-  display: flex;
-  flex-direction: column;
-  color: #123456;
-  font-family: Roboto;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24.5px; /* 122.5% */
-  letter-spacing: 0.4px;
-`
-
 const MobileProjectDetail = ({ projectDetails }) => {
   return (
-    <MobileView>
-      <ProjectDetail>
-        <ProjectBudget>Budget: ${projectDetails?.budget || 0}</ProjectBudget>
-        <ProjectDescription>{projectDetails?.challenge || 'N/A'}</ProjectDescription>
-        <ProjectRequirements>
-          {projectDetails?.objectives?.length
-            ? projectDetails?.objectives?.map((objective, index) => <li key={`${objective}_${index}`}>{objective}</li>)
-            : 'N/A'}
-        </ProjectRequirements>
-        <SkillsRequired>Skills Required</SkillsRequired>
-        {projectDetails?.requiredSkills?.length
-          ? projectDetails?.requiredSkills?.map((skill, index) => {
-              return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-            })
+    <MobileView flexWrap="wrap" background="#fff" padding="10px 15px 80px 15px !important">
+      <TEXT
+        fontSize="16px"
+        lineHeight="18.75px"
+        color="#12151B
+          
+">
+        Budget: ${projectDetails?.budget || 0}
+      </TEXT>
+      <div className="d-flex justify-content-start mt-3">
+        <TEXT width="40%" fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
+          Project Length:
+        </TEXT>
+        <TEXT padding="0px 0px 0px 10px" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
+          {projectDetails?.projectType}
+        </TEXT>
+      </div>
+      <TEXT margin="10px 0px 0px 0px" fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
+        Description
+      </TEXT>
+      <TEXT
+        textAlign="justify"
+        margin="10px 0px 0px 0px"
+        fontWeight="300"
+        fontSize="16px"
+        lineHeight="18.75px"
+        color="#12151B">
+        {projectDetails?.description}
+      </TEXT>
+      <TEXT margin="10px 0px 0px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="23px" color=" #12151B">
+        Requirements
+      </TEXT>
+      <ProjectRequirements>
+        {projectDetails?.objectives?.length
+          ? projectDetails?.objectives?.map((objective, index) => (
+              <li key={`${objective}_${index}`}>
+                <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
+                  {objective}
+                </TEXT>{' '}
+              </li>
+            ))
           : 'N/A'}
-        <ProjectID>Project ID: {projectDetails?._id || 'N / A'}</ProjectID>
-        <AboutClient>
-          <AboutClientHeading>About client</AboutClientHeading>
-          <ClientInfo>
-            <ClientAddress>
-              <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>{projectDetails?.businessCity || 'N/A'}</span>
-            </ClientAddress>
-            <ClientAddress>
-              <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>{projectDetails?.businessCountry || 'N/A'}</span>
-            </ClientAddress>
-            <ClientVerificationDetail>
-              <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '5px' }}>{projectDetails?.likeTotal} upvotes</span>
-            </ClientVerificationDetail>
-            <ClientVerificationDetail>
-              <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>
-                Member since {moment(projectDetails?.userId?.createdAt).format('MMM DD, YYYY')}
-              </span>
-            </ClientVerificationDetail>
-          </ClientInfo>
+      </ProjectRequirements>
+      <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
+        Skills Required
+      </TEXT>{' '}
+      {projectDetails?.requiredSkills?.length
+        ? projectDetails?.requiredSkills?.map((skill, index) => {
+            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+          })
+        : 'N/A'}
+      <TEXT fontSize="13px" padding="5px 0px 0px 0px">
+        Project ID: {projectDetails?._id || 'N / A'}
+      </TEXT>
+      <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
+        Project Goals
+      </TEXT>{' '}
+      <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
+        {projectDetails?.goals}
+      </TEXT>
+      <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
+        Project Image
+      </TEXT>
+      <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
+        {projectDetails &&
+          projectDetails?.projectImagesUrl?.length > 0 &&
+          projectDetails.projectImagesUrl.map(item => (
+            <Image src={item.url} alt="project image" width={'100%'} height={'150px'} />
+          ))}
+      </div>
+      <div className="mt-3">
+        <TEXT textColor="#123456" fontSize="20px" fontWeight="600">
+          About client
+        </TEXT>
+        <DIV margin="15px 0px 0px 0px">
+          <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+            <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="500" lineHeight="18.75px" padding="3px 0px 0px 5px">
+              {projectDetails?.businessCity || 'N/A'}
+            </TEXT>
+          </DIV>
+          <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+            <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="500" lineHeight="18.75px" padding="5px 0px 0px 5px">
+              {projectDetails?.businessCountry || 'N/A'}
+            </TEXT>
+          </DIV>
+          <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+            <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="8px 0px 0px 5px">
+              {projectDetails?.likeTotal} upvotes
+            </TEXT>
+          </DIV>
+          <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+            <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="8px 0px 0px 5px">
+              Member since {moment(projectDetails?.userId?.createdAt).format('MMM DD, YYYY')}
+            </TEXT>
+          </DIV>
+        </DIV>
 
-          <ClientVerification>
-            <VerificationHeading>Client Verification</VerificationHeading>
-            <ClientVerificationDetail>
-              <MdCreditCard
-                style={{
-                  marginTop: '4px',
-                  fontSize: '24px',
-                  color: projectDetails?.userId?.isIdentityVerified ? '#8EDE64' : 'red'
-                }}
-              />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Identity Verified</span>
-            </ClientVerificationDetail>
+        <DIV margin="10px 0px 0px 0px">
+          <TEXT textColor="#123456" fontSize="20px" fontWeight="500" lineHeight="18.75px" padding="10px 0px 0px 5px">
+            Client Verification
+          </TEXT>
+          <DIV display="flex" margin="10px 0px 0px 0px">
+            <MdCreditCard
+              style={{
+                marginTop: '4px',
+                fontSize: '24px',
+                color: projectDetails?.userId?.isIdentityVerified ? '#8EDE64' : 'red'
+              }}
+            />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="3px 0px 0px 10px">
+              Identity Verified
+            </TEXT>
+          </DIV>
 
-            <ClientVerificationDetail>
-              <MdMonetizationOn
-                style={{
-                  marginTop: '4px',
-                  fontSize: '24px',
-                  color: projectDetails?.userId?.stripeSubscription ? '#8EDE64' : 'red'
-                }}
-              />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Payment Verified</span>
-            </ClientVerificationDetail>
+          <DIV display="flex" margin="10px 0px 0px 0px">
+            <MdMonetizationOn
+              style={{
+                marginTop: '4px',
+                fontSize: '24px',
+                color: projectDetails?.userId?.stripeSubscription ? '#8EDE64' : 'red'
+              }}
+            />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="3px 0px 0px 10px">
+              Payment Verified
+            </TEXT>
+          </DIV>
 
-            <ClientVerificationDetail>
-              <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
-              <span style={{ paddingLeft: '5px', paddingTop: '3px' }}>Completed 12 projects</span>
-            </ClientVerificationDetail>
-          </ClientVerification>
-        </AboutClient>
-      </ProjectDetail>
-
+          <DIV display="flex" margin="10px 0px 0px 0px">
+            <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
+            <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="3px 0px 0px 10px">
+              Completed 12 projects
+            </TEXT>
+          </DIV>
+        </DIV>
+      </div>
       <MobileFreelancerFooter />
     </MobileView>
   )
