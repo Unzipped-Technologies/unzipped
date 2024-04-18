@@ -29,7 +29,7 @@ const ProjectRequirements = styled.ul`
   }
 `
 
-const MobileProjectDetail = ({ projectDetails }) => {
+const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBusinessCount }) => {
   return (
     <MobileView flexWrap="wrap" background="#fff" padding="10px 15px 80px 15px !important">
       <TEXT
@@ -45,7 +45,7 @@ const MobileProjectDetail = ({ projectDetails }) => {
           Project Length:
         </TEXT>
         <TEXT padding="0px 0px 0px 10px" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
-          {projectDetails?.projectType}
+          {projectDetails?.projectType || 'N/A'}
         </TEXT>
       </div>
       <TEXT margin="10px 0px 0px 0px" fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
@@ -58,7 +58,7 @@ const MobileProjectDetail = ({ projectDetails }) => {
         fontSize="16px"
         lineHeight="18.75px"
         color="#12151B">
-        {projectDetails?.description}
+        {projectDetails?.description || 'N/A'}
       </TEXT>
       <TEXT margin="10px 0px 0px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="23px" color=" #12151B">
         Requirements
@@ -89,17 +89,27 @@ const MobileProjectDetail = ({ projectDetails }) => {
         Project Goals
       </TEXT>{' '}
       <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
-        {projectDetails?.goals}
+        {projectDetails?.goals || 'N/A'}
       </TEXT>
       <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
         Project Image
       </TEXT>
       <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
-        {projectDetails &&
-          projectDetails?.projectImagesUrl?.length > 0 &&
+        {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
           projectDetails.projectImagesUrl.map(item => (
-            <Image src={item.url} alt="project image" width={'100%'} height={'150px'} />
-          ))}
+            <Image src={item.url} alt="project image" width={'100%'} height={'150px'} key={item?._id ?? index} />
+          ))
+        ) : (
+          <TEXT
+            textAlign="justify"
+            margin="10px 0px 0px 0px"
+            fontWeight="300"
+            fontSize="16px"
+            lineHeight="18.75px"
+            color="#12151B">
+            N/A
+          </TEXT>
+        )}
       </div>
       <div className="mt-3">
         <TEXT textColor="#123456" fontSize="20px" fontWeight="600">
@@ -141,7 +151,7 @@ const MobileProjectDetail = ({ projectDetails }) => {
               style={{
                 marginTop: '4px',
                 fontSize: '24px',
-                color: projectDetails?.userId?.isIdentityVerified ? '#8EDE64' : 'red'
+                color: projectDetails?.userId?.isIdentityVerified === 'SUCCESS' ? '#8EDE64' : 'red'
               }}
             />{' '}
             <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="3px 0px 0px 10px">
@@ -154,7 +164,7 @@ const MobileProjectDetail = ({ projectDetails }) => {
               style={{
                 marginTop: '4px',
                 fontSize: '24px',
-                color: projectDetails?.userId?.stripeSubscription ? '#8EDE64' : 'red'
+                color: isClientPaymentVerified ? '#8EDE64' : 'red'
               }}
             />{' '}
             <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="3px 0px 0px 10px">
@@ -165,7 +175,7 @@ const MobileProjectDetail = ({ projectDetails }) => {
           <DIV display="flex" margin="10px 0px 0px 0px">
             <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
             <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="3px 0px 0px 10px">
-              Completed 12 projects
+              Completed {clientBusinessCount} projects
             </TEXT>
           </DIV>
         </DIV>
@@ -174,4 +184,5 @@ const MobileProjectDetail = ({ projectDetails }) => {
     </MobileView>
   )
 }
+
 export default MobileProjectDetail

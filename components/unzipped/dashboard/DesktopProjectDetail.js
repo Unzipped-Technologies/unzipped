@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as moment from 'moment'
 import styled from 'styled-components'
 import { MdFlag } from 'react-icons/md'
@@ -13,6 +13,11 @@ import Badge from '../../ui/Badge'
 import MobileProjectDetail from './mobile/MobileProjectDetail'
 import { TEXT, DIV } from './style'
 import { Image } from '../../ui'
+import { verifyUserStripeAccount, countClientContracts } from '../../../redux/actions'
+import { useRouter } from 'next/router'
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 const Desktop = styled(DIV)`
   min-width: 82%;
@@ -68,7 +73,34 @@ const AboutClient = styled.div`
   }
 `
 
-const DesktopProjectDetail = ({ projectDetails, loading }) => {
+const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount, countClientContracts }) => {
+  const router = useRouter()
+  const { id } = router.query
+
+  const [isClientPaymentVerified, setVerified] = useState(false)
+  const [clientBusinessCount, setBusinessCount] = useState(0)
+
+  useEffect(async () => {
+    if (projectDetails?.userId?._id && id === projectDetails?._id) {
+      const userId = projectDetails?.userId?._id
+      await checkPayentVerification(userId)
+      await countBusiness(userId)
+    }
+  }, [projectDetails])
+
+  const checkPayentVerification = async userId => {
+    const response = await verifyUserStripeAccount(userId)
+    if (response?.status === 200) {
+      setVerified(true)
+    }
+  }
+  const countBusiness = async userId => {
+    setBusinessCount(0)
+    const response = await countClientContracts(userId)
+    if (response?.status === 200) {
+      setBusinessCount(response?.data?.count ?? 0)
+    }
+  }
   return (
     <>
       {!loading ? (
@@ -105,7 +137,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                       fontSize="20px"
                       lineHeight="25.78px"
                       textColor="#12151B">
-                      {projectDetails?.projectType}
+                      {projectDetails?.projectType || 'N/A'}
                     </TEXT>
 
                     <TEXT
@@ -122,7 +154,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                       fontSize="20px"
                       lineHeight="25.78px"
                       textColor="#12151B">
-                      {projectDetails?.description}
+                      {projectDetails?.description || 'N/A'}
                     </TEXT>
 
                     <TEXT
@@ -134,13 +166,19 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                       Requirements
                     </TEXT>
                     <ProjectRequirements>
-                      {projectDetails?.objectives?.map((objective, index) => (
-                        <li key={`${objective}_${index}`}>
-                          <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
-                            {objective}
-                          </TEXT>
-                        </li>
-                      ))}
+                      {projectDetails?.objectives?.length ? (
+                        projectDetails?.objectives?.map((objective, index) => (
+                          <li key={`${objective}_${index}`}>
+                            <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                              {objective}
+                            </TEXT>
+                          </li>
+                        ))
+                      ) : (
+                        <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                          N/A
+                        </TEXT>
+                      )}
                     </ProjectRequirements>
                     <TEXT padding="10px 0px 10px 0px" fontSize="20px" lineHeight="23px" textColor=" #12151B">
                       Skills Required
@@ -165,7 +203,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                       Project Goals
                     </TEXT>
                     <TEXT textAlign="justify" fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#12151B">
-                      {projectDetails?.goals}
+                      {projectDetails?.goals || 'N/A'}
                     </TEXT>
                   </ProjectDetail>
                   <ProjectDetail margin="10px 0px 0px 0px">
@@ -192,11 +230,21 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                       Project Image
                     </TEXT>
                     <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
-                      {projectDetails &&
-                        projectDetails?.projectImagesUrl?.length > 0 &&
-                        projectDetails.projectImagesUrl.map(item => (
-                          <Image src={item.url} alt="project image" width={'100%'} height={'150px'} />
-                        ))}
+                      {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
+                        projectDetails.projectImagesUrl.map((item, index) => (
+                          <Image
+                            src={item.url}
+                            alt="project image"
+                            width={'100%'}
+                            height={'150px'}
+                            key={item?._id ?? index}
+                          />
+                        ))
+                      ) : (
+                        <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                          N/A
+                        </TEXT>
+                      )}
                     </div>
                   </ProjectDetail>
                 </div>
@@ -235,7 +283,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                         lineHeight="24.5px"
                         textColor="#123456"
                         padding="3px 0px 0px 5px">
-                        {projectDetails?.likeTotal} upvotes
+                        {projectDetails?.likeTotal || 0} upvotes
                       </TEXT>
                     </DIV>
                     <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
@@ -265,7 +313,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                         style={{
                           marginTop: '4px',
                           fontSize: '24px',
-                          color: projectDetails?.userId?.isIdentityVerified ? '#8EDE64' : 'red'
+                          color: projectDetails?.userId?.isIdentityVerified === 'SUCCESS' ? '#8EDE64' : 'red'
                         }}
                       />{' '}
                       <TEXT
@@ -282,7 +330,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                         style={{
                           marginTop: '4px',
                           fontSize: '24px',
-                          color: projectDetails?.userId?.stripeSubscription ? '#8EDE64' : 'red'
+                          color: isClientPaymentVerified ? '#8EDE64' : 'red'
                         }}
                       />{' '}
                       <TEXT
@@ -302,13 +350,17 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                         lineHeight="24.5px"
                         textColor="#123456"
                         padding="3px 0px 0px 5px">
-                        Completed 12 projects
+                        Completed {clientBusinessCount ?? 0} projects
                       </TEXT>
                     </DIV>
                   </DIV>
                 </AboutClient>
               </Desktop>
-              <MobileProjectDetail projectDetails={projectDetails} />
+              <MobileProjectDetail
+                projectDetails={projectDetails}
+                isClientPaymentVerified={isClientPaymentVerified}
+                clientBusinessCount={clientBusinessCount}
+              />
             </>
           ) : (
             <h4 className="text-center mt-5">Project Not Found</h4>
@@ -320,4 +372,16 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
     </>
   )
 }
-export default DesktopProjectDetail
+
+const mapStateToProps = state => {
+  return {}
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    verifyUserStripeAccount: bindActionCreators(verifyUserStripeAccount, dispatch),
+    countClientContracts: bindActionCreators(countClientContracts, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DesktopProjectDetail)

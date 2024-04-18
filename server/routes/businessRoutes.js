@@ -87,7 +87,7 @@ router.post('/public/list', async (req, res) => {
   }
 })
 
-router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getBusinessById'), async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const business = await businessHelper.getBusinessById(req.params.id, req.user)
     if (!business) throw Error('failed to get business')

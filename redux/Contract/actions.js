@@ -141,3 +141,18 @@ export const deleteContract = contractID => async (dispatch, getState) => {
     })
   dispatch(stopLoading())
 }
+
+export const countClientContracts = clientId => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  const response = await axios
+    .get(`/api/contract/count/${clientId}`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      return res
+    })
+    .catch(err => {
+      return err
+    })
+  dispatch(stopLoading())
+  return response
+}
