@@ -58,8 +58,10 @@ const SearchBar = ({
   setFilter,
   border,
   borderRadius,
-  searchButton
+  searchButton,
+  filter
 }) => {
+
   return (
     <Container margin={margin} alignItems={alignItems}>
       {title && (
@@ -80,7 +82,7 @@ const SearchBar = ({
           border={border}
           borderRadius={borderRadius}
           onChange={filteredResults => {
-            setFilter(filteredResults)
+            setFilter({ ...filter,  searchKey: filteredResults })
           }}
           placeholder={'Search'}
           theme={theme}

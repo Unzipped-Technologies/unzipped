@@ -169,25 +169,6 @@ const NewsLetter = () => {
                                 <ButtonStyled>Subscribe</ButtonStyled>
                             </ButtonContainer>
                         </ContainerX>
-                        {/* <ImageContainer>
-                            <img src="/img/Newsletter.png" />
-                        </ImageContainer>
-                        <SubscribeEmailContainer>
-                            <LabelStyled> News letter goes here </LabelStyled>
-                            <InputStyledContainer >
-                                <input placeholder="Email" style={{
-                                    height: 47,
-                                    paddingLeft: '26px',
-                                    marginRight: '12px',
-                                    width: 610,
-                                    border: '1px solid black',
-                                    borderRadius: '10px',
-                                    display: 'inline-block'
-                                }} />
-                                <ButtonStyled>Subscribe</ButtonStyled>
-                            </InputStyledContainer>
-                            <ButtonResponsiveContainer><ButtonStyled>SubscribeX</ButtonStyled></ButtonResponsiveContainer>
-                        </SubscribeEmailContainer> */}
                     </Body>
                 </ContentContainer>
             </Wrapper>

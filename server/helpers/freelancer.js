@@ -39,7 +39,7 @@ const getFreelancerWithoutPopulate = async filter => {
   }
 }
 
-const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
+const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
   try {
     const regexQuery = new RegExp(filter?.searchKey, 'i')
     const existingIndexes = await FreelancerModel.collection.getIndexes()
@@ -178,20 +178,20 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
         $match: {
           ...(filter?.minRate &&
             +filter?.minRate > 0 && {
-              rate: { $gte: +filter?.minRate }
-            }),
+            rate: { $gte: +filter?.minRate }
+          }),
           ...(filter?.maxRate &&
             +filter?.maxRate > 0 && {
-              rate: { $lte: +filter?.maxRate }
-            }),
+            rate: { $lte: +filter?.maxRate }
+          }),
           ...(filter?.skill?.length > 0
             ? {
-                freelancerSkills: {
-                  $elemMatch: {
-                    skill: { $regex: new RegExp(regexPattern, 'i') }
-                  }
+              freelancerSkills: {
+                $elemMatch: {
+                  skill: { $regex: new RegExp(regexPattern, 'i') }
                 }
               }
+            }
             : {}),
           'user.FullName': { $regex: regexQuery }
         }
@@ -200,24 +200,24 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
         $sort: {
           ...(filter?.sort &&
             filter?.sort === 'highest_hourly_rate' && {
-              rate: -1
-            }),
+            rate: -1
+          }),
           ...(filter?.sort &&
             filter?.sort === 'lowest_hourly_rate' && {
-              rate: 1
-            }),
+            rate: 1
+          }),
           ...(filter?.sort &&
             filter?.sort === 'most_reviews' && {
-              likeTotal: -1
-            }),
+            likeTotal: -1
+          }),
           ...(filter?.sort &&
             filter?.sort === 'recomended' && {
-              isPreferedFreelancer: -1
-            }),
+            isPreferedFreelancer: -1
+          }),
           ...(filter?.sort &&
             filter?.sort === 'most_relavent' && {
-              isPreferedFreelancer: -1
-            }),
+            isPreferedFreelancer: -1
+          }),
           createdAt: 1
         }
       },
@@ -234,6 +234,11 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
               $count: 'count'
             }
           ]
+        }
+      },
+      {
+        $addFields: {
+          totalCount: { $arrayElemAt: ["$totalCount.count", 0] }
         }
       }
     ]

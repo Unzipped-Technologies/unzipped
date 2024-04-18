@@ -376,27 +376,27 @@ export const ScheduleInterviewButtonContainer = styled.div`
   padding: 10px;
 `
 const TableHeading = styled.th`
-  color: ${({ $color }) => ($color ? $color : '#000')};
-  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
-  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : 'Roboto')};
-  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
-  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
-  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '500')};
-  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
-  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
-  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  color: ${({ color }) => (color ? color : '#000')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : 'Roboto')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '500')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
 `
 
 const TableData = styled.td`
-  color: ${({ $color }) => ($color ? $color : '#000')};
-  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
-  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : '')};
-  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
-  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
-  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '400')};
-  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
-  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
-  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  color: ${({ color }) => (color ? color : '#000')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : '')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
   ${({ $default }) => ($default ? 'cursor: pointer;' : '')}
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}

@@ -82,7 +82,8 @@ router.delete('/:id', requireLogin, permissionCheckHelper.hasPermission('deleteA
 
 router.post('/public/list', async (req, res) => {
   try {
-    const freelancers = await freelancerHelper.getAllFreelancers(req?.body)
+    const { take, skip } = req.body;
+    const freelancers = await freelancerHelper.getAllFreelancers(req.body, take, skip)
     res.json(freelancers)
   } catch (e) {
     res.status(400).json({ msg: e.message })
