@@ -176,7 +176,10 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
 
     const shouldDisableButton = (balance, formDetails) => {
         // Extract the instant available amount and convert it to a standard numerical format (dollars)
-        const instantAvailableAmount = balance?.instant_available[0]?.amount / 100 || 0;
+        let instantAvailableAmount = 0;
+        if (balance && balance?.instant_available) {
+            instantAvailableAmount = balance?.instant_available[0]?.amount / 100;
+        }
         const formAmount = +formDetails.amount || 0;
       
         // Condition 1: Check if the difference between the available amount and the form amount is negative
@@ -255,18 +258,18 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
                 </LeftTwo>
                 <RightTwo>
                     <RowTitleFixed left>Balance</RowTitleFixed>
-                    <RowItem left>${(balance?.available[0]?.amount/100).toFixed(2).toLocaleString()}</RowItem>
+                    <RowItem left>${balance && balance?.instant_available ?((balance?.available[0]?.amount/100).toFixed(2).toLocaleString()) : 0}</RowItem>
                 </RightTwo>
                 </Row>
             </LeftBox>
             <RightBox>
                 <RightTitle>You can withdraw <br/> up to</RightTitle>
-                <CostPanel>$ {(balance?.instant_available[0]?.amount/100).toFixed(2).toLocaleString()} USD</CostPanel>
+                <CostPanel>$ {balance && balance?.instant_available ? ((balance?.instant_available[0]?.amount/100).toFixed(2).toLocaleString()) : 0} USD</CostPanel>
                 <SubText>Note: refer to table for fees that may apply</SubText>
                 <Row padding="120px 0px">
                     <LeftTwo>
                         <RowTitle>Remaining Balance</RowTitle>
-                        <RowItem>${((balance?.instant_available[0]?.amount/100)-(formDetails.amount || 0)).toFixed(2)}</RowItem>
+                        <RowItem>${balance && balance?.instant_available ? (((balance?.instant_available[0]?.amount/100)-(formDetails.amount || 0)).toFixed(2)) : 0}</RowItem>
                     </LeftTwo>
                 </Row>
                 <Button disabled={isDisabled} onClick={() => onSubmit(formDetails.amount)}>Submit Application</Button>
