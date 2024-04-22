@@ -4,6 +4,10 @@ const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
+const listHelper = require('./list')
+const listEntriesHelper = require('./listEntriesHelper')
+
+const mongoose = require('mongoose')
 
 const getFreelancerById = async id => {
   try {
@@ -177,20 +181,20 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
         $match: {
           ...(filter?.minRate &&
             +filter?.minRate > 0 && {
-            rate: { $gte: +filter?.minRate }
-          }),
+              rate: { $gte: +filter?.minRate }
+            }),
           ...(filter?.maxRate &&
             +filter?.maxRate > 0 && {
-            rate: { $lte: +filter?.maxRate }
-          }),
+              rate: { $lte: +filter?.maxRate }
+            }),
           ...(filter?.skill?.length > 0
             ? {
-              freelancerSkills: {
-                $elemMatch: {
-                  skill: { $regex: new RegExp(regexPattern, 'i') }
+                freelancerSkills: {
+                  $elemMatch: {
+                    skill: { $regex: new RegExp(regexPattern, 'i') }
+                  }
                 }
               }
-            }
             : {}),
           'user.FullName': { $regex: regexQuery }
         }
@@ -199,24 +203,24 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
         $sort: {
           ...(filter?.sort &&
             filter?.sort === 'highest_hourly_rate' && {
-            rate: -1
-          }),
+              rate: -1
+            }),
           ...(filter?.sort &&
             filter?.sort === 'lowest_hourly_rate' && {
-            rate: 1
-          }),
+              rate: 1
+            }),
           ...(filter?.sort &&
             filter?.sort === 'most_reviews' && {
-            likeTotal: -1
-          }),
+              likeTotal: -1
+            }),
           ...(filter?.sort &&
             filter?.sort === 'recomended' && {
-            isPreferedFreelancer: -1
-          }),
+              isPreferedFreelancer: -1
+            }),
           ...(filter?.sort &&
             filter?.sort === 'most_relavent' && {
-            isPreferedFreelancer: -1
-          }),
+              isPreferedFreelancer: -1
+            }),
           createdAt: 1
         }
       },
@@ -237,7 +241,7 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
       },
       {
         $addFields: {
-          totalCount: { $arrayElemAt: ["$totalCount.count", 0] }
+          totalCount: { $arrayElemAt: ['$totalCount.count', 0] }
         }
       }
     ]
@@ -433,6 +437,41 @@ const createFreelancerInvite = async params => {
     },
     { new: true }
   )
+  const listData = await listHelper.getSingleList({
+    name: 'Invites',
+    user: params.userInvited
+  })
+  const ListEntry = {
+    name: 'Invites',
+    icon: 'TeamOutlined',
+    listId: null,
+    userId: params?.userInvited,
+    freelancerId: params?.freelancer,
+    businessId: params?.business,
+    isPrivate: true,
+    isDefaultList: false
+  }
+  if (!listData) {
+    const newList = await listHelper.createLists({
+      name: 'Invites',
+      icon: 'TeamOutlined',
+      userId: params.userInvited,
+      user: params.userInvited,
+      isDefault: false,
+      listEntries: [],
+      isPrivate: true
+    })
+    ListEntry.listId = newList?._id
+    const listEntry = await listEntriesHelper.createListEntries(ListEntry)
+    newList['listEntries'] = [listEntry?._id]
+    await newList.save()
+  } else {
+    ListEntry.listId = listData?._id
+
+    const listEntry = await listEntriesHelper.createListEntries(ListEntry)
+    listData['listEntries'] = [...listData['listEntries'], listEntry?._id]
+    await listData.save()
+  }
 
   return updateFreelancer
 }
