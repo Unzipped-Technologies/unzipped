@@ -282,11 +282,12 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         {selectedTab === 3 && (
           <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} role={role} businessId={id} />
         )}
-        {selectedTab === 4 && role === 0 ? (
-          <Invites role={role} businessId={id} projectDetails={projectDetails} />
-        ) : (
-          <FreelancerInvites businessId={id} projectDetails={projectDetails} />
-        )}
+        {selectedTab === 4 &&
+          (role === 0 ? (
+            <Invites role={role} businessId={id} projectDetails={projectDetails} />
+          ) : (
+            <FreelancerInvites businessId={id} projectDetails={projectDetails} />
+          ))}
       </TabContent>
     </>
   )
