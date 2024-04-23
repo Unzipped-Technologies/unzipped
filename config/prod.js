@@ -1,5 +1,6 @@
 // prod.js - production keys here!!
-console.log('prod.js => SOCKET_URL', process.env.SOCKET_URL)
+console.log('prod.js => SOCKET_URL', process.env.NEXT_PUBLIC_SOCKET_URL)
+console.log('app_enviroment', process.env.ENV)
 module.exports = {
   googleClientID: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
