@@ -242,7 +242,7 @@ const Freelancers = ({
         }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           {!loading && (
-            <div className="overflow-auto">
+            <div className="overflow-auto" style={{ width: "100%"}}>
               <div className="d-flex align-items-baseline py-4 bg-white">
                 <h5 className="px-4">
                   <b>Top Results</b>
@@ -250,7 +250,7 @@ const Freelancers = ({
                 <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
               </div>
               {freelancerList?.length === 0 && (
-                <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                <DarkText fontSize="20px" padding="20px 40px" paddingLeft={"25px"} backgroundColor="white" width="-webkit-fill-available">
                   No freelancers found for this search
                 </DarkText>
               )}
