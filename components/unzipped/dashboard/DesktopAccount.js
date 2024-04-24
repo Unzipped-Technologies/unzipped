@@ -259,8 +259,6 @@ const DesktopAccount = ({
             onClick={() => {
               if (user?.role === 1) {
                 router.push(`/freelancers/${user.freelancers?._id}`)
-              } else {
-                router.push(`/client/${user._id}`)
               }
             }}>
             View profile
