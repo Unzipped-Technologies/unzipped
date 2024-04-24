@@ -1,5 +1,6 @@
 const list = require('../models/List')
 const listItems = require('../models/ListItems')
+const ListEntriesModel = require('../models/ListEntries')
 const mongoose = require('mongoose')
 
 const createLists = async data => {
@@ -56,17 +57,36 @@ const addListItemToList = async (data, listId) => {
   }
 }
 
-const getListById = async (id) => {
-    try {
-        return await list.findById(id)
-            .populate({
-                path: 'listItems',
-                model: 'listItemss'
-            })
-            .exec()
-    } catch (e) {
-        throw Error(`Could not find user, error: ${e}`);
+const addListEntriesToList = async (data, listId) => {
+  try {
+    const updateList = await list.findById(listId)
+    const newEntry = await ListEntriesModel.create({
+      ...data
+    })
+    if (updateList?.listEntries?.length) {
+      updateList.listEntries.push(newEntry?._id)
+    } else {
+      updateList.listEntries = [newEntry?._id]
     }
+    await updateList.save()
+    return updateList
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
+const getListById = async id => {
+  try {
+    return await list
+      .findById(id)
+      .populate({
+        path: 'listItems',
+        model: 'listItemss'
+      })
+      .exec()
+  } catch (e) {
+    throw Error(`Could not find user, error: ${e}`)
+  }
 }
 
 // list lists
@@ -93,5 +113,7 @@ module.exports = {
   listLists,
   getListById,
   updateLists,
-  deleteLists
+  deleteLists,
+  getSingleList,
+  addListEntriesToList
 }
