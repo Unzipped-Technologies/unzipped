@@ -7,9 +7,8 @@ const createLists = async data => {
   return await list.create(data)
 }
 
-const updateLists = async (data) => {
-
-  const result = await list.find({ _id: data.listId });
+const updateLists = async data => {
+  const result = await list.find({ _id: data.listId })
   if (result && result.length > 0 && result[0].isDefault) {
     return { message: 'Default list can not be edited' }
   }
@@ -18,8 +17,8 @@ const updateLists = async (data) => {
     listId: data.listId,
     userId: data.userId,
     name: data.name,
-    ...(data.icon !== '' && { icon: data.icon }),
-  };
+    ...(data.icon !== '' && { icon: data.icon })
+  }
 
   return await list.findByIdAndUpdate(
     data.listId,
@@ -27,16 +26,16 @@ const updateLists = async (data) => {
       $set: { ...listObj }
     },
     { new: true }
-  );
+  )
 }
 
-const deleteLists = async (id) => {
-    const { isDefault } = await list.find({ _id: id });
-    if (isDefault) {
-        return { message: 'Default list can not be edited' }
-    }
-    await list.findByIdAndDelete(id);
-    await listItems.deleteMany({ listId: id })
+const deleteLists = async id => {
+  const { isDefault } = await list.find({ _id: id })
+  if (isDefault) {
+    return { message: 'Default list can not be edited' }
+  }
+  await list.findByIdAndDelete(id)
+  await listItems.deleteMany({ listId: id })
 }
 
 const addListItemToList = async (data, listId) => {
@@ -91,20 +90,21 @@ const getListById = async id => {
 
 // list lists
 const listLists = async ({ filter, take, skip }) => {
-    try {
-        const lists = await list.find({ ...filter })
-            .skip(skip)
-            .limit(take)
-            .populate({
-                path: 'listItems',
-                model: 'listItems'
-            })
-            .exec()
-        console.log('gettingListon listHeler #77', lists)
-        return lists;
-    } catch (e) {
-        throw Error(`Could not find list, error: ${e}`);
-    }
+  try {
+    const lists = await list
+      .find({ ...filter })
+      .skip(skip)
+      .limit(take)
+      .populate({
+        path: 'listItems',
+        model: 'listItems'
+      })
+      .exec()
+    console.log('gettingListon listHeler #77', lists)
+    return lists
+  } catch (e) {
+    throw Error(`Could not find list, error: ${e}`)
+  }
 }
 
 module.exports = {
@@ -114,6 +114,5 @@ module.exports = {
   getListById,
   updateLists,
   deleteLists,
-  getSingleList,
   addListEntriesToList
 }

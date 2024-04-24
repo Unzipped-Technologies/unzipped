@@ -43,75 +43,67 @@ const createList = (params, token, cb) => async dispatch => {
   dispatch(stopLoading())
 }
 
+const updateList = (params, token, cb) => async dispatch => {
+  dispatch(startLoading())
+  dispatch({ type: EDIT_USER_LIST })
+
+  try {
+    const response = await axios.post(`/api/list/update/`, params, tokenConfig(token))
+    dispatch({
+      type: EDIT_USER_LIST_SUCCESS,
+      payload: response.data
+    })
+
+    dispatch({
+      type: ON_UPDATE_LIST,
+      payload: response.data
+    })
+    cb()
+  } catch (error) {
+    dispatch({
+      type: EDIT_USER_LIST_ERROR,
+      payload: error.response
+    })
+  }
+
+  dispatch(stopLoading())
 }
 
-const updateList = (params, token, cb) => async (dispatch) => {
+const deleteList = (listId, cb) => async dispatch => {
+  dispatch(startLoading())
+  dispatch({ type: DELETE_USER_LIST })
 
-    dispatch(startLoading());
-    dispatch({ type: EDIT_USER_LIST });
+  try {
+    const response = await axios.delete(`/api/list-entries/${listId}`)
+    dispatch({
+      type: DELETE_USER_LIST_SUCCESS,
+      payload: response.data
+    })
+    cb()
+  } catch (error) {
+    dispatch({
+      type: DELETE_USER_LIST_ERROR,
+      payload: error.response
+    })
+  }
 
-    try {
-        const response = await axios.post(`/api/list/update/`, params, tokenConfig(token));
-        dispatch({
-            type: EDIT_USER_LIST_SUCCESS,
-            payload: response.data
-        });
-
-        dispatch({
-            type: ON_UPDATE_LIST,
-            payload: response.data
-        });
-        cb()
-    } catch (error) {
-        dispatch({
-            type: EDIT_USER_LIST_ERROR,
-            payload: error.response
-        });
-    }
-
-    dispatch(stopLoading())
-
+  dispatch(stopLoading())
 }
 
-const deleteList = (listId, cb) => async (dispatch) => {
+const setLitItemsAction = params => async dispatch => {
+  dispatch({ type: EDIT_USER_LIST })
 
-    dispatch(startLoading());
-    dispatch({ type: DELETE_USER_LIST });
-
-    try {
-        const response = await axios.delete(`/api/list-entries/${listId}`);
-        dispatch({
-            type: DELETE_USER_LIST_SUCCESS,
-            payload: response.data
-        });
-        cb()
-    } catch (error) {
-        dispatch({
-            type: DELETE_USER_LIST_ERROR,
-            payload: error.response
-        });
-    }
-
-    dispatch(stopLoading())
-
-}
-
-const setLitItemsAction = (params) => async (dispatch) => {
-
-    dispatch({ type: EDIT_USER_LIST });
-
-    try {
-        dispatch({
-            type: ON_UPDATE_LIST,
-            payload: params
-        });
-    } catch (error) {
-        dispatch({
-            type: EDIT_USER_LIST_ERROR,
-            payload: null
-        });
-    }
-
+  try {
+    dispatch({
+      type: ON_UPDATE_LIST,
+      payload: params
+    })
+  } catch (error) {
+    dispatch({
+      type: EDIT_USER_LIST_ERROR,
+      payload: null
+    })
+  }
 }
 
 const addEntriesToList = (params, listId) => async (dispatch, getState) => {
@@ -136,4 +128,4 @@ const addEntriesToList = (params, listId) => async (dispatch, getState) => {
   return response
 }
 
-export { createList, updateList, deleteList, setLitItemsAction, getInvitesLists, addEntriesToList }
+export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList }
