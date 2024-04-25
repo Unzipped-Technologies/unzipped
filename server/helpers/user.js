@@ -676,8 +676,22 @@ const getSingleUser = async (filter, fields) => {
 const registerUser = async ({ email, password }) => {
   const hash = await AuthService.bcryptAndHashing(password)
   const newuser = await createUser({ email, password }, hash)
-  if(newuser) Mailer.sendVerificationMail({ email})
-  return newuser;
+  if (newuser) {
+    const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
+    if (result && result.isLoginWithGoogle) {
+      return result;
+    }
+    return newuser;
+  }
+}
+
+const updateUser = async (id, data) => {
+  try {
+    return await User.findByIdAndUpdate(id, { $set: { ...data } })
+  }
+  catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
 }
 
 module.exports = {
@@ -702,5 +716,6 @@ module.exports = {
   getAllFreelancers,
   getSingleUser,
   retrievePaymentMethods,
-  registerUser
+  registerUser,
+  updateUser
 }
