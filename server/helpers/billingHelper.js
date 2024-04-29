@@ -694,17 +694,41 @@ const retrieveStripeBalance = async () => {
   }
 }
 
-const withdrawFundsToBankAccount = async (accountId, amount, currency = 'usd') => {
+const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', userId) => {
   try {
     // Create a payout to the connected account's external bank account
+    const accountInfo = await retrieveExternalBankAccounts(account.id);
     const payout = await stripe.payouts.create({
       amount: amount,
       currency: currency,
     }, {
       stripeAccount: accountId, // Specify the connected account ID
     });
+    const user = await UserModel.findById(userId);
+    if (payout
+      &&
+      accountInfo &&
+      accountInfo?.data &&
+      accountInfo?.data?.length > 0 &&
+      user
+    ) {
+      const fundsWithdrawMailObj = {
+        to: user?.email,
+        templateId: "d-ecd4393f48de4496a511c74220631ac3",
+        dynamicTemplateData: {
+          firstName: user?.FirstName ?? '',
+          lastName:  user?.LastName ?? '',
+          amount,
+          withdrawDate: new Date().toLocaleDateString(),
+          partialPaymentDetails:  `**** **** ${accountInfo?.data[0]?.last4}`,
+          supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+          withdrawLink: `${keys.redirectDomain}/dashboard/withdrawal`,
+          transactionHstoryLink: `${keys.redirectDomain}/transaction-history`,
+        }
+      }
+      await Mailer.sendInviteMail(fundsWithdrawMailObj);
+    }
 
-    console.log('Payout successful:', payout);
     return payout;
   } catch (error) {
     console.error('Payout failed:', error);

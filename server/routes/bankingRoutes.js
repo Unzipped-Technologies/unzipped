@@ -117,7 +117,7 @@ router.post('/withdraw-funds', requireLogin, async (req, res) => {
 
     const account = await billingHelper.getUserAccountById(userId)
 
-    const balance = await billingHelper.withdrawFundsToBankAccount(account.id, amount, currency)
+    const balance = await billingHelper.withdrawFundsToBankAccount(account, amount, currency, userId)
 
     res.status(200).json(balance);
   } catch (error) {
