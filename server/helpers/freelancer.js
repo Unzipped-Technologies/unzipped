@@ -4,6 +4,8 @@ const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
+const Mailer = require('../../services/Mailer')
+const keys = require('../../config/keys')
 
 const getFreelancerById = async id => {
   try {
@@ -433,8 +435,58 @@ const createFreelancerInvite = async params => {
     },
     { new: true }
   )
-
+  if (updateFreelancer) {
+    sendProjectInvitationEmail(createInvite._id)
+  }
   return updateFreelancer
+}
+
+const sendProjectInvitationEmail = async (inviteId) => {
+
+  const inviteInfo = await InviteModel.findById(inviteId)
+    .populate(
+      [
+        {
+          path: 'business',
+          model: 'businesses',
+          select: 'name requiredSkills',
+        },
+        {
+          path: 'userInvited',
+          model: 'users',
+          select: 'FirstName LastName email',
+        },
+        {
+          path: 'freelancer',
+          model: 'freelancers',
+          populate: {
+            path: 'userId',
+            model: 'users',
+            select: 'FirstName LastName email',
+          },
+          select: 'userId'
+        }
+      ]
+    );
+
+  const inviteEmailObj = {
+    to: inviteInfo?.freelancer?.userId?.email,
+    templateId: "d-ab58179c407a4e17be18ffbe81ef0fce",
+    dynamicTemplateData: {
+      firstName: inviteInfo?.freelancer?.userId?.FirstName ?? '',
+      lastName: inviteInfo?.freelancer?.userId?.LastName ?? '',
+      loginLink: `${keys.redirectDomain}/login`,
+      supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+      projectName: inviteInfo?.business?.name,
+      clientName: inviteInfo?.userInvited?.FirstName + " " + inviteInfo?.userInvited?.LastName,
+      duration: inviteInfo?.duration ?? 'N/A',
+      skills: inviteInfo?.business?.requiredSkills,
+    }
+  }
+
+  await Mailer.sendInviteMail(inviteEmailObj)
+  return inviteEmailObj;
+
 }
 
 module.exports = {
@@ -451,5 +503,6 @@ module.exports = {
   addSkillsToFreelancer,
   createFreelancerInvite,
   deleteSkillFromFreelancer,
-  getFreelancerWithoutPopulate
+  getFreelancerWithoutPopulate,
+  sendProjectInvitationEmail
 }

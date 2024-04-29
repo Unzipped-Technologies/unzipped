@@ -508,20 +508,20 @@ const removeExternalBankAccount = async (customerId, bankAccountId) => {
 const getUserAccountById = async (userId) => {
   const user = await UserModel.findById(userId)
   if (user && user.stripeAccountId) {
-    return await retreiveAccountInfo(user.stripeAccountId) 
+    return await retreiveAccountInfo(user.stripeAccountId)
   }
   return;
 }
 
 const getUserByAccountId = async (accountId) => {
-  return await UserModel.findOne({stripeAccountId: accountId})
+  return await UserModel.findOne({ stripeAccountId: accountId })
 }
 
 const createAccountOnboarding = async (type, userId) => {
   // Create a new Stripe Connected Account for the user
   const account = await stripe.accounts.create({
     type: 'express',
-    country: 'US', 
+    country: 'US',
     business_type: type,
   });
 
@@ -532,7 +532,7 @@ const createAccountOnboarding = async (type, userId) => {
     // Create or update the document in the third-party application collection
     // Ensure userId and stripeAccountId are correctly mapped to your third-party model schema
     await ThirdPartyApplicationModel.updateOne(
-      { userId }, 
+      { userId },
       { $set: { userId, stripeAccountId: account.id } },
       { upsert: true }
     );
@@ -542,70 +542,38 @@ const createAccountOnboarding = async (type, userId) => {
 }
 
 const retreiveAccountInfo = async (id) => {
-    // Create a new Stripe Connected Account for the user
-    const account = await stripe.accounts.retrieve(id);
+  // Create a new Stripe Connected Account for the user
+  const account = await stripe.accounts.retrieve(id);
 
-    return account;
+  return account;
 }
 
 const getAccountOnboardingLink = async (account, url) => {
-    const redirect = url || '/kyc'
-    // Create an account link for the onboarding process
-    const accountLink = await stripe.accountLinks.create({
-      account: account.id,
-      refresh_url: `${keys.redirectDomain}${redirect}`, // Your URL for re-onboarding
-      return_url: `${keys.redirectDomain}${redirect}`, // Your URL for successful onboarding
-      type: 'account_onboarding',
-    });
+  const redirect = url || '/kyc'
+  // Create an account link for the onboarding process
+  const accountLink = await stripe.accountLinks.create({
+    account: account.id,
+    refresh_url: `${keys.redirectDomain}${redirect}`, // Your URL for re-onboarding
+    return_url: `${keys.redirectDomain}${redirect}`, // Your URL for successful onboarding
+    type: 'account_onboarding',
+  });
 
-    return accountLink;
+  return accountLink;
 }
 
 const retrieveExternalBankAccounts = async (userStripeAccountId) => {
-    // List all bank accounts associated with the Stripe account
-    const bankAccounts = await stripe.accounts.listExternalAccounts(
-      userStripeAccountId,
-      { object: 'bank_account' }
-    );
+  // List all bank accounts associated with the Stripe account
+  const bankAccounts = await stripe.accounts.listExternalAccounts(
+    userStripeAccountId,
+    { object: 'bank_account' }
+  );
 
-    return bankAccounts;
+  return bankAccounts;
 }
 
 // charge client 
 async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
   try {
-    // step 1: load invoices that are being paid and verify charge amount
-    // const Invoices = await InvoiceModel.aggregate([
-    //   {
-    //     $match: { isApproved: true, isPaid: false }
-    //   },
-    //   {
-    //     $group: {
-    //       _id: '$clientId',
-    //       invoices: { $push: '$$ROOT' },
-    //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       totalAmount: 1,
-    //       invoices: {
-    //         $map: {
-    //           input: '$invoices',
-    //           as: 'invoice',
-    //           in: {
-    //             _id: '$$invoice._id',
-    //             hoursWorked: '$$invoice.hoursWorked',
-    //             hourlyRate: '$$invoice.hourlyRate'
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // ])
-    // Step 2: Charge the client
-
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountToCharge,
       currency: 'usd',
@@ -656,9 +624,6 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
       subtotal: String,
       paymentAmount: Number,
     })
-    console.log('Charge created:', charge.id);
-    console.log('payment history created:', payment);
-    console.log('Transfer created:', transfer.id);
 
     return { charge };
   } catch (error) {
@@ -668,51 +633,21 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
 }
 
 const transferPaymentToFreelancers = async (data) => {
-    const { amount_captured, id } = data.data.object
-    const amountToFreelancer = amount_captured * 0.9
-    // step 1: retrieve invoices that are being paid and figure which freelancers are to be paid
-    // const Invoices = await InvoiceModel.aggregate([
-    //   {
-    //     $match: { isApproved: true, isPaid: false }
-    //   },
-    //   {
-    //     $group: {
-    //       _id: '$clientId',
-    //       invoices: { $push: '$$ROOT' },
-    //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       totalAmount: 1,
-    //       invoices: {
-    //         $map: {
-    //           input: '$invoices',
-    //           as: 'invoice',
-    //           in: {
-    //             _id: '$$invoice._id',
-    //             hoursWorked: '$$invoice.hoursWorked',
-    //             hourlyRate: '$$invoice.hourlyRate'
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // ])
-    // you will need to retrieve this info from the transaction history created for this event
-    const accountId = "acct_1OtzJDQmnBKiGech"
-    // step 2: get charge from db
-    // const charge = await PaymentHistoryModel.findOne({chargeId: id})
-    // Step 2: Transfer a portion to the freelancer
-    const transfer = await stripe.transfers.create({
-      amount: 2000, // Amount to transfer to freelancer in cents
-      currency: 'usd',
-      destination: accountId, // Freelancer's Stripe account ID
-      transfer_group: data.id, // Group the transfer with the charge for easy reconciliation
-    });
+  const { amount_captured, id } = data.data.object
+  const amountToFreelancer = amount_captured * 0.9
+  // you will need to retrieve this info from the transaction history created for this event
+  const accountId = "acct_1OtzJDQmnBKiGech"
+  // step 2: get charge from db
+  // const charge = await PaymentHistoryModel.findOne({chargeId: id})
+  // Step 2: Transfer a portion to the freelancer
+  const transfer = await stripe.transfers.create({
+    amount: 2000, // Amount to transfer to freelancer in cents
+    currency: 'usd',
+    destination: accountId, // Freelancer's Stripe account ID
+    transfer_group: data.id, // Group the transfer with the charge for easy reconciliation
+  });
 
-    return transfer;
+  return transfer;
 }
 
 const getFreelancerBalance = async (stripeAccountId) => {
@@ -823,7 +758,16 @@ const confirmVerificationSession = async (userId, status) => {
       const user = await UserModel.findById(userId);
       if (user && user.isIdentityVerified !== "SUCCESS") {
         const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
-        if (updateUser) {
+        if (updateUser && updateUser?.email) {
+          await Mailer.sendInviteMail({
+            to: updateUser?.email,
+            templateId: 'd-53bdcde93b8e42edbc7d77d10322f3cc',
+            dynamicTemplateData: {
+              firstName: updateUser?.FirstName ?? '',
+              lastName: updateUser?.LastName ?? '',
+              supportLink: `${keys.redirectDomain}/wiki/getting-started`
+            }
+          })
           return true;
         } else {
           const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "REJECTED" } }, { new: true });

@@ -125,6 +125,29 @@ const sendMailWithSG = async (params) => {
   }
 }
 
+
+const sendInviteMail = async ({ to, subject, templateId, dynamicTemplateData }) => {
+
+  try {
+    const msg = {
+      to,
+      from: {
+        name: keys.sendGridName,
+        email: keys.sendGridEmail
+      },
+      subject,
+      templateId,
+      dynamicTemplateData
+    }
+
+    return await sgMail.send(msg)
+
+  }
+  catch (error) {
+    throw new Error(error.message)
+  }
+}
+
 const getTemplateDetails = (templateName, userName, existingUser) => {
   switch (templateName) {
     case 'VERIFY_EMAIL_ADDRESS':
@@ -158,5 +181,6 @@ module.exports = {
   addContact,
   getCustomFieldID,
   getTemplateDetails,
-  sendMailWithSG
+  sendMailWithSG,
+  sendInviteMail
 }
