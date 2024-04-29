@@ -59,7 +59,7 @@ const InnerCard = styled.div`
   margin-bottom: 2px;
 `
 
-const Notification = ({ type, children }) => {
+const Notification = ({ type, children, smallMargin, noButton }) => {
   const router = useRouter()
 
   switch (type) {
@@ -240,6 +240,23 @@ const Notification = ({ type, children }) => {
               </div>
             </InnerCard>
           ))}
+        </WhiteCard>
+      )
+    case 'blue':
+      return (
+        <WhiteCard row borderColor="#0029FF" background="#F8FAFF" smallMargin={smallMargin} padding="5px">
+          <Icon name="question" />
+          <DarkText noMargin paddingLeft>
+            {children}
+          </DarkText>
+          {!noButton && (
+            <Absolute>
+              <Dismiss>Dismiss</Dismiss>
+              <Button noBorder type="default" normal small>
+                UPDATE
+              </Button>
+            </Absolute>
+          )}
         </WhiteCard>
       )
     default:
