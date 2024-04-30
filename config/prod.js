@@ -1,5 +1,6 @@
 // prod.js - production keys here!!
-console.log('SOCKET_URL', process.env.SOCKET_URL)
+console.log('prod.js => SOCKET_URL', process.env.NEXT_PUBLIC_SOCKET_URL)
+console.log('app_enviroment', process.env.ENV)
 module.exports = {
   googleClientID: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -26,5 +27,11 @@ module.exports = {
   nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || '509d38179ddfee75d61f',
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '30a2ea2b0796b6092f825f80680a608ff57d5e9e',
   githubRedirectUrl: process.env.GITHUB_REDIRECT_URL || 'http://localhost:3000/api/auth/github',
-  socketUrl: process.env.SOCKET_URL || 'http://localhost:3000'
+  socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000',
+  supportEmail: 'jason+support@unzipped.io',
+  supportAccountPassword: 'Myfirst1',
+  supportFirstName: 'Unzipped',
+  supportLastName: 'Support',
+  supportFullName: 'Unzipped Support',
+  supportRole: 2
 }

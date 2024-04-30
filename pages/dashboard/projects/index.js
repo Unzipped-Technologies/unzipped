@@ -46,7 +46,7 @@ const Projects = () => {
           <SearchBar
             theme={{ tint3: '#C4C4C4' }}
             placeHolderColor={'#444444'}
-            margin="0px"
+            margin="0px 0px 20px 0px"
             take={limit}
             setTake={setLimit}
           />

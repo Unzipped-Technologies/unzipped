@@ -6,7 +6,6 @@ const FileModel = require('../models/file')
 const UserModel = require('../models/User')
 const listHelper = require('./list')
 const listEntriesHelper = require('./listEntriesHelper')
-
 const mongoose = require('mongoose')
 
 const getFreelancerById = async id => {

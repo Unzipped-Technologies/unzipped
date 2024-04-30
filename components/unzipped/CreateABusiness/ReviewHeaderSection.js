@@ -26,7 +26,7 @@ const ReviewHeaderSection = ({ label, isEditIconDisplayed, step, isMobileViewAct
                 <ParagraphStyled
                     fontFamily={'Roboto'}
                     fontSize={FONT_SIZE}
-                    fontWeight={ isMobileViewActive ? 600 : 500}
+                    fontWeight={isMobileViewActive ? 600 : 500}
                     lineHeight={'24px'}
                     letterSpacing={'0.5px'}
                     textAlign={'left'}
