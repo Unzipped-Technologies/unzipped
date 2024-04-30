@@ -28,7 +28,7 @@ class Validations {
   }
 
   getFullNameFromUser(user) {
-    return `${user?.FirstName || ''} ${user?.LastName || ''}`
+    return !user?.FirstName && !user?.LastName ? 'User' : `${user?.FirstName || ''} ${user?.LastName || ''}`
   }
 
   _isNull(value) {
@@ -409,7 +409,7 @@ class Validations {
 
   getMostRecentlyUpdated(array) {
     if (Array.isArray(array) && array.length > 0) {
-      return array.reduce((a, b) => (a.updatedAt > b.updatedAt ? a : b))
+      return array.reduce((a, b) => (a?.updatedAt > b?.updatedAt ? a : b))
     }
   }
 

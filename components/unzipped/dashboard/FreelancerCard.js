@@ -34,7 +34,15 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited,filter, afterInvitation }) => {
+const FreelancerCard = ({
+  user,
+  includeRate,
+  clearSelectedFreelancer,
+  width,
+  setIsUserInvited,
+  filter,
+  afterInvitation
+}) => {
   const router = useRouter()
   const { proejct } = router.query
 
@@ -60,7 +68,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
         freelancer: user.id,
         business: proejct
       }
-      dispatch(createUserInvitation(inviteFreelancer, accessToken, filter))
+      dispatch(createUserInvitation(inviteFreelancer, filter))
     }
   }
 

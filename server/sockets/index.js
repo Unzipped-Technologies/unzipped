@@ -6,6 +6,7 @@ const MeetingHelper = require('./../helpers/meeting')
 const MessageHelper = require('./../helpers/message')
 const UserModel = require('./../models/User')
 const ZoomHelper = require('./../helpers/ZoomHelper')
+
 module.exports = createSocket = server => {
   const io = socketIO(server)
   const onlineUsers = {}
@@ -174,9 +175,40 @@ module.exports = createSocket = server => {
       io.emit('updateOnlineUsers', onlineUsers)
     })
 
+    socket.on('chat unread', async conversation => {
+      const res = await conversations.findByIdAndUpdate(
+        conversation.conversationId,
+        {
+          $set: {
+            'participants.$[elem].unreadCount': 0
+          }
+        },
+        {
+          arrayFilters: [{ 'elem.userId': conversation.receiverId }],
+          new: true
+        }
+      )
+      const participantCount =
+        res?.participants?.find(participant => participant.userId._id === conversation.receiverId)?.unreadCount ?? 0
+
+      socket.userId = conversation.receiverId
+      if (res?._id) {
+        socket.broadcast.to(onlineUsers[conversation.receiverId]).emit('chat unread', {
+          conversationid: conversation.conversationId,
+          receiverId: conversation.receiverId
+        })
+
+        io.emit('chat unread', {
+          conversationid: conversation.conversationId,
+          receiverId: conversation.receiverId
+        })
+      }
+    })
+
     socket.on('chat message', async message => {
       const conversation = {
-        ...message
+        ...message,
+        unreadCount: 1
       }
       socket.broadcast.to(onlineUsers[message?.receiver?.userId]).emit('chat message', conversation)
       socket.emit('chat message', conversation)
@@ -186,27 +218,22 @@ module.exports = createSocket = server => {
           access_token: message?.access
         }
         await axios.post(`${keys.redirectDomain}/api/message/send`, message, { headers })
-        await conversations.findByIdAndUpdate(
-          conversation.conversationId,
+
+        await conversations.findOneAndUpdate(
+          { _id: conversation.conversationId },
           {
             $inc: {
-              'participants.$[elem].unreadCount': 1
-            }
-          },
-          {
-            arrayFilters: [{ 'elem.userId': conversation.receiver.userId }],
-            new: true
-          }
-        )
-        await conversations.findByIdAndUpdate(
-          conversation.conversationId,
-          {
+              'participants.$[elem1].unreadCount': 1 // Increment receiver's unreadCount
+            },
             $set: {
-              'participants.$[elem].unreadCount': 0
+              'participants.$[elem2].unreadCount': 0 // Set sender's unreadCount to 0
             }
           },
           {
-            arrayFilters: [{ 'elem.userId': conversation.sender.userId }],
+            arrayFilters: [
+              { 'elem1.userId': conversation.receiver.userId },
+              { 'elem2.userId': conversation.sender.userId }
+            ],
             new: true
           }
         )
@@ -220,7 +247,6 @@ module.exports = createSocket = server => {
     })
 
     socket.on('stop-typing', message => {
-      console.log(message, onlineUsers, onlineUsers[message?.receiverId])
       socket.broadcast.to(onlineUsers[message?.receiverId]).emit('stop-typing', message)
     })
 

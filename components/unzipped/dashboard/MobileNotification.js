@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
 import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 
-import { useRouter } from 'next/router'
-import styled from 'styled-components'
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+import ScheduleMeetingModal from './ScheduleMeetingModal';
+import { useDispatch, useSelector } from 'react-redux'
+import { updateWizardSubmission } from '../../../redux/actions'
 
 const help = [
   {
@@ -57,7 +60,35 @@ const InnerCard = styled.div`
   color: #fff;
   border-radius: 5px;
   margin-bottom: 2px;
+`;
+
+const WizardSuccessMessageDisplay = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+    background: #f4fcef;
+    border: 1px solid #8EDE64;
+    border-radius: 8px;
+    margin-top: 20px;
+`;
+
+const NotificationDismissalContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+
 `
+const Notification = ({ type, children, noButton }) => {
+    const router = useRouter()
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const dispatch = useDispatch();
+    const { wizardSubmission } = useSelector((state) => state.Business);
+    const handleNotificationDismissal = () => {
+        dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }));
+    }
+    const handleMeetingModal = () => {
+        setIsModalOpen(true);
+    }
 
 const Notification = ({ type, children, smallMargin, noButton }) => {
   const router = useRouter()
