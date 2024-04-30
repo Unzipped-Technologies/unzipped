@@ -1,5 +1,6 @@
 const list = require('../models/List')
 const listItems = require('../models/ListItems')
+const ListEntriesModel = require('../models/ListEntries')
 const mongoose = require('mongoose')
 
 const createLists = async data => {
@@ -49,6 +50,24 @@ const addListItemToList = async (data, listId) => {
     }
     updateList.listItems.push(...ids.map(item => mongoose.Types.ObjectId(item.id)))
     updateList.save()
+    return updateList
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
+const addListEntriesToList = async (data, listId) => {
+  try {
+    const updateList = await list.findById(listId)
+    const newEntry = await ListEntriesModel.create({
+      ...data
+    })
+    if (updateList?.listEntries?.length) {
+      updateList.listEntries.push(newEntry?._id)
+    } else {
+      updateList.listEntries = [newEntry?._id]
+    }
+    await updateList.save()
     return updateList
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -129,5 +148,6 @@ module.exports = {
   getListById,
   updateLists,
   deleteLists,
+  addListEntriesToList,
   getSingleList
 }

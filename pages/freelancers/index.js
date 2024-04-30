@@ -57,14 +57,7 @@ const SearchContainer = styled.div`
     margin-top: 78px;
   }
 `
-const Freelancers = ({
-  freelancerList = [],
-  access_token,
-  totalCount,
-  clearSelectedFreelancer,
-  getAllFreelancers,
-  loading
-}) => {
+const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelectedFreelancer, getAllFreelancers }) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -198,7 +191,7 @@ const Freelancers = ({
   return (
     <SearchContainer>
       <Nav
-       isSubMenu
+        isSubMenu
         searchValue={filter}
         setFilter={setFilter}
         handleSearchValue={setFilter}
@@ -237,46 +230,46 @@ const Freelancers = ({
             </MobileDisplayBox>
           )
         )}
-        <Box style={{
-          marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px',
-        }}>
+        <Box
+          style={{
+            marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
+          }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
-          {!loading && (
-            <div className="overflow-auto">
-              <div className="d-flex align-items-baseline py-4 bg-white">
-                <h5 className="px-4">
-                  <b>Top Results</b>
-                </h5>
-                <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
-              </div>
-              {freelancerList?.length === 0 && (
-                <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                  No freelancers found for this search
-                </DarkText>
-              )}
-              {freelancerList?.map((item, index) => {
-                const freelancer = constructFreelancerModel(item)
-                if (item?.user?.FirstName) {
-                  return (
-                    <div key={item?._id}>
-                      <WhiteCard noMargin overlayDesktop cardHeightDesktop>
-                        <FreelancerCard
-                          user={freelancer}
-                          includeRate
-                          clearSelectedFreelancer={clearSelectedFreelancer}
-                          filter={filter}
-                                                    afterInvitation={getFreelancersAfterInvitation}
-                        />
-                      </WhiteCard>
-                      {freelancerList.length < 1000 && freelancerList.length < totalCount && (
-                        <div ref={containerRef}></div>
-                      )}
-                    </div>
-                  )
-                }
-              })}
+          <div className="overflow-auto">
+            <div className="d-flex align-items-baseline py-4 bg-white">
+              <h5 className="px-4">
+                <b>Top Results</b>
+              </h5>
+              <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
             </div>
-          )}
+            {freelancerList?.length === 0 && (
+              <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                No freelancers found for this search
+              </DarkText>
+            )}
+            {freelancerList?.map((item, index) => {
+              const freelancer = constructFreelancerModel(item)
+              if (item?.user?.FirstName) {
+                return (
+                  <div key={item?._id}>
+                    <WhiteCard noMargin overlayDesktop cardHeightDesktop>
+                      <FreelancerCard
+                        user={freelancer}
+                        includeRate
+                        clearSelectedFreelancer={clearSelectedFreelancer}
+                        filter={filter}
+                        afterInvitation={getFreelancersAfterInvitation}
+                        userId={userId}
+                      />
+                    </WhiteCard>
+                    {freelancerList.length < 1000 && freelancerList.length < totalCount && (
+                      <div ref={containerRef}></div>
+                    )}
+                  </div>
+                )
+              }
+            })}
+          </div>
         </Box>
         {window?.innerWidth < 680 &&
           freelancerList?.map((item, index) => {
@@ -291,6 +284,7 @@ const Freelancers = ({
                         includeRate
                         clearSelectedFreelancer={clearSelectedFreelancer}
                         afterInvitation={getFreelancersAfterInvitation}
+                        userId={userId}
                       />
                     </MobileDisplayBox>
                   )}

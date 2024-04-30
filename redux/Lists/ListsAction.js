@@ -10,7 +10,9 @@ import {
   DELETE_USER_LIST_ERROR,
   ON_UPDATE_LIST,
   GET_INVITES_LIST,
-  GET_INVITES_LIST_ERROR
+  GET_INVITES_LIST_ERROR,
+  ADD_ENTRIES_TO_LIST,
+  ADD_ENTRIES_TO_LIST_ERROR
 } from './constant'
 import axios from 'axios'
 import { startLoading, stopLoading } from '../Loading/actions'
@@ -104,6 +106,27 @@ const setLitItemsAction = params => async dispatch => {
   }
 }
 
+const addEntriesToList = (params, listId) => async (dispatch, getState) => {
+  dispatch(startLoading())
+  const response = await axios
+    .patch(`/api/list/add-entry/${listId}`, params, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: ADD_ENTRIES_TO_LIST,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: ADD_ENTRIES_TO_LIST_ERROR,
+        payload: err.response
+      })
+      return err
+    })
+  dispatch(stopLoading())
+  return response
+}
 const getInvitesLists = params => async (dispatch, getState) => {
   dispatch(startLoading())
   try {
@@ -121,5 +144,4 @@ const getInvitesLists = params => async (dispatch, getState) => {
 
   dispatch(stopLoading())
 }
-
-export { createList, updateList, deleteList, setLitItemsAction, getInvitesLists }
+export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList,getInvitesLists }

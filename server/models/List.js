@@ -17,9 +17,10 @@ const listSchema = new Schema(
       }
     ],
     isDefault: {
-      type: Boolean
+      type: Boolean,
+      default: false
     },
-    isPrivate: { type: Boolean }
+    isPrivate: { type: Boolean, default: false }
   },
   {
     timestamps: true
