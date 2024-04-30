@@ -87,7 +87,7 @@ const Freelancers = ({
   const [take, setTake] = useState(20)
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
-  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '70px')
+  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
 
   const { isExpanded } = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
@@ -198,7 +198,6 @@ const Freelancers = ({
   return (
     <SearchContainer>
       <Nav
-       isSubMenu
         searchValue={filter}
         setFilter={setFilter}
         handleSearchValue={setFilter}
@@ -237,9 +236,10 @@ const Freelancers = ({
             </MobileDisplayBox>
           )
         )}
-        <Box style={{
-          marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px',
-        }}>
+        <Box
+          style={{
+            marginTop: '0px'
+          }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           {!loading && (
             <div className="overflow-auto">
@@ -265,7 +265,7 @@ const Freelancers = ({
                           includeRate
                           clearSelectedFreelancer={clearSelectedFreelancer}
                           filter={filter}
-                                                    afterInvitation={getFreelancersAfterInvitation}
+                          afterInvitation={getFreelancersAfterInvitation}
                         />
                       </WhiteCard>
                       {freelancerList.length < 1000 && freelancerList.length < totalCount && (
