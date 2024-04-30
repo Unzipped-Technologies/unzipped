@@ -4,6 +4,9 @@ const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
+const listHelper = require('./list')
+const listEntriesHelper = require('./listEntriesHelper')
+const mongoose = require('mongoose')
 
 const getFreelancerById = async id => {
   try {
@@ -38,7 +41,7 @@ const getFreelancerWithoutPopulate = async filter => {
   }
 }
 
-const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
+const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
   try {
     const regexQuery = new RegExp(filter?.searchKey, 'i')
     const existingIndexes = await FreelancerModel.collection.getIndexes()
@@ -234,6 +237,11 @@ const getAllFreelancers = async ({ filter, limit = 50, skip = 0, sort }) => {
             }
           ]
         }
+      },
+      {
+        $addFields: {
+          totalCount: { $arrayElemAt: ['$totalCount.count', 0] }
+        }
       }
     ]
 
@@ -428,6 +436,41 @@ const createFreelancerInvite = async params => {
     },
     { new: true }
   )
+  const listData = await listHelper.getSingleList({
+    name: 'Invites',
+    user: params.userInvited
+  })
+  const ListEntry = {
+    name: 'Invites',
+    icon: 'TeamOutlined',
+    listId: null,
+    userId: params?.userInvited,
+    freelancerId: params?.freelancer,
+    businessId: params?.business,
+    isPrivate: true,
+    isDefaultList: false
+  }
+  if (!listData) {
+    const newList = await listHelper.createLists({
+      name: 'Invites',
+      icon: 'TeamOutlined',
+      userId: params.userInvited,
+      user: params.userInvited,
+      isDefault: false,
+      listEntries: [],
+      isPrivate: true
+    })
+    ListEntry.listId = newList?._id
+    const listEntry = await listEntriesHelper.createListEntries(ListEntry)
+    newList['listEntries'] = [listEntry?._id]
+    await newList.save()
+  } else {
+    ListEntry.listId = listData?._id
+
+    const listEntry = await listEntriesHelper.createListEntries(ListEntry)
+    listData['listEntries'] = [...listData['listEntries'], listEntry?._id]
+    await listData.save()
+  }
 
   return updateFreelancer
 }

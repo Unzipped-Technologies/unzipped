@@ -1,36 +1,45 @@
-const user = require('../models/User')
 const message = require('../models/Message')
 const conversation = require('../models/Conversation')
-const mongoose = require('mongoose')
 
 const sendMessage = async (data, id) => {
-  const isConversation = await conversation.findById(data?.conversationId)
-  let getConversation = isConversation
-  if (!data?.receiver?.userId) return undefined
-  if (!isConversation) {
-    getConversation = await conversation.create({
-      participants: [{ ...data.sender, userId: id }, { ...data.receiver }]
+  try {
+    let conversationData = null
+    conversationData = await conversation.findById(data?.conversationId)
+
+    if (!data?.receiver?.userId) return undefined
+
+    if (!conversationData) {
+      conversationData = await conversation.create({
+        participants: [{ ...data.sender, userId: id }, { ...data.receiver }]
+      })
+    }
+
+    const newMessage = await message.create({
+      sender: id,
+      message: data?.message,
+      attachment: data?.attachment,
+      conversationId: conversationData._id,
+      ...(data?.meetingId && { meetingId: data.meetingId })
     })
-  }
-  const msg = await message.create({
-    sender: id,
-    message: data?.message,
-    attachment: data?.attachment,
-    conversationId: getConversation._id,
-    ...(data?.meetingId && { meetingId: data.meetingId })
-  })
-  await conversation.findByIdAndUpdate(getConversation._id, {
-    messages: await message.find({ conversationId: getConversation._id })
-  })
-  return await conversation
-    .findById(getConversation._id)
-    .populate('messages')
-    .populate({
-      path: 'participants.userId',
-      model: 'users',
-      select: ['email', 'FirstName', 'LastName', 'profileImage']
-    })
-    .exec()
+
+    if (conversationData?.messages?.length) {
+      conversationData.messages.push(newMessage?._id)
+    } else {
+      conversationData['messages'] = [newMessage?._id]
+    }
+
+    await conversationData.save()
+
+    return await conversation
+      .findById(conversationData._id)
+      .populate('messages')
+      .populate({
+        path: 'participants.userId',
+        model: 'users',
+        select: ['email', 'FirstName', 'LastName', 'profileImage']
+      })
+      .exec()
+  } catch (err) {}
 }
 
 const getMessagesForUser = async ({ filter = {}, take = 25, skip = 0 }, id) => {
@@ -55,12 +64,16 @@ const getMessagesForUser = async ({ filter = {}, take = 25, skip = 0 }, id) => {
       .populate({
         path: 'participants.userId',
         model: 'users',
-        select: ['email', 'FirstName', 'LastName', 'profileImage']
+        select: ['email', 'FirstName', 'LastName', 'profileImage', 'freelancers'],
+        populate: {
+          path: 'freelancers',
+          model: 'freelancers',
+          select: ['category']
+        }
       })
+
       .exec()
-  } catch (error) {
-    console.log('Error on getting user messages', error?.message)
-  }
+  } catch (error) {}
 }
 
 const getConversationById = async (conversationId, id, limit) => {
@@ -91,7 +104,12 @@ const getConversationById = async (conversationId, id, limit) => {
     .populate({
       path: 'participants.userId',
       model: 'users',
-      select: ['email', 'FirstName', 'LastName', 'profileImage']
+      select: ['email', 'FirstName', 'LastName', 'profileImage', 'freelancers'],
+      populate: {
+        path: 'freelancers',
+        model: 'freelancers',
+        select: ['category']
+      }
     })
     .exec()
   const count = await message.countDocuments({ conversationId: conversationId })

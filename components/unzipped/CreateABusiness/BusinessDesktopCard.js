@@ -24,7 +24,7 @@ const GetCardDesktop = ({
     requiredSkills,
     goals,
     companyBackground,
-    budget,
+    budgetRange,
     questionsToAsk,
     submitForm,
     updateForm,
@@ -39,7 +39,10 @@ const GetCardDesktop = ({
     files,
     setFiles,
     handleGithub,
-    userDetails
+    userDetails,
+    isSubmitted,
+    setIsSubmitted,
+    projectFiles
 }) => {
     switch (stage) {
         case 1:
@@ -59,6 +62,8 @@ const GetCardDesktop = ({
                     submitForm={submitForm}
                     stage={stage}
                     name={name}
+                    isSubmitted={isSubmitted}
+                    setIsSubmitted={setIsSubmitted}
                 />)
         case 3:
             if (projectType === 'Short Term Business') {
@@ -166,7 +171,7 @@ const GetCardDesktop = ({
         case 8:
             return (
                 <StepEightWizardFlow
-                    budget={budget}
+                    budgetRange={budgetRange}
                     updateForm={updateForm}
                     goBack={goBack}
                     submitForm={submitForm}
@@ -200,6 +205,7 @@ const GetCardDesktop = ({
                     setFiles={setFiles}
                     handleCancelIcon={handleCancelIcon}
                     SkipNextOutlinedIcon={SkipNextOutlinedIcon}
+                    projectFiles={projectFiles}
                 />
             )
         case 11:
@@ -211,6 +217,8 @@ const GetCardDesktop = ({
                         submitForm={submitForm}
                         stage={stage}
                         handleGithub={handleGithub}
+                        SkipNextOutlinedIcon={SkipNextOutlinedIcon}
+                        handleSkip={handleSkip}
                     />
                 )
             } else {
@@ -219,7 +227,7 @@ const GetCardDesktop = ({
         case 12:
             return (
                 <>
-                    <ReviewBusinessDetails files={files} isGithubConnected={isGithubConnected} stage={stage} />
+                    <ReviewBusinessDetails files={projectFiles} isGithubConnected={isGithubConnected} stage={stage} />
                 </>
             )
 

@@ -84,17 +84,18 @@ const Freelancers = ({
     skill: []
   })
   const [skip] = useState(0)
-  const [take, setTake] = useState(50)
+  const [take, setTake] = useState(20)
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '70px')
 
+  const { isExpanded } = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
   useEffect(() => {
     getAllFreelancers({ filter, skip, take })
-  }, [filter, createdInvitation])
+  }, [filter, createdInvitation, take])
 
   const getFreelancersAfterInvitation = () => {
     getAllFreelancers({ filter, skip, take })
@@ -126,7 +127,7 @@ const Freelancers = ({
     setIsVisible(entry.isIntersecting)
     if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
       if (take < totalCount) {
-        setTake(take + 50)
+        setTake(take + 20)
       }
     }
   }
@@ -197,7 +198,9 @@ const Freelancers = ({
   return (
     <SearchContainer>
       <Nav
+       isSubMenu
         searchValue={filter}
+        setFilter={setFilter}
         handleSearchValue={setFilter}
         handleSearch={handleSearch}
         searchButton
@@ -234,7 +237,9 @@ const Freelancers = ({
             </MobileDisplayBox>
           )
         )}
-        <Box>
+        <Box style={{
+          marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px',
+        }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           {!loading && (
             <div className="overflow-auto">
@@ -318,7 +323,7 @@ const mapStateToProps = state => {
   return {
     freelancerList: state.Freelancers?.freelancers,
     access_token: state.Auth.token,
-    totalCount: state.FreelancerSkills?.freelancersTotalCount,
+    totalCount: state.Freelancers?.totalCount,
     loading: state.Loading.loading
   }
 }

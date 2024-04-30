@@ -118,10 +118,9 @@ const DashboardTable = ({
     <Container background={'#FDFDFD'}>
       <table>
         <thead>
-          <tr style={{}}>
-            <TableHeading>Project Name</TableHeading>
+          <tr>
+            <TableHeading textAlign="left">Project Name</TableHeading>
             <TableHeading>Budget</TableHeading>
-            <TableHeading>Equity</TableHeading>
             <TableHeading>Points</TableHeading>
             <TableHeading>Value Estimate</TableHeading>
             <TableHeading>Deadline</TableHeading>
@@ -133,11 +132,10 @@ const DashboardTable = ({
             <tbody>
               {businesses?.map(row => (
                 <tr key={row._id}>
-                  <TableData $default onClick={() => router.push(`projects/details/${row._id}`)}>
-                    {row.name}
+                  <TableData $default onClick={() => router.push(`projects/details/${row._id}`)} textAlign="left">
+                    {ValidationUtils.truncate(row.name, 40)}
                   </TableData>
                   <TableData>{row.budget || 0}</TableData>
-                  <TableData>{row.equity || 0}</TableData>
                   <TableData>27</TableData>
                   <TableData>{row.valueEstimate || 'N/A'}</TableData>
                   <TableData>

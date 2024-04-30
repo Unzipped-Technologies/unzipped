@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import theme from '../../ui/theme'
 
 const BlackCard = styled.div`
@@ -91,7 +91,7 @@ const DarkText = styled.div`
   padding: ${({ padding }) => (padding ? padding : '0px')};
   width: ${({ width }) => (width ? width : '96%')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
-  text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
+  text-align: ${({ center, right, justify }) => (center ? 'center' : right ? 'right' : justify ? 'justify' : 'unset')};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '')};
   &:hover {
@@ -329,7 +329,6 @@ export const SimpleText = styled.span`
 export const Span = styled.span`
   display: flex;
   flex-flow: row;
-  position: relative;
   font-family: 'Roboto';
   font-style: normal;
   font-weight: ${({ bold }) => (bold ? 600 : 400)};
@@ -377,27 +376,27 @@ export const ScheduleInterviewButtonContainer = styled.div`
   padding: 10px;
 `
 const TableHeading = styled.th`
-  color: ${({ $color }) => ($color ? $color : '#000')};
-  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
-  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : 'Roboto')};
-  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
-  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
-  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '500')};
-  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
-  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
-  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  color: ${({ color }) => (color ? color : '#000')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : 'Roboto')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '500')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
 `
 
 const TableData = styled.td`
-  color: ${({ $color }) => ($color ? $color : '#000')};
-  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
-  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : '')};
-  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
-  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
-  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '400')};
-  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
-  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
-  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  color: ${({ color }) => (color ? color : '#000')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : '')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
   ${({ $default }) => ($default ? 'cursor: pointer;' : '')}
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
@@ -470,7 +469,39 @@ const TEXT = styled.p`
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
   color: ${({ textColor }) => (textColor ? textColor : '#000000')};
 `
+const bounceAnimation = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`
 
+const TypingAnimation = styled.div`
+  width: 100%;
+  padding-left: 10px;
+  span {
+    width: 7px;
+    height: 7px;
+    background-color: #848891;
+    display: inline-block;
+    margin: 1px;
+    border-radius: 50%;
+    &:nth-child(1) {
+      animation: ${bounceAnimation} 1s infinite;
+    }
+    &:nth-child(2) {
+      animation: ${bounceAnimation} 1s infinite 0.2s;
+    }
+    &:nth-child(3) {
+      animation: ${bounceAnimation} 1s infinite 0.4s;
+    }
+  }`
+  
 module.exports = {
   DIV,
   TEXT,
@@ -493,6 +524,7 @@ module.exports = {
   Span,
   Box,
   PaddingLeft,
+  TypingAnimation,
   Title,
   ScheduleInterviewContainer,
   ScheduleInterviewButtonContainer,

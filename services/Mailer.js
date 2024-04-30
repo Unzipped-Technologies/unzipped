@@ -60,7 +60,7 @@ const send = async data => {
 }
 const sendVerificationMail = async data => {
   const { email } = data
-  if(!email) return 'Email is required';
+  if (!email) return 'Email is required'
 
   try {
     const existingUser = await User.findOne({ email })

@@ -32,7 +32,9 @@ import {
   RESET_PASSWORD_SUCCESS,
   RESET_PASSWORD_ERROR,
   UPDATE_USER_ERROR,
-  USER_MAIL_CONFIRMATION
+  USER_MAIL_CONFIRMATION,
+  UPDATE_PHONE_NUMBER,
+  UPDATE_PHONE_ERROR
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -142,6 +144,26 @@ export const updateUserEmail = data => async (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: UPDATE_EMAIL_ERROR,
+        payload: err?.response?.data?.msg
+      })
+      return err?.response
+    })
+  return response
+}
+
+export const updatePhoneNumber = data => async (dispatch, getState) => {
+  const response = await axios
+    .patch(`/api/user/change-phone`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: UPDATE_PHONE_NUMBER,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: UPDATE_PHONE_ERROR,
         payload: err?.response?.data?.msg
       })
       return err?.response
@@ -445,7 +467,6 @@ export const updateCurrentUser = data => async (dispatch, getState) => {
         type: UPDATE_USER_ERROR,
         payload: err.response
       })
-      console.log('err.response', err.response)
       return err.response
     })
   return response
