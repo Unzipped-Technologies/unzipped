@@ -16,7 +16,9 @@ const INIT_STATE = {
   loading: false,
   list: null,
   error: null,
-  updatedList: null
+  updatedList: null,
+  invitesList: [],
+  inviteListError: null
 }
 
 const Lists = (state = INIT_STATE, action) => {

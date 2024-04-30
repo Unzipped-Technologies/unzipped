@@ -71,7 +71,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         freelancer: user.id,
         business: proejct
       }
-      dispatch(createUserInvitation(inviteFreelancer, accessToken, filter))
+      dispatch(createUserInvitation(inviteFreelancer, filter))
     }
   }
 

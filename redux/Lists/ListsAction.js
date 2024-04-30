@@ -127,5 +127,21 @@ const addEntriesToList = (params, listId) => async (dispatch, getState) => {
   dispatch(stopLoading())
   return response
 }
+const getInvitesLists = params => async (dispatch, getState) => {
+  dispatch(startLoading())
+  try {
+    const response = await axios.post(`/api/list/list`, params, tokenConfig(getState()?.Auth.token))
+    dispatch({
+      type: GET_INVITES_LIST,
+      payload: response.data
+    })
+  } catch (error) {
+    dispatch({
+      type: GET_INVITES_LIST_ERROR,
+      payload: error.response
+    })
+  }
 
-export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList }
+  dispatch(stopLoading())
+}
+export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList,getInvitesLists }

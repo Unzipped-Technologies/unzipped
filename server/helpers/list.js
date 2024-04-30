@@ -99,12 +99,46 @@ const listLists = async ({ filter, take, skip }) => {
         path: 'listItems',
         model: 'listItems'
       })
+      .populate([
+        {
+          path: 'listEntries',
+          model: 'listEntries',
+          select: 'freelancerId name icon businessId',
+          populate: [
+            {
+              path: 'freelancerId',
+              model: 'freelancers',
+              select: 'userId rate category likeTotal dislikeTotal freelancerSkills',
+              populate: [
+                {
+                  path: 'userId',
+                  model: 'users',
+                  select: 'FirstName LastName email profileImage AddressLineCountry'
+                },
+                {
+                  path: 'freelancerSkills',
+                  model: 'freelancerskills',
+                  select: 'skill yearsExperience'
+                }
+              ]
+            },
+            {
+              path: 'businessId',
+              model: 'businesses',
+              select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills'
+            }
+          ]
+        }
+      ])
       .exec()
-    console.log('gettingListon listHeler #77', lists)
     return lists
   } catch (e) {
     throw Error(`Could not find list, error: ${e}`)
   }
+}
+
+const getSingleList = async filter => {
+  return await list.findOne({ ...filter })
 }
 
 module.exports = {
@@ -114,5 +148,6 @@ module.exports = {
   getListById,
   updateLists,
   deleteLists,
-  addListEntriesToList
+  addListEntriesToList,
+  getSingleList
 }
