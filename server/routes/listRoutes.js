@@ -1,9 +1,9 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const listHelper = require('../helpers/list')
 const userHelper = require('../helpers/user')
-const requireLogin = require('../middlewares/requireLogin');
-const permissionCheckHelper = require('../middlewares/permissionCheck');
+const requireLogin = require('../middlewares/requireLogin')
+const permissionCheckHelper = require('../middlewares/permissionCheck')
 
 // let admin create a list for any user
 router.post('/create', requireLogin, async (req, res) => {
@@ -14,7 +14,7 @@ router.post('/create', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
 
 // let user create a list
 router.post('/user/create', requireLogin, async (req, res) => {
@@ -26,7 +26,7 @@ router.post('/user/create', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
 
 // lets admin get any list
 router.get('/:id', requireLogin, async (req, res) => {
@@ -37,7 +37,7 @@ router.get('/:id', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
 
 // lets users get their lists
 router.post('/user/list', requireLogin, async (req, res) => {
@@ -50,7 +50,7 @@ router.post('/user/list', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
 
 // lets admin get the lists of lists
 router.post('/list', requireLogin, async (req, res) => {
@@ -62,7 +62,7 @@ router.post('/list', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
 
 // lets user update their lists
 router.post('/update', requireLogin, async (req, res) => {
@@ -74,7 +74,19 @@ router.post('/update', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
+
+// lets user update their lists
+router.patch('/add-entry/:id', requireLogin, async (req, res) => {
+  // includes lists that are not active. Pass isActive true to get only existing lists
+  try {
+    const updateList = await listHelper.addListEntriesToList(req.body, req?.params?.id)
+    if (!updateList) throw Error('list not found')
+    res.json(updateList)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
 
 // lets user delete their lists
 router.post('/delete', requireLogin, async (req, res) => {
@@ -85,6 +97,6 @@ router.post('/delete', requireLogin, async (req, res) => {
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
-});
+})
 
-module.exports = router;
+module.exports = router

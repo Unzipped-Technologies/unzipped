@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { clearErrors, loadUser } from '../redux/actions'
+import { clearErrors, loadUser, resetMessageStore } from '../redux/actions'
 import { useRouter } from 'next/router'
 import Notification from '../components/animation/notifications'
 import styled, { css, keyframes } from 'styled-components'
@@ -76,7 +76,7 @@ const Google = styled.button`
   font-size: 14px;
   margin-top: 20px;
   &:hover {
-    background-color: #5C67C7;
+    background-color: #5c67c7;
   }
 `
 
@@ -97,7 +97,7 @@ const EmailButton = styled.button`
   font-size: 14px;
   letter-spacing: 0.4px;
   &:hover {
-    background-color: #F4F5F8;
+    background-color: #f4f5f8;
   }
   &:focus {
     background-color: #ffffff;
@@ -123,7 +123,7 @@ const LoginInputs = styled.div`
     `}
 `
 
-const Login = ({ loading, loadUser, isAuthenticated, error, clearErrors }) => {
+const Login = ({ loading, loadUser, isAuthenticated, error, clearErrors, resetMessageStore }) => {
   const [emailAlert, setEmailAlert] = useState('')
   const [passwordAlert, setPasswordAlert] = useState('')
   const [email, setEmail] = useState('')
@@ -198,9 +198,8 @@ const Login = ({ loading, loadUser, isAuthenticated, error, clearErrors }) => {
     }
     try {
       await loadUser(user)
-    } catch (e) {
-      console.log('error:', e)
-    }
+      await resetMessageStore('')
+    } catch (e) {}
   }
 
   const google = () => {
@@ -310,7 +309,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     loadUser: bindActionCreators(loadUser, dispatch),
-    clearErrors: bindActionCreators(clearErrors, dispatch)
+    clearErrors: bindActionCreators(clearErrors, dispatch),
+    resetMessageStore: bindActionCreators(resetMessageStore, dispatch)
   }
 }
 
