@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import theme from '../../ui/theme'
 
 const BlackCard = styled.div`
@@ -91,7 +91,7 @@ const DarkText = styled.div`
   width: ${({ width }) => (width ? width : '96%')};
   padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? (smallPadding ? smallPadding : '20px') : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
-  text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
+  text-align: ${({ center, right, justify }) => (center ? 'center' : right ? 'right' : justify ? 'justify' : 'unset')};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '')};
   &:hover {
@@ -329,7 +329,6 @@ export const SimpleText = styled.span`
 export const Span = styled.span`
   display: flex;
   flex-flow: row;
-  position: relative;
   font-family: 'Roboto';
   font-style: normal;
   font-weight: ${({ bold }) => (bold ? 600 : 400)};
@@ -472,7 +471,39 @@ const TEXT = styled.span`
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
   color: ${({ textColor }) => (textColor ? textColor : '#000000')};
 `
+const bounceAnimation = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`
 
+const TypingAnimation = styled.div`
+  width: 100%;
+  padding-left: 10px;
+  span {
+    width: 7px;
+    height: 7px;
+    background-color: #848891;
+    display: inline-block;
+    margin: 1px;
+    border-radius: 50%;
+    &:nth-child(1) {
+      animation: ${bounceAnimation} 1s infinite;
+    }
+    &:nth-child(2) {
+      animation: ${bounceAnimation} 1s infinite 0.2s;
+    }
+    &:nth-child(3) {
+      animation: ${bounceAnimation} 1s infinite 0.4s;
+    }
+  }`
+  
 module.exports = {
   DIV,
   TEXT,
@@ -495,6 +526,7 @@ module.exports = {
   Span,
   Box,
   PaddingLeft,
+  TypingAnimation,
   Title,
   ScheduleInterviewContainer,
   ScheduleInterviewButtonContainer,

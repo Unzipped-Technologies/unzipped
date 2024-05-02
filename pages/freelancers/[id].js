@@ -24,7 +24,7 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, loading }) => {
+const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, loading, userId }) => {
   const router = useRouter()
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
@@ -55,7 +55,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
       isPreferedFreelancer: selectedFreelancer?.isPreferedFreelancer,
       isEmailVerified: selectedFreelancer?.userId?.isEmailVerified,
       isPhoneVerified: selectedFreelancer?.userId?.isPhoneVerified,
-      isIdentityVerified: selectedFreelancer?.userId?.isIdentityVerified,
+      isIdentityVerified: selectedFreelancer?.userId?.isIdentityVerified
     })
   }, [selectedFreelancer])
 
@@ -64,45 +64,39 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
   }
   return (
     <>
-      {!loading && (
-        <>
-          <Container>
-            <Nav marginBottom={'0px'} />
-            <div style={{ overflow: 'overlay' }}>
-              <ProfileCard user={userData} />
-            </div>
-            <div style={{ width: '100%' }}>
-              <ProfileTab
-                tabs={['PROJECTS']}
-                selected={selected}
-                setSelected={setSelected}
-                role={role}
-                freelancerId={freelancerId}
-                userId={userData?._id}
-              />
-            </div>
-            <ProjectsCard user={userData} freelancerId={freelancerId} />
-          </Container>
-          <MobileContainer>
-            {interViewView ? (
-              <MobileProfileCard
-                user={userData}
-                handleProfilePage={handleValueFromChild}
-                role={role}
-                freelancerId={freelancerId}
-              />
-            ) : (
-              <MobileProfileCardOptions handleProfilePage={handleValueFromChild} />
-            )}
-          </MobileContainer>
-        </>
-      )}
+      <>
+        <Container>
+          <Nav marginBottom={'0px'} />
+          <div style={{ overflow: 'overlay' }}>
+            <ProfileCard user={userData} />
+          </div>
+          <div style={{ width: '100%' }}>
+            <ProfileTab
+              tabs={['PROJECTS']}
+              selected={selected}
+              setSelected={setSelected}
+              role={role}
+              freelancerId={freelancerId}
+              userId={userData?._id}
+            />
+          </div>
+          <ProjectsCard user={userData} freelancerId={freelancerId} />
+        </Container>
+        <MobileContainer>
+          {interViewView ? (
+            <MobileProfileCard user={userData} handleProfilePage={handleValueFromChild} role={role} freelancerId={id} />
+          ) : (
+            <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />
+          )}
+        </MobileContainer>
+      </>
     </>
   )
 }
 
 const mapStateToProps = state => {
   return {
+    userId: state?.Auth?.user?._id,
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
     role: state.Auth?.user?.role,
     freelancerId: state.Auth?.user?.freelancers,

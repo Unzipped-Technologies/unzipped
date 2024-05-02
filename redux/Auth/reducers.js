@@ -32,7 +32,8 @@ import {
   RESET_PASSWORD_ERROR,
   UPDATE_USER_ERROR,
   HIDE_AUTH_NOTIFICATION,
-  USER_MAIL_CONFIRMATION
+  USER_MAIL_CONFIRMATION,
+  UPDATE_PHONE_NUMBER
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -299,6 +300,13 @@ const Auth = (state = INIT_STATE, action) => {
         loading: false,
         user: action.payload,
         email: action.payload.email
+      }
+    case UPDATE_PHONE_NUMBER:
+      return {
+        ...state,
+        loading: false,
+        user: action.payload,
+        phoneNumber: action.payload?.phoneNumber
       }
     case RESET_PASSWORD_SUCCESS:
       return {

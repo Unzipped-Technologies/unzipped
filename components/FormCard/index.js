@@ -9,6 +9,10 @@ const Container = styled.div`
     margin: 10px 0px;
     width: 100%;
     ${({first}) => first ? 'margin-top: 24px' : ''};
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        padding: 5px 5px;
+    }
 `;
 
 const Row = styled.div`
@@ -17,6 +21,14 @@ const Row = styled.div`
     padding: 6px 0px;
     display: flex;
     align-items: center;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        padding: 0px
+    }
+    @media screen and (max-width: 420px) {
+        width: 100%;
+        flex-direction: column;
+    }
 `;
 
 const Button = styled.button`
@@ -27,6 +39,9 @@ const Button = styled.button`
     ${({isSelected}) => isSelected && 'visibility: hidden;'}
     background: #fff;
     border-radius: 5px;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
 `;
 
 const Image = styled.img`
@@ -40,6 +55,14 @@ const Title = styled.div`
 
 const Div = styled.div`
     display: flex;
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
+    @media screen and (max-width: 420px) {
+        flex-flow: column;
+        width: 100%;
+        margin: 10px
+    }
 `;
 
 const ButtonTwo = styled.div`
@@ -48,6 +71,9 @@ const ButtonTwo = styled.div`
     border: none;
     left: 10px;
     position: relative;
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const FormCard = ({image, title, children, badge, isSelected, first, onClick}) => {

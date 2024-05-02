@@ -4,14 +4,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { useRouter } from 'next/router'
 import UpdatePhoneForm from '../components/unzipped/UpdatePhoneForm'
-import { updateCurrentUser } from '../redux/actions'
+import { updatePhoneNumber } from '../redux/actions'
 import Nav from '../components/unzipped/header'
 import { parseCookies } from '../services/cookieHelper'
 
 import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 import Footer from '../components/unzipped/Footer'
 
-const Reset = ({ updateCurrentUser, token, phone }) => {
+const Reset = ({ updatePhoneNumber, token, phone }) => {
   const [loading, setLoading] = useState(false)
   const [phoneError, setPhoneError] = useState('')
 
@@ -46,7 +46,7 @@ const Reset = ({ updateCurrentUser, token, phone }) => {
 
   const changePhoneNumber = async data => {
     setLoading(true)
-    const response = await updateCurrentUser(data)
+    const response = await updatePhoneNumber(data)
     if (response?.status === 200) {
       await router.push('/dashboard/account')
     } else {
@@ -94,7 +94,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateCurrentUser: bindActionCreators(updateCurrentUser, dispatch)
+    updatePhoneNumber: bindActionCreators(updatePhoneNumber, dispatch)
   }
 }
 

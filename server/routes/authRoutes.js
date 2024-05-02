@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const bcrypt = require('bcryptjs')
 const token = require('../../services/jwt')
 const delToken = require('../../services/delCookie')
 const passport = require('passport')
@@ -13,6 +12,7 @@ const resetTemplate = require('../../services/emailTemplates/reset-password')
 const contact = require('../../services/emailTemplates/contact')
 const API = require('../helpers/axios')
 const AuthService = require('../helpers/authentication')
+const messageHelper = require('../helpers/message')
 
 router.get(
   '/google',
@@ -42,6 +42,7 @@ router.post('/register', async (req, res, next) => {
       }
     } else {
       const registerUser = await userHelper.registerUser(req.body)
+
       const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
@@ -58,7 +59,50 @@ router.get('/verify/:id', async (req, res, next) => {
   const id = req.params.id
   try {
     await AuthService.verifyUser(id)
-    res.send({ message: "SUCCESS" })
+    const supportUser = await userHelper.getSingleUser({ email: keys.supportEmail })
+    if (!supportUser) {
+      const hash = await AuthService.bcryptAndHashing(keys.supportAccountPassword)
+      let newSupportUser = await userHelper.createUser(
+        {
+          email: keys.supportEmail,
+          FirstName: keys.supportFirstName,
+          LastName: keys.supportLastName,
+          FullName: keys.supportFullName,
+          role: keys.supportRole
+        },
+        hash
+      )
+      const message = {
+        conversationId: null,
+        sender: {
+          userId: newSupportUser._id,
+          isInitiated: true
+        },
+        receiver: {
+          userId: id
+        },
+        attachment: null,
+        message:
+          'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
+      }
+      await messageHelper.sendMessage(message, newSupportUser._id)
+    } else {
+      const message = {
+        conversationId: null,
+        sender: {
+          userId: supportUser._id,
+          isInitiated: true
+        },
+        receiver: {
+          userId: id
+        },
+        attachment: null,
+        message:
+          'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
+      }
+      await messageHelper.sendMessage(message, supportUser._id)
+    }
+    res.send({ message: 'SUCCESS' })
   } catch {
     res.status(400).send('verify failed')
   }
@@ -107,9 +151,8 @@ router.post('/verify', async (req, res) => {
     const send = await Mailer.sendVerificationMail(req.body)
     if (send) {
       res.send({ send: 'Email sent successfully.' })
-    }else{
+    } else {
       res.send({ send: 'Failed to send an email.' })
-
     }
   } catch (error) {
     res.status(400).json({ message: error.message })

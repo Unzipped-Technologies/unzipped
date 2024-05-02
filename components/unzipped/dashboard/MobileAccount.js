@@ -132,7 +132,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
               </div>
               <div className="d-flex align-items-center justify-content-between mt-3">
                 <P fontSize="16px" margin="5px 0px 0px 20px">
-                  {user?.phoneNumber}
+                  {user?.phoneNumber ?? 'N/A'}
                 </P>
                 <Link href="/change-phone">Change Phone</Link>
               </div>
