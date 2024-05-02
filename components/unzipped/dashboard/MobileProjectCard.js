@@ -5,6 +5,9 @@ import { useRouter } from 'next/router'
 import IconComponent from '../../ui/icons/IconComponent'
 
 const UserSkills = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   ::-webkit-scrollbar {
     width: 0.1em;
   }
@@ -43,12 +46,12 @@ function MobileProjectCard({ project }) {
           <div className="d-flex">
             <div className="d-flex align-items-center ps-3">
               <IconComponent name="thumbUp" width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
-              <span style={{ fontSize: '16px', paddingLeft: '3px' }}>{project?.likes}</span>
+              <span style={{ fontSize: '16px', paddingLeft: '3px' }}>{project?.likeTotal}</span>
             </div>
           </div>
         </div>
       </div>
-      <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', padding: '13px 0', marginLeft: '8px' }}>
+      <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', marginLeft: '8px' }}>
         {project?.requiredSkills?.map((skill, index) => (
           <span
             key={index}
@@ -59,7 +62,8 @@ function MobileProjectCard({ project }) {
               padding: '4px 20px 6px 20px',
               marginRight: '6.4px',
               fontWeight: '500',
-              minHeight: '100%'
+              minHeight: '100%',
+              marginTop: '5px'
             }}>
             {skill}
           </span>

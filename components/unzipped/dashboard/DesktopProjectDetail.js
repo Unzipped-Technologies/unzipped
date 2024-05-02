@@ -253,7 +253,7 @@ const DesktopProjectDetail = ({ projectDetails, loading }) => {
                       projectDetails?.projectImagesUrl?.length > 0 &&
                       projectDetails.projectImagesUrl.map(item => (
                         <>
-                          <ImageContainer>
+                          <ImageContainer key={item?._id}>
                             <img src={item.url} alt="project image" height={'100%'} />
                           </ImageContainer>
                         </>

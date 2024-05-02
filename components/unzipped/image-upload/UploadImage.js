@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import UploadArrow from '../../icons/uploadArrow'
 import Dropzone from 'react-dropzone'
 import React, { useState, useRef, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { setProjectFiles } from '../../../redux/Business/actions'
 
 const ImageWrapper = styled.div`
   width: ${({ width }) => (width ? width : '100%')};
@@ -27,13 +29,14 @@ const ImageTextStyled = styled.p`
   margin-top: 15px;
 `
 
-const UploadImage = ({ setFiles, files }) => {
+const UploadImage = ({ setFiles, files, projectFiles }) => {
   const dropzoneRef = useRef(null)
+  const dispatch = useDispatch();
   const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
   const [isMaxFileLimit, setIsMaxFileLimit] = useState(false)
 
   const openDropzone = () => {
-    if (dropzoneRef.current && files.length < 3) {
+    if (dropzoneRef.current && projectFiles.length < 3) {
       dropzoneRef.current.open()
     }
   }
@@ -43,20 +46,23 @@ const UploadImage = ({ setFiles, files }) => {
   }
 
   const handleDrop = acceptedFiles => {
-    if (files.length <= 3) {
-      const imagesToAdded = 3 - files.length
-      if (imagesToAdded > 0) setFiles([...files, ...acceptedFiles?.splice(0, imagesToAdded)])
+    if (projectFiles.length <= 3) {
+      const imagesToAdded = 3 - projectFiles.length
+      if (imagesToAdded > 0) {
+        dispatch(setProjectFiles([...projectFiles, ...acceptedFiles?.splice(0, imagesToAdded)]))
+        setFiles([...files, ...acceptedFiles?.splice(0, imagesToAdded)])
+      }
     }
     closeDropzone()
   }
 
   useEffect(() => {
-    if (files.length >= 3) {
+    if (projectFiles.length >= 3) {
       setIsMaxFileLimit(true)
     } else {
       setIsMaxFileLimit(false)
     }
-  }, [files])
+  }, [projectFiles])
 
   return (
     <>

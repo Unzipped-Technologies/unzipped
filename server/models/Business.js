@@ -34,7 +34,7 @@ const businessSchema = new Schema(
     requiredSkills: [String],
     goals: String,
     companyBackground: String,
-    budget: { type: Number, required: true },
+    budget: { type: Number, default: 0 },
     paymentMethod: {
       card: String,
       id: String
@@ -89,7 +89,8 @@ const businessSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: 'file'
       }
-    ]
+    ],
+    budgetRange: { type: String }
   },
   {
     timestamps: true

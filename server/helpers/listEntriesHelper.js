@@ -174,6 +174,23 @@ const createRecentlyViewdRecod = async params => {
   }
 }
 
+const getUserListEntries = async ({ filter }) => {
+  try {
+    const response = await ListEntriesModel.find({ ...filter })
+      .populate([
+        {
+          path: 'businessId',
+          model: 'businesses',
+          select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills'
+        }
+      ])
+      .exec()
+    return response
+  } catch (err) {
+    throw Error(`Could not find list, error: ${err}`)
+  }
+}
+
 module.exports = {
   createListEntries,
   deleteListEntry,
@@ -182,6 +199,7 @@ module.exports = {
   updateUserLists,
   findListEntriesById,
   getAllteamMembers,
+  getUserListEntries,
   getRecentlyViewedProfile,
   createRecentlyViewdRecod
 }
