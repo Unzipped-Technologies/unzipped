@@ -1,14 +1,14 @@
 const list = require('../models/List')
 const listItems = require('../models/ListItems')
+const ListEntriesModel = require('../models/ListEntries')
 const mongoose = require('mongoose')
 
 const createLists = async data => {
   return await list.create(data)
 }
 
-const updateLists = async (data) => {
-
-  const result = await list.find({ _id: data.listId });
+const updateLists = async data => {
+  const result = await list.find({ _id: data.listId })
   if (result && result.length > 0 && result[0].isDefault) {
     return { message: 'Default list can not be edited' }
   }
@@ -17,8 +17,8 @@ const updateLists = async (data) => {
     listId: data.listId,
     userId: data.userId,
     name: data.name,
-    ...(data.icon !== '' && { icon: data.icon }),
-  };
+    ...(data.icon !== '' && { icon: data.icon })
+  }
 
   return await list.findByIdAndUpdate(
     data.listId,
@@ -26,16 +26,16 @@ const updateLists = async (data) => {
       $set: { ...listObj }
     },
     { new: true }
-  );
+  )
 }
 
-const deleteLists = async (id) => {
-    const { isDefault } = await list.find({ _id: id });
-    if (isDefault) {
-        return { message: 'Default list can not be edited' }
-    }
-    await list.findByIdAndDelete(id);
-    await listItems.deleteMany({ listId: id })
+const deleteLists = async id => {
+  const { isDefault } = await list.find({ _id: id })
+  if (isDefault) {
+    return { message: 'Default list can not be edited' }
+  }
+  await list.findByIdAndDelete(id)
+  await listItems.deleteMany({ listId: id })
 }
 
 const addListItemToList = async (data, listId) => {
@@ -56,35 +56,89 @@ const addListItemToList = async (data, listId) => {
   }
 }
 
-const getListById = async (id) => {
-    try {
-        return await list.findById(id)
-            .populate({
-                path: 'listItems',
-                model: 'listItemss'
-            })
-            .exec()
-    } catch (e) {
-        throw Error(`Could not find user, error: ${e}`);
+const addListEntriesToList = async (data, listId) => {
+  try {
+    const updateList = await list.findById(listId)
+    const newEntry = await ListEntriesModel.create({
+      ...data
+    })
+    if (updateList?.listEntries?.length) {
+      updateList.listEntries.push(newEntry?._id)
+    } else {
+      updateList.listEntries = [newEntry?._id]
     }
+    await updateList.save()
+    return updateList
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
+const getListById = async id => {
+  try {
+    return await list
+      .findById(id)
+      .populate({
+        path: 'listItems',
+        model: 'listItemss'
+      })
+      .exec()
+  } catch (e) {
+    throw Error(`Could not find user, error: ${e}`)
+  }
 }
 
 // list lists
 const listLists = async ({ filter, take, skip }) => {
-    try {
-        const lists = await list.find({ ...filter })
-            .skip(skip)
-            .limit(take)
-            .populate({
-                path: 'listItems',
-                model: 'listItems'
-            })
-            .exec()
-        console.log('gettingListon listHeler #77', lists)
-        return lists;
-    } catch (e) {
-        throw Error(`Could not find list, error: ${e}`);
-    }
+  try {
+    const lists = await list
+      .find({ ...filter })
+      .skip(skip)
+      .limit(take)
+      .populate({
+        path: 'listItems',
+        model: 'listItems'
+      })
+      .populate([
+        {
+          path: 'listEntries',
+          model: 'listEntries',
+          select: 'freelancerId name icon businessId',
+          populate: [
+            {
+              path: 'freelancerId',
+              model: 'freelancers',
+              select: 'userId rate category likeTotal dislikeTotal freelancerSkills',
+              populate: [
+                {
+                  path: 'userId',
+                  model: 'users',
+                  select: 'FirstName LastName email profileImage AddressLineCountry'
+                },
+                {
+                  path: 'freelancerSkills',
+                  model: 'freelancerskills',
+                  select: 'skill yearsExperience'
+                }
+              ]
+            },
+            {
+              path: 'businessId',
+              model: 'businesses',
+              select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills'
+            }
+          ]
+        }
+      ])
+      .exec()
+    return lists
+  } catch (e) {
+    throw Error(`Could not find list, error: ${e}`)
+  }
+}
+
+const getSingleList = async filter => {
+  return await list.findOne({ ...filter })
 }
 
 module.exports = {
@@ -93,5 +147,7 @@ module.exports = {
   listLists,
   getListById,
   updateLists,
-  deleteLists
+  deleteLists,
+  addListEntriesToList,
+  getSingleList
 }

@@ -7,6 +7,7 @@ const permissionCheckHelper = require('../middlewares/permissionCheck')
 const sgMail = require('@sendgrid/mail')
 const Mailer = require('../../services/Mailer')
 const keys = require('../../config/keys')
+const { _isValidPhoneNumber } = require('../utils/validations')
 
 sgMail.setApiKey(keys.sendGridKey)
 
@@ -151,6 +152,39 @@ router.patch(
       res.json(updateUser)
     } catch (e) {
       res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.patch(
+  '/change-phone',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateCurrentUsers'),
+  async (req, res) => {
+    try {
+      const userData = await userHelper.getSingleUser({ _id: req.user.sub }, '-password')
+      if (!userData) throw Error('user does not exist')
+
+      const { currentPhone, phoneNumber } = req.body
+
+      if (!userData?.phoneNumber && !_isValidPhoneNumber(phoneNumber)) {
+        throw new Error(`Invalid phone number.`)
+      } else if (currentPhone) {
+        if (userData?.phoneNumber && currentPhone !== userData?.phoneNumber) {
+          throw new Error(`Incorrect phone number.`)
+        } else if (!userData?.phoneNumber && currentPhone === phoneNumber) {
+          throw new Error(`New and current phone numbers must be different.`)
+        } else if (!_isValidPhoneNumber(phoneNumber)) {
+          throw new Error(`Invalid phone number.`)
+        }
+      } else if (userData?.phoneNumber && !currentPhone) {
+        throw new Error(`Invalid phone number.`)
+      }
+      const updateUser = await userHelper.updateUserByid(req.user.sub, { phoneNumber })
+      if (!updateUser) throw Error('user does not exist')
+      res.json(updateUser)
+    } catch (e) {
+      res.status(400).json({ message: e.message })
     }
   }
 )
