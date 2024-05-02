@@ -57,14 +57,7 @@ const SearchContainer = styled.div`
     margin-top: 78px;
   }
 `
-const Freelancers = ({
-  freelancerList = [],
-  access_token,
-  totalCount,
-  clearSelectedFreelancer,
-  getAllFreelancers,
-  loading
-}) => {
+const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelectedFreelancer, getAllFreelancers, loading }) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -198,7 +191,7 @@ const Freelancers = ({
   return (
     <SearchContainer>
       <Nav
-       isSubMenu
+        isSubMenu
         searchValue={filter}
         setFilter={setFilter}
         handleSearchValue={setFilter}
@@ -237,9 +230,10 @@ const Freelancers = ({
             </MobileDisplayBox>
           )
         )}
-        <Box style={{
-          marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px',
-        }}>
+        <Box
+          style={{
+            marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
+          }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           {!loading && (
             <div className="overflow-auto" style={{ width: "100%"}}>
@@ -265,7 +259,7 @@ const Freelancers = ({
                           includeRate
                           clearSelectedFreelancer={clearSelectedFreelancer}
                           filter={filter}
-                                                    afterInvitation={getFreelancersAfterInvitation}
+                          afterInvitation={getFreelancersAfterInvitation}
                         />
                       </WhiteCard>
                       {freelancerList.length < 1000 && freelancerList.length < totalCount && (
@@ -291,6 +285,7 @@ const Freelancers = ({
                         includeRate
                         clearSelectedFreelancer={clearSelectedFreelancer}
                         afterInvitation={getFreelancersAfterInvitation}
+                        userId={userId}
                       />
                     </MobileDisplayBox>
                   )}

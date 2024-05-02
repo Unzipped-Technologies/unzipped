@@ -14,7 +14,7 @@ const CardContainer = styled.div`
   display: flex;
   width: 90vw;
   max-width: 952px;
-  height: 611px;
+  height: 735px;
 
   @media (max-width: 680px) {
     width: 100%;
@@ -35,7 +35,7 @@ const CreateBusiness = ({
   sub,
   children,
   stage,
-  progress = 10,
+  progress = 11,
   onBack,
   onSubmit,
   onUpdate,

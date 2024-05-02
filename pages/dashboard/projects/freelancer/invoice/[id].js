@@ -3,13 +3,14 @@ import styled, { css } from 'styled-components'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { TitleText, DarkText } from '../../../../../components/unzipped/dashboard/style'
+import { DarkText } from '../../../../../components/unzipped/dashboard/style'
 
 import { getBusinessById } from '../../../../../redux/actions'
 import Nav from '../../../../../components/unzipped/header'
-import Invoice from '../../../../../components/unzipped/dashboard/project/invoice'
 import ClientMobileInvoices from '../../../../../components/unzipped/dashboard/mobile/ClinetMobileInvoices'
 import Timesheet from '../../../../../components/unzipped/dashboard/project/Timesheet'
+import Invites from '../../../../components/unzipped/dashboard/Invites'
+import FreelancerInvites from '../../../../components/unzipped/dashboard/FreelancerInvites'
 
 import ApplicationCard from '../../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../../components/unzipped/dashboard/HiresTable'
@@ -227,7 +228,8 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
     case 1:
       projectTabs = [
         { name: 'Details', index: 0 },
-        { name: 'Invoices', index: 3 }
+        { name: 'Invoices', index: 3 },
+        { name: 'Invites', index: 4 }
       ]
       break
     default:
@@ -343,6 +345,11 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
               </MobileDisplayBox>
             )}
           </>
+        )}
+        {selectedTab === 4 && role === 0 ? (
+          <Invites role={role} businessId={id} projectDetails={projectDetails} />
+        ) : (
+          <FreelancerInvites businessId={id} projectDetails={projectDetails} />
         )}
       </TabContent>
     </>

@@ -40,4 +40,10 @@ module.exports = {
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '30a2ea2b0796b6092f825f80680a608ff57d5e9e',
   githubRedirectUrl: process.env.GITHUB_REDIRECT_URL || 'http://localhost:3000/api/auth/github',
   socketUrl: process.env.ENV == 'local' ? 'http://localhost:3000' : 'https://unzipped.io',
+  supportEmail: 'jason+support@unzipped.io',
+  supportAccountPassword: 'Myfirst1',
+  supportFirstName: 'Unzipped',
+  supportLastName: 'Support',
+  supportFullName: 'Unzipped Support',
+  supportRole: 2
 }

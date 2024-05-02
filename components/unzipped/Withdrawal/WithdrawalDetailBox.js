@@ -18,6 +18,11 @@ const Container = styled.div`
         width: 100%;
         max-width: 100%;
     }
+    @media screen and (max-width: 600px) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 `;
 
 const LeftBox = styled.div``;
@@ -28,6 +33,9 @@ const RightBox = styled.div`
     position: absolute;
     right: 10px;
     top: 10px;
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const LeftTwo = styled.div``;
@@ -39,13 +47,13 @@ const Table = styled.div`
 `;
 
 const RowTitleFixed = styled.div`
-    text-align: ${({left}) => left ? 'left' : 'center'};
+    text-align: ${({ left }) => left ? 'left' : 'center'};
     min-width: 130px;
     font-weight: 600;
 `;
 
 const RowTitle = styled.div`
-    text-align: ${({left}) => left ? 'left' : 'center'};
+    text-align: ${({ left }) => left ? 'left' : 'center'};
     min-width: 130px;
     font-weight: 600;
     @media(max-width: 600px) {
@@ -54,35 +62,35 @@ const RowTitle = styled.div`
         font-weight: 600;
     }
     @media(max-width: 495px) {
-        min-width: ${({smallMobile}) => smallMobile ? '90px' : '116px'};
+        min-width: ${({ smallMobile }) => smallMobile ? '90px' : '116px'};
     }
     @media(max-width: 442px) {
-        min-width: ${({smallMobile}) => smallMobile ? '0px' : '116px'};
-        width: ${({smallMobile}) => smallMobile ? '75px' : '116px'};
+        min-width: ${({ smallMobile }) => smallMobile ? '0px' : '116px'};
+        width: ${({ smallMobile }) => smallMobile ? '75px' : '116px'};
     }
     @media(max-width: 400px) {
-        min-width: ${({smallMobile}) => smallMobile ? '0px' : '101px'};
-        width: ${({smallMobile}) => smallMobile ? '75px' : '100px'};
+        min-width: ${({ smallMobile }) => smallMobile ? '0px' : '101px'};
+        width: ${({ smallMobile }) => smallMobile ? '75px' : '100px'};
     }
 `;
 
 const RowItem = styled.div`
-    text-align: ${({left}) => left ? 'left' : 'center'};
+    text-align: ${({ left }) => left ? 'left' : 'center'};
     min-width: 130px;
     @media(max-width: 600px) {
-        text-align: left;
+        text-align: center;
         min-width: 116px;
     }
     @media(max-width: 495px) {
-        min-width: ${({smallMobile}) => smallMobile ? '90px' : '116px'};
+        min-width: ${({ smallMobile }) => smallMobile ? '90px' : '116px'};
     }
     @media(max-width: 442px) {
-        min-width: ${({smallMobile}) => smallMobile ? '0px' : '116px'};
-        width: ${({smallMobile}) => smallMobile ? '75px' : '116px'};
+        min-width: ${({ smallMobile }) => smallMobile ? '0px' : '116px'};
+        width: ${({ smallMobile }) => smallMobile ? '75px' : '116px'};
     }
     @media(max-width: 400px) {
-        min-width: ${({smallMobile}) => smallMobile ? '0px' : '101px'};
-        width: ${({smallMobile}) => smallMobile ? '75px' : '100px'};
+        min-width: ${({ smallMobile }) => smallMobile ? '0px' : '101px'};
+        width: ${({ smallMobile }) => smallMobile ? '75px' : '100px'};
     }
 `;
 const Title = styled.div`
@@ -100,9 +108,10 @@ const Row = styled.div`
     justify-content: space-between;
     max-width: 250px;
     align-self: center;
-    padding: ${({padding}) => padding ? padding : '4px 0px'};
+    padding: ${({ padding }) => padding ? padding : '4px 0px'};
     @media(max-width: 600px) {
         max-width: 100%;
+        padding: 10px;
     }
 `;
 
@@ -159,15 +168,34 @@ const Button = styled.button`
     }
 `;
 
-const WithdrawalCard = ({onSubmit, balance, isBank}) => {
+const RightBoxMobile = styled.div`
+    display: none;
+    gap: 0px;
+    @media screen and (max-width: 600px) {
+        display: flex;
+        flex-direction: column;
+    }
+`;
+
+const ButtonBoxMobile = styled.div`
+    display: none;
+    @media screen and (max-width: 600px) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0px auto;
+        padding-bottom: 10px;
+        width: 100%;
+    }
+`;
+const WithdrawalCard = ({ onSubmit, balance, isBank }) => {
     const [formDetails, setFormDetails] = useState({
-        country: {label: 'United States', value: 1},
-        type: {label: 'Express Withdrawal', value: 0},
+        country: { label: 'United States', value: 1 },
+        type: { label: 'Express Withdrawal', value: 0 },
         amount: '',
     })
 
     const updateForm = (type, data) => {
-        console.log(data)
         setFormDetails({
             ...formDetails,
             [type]: data
@@ -175,16 +203,20 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
     }
 
     const shouldDisableButton = (balance, formDetails) => {
+        let instantAvailableAmount = 0;
         // Extract the instant available amount and convert it to a standard numerical format (dollars)
-        const instantAvailableAmount = balance?.instant_available[0]?.amount / 100 || 0;
+        if (balance && balance?.instant_available) {
+
+            instantAvailableAmount = balance?.instant_available[0]?.amount / 100;
+        }
         const formAmount = +formDetails.amount || 0;
-      
+
         // Condition 1: Check if the difference between the available amount and the form amount is negative
         const isNegativeBalanceAfterTransaction = (instantAvailableAmount - formAmount) < 0;
-      
+
         // Condition 2: Check if the available amount is less than the minimum required (e.g., $30)
         const isBelowMinimum = formAmount < 30;
-      
+
         // Condition 3: Check if the available amount exceeds the maximum allowed (e.g., $10,000)
         const isAboveMaximum = formAmount > 10000;
         // The button should be disabled if any of the conditions above are true
@@ -194,14 +226,26 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
 
     return (
         <Container>
+
             <LeftBox>
-                <Title>Amount To Withdraw</Title> 
-                <Form>  
+                <Title>Amount To Withdraw</Title>
+                <RightBoxMobile>
+                    <RightTitle>You can withdraw  up to</RightTitle>
+                    <CostPanel>$ {balance && balance?.instant_available ? ((balance?.instant_available[0]?.amount / 100).toFixed(2).toLocaleString()) : 0} USD</CostPanel>
+                    <SubText>Note: refer to table for fees that may apply</SubText>
+                    <Row>
+                        <LeftTwo>
+                            <RowTitle>Remaining Balance</RowTitle>
+                            <RowItem>${balance && balance?.instant_available ? (((balance?.instant_available[0]?.amount / 100) - (formDetails.amount || 0)).toFixed(2)) : 0}</RowItem>
+                        </LeftTwo>
+                    </Row>
+                </RightBoxMobile>
+                <Form>
                     <FormField
                         fieldType="select"
                         margin
                         fontSize='18px'
-                        options={[{label: 'United States', value: 1}]}
+                        options={[{ label: 'United States', value: 1 }]}
                         noMargin
                         width="100%"
                         id="country"
@@ -209,9 +253,9 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
                         disabled={true}
                         onChange={(e) => updateForm('country', e)}
                         value={formDetails.country}
-                        >
+                    >
                         Country of bank account:
-                    </FormField>            
+                    </FormField>
                     <LeftTwo>
                         <FormField
                             fieldType="input"
@@ -223,20 +267,20 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
                             zIndexUnset
                             onChange={(e) => updateForm('amount', e.target.value)}
                             value={formDetails.amount}
-                            >
+                        >
                             Withdraw amount
-                        </FormField>  
-                        <SubTitle>Note: Min amount $30 USD. Max amount $10,000.00 USD</SubTitle>          
+                        </FormField>
+                        <SubTitle>Note: Min amount $30 USD. Max amount $10,000.00 USD</SubTitle>
                     </LeftTwo>
                     <FormField
                         fieldType="select"
                         margin
                         fontSize='18px'
                         options={[
-                            {label: 'Express Withdrawal', value: 0},
-                            {label: 'Payoneer', value: 1},
-                            {label: 'Wire Transfer', value: 2},
-                            {label: 'Freelancer Debit Card', value: 3},
+                            { label: 'Express Withdrawal', value: 0 },
+                            { label: 'Payoneer', value: 1 },
+                            { label: 'Wire Transfer', value: 2 },
+                            { label: 'Freelancer Debit Card', value: 3 },
                         ]}
                         noMargin
                         width="100%"
@@ -244,33 +288,39 @@ const WithdrawalCard = ({onSubmit, balance, isBank}) => {
                         zIndexUnset
                         onChange={(e) => updateForm('type', e)}
                         value={formDetails.type}
-                        >
+                    >
                         Type of Withdraw
-                    </FormField>            
-                </Form> 
+                    </FormField>
+                </Form>
                 <Row padding="15px 15px 25px 20px">
-                <LeftTwo>
-                    <RowTitle left>Currency</RowTitle>
-                    <RowItem left>USD</RowItem>
-                </LeftTwo>
-                <RightTwo>
-                    <RowTitleFixed left>Balance</RowTitleFixed>
-                    <RowItem left>${(balance?.available[0]?.amount/100).toFixed(2).toLocaleString()}</RowItem>
-                </RightTwo>
+                    <LeftTwo>
+                        <RowTitle left>Currency</RowTitle>
+                        <RowItem left>USD</RowItem>
+                    </LeftTwo>
+                    <RightTwo>
+                        <RowTitleFixed left>Balance</RowTitleFixed>
+                        <RowItem left>${balance && balance?.instant_available ? ((balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()) : 0}</RowItem>
+                    </RightTwo>
                 </Row>
+
             </LeftBox>
+
+
             <RightBox>
-                <RightTitle>You can withdraw <br/> up to</RightTitle>
-                <CostPanel>$ {(balance?.instant_available[0]?.amount/100).toFixed(2).toLocaleString()} USD</CostPanel>
+                <RightTitle>You can withdraw <br /> up to</RightTitle>
+                <CostPanel>$ {balance && balance?.instant_available ? ((balance?.instant_available[0]?.amount / 100).toFixed(2).toLocaleString()) : 0} USD</CostPanel>
                 <SubText>Note: refer to table for fees that may apply</SubText>
                 <Row padding="120px 0px">
                     <LeftTwo>
                         <RowTitle>Remaining Balance</RowTitle>
-                        <RowItem>${((balance?.instant_available[0]?.amount/100)-(formDetails.amount || 0)).toFixed(2)}</RowItem>
+                        <RowItem>${balance && balance?.instant_available ? (((balance?.instant_available[0]?.amount / 100) - (formDetails.amount || 0)).toFixed(2)) : 0}</RowItem>
                     </LeftTwo>
                 </Row>
                 <Button disabled={isDisabled} onClick={() => onSubmit(formDetails.amount)}>Submit Application</Button>
             </RightBox>
+            <ButtonBoxMobile>
+                <Button disabled={isDisabled} onClick={() => onSubmit(formDetails.amount)}>Submit Application</Button>
+            </ButtonBoxMobile>
         </Container>
     )
 }

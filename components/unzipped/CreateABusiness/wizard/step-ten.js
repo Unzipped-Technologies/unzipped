@@ -5,6 +5,8 @@ import Button from '../../../ui/Button';
 import { ContentContainer, ContainedSpan } from '../../../../pages/create-your-business';
 import ClearSharpIcon from '@material-ui/icons/ClearSharp';
 import UploadImage from '../../image-upload/UploadImage';
+import { useDispatch } from 'react-redux';
+const MAX_FLIMENAME_LENGTH = 40;
 
 const StepTenWizardFlow = ({
     updateForm,
@@ -15,8 +17,19 @@ const StepTenWizardFlow = ({
     files,
     setFiles,
     handleCancelIcon,
-    SkipNextOutlinedIcon
+    SkipNextOutlinedIcon,
+    projectFiles
 }) => {
+    const disptach = useDispatch()
+    const handleFileName = (fileName) => {
+        if (fileName) {
+            if (fileName.length <= MAX_FLIMENAME_LENGTH) {
+                return fileName;
+            } else {
+                return fileName.substring(0, MAX_FLIMENAME_LENGTH - 3) + '...';
+            }
+        }
+    }
     return (
         <CreateABusiness
             title="Project Image"
@@ -39,17 +52,17 @@ const StepTenWizardFlow = ({
                 <SkipNextOutlinedIcon />
             </Button>
             <Grid margin={files?.length && '0'}>
-                <UploadImage setFiles={setFiles} files={files} />
+                <UploadImage setFiles={setFiles} files={files} projectFiles={projectFiles} />
             </Grid>
-            {!!files?.length && (
+            {!!projectFiles?.length && (
                 <ContentContainer padding="20px 5px 20px 10px ">
-                    {files?.map((file, index) => (
+                    {projectFiles?.map((file, index) => (
                         <ContainedSpan>
                             <ClearSharpIcon
                                 style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
                                 onClick={() => handleCancelIcon(`files:${index}`)}
                             />
-                            {file.name}
+                            {handleFileName(file.name)}
                         </ContainedSpan>
                     ))}
                 </ContentContainer>
