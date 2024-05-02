@@ -16,7 +16,8 @@ import {
   UPDATE_WIZARD_SUBMISSION,
   SET_IS_BUSINESS_FIELD_SUBMITTED,
   SET_PROJECT_FILES,
-  RESET_PROJECT_FILES
+  RESET_PROJECT_FILES,
+  GET_BUSINESS_DETAILS
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'

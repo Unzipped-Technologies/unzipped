@@ -175,7 +175,7 @@ router.post(
     const id = req.body.userId || req.user.sub
     try {
       const businessDetails = await businessHelper.getBusinessDetailsByUserId(id)
-      if (!businessDetails) throw Error('business details already exists')
+      if (!businessDetails) throw Error('business details does not exists')
       res.json(businessDetails)
     } catch (e) {
       res.status(400).json({ msg: e.message })

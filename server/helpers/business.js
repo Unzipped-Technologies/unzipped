@@ -14,6 +14,7 @@ const TaskHours = require('../models/TaskHours')
 const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const CloudinaryUploadHelper = require('./file')
+const businessDetail = require('../models/BusinessDetails')
 
 const createBusiness = async (data, id, files = []) => {
   // upload file to cloudinary platform
@@ -520,7 +521,7 @@ const createBusinessDetails = async (data, id) => {
 }
 
 const getBusinessDetailsByUserId = async id => {
-  return await businessDetail.findOne({ userId: id })
+  return await businessDetail.findOne({ userId: id }).select('name type businessPhone taxId userId _id')
 }
 
 const updateBusinessDetails = async (data, id) => {
