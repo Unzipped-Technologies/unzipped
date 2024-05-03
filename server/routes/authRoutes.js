@@ -42,7 +42,7 @@ router.post('/register', async (req, res, next) => {
       }
     } else {
       const registerUser = await userHelper.registerUser(req.body)
-
+      if (registerUser?.isLoginWithGoogle) throw Error('Please login with google');
       const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
@@ -136,7 +136,11 @@ router.post('/change-password', requireLogin, async (req, res, next) => {
     const hash = await AuthService.bcryptAndHashing(req.body?.newPassword)
     if (!hash) throw new Error('Something went wrong hashing the password')
 
-    await userHelper.updateUserByid(existingUser?._id, { password: hash })
+    const result = await userHelper.updateUser(existingUser?._id, { password: hash })
+
+    if(result) {
+      await Mailer.sendMailWithSG({ email: result?.email, templateName: 'RESET_PASSWORD' })
+    }
 
     const existingUsers = await AuthService.isExistingUser(req.user.sub, true)
     res.cookie('access_token', token.signToken(req.user.sub), { httpOnly: true })
@@ -148,7 +152,7 @@ router.post('/change-password', requireLogin, async (req, res, next) => {
 
 router.post('/verify', async (req, res) => {
   try {
-    const send = await Mailer.sendVerificationMail(req.body)
+    const send = await Mailer.sendMailWithSG(req.body)
     if (send) {
       res.send({ send: 'Email sent successfully.' })
     } else {
