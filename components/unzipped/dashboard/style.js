@@ -223,6 +223,7 @@ const WhiteCard = styled.div`
     display: flex;
     width: 100%;
     justify-content: space-between;
+    padding: ${({ padding }) => (padding ? padding : '0px')};
   }
 `
 
