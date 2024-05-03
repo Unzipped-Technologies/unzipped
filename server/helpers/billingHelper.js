@@ -191,7 +191,7 @@ const createSubscription = async (req, obj, user) => {
   const [newSubscription] = await Promise.all([
     stripe.subscriptions.create({
       customer: customerId,
-      items: [{ price: subscriptionType.stripePriceId }],
+      items: [{ price: subscriptionType?.stripePriceId }],
       trial_end: new Date(trialEnd),
       default_payment_method: obj.paymentMethod.card.id,
       metadata: {
@@ -494,84 +494,78 @@ const handleWebhookEvent = event => {
 
 const linkExternalBankAccount = async (customerId, bankAccountToken) => {
   return await stripe.customers.createSource(customerId, {
-    source: bankAccountToken,
-  });
+    source: bankAccountToken
+  })
 }
 
 const removeExternalBankAccount = async (customerId, bankAccountId) => {
-  return await stripe.customers.deleteSource(
-    customerId,
-    bankAccountId
-  );
+  return await stripe.customers.deleteSource(customerId, bankAccountId)
 }
 
-const getUserAccountById = async (userId) => {
+const getUserAccountById = async userId => {
   const user = await UserModel.findById(userId)
+
   if (user && user.stripeAccountId) {
-    return await retreiveAccountInfo(user.stripeAccountId) 
+    return await retreiveAccountInfo(user.stripeAccountId)
   }
-  return;
+  throw new Error(`Account not exist.`)
 }
 
-const getUserByAccountId = async (accountId) => {
-  return await UserModel.findOne({stripeAccountId: accountId})
+const getUserByAccountId = async accountId => {
+  return await UserModel.findOne({ stripeAccountId: accountId })
 }
 
 const createAccountOnboarding = async (type, userId) => {
   // Create a new Stripe Connected Account for the user
   const account = await stripe.accounts.create({
     type: 'express',
-    country: 'US', 
-    business_type: type,
-  });
+    country: 'US',
+    business_type: type
+  })
 
   if (account) {
     // associate the accoutn with the user
-    await UserModel.updateOne({ _id: userId }, { $set: { stripeAccountId: account.id } });
+    await UserModel.updateOne({ _id: userId }, { $set: { stripeAccountId: account.id } })
 
     // Create or update the document in the third-party application collection
     // Ensure userId and stripeAccountId are correctly mapped to your third-party model schema
     await ThirdPartyApplicationModel.updateOne(
-      { userId }, 
+      { userId },
       { $set: { userId, stripeAccountId: account.id } },
       { upsert: true }
-    );
+    )
   }
 
-  return account;
+  return account
 }
 
-const retreiveAccountInfo = async (id) => {
-    // Create a new Stripe Connected Account for the user
-    const account = await stripe.accounts.retrieve(id);
-
-    return account;
+const retreiveAccountInfo = async id => {
+  // Create a new Stripe Connected Account for the user
+  const account = await stripe.accounts.retrieve(id)
+  return account
 }
 
 const getAccountOnboardingLink = async (account, url) => {
-    const redirect = url || '/kyc'
-    // Create an account link for the onboarding process
-    const accountLink = await stripe.accountLinks.create({
-      account: account.id,
-      refresh_url: `${keys.redirectDomain}${redirect}`, // Your URL for re-onboarding
-      return_url: `${keys.redirectDomain}${redirect}`, // Your URL for successful onboarding
-      type: 'account_onboarding',
-    });
+  const redirect = url || '/kyc'
+  // Create an account link for the onboarding process
+  const accountLink = await stripe.accountLinks.create({
+    account: account.id,
+    refresh_url: `${keys.redirectDomain}${redirect}`, // Your URL for re-onboarding
+    return_url: `${keys.redirectDomain}${redirect}`, // Your URL for successful onboarding
+    type: 'account_onboarding'
+  })
 
-    return accountLink;
+  return accountLink
 }
 
-const retrieveExternalBankAccounts = async (userStripeAccountId) => {
-    // List all bank accounts associated with the Stripe account
-    const bankAccounts = await stripe.accounts.listExternalAccounts(
-      userStripeAccountId,
-      { object: 'bank_account' }
-    );
+const retrieveExternalBankAccounts = async userStripeAccountId => {
+  // List all bank accounts associated with the Stripe account
+  const bankAccounts = await stripe.accounts.listExternalAccounts(userStripeAccountId, { object: 'bank_account' })
 
-    return bankAccounts;
+  return bankAccounts
 }
 
-// charge client 
+// charge client
 async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
   try {
     // step 1: load invoices that are being paid and verify charge amount
@@ -612,9 +606,9 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
       customer: customerId,
       payment_method: paymentMethodId,
       off_session: true, // Assuming the customer is not present
-      confirm: true, // Automatically confirm the payment intent
+      confirm: true // Automatically confirm the payment intent
       // Add any other necessary parameters here
-    });
+    })
 
     // step 3: create a payment history in the db
 
@@ -633,7 +627,7 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
       card: String,
       payPeriod: String,
       subtotal: String,
-      paymentAmount: Number,
+      paymentAmount: Number
     })
 
     // get user by freelancer id
@@ -654,81 +648,81 @@ async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
       card: String,
       payPeriod: String,
       subtotal: String,
-      paymentAmount: Number,
+      paymentAmount: Number
     })
-    console.log('Charge created:', charge.id);
-    console.log('payment history created:', payment);
-    console.log('Transfer created:', transfer.id);
+    console.log('Charge created:', charge.id)
+    console.log('payment history created:', payment)
+    console.log('Transfer created:', transfer.id)
 
-    return { charge };
+    return { charge }
   } catch (error) {
-    console.error('Error creating payment and transfer:', error);
-    throw error; // Rethrow or handle as appropriate for your application
+    console.error('Error creating payment and transfer:', error)
+    throw error // Rethrow or handle as appropriate for your application
   }
 }
 
-const transferPaymentToFreelancers = async (data) => {
-    const { amount_captured, id } = data.data.object
-    const amountToFreelancer = amount_captured * 0.9
-    // step 1: retrieve invoices that are being paid and figure which freelancers are to be paid
-    // const Invoices = await InvoiceModel.aggregate([
-    //   {
-    //     $match: { isApproved: true, isPaid: false }
-    //   },
-    //   {
-    //     $group: {
-    //       _id: '$clientId',
-    //       invoices: { $push: '$$ROOT' },
-    //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       totalAmount: 1,
-    //       invoices: {
-    //         $map: {
-    //           input: '$invoices',
-    //           as: 'invoice',
-    //           in: {
-    //             _id: '$$invoice._id',
-    //             hoursWorked: '$$invoice.hoursWorked',
-    //             hourlyRate: '$$invoice.hourlyRate'
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // ])
-    // you will need to retrieve this info from the transaction history created for this event
-    const accountId = "acct_1OtzJDQmnBKiGech"
-    // step 2: get charge from db
-    // const charge = await PaymentHistoryModel.findOne({chargeId: id})
-    // Step 2: Transfer a portion to the freelancer
-    const transfer = await stripe.transfers.create({
-      amount: 2000, // Amount to transfer to freelancer in cents
-      currency: 'usd',
-      destination: accountId, // Freelancer's Stripe account ID
-      transfer_group: data.id, // Group the transfer with the charge for easy reconciliation
-    });
+const transferPaymentToFreelancers = async data => {
+  const { amount_captured, id } = data.data.object
+  const amountToFreelancer = amount_captured * 0.9
+  // step 1: retrieve invoices that are being paid and figure which freelancers are to be paid
+  // const Invoices = await InvoiceModel.aggregate([
+  //   {
+  //     $match: { isApproved: true, isPaid: false }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: '$clientId',
+  //       invoices: { $push: '$$ROOT' },
+  //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
+  //     }
+  //   },
+  //   {
+  //     $project: {
+  //       _id: 1,
+  //       totalAmount: 1,
+  //       invoices: {
+  //         $map: {
+  //           input: '$invoices',
+  //           as: 'invoice',
+  //           in: {
+  //             _id: '$$invoice._id',
+  //             hoursWorked: '$$invoice.hoursWorked',
+  //             hourlyRate: '$$invoice.hourlyRate'
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // ])
+  // you will need to retrieve this info from the transaction history created for this event
+  const accountId = 'acct_1OtzJDQmnBKiGech'
+  // step 2: get charge from db
+  // const charge = await PaymentHistoryModel.findOne({chargeId: id})
+  // Step 2: Transfer a portion to the freelancer
+  const transfer = await stripe.transfers.create({
+    amount: 2000, // Amount to transfer to freelancer in cents
+    currency: 'usd',
+    destination: accountId, // Freelancer's Stripe account ID
+    transfer_group: data.id // Group the transfer with the charge for easy reconciliation
+  })
 
-    return transfer;
+  return transfer
 }
 
-const getFreelancerBalance = async (stripeAccountId) => {
+const getFreelancerBalance = async stripeAccountId => {
   try {
     const balance = await stripe.balance.retrieve({
-      stripeAccount: stripeAccountId, // The ID of the connected Stripe account
-    });
+      stripeAccount: stripeAccountId // The ID of the connected Stripe account
+    })
 
     // The balance object contains amounts in different categories
     // For example, balance.available and balance.pending
-    console.log(balance);
+    console.log(balance)
 
-    return balance;
+    return balance
   } catch (error) {
-    console.error('Error retrieving balance:', error);
-    throw error;
+    console.error('Error retrieving balance:', error)
+    throw error
   }
 }
 
@@ -738,42 +732,45 @@ const createTestCharge = async () => {
       amount: 20000000,
       currency: 'usd',
       source: 'tok_visa',
-      description: 'Test charge for $200000.00',
-    });
+      description: 'Test charge for $200000.00'
+    })
 
-    console.log('Charge successful:', charge);
-    return charge;
+    console.log('Charge successful:', charge)
+    return charge
   } catch (error) {
-    console.error('Charge failed:', error);
-    throw error;
+    console.error('Charge failed:', error)
+    throw error
   }
 }
 
 const retrieveStripeBalance = async () => {
   try {
-    const balance = await stripe.balance.retrieve();
-    console.log(balance); // Logs the entire balance object to the console
-    return balance;
+    const balance = await stripe.balance.retrieve()
+    console.log(balance) // Logs the entire balance object to the console
+    return balance
   } catch (error) {
-    console.error('Error retrieving Stripe balance:', error);
+    console.error('Error retrieving Stripe balance:', error)
   }
 }
 
 const withdrawFundsToBankAccount = async (accountId, amount, currency = 'usd') => {
   try {
     // Create a payout to the connected account's external bank account
-    const payout = await stripe.payouts.create({
-      amount: amount,
-      currency: currency,
-    }, {
-      stripeAccount: accountId, // Specify the connected account ID
-    });
+    const payout = await stripe.payouts.create(
+      {
+        amount: amount,
+        currency: currency
+      },
+      {
+        stripeAccount: accountId // Specify the connected account ID
+      }
+    )
 
-    console.log('Payout successful:', payout);
-    return payout;
+    console.log('Payout successful:', payout)
+    return payout
   } catch (error) {
-    console.error('Payout failed:', error);
-    throw error;
+    console.error('Payout failed:', error)
+    throw error
   }
 }
 
@@ -781,60 +778,66 @@ const listTransactions = async (accountId = null, lastObjectId = null, limit = 2
   try {
     const params = {
       limit: limit
-    };
+    }
 
     if (lastObjectId) {
-      params.starting_after = lastObjectId;
+      params.starting_after = lastObjectId
     }
 
     // If retrieving transactions for a connected account, use the `stripeAccount` option
-    const options = accountId ? { stripeAccount: accountId } : {};
+    const options = accountId ? { stripeAccount: accountId } : {}
 
-    const transactions = await stripe.balanceTransactions.list(params, options);
+    const transactions = await stripe.balanceTransactions.list(params, options)
 
-    return transactions;
+    return transactions
   } catch (error) {
-    console.error('Error retrieving transactions:', error);
-    throw error;
+    console.error('Error retrieving transactions:', error)
+    throw error
   }
 }
 
 // verfify identity session
-const createVerificationSession = async (customerId) => {
+const createVerificationSession = async customerId => {
   const verificationSession = await stripe.identity.verificationSessions.create({
     type: 'document',
     metadata: {
-      customer: customerId,
+      customer: customerId
     },
     options: {
       document: {
-        require_matching_selfie: true,
-      },
-    },
-  });
+        require_matching_selfie: true
+      }
+    }
+  })
 
-  return verificationSession;
+  return verificationSession
 }
 
 const confirmVerificationSession = async (userId, status) => {
   try {
-
     if (userId && status && status === 'verified') {
-      const user = await UserModel.findById(userId);
-      if (user && user.isIdentityVerified !== "SUCCESS") {
-        const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
+      const user = await UserModel.findById(userId)
+      if (user && user.isIdentityVerified !== 'SUCCESS') {
+        const updateUser = await UserModel.updateOne(
+          { _id: userId },
+          { $set: { isIdentityVerified: 'SUCCESS' } },
+          { new: true }
+        )
         if (updateUser) {
-          return true;
+          return true
         } else {
-          const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "REJECTED" } }, { new: true });
+          const updateUser = await UserModel.updateOne(
+            { _id: userId },
+            { $set: { isIdentityVerified: 'REJECTED' } },
+            { new: true }
+          )
         }
       }
-      return false;
-
+      return false
     }
   } catch (err) {
-    console.log(`Error on verification session: ${err.message}`);
-    return false;
+    console.log(`Error on verification session: ${err.message}`)
+    return false
   }
 }
 

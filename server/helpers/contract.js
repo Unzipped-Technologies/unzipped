@@ -131,6 +131,39 @@ const countContracts = async filter => {
   } catch (e) {}
 }
 
+const countUserContracts = async userId => {
+  try {
+    const aggregation = [
+      {
+        $match: {
+          // Filter based on userId
+          userId: mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $group: {
+          _id: '$businessId', // Group by businessId
+          userId: { $first: '$userId' } // Take the userId of the first document in each group
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalCount: { $sum: 1 } // Count the unique businessIds
+        }
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the default _id field
+          count: '$totalCount' // Concatenating "count: " with the totalCount field
+        }
+      }
+    ]
+    const results = await Contracts.aggregate(aggregation)
+    return results?.length ? results[0] : { count: 0 }
+  } catch (e) {}
+}
+
 const getContracts = async (query, user) => {
   try {
     if (user?.role === accountTypeEnum.FOUNDER) {
@@ -378,5 +411,6 @@ module.exports = {
   createStripeCustomer,
   createPaymentMethod,
   endContract,
+  countUserContracts,
   getContractWithoutPopulate
 }
