@@ -2,26 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import styled from 'styled-components'
-import Nav from '../../components/unzipped/header'
-import ProfileCard from '../../components/unzipped/ProfileCard'
-import ProfileTab from '../../components/unzipped/ProfileTab'
 import { getCurrentUserData } from '../../redux/actions'
 import MobileProfileCard from '../../components/unzipped/MobileProfileCard'
-import ProjectsCard from '../../components/unzipped/ProjectsCard'
 
-const Container = styled.div`
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  @media (max-width: 680px) {
-    display: none;
-  }
-`
-const MobileContainer = styled.div`
-  @media (min-width: 680px) {
-    display: none;
-  }
-`
 const Profile = ({ user, getCurrentUserData, role }) => {
   const [interViewView, setInterViewView] = useState(true)
   const [userData, setUserData] = useState({})
