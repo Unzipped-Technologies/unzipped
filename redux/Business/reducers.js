@@ -17,7 +17,8 @@ import {
   UPDATE_WIZARD_SUBMISSION,
   SET_IS_BUSINESS_FIELD_SUBMITTED,
   SET_PROJECT_FILES,
-  RESET_PROJECT_FILES
+  RESET_PROJECT_FILES,
+  GET_BUSINESS_DETAILS
 } from './constants'
 
 const INIT_STATE = {
@@ -158,6 +159,8 @@ const Business = (state = INIT_STATE, action = {}) => {
     case RESET_PROJECT_FILES:
       return { ...state, files: [] }
 
+    case GET_BUSINESS_DETAILS:
+      return { ...state, loading: false, details: action.payload }
     default:
       return state
   }
