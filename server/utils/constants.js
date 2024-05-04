@@ -1,7 +1,7 @@
-const TODO_STATUS = 'todo'
-const IN_PROGRESS = 'inprogress'
-const DONE = 'done'
-const DOING = 'doing'
+const TODO_STATUS = 'Todo'
+const IN_PROGRESS = 'In progress'
+const DONE = 'Done'
+const DOING = 'Doing'
 
 const TASK_STATUS = [TODO_STATUS, IN_PROGRESS, DONE, DOING]
 

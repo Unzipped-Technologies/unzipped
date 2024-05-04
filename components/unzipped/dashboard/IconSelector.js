@@ -1,4 +1,5 @@
 import * as Icons from '@ant-design/icons/lib/icons';
+import { IconColors } from '../../../utils/FontIcons';
 
 
 const IconSelector = ({ icon, size, color, }) => {
@@ -10,7 +11,7 @@ const IconSelector = ({ icon, size, color, }) => {
                 color: color,
                 paddingBottom: 10
             }}>
-                <IconComponent />
+                <IconComponent style={{ color: IconColors[icon] || "#1C1C1C" }} twoToneColor={IconColors[icon]} />
             </div>
         </>
     )

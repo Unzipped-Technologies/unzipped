@@ -21,6 +21,7 @@ import {
 import { getUserLists } from '../../../redux/ListEntries/action';
 import IconPicker from './../IconPicker'
 import * as Icons from '@ant-design/icons/lib/icons';
+import { IconColors } from '../../../utils/FontIcons';
 
 const TextTitleStyled = styled.p`
     color: #000;
@@ -110,6 +111,7 @@ overflow-y: auto; /* Enable vertical scrollbar when needed */
 const SelectIconLabel = styled.span`
     text-transform: uppercase;
     display: block;
+    cursor: pointer;
     ${getFontStyled(
     {
         color: COLORS.black,
@@ -279,12 +281,12 @@ const ListManagementPanel = ({
 
                                 <div style={{ display: "flex", flexDirection: "row", gap: 20 }}>
                                     <div style={{ background: "" }}>
-                                        <SelectIconLabel>select an icon</SelectIconLabel>
+                                        <SelectIconLabel onClick={() => setIsIconDropdownOpen(true)}>select an icon</SelectIconLabel>
                                     </div>
                                     <div style={{ background: "", display: "flex", flexDirection: "column", alignItems: "baseline" }}>
                                         {listIcon && (<>
                                             <div style={{ fontSize: '30px', padding: '5px', textAlign: "center" }} onClick={handleIconDropdown}>
-                                                <IconComponent />
+                                                <IconComponent style={{ color: IconColors[listIcon] }} twoToneColor={IconColors[listIcon]}/>
                                             </div>
                                         </>)}
                                     </div>
