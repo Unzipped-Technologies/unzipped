@@ -86,6 +86,7 @@ const TextTitleStyled = styled.p`
   line-height: 24.5px;
   letter-spacing: 0.4px;
   text-transform: capitalize;
+  cursor: pointer;
   @media screen and (max-width: 600px){
     font-size: 18px;
     margin-top: 0px;

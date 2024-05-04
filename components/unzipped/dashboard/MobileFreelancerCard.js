@@ -33,7 +33,7 @@ const SelectInputStyled = styled.select`
 
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afterInvitation }) {
   const router = useRouter()
-  const { proejct } = router.query
+  const { project } = router.query
 
   const dispatch = useDispatch()
   const userLists = useSelector(state => state.ListEntries.userLists)
@@ -56,7 +56,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
       const inviteFreelancer = {
         userInvited: userId,
         freelancer: user.id,
-        business: proejct
+        business: project
       }
       await dispatch(createUserInvitation(inviteFreelancer))
       await afterInvitation()
@@ -84,14 +84,14 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
           </div>
         </div>
         <div className="d-flex justify-content-between  align-items-center">
-          {proejct && (
+          {project && (
             <Button
               margin="20px 0px"
-              type={user?.invites?.business === proejct ? 'grey' : 'default'}
+              type={user?.invites?.business === project ? 'grey' : 'default'}
               noBorder
-              disabled={user?.invites?.business === proejct}
+              disabled={user?.invites?.business === project}
               onClick={handleUserInvite}>
-              {user?.invites?.business === proejct ? 'Invited' : 'Invite'}
+              {user?.invites?.business === project ? 'Invited' : 'Invite'}
             </Button>
           )}
           <div className="d-flex  gap-4">

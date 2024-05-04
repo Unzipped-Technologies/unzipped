@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux'
 import IconButton from '@mui/material/IconButton'
 import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
+import router from 'next/router'
 
 import IconComponent from '../ui/icons/IconComponent'
 import { getInvitesLists, getAllFreelancers, addEntriesToList } from '../../redux/actions'
@@ -19,8 +20,12 @@ const P = styled.p`
   padding: ${({ padding }) => (padding ? padding : '')};
   margin: ${({ margin }) => (margin ? margin : '')};
   text-align: ${({ align }) => (align ? align : '')};
+  cursor: ${({ cursor }) => (cursor ? cursor : '')};
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   right: ${({ right }) => (right ? right : '')};
+  &:hover {
+    color: ${({ hoverColor }) => (hoverColor ? hoverColor : '#1A264E')};
+  }
 `
 const DropDown = styled.div`
   display: ${({ display }) => (display ? display : '')};
@@ -111,25 +116,32 @@ const ListModal = ({ handleClose, open, getInvitesLists, userId, lists, addEntri
               margin="7px 0 0 0"
               borderBottom="3px solid #EFF1F4"
               fontWeight="600"
-              onClick={() => {}}>
+              cursor="pointer"
+              onClick={() => router.push('/hire')}>
               Make An Offer
             </P>
-            <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
+            <P padding="12px 0 18px 0" cursor="pointer" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
               Schedule an Interview
             </P>
-            <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
+            <P padding="12px 0 18px 0" cursor="pointer" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
               Send A Message
             </P>
 
             <div
               onClick={() => setOpenList(!openList)}
               className="d-flex justify-content-between"
-              style={{ padding: '12px 0 18px 0', borderBottom: '3px solid #EFF1F4' }}>
+              style={{ padding: '12px 0 18px 0', borderBottom: '3px solid #EFF1F4', cursor: 'pointer', position: 'relative' }}>
               <P fontWeight="600" margin="0">
                 Add User To A List
               </P>
-              <span style={{ position: 'absolute', right: '23px' }}>
-                <IconComponent name="downArrow" width="20" height="20" viewBox="0 0 20 20" fill="black" />
+              <span style={{ 
+                position: 'absolute', 
+                right: '10px', 
+                top: '15px',
+                transform: openList ? 'rotate(0deg)' : 'rotate(-90deg)',
+                transition: 'transform 0.3s ease'
+              }}>
+                <IconComponent name="downArrow" width="10" height="10" viewBox="0 0 10 10" fill="black" />
               </span>
             </div>
           </div>

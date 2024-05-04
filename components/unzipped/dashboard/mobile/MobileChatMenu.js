@@ -15,6 +15,7 @@ const P = styled.p`
   text-align: ${({ align }) => (align ? align : '')};
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   right: ${({ right }) => (right ? right : '')};
+  cursor: ${({ cursor }) => (cursor ? cursor : '')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '')};
 `
 

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import { connect, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
-
+import _ from 'lodash'
 import { getFreelancerList, clearSelectedFreelancer, getAllFreelancers } from '../../redux/actions'
 import Nav from '../../components/unzipped/header'
 import Footer from '../../components/unzipped/Footer'
@@ -66,10 +66,10 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
 
   const containerRef = useRef(null)
   const router = useRouter()
-  const { proejct } = router.query
+  const { project } = router.query
 
   const [filter, setFilter] = useState({
-    businessId: proejct,
+    businessId: project,
     sort: '',
     searchKey: '',
     minRate: 0,
@@ -86,9 +86,17 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
+  const debouncedSearch = useRef(
+    _.debounce((filter) => {
+      getAllFreelancers({ filter, skip, take })
+    }, 750)
+  ).current;
+
   useEffect(() => {
-    getAllFreelancers({ filter, skip, take })
-  }, [filter, createdInvitation, take])
+    if (filter) {
+      debouncedSearch(filter);
+    }
+  }, [filter, createdInvitation, take, debouncedSearch])
 
   const getFreelancersAfterInvitation = () => {
     getAllFreelancers({ filter, skip, take })
@@ -232,7 +240,7 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
         )}
         <Box
           style={{
-            marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
+            marginTop: !isExpanded ? (access_token ? '200px' : '150px') : access_token ? '190px' : '150px'
           }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
           <div className="overflow-auto">
