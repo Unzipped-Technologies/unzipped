@@ -165,8 +165,7 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
       skills: item?.freelancerSkills?.map(e => e.skill) || [],
       cover:
         item?.cover ||
-        `I have been a ${item?.category || 'developer'} for over ${
-          (item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
+        `I have been a ${item?.category || 'developer'} for over ${(item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
         } years. schedule a meeting to check if I'm a good fit for your business.`,
       profilePic:
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
@@ -197,15 +196,18 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
   }
 
   const handleAccountVerification = () => {
-    if (user?.isEmailVerified
-      && user?.isPhoneVerified
-      && user?.isIdentityVerified == "SUCCESS"
-      && (user?.FirstName || user?.LastName)) {
-      return true;
-    } else {
-      router.push('/dashboard');
-      return false;
+    if (user?.role === 0) {
+      if (user?.isEmailVerified
+        && user?.isPhoneVerified
+        && user?.isIdentityVerified == "SUCCESS"
+        && (user?.FirstName || user?.LastName)) {
+        return true;
+      } else {
+        router.push('/dashboard');
+        return false;
+      }
     }
+    return true;
   }
 
   return (
