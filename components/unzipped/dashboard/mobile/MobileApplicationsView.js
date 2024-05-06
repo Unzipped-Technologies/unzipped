@@ -274,7 +274,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                 wideBorder: '#1976D2'
               }}
               onClick={() => {
-                router.push(`/freelancers?proejct=${id}`)
+                router.push(`/freelancers?project=${id}`)
               }}>
               Invite Freelancer
             </Button>

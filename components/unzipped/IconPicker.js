@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import * as Icons from '@ant-design/icons/lib/icons';
-import { FontIconsArray } from '../../utils/FontIcons';
+import { FontIconsArray, IconColors } from '../../utils/FontIcons';
 
 const IconPicker = ({
     setListIcon,
@@ -25,6 +25,14 @@ const IconPicker = ({
         setIsIconDropdownOpen(!isIconDropdownOpen);
         setIsIconSelected(!isIconSelected)
     }
+
+    useEffect(() => {
+        setFilterdIcons(Object.keys(Icons).filter(icon => {
+            if (FontIconsArray.includes(icon)) {
+                return icon;
+            }
+        }));
+    }, []);
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -59,7 +67,7 @@ const IconPicker = ({
                                     const Icon = Icons[icon];
                                     return (
                                         <div key={icon} style={{ fontSize: "28px", paddingLeft: "5px", color: "#1C1C1C" }}>
-                                            <Icon onClick={() => { handleIconSelect(icon) }} />
+                                            <Icon style={{ color: IconColors[icon] || "#1C1C1C" }} twoToneColor={IconColors[icon]} onClick={() => { handleIconSelect(icon) }} />
                                         </div>
                                     );
                                 })}
@@ -71,8 +79,8 @@ const IconPicker = ({
                             {Object.keys(Icons).map((icon) => {
                                 const Icon = Icons[icon];
                                 return (
-                                    <div key={icon} style={{ fontSize: "30px", paddingLeft: "10px", color: "#1C1C1C" }}>
-                                        <Icon onClick={() => { handleIconSelect(icon) }} />
+                                    <div key={icon} style={{ fontSize: "30px", paddingLeft: "10px", color: IconColors[icon] }}>
+                                        <Icon style={{ color: IconColors[icon] || "#1C1C1C" }} onClick={() => { handleIconSelect(icon) }} />
                                     </div>
                                 );
                             })

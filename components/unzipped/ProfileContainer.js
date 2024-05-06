@@ -20,6 +20,7 @@ const P = styled.p`
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   right: ${({ right }) => (right ? right : '')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '')};
+  cursor: ${({ cursor }) => (cursor ? cursor : '')};
 `
 
 const DropDown = styled.div`
@@ -73,6 +74,7 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
               color="#000000"
               padding="25px 0 18px 0"
               margin="7px 0 0 0"
+              cursor="pointer"
               borderBottom="3px solid #EFF1F4"
               className="px-1"
               onClick={() => {

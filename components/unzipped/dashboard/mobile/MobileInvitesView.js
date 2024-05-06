@@ -251,7 +251,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
                 wideBorder: '#1976D2'
               }}
               onClick={() => {
-                router.push(`/freelancers?proejct=${projectDetails?._id}`)
+                router.push(`/freelancers?project=${projectDetails?._id}`)
               }}>
               Invite Freelancer
             </Button>

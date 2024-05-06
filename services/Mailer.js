@@ -33,10 +33,6 @@ const send = async data => {
       msg.replyTo = data.replyTo
     }
 
-    // // filter attachments out of logs due to data buffers being too large for logs
-    // const msgToLog = { ...msg, attachments: `${(msg.attachments && msg.attachments.length) || 0} attachments found.` }
-    // logger.info(`******** Email Helper after content 5 ******${JSON.stringify(msgToLog, null, 2)}*********`)
-
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
       service: 'SendGrid',
@@ -51,44 +47,10 @@ const send = async data => {
 
     // send mail with defined transport object
     const info = await transporter.sendMail(msg)
-    // logger.info(`******** Email Helper after content 6 ******${JSON.stringify(info, null, 2)}*********`)
-    // logger.info(`******** Email Helper Message sent Message id ${info.messageId}  to email ***************${mailOptionsObject.toAddress}`)
+
     return 1
   } catch (e) {
     console.log('error', e)
-  }
-}
-const sendVerificationMail = async data => {
-  const { email } = data
-  if (!email) return 'Email is required'
-
-  try {
-    const existingUser = await User.findOne({ email })
-    if (existingUser) {
-      if (existingUser.googleId) {
-        return res.send('Login with Google')
-      }
-    }
-
-    const token = Buffer.from(JSON.stringify(existingUser._id)).toString('base64')
-    const subject = 'Unzipped Verification Link'
-    const msg = {
-      to: email,
-      from: {
-        name: keys.sendGridName,
-        email: keys.sendGridEmail
-      },
-      subject,
-      templateId: 'd-22eb3cf8b01a431ca20ee4a42ec349ad',
-      dynamicTemplateData: {
-        subject,
-        link: `${keys.redirectDomain}/verified/${existingUser._id}`
-      }
-    }
-
-    return await sgMail.send(msg)
-  } catch (error) {
-    throw new Error(error.message)
   }
 }
 
@@ -125,10 +87,76 @@ const getCustomFieldID = async customFieldName => {
   return allCustomFields.find(x => x.name === customFieldName).id
 }
 
+const sendMailWithSG = async (params) => {
+  const { email, templateName } = params;
+  let userName = '';
+  if (!email) return 'Email is required';
+  const existingUser = await User.findOne({ email })
+
+  try {
+    if (templateName === "VERIFY_EMAIL_ADDRESS" && existingUser) {
+      if (existingUser.googleId) {
+        return { isLoginWithGoogle: true }
+      }
+    }
+
+    if (existingUser?.FirstName || existingUser?.LastName) {
+      userName = `${existingUser?.FirstName} ${existingUser?.LastName}`;
+    } else {
+      userName = email.split('@')[0];
+    }
+    const { templateId, dynamicTemplateData } = getTemplateDetails(templateName, userName, existingUser);
+
+    const msg = {
+      to: email,
+      from: {
+        name: keys.sendGridName,
+        email: keys.sendGridEmail
+      },
+      templateId,
+      dynamicTemplateData
+    }
+
+    return await sgMail.send(msg)
+
+  }
+  catch (error) {
+    throw new Error(error.message)
+  }
+}
+
+const getTemplateDetails = (templateName, userName, existingUser) => {
+  switch (templateName) {
+    case 'VERIFY_EMAIL_ADDRESS':
+      return {
+        templateId: 'd-2c0cc93195e149109d032d0c65cab3ba',
+        dynamicTemplateData: {
+          firstName: userName,
+          lastName: '',
+          verifyLink: `${keys.redirectDomain}/verified/${existingUser._id}`
+        }
+      }
+    case 'RESET_PASSWORD':
+      return {
+        templateId: 'd-2b57dce0f9b44b17b89eff2f34969822',
+        dynamicTemplateData: {
+          firstName: userName,
+          lastName: '',
+          dashboardLink: `${keys.redirectDomain}/dashboard`,
+        }
+      }
+
+    default:
+      break;
+  }
+}
+
+
 module.exports = {
   send,
   randNum,
   addContact,
   getCustomFieldID,
-  sendVerificationMail
+  getTemplateDetails,
+  sendMailWithSG
 }
