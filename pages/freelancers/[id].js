@@ -67,7 +67,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
       <>
         <Container>
           <Nav marginBottom={'0px'} />
-          <div style={{ overflow: 'overlay' }}>
+          <div>
             <ProfileCard user={userData} />
           </div>
           <div style={{ width: '100%' }}>
@@ -82,13 +82,20 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
           </div>
           <ProjectsCard user={userData} freelancerId={freelancerId} />
         </Container>
-        <MobileContainer>
-          {interViewView ? (
-            <MobileProfileCard user={userData} handleProfilePage={handleValueFromChild} role={role} freelancerId={id} />
-          ) : (
-            <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />
-          )}
-        </MobileContainer>
+        {window.innerWidth <= '680' && (
+          <MobileContainer>
+            {interViewView ? (
+              <MobileProfileCard
+                user={userData}
+                handleProfilePage={handleValueFromChild}
+                role={role}
+                freelancerId={id}
+              />
+            ) : (
+              <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />
+            )}
+          </MobileContainer>
+        )}
       </>
     </>
   )

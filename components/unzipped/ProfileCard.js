@@ -11,30 +11,35 @@ const Container = styled.div`
   display: flex;
   flex-flow: row;
   align-self: center;
-  max-width: 1300px;
+  max-width: 100%;
+  min-width: 100%;
+  padding-left: 10%;
+  padding-right: 10%;
   margin-top: 119px;
-  margin-left: 10%;
 `
 const Content = styled.div``
 const Box = styled.div`
+  width: 100%;
   display: flex;
   flex-flow: row;
+  justify-content: space-between;
 `
 const Description = styled.div`
-  width: 445px;
+  width: 100%;
 `
 const ImageContainer = styled.div`
   padding: 0px 55px 10px 0px;
 `
-const Badges = styled.div``
+const Badges = styled.div`
+  width: 100%;
+  padding-left: 20%;
+`
 const TextBox = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  width: 300px;
 `
 const Span = styled.span`
-  width: 160px;
   font-weight: ${({ bold }) => (bold ? 500 : 'normal')};
 `
 const LikeBox = styled.span`
@@ -60,7 +65,7 @@ const ProfileCard = ({ user }) => {
       </ImageContainer>
       <Content>
         <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
-        <div style={{ width: '600px' }}>
+        <div>
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKIILS
           </DarkText>
@@ -81,7 +86,9 @@ const ProfileCard = ({ user }) => {
               <Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span>
             </TextBox>
             <TextBox>
-              <Span bold>SALARY</Span> <Span>{user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
+              <Span bold>SALARY</Span>
+              {'     '}
+              <Span>{user.rate > 0 ? `  $${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
             </TextBox>
 
             <TextBox>
@@ -89,35 +96,43 @@ const ProfileCard = ({ user }) => {
             </TextBox>
           </Description>
           <Badges>
-            {user?.isIdentityVerified == "SUCCESS" && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorUser" />
-              <DarkText clickable noMargin paddingLeft hover padding="3px 0px 0px 5px">
-                Identity Verified
-              </DarkText>
-            </WhiteCard>)}
-            {user?.isEmailVerified && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorEmail" />
-              <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
-                Email Verified
-              </DarkText>
-            </WhiteCard>)}
-            {user?.isPreferedFreelancer && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorSheild" />
-              <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
-                Preferred Verified
-              </DarkText>
-            </WhiteCard>)}
-            {user?.isPhoneVerified && (<WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorPhone" />
-              <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
-                Phone Verified
-              </DarkText>
-            </WhiteCard>)}
+            {user?.isIdentityVerified == 'SUCCESS' && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorUser" />
+                <DarkText clickable noMargin paddingLeft hover padding="3px 0px 0px 5px">
+                  Identity Verified
+                </DarkText>
+              </WhiteCard>
+            )}
+            {user?.isEmailVerified && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorEmail" />
+                <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
+                  Email Verified
+                </DarkText>
+              </WhiteCard>
+            )}
+            {user?.isPreferedFreelancer && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorSheild" />
+                <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
+                  Preferred Verified
+                </DarkText>
+              </WhiteCard>
+            )}
+            {user?.isPhoneVerified && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorPhone" />
+                <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
+                  Phone Verified
+                </DarkText>
+              </WhiteCard>
+            )}
           </Badges>
         </Box>
       </Content>
       <LikeBox>
-        <Button padding="10px 22px" noBorder>
+        <Button block width="36px" type="button" buttonHeight="36px" fontSize="15px" noBorder>
           CHECK AVAILABILITY
         </Button>
         <Likes>

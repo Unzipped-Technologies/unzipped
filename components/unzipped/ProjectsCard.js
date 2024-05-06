@@ -9,13 +9,13 @@ import EducationModal from './EducationModal'
 const Container = styled.div`
   margin-top: 42px;
   margin-left: 10%;
-  max-width: 1300px;
+  max-width: 100%;
   display: flex;
   gap: 20px;
 `
 const ProjectCard = styled.div`
-  min-width: 830px;
-  max-width: 830px;
+  // min-width: 830px;
+  max-width: 100%;
   border: 1px solid #d9d9d9;
   margin-bottom: 24px;
 `
@@ -75,7 +75,7 @@ function ProjectsCard({ user, freelancerId }) {
   }, [user])
   return (
     <Container>
-      <div>
+      <div style={{ width: '70%' }}>
         {user?.projects?.length ? (
           user?.projects?.map(project => (
             <ProjectCard key={project?._id}>
@@ -94,10 +94,19 @@ function ProjectsCard({ user, freelancerId }) {
                     ? project?.freelancerSkills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
                     : ''}
                 </div>
-                <div style={{ display: 'flex', gap: '21px', width: '176px', height: '93px', borderRadius: '10px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '21px',
+                    maxWidth: '100%',
+                    height: '93px',
+                    borderRadius: '10px',
+                    overflow: 'visible'
+                  }}>
                   {project?.images?.length
                     ? project?.images?.map((image, i) => (
-                        <Image src={image?.url} width="171px" key={image?._id} alt={`Image ${i}`} />
+                        <Image src={image?.url} width="171px" height="93px" key={image?._id} alt={`Image ${i}`} />
                       ))
                     : ''}
                 </div>
@@ -114,7 +123,7 @@ function ProjectsCard({ user, freelancerId }) {
           </ProjectCard>
         )}
       </div>
-      <OtherInformationBox>
+      <div style={{ width: '30%' }}>
         <OtherInformationCard>
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
             Top Skills
@@ -207,7 +216,7 @@ function ProjectsCard({ user, freelancerId }) {
               ))
             : ''}
         </OtherInformationCard>
-      </OtherInformationBox>
+      </div>
       {open && <EducationModal open={open} onHide={handleClose} />}
     </Container>
   )
