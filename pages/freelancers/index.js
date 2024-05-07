@@ -57,7 +57,14 @@ const SearchContainer = styled.div`
     margin-top: 78px;
   }
 `
-const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelectedFreelancer, getAllFreelancers, user }) => {
+const Freelancers = ({
+  freelancerList = [],
+  access_token,
+  totalCount,
+  clearSelectedFreelancer,
+  getAllFreelancers,
+  user
+}) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -165,7 +172,8 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
       skills: item?.freelancerSkills?.map(e => e.skill) || [],
       cover:
         item?.cover ||
-        `I have been a ${item?.category || 'developer'} for over ${(item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
+        `I have been a ${item?.category || 'developer'} for over ${
+          (item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
         } years. schedule a meeting to check if I'm a good fit for your business.`,
       profilePic:
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
@@ -197,94 +205,123 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
 
   const handleAccountVerification = () => {
     if (user?.role === 0) {
-      if (user?.isEmailVerified
-        && user?.isPhoneVerified
-        && user?.isIdentityVerified == "SUCCESS"
-        && (user?.FirstName || user?.LastName)) {
-        return true;
+      if (
+        user?.isEmailVerified &&
+        user?.isPhoneVerified &&
+        user?.isIdentityVerified == 'SUCCESS' &&
+        (user?.FirstName || user?.LastName)
+      ) {
+        return true
       } else {
-        router.push('/dashboard');
-        return false;
+        router.push('/dashboard')
+        return false
       }
     }
-    return true;
+    return true
   }
 
   return (
     <SearchContainer>
-      {handleAccountVerification() && (<>
-        <Nav
-          isSubMenu
-          searchValue={filter}
-          setFilter={setFilter}
-          handleSearchValue={setFilter}
-          handleSearch={handleSearch}
-          searchButton
-          margin={'0px'}
-          marginBottom={marginBottom}
-        />
-        {!filterOpenClose && window?.innerWidth <= 680 && (
-          <MobileDisplayBox>
-            <MobileSearchBar
-              setFilters={setFilters}
-              handleFilterOpenClose={handleFilterOpenClose}
-              searchKey={filter?.searchKey}
-            />
-          </MobileDisplayBox>
-        )}
-        <Container>
-          {!filterOpenClose && window?.innerWidth <= 680 ? (
+      {handleAccountVerification() && (
+        <>
+          <Nav
+            isSubMenu
+            searchValue={filter}
+            setFilter={setFilter}
+            handleSearchValue={setFilter}
+            handleSearch={handleSearch}
+            searchButton
+            margin={'0px'}
+            marginBottom={marginBottom}
+          />
+          {!filterOpenClose && window?.innerWidth <= 680 && (
             <MobileDisplayBox>
-              <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
-                <b style={{ paddingRight: '20px' }}>Top Results</b>
-                <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
-              </div>
-              <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
+              <MobileSearchBar
+                setFilters={setFilters}
+                handleFilterOpenClose={handleFilterOpenClose}
+                searchKey={filter?.searchKey}
+              />
             </MobileDisplayBox>
-          ) : (
-            window?.innerWidth <= 680 && (
-              <MobileDisplayBox>
-                <MobileSearchFilter
-                  handleFilterOpenClose={handleFilterOpenClose}
-                  filter={filter}
-                  setFilters={setFilters}
-                  filterType="freelancer"
-                />
-              </MobileDisplayBox>
-            )
           )}
-          <Box
-            style={{
-              marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
-            }}>
-            <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
-            <div className="overflow-auto">
-              <div className="d-flex align-items-baseline py-4 bg-white">
-                <h5 className="px-4">
-                  <b>Top Results</b>
-                </h5>
-                <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+          <Container>
+            {!filterOpenClose && window?.innerWidth <= 680 ? (
+              <MobileDisplayBox>
+                <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
+                  <b style={{ paddingRight: '20px' }}>Top Results</b>
+                  <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
+                </div>
+                <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
+              </MobileDisplayBox>
+            ) : (
+              window?.innerWidth <= 680 && (
+                <MobileDisplayBox>
+                  <MobileSearchFilter
+                    handleFilterOpenClose={handleFilterOpenClose}
+                    filter={filter}
+                    setFilters={setFilters}
+                    filterType="freelancer"
+                  />
+                </MobileDisplayBox>
+              )
+            )}
+            <Box
+              style={{
+                marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
+              }}>
+              <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
+              <div className="overflow-auto">
+                <div className="d-flex align-items-baseline py-4 bg-white">
+                  <h5 className="px-4">
+                    <b>Top Results</b>
+                  </h5>
+                  <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+                </div>
+                {freelancerList?.length === 0 && (
+                  <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                    No freelancers found for this search
+                  </DarkText>
+                )}
+                {freelancerList?.map((item, index) => {
+                  const freelancer = constructFreelancerModel(item)
+                  if (item?.user?.FirstName) {
+                    return (
+                      <div key={item?._id}>
+                        <WhiteCard noMargin overlayDesktop cardHeightDesktop>
+                          <FreelancerCard
+                            user={freelancer}
+                            includeRate
+                            clearSelectedFreelancer={clearSelectedFreelancer}
+                            filter={filter}
+                            afterInvitation={getFreelancersAfterInvitation}
+                            userId={userId}
+                          />
+                        </WhiteCard>
+                        {freelancerList.length < 1000 && freelancerList.length < totalCount && (
+                          <div ref={containerRef}></div>
+                        )}
+                      </div>
+                    )
+                  }
+                })}
               </div>
-              {freelancerList?.length === 0 && (
-                <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                  No freelancers found for this search
-                </DarkText>
-              )}
-              {freelancerList?.map((item, index) => {
+            </Box>
+            {window?.innerWidth < 680 &&
+              freelancerList?.map((item, index) => {
                 const freelancer = constructFreelancerModel(item)
                 if (item?.user?.FirstName) {
                   return (
-                    <div key={item?._id}>
-                      <WhiteCard noMargin overlayDesktop cardHeightDesktop>
-                        <FreelancerCard
-                          user={freelancer}
-                          includeRate
-                          clearSelectedFreelancer={clearSelectedFreelancer}
-                          filter={filter}
-                          afterInvitation={getFreelancersAfterInvitation}
-                          userId={userId}
-                        />
-                      </WhiteCard>
+                    <div key={`${item._id}_${index}`}>
+                      {!filterOpenClose && (
+                        <MobileDisplayBox>
+                          <MobileFreelancerCard
+                            user={freelancer}
+                            includeRate
+                            clearSelectedFreelancer={clearSelectedFreelancer}
+                            afterInvitation={getFreelancersAfterInvitation}
+                            userId={userId}
+                          />
+                        </MobileDisplayBox>
+                      )}
                       {freelancerList.length < 1000 && freelancerList.length < totalCount && (
                         <div ref={containerRef}></div>
                       )}
@@ -292,62 +329,16 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
                   )
                 }
               })}
-            </div>
-          </Box>
-          {window?.innerWidth < 680 &&
-            freelancerList?.map((item, index) => {
-              const freelancerModel = constructFreelancerModel(item)
-              if (item?.user?.FirstName) {
-                return (
-                  <div key={`${item._id}_${index}`}>
-                    {!filterOpenClose && (
-                      <MobileDisplayBox>
-                        <MobileFreelancerCard
-                          user={freelancerModel}
-                          includeRate
-                          clearSelectedFreelancer={clearSelectedFreelancer}
-                          afterInvitation={getFreelancersAfterInvitation}
-                          userId={userId}
-                        />
-                      </MobileDisplayBox>
-                    )}
-                    {freelancerList.length < 1000 && freelancerList.length < totalCount && <div ref={containerRef}></div>}
-                  </div>
-                )
-              }
-            })}
-          </div>
-        </Box>
-        {window?.innerWidth < 680 &&
-          freelancerList?.map((item, index) => {
-            const freelancer = constructFreelancerModel(item)
-            if (item?.user?.FirstName) {
-              return (
-                <div key={`${item._id}_${index}`}>
-                  {!filterOpenClose && (
-                    <MobileDisplayBox>
-                      <MobileFreelancerCard
-                        user={freelancer}
-                        includeRate
-                        clearSelectedFreelancer={clearSelectedFreelancer}
-                        afterInvitation={getFreelancersAfterInvitation}
-                        userId={userId}
-                      />
-                    </MobileDisplayBox>
-                  )}
-                  {freelancerList.length < 1000 && freelancerList.length < totalCount && <div ref={containerRef}></div>}
-                </div>
-              )
-            }
-          })}
-      </Container>
-      <DesktopDisplayBox>
-        <Footer />
-      </DesktopDisplayBox>
-      {!filterOpenClose && window?.innerWidth <= 680 && (
-        <MobileDisplayBox>
-          <MobileFreelancerFooter />
-        </MobileDisplayBox>
+          </Container>
+          <DesktopDisplayBox>
+            <Footer />
+          </DesktopDisplayBox>
+          {!filterOpenClose && window?.innerWidth <= 680 && (
+            <MobileDisplayBox>
+              <MobileFreelancerFooter />
+            </MobileDisplayBox>
+          )}
+        </>
       )}
     </SearchContainer>
   )
