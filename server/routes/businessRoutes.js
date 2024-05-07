@@ -62,7 +62,8 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('userList
         })
       } else if (req.user?.userInfo?.role === 0) {
         req.body['filter'] = Object.assign({}, req.body?.['filter'], {
-          userId: req.user.sub
+          userId: req.user.sub,
+          ...(req.body?.searchKey && { searchKey: req.body.searchKey })
         })
       }
     }
