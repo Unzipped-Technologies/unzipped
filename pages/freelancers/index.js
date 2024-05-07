@@ -87,14 +87,14 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
   const debouncedSearch = useRef(
-    _.debounce((filter) => {
+    _.debounce(filter => {
       getAllFreelancers({ filter, skip, take })
     }, 750)
-  ).current;
+  ).current
 
   useEffect(() => {
     if (filter) {
-      debouncedSearch(filter);
+      debouncedSearch(filter)
     }
   }, [filter, createdInvitation, take, debouncedSearch])
 
@@ -316,16 +316,39 @@ const Freelancers = ({ freelancerList = [], access_token, totalCount, clearSelec
                 )
               }
             })}
-        </Container>
-        <DesktopDisplayBox>
-          <Footer />
-        </DesktopDisplayBox>
-        {!filterOpenClose && window?.innerWidth <= 680 && (
-          <MobileDisplayBox>
-            <MobileFreelancerFooter />
-          </MobileDisplayBox>
-        )}
-      </>)}
+          </div>
+        </Box>
+        {window?.innerWidth < 680 &&
+          freelancerList?.map((item, index) => {
+            const freelancer = constructFreelancerModel(item)
+            if (item?.user?.FirstName) {
+              return (
+                <div key={`${item._id}_${index}`}>
+                  {!filterOpenClose && (
+                    <MobileDisplayBox>
+                      <MobileFreelancerCard
+                        user={freelancer}
+                        includeRate
+                        clearSelectedFreelancer={clearSelectedFreelancer}
+                        afterInvitation={getFreelancersAfterInvitation}
+                        userId={userId}
+                      />
+                    </MobileDisplayBox>
+                  )}
+                  {freelancerList.length < 1000 && freelancerList.length < totalCount && <div ref={containerRef}></div>}
+                </div>
+              )
+            }
+          })}
+      </Container>
+      <DesktopDisplayBox>
+        <Footer />
+      </DesktopDisplayBox>
+      {!filterOpenClose && window?.innerWidth <= 680 && (
+        <MobileDisplayBox>
+          <MobileFreelancerFooter />
+        </MobileDisplayBox>
+      )}
     </SearchContainer>
   )
 }

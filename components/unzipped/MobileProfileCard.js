@@ -119,7 +119,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
               </P>
             )}
           </div>
-          <P fontSize="22px" fontWeight="600">
+          <P fontSize="20px" fontWeight="600">
             {user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}
           </P>
           <div className="d-flex justify-content-around align-items-center py-4 mb-2">
