@@ -16,6 +16,23 @@ router.post('/send', requireLogin, permissionCheckHelper.hasPermission('sendMess
   }
 })
 
+// Create User Conversation with client if not exist
+router.post(
+  '/check-conversation',
+  requireLogin,
+  permissionCheckHelper.hasPermission('sendMessage'),
+  async (req, res) => {
+    try {
+      const id = req.user.sub
+      const sentMessage = await messageHelper.checkConversation(req.body)
+      if (!sentMessage) throw Error('Conversation not created.')
+      res.json(sentMessage)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
 // lets user send a message
 router.post('/list', requireLogin, permissionCheckHelper.hasPermission('getMessagesById'), async (req, res) => {
   try {

@@ -165,6 +165,7 @@ const Freelancers = ({
   const constructFreelancerModel = item => {
     const freelancer = {
       id: item?._id,
+      userId: item?.user?._id,
       name: `${item?.user?.FirstName} ${item?.user?.LastName}`,
       type: item?.category,
       isPreferedFreelancer: item?.isPreferedFreelancer,

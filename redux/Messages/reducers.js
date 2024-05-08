@@ -6,7 +6,8 @@ import {
   UPDATE_CONVERSATION_STATUS,
   UPDATE_CONVERSATION_MESSAGE,
   SET_COUNT_ZERO,
-  RESET_MESSAGE_STORE
+  RESET_MESSAGE_STORE,
+  SET_USER_ID_FOR_CHAT
 } from './constants'
 
 const INIT_STATE = {
@@ -17,6 +18,7 @@ const INIT_STATE = {
     attachment: '',
     message: ''
   },
+  selectedUserId: null,
   conversationId: '',
   messagesCount: null,
   error: null
@@ -145,6 +147,11 @@ const Messages = (state = INIT_STATE, action) => {
         conversationId: '',
         messagesCount: null,
         error: null
+      }
+    case SET_USER_ID_FOR_CHAT:
+      return {
+        ...state,
+        selectedUserId: action.payload
       }
 
     default:

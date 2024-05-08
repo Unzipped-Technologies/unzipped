@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import CloseIcon from '../icons/close'
 import styled from 'styled-components'
 import { Dialog } from '@material-ui/core'
@@ -11,7 +12,14 @@ import router from 'next/router'
 import ScheduleMeetingModal from '../modals/scheduleMeeting'
 
 import IconComponent from '../ui/icons/IconComponent'
-import { getInvitesLists, getAllFreelancers, addEntriesToList, getFreelancerById } from '../../redux/actions'
+import {
+  getInvitesLists,
+  getAllFreelancers,
+  addEntriesToList,
+  getFreelancerById,
+  setUserIdForChat,
+  checkUserConversation
+} from '../../redux/actions'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -69,8 +77,12 @@ const ListModal = ({
   addEntriesToList,
   freelancerId,
   getFreelancerById,
-  user
+  setUserIdForChat,
+  user,
+  checkUserConversation
 }) => {
+  const router = useRouter()
+
   const [openList, setOpenList] = useState(false)
   const [error, setError] = useState('')
   const [scheduleInterviewModal, setScheduleInterviewModal] = useState(false)
@@ -104,6 +116,23 @@ const ListModal = ({
 
   const handleScheduleInterviewModal = () => {
     setScheduleInterviewModal(!scheduleInterviewModal)
+  }
+
+  const sendMessage = async () => {
+    setUserIdForChat(user?.userId)
+
+    if (window.innerWidth <= 680) {
+      const response = await checkUserConversation({
+        freelancerId: user?.userId,
+        clientId: userId
+      })
+      if (response?.data?._id || response?.data === true) {
+        router.push(`/dashboard/chat/${response?.data?._id}`)
+        setUserIdForChat(null)
+      }
+    } else {
+      router.push('/dashboard/inbox')
+    }
   }
 
   return (
@@ -156,7 +185,15 @@ const ListModal = ({
               onClick={handleScheduleInterviewModal}>
               Schedule an Interview
             </P>
-            <P padding="12px 0 18px 0" cursor="pointer" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
+            <P
+              padding="12px 0 18px 0"
+              cursor="pointer"
+              borderBottom="3px solid #EFF1F4"
+              margin="0"
+              fontWeight="600"
+              onClick={() => {
+                sendMessage()
+              }}>
               Send A Message
             </P>
 
@@ -250,7 +287,9 @@ const mapDispatchToProps = dispatch => {
     getInvitesLists: bindActionCreators(getInvitesLists, dispatch),
     getAllFreelancers: bindActionCreators(getAllFreelancers, dispatch),
     addEntriesToList: bindActionCreators(addEntriesToList, dispatch),
-    getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
+    setUserIdForChat: bindActionCreators(setUserIdForChat, dispatch),
+    checkUserConversation: bindActionCreators(checkUserConversation, dispatch)
   }
 }
 

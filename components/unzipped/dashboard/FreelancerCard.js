@@ -149,7 +149,9 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         )}
       </Absolute>
 
-      {isOpen && <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} />}
+      {isOpen && (
+        <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} user={user} />
+      )}
     </Container>
   )
 }
