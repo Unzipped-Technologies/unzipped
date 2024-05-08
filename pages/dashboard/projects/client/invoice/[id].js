@@ -10,6 +10,7 @@ import Nav from '../../../../../components/unzipped/header'
 import Invoice from '../../../../../components/unzipped/dashboard/project/invoice'
 import Timesheet from '../../../../../components/unzipped/dashboard/project/Timesheet'
 import ClientMobileInvoices from '../../../../../components/unzipped/dashboard/mobile/ClinetMobileInvoices'
+import Invites from '../../../../components/unzipped/dashboard/Invites'
 
 import ApplicationCard from '../../../../../components/unzipped/dashboard/ApplicationCard'
 import HiringTable from '../../../../../components/unzipped/dashboard/HiresTable'
@@ -218,7 +219,8 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
         { name: 'Details', index: 0 },
         { name: 'Applications', index: 1 },
         { name: 'Hires', index: 2 },
-        { name: 'Invoices', index: 3 }
+        { name: 'Invoices', index: 3 },
+        { name: 'Invites', index: 4 }
       ]
   }
 
@@ -332,6 +334,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
             )}
           </>
         )}
+        {selectedTab === 4 && <Invites businessId={id} projectDetails={projectDetails} />}
       </TabContent>
     </>
   )

@@ -7,9 +7,11 @@ import styled, { css } from 'styled-components'
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
+import Invites from '../../../../components/unzipped/dashboard/Invites'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
 import DesktopProjectDetail from '../../../../components/unzipped/dashboard/DesktopProjectDetail'
 import Invoices from '../../../../components/unzipped/dashboard/Invoices'
+import FreelancerInvites from '../../../../components/unzipped/dashboard/FreelancerInvites'
 
 const Navbar = styled.div`
   margin-bottom: 160px;
@@ -19,7 +21,7 @@ const Navbar = styled.div`
 `
 
 const Desktop = styled.div`
-  width: 80%;
+  width: 82%;
   margin: auto;
   @media (max-width: 680px) {
     width: 100%;
@@ -177,7 +179,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
     case 1:
       projectTabs = [
         { name: 'Details', index: 0 },
-        { name: 'Invoices', index: 3 }
+        { name: 'Invoices', index: 3 },
+        { name: 'Invites', index: 4 }
       ]
       break
     default:
@@ -185,7 +188,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         { name: 'Details', index: 0 },
         { name: 'Applications', index: 1 },
         { name: 'Hires', index: 2 },
-        { name: 'Invoices', index: 3 }
+        { name: 'Invoices', index: 3 },
+        { name: 'Invites', index: 4 }
       ]
   }
 
@@ -278,6 +282,12 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         {selectedTab === 3 && (
           <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} role={role} businessId={id} />
         )}
+        {selectedTab === 4 &&
+          (role === 0 ? (
+            <Invites role={role} businessId={id} projectDetails={projectDetails} />
+          ) : (
+            <FreelancerInvites businessId={id} projectDetails={projectDetails} />
+          ))}
       </TabContent>
     </>
   )

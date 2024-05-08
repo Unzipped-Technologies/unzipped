@@ -26,6 +26,16 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('getAllContrac
   }
 })
 
+// Get a contract by ID (GET)
+router.get('/count/:userId', async (req, res) => {
+  try {
+    const counts = await contractHelper.countUserContracts(req.params?.userId)
+    res.json(counts)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 // Get a contract for current user only
 router.get('/current', requireLogin, permissionCheckHelper.hasPermission('getAllContracts'), async (req, res) => {
   try {

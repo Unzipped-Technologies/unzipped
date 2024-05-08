@@ -42,7 +42,7 @@ const Flex = styled.div`
   justify-items: space-between;
 `
 
-const ProjectDesktopCard = ({ project, includeRate, width, freelancerId }) => {
+const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
   const router = useRouter()
   return (
     <Container includeRate={includeRate}>

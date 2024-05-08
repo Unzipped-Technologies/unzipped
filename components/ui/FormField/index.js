@@ -27,7 +27,6 @@ const FormFieldContainer = styled.div`
   width: ${({ width }) => (width ? width : '100%')};
   height: ${({ height }) => (height ? height : '100%')};
   justify-self: ${({ justifySelf }) => (justifySelf ? justifySelf : 'auto')};
-  height: 100%;
   z-index: ${({ zIndex, zIndexUnset }) => (zIndex ? zIndex : zIndexUnset ? '0' : 'auto')};
   color: ${props => props.theme.textSecondary};
   font-weight: 400;
@@ -51,7 +50,7 @@ const FormFieldContainer = styled.div`
     // label { margin-bottom: 0 !important; }
     margin-bottom: ${({ noMargin }) => (noMargin ? '0px' : '5px !important')};
     color: #333;
-    font-size: 16px;
+    font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px%')};
   }
   & > label {
     width: 100%;
@@ -232,6 +231,7 @@ const FormField = ({
       $bottom={bottom}
       width={width}
       height={handleHeight()}
+      fontSize={fontSize}
       maxWidth={maxWidth}>
       {children && (
         <FormLabel forId={name} fontSize={fontSize} help={help} required={required}>

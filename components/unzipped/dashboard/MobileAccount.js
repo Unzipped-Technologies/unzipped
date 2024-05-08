@@ -132,7 +132,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
               </div>
               <div className="d-flex align-items-center justify-content-between mt-3">
                 <P fontSize="16px" margin="5px 0px 0px 20px">
-                  {user?.phoneNumber}
+                  {user?.phoneNumber ?? 'N/A'}
                 </P>
                 <Link href="/change-phone">Change Phone</Link>
               </div>
@@ -154,7 +154,8 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
             </P>
           </div>
           <P margin="0" padding="0 0 0 12px" fontSize="20px">
-            $ {(balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()} USD
+
+            $ {((balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()) == 'NaN' ? '0.00' : (balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()} USD
           </P>
         </div>
         <div

@@ -17,6 +17,7 @@ const userSchema = new Schema(
       maxlength: 1024
     },
     isEmailVerified: { type: Boolean, default: false },
+    isSupportAdmin: { type: Boolean, default: false },
     googleId: String,
     isGithubConnected: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },

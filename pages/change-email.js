@@ -10,6 +10,19 @@ import { parseCookies } from '../services/cookieHelper'
 import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 import Footer from '../components/unzipped/Footer'
 
+import styled from 'styled-components';
+
+const MainContainer = styled.div`
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
+const FooterContainer = styled.div`
+  margin-top: auto;
+`;
+
 const Reset = ({ error, token, email, updateUserEmail }) => {
   const [emailError, setEmailError] = useState('')
   const router = useRouter()
@@ -51,7 +64,7 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
   }
 
   return (
-    <React.Fragment>
+    <MainContainer >
       <Head>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
@@ -67,8 +80,8 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
         email={email}
         error={emailError}
       />
-      {window.innerWidth >= 680 ? <Footer /> : <MobileFreelancerFooter defaultSelected="Account" />}
-    </React.Fragment>
+      {window.innerWidth >= 680 ? <FooterContainer><Footer /></FooterContainer> : <MobileFreelancerFooter defaultSelected="Account" />}
+    </MainContainer>
   )
 }
 

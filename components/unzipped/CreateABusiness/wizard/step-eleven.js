@@ -9,7 +9,9 @@ const StepElevenWizardFlow = (
         goBack,
         submitForm,
         stage,
-        handleGithub
+        handleGithub,
+        SkipNextOutlinedIcon,
+        handleSkip
     }
 ) => {
     return (
@@ -22,6 +24,17 @@ const StepElevenWizardFlow = (
             progress={stage}
             stage={stage}
         >
+            <Button
+                type="transparent"
+                noUppercase
+                noPadding
+                position="absolute"
+                right="50px"
+                top="170px"
+                onClick={() => handleSkip(true)}>
+                Skip
+                <SkipNextOutlinedIcon />
+            </Button>
             <Grid>
                 <Button icon="github" extraWide noBorder type="dark" normal onClick={handleGithub}>
                     CONNECT YOUR GITHUB ACCOUNT
