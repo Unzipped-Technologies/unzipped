@@ -15,9 +15,10 @@ router.post(
   upload.array('images', 3),
   async (req, res) => {
     try {
-      const data = JSON.parse(req.body?.projectDetails)
-      data['userId'] = req.user.sub
-      const createBusiness = await businessHelper.createBusiness(data, req.user.sub, req.files)
+      req.body['userId'] = req.user.sub
+      const businessDetails = JSON.parse(req.body?.projectDetails)
+      if (!businessDetails) throw Error('can not process without business details')
+      const createBusiness = await businessHelper.createBusiness(businessDetails, req.user.sub, req.files)
       if (!createBusiness) throw Error('business already exists')
       res.json(createBusiness)
     } catch (e) {
@@ -61,7 +62,8 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('userList
         })
       } else if (req.user?.userInfo?.role === 0) {
         req.body['filter'] = Object.assign({}, req.body?.['filter'], {
-          userId: req.user.sub
+          userId: req.user.sub,
+          ...(req.body?.searchKey && { searchKey: req.body.searchKey })
         })
       }
     }
@@ -87,7 +89,7 @@ router.post('/public/list', async (req, res) => {
   }
 })
 
-router.get('/:id', requireLogin, permissionCheckHelper.hasPermission('getBusinessById'), async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const business = await businessHelper.getBusinessById(req.params.id, req.user)
     if (!business) throw Error('failed to get business')
@@ -174,7 +176,7 @@ router.post(
     const id = req.body.userId || req.user.sub
     try {
       const businessDetails = await businessHelper.getBusinessDetailsByUserId(id)
-      if (!businessDetails) throw Error('business details already exists')
+      if (!businessDetails) throw Error('business details does not exists')
       res.json(businessDetails)
     } catch (e) {
       res.status(400).json({ msg: e.message })

@@ -32,7 +32,9 @@ import {
   RESET_PASSWORD_SUCCESS,
   RESET_PASSWORD_ERROR,
   UPDATE_USER_ERROR,
-  USER_MAIL_CONFIRMATION
+  USER_MAIL_CONFIRMATION,
+  UPDATE_PHONE_NUMBER,
+  UPDATE_PHONE_ERROR
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -149,6 +151,26 @@ export const updateUserEmail = data => async (dispatch, getState) => {
   return response
 }
 
+export const updatePhoneNumber = data => async (dispatch, getState) => {
+  const response = await axios
+    .patch(`/api/user/change-phone`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: UPDATE_PHONE_NUMBER,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: UPDATE_PHONE_ERROR,
+        payload: err?.response?.data?.msg
+      })
+      return err?.response
+    })
+  return response
+}
+
 export const updateUser = (data, token) => async (dispatch, getState) => {
   await axios
     .post(`/api/user/current/update`, data, tokenConfig(token))
@@ -166,22 +188,24 @@ export const updateUser = (data, token) => async (dispatch, getState) => {
     })
 }
 
-export const getVerifyIdentityUrl = token => async (dispatch, getState) => {
-  await axios
-    .post(`/api/stripe/verify-identity`, {}, tokenConfig(token))
-    .then(res =>
-      dispatch({
-        type: INITIATE_VERIFY_IDENTITY,
-        payload: res.data
+export const getVerifyIdentityUrl =
+  (accountId = null, token) =>
+  async (dispatch, getState) => {
+    await axios
+      .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(token))
+      .then(res =>
+        dispatch({
+          type: INITIATE_VERIFY_IDENTITY,
+          payload: res.data
+        })
+      )
+      .catch(err => {
+        dispatch({
+          type: AUTH_ERROR,
+          payload: err.response.data
+        })
       })
-    )
-    .catch(err => {
-      dispatch({
-        type: AUTH_ERROR,
-        payload: err.response.data
-      })
-    })
-}
+  }
 
 export const resendVerify = user => async (dispatch, getState) => {
   const data = await axios
@@ -265,7 +289,7 @@ export const registerUser = user => async dispatch => {
   //User Loading
   dispatch({ type: USER_LOADING })
 
-  const response = await axios.post(`/api/auth/register`, user);
+  const response = await axios.post(`/api/auth/register`, user)
   if (response.status === 200) {
     dispatch({
       type: REGISTER_USER,
@@ -443,21 +467,18 @@ export const updateCurrentUser = data => async (dispatch, getState) => {
         type: UPDATE_USER_ERROR,
         payload: err.response
       })
-      console.log('err.response', err.response)
       return err.response
     })
   return response
 }
 
 export const emailConfirmation = userId => async dispatch => {
-
-  const response = await axios.get(`/api/auth/verify/${userId}`);
+  const response = await axios.get(`/api/auth/verify/${userId}`)
   if (response.status === 200) {
     dispatch({
       type: USER_MAIL_CONFIRMATION,
       payload: true
     })
-
   }
 
   if (response.status !== 200) {
@@ -466,5 +487,4 @@ export const emailConfirmation = userId => async dispatch => {
       payload: false
     })
   }
-
 }

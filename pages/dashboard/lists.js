@@ -160,7 +160,7 @@ const Dashboard = ({ business = 'Lists', selectedList = "Favorites", token, cook
             const transformedArray = freelancersArray.map((item) => {
                 return {
                     id: item?.freelancerId?._id,
-                    name: `${item?.userId?.FirstName} ${item?.userId?.LastName}`,
+                    name: `${item?.freelancerId.userId?.FirstName} ${item?.freelancerId?.userId?.LastName}`,
                     skills: (item?.freelancerId?.freelancerSkills.length > 0) ?
                         item?.freelancerId?.freelancerSkills?.map((skill) => skill.skill) : [],
                     cover:

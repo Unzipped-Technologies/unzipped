@@ -203,7 +203,7 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
               </div>
               {projectList?.length === 0 && (
                 <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                  No Proejcts found for this search
+                  No Projects found for this search
                 </DarkText>
               )}
               {projectList?.map((project, index) => {

@@ -108,16 +108,23 @@ const findListEntriesById = async id => {
       path: 'freelancerId',
       model: 'freelancers',
       select: 'category rate likeTotal freelancerSkills',
-      populate: {
+      populate: [{
         path: 'freelancerSkills',
         model: 'freelancerskills',
         select: 'yearsExperience skill '
+      },
+      {
+        path: 'userId',
+        model: 'users',
+        select: 'FirstName LastName profileImage AddressLineCountry',
+        match: {
+          $or: [
+            { FirstName: { $ne: null, $ne: '' } },
+            { LastName: { $ne: null, $ne: '' } }
+          ]
+        }
       }
-    })
-    .populate({
-      path: 'userId',
-      model: 'users',
-      select: 'FirstName LastName profileImage AddressLineCountry'
+      ]
     })
     .sort({ createdAt: -1 })
 
@@ -174,6 +181,23 @@ const createRecentlyViewdRecod = async params => {
   }
 }
 
+const getUserListEntries = async ({ filter }) => {
+  try {
+    const response = await ListEntriesModel.find({ ...filter })
+      .populate([
+        {
+          path: 'businessId',
+          model: 'businesses',
+          select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills'
+        }
+      ])
+      .exec()
+    return response
+  } catch (err) {
+    throw Error(`Could not find list, error: ${err}`)
+  }
+}
+
 module.exports = {
   createListEntries,
   deleteListEntry,
@@ -182,6 +206,7 @@ module.exports = {
   updateUserLists,
   findListEntriesById,
   getAllteamMembers,
+  getUserListEntries,
   getRecentlyViewedProfile,
   createRecentlyViewdRecod
 }

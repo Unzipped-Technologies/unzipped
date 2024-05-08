@@ -220,7 +220,6 @@ const ViewAllList = ({
         setIsIconDropdownOpen(!isIconDropdownOpen);
     }
 
-
     useEffect(() => {
         setIsIconDropdownOpen(!isIconDropdownOpen)
     }, [listIcon])

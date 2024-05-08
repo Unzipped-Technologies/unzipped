@@ -5,6 +5,7 @@ import { getListEntriesById, getTeamMembers, getRecentlyViewedList } from '../..
 import { useDispatch, useSelector } from 'react-redux'
 import ListManagementPanel from './ListManagementPanel'
 import IconSelector from './IconSelector'
+import { IconColors } from '../../../utils/FontIcons'
 
 const Container = styled.div`
   position: relative;
@@ -115,28 +116,15 @@ const Panel = ({
             borderLeft={listInfo?.listTitle == item.name ? '#1976D2' : 'transparent'}
             borderRadius={listInfo?.listTitle == item.name ? '0' : ''}
             key={index}>
-            {item?.isDefault && item.icon == 'EyeOutlined' && (
-              <IconSelector icon={item.icon} size={24} color="#8EDE64" />
-            )}
-
-            {item?.isDefault && item.icon == 'HeartOutlined' && (
-              <IconSelector icon={item.icon} size={24} color="#FA00FF" />
-            )}
-
-            {item?.isDefault && item.icon == 'TeamOutlined' && (
-              <IconSelector icon={item.icon} size={24} color="#FFC24E" />
-            )}
 
             {item?.icon &&
-              !item?.isDefault &&
-              item.icon !== 'EyeOutlined' &&
-              item.icon !== 'HeartOutlined' &&
-              item.icon !== 'TeamOutlined' && <IconSelector icon={item.icon} size={24} color="#e25050" />}
+              <IconSelector icon={item.icon} size={24} style={{ color: IconColors[item.icon] || "#1C1C1C" }} twoToneColor={IconColors[item.icon]} />}
 
             <DarkText
               clickable
               noMargin
               paddingLeft
+              smallPadding="12px"
               hover
               onClick={() => {
                 handleListChangeEv(item)

@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 
+import { Icon } from '../../ui'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
 import { TitleText, DarkText, Absolute, DarkSpan } from './style'
 import { useDispatch, useSelector } from 'react-redux'
-
+import ListModal from '../ListModal'
 import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
-import { createUserInvitation, getAllFreelancers } from '../../../redux/actions'
+import { createUserInvitation } from '../../../redux/actions'
 
 const Container = styled.div`
   display: flex;
@@ -28,18 +29,28 @@ const Right = styled.div`
   min-width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
 `
 
+const ButtonTwo = styled.div`
+  transform: rotate(90deg);
+  outline: none;
+  border: none;
+  left: 10px;
+  position: relative;
+  padding-left: 10px;
+`
+
 const Flex = styled.div`
   display: flex;
   flex-flow: row;
   justify-items: space-between;
 `
 
-const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, setIsUserInvited,filter, afterInvitation }) => {
+const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
   const router = useRouter()
-  const { proejct } = router.query
+  const { project } = router.query
+
+  const [isOpen, setOpen] = useState(false)
 
   const userLists = useSelector(state => state.ListEntries.userLists)
-  const userId = useSelector(state => state.Auth.user._id)
   const accessToken = useSelector(state => state.Auth.token)
   const dispatch = useDispatch()
 
@@ -58,24 +69,32 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
       const inviteFreelancer = {
         userInvited: userId,
         freelancer: user.id,
-        business: proejct
+        business: project
       }
-      dispatch(createUserInvitation(inviteFreelancer, accessToken, filter))
+      dispatch(createUserInvitation(inviteFreelancer, filter))
     }
+  }
+
+  const handlOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
   }
 
   return (
     <Container includeRate={includeRate}>
       <Left>
         <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
-        {proejct && (
+        {project && (
           <Button
             margin="20px 0px"
-            type={user?.invites?.business === proejct ? 'grey' : 'default'}
+            type={user?.invites?.business === project ? 'grey' : 'default'}
             noBorder
-            disabled={user?.invites?.business === proejct}
+            disabled={user?.invites?.business === project}
             onClick={handleUserInvite}>
-            {user?.invites?.business === proejct ? 'Invited' : 'Invite'}
+            {user?.invites?.business === project ? 'Invited' : 'Invite'}
           </Button>
         )}
       </Left>
@@ -115,7 +134,7 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
       <Absolute>
         <Button
           color="#000"
-          style={{ padding: '8px 22px' }}
+          style={{ padding: '8px 22px', marginRight: '20px' }}
           normal
           oval
           type="green2"
@@ -123,7 +142,14 @@ const FreelancerCard = ({ user, includeRate, clearSelectedFreelancer, width, set
           onClick={redirectToProfile}>
           View Profile
         </Button>
+        {userId && (
+          <ButtonTwo onClick={handlOpen}>
+            <Icon name="actionIcon" color="#333" />
+          </ButtonTwo>
+        )}
       </Absolute>
+
+      {isOpen && <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} />}
     </Container>
   )
 }
