@@ -25,7 +25,7 @@ module.exports = {
     'sk_test_51M4xI7HVpfsarZmB00kaNw3rrH722ddi84qWASUSAkFFM7ACHxhxAiQ8I3tzeOdwjSMI0oRxbLP5FGkFm9HnDwPX00pcXTtQB4',
   stripeClientId: 'ca_PfJUA8aC0UA53v2zmIRQ6Se4V6qh3jmm',
   stripeSigningSecret: 'whsec_20e88d86a51726a7e1b7d93425a5c540116f06cea126a8e3ca75342f616cdd3b',
-  sendGridKey: process.env.SEND_GRID_KEY,
+  sendGridKey: process.env.NEXT_PUBLIC_SEND_GRID_KEY,
   sendGridName: 'Unzipped',
   sendGridEmail: 'Jason@unzipped.io',
   redirectDomain: 'http://localhost:3000',

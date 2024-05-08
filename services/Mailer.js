@@ -140,8 +140,9 @@ const sendInviteMail = async ({ to, subject, templateId, dynamicTemplateData }) 
       dynamicTemplateData
     }
 
-    return await sgMail.send(msg)
-
+    const emailResponse =  await sgMail.send(msg)
+    if(emailResponse) return emailResponse;
+    return false;
   }
   catch (error) {
     throw new Error(error.message)
