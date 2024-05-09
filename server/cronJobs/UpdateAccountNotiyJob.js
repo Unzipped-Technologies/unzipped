@@ -28,10 +28,9 @@ const UpdateAccountNotiyJob = () => {
 
 
             if (users && users.length > 0) {
-                let mailerCount = 0;
                 for (const item of users) {
                     const mailOptions = {
-                        to: "mohammed.zubayr10@gmail.com",
+                        to: item.email,
                         templateId: "d-2cd6aefc600241718abd22f51a1914cd",
                         dynamicTemplateData: {
                             firstName: item?.FirstName ? item.FirstName : item?.email.split('@')[0],
@@ -42,7 +41,6 @@ const UpdateAccountNotiyJob = () => {
 
                     const isSuccessfull = await Mailer.sendInviteMail(mailOptions);
                     if (isSuccessfull) {
-                        mailerCount += 1;
                         await UserModel.findByIdAndUpdate(item._id, { $inc: { accountUpdateMailCount: 1 } });
                     }
 
