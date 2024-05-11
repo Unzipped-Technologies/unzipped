@@ -495,7 +495,7 @@ const TaskForm = ({
                 Tags:
               </TitleText>
 
-              {!editMode?.tag && (
+              {!editMode?.tag && userRole !== 1 && (
                 <div
                   style={{
                     width: '17px',
@@ -741,7 +741,7 @@ const TaskForm = ({
         {selectedTaskId &&
           comments &&
           comments.length > 0 &&
-          comments.map((comment, index) => {
+          comments.map(comment => {
             const userData = getCommentUserData(comment)
             return (
               <WhiteCard
