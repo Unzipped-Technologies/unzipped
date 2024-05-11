@@ -2916,10 +2916,10 @@ export const SELECT_MEETING_TIME = [
   '11.30 PM'
 ]
 
-export const TODO_STATUS = 'todo'
-export const IN_PROGRESS = 'inprogress'
-export const DONE = 'done'
-export const DOING = 'doing'
+export const TODO_STATUS = 'Todo'
+export const IN_PROGRESS = 'In progress'
+export const DONE = 'Done'
+export const DOING = 'Doing'
 
 export const TASK_STATUS = [TODO_STATUS, IN_PROGRESS, DONE, DOING]
 

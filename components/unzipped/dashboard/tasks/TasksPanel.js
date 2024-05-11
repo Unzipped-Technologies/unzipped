@@ -129,6 +129,24 @@ const TasksPanel = ({
     })
   }
 
+  const addNewTask = async (tagId, tagName) => {
+    updateCreateStoryForm({
+      businessId: selectedDepartment.businessId,
+      departmentId: selectedDepartment?._id,
+      tag: tagId,
+      priority: 'lowest',
+      status: tagName?.toLowerCase().includes('to')
+        ? TODO_STATUS
+        : tagName?.toLowerCase().includes('in')
+        ? IN_PROGRESS
+        : tagName?.toLowerCase().includes('done')
+        ? DONE
+        : TODO_STATUS
+    })
+    setIsEditing(false)
+    setStoryModal(true)
+  }
+
   return (
     <DIV
       position="relative"
@@ -304,21 +322,7 @@ const TasksPanel = ({
                           {userRole === 0 && (
                             <WhiteCard
                               onClick={() => {
-                                updateCreateStoryForm({
-                                  businessId: selectedDepartment.businessId,
-                                  departmentId: selectedDepartment?._id,
-                                  tag: tag._id,
-                                  priority: 'lowest',
-                                  status: tag.tagName?.toLowerCase().includes('to')
-                                    ? TODO_STATUS
-                                    : tag.tagName?.toLowerCase().includes('in')
-                                    ? IN_PROGRESS
-                                    : tag.tagName?.toLowerCase().includes('done')
-                                    ? DONE
-                                    : TODO_STATUS
-                                })
-                                setIsEditing(false)
-                                setStoryModal(true)
+                                addNewTask(tag._id, tag?.tagName)
                               }}
                               noMargin
                               borderRadius="0px"

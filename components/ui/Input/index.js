@@ -54,10 +54,10 @@ const inputContainerStyles = props => `
       props.disableBorder
         ? 'none'
         : props.isFocused
-        ? '2px solid black !important'
+        ? '1px solid black !important'
         : props.border
         ? props.border
-        : '2px solid #CED4DA !important'
+        : '1px solid #CED4DA !important'
     };
 `
 

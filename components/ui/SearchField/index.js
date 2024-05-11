@@ -53,7 +53,7 @@ const SearchField = ({
       margin: margin ? margin : '0px !important',
       display: display ? display : 'flex',
       alignItems: alignItems ? alignItems : 'center',
-      border: disableBorder ? 'none' : border ? border : '2px solid #CED4DA',
+      border: disableBorder ? 'none' : border ? border : '1px solid #CED4DA',
       borderRadius: borderRadius ? borderRadius : '0px',
       textAlign: 'center' // Aligning text to center
     }),

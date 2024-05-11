@@ -1,29 +1,27 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { AiOutlineClose } from 'react-icons/ai'
-import styled, { css } from 'styled-components'
-import { FormField } from '../../../ui'
-import ManIcon from '../../../icons/man'
-import Icon from '../../../ui/Icon'
-import { TASK_PRIORITY, TODO_STATUS, TASK_STATUS } from '../../../../utils/constants'
-
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { TitleText, DarkText, WhiteCard, Span, Grid2 } from '../style'
-import Dropdowns from '../../../ui/Dropdown'
+import { AiOutlineClose } from 'react-icons/ai'
+import styled, { css } from 'styled-components'
+
+import Icon from '../../../ui/Icon'
+import Image from '../../../ui/Image'
+import Badge from '../../../ui/Badge'
+import Chat from '../../../icons/chat'
+import Plus from '../../../icons/plus'
+import { FormField } from '../../../ui'
+import ManIcon from '../../../icons/man'
+import EditIcon from '../../../icons/edit'
+import { ValidationUtils, ConverterUtils } from '../../../../utils'
+import { TitleText, DarkText, WhiteCard, Span, Grid2, TEXT, DIV } from '../style'
+import { TASK_PRIORITY, TASK_STATUS } from '../../../../utils/constants'
 import {
-  getDepartmentById,
   updateCreateStoryForm,
   createTask,
   updateTask,
   updateComment,
   addCommentToStory
 } from '../../../../redux/actions'
-import Image from '../../../ui/Image'
-import { ValidationUtils, ConverterUtils } from '../../../../utils'
-import Badge from '../../../ui/Badge'
-import EditIcon from '../../../icons/edit'
-import Chat from '../../../icons/chat'
-import Plus from '../../../icons/plus'
 
 const Button = styled.button`
   text-align: center;
@@ -51,17 +49,17 @@ const Button = styled.button`
 `
 
 const TaskFormContainer = styled.div`
-  margin-left: 20px !important;
+  margin-left: 10px !important;
   margin-right: 10px !important;
-  padding: 20px 0px 20px 0px;
+  padding: 10px 0px 20px 0px;
 `
 
 const Task = styled.div`
+  margin-top: 20px;
   margin-bottom: 20px;
 `
 
 const MobileTaskForm = ({
-  isEditing = false,
   isCreating = false,
   departmentData,
   taskDetail,
@@ -74,10 +72,17 @@ const MobileTaskForm = ({
   userId,
   userRole
 }) => {
-  const [editMode, setEditMode] = useState(isEditing)
+  const [editMode, setEditMode] = useState({
+    taskName: false,
+    storyPoints: false,
+    priority: false,
+    description: false,
+    status: false,
+    assignee: false,
+    tag: false
+  })
   const [commentId, setCommentId] = useState('')
   const [tag, setTag] = useState('')
-  const [tagShow, setTagShow] = useState(false)
   const [error, setError] = useState('')
 
   const [comments, setComments] = useState([])
@@ -93,6 +98,62 @@ const MobileTaskForm = ({
       departmentData?.contracts?.map(contract => ({
         value: contract?.freelancer?.userId,
         label: (
+          <div className="d-flex justify-content-start" style={{ overflow: 'scroll' }}>
+            <div>
+              <Image
+                src={contract?.freelancer?.user?.profileImage}
+                alt="Assignee Image"
+                width={'25px'}
+                height={'25px'}
+                radius={'50%'}
+                margin={'5px 5px  0px 0px'}
+              />
+            </div>
+            <div>
+              <div
+                style={{
+                  color: '#000',
+                  textAlign: 'center',
+                  fontFamily: 'Roboto',
+                  fontSize: '14px',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.4px',
+                  textTransform: 'capitalize'
+                }}>
+                {contract?.freelancer?.user?.FullName ?? 'Name'}
+              </div>
+              <div
+                style={{
+                  color: '#787878',
+                  textAlign: 'center',
+                  fontSize: '10px',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  lineHeight: 'normal',
+                  letterSpacing: '0.4px'
+                }}>
+                {contract?.freelancer?.user?.email}
+              </div>
+            </div>
+          </div>
+        )
+      })) || []
+    assignee.push({
+      value: departmentData?.client?._id,
+      label: (
+        <div className="d-flex justify-content-start">
+          <div>
+            <Image
+              src={departmentData?.client?.profileImage}
+              alt="Assignee Image"
+              width={'25px'}
+              height={'25px'}
+              radius={'50%'}
+              margin={'5px 5px  0px 0px'}
+            />
+          </div>
           <div>
             <div
               style={{
@@ -106,7 +167,7 @@ const MobileTaskForm = ({
                 letterSpacing: '0.4px',
                 textTransform: 'capitalize'
               }}>
-              {contract?.freelancer?.user?.FullName ?? 'Name'}
+              {departmentData?.client?.FullName || 'Client'}
             </div>
             <div
               style={{
@@ -118,13 +179,14 @@ const MobileTaskForm = ({
                 lineHeight: 'normal',
                 letterSpacing: '0.4px'
               }}>
-              {contract?.freelancer?.user?.email}
+              {departmentData?.client?.email}
             </div>
           </div>
-        )
-      })) || []
-    assignee.push({
-      value: departmentData?.client?._id,
+        </div>
+      )
+    })
+    assignee.unshift({
+      value: 'unassigned',
       label: (
         <div>
           <div
@@ -139,45 +201,12 @@ const MobileTaskForm = ({
               letterSpacing: '0.4px',
               textTransform: 'capitalize'
             }}>
-            {departmentData?.client?.FullName || 'Client'}
-          </div>
-          <div
-            style={{
-              color: '#787878',
-              textAlign: 'center',
-              fontSize: '10px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              letterSpacing: '0.4px'
-            }}>
-            {departmentData?.client?.email}
+            Unassigned
           </div>
         </div>
       )
     })
     if (!taskForm?.assignee) {
-      assignee.push({
-        value: 'unassigned',
-        label: (
-          <div>
-            <div
-              style={{
-                color: '#000',
-                textAlign: 'center',
-                fontFamily: 'Roboto',
-                fontSize: '14px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-                letterSpacing: '0.4px',
-                textTransform: 'capitalize'
-              }}>
-              Unassigned
-            </div>
-          </div>
-        )
-      })
       updateCreateStoryForm({
         [`assignee`]: 'unassigned'
       })
@@ -201,6 +230,14 @@ const MobileTaskForm = ({
         label: status
       })) || []
     )
+  }, [])
+
+  useEffect(() => {
+    if (isCreating) {
+      setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, true])))
+    } else {
+      setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, false])))
+    }
   }, [])
 
   useEffect(() => {
@@ -238,7 +275,7 @@ const MobileTaskForm = ({
       userData.name =
         taskDetail?.department?.client?.FullName ||
         `${taskDetail?.department?.client?.FirstName} ${taskDetail?.department?.client?.LastName}`
-    } else {
+    } else if (departmentData) {
       for (var contract of departmentData?.contracts) {
         if (contract?.freelancer?.user?._id === comment?.userId) {
           userData.profilePic = contract?.freelancer?.user?.profileImage
@@ -258,13 +295,11 @@ const MobileTaskForm = ({
     })
   }
 
-  const enableEditMode = () => {
-    setEditMode(true)
-  }
-
-  const disableEditMode = () => {
-    if (document.activeElement?.tagName?.toLowerCase() === 'div' && !isCreating) {
-      setEditMode(false)
+  const enableEditMode = fieldName => {
+    if (userRole !== 1 && !isCreating) {
+      setEditMode(prevState => ({
+        ...Object.fromEntries(Object.keys(prevState).map(key => [key, key === fieldName]))
+      }))
     }
   }
 
@@ -323,9 +358,11 @@ const MobileTaskForm = ({
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
       return false
-    }
-    if (!taskForm?.assignee || taskForm?.assignee === 'unassigned') {
-      setValidationErrors('Assignee is required.')
+    } else if (!taskForm?.priority) {
+      setValidationErrors('Priority is required.')
+      return false
+    } else if (!taskForm?.status) {
+      setValidationErrors('Status is required.')
       return false
     }
     setValidationErrors('')
@@ -339,39 +376,34 @@ const MobileTaskForm = ({
   return (
     <TaskFormContainer>
       {taskForm?.ticketCode && (
-        <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" topMargin="40px">
+        <TEXT fontSize="18px" textColor="#0057FF" lineHeight="normal">
           ISSUE {taskForm?.ticketCode?.toLowerCase()}
-        </DarkText>
+        </TEXT>
       )}
-      <form onFocus={enableEditMode} onClick={e => disableEditMode(e)}>
+      <form>
         <Task>
-          {editMode ? (
-            <FormField
-              zIndexUnset
-              fieldType="input"
-              margin
-              fontSize="14px"
-              borderColor="red"
-              placeholder="Task Name"
-              disableBorder={!editMode}
-              disabled={userRole === 1}
-              noMargin
-              width="100%"
-              height="36px !important"
-              onChange={e => updateForm('taskName', e?.target?.value)}
-              value={taskForm?.taskName}
-              clickType="taskName"
-              onBlur={validateForm}
-              onUpdate={() => {}}>
-              <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="20px" paddingRight="10px">
-                Task:
-              </TitleText>
-            </FormField>
-          ) : (
-            <DarkText paddingLeft="0px !important" padding="0px !important" onClick={enableEditMode}>
-              {taskForm?.taskName}
-            </DarkText>
-          )}
+          <FormField
+            zIndexUnset
+            fieldType="input"
+            fontSize="14px"
+            borderColor="red"
+            placeholder={'Task Name'}
+            disableBorder={!editMode.taskName}
+            disabled={userRole === 1}
+            noMargin
+            width="100%"
+            height="36px !important"
+            onChange={e => updateForm('taskName', e?.target?.value)}
+            value={taskForm?.taskName}
+            clickType="taskName"
+            onUpdate={() => {}}
+            onClick={() => {
+              enableEditMode('taskName')
+            }}
+            onBlur={() => {
+              validateForm()
+              enableEditMode('')
+            }}></FormField>
 
           <div
             style={{
@@ -379,55 +411,59 @@ const MobileTaskForm = ({
               flexDirection: 'row',
               justifyContent: 'flex-start',
               alignItems: 'center',
-              marginTop: editMode ? '50px' : '0px !important'
+              paddingTop: '20px'
             }}>
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end'
-              }}>
-              <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
-            </span>
-            {editMode ? (
+            <div className="d-flex">
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  paddingTop: '10px'
+                }}>
+                <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
+              </span>
               <FormField
-                margin="0px 0px 0px 20px"
+                margin="0px 0px 0px 10px"
                 mobile
                 zIndex="1000"
+                disableBorder={!editMode.assignee}
                 disabled={userRole === 1}
                 fieldType="searchField"
                 isSearchable={true}
                 name="select"
                 options={assigneeOptions}
-                placeholder="assignee"
                 fontSize="14px"
                 width="160px"
-                height={taskForm?.assignee ? '10px' : '30px'}
+                height={taskForm?.assignee ? '15px' : '36px'}
                 onChange={value => {
                   updateForm('assignee', value?.value)
                 }}
                 value={assigneeOptions.find(assignee => assignee.value === taskForm?.assignee)}
                 clickType="assignee"
                 onUpdate={() => {}}
-                onBlur={validateForm}
+                onMenuOpen={() => {
+                  enableEditMode('assignee')
+                }}
+                onBlur={() => {
+                  validateForm()
+                  enableEditMode('')
+                }}
               />
-            ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" width="150px" paddingLeft="20px">
-                {assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label}
-              </DarkText>
-            )}
+            </div>
             {comments?.length ? (
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-end',
-                  marginLeft: '10px'
+                  marginLeft: '10px',
+                  marginTop: '10px'
                 }}>
                 <Chat width="18" height="18" />
-                <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" paddingLeft="0px" topPadding>
-                  {comments.length} Comment
-                </DarkText>
+                <TEXT fontSize="18px" textColor="#0057FF" lineHeight="normal" padding="0px 0px 0px 5px">
+                  {comments?.length > 10 ? '10+' : comments?.length} {comments?.length > 10 ? 'Comments' : 'Comment'}
+                </TEXT>
               </div>
             ) : (
               ''
@@ -436,115 +472,111 @@ const MobileTaskForm = ({
           <div
             style={{
               display: 'flex',
+              flexDirection: 'row',
               alignItems: 'center',
-              marginTop: editMode ? '10px' : '0px !important',
-              flexDirection: 'row'
+              marginTop: '50px'
             }}>
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center'
+                display: 'flex'
               }}>
-              <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="65px" marginTop="10px">
+              <TEXT
+                padding="5px 0px 0px 0px"
+                textColor="#000000"
+                fontSize="18px"
+                lineHeight="21.09px"
+                fontWeight="500"
+                width="65px">
                 Priority:
-              </TitleText>
-              {editMode ? (
-                <FormField
-                  zIndex="999"
-                  zIndexUnset={true}
-                  mobile
-                  required
-                  fieldType="searchField"
-                  isSearchable={true}
-                  name="select"
-                  placeholder=" priority"
-                  disabled={userRole === 1}
-                  fontSize="14px"
-                  width="100px"
-                  height={taskForm?.priority ? '10px' : '30px'}
-                  options={taskPriorityOptions}
-                  dropdownList={taskPriorityOptions}
-                  onChange={value => updateForm('priority', value?.value)}
-                  value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
-                  clickType="priority"
-                  onUpdate={() => {}}
-                />
-              ) : (
-                <DarkText fontSize="18px" color="#000" lineHeight="normal" width="60px" topMargin="15px">
-                  {taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label}
-                </DarkText>
-              )}
+              </TEXT>
+              <FormField
+                zIndex="999"
+                zIndexUnset={true}
+                disableBorder={!editMode.priority}
+                margin={!editMode.priority ? '2px 0px 0px 0px' : '0px 0px 0px 10px !important'}
+                mobile
+                required
+                fieldType="searchField"
+                isSearchable={true}
+                name="select"
+                disabled={userRole === 1}
+                fontSize="14px"
+                width="100px"
+                height={taskForm?.priority ? '10px' : '30px'}
+                options={taskPriorityOptions}
+                dropdownList={taskPriorityOptions}
+                onChange={value => updateForm('priority', value?.value)}
+                value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
+                clickType="priority"
+                onUpdate={() => {}}
+                onMenuOpen={() => {
+                  enableEditMode('priority')
+                }}
+                onBlur={() => {
+                  validateForm()
+                  enableEditMode('')
+                }}
+              />
             </div>
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                marginLeft: editMode ? '0px !important' : '150px !important'
+                display: 'flex'
               }}>
-              <TitleText
-                color="#000"
-                titleFontSize="16px"
-                lineHeight="normal"
-                light
-                width="55px"
-                paddingLeft={editMode ? '5px' : '10px'}
-                marginTop="10px">
+              <TEXT
+                textColor="#000000"
+                fontSize="18px"
+                lineHeight="21.09px"
+                fontWeight="500"
+                width="80px"
+                padding="5px 0px 0px 15px">
                 Status:
-              </TitleText>
-              {editMode ? (
-                <FormField
-                  zIndex="100"
-                  mobile
-                  required
-                  margin="0px 0px 0px 5px !important"
-                  fieldType="searchField"
-                  isSearchable={true}
-                  name="status"
-                  placeholder=" status"
-                  fontSize="14px"
-                  width="100px"
-                  height={taskForm?.status ? '10px' : '30px'}
-                  options={taskStatusOptions}
-                  onChange={value => updateForm('status', value?.value)}
-                  value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
-                  clickType="status"
-                  onUpdate={() => {}}
-                />
-              ) : (
-                <DarkText
-                  fontSize="18px"
-                  color="#000"
-                  lineHeight="normal"
-                  topMargin="10px"
-                  width="100px"
-                  paddingLeft="10px">
-                  {taskStatusOptions?.find(status => status.value === taskForm?.status)?.label}
-                </DarkText>
-              )}
+              </TEXT>
+
+              <FormField
+                zIndex="999"
+                zIndexUnset={true}
+                disableBorder={!editMode.status}
+                margin={!editMode.status ? '2px 0px 0px 0px' : '0px !important'}
+                mobile
+                required
+                fieldType="searchField"
+                isSearchable={true}
+                name="select"
+                disabled={userRole === 1}
+                fontSize="14px"
+                width="85px"
+                overflow="scroll"
+                height={taskForm?.status ? '10px' : '30px'}
+                options={taskStatusOptions}
+                dropdownList={taskStatusOptions}
+                onChange={value => updateForm('status', value?.value)}
+                value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
+                clickType="status"
+                onUpdate={() => {}}
+                onMenuOpen={() => {
+                  enableEditMode('status')
+                }}
+                onBlur={() => {
+                  enableEditMode('')
+                }}
+              />
             </div>
           </div>
           <div
             style={{
-              marginTop: editMode ? '10px' : '0px',
+              marginTop: '20px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-start'
             }}>
-            <TitleText
-              color="#000"
-              titleFontSize="16px"
-              lineHeight="normal"
-              light
-              marginTop="10px"
-              width="100px !important">
+            <TEXT textColor="#000000" fontSize="18px" lineHeight="21.09px" fontWeight="500" width="120px !important">
               Story Points:
-            </TitleText>
+            </TEXT>
             {editMode ? (
               <FormField
                 zIndexUnset
                 fieldType="input"
-                disableBorder={!editMode}
+                disableBorder={!editMode.storyPoints}
                 borderRadius="0px"
                 border="1px solid #ccc"
                 margin="0px 0px 0px 0px !important"
@@ -555,7 +587,13 @@ const MobileTaskForm = ({
                 onChange={e => updateForm('storyPoints', e?.target?.value)}
                 value={taskForm?.storyPoints}
                 clickType="storyPoints"
-                onUpdate={() => {}}></FormField>
+                onUpdate={() => {}}
+                onClick={() => {
+                  enableEditMode('storyPoints')
+                }}
+                onBlur={() => {
+                  enableEditMode('')
+                }}></FormField>
             ) : (
               <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px">
                 {taskForm?.storyPoints}
@@ -566,18 +604,12 @@ const MobileTaskForm = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              marginTop: editMode ? '10px' : '0px'
+              marginTop: '20px'
             }}>
-            <TitleText
-              color="#000"
-              titleFontSize="16px"
-              lineHeight="normal"
-              light
-              marginTop="10px"
-              width="40px !important">
-              tags:
-            </TitleText>
-            {!tagShow && editMode && (
+            <TEXT textColor="#000000" fontSize="18px" lineHeight="21.09px" fontWeight="500" width="40px !important">
+              Tags:
+            </TEXT>
+            {!editMode?.tag && (
               <span
                 style={{
                   width: '17px',
@@ -586,27 +618,29 @@ const MobileTaskForm = ({
                   display: 'flex',
                   alignItems: 'center',
                   marginRight: '10px',
-                  marginTop: '-2px'
+                  marginTop: '-2px',
+                  marginLeft: '10px'
                 }}
                 id="add_tags_icon"
                 onClick={() => {
-                  setTagShow(true)
+                  enableEditMode('tag')
+                  setTimeout(() => {
+                    document.getElementById('tags').focus()
+                  }, 1)
                 }}>
                 <Plus width="17" height="17" />
               </span>
             )}
 
-            {editMode && tagShow && (
+            {editMode?.tag && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FormField
                   zIndexUnset
                   fieldType="input"
-                  disableBorder={!editMode}
-                  borderRadius="0px"
-                  border="1px solid #ccc"
-                  placeholder="Tags"
-                  margin="0px 0px 0px 0px !important"
+                  margin="0px 0px 0px 10px !important"
                   fontSize="14px"
+                  name={'tags'}
+                  id={'tags'}
                   disabled={userRole === 1}
                   width="200px"
                   height="30px  !important"
@@ -615,8 +649,9 @@ const MobileTaskForm = ({
                   onChange={e => {
                     setTag(e?.target?.value)
                   }}
+                  handleEnterKey={() => {}}
                 />
-                {editMode && taskForm?.tags?.length < 5 && (
+                {editMode?.tag && taskForm?.tags?.length < 5 && (
                   <span
                     style={{
                       width: '17px',
@@ -631,6 +666,9 @@ const MobileTaskForm = ({
                       e?.preventDefault()
                       updateForm('tags', [...taskForm?.tags, tag])
                       setTag('')
+                      setTimeout(() => {
+                        document.getElementById('tags').focus()
+                      }, 1)
                     }}>
                     <Plus width="17" height="17" />
                   </span>
@@ -662,57 +700,188 @@ const MobileTaskForm = ({
           <div
             style={{
               display: 'flex',
-              marginTop: editMode ? '10px' : '0px'
+              flexDirection: 'column',
+              marginTop: '20px'
             }}>
-            {!editMode && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
-                  Description:
-                </TitleText>
-                <div style={{ paddingLeft: '10px' }}>{taskForm?.description}</div>
-              </div>
-            )}
-            {editMode && (
+            <TEXT textColor="#000000" fontSize="18px" lineHeight="21.09px" fontWeight="500" width="100px !important">
+              Description:
+            </TEXT>
+            {editMode.description ? (
               <FormField
                 zIndexUnset
                 fieldType="input"
                 textarea
-                margin
+                margin={'10px 0px 0px 0px'}
                 fontSize="14px"
                 borderColor="red"
-                disableBorder={!editMode}
+                disableBorder={!editMode.description}
                 disabled={userRole === 1}
-                noMargin
                 width="100%"
                 onChange={e => updateForm('description', e?.target?.value)}
                 value={taskForm?.description}
                 clickType="description"
-                onUpdate={() => {}}>
-                Description
-              </FormField>
+                onUpdate={() => {}}
+                onClick={() => {
+                  enableEditMode('description')
+                }}
+                onBlur={() => {
+                  enableEditMode('')
+                }}
+              />
+            ) : (
+              <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
+                <div
+                  style={{ paddingLeft: '10px' }}
+                  onClick={() => {
+                    enableEditMode('description')
+                  }}>
+                  {taskForm?.description}
+                </div>
+              </div>
             )}
           </div>
 
-          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
-              Discussion:
-            </TitleText>
-            <FormField
-              fieldType="input"
-              fontSize="14px"
-              placeholder="Leave a comment..."
-              noMargin
-              height="auto"
-              textarea
-              width="100%"
-              display="inline !important"
-              onChange={e => setComment({ ...newComment, comment: e.target.value })}
-              value={newComment.comment}></FormField>
-          </div>
+          {!isCreating && (
+            <div style={{ marginTop: '20px', marginBottom: '10px' }}>
+              <TEXT
+                textColor="#000000"
+                fontSize="18px"
+                lineHeight="21.09px"
+                fontWeight="500"
+                margin="10px 0px 10px 0px"
+                width="70px">
+                Discussion:
+              </TEXT>
+              <FormField
+                fieldType="input"
+                fontSize="14px"
+                height="auto"
+                textarea
+                width="100%"
+                display="inline !important"
+                onChange={e => setComment({ ...newComment, comment: e.target.value })}
+                value={newComment.comment}></FormField>
+            </div>
+          )}
+
+          {!isCreating &&
+            comments &&
+            comments.length > 0 &&
+            comments.map((comment, index) => {
+              const userData = getCommentUserData(comment)
+              return (
+                <WhiteCard
+                  borderColor="1px solid #CED4DA"
+                  borderRadius="4px"
+                  unset
+                  key={comment?._id}
+                  half
+                  padding="10px">
+                  <Grid2 block margin="0px">
+                    <div className="d-flex">
+                      <Span margin="0px 0px 10px 0px">
+                        {userData?.profilePic && (
+                          <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
+                        )}
+                        <Span space>
+                          <DarkText fontSize="18px" color="#000000" lineHeight="21.09px" noMargin>
+                            {userData?.name || ''}
+                            <span
+                              style={{
+                                paddingLeft: '20px',
+                                fontSize: '14px',
+                                color: '#9B9B9B',
+                                lineHeight: '16.41px'
+                              }}>
+                              <span>{ValidationUtils.formatDateWithDate(comment?.updatedAt)}</span>
+                            </span>
+                          </DarkText>
+                        </Span>
+                      </Span>
+                      {comment?.userId === userId && (
+                        <DIV
+                          display="flex"
+                          justifyContent="flex-end"
+                          onClick={() => {
+                            setCommentId(comment?._id)
+                          }}>
+                          <EditIcon width="12px" height="12px" color="#585858" />
+                        </DIV>
+                      )}
+                    </div>
+                  </Grid2>
+                  {commentId === comment?._id ? (
+                    <FormField
+                      fieldType="input"
+                      fontSize="14px"
+                      placeholder="Leave a comment..."
+                      noMargin
+                      height="auto"
+                      textarea
+                      width="100%"
+                      display="inline !important"
+                      onChange={e => {
+                        setComments(prevArray =>
+                          prevArray.map(item =>
+                            item._id === comment?._id ? { ...item, comment: e?.target.value } : item
+                          )
+                        )
+                      }}
+                      value={comment?.comment}></FormField>
+                  ) : (
+                    <DarkText
+                      noMargin
+                      paddingLeft
+                      smallPadding="30px"
+                      fontSize="14px"
+                      lineHeight="16.41px"
+                      color="#000000">
+                      {comment?.comment}
+                      {taskDetail?.comments?.find(com => com?._id === comment?._id)?.comment !== comment?.comment && (
+                        <span
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            paddingLeft: '20px',
+                            fontSize: '14px',
+                            color: '#9B9B9B',
+                            lineHeight: '16.41px'
+                          }}>
+                          <span>Edited</span>
+                        </span>
+                      )}
+                    </DarkText>
+                  )}
+                  {commentId === comment?._id && (
+                    <div
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end'
+                      }}>
+                      <Button
+                        disabled={false}
+                        onClick={async e => {
+                          e?.preventDefault()
+                          await updateComment(taskDetail?._id, comment._id, comment)
+                          setCommentId('')
+                        }}
+                        width="40px"
+                        fontSize="12px"
+                        margin="0px 37px 0px 20px">
+                        <Icon name="send" color="white" width="18" height="18" />
+                      </Button>
+                    </div>
+                  )}
+                </WhiteCard>
+              )
+            })}
+
           {error && (
-            <TitleText color="red" titleFontSize="12px">
+            <TEXT margin="20px 0px 0px 0px" textColor="red" fontSize="12px">
               {error}
-            </TitleText>
+            </TEXT>
           )}
           <div
             style={{
@@ -750,85 +919,6 @@ const MobileTaskForm = ({
               Save
             </Button>
           </div>
-          {comments &&
-            comments.length > 0 &&
-            comments.map((comment, index) => {
-              const userData = getCommentUserData(comment)
-
-              return (
-                <WhiteCard borderColor="1px solid #F5F6F8" unset key={comment?._id} half padding="10px">
-                  <Grid2 block margin="0px">
-                    <Span margin="0px 0px 10px 0px">
-                      {userData?.profilePic && (
-                        <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
-                      )}
-                      <Span space>
-                        <DarkText noMargin>
-                          {userData?.name || ''}
-                          <span style={{ paddingLeft: '20px' }}>
-                            <span>{ValidationUtils.formatDateWithDate(comment?.updatedAt)}</span>
-                            {comment?.userId === userId && (
-                              <span
-                                style={{
-                                  paddingLeft: '15px'
-                                }}
-                                onClick={() => {
-                                  setCommentId(comment?._id)
-                                }}>
-                                <EditIcon width="12px" height="12px" color="#585858" />
-                              </span>
-                            )}
-                          </span>
-                        </DarkText>
-                      </Span>
-                    </Span>
-                  </Grid2>
-                  {commentId === comment?._id ? (
-                    <FormField
-                      fieldType="input"
-                      fontSize="14px"
-                      placeholder="Leave a comment..."
-                      noMargin
-                      height="auto"
-                      textarea
-                      width="100%"
-                      display="inline !important"
-                      onChange={e => {
-                        setComments(prevArray =>
-                          prevArray.map(item =>
-                            item._id === comment?._id ? { ...item, comment: e?.target.value } : item
-                          )
-                        )
-                      }}
-                      value={comment?.comment}></FormField>
-                  ) : (
-                    <DarkText marginLeft="80px">{comment?.comment}</DarkText>
-                  )}
-                  {commentId === comment?._id && (
-                    <div
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end'
-                      }}>
-                      <Button
-                        disabled={false}
-                        onClick={async e => {
-                          e?.preventDefault()
-                          await updateComment(taskDetail?._id, comment._id, comment)
-                          setCommentId('')
-                        }}
-                        width="40px"
-                        fontSize="12px"
-                        margin="0px 37px 0px 20px">
-                        <Icon name="send" color="white" width="18" height="18" />
-                      </Button>
-                    </div>
-                  )}
-                </WhiteCard>
-              )
-            })}
         </Task>
       </form>
     </TaskFormContainer>
