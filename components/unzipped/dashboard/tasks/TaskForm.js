@@ -588,6 +588,7 @@ const TaskForm = ({
                 fieldType="searchField"
                 isSearchable={true}
                 name="priority"
+                color="#000000"
                 disabled={userRole === 1}
                 disableBorder={!editMode.priority}
                 placeholder="Select Priority"
@@ -638,6 +639,7 @@ const TaskForm = ({
               onBlur={() => {
                 enableEditMode('')
               }}
+              style={{ color: '#000000' }}
             />
           </DIV>
         </DIV>

@@ -40,12 +40,14 @@ const SearchField = ({
     }),
     container: defaultStyles => ({
       ...defaultStyles,
+
       width: dropdownWidth ? dropdownWidth : width ? width : '200px',
       fontSize: menuListFontSize ? menuListFontSize : '16px'
     }),
     control: (provided, state) => ({
       ...provided,
       boxShadow: 'none',
+      backgroundColor: 'transparent',
       fontSize: valueFontSize ? valueFontSize : '16px',
       width: width ? width : '200px',
       minHeight: height ? height : '30px !important',
@@ -93,7 +95,8 @@ const SearchField = ({
       ...provided,
       display: 'flex',
       gridArea: 'auto',
-      textAlign: 'center' // Aligning text to center
+      textAlign: 'center', // Aligning text to center
+      color: '#000000'
     }),
     // Other styles...
     placeholder: (provided, state) => ({

@@ -13,7 +13,7 @@ import { FormField } from '../../../ui'
 import ManIcon from '../../../icons/man'
 import EditIcon from '../../../icons/edit'
 import { ValidationUtils, ConverterUtils } from '../../../../utils'
-import { TitleText, DarkText, WhiteCard, Span, Grid2, TEXT, DIV } from '../style'
+import { DarkText, WhiteCard, Span, Grid2, TEXT, DIV } from '../style'
 import { TASK_PRIORITY, TASK_STATUS } from '../../../../utils/constants'
 import {
   updateCreateStoryForm,
@@ -382,28 +382,40 @@ const MobileTaskForm = ({
       )}
       <form>
         <Task>
-          <FormField
-            zIndexUnset
-            fieldType="input"
-            fontSize="14px"
-            borderColor="red"
-            placeholder={'Task Name'}
-            disableBorder={!editMode.taskName}
-            disabled={userRole === 1}
-            noMargin
-            width="100%"
-            height="36px !important"
-            onChange={e => updateForm('taskName', e?.target?.value)}
-            value={taskForm?.taskName}
-            clickType="taskName"
-            onUpdate={() => {}}
-            onClick={() => {
-              enableEditMode('taskName')
-            }}
-            onBlur={() => {
-              validateForm()
-              enableEditMode('')
-            }}></FormField>
+          {editMode.taskName ? (
+            <FormField
+              autoFocus
+              zIndexUnset
+              fieldType="input"
+              fontSize="14px"
+              borderColor="red"
+              placeholder={'Task Name'}
+              disableBorder={!editMode.taskName}
+              disabled={userRole === 1}
+              noMargin
+              width="100%"
+              height="36px !important"
+              onChange={e => updateForm('taskName', e?.target?.value)}
+              value={taskForm?.taskName}
+              clickType="taskName"
+              onUpdate={() => {}}
+              onBlur={() => {
+                validateForm()
+                enableEditMode('')
+              }}
+            />
+          ) : (
+            <TEXT
+              textColor="#000000"
+              fontSize="18px"
+              lineHeight="21.09px"
+              fontWeight="400"
+              onClick={() => {
+                enableEditMode('taskName')
+              }}>
+              {taskForm?.taskName}
+            </TEXT>
+          )}
 
           <div
             style={{
@@ -593,7 +605,9 @@ const MobileTaskForm = ({
                 }}
                 onBlur={() => {
                   enableEditMode('')
-                }}></FormField>
+                }}
+                style={{ color: '#000000' }}
+              />
             ) : (
               <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px">
                 {taskForm?.storyPoints}
@@ -609,7 +623,7 @@ const MobileTaskForm = ({
             <TEXT textColor="#000000" fontSize="18px" lineHeight="21.09px" fontWeight="500" width="40px !important">
               Tags:
             </TEXT>
-            {!editMode?.tag && (
+            {!editMode?.tag && userRole !== 1 && (
               <span
                 style={{
                   width: '17px',
@@ -651,7 +665,7 @@ const MobileTaskForm = ({
                   }}
                   handleEnterKey={() => {}}
                 />
-                {editMode?.tag && taskForm?.tags?.length < 5 && (
+                {editMode?.tag && taskForm?.tags?.length < 5 && userRole !== 1 && (
                   <span
                     style={{
                       width: '17px',
