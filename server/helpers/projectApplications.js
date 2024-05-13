@@ -4,9 +4,15 @@ const business = require('./business')
 const questions = require('./questions')
 const keys = require('../../config/keys')
 const Mailer = require('../../services/Mailer')
+const FreelancerModel = require('../models/Freelancer')
 
-const createApplication = async data => {
+const createApplication = async params => {
   try {
+
+    const FREELANCER_ID = await FreelancerModel.find( { userId: params.userId});
+    let {userId, ...data} = params;
+    data.freelancerId = FREELANCER_ID[0]._id;
+    if (!FREELANCER_ID) throw new Error('Freelancer not found!')
     const isAlreadyApplied = await countApplications({
       projectId: data.projectId,
       freelancerId: data.freelancerId
