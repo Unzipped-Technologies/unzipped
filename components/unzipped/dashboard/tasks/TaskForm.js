@@ -52,6 +52,7 @@ const TaskForm = ({
     tag: false
   })
   const [comments, setComments] = useState([])
+  const [disableBtn, setButtonDisable] = useState(true)
   const [tag, setTag] = useState('')
   const [newComment, setComment] = useState({
     comment: '',
@@ -70,6 +71,7 @@ const TaskForm = ({
     if (selectedTaskId) {
       setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, false])))
       getTaskById(selectedTaskId)
+      setButtonDisable(false)
     } else {
       setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, true])))
     }
@@ -250,8 +252,18 @@ const TaskForm = ({
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
       return false
+    } else if (!taskForm?.storyPoints) {
+      setValidationErrors('Sotry points are required.')
+      return false
+    } else if (!taskForm?.priority) {
+      setValidationErrors('Priority are required.')
+      return false
+    } else if (!taskForm?.status) {
+      setValidationErrors('Status are required.')
+      return false
     }
     setValidationErrors('')
+    setButtonDisable(false)
     return true
   }
   const onSubmit = async () => {
@@ -285,6 +297,8 @@ const TaskForm = ({
           setValidationErrors(response?.data?.message ?? 'Something went wrong')
         }
       }
+    } else {
+      setButtonDisable(true)
     }
   }
 
@@ -358,7 +372,7 @@ const TaskForm = ({
           </Button>
 
           <Button
-            disabled={false}
+            disabled={disableBtn}
             onClick={async () => {
               await onSubmit()
             }}
@@ -605,6 +619,7 @@ const TaskForm = ({
                   enableEditMode('priority')
                 }}
                 onBlur={() => {
+                  validateForm()
                   enableEditMode('')
                 }}
               />
@@ -637,6 +652,7 @@ const TaskForm = ({
                 enableEditMode('storyPoints')
               }}
               onBlur={() => {
+                validateForm()
                 enableEditMode('')
               }}
               style={{ color: '#000000' }}
@@ -677,6 +693,7 @@ const TaskForm = ({
                   enableEditMode('status')
                 }}
                 onBlur={() => {
+                  validateForm()
                   enableEditMode('')
                 }}
               />

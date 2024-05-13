@@ -81,6 +81,8 @@ const MobileTaskForm = ({
     assignee: false,
     tag: false
   })
+  const [disableBtn, setButtonDisable] = useState(true)
+
   const [commentId, setCommentId] = useState('')
   const [tag, setTag] = useState('')
   const [error, setError] = useState('')
@@ -236,6 +238,7 @@ const MobileTaskForm = ({
     if (isCreating) {
       setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, true])))
     } else {
+      setButtonDisable(false)
       setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, false])))
     }
   }, [])
@@ -336,6 +339,8 @@ const MobileTaskForm = ({
           setValidationErrors(response?.data?.message ?? 'Something went wrong')
         }
       }
+    } else {
+      setButtonDisable(true)
     }
   }
 
@@ -358,14 +363,18 @@ const MobileTaskForm = ({
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
       return false
+    } else if (!taskForm?.storyPoints) {
+      setValidationErrors('Sotry points are required.')
+      return false
     } else if (!taskForm?.priority) {
-      setValidationErrors('Priority is required.')
+      setValidationErrors('Priority are required.')
       return false
     } else if (!taskForm?.status) {
-      setValidationErrors('Status is required.')
+      setValidationErrors('Status are required.')
       return false
     }
     setValidationErrors('')
+    setButtonDisable(false)
     return true
   }
 
@@ -569,6 +578,7 @@ const MobileTaskForm = ({
                   enableEditMode('status')
                 }}
                 onBlur={() => {
+                  validateForm()
                   enableEditMode('')
                 }}
               />
@@ -604,6 +614,7 @@ const MobileTaskForm = ({
                   enableEditMode('storyPoints')
                 }}
                 onBlur={() => {
+                  validateForm()
                   enableEditMode('')
                 }}
                 style={{ color: '#000000' }}
@@ -920,6 +931,7 @@ const MobileTaskForm = ({
               CANCEL
             </Button>
             <Button
+              disabled={disableBtn}
               onClick={async e => {
                 e?.preventDefault()
                 await handleSubmit()
