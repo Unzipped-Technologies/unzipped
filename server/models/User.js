@@ -60,7 +60,8 @@ const userSchema = new Schema(
     files: [{ type: Schema.Types.Mixed, ref: 'file' }],
     totalBalance: { type: Number, default: 0 },
     totalPending: { type: Number, default: 0 },
-    thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' }
+    thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' },
+    accountUpdateMailCount: { type: Number, default: 0 },
   },
   {
     timestamps: true

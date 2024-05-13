@@ -568,38 +568,6 @@ const retrieveExternalBankAccounts = async userStripeAccountId => {
 // charge client
 async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
   try {
-    // step 1: load invoices that are being paid and verify charge amount
-    // const Invoices = await InvoiceModel.aggregate([
-    //   {
-    //     $match: { isApproved: true, isPaid: false }
-    //   },
-    //   {
-    //     $group: {
-    //       _id: '$clientId',
-    //       invoices: { $push: '$$ROOT' },
-    //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       totalAmount: 1,
-    //       invoices: {
-    //         $map: {
-    //           input: '$invoices',
-    //           as: 'invoice',
-    //           in: {
-    //             _id: '$$invoice._id',
-    //             hoursWorked: '$$invoice.hoursWorked',
-    //             hourlyRate: '$$invoice.hourlyRate'
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // ])
-    // Step 2: Charge the client
-
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountToCharge,
       currency: 'usd',
@@ -753,7 +721,7 @@ const retrieveStripeBalance = async () => {
   }
 }
 
-const withdrawFundsToBankAccount = async (accountId, amount, currency = 'usd') => {
+const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', userId) => {
   try {
     // Create a payout to the connected account's external bank account
     const payout = await stripe.payouts.create(
