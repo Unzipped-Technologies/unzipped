@@ -175,28 +175,6 @@ const getTemplateDetails = (templateName, userName, existingUser) => {
   }
 }
 
-const sendInviteMail = async ({ to, subject, templateId, dynamicTemplateData }) => {
-
-  try {
-    const msg = {
-      to,
-      from: {
-        name: keys.sendGridName,
-        email: keys.sendGridEmail
-      },
-      subject,
-      templateId,
-      dynamicTemplateData
-    }
-
-    return await sgMail.send(msg)
-
-  }
-  catch (error) {
-    throw new Error(error.message)
-  }
-}
-
 module.exports = {
   send,
   randNum,
