@@ -368,6 +368,8 @@ export const ScheduleInterviewContainer = styled.div`
   padding: 10px;
   gap: 10px;
   justify-content: space-between;
+  border-radius: 8px;
+  margin-bottom: 5px;
 `
 
 export const ScheduleInterviewButtonContainer = styled.div`
