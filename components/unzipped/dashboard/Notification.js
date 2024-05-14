@@ -78,6 +78,12 @@ const NotificationContainer = styled.div`
 const NotificationDismissalContainer = styled.div`
   display: flex;
 `;
+const DismissTextStyled = styled.div`
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center
+`;
 
 const help = [
   {
@@ -191,7 +197,9 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
               <p> {children} </p>
             </div>
             <NotificationDismissalContainer>
-              <Dismiss>Dismiss</Dismiss>
+              <DismissTextStyled>
+                <Dismiss>Dismiss</Dismiss>
+              </DismissTextStyled>
               <Button noBorder type="default" normal small> UPDATE </Button>
             </NotificationDismissalContainer>
           </NotificationContainer>
@@ -204,7 +212,9 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
             <p> Investors are asking about your businss. Update Frequently asked questions now. </p>
           </div>
           <NotificationDismissalContainer>
-            <Dismiss>Dismiss</Dismiss>
+            <DismissTextStyled>
+              <Dismiss>Dismiss</Dismiss>
+            </DismissTextStyled>
             <Button noBorder type="default" normal small> UPDATE </Button>
           </NotificationDismissalContainer>
         </NotificationContainer>
@@ -223,7 +233,9 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
             </div>
           </div>
           {!noButton && (<NotificationDismissalContainer>
-            <Dismiss>Dismiss</Dismiss>
+            <DismissTextStyled>
+              <Dismiss>Dismiss</Dismiss>
+            </DismissTextStyled>
             <Button noBorder type="default" normal small> UPDATE </Button>
           </NotificationDismissalContainer>
           )}
