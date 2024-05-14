@@ -9,6 +9,7 @@ import SetupCalendlyModal from './SetupCalendlyModal';
 import styled from 'styled-components'
 
 const NotificationContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -23,6 +24,12 @@ const NotificationDismissalContainer = styled.div`
   display: flex;
 `;
 
+const DismissTextStyled = styled.div`
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center
+`;
 
 const ScheduleInterview = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +45,9 @@ const ScheduleInterview = () => {
                     <p>You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you. </p>
                 </div>
                 <NotificationDismissalContainer>
-                    <Dismiss>Dismiss</Dismiss>
+                    <DismissTextStyled s>
+                        <Dismiss>Dismiss</Dismiss>
+                    </DismissTextStyled>
                     <Button noBorder type="default" normal small onClick={handleMeetingModal}>
                         UPDATE
                     </Button>
