@@ -6,6 +6,8 @@ import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUserInvitation } from '../../../redux/actions'
 import Button from '../../ui/Button'
+import { Icon } from '../../ui'
+import ListModal from '../ListModal'
 
 const UserSkills = styled.div`
   ::-webkit-scrollbar {
@@ -31,9 +33,20 @@ const SelectInputStyled = styled.select`
   font-size: 15px;
 `
 
+const ButtonTwo = styled.div`
+  margin-left: auto;
+  margin-right: 20px;
+  transform: rotate(90deg);
+  outline: none;
+  border: none;
+  left: 10px;
+  position: relative;
+  padding-left: 10px;
+`
+
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afterInvitation }) {
   const router = useRouter()
-  const { proejct } = router.query
+  const { project } = router.query
 
   const dispatch = useDispatch()
   const userLists = useSelector(state => state.ListEntries.userLists)
@@ -41,6 +54,8 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
   const accessToken = useSelector(state => state.Auth.token)
 
   const listObj = userLists?.find(list => list.name === 'Recently Viewed')
+
+  const [isOpen, setOpen] = useState(false)
 
   const redirectToProfile = () => {
     if (listObj) {
@@ -56,11 +71,19 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
       const inviteFreelancer = {
         userInvited: userId,
         freelancer: user.id,
-        business: proejct
+        business: project
       }
       await dispatch(createUserInvitation(inviteFreelancer))
       await afterInvitation()
     }
+  }
+
+  const handlOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
   }
 
   return (
@@ -82,22 +105,27 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
             </p>
             <p className="mb-0">{user?.country}</p>
           </div>
+          {userId && (
+            <ButtonTwo onClick={handlOpen}>
+              <Icon name="actionIcon" color="#333" />
+            </ButtonTwo>
+          )}
         </div>
         <div className="d-flex justify-content-between  align-items-center">
-          {proejct && (
+          {project && (
             <Button
               margin="20px 0px"
-              type={user?.invites?.business === proejct ? 'grey' : 'default'}
+              type={user?.invites?.business === project ? 'grey' : 'default'}
               noBorder
-              disabled={user?.invites?.business === proejct}
+              disabled={user?.invites?.business === project}
               onClick={handleUserInvite}>
-              {user?.invites?.business === proejct ? 'Invited' : 'Invite'}
+              {user?.invites?.business === project ? 'Invited' : 'Invite'}
             </Button>
           )}
           <div className="d-flex  gap-4">
             <span
               style={{
-                fontSize: '24px'
+                fontSize: '20px'
               }}>
               {user?.rate > 0 ? (
                 <div>
@@ -151,6 +179,9 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
           VIEW PROFILE
         </button>
       </div>
+      {isOpen && (
+        <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} user={user} />
+      )}
     </div>
   )
 }

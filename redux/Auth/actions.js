@@ -188,22 +188,24 @@ export const updateUser = (data, token) => async (dispatch, getState) => {
     })
 }
 
-export const getVerifyIdentityUrl = token => async (dispatch, getState) => {
-  await axios
-    .post(`/api/stripe/verify-identity`, {}, tokenConfig(token))
-    .then(res =>
-      dispatch({
-        type: INITIATE_VERIFY_IDENTITY,
-        payload: res.data
+export const getVerifyIdentityUrl =
+  (accountId = null, token) =>
+  async (dispatch, getState) => {
+    await axios
+      .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(token))
+      .then(res =>
+        dispatch({
+          type: INITIATE_VERIFY_IDENTITY,
+          payload: res.data
+        })
+      )
+      .catch(err => {
+        dispatch({
+          type: AUTH_ERROR,
+          payload: err.response.data
+        })
       })
-    )
-    .catch(err => {
-      dispatch({
-        type: AUTH_ERROR,
-        payload: err.response.data
-      })
-    })
-}
+  }
 
 export const resendVerify = user => async (dispatch, getState) => {
   const data = await axios

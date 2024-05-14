@@ -170,7 +170,6 @@ const ConversationContainer = ({
   userId,
   userEmail,
   openConversation,
-  isMobile,
   selectedConversation,
   socket
 }) => {
@@ -195,18 +194,6 @@ const ConversationContainer = ({
     })
   })
 
-  useEffect(() => {
-    if (conversations.length && !selectedConversation) {
-      const conversationId = conversations[0]?._id
-      openConversation(conversationId)
-      setSelectedItem(conversationId)
-    } else if (selectedConversation?._id) {
-      const conversationId = conversations?.find(conversation => conversation?._id === selectedConversation?._id)?._id
-      openConversation(conversationId)
-      setSelectedItem(conversationId)
-    }
-  }, [conversations])
-
   const handleSearch = e => {
     const filteredConversations = conversations.filter(convo => {
       const participants = convo.participants
@@ -227,7 +214,7 @@ const ConversationContainer = ({
   const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) => (
     <WhiteCard
       key={index}
-      background={_id === selectedItem ? '#BABABA' : '#fff'}
+      background={_id === selectedConversation?._id ? '#BABABA' : '#fff'}
       noMargin
       minWidth="100%"
       padding="5px"
@@ -238,7 +225,6 @@ const ConversationContainer = ({
       }}
       onClick={() => {
         openConversation(_id)
-        setSelectedItem(_id)
       }}>
       <Span>
         <DIV display="flex" justifyContent="space-between">

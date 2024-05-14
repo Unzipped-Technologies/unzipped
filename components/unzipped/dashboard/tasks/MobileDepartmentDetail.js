@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { AiOutlinePlus } from 'react-icons/ai'
-import { ConverterUtils } from '../../../../utils'
-import { useRouter } from 'next/router'
-import Nav from '../../header'
-import MobileTaskForm from './MobileTaskForm'
-import { Dialog } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
-import MuiDialogContent from '@material-ui/core/DialogContent'
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
+import { Dialog } from '@material-ui/core'
+import { AiOutlinePlus } from 'react-icons/ai'
+import styled, { css } from 'styled-components'
 import Accordion from '@material-ui/core/Accordion'
+import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import MuiDialogContent from '@material-ui/core/DialogContent'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
+import Nav from '../../header'
 import { DarkText } from '../style'
+import MobileTaskForm from './MobileTaskForm'
+import { ConverterUtils } from '../../../../utils'
 import {
   getDepartmentById,
   updateCreateStoryForm,
@@ -130,9 +130,7 @@ const MobileTaskDetail = ({
     resetStoryForm()
     updateCreateStoryForm({
       businessId: departmentData?.businessId,
-      departmentId: departmentData?._id,
-      status: 'todo',
-      priority: 'lowest'
+      departmentId: departmentData?._id
     })
     setOpen(true)
   }
@@ -289,7 +287,10 @@ const MobileTaskDetail = ({
                                                   <DarkText topMargin="5px">{task?.description}</DarkText>
                                                   <DarkText margin bold topMargin="10px">
                                                     <img
-                                                      src={task?.assignee?.user?.profileImage}
+                                                      src={
+                                                        task?.assignee?.user?.profileImage ||
+                                                        'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+                                                      }
                                                       style={{
                                                         width: '24px',
                                                         height: '24px',
@@ -299,8 +300,12 @@ const MobileTaskDetail = ({
                                                     />
                                                     {ConverterUtils.capitalize(
                                                       `${
-                                                        task?.assignee?.user?.FullName ||
-                                                        `${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`
+                                                        task?.assignee?.user?.FullName
+                                                          ? task?.assignee?.user?.FullName
+                                                          : task?.assignee?.user?.FirstName ||
+                                                            task?.assignee?.user?.LastName
+                                                          ? `${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`
+                                                          : 'Unassigned'
                                                       }`
                                                     )}
                                                   </DarkText>

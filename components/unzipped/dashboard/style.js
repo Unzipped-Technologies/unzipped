@@ -78,7 +78,7 @@ const DarkText = styled.div`
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
   line-height: ${({ lineHeight, fontSize }) => (lineHeight ? lineHeight : fontSize ? fontSize : '24px')};
   letter-spacing: 0.15008px;
-  margin-top: ${({ topMargin }) => (topMargin ? topMargin : 'unset')};
+  margin-top: ${({ topMargin }) => (topMargin ? topMargin : '0px')};
   margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) =>
     bottomMargin ? '22px' : noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
   margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '0px')};
@@ -87,9 +87,9 @@ const DarkText = styled.div`
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
   white-space: ${({ textOverflow }) => (textOverflow ? 'nowrap' : 'pre-line')};
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
-  padding: ${({ padding }) => (padding ? padding : '')};
-  width: ${({ width }) => (width ? width : '96%')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
   padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? (smallPadding ? smallPadding : '20px') : '0px')};
+  width: ${({ width }) => (width ? width : '96%')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
   text-align: ${({ center, right, justify }) => (center ? 'center' : right ? 'right' : justify ? 'justify' : 'unset')};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
@@ -223,6 +223,7 @@ const WhiteCard = styled.div`
     display: flex;
     width: 100%;
     justify-content: space-between;
+    padding: ${({ padding }) => (padding ? padding : '0px')};
   }
 `
 
@@ -367,6 +368,8 @@ export const ScheduleInterviewContainer = styled.div`
   padding: 10px;
   gap: 10px;
   justify-content: space-between;
+  border-radius: 8px;
+  margin-bottom: 5px;
 `
 
 export const ScheduleInterviewButtonContainer = styled.div`
@@ -423,7 +426,7 @@ const DIV = styled.div`
   align-items: ${({ alignItems }) => (alignItems ? alignItems : 'stretch')};
   justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : 'flex-start')};
   flex-direction: ${({ flexDirection }) => (flexDirection ? flexDirection : 'row')};
-  flex-flow: ${({ position }) => (position ? position : 'row nowrap')};
+  flex-flow: ${({ flexFlow }) => (flexFlow ? flexFlow : 'row nowrap')};
   flex: ${({ flex }) => (flex ? flex : '0 1 auto')};
   box-sizing: ${({ boxSizing }) => (boxSizing ? boxSizing : 'content-box')};
   // Style
@@ -448,7 +451,7 @@ const DIV = styled.div`
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
 `
 
-const TEXT = styled.span`
+const TEXT = styled.p`
   width: ${({ width }) => (width ? width : 'auto')};
   height: ${({ height }) => (height ? height : 'auto')};
   position: ${({ position }) => (position ? position : 'static')};
@@ -460,8 +463,6 @@ const TEXT = styled.span`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
-  font-family: Roboto;
-  font-style: normal;
   word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
   cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
   letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
@@ -502,8 +503,9 @@ const TypingAnimation = styled.div`
     &:nth-child(3) {
       animation: ${bounceAnimation} 1s infinite 0.4s;
     }
-  }`
-  
+  }
+`
+
 module.exports = {
   DIV,
   TEXT,

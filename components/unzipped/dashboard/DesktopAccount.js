@@ -255,7 +255,14 @@ const DesktopAccount = ({
       <Container>
         <LeftOne>
           <TitleOne>Membership & Billing</TitleOne>
-          <ButtonOne>Cancel Membership</ButtonOne>
+          <ButtonOne
+            onClick={() => {
+              if (user?.role === 1) {
+                router.push(`/freelancers/${user.freelancers?._id}`)
+              }
+            }}>
+            View profile
+          </ButtonOne>
         </LeftOne>
         <RightOne>
           <Rows>

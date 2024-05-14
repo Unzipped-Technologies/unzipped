@@ -2,9 +2,17 @@ const ProjectApplications = require('../models/ProjectApplications')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const business = require('./business')
 const questions = require('./questions')
+const keys = require('../../config/keys')
+const Mailer = require('../../services/Mailer')
+const FreelancerModel = require('../models/Freelancer')
 
-const createApplication = async data => {
+const createApplication = async params => {
   try {
+
+    const FREELANCER_ID = await FreelancerModel.find( { userId: params.userId});
+    let {userId, ...data} = params;
+    data.freelancerId = FREELANCER_ID[0]._id;
+    if (!FREELANCER_ID) throw new Error('Freelancer not found!')
     const isAlreadyApplied = await countApplications({
       projectId: data.projectId,
       freelancerId: data.freelancerId
@@ -36,6 +44,19 @@ const createApplication = async data => {
       listId: data.projectId,
       applicants: projectData.applicants
     })
+    if(!updatedBusiness) throw new Error('Could not update business');
+    const mailOptions = {
+      to: updatedBusiness.userId.email,
+      templateId: "d-7a6cfc5885764014a2ef24371af0ef55",
+      dynamicTemplateData:{
+        firstName: updatedBusiness?.userId?.FirstName ? updatedBusiness.userId.FirstName: updatedBusiness.userId.email.split('@')[0],
+        lastName: updatedBusiness?.userId?.LastName ? updatedBusiness.userId.LastName: '',
+        reviewApplicationLink: `${keys.redirectDomain}/projects/${updatedBusiness._id}`,
+        supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+        projectName: updatedBusiness?.name,
+      }
+    }
+    await Mailer.sendInviteMail(mailOptions);
     return response
   } catch (e) {
     throw new Error(`Something went wrong: ${e.message}`)

@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { AiOutlineClose } from 'react-icons/ai'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { TASK_PRIORITY, TODO_STATUS, TASK_STATUS } from '../../../../utils/constants'
+import { bindActionCreators } from 'redux'
+import { AiOutlineClose } from 'react-icons/ai'
+
 import Icon from '../../../ui/Icon'
-
-import { TitleText, DarkText, WhiteCard, Span, Grid2, DIV } from '../style'
-
-import Button from '../../../ui/Button'
 import Image from '../../../ui/Image'
-import { FormField } from '../../../ui'
-import { ValidationUtils, ConverterUtils } from '../../../../utils'
 import Badge from '../../../ui/Badge'
-import ManIcon from '../../../icons/man'
-import EditIcon from '../../../icons/edit'
 import Chat from '../../../icons/chat'
 import Plus from '../../../icons/plus'
+import Button from '../../../ui/Button'
+import { FormField } from '../../../ui'
+import ManIcon from '../../../icons/man'
+import EditIcon from '../../../icons/edit'
+import { ValidationUtils, ConverterUtils } from '../../../../utils'
+import { TASK_PRIORITY, TASK_STATUS } from '../../../../utils/constants'
+import { TitleText, DarkText, WhiteCard, Span, Grid2, DIV, TEXT } from '../style'
+
 import {
   getTaskById,
   updateCreateStoryForm,
@@ -42,9 +42,17 @@ const TaskForm = ({
   departmentData,
   userRole
 }) => {
-  const [editMode, setEditMode] = useState(false)
-  const [tagShow, setTagShow] = useState(false)
+  const [editMode, setEditMode] = useState({
+    taskName: false,
+    storyPoints: false,
+    priority: false,
+    description: false,
+    status: false,
+    assignee: false,
+    tag: false
+  })
   const [comments, setComments] = useState([])
+  const [disableBtn, setButtonDisable] = useState(true)
   const [tag, setTag] = useState('')
   const [newComment, setComment] = useState({
     comment: '',
@@ -52,6 +60,7 @@ const TaskForm = ({
     taskId: taskDetail?._id
   })
   const [commentId, setCommentId] = useState('')
+  const [hoverCommentId, setHoverCommentId] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -60,10 +69,11 @@ const TaskForm = ({
 
   useEffect(() => {
     if (selectedTaskId) {
-      setEditMode(false)
+      setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, false])))
       getTaskById(selectedTaskId)
+      setButtonDisable(false)
     } else {
-      setEditMode(true)
+      setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, true])))
     }
   }, [selectedTaskId])
 
@@ -91,38 +101,95 @@ const TaskForm = ({
     assignee = departmentData?.contracts?.map(contract => ({
       value: contract?.freelancer?.userId,
       label: (
-        <div>
-          <div
-            style={{
-              color: '#000',
-              textAlign: 'center',
-              fontFamily: 'Roboto',
-              fontSize: '14px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              letterSpacing: '0.4px',
-              textTransform: 'capitalize'
-            }}>
-            {contract?.freelancer?.user?.FullName ?? 'Name'}
+        <div className="d-flex justify-content-start">
+          <div>
+            <Image
+              src={contract?.freelancer?.user?.profileImage}
+              alt="Assignee Image"
+              width={'25px'}
+              height={'25px'}
+              radius={'50%'}
+              margin={'0px 5px  0px 0px'}
+            />
           </div>
-          <div
-            style={{
-              color: '#787878',
-              textAlign: 'center',
-              fontSize: '10px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              letterSpacing: '0.4px'
-            }}>
-            {contract?.freelancer?.user?.email}
+          <div>
+            <div
+              style={{
+                color: '#000',
+                textAlign: 'center',
+                fontFamily: 'Roboto',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px',
+                textTransform: 'capitalize'
+              }}>
+              {contract?.freelancer?.user?.FullName ?? 'Name'}
+            </div>
+            <div
+              style={{
+                color: '#787878',
+                textAlign: 'center',
+                fontSize: '10px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px'
+              }}>
+              {contract?.freelancer?.user?.email}
+            </div>
           </div>
         </div>
       )
     }))
     assignee.push({
       value: departmentData?.client?._id,
+      label: (
+        <div className="d-flex justify-content-start">
+          <div>
+            <Image
+              src={departmentData?.client?.profileImage}
+              alt="Assignee Image"
+              width={'25px'}
+              height={'25px'}
+              radius={'50%'}
+              margin={'0px 5px  0px 0px'}
+            />
+          </div>
+          <div>
+            <div
+              style={{
+                color: '#000',
+                textAlign: 'center',
+                fontFamily: 'Roboto',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px',
+                textTransform: 'capitalize'
+              }}>
+              {departmentData?.client?.FullName || 'Client'}
+            </div>
+            <div
+              style={{
+                color: '#787878',
+                textAlign: 'center',
+                fontSize: '10px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px'
+              }}>
+              {departmentData?.client?.email}
+            </div>
+          </div>
+        </div>
+      )
+    })
+    assignee.unshift({
+      value: 'unassigned',
       label: (
         <div>
           <div
@@ -137,45 +204,12 @@ const TaskForm = ({
               letterSpacing: '0.4px',
               textTransform: 'capitalize'
             }}>
-            {departmentData?.client?.FullName || 'Client'}
-          </div>
-          <div
-            style={{
-              color: '#787878',
-              textAlign: 'center',
-              fontSize: '10px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              letterSpacing: '0.4px'
-            }}>
-            {departmentData?.client?.email}
+            Unassigned
           </div>
         </div>
       )
     })
     if (!taskForm?.assignee) {
-      assignee.push({
-        value: 'unassigned',
-        label: (
-          <div>
-            <div
-              style={{
-                color: '#000',
-                textAlign: 'center',
-                fontFamily: 'Roboto',
-                fontSize: '14px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-                letterSpacing: '0.4px',
-                textTransform: 'capitalize'
-              }}>
-              Unassigned
-            </div>
-          </div>
-        )
-      })
       updateCreateStoryForm({
         [`assignee`]: 'unassigned'
       })
@@ -201,16 +235,11 @@ const TaskForm = ({
     )
   }, [])
 
-  const enableEditMode = () => {
-    if (userRole !== 1) setEditMode(true)
-  }
-  const disableEditMode = event => {
-    if (
-      event?.target?.id !== 'add_task_icon' &&
-      document.activeElement?.tagName?.toLowerCase() === 'div' &&
-      selectedTaskId
-    ) {
-      setEditMode(false)
+  const enableEditMode = fieldName => {
+    if (userRole !== 1 && selectedTaskId) {
+      setEditMode(prevState => ({
+        ...Object.fromEntries(Object.keys(prevState).map(key => [key, key === fieldName]))
+      }))
     }
   }
 
@@ -223,12 +252,18 @@ const TaskForm = ({
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
       return false
-    }
-    if (!taskForm?.assignee || taskForm?.assignee === 'unassigned') {
-      setValidationErrors('Assignee is required.')
+    } else if (!taskForm?.storyPoints) {
+      setValidationErrors('Sotry points are required.')
+      return false
+    } else if (!taskForm?.priority) {
+      setValidationErrors('Priority are required.')
+      return false
+    } else if (!taskForm?.status) {
+      setValidationErrors('Status are required.')
       return false
     }
     setValidationErrors('')
+    setButtonDisable(false)
     return true
   }
   const onSubmit = async () => {
@@ -262,6 +297,8 @@ const TaskForm = ({
           setValidationErrors(response?.data?.message ?? 'Something went wrong')
         }
       }
+    } else {
+      setButtonDisable(true)
     }
   }
 
@@ -305,14 +342,17 @@ const TaskForm = ({
       <DarkText fontSize="18px" color="#0057FF" lineHeight="normal">
         ISSUE {taskDetail?.ticketCode?.toLowerCase()}
       </DarkText>
-      <form onClick={e => disableEditMode(e)}>
+      <form>
         <DIV
           width="97%"
           display="flex"
           overflow="hidden"
           alignItems="flex-end"
           justifyContent="flex-end"
-          margin="-25px 0px 0px 35px">
+          margin="-25px 0px 0px 35px"
+          onClick={() => {
+            enableEditMode('')
+          }}>
           <Button
             extraWid
             type="outlineInverse"
@@ -332,7 +372,7 @@ const TaskForm = ({
           </Button>
 
           <Button
-            disabled={false}
+            disabled={disableBtn}
             onClick={async () => {
               await onSubmit()
             }}
@@ -370,8 +410,7 @@ const TaskForm = ({
               fieldType="input"
               name="taskName"
               fontSize="14px"
-              borderColor="red"
-              disableBorder={!editMode}
+              disableBorder={!editMode.taskName}
               disabled={userRole === 1}
               noMargin
               width="500px"
@@ -379,9 +418,14 @@ const TaskForm = ({
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
-              onClick={enableEditMode}
+              onClick={() => {
+                enableEditMode('taskName')
+              }}
+              onBlur={() => {
+                validateForm()
+                enableEditMode('')
+              }}
               onUpdate={() => {}}
-              onBlur={validateForm}
             />
           </div>
         </DIV>
@@ -400,7 +444,7 @@ const TaskForm = ({
                 <FormField
                   mobile
                   zIndex="10000"
-                  disableBorder={!editMode}
+                  disableBorder={!editMode.assignee}
                   fieldType="searchField"
                   isSearchable={true}
                   name="assignee"
@@ -420,7 +464,13 @@ const TaskForm = ({
                   }}
                   clickType="assignee"
                   onUpdate={() => {}}
-                  onBlur={validateForm}
+                  onMenuOpen={() => {
+                    enableEditMode('assignee')
+                  }}
+                  onBlur={() => {
+                    validateForm()
+                    enableEditMode('')
+                  }}
                 />
               </span>
             ) : (
@@ -429,98 +479,107 @@ const TaskForm = ({
               </DarkText>
             )}
           </DIV>
-          <DIV display="flex" justifyContent="center" alignItems="center" width="20%">
+          <DIV display="flex" justifyContent="center" alignItems="center" width="20%" margin="20px 0px 0px 0px">
             {taskDetail?.comments?.length ? (
               <>
                 <Chat width="18" height="18" />
-                <DarkText fontSize="18px" color="#0057FF" lineHeight="normal" paddingLeft="5px" topPadding>
-                  {taskDetail?.comments?.length} Comment
+                <DarkText
+                  fontSize="18px"
+                  color="#0057FF"
+                  lineHeight="normal"
+                  paddingLeft="5px"
+                  padding="10px 0px 0px 0px">
+                  {taskDetail?.comments?.length > 10 ? '10+' : taskDetail?.comments?.length} Comment
                 </DarkText>
               </>
             ) : (
               ''
             )}
           </DIV>
-          <DIV display="flex" alignItems="center" padding="0px 0px 0px 70px" width="40%">
-            <TitleText
-              color="#000"
-              titleFontSize="16px"
-              width="50px"
-              lineHeight="normal"
-              light
-              paddingTop="20px"
-              paddingRight="5px">
-              tags:
-            </TitleText>
+          <DIV display="flex" alignItems="center" padding="0px 0px 0px 0px" width="40%">
+            <DIV display="flex" alignItems="center">
+              <TitleText
+                color="#000"
+                titleFontSize="16px"
+                width="50px"
+                lineHeight="normal"
+                light
+                paddingTop="20px"
+                paddingRight="5px">
+                Tags:
+              </TitleText>
 
-            {!tagShow && (
-              <div
-                style={{
-                  width: '17px',
-                  height: '17px',
-                  background: '#D9D9D9',
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginRight: '10px',
-                  marginTop: '5px'
-                }}
-                onClick={() => {
-                  if (editMode) setTagShow(true)
-                }}>
-                <Plus width="17" height="17" id="add_task_icon" />
-              </div>
-            )}
-            {tagShow && editMode && (
-              <FormField
-                zIndexUnset
-                fieldType="input"
-                borderRadius="0px"
-                placeholder="Tags"
-                border="2px solid #CED4DA"
-                fontSize="14px"
-                name="tags"
-                disabled={userRole === 1}
-                width="160px"
-                margin="0px 0px 0px 0px"
-                height="30px  !important"
-                value={tag}
-                maxLength="30"
-                onBlur={() => {
-                  setTagShow(false)
-                }}
-                onChange={e => {
-                  setTag(e?.target?.value)
-                }}
-                handleEnterKey={e => {
-                  if (e.keyCode === 13 && e.shiftKey === false && taskForm?.tags?.length < 5) {
-                    updateForm('tags', [...taskForm?.tags, e?.target?.value])
-                    setTag('')
-                  }
-                }}
-                onUpdate={() => {}}
-              />
-            )}
+              {!editMode?.tag && userRole !== 1 && (
+                <div
+                  style={{
+                    width: '17px',
+                    height: '17px',
+                    background: '#D9D9D9',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginRight: '10px',
+                    marginTop: '5px'
+                  }}
+                  onClick={() => {
+                    enableEditMode('tag')
+                    setTimeout(() => {
+                      document.getElementById('tags').focus()
+                    }, 1)
+                  }}>
+                  <Plus width="17" height="17" id="add_task_icon" />
+                </div>
+              )}
+              {editMode?.tag && (
+                <FormField
+                  zIndexUnset
+                  fieldType="input"
+                  placeholder="Tags"
+                  fontSize="14px"
+                  name="tags"
+                  disabled={userRole === 1}
+                  width="160px"
+                  margin="0px 0px 0px 20px"
+                  height="30px  !important"
+                  value={tag}
+                  maxLength="30"
+                  onBlur={() => {
+                    enableEditMode('')
+                  }}
+                  onChange={e => {
+                    setTag(e?.target?.value)
+                  }}
+                  handleEnterKey={e => {
+                    if (e.keyCode === 13 && e.shiftKey === false && taskForm?.tags?.length < 5) {
+                      updateForm('tags', [...taskForm?.tags, e?.target?.value])
+                      setTag('')
+                    }
+                  }}
+                  onUpdate={() => {}}
+                />
+              )}
+            </DIV>
+            <DIV
+              display="flex"
+              alignItems="center"
+              margin="10px 0px 0px 10px"
+              overflow="scroll"
+              width={editMode.tag ? '40%' : '100%'}>
+              {taskForm.tags.map(tag => {
+                return (
+                  <Badge key={tag} small>
+                    {ConverterUtils.capitalize(`${tag}`)}
+                    <AiOutlineClose
+                      style={{ width: '14px', height: '14px', marginLeft: '10px' }}
+                      onClick={() => {
+                        removeTag(tag)
+                      }}
+                    />
+                  </Badge>
+                )
+              })}
+            </DIV>
           </DIV>
         </DIV>
-        {taskForm?.tags?.length ? (
-          <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
-            {taskForm.tags.map(tag => {
-              return (
-                <Badge key={tag} small>
-                  {ConverterUtils.capitalize(`${tag}`)}
-                  <AiOutlineClose
-                    style={{ width: '14px', height: '14px', marginLeft: '10px' }}
-                    onClick={() => {
-                      removeTag(tag)
-                    }}
-                  />
-                </Badge>
-              )
-            })}
-          </DIV>
-        ) : (
-          ''
-        )}
 
         <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
           <DIV width="50%" display="flex" margin="0px 50px 0px 0px">
@@ -543,8 +602,10 @@ const TaskForm = ({
                 fieldType="searchField"
                 isSearchable={true}
                 name="priority"
+                color="#000000"
                 disabled={userRole === 1}
-                placeholder="Select priority"
+                disableBorder={!editMode.priority}
+                placeholder="Select Priority"
                 fontSize="14px"
                 width="160px"
                 height={taskForm?.priority ? '15px' : '36px'}
@@ -554,37 +615,48 @@ const TaskForm = ({
                 value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
                 clickType="priority"
                 onUpdate={() => {}}
+                onMenuOpen={() => {
+                  enableEditMode('priority')
+                }}
+                onBlur={() => {
+                  validateForm()
+                  enableEditMode('')
+                }}
               />
             ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px">
+              <DarkText fontSize="18px" lineHeight="21.09px" color="#000000" topMargin="10px" f>
                 {taskPriorityOptions?.find(priority => priority.value === taskDetail?.priority)?.label || 'priority'}
               </DarkText>
             )}
           </DIV>
-          <DIV width="50%" display="flex" alignItems="center" padding="0px 0px 0px 85px">
-            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="130px" paddingTop="20px">
+          <DIV width="50%" display="flex" alignItems="center" padding="0px 0px 0px 90px">
+            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="100px" paddingTop="15px">
               Story Points:
             </TitleText>
-            {editMode ? (
-              <FormField
-                zIndexUnset
-                fieldType="input"
-                borderRadius="0px"
-                border="2px solid #CED4DA"
-                fontSize="14px"
-                name="storyPoints"
-                disabled={userRole === 1}
-                width="160px"
-                margin="0px 0px 0px 0px"
-                height="30px  !important"
-                onChange={e => updateForm('storyPoints', e?.target?.value)}
-                value={taskForm?.storyPoints}
-                onUpdate={() => {}}></FormField>
-            ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="20px">
-                {taskDetail?.storyPoints || 0}
-              </DarkText>
-            )}
+            <FormField
+              zIndexUnset
+              fieldType="input"
+              fontSize="18px"
+              lineHeight="21.09px"
+              color="#000000"
+              name="storyPoints"
+              noMargin
+              disableBorder={!editMode.storyPoints}
+              disabled={userRole === 1}
+              width="160px"
+              height="30px  !important"
+              onChange={e => updateForm('storyPoints', e?.target?.value)}
+              value={taskForm?.storyPoints}
+              onUpdate={() => {}}
+              onClick={() => {
+                enableEditMode('storyPoints')
+              }}
+              onBlur={() => {
+                validateForm()
+                enableEditMode('')
+              }}
+              style={{ color: '#000000' }}
+            />
           </DIV>
         </DIV>
         <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
@@ -605,9 +677,10 @@ const TaskForm = ({
                 mobile
                 required
                 fieldType="searchField"
+                disableBorder={!editMode.status}
                 isSearchable={true}
                 name="status"
-                placeholder="Select priority"
+                placeholder="Select Status"
                 fontSize="14px"
                 width="160px"
                 height={taskForm?.status ? '15px' : '36px'}
@@ -616,31 +689,30 @@ const TaskForm = ({
                 value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
                 clickType="status"
                 onUpdate={() => {}}
+                onMenuOpen={() => {
+                  enableEditMode('status')
+                }}
+                onBlur={() => {
+                  validateForm()
+                  enableEditMode('')
+                }}
               />
             ) : (
-              <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px">
+              <DarkText fontSize="18px" lineHeight="21.09px" color="##000000" topMargin="10px">
                 {taskStatusOptions?.find(status => status.value === taskDetail?.status)?.label}
               </DarkText>
             )}
           </DIV>
         </DIV>
-        <DIV display="flex" margin="20px 0px 0px 0px">
-          {!editMode && (
-            <>
-              <DIV>
-                <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="70px">
-                  Description:
-                </TitleText>
-                <DarkText style={{ paddingLeft: '10px' }}>{taskDetail?.description}</DarkText>
-              </DIV>
-            </>
-          )}
-          {editMode && (
+        <DIV display="flex" flexDirection="column" flexFlow="column" margin="20px 0px 0px 0px">
+          <TEXT color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="100px">
+            Description:
+          </TEXT>
+          {editMode?.description || !taskForm?.description ? (
             <FormField
-              disableBorder={!editMode}
+              disableBorder={!editMode.description && taskForm?.description}
               fieldType="input"
-              border="2px solid #CED4DA"
-              margin
+              margin="10px 0px 0px 0px"
               fontSize="14px"
               width="100%"
               name="description"
@@ -648,103 +720,135 @@ const TaskForm = ({
               display="inline !important"
               textarea
               onChange={e => updateForm('description', e?.target?.value)}
-              value={taskForm?.description}>
-              Description
-            </FormField>
+              value={taskForm?.description}
+              onBlur={() => {
+                enableEditMode('')
+              }}
+            />
+          ) : (
+            <DarkText
+              fontSize="18px"
+              lineHeight="21.09px"
+              color="#000000"
+              topMargin="10px"
+              style={{ paddingLeft: '10px' }}
+              onClick={() => {
+                enableEditMode('description')
+              }}>
+              {taskForm?.description}
+            </DarkText>
           )}
         </DIV>
-        <DIV margin="20px 0px 0px 0px" alignItems="flex-end" justifyContent="flex-end" width="100%">
-          <FormField
-            fieldType="input"
-            border="2px solid #CED4DA"
-            fontSize="14px"
-            placeholder="Leave a comment..."
-            noMargin
-            height="auto"
-            name="comment"
-            textarea
-            width="100%"
-            display="inline !important"
-            onChange={e => setComment({ ...newComment, comment: e.target.value })}
-            value={newComment.comment}>
-            Discussion
-          </FormField>
-        </DIV>
-      </form>
-      {comments &&
-        comments.length > 0 &&
-        comments.map((comment, index) => {
-          const userData = getCommentUserData(comment)
-          return (
-            <WhiteCard
-              borderColor="transparent"
-              unset
-              key={comment?._id}
+        {selectedTaskId && (
+          <DIV margin="20px 0px 20px 0px" alignItems="flex-end" justifyContent="flex-end" width="100%">
+            <FormField
+              fieldType="input"
+              fontSize="14px"
+              placeholder="Leave a comment..."
               noMargin
-              padding={index === 0 ? '30px 0px 0px 0px' : '0px'}>
-              <Grid2 block margin="0px">
-                <Span margin="0px 0px 10px 0px">
-                  {userData?.profilePic && <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />}
-                  <Span space>
-                    <DarkText noMargin>
-                      {userData?.name || ''}
-                      <span style={{ paddingLeft: '20px' }}>
-                        {ValidationUtils.formatDateWithDate(comment?.updatedAt)} -{' '}
-                        {ValidationUtils.getTimeFormated(comment?.updatedAt)}
-                      </span>
-                    </DarkText>
+              height="auto"
+              name="comment"
+              textarea
+              width="100%"
+              display="inline !important"
+              onChange={e => setComment({ ...newComment, comment: e.target.value })}
+              value={newComment.comment}>
+              Discussion
+            </FormField>
+          </DIV>
+        )}
+        {selectedTaskId &&
+          comments &&
+          comments.length > 0 &&
+          comments.map(comment => {
+            const userData = getCommentUserData(comment)
+            return (
+              <WhiteCard
+                borderColor="#CED4DA"
+                borderRadius="4px"
+                unset
+                key={comment?._id}
+                half
+                padding={'10px'}
+                onMouseOver={() => {
+                  if (hoverCommentId !== comment?._id) setHoverCommentId(comment?._id)
+                }}
+                onMouseOut={() => {
+                  if (hoverCommentId !== comment?._id) setHoverCommentId(null)
+                }}>
+                <Grid2 block margin="0px">
+                  <Span margin="0px 0px 10px 0px">
+                    {userData?.profilePic && (
+                      <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
+                    )}
+                    <Span space>
+                      <DarkText
+                        noMargin
+                        fontSize="18px"
+                        color="#000000"
+                        lineHeight="21.09px"
+                        paddingLeft
+                        smallPadding="10px">
+                        {userData?.name || ''}
+                        <span
+                          style={{ fontSize: '14px', color: '#9B9B9B', lineHeight: '16.41px', paddingLeft: '20px' }}>
+                          {ValidationUtils.formatDateWithDate(comment?.updatedAt)} -{' '}
+                          {ValidationUtils.getTimeFormated(comment?.updatedAt)}
+                        </span>
+                      </DarkText>
+                    </Span>
                   </Span>
-                </Span>
-                {comment?.userId === userId && (
-                  <DIV
-                    width="100%"
-                    display="flex"
-                    alignItems="flex-end"
-                    justifyContent="flex-end"
-                    margin="20px 0px 0px 0px"
-                    onClick={() => {
-                      setCommentId(comment?._id)
-                    }}>
-                    <EditIcon width="12px" height="12px" color="#585858" />
-                  </DIV>
-                )}
-              </Grid2>
-              {commentId === comment?._id ? (
-                <DIV width="100%" display="flex" flexDirection="column" alignItems="flex-end">
-                  <FormField
-                    fieldType="input"
-                    fontSize="14px"
-                    placeholder="Leave a comment..."
-                    noMargin
-                    height="auto"
-                    textarea
-                    width="100%"
-                    display="inline !important"
-                    onChange={e => {
-                      setComments(prevArray =>
-                        prevArray.map(item =>
-                          item._id === comment?._id ? { ...item, comment: e?.target.value } : item
+                  {hoverCommentId === comment?._id && comment?.userId === userId && (
+                    <DIV
+                      width="100%"
+                      display="flex"
+                      justifyContent="flex-end"
+                      onClick={() => {
+                        setCommentId(comment?._id)
+                      }}>
+                      <EditIcon width="12px" height="12px" color="#585858" />
+                    </DIV>
+                  )}
+                </Grid2>
+                {commentId === comment?._id ? (
+                  <DIV width="100%" display="flex" flexDirection="column" alignItems="flex-end">
+                    <FormField
+                      fieldType="input"
+                      fontSize="14px"
+                      placeholder="Leave a comment..."
+                      noMargin
+                      height="auto"
+                      textarea
+                      width="100%"
+                      display="inline !important"
+                      onChange={e => {
+                        setComments(prevArray =>
+                          prevArray.map(item =>
+                            item._id === comment?._id ? { ...item, comment: e?.target.value } : item
+                          )
                         )
-                      )
-                    }}
-                    value={comment?.comment}></FormField>
+                      }}
+                      value={comment?.comment}></FormField>
 
-                  <DIV
-                    onClick={async e => {
-                      e?.preventDefault()
-                      await updateComment(taskDetail?._id, comment._id, comment)
-                      setCommentId('')
-                    }}>
-                    <Icon name="send" color="#173B7F" width="24" height="24" />
+                    <DIV
+                      onClick={async e => {
+                        e?.preventDefault()
+                        await updateComment(taskDetail?._id, comment._id, comment)
+                        setCommentId('')
+                      }}>
+                      <Icon name="send" color="#173B7F" width="24" height="24" />
+                    </DIV>
                   </DIV>
-                </DIV>
-              ) : (
-                <DarkText marginLeft="30px">{comment?.comment}</DarkText>
-              )}
-              {comment?.img && <Image src={comment?.img} />}
-            </WhiteCard>
-          )
-        })}
+                ) : (
+                  <DarkText marginLeft="40px" fontSize="14px" lineHeight="16.41px" color="#000000">
+                    {comment?.comment}
+                  </DarkText>
+                )}
+                {comment?.img && <Image src={comment?.img} />}
+              </WhiteCard>
+            )
+          })}
+      </form>
     </>
   )
 }

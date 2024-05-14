@@ -46,7 +46,7 @@ const Flex = styled.div`
 
 const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
   const router = useRouter()
-  const { proejct } = router.query
+  const { project } = router.query
 
   const [isOpen, setOpen] = useState(false)
 
@@ -69,7 +69,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
       const inviteFreelancer = {
         userInvited: userId,
         freelancer: user.id,
-        business: proejct
+        business: project
       }
       dispatch(createUserInvitation(inviteFreelancer, filter))
     }
@@ -87,14 +87,14 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
     <Container includeRate={includeRate}>
       <Left>
         <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
-        {proejct && (
+        {project && (
           <Button
             margin="20px 0px"
-            type={user?.invites?.business === proejct ? 'grey' : 'default'}
+            type={user?.invites?.business === project ? 'grey' : 'default'}
             noBorder
-            disabled={user?.invites?.business === proejct}
+            disabled={user?.invites?.business === project}
             onClick={handleUserInvite}>
-            {user?.invites?.business === proejct ? 'Invited' : 'Invite'}
+            {user?.invites?.business === project ? 'Invited' : 'Invite'}
           </Button>
         )}
       </Left>
@@ -149,7 +149,9 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         )}
       </Absolute>
 
-      {isOpen && <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} />}
+      {isOpen && (
+        <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} user={user} />
+      )}
     </Container>
   )
 }

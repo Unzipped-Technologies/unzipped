@@ -14,6 +14,7 @@ const TaskHours = require('../models/TaskHours')
 const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const CloudinaryUploadHelper = require('./file')
+const businessDetail = require('../models/BusinessDetails')
 
 const createBusiness = async (data, id, files = []) => {
   // upload file to cloudinary platform
@@ -68,7 +69,7 @@ const createBusiness = async (data, id, files = []) => {
 }
 
 const updateBusiness = async data => {
-  return await business.findByIdAndUpdate(data.listId, { $set: { ...data } })
+  return await business.findByIdAndUpdate(data.listId, { $set: { ...data } }).populate('userId')
 }
 
 const deleteBusiness = async (businessId, userId) => {
@@ -224,6 +225,9 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           userId: 1,
           departments: 1,
           projectImagesUrl: 1,
+          questionsToAsk: 1,
+          objectives: 1,
+          goals: 1,
           requiredSkills: 1,
           projectBudgetType: 1
         }
@@ -256,6 +260,25 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             }
           ],
           as: 'projectImages'
+        }
+      },
+      {
+        $lookup: {
+          from: 'questions',
+          let: { questionId: '$questionsToAsk' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$questionId'] }
+              }
+            },
+            {
+              $project: {
+                question: 1
+              }
+            }
+          ],
+          as: 'questions'
         }
       },
       {
@@ -520,7 +543,7 @@ const createBusinessDetails = async (data, id) => {
 }
 
 const getBusinessDetailsByUserId = async id => {
-  return await businessDetail.findOne({ userId: id })
+  return await businessDetail.findOne({ userId: id }).select('name type businessPhone taxId userId _id')
 }
 
 const updateBusinessDetails = async (data, id) => {

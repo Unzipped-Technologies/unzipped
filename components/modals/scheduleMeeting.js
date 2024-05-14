@@ -11,13 +11,13 @@ import Grid from '@mui/material/Grid'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import dayjs from 'dayjs'
-const utc = require('dayjs/plugin/utc');
-const timezone = require('dayjs/plugin/timezone');
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
 import { createMeeting } from '../../redux/Meeting/actions'
 import socket from '../../components/sockets/index'
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
+dayjs.extend(utc)
+dayjs.extend(timezone)
 import { useDispatch, useSelector } from 'react-redux'
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -43,9 +43,13 @@ const style = {
     width: '95%',
     overflow: 'scroll'
   }
-
 }
-export default function ScheduleMeetingModal({ scheduleInterviewModal, handleScheduleInterviewModal, receiver, setScheduleInterviewModal }) {
+export default function ScheduleMeetingModal({
+  scheduleInterviewModal,
+  handleScheduleInterviewModal,
+  receiver,
+  setScheduleInterviewModal
+}) {
   const dispatch = useDispatch()
   const { Auth, Loading } = useSelector(state => state)
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()))
@@ -67,7 +71,6 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
   const dayTime = generateTimeSlots(selectedDate)
 
   const handleSelectedTime = time => {
-
     if (updatedSelectedTime.has(time)) {
       updatedSelectedTime.delete(time)
     } else {
@@ -82,51 +85,47 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
   }
 
   const convertToUserTimeZone = dateString => {
-    console.log('date_string', dateString, typeof dateString);
+    console.log('date_string', dateString, typeof dateString)
 
-    const userDate = dayjs(dateString, { format: 'YYYY-MM-DD HH:mm:ss A' });
-    console.log('userDate:', userDate);
+    const userDate = dayjs(dateString, { format: 'YYYY-MM-DD HH:mm:ss A' })
+    console.log('userDate:', userDate)
 
-    const userTimeZone = 'Asia/Karachi';
-    const convertedDate = userDate.tz(userTimeZone);
+    const userTimeZone = 'Asia/Karachi'
+    const convertedDate = userDate.tz(userTimeZone)
 
-    return convertedDate.toDate();
+    return convertedDate.toDate()
   }
 
-
   const handleScheduleMeeting = () => {
-
-    let meetingSlots = (Array.from(updatedSelectedTime))
-      .map(time => {
-        return {
-          Date: getDate(time),
-          Time: getTime(time)
-        }
-      });
+    let meetingSlots = Array.from(updatedSelectedTime).map(time => {
+      return {
+        Date: getDate(time),
+        Time: getTime(time)
+      }
+    })
 
     console.log('receiver', receiver)
 
     const scheduleMeetingObj = {
       primaryTime: {
-        Date: getDate((Array.from(updatedSelectedTime))[0]),
-        Time: getTime((Array.from(updatedSelectedTime))[0])
-
+        Date: getDate(Array.from(updatedSelectedTime)[0]),
+        Time: getTime(Array.from(updatedSelectedTime)[0])
       },
       secondaryTimes: meetingSlots.slice(1),
       senderId: Auth?.user?._id,
       receiverId: receiver?.userId?._id
     }
 
-    socket.emit("createMeeting", scheduleMeetingObj)
-    setScheduleInterviewModal(false);
+    socket.emit('createMeeting', scheduleMeetingObj)
+    setScheduleInterviewModal(false)
 
     // dispatch(createMeeting(scheduleMeetingObj, Auth.token))
   }
 
-  const getDate = (val) => {
+  const getDate = val => {
     if (val) {
-      const [datePart, timePart] = val.split(" ");
-      const slpitDateString = datePart.replace(/:/g, '-');// + 'T' + timePart + 'Z';
+      const [datePart, timePart] = val.split(' ')
+      const slpitDateString = datePart.replace(/:/g, '-') // + 'T' + timePart + 'Z';
       // const timeString = timePart.split(/:/g);
       // let formattedDate = dayjs(datePart).hour(timeString[0]).minute(timeString[1]).second(timeString[2])
       // console.log('converted_date', formattedDate)
@@ -134,11 +133,11 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
     }
   }
 
-  const getTime = (time) => {
+  const getTime = time => {
     if (time) {
-      const [datePart, timePart, hoursPart] = time.split(" ");
-      const timeFormat = timePart + ' ' + hoursPart;
-      return timeFormat;
+      const [datePart, timePart, hoursPart] = time.split(' ')
+      const timeFormat = timePart + ' ' + hoursPart
+      return timeFormat
     }
   }
 
@@ -151,7 +150,7 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
         aria-describedby="modal-modal-description">
         <Box sx={style}>
           <Grid container paddingLeft={2} spacing={2}>
-            <Grid sm={12} md={12}>
+            <Grid item sm={12} md={12}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 Request a meeting
               </Typography>
@@ -160,7 +159,7 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
                 to accept the request. Select up to 5 times for maximum flexibility.
               </Typography>
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateCalendar
                   value={selectedDate}
@@ -170,7 +169,7 @@ export default function ScheduleMeetingModal({ scheduleInterviewModal, handleSch
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid container xs={12} md={6} gap={2} justifyContent={{ xs: 'center', md: 'space-between' }}>
+            <Grid container item xs={12} md={6} gap={2} justifyContent={{ xs: 'center', md: 'space-between' }}>
               {dayTime.map((time, index) => (
                 <Button
                   key={index}

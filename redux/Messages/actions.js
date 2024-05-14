@@ -6,7 +6,10 @@ import {
   UPDATE_CONVERSATION_STATUS,
   UPDATE_CONVERSATION_MESSAGE,
   SET_COUNT_ZERO,
-  RESET_MESSAGE_STORE
+  RESET_MESSAGE_STORE,
+  SET_USER_ID_FOR_CHAT,
+  CHECK_CONVERSATIONS,
+  CONVERSATION_ERROR
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -80,6 +83,29 @@ export const updateChatStatus = (type, status, id, token) => async (dispatch, ge
     })
 }
 
+export const checkUserConversation = data => async (dispatch, getState) => {
+  dispatch({
+    type: MESSAGES_LOADING
+  })
+  const response = await axios
+    .post(`/api/message/check-conversation`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: CHECK_CONVERSATIONS,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: CONVERSATION_ERROR,
+        payload: err.response
+      })
+      return err
+    })
+  return response
+}
+
 export const handleUnreadMessages = message => async dispatch => {
   dispatch({
     type: UPDATE_CONVERSATION_MESSAGE,
@@ -97,6 +123,12 @@ export const setCountToZero = data => async dispatch => {
 export const resetMessageStore = data => async dispatch => {
   dispatch({
     type: RESET_MESSAGE_STORE,
+    payload: data
+  })
+}
+export const setUserIdForChat = data => async dispatch => {
+  dispatch({
+    type: SET_USER_ID_FOR_CHAT,
     payload: data
   })
 }
