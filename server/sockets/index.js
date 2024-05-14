@@ -189,7 +189,7 @@ module.exports = createSocket = server => {
         }
       )
       const participantCount =
-        res?.participants?.find(participant => participant.userId._id === conversation.receiverId)?.unreadCount ?? 0
+        res?.participants?.find(participant => participant?.userId?._id === conversation?.receiverId)?.unreadCount ?? 0
 
       socket.userId = conversation.receiverId
       if (res?._id) {

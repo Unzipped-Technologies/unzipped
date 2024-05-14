@@ -18,7 +18,9 @@ import {
   createTempFile,
   updateChatStatus,
   handleUnreadMessages,
-  setCountToZero
+  setCountToZero,
+  setUserIdForChat,
+  checkUserConversation
 } from '../../redux/actions'
 
 const MobileDisplayBox = styled.div`
@@ -64,7 +66,10 @@ const Inbox = ({
   createTempFile,
   updateChatStatus,
   handleUnreadMessages,
-  setCountToZero
+  setCountToZero,
+  setUserIdForChat,
+  selectedUserId,
+  checkUserConversation
 }) => {
   const [onlineUsers, setOnlineUsers] = useState([])
   const access = token.access_token || cookie
@@ -100,6 +105,17 @@ const Inbox = ({
     }
   }, [])
 
+  useEffect(async () => {
+    if (selectedUserId !== null) {
+      await checkUserConversation({
+        freelancerId: selectedUserId,
+        clientId: user?._id
+      })
+      await getConversationList(form, access)
+      await setUserIdForChat(null)
+    }
+  }, [selectedUserId])
+
   useEffect(() => {
     socket.on('refreshConversationList', () => {
       getConversationList(form, access)
@@ -121,8 +137,14 @@ const Inbox = ({
   }, [])
 
   useEffect(() => {
-    if (conversations.length && !selectedConversation) {
-      const conversationId = conversations[0]?._id
+    let conversationId = null
+    if (selectedUserId) {
+      conversationId = conversations.find(obj =>
+        obj.participants.some(participant => participant.userId?._id === selectedUserId)
+      )?._id
+      openConversation(conversationId)
+    } else if (conversations.length && !selectedConversation) {
+      conversationId = conversations[0]?._id
 
       openConversation(conversationId)
     } else {
@@ -135,9 +157,11 @@ const Inbox = ({
   }
 
   const openConversation = async id => {
-    setConversationId(id)
-    setMessageLimit(10)
-    await selectConversation(id, 10)
+    if (id) {
+      setConversationId(id)
+      setMessageLimit(10)
+      await selectConversation(id, 10)
+    }
   }
 
   const handleMute = status => {
@@ -190,7 +214,6 @@ const Inbox = ({
 
           <Container>
             <ConversationContainer
-              isMobile={isMobile}
               selectedConversation={selectedConversation}
               conversations={conversations}
               userEmail={user.email}
@@ -252,7 +275,8 @@ const mapStateToProps = state => {
     conversations: state.Messages?.conversations,
     selectedConversation: state.Messages?.selectedConversation,
     messagesCount: state.Messages?.messagesCount,
-    selectedConversationId: state.Messages?.conversationId
+    selectedConversationId: state.Messages?.conversationId,
+    selectedUserId: state.Messages?.selectedUserId
   }
 }
 
@@ -264,7 +288,9 @@ const mapDispatchToProps = dispatch => {
     createTempFile: bindActionCreators(createTempFile, dispatch),
     updateChatStatus: bindActionCreators(updateChatStatus, dispatch),
     handleUnreadMessages: bindActionCreators(handleUnreadMessages, dispatch),
-    setCountToZero: bindActionCreators(setCountToZero, dispatch)
+    setCountToZero: bindActionCreators(setCountToZero, dispatch),
+    setUserIdForChat: bindActionCreators(setUserIdForChat, dispatch),
+    checkUserConversation: bindActionCreators(checkUserConversation, dispatch)
   }
 }
 
