@@ -724,18 +724,39 @@ const retrieveStripeBalance = async () => {
 const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', userId) => {
   try {
     // Create a payout to the connected account's external bank account
-    const payout = await stripe.payouts.create(
-      {
-        amount: amount,
-        currency: currency
-      },
-      {
-        stripeAccount: accountId // Specify the connected account ID
+    const accountInfo = await retrieveExternalBankAccounts(account.id);
+    const payout = await stripe.payouts.create({
+      amount: amount,
+      currency: currency,
+    }, {
+      stripeAccount: accountId, // Specify the connected account ID
+    });
+    const user = await UserModel.findById(userId);
+    if (payout
+      &&
+      accountInfo &&
+      accountInfo?.data &&
+      accountInfo?.data?.length > 0 &&
+      user
+    ) {
+      const fundsWithdrawMailObj = {
+        to: user?.email,
+        templateId: "d-ecd4393f48de4496a511c74220631ac3",
+        dynamicTemplateData: {
+          firstName: user?.FirstName ?? '',
+          lastName:  user?.LastName ?? '',
+          amount,
+          withdrawDate: new Date().toLocaleDateString(),
+          partialPaymentDetails:  `**** **** ${accountInfo?.data[0]?.last4}`,
+          supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+          withdrawLink: `${keys.redirectDomain}/dashboard/withdrawal`,
+          transactionHstoryLink: `${keys.redirectDomain}/transaction-history`,
+        }
       }
-    )
+      await Mailer.sendInviteMail(fundsWithdrawMailObj);
+    }
 
-    console.log('Payout successful:', payout)
-    return payout
+    return payout;
   } catch (error) {
     console.error('Payout failed:', error)
     throw error
@@ -784,15 +805,20 @@ const createVerificationSession = async customerId => {
 const confirmVerificationSession = async (userId, status) => {
   try {
     if (userId && status && status === 'verified') {
-      const user = await UserModel.findById(userId)
-      if (user && user.isIdentityVerified !== 'SUCCESS') {
-        const updateUser = await UserModel.updateOne(
-          { _id: userId },
-          { $set: { isIdentityVerified: 'SUCCESS' } },
-          { new: true }
-        )
-        if (updateUser) {
-          return true
+      const user = await UserModel.findById(userId);
+      if (user && user.isIdentityVerified !== "SUCCESS") {
+        const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
+        if (updateUser && updateUser?.email) {
+          await Mailer.sendInviteMail({
+            to: updateUser?.email,
+            templateId: 'd-53bdcde93b8e42edbc7d77d10322f3cc',
+            dynamicTemplateData: {
+              firstName: updateUser?.FirstName ?? '',
+              lastName: updateUser?.LastName ?? '',
+              supportLink: `${keys.redirectDomain}/wiki/getting-started`
+            }
+          })
+          return true;
         } else {
           const updateUser = await UserModel.updateOne(
             { _id: userId },
