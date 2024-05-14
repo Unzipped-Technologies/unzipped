@@ -89,7 +89,7 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
-const Panel = ({ user: userProps, success, passwordChanged }) => {
+const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) => {
   const { user } = useSelector(state => state.Auth)
 
   const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
@@ -101,6 +101,14 @@ const Panel = ({ user: userProps, success, passwordChanged }) => {
   const hideAlert = () => {
     if (success) hideSuccessAlert()
     if (passwordChanged) hidePasswordAlert()
+    if (calenderSuccess) hideCalenderSuccessAlert()
+  }
+
+  const hideCalenderSuccessAlert = () => {
+    dispatch({
+      type: 'HIDE_CALENDER_SUCCESS_NOTIFICATION',
+      payload: null
+    })
   }
 
   const hideSuccessAlert = () => {
@@ -116,9 +124,10 @@ const Panel = ({ user: userProps, success, passwordChanged }) => {
     })
   }
   setTimeout(() => {
-    if (success || passwordChanged) {
+    if (success || passwordChanged || calenderSuccess) {
       hideSuccessAlert()
       hidePasswordAlert()
+      hideCalenderSuccessAlert()
     }
   }, 5000)
 
@@ -199,6 +208,48 @@ const Panel = ({ user: userProps, success, passwordChanged }) => {
             </Absolute>
           </WhiteCard>
         )}
+        {calenderSuccess && (
+          <WhiteCard
+            row
+            style={{
+              borderRadius: '4px',
+              border: '1px solid #8EDE64',
+              background: 'rgba(142, 222, 100, 0.10)'
+            }}>
+            <DarkText noMargin>You have successfully setup the calendar!</DarkText>
+            <Absolute>
+              <Dismiss
+                onClick={() => {
+                  hideCalenderSuccessAlert()
+                }}
+                padding="20px 0px 0px 200px"
+                margin="20px 0px 20px 20px">
+                Dismiss
+              </Dismiss>
+            </Absolute>
+          </WhiteCard>
+        )}
+        {calenderSuccess === false && (
+          <WhiteCard
+            row
+            style={{
+              borderRadius: '4px',
+              border: '1px solid #DE4E4E',
+              background: '#FCEDED'
+            }}>
+            <DarkText noMargin>Failed to set up your calendar. Please try again later!</DarkText>
+            <Absolute>
+              <Dismiss
+                onClick={() => {
+                  hideCalenderSuccessAlert()
+                }}
+                padding="20px 0px 0px 200px"
+                margin="20px 0px 20px 20px">
+                Dismiss
+              </Dismiss>
+            </Absolute>
+          </WhiteCard>
+        )}
         <TitleText size={18}>Set up your account</TitleText>
         <ProgressBarContainer>
           <ProgressBarFiller percentage={trackProgress} padding={'0px'}>
@@ -270,6 +321,7 @@ const Panel = ({ user: userProps, success, passwordChanged }) => {
 
 const mapStateToProps = state => {
   return {
+    calenderSuccess: state?.CalenderSetting?.success,
     success: state?.ProjectApplications?.success,
     passwordChanged: state?.Auth?.passwordChanged
   }
