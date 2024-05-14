@@ -157,7 +157,8 @@ const ProjectDetail = ({
   getBusinessById,
   createProjectApplication,
   role,
-  loading
+  loading,
+  userId
 }) => {
   const [filterOpenClose, setFilterOpenClose] = useState(false)
 
@@ -178,6 +179,7 @@ const ProjectDetail = ({
     await createProjectApplication({
       projectId: id,
       freelancerId: freelancerId,
+      userId,
       ...data
     })
   }
@@ -236,7 +238,8 @@ const mapStateToProps = state => {
     freelancerId: state?.Auth?.user?.freelancers,
     role: state?.Auth?.user?.role,
     success: state?.ProjectApplications?.success,
-    loading: state.Loading.loading
+    loading: state.Loading.loading,
+    userId: state?.Auth?.user?._id
   }
 }
 
