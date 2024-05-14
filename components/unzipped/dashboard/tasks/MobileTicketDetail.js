@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
-import { useRouter } from 'next/router'
-
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
+
 import Nav from '../../header'
 import MobileTaskForm from './MobileTaskForm'
 import { getTaskById, resetStoryForm } from '../../../../redux/actions'
+
 const MobileTaskDetail = ({ getTaskById, detail, resetStoryForm }) => {
   const router = useRouter()
 

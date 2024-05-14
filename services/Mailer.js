@@ -175,7 +175,6 @@ const getTemplateDetails = (templateName, userName, existingUser) => {
   }
 }
 
-
 module.exports = {
   send,
   randNum,

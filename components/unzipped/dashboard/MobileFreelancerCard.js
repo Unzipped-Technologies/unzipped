@@ -6,6 +6,8 @@ import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUserInvitation } from '../../../redux/actions'
 import Button from '../../ui/Button'
+import { Icon } from '../../ui'
+import ListModal from '../ListModal'
 
 const UserSkills = styled.div`
   ::-webkit-scrollbar {
@@ -31,6 +33,17 @@ const SelectInputStyled = styled.select`
   font-size: 15px;
 `
 
+const ButtonTwo = styled.div`
+  margin-left: auto;
+  margin-right: 20px;
+  transform: rotate(90deg);
+  outline: none;
+  border: none;
+  left: 10px;
+  position: relative;
+  padding-left: 10px;
+`
+
 function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afterInvitation }) {
   const router = useRouter()
   const { project } = router.query
@@ -41,6 +54,8 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
   const accessToken = useSelector(state => state.Auth.token)
 
   const listObj = userLists?.find(list => list.name === 'Recently Viewed')
+
+  const [isOpen, setOpen] = useState(false)
 
   const redirectToProfile = () => {
     if (listObj) {
@@ -63,6 +78,14 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
     }
   }
 
+  const handlOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   return (
     <div className="bg-" style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}>
       <div className="px-3 py-2">
@@ -82,6 +105,11 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
             </p>
             <p className="mb-0">{user?.country}</p>
           </div>
+          {userId && (
+            <ButtonTwo onClick={handlOpen}>
+              <Icon name="actionIcon" color="#333" />
+            </ButtonTwo>
+          )}
         </div>
         <div className="d-flex justify-content-between  align-items-center">
           {project && (
@@ -97,7 +125,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
           <div className="d-flex  gap-4">
             <span
               style={{
-                fontSize: '24px'
+                fontSize: '20px'
               }}>
               {user?.rate > 0 ? (
                 <div>
@@ -151,6 +179,9 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
           VIEW PROFILE
         </button>
       </div>
+      {isOpen && (
+        <ListModal handleClose={handleClose} open={isOpen} userId={userId} freelancerId={user?.id} user={user} />
+      )}
     </div>
   )
 }

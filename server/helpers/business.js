@@ -69,7 +69,7 @@ const createBusiness = async (data, id, files = []) => {
 }
 
 const updateBusiness = async data => {
-  return await business.findByIdAndUpdate(data.listId, { $set: { ...data } })
+  return await business.findByIdAndUpdate(data.listId, { $set: { ...data } }).populate('userId')
 }
 
 const deleteBusiness = async (businessId, userId) => {

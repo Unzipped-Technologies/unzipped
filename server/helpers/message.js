@@ -1,5 +1,6 @@
 const message = require('../models/Message')
 const conversation = require('../models/Conversation')
+const mongoose = require('mongoose')
 
 const sendMessage = async (data, id) => {
   try {
@@ -13,15 +14,13 @@ const sendMessage = async (data, id) => {
         participants: [{ ...data.sender, userId: id }, { ...data.receiver }]
       })
     }
-
     const newMessage = await message.create({
       sender: id,
       message: data?.message,
       attachment: data?.attachment,
       conversationId: conversationData._id,
-      ...(data?.meetingId && { meetingId: data.meetingId })
+      ...(data?.meetingId && { meetingId: data?.meetingId })
     })
-
     if (conversationData?.messages?.length) {
       conversationData.messages.push(newMessage?._id)
     } else {
@@ -130,9 +129,74 @@ const updateConversationStatus = async (conversationId, type, status) => {
   }
 }
 
+const checkConversation = async data => {
+  let newConversation = null
+  const freelancerId = mongoose.Types.ObjectId(data.freelancerId)
+  const clientId = mongoose.Types.ObjectId(data.clientId)
+
+  const conversationData = await conversation.aggregate([
+    {
+      $lookup: {
+        from: 'conversations', // Replace with your collection name
+        localField: '_id',
+        foreignField: '_id',
+        as: 'conversationData'
+      }
+    },
+    {
+      $unwind: '$conversationData' // Unwind the looked up data
+    },
+    {
+      $project: {
+        numParticipants: { $size: '$conversationData.participants' },
+        matchingUserId1: {
+          $sum: {
+            $map: {
+              input: '$conversationData.participants',
+              as: 'participant',
+              in: {
+                $cond: { if: { $eq: ['$$participant.userId', clientId] }, then: 1, else: 0 }
+              }
+            }
+          }
+        },
+        matchingUserId2: {
+          $sum: {
+            $map: {
+              input: '$conversationData.participants',
+              as: 'participant',
+              in: {
+                $cond: { if: { $eq: ['$$participant.userId', freelancerId] }, then: 1, else: 0 }
+              }
+            }
+          }
+        },
+        conversation: '$conversationData' // Include the conversation data
+      }
+    },
+    {
+      $match: {
+        numParticipants: 2, // Ensure exactly 2 participants
+        matchingUserId1: 1, // One participant matches userId1
+        matchingUserId2: 1 // One participant matches userId2
+      }
+    }
+  ])
+  if (!conversationData?.length) {
+    newConversation = await conversation.create({
+      participants: [{ userId: data.clientId }, { userId: data.freelancerId }]
+    })
+  } else {
+    newConversation = conversationData[0]?.conversation
+  }
+
+  return newConversation
+}
+
 module.exports = {
   sendMessage,
   getMessagesForUser,
   getConversationById,
+  checkConversation,
   updateConversationStatus
 }
