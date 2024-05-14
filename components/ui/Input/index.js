@@ -45,7 +45,7 @@ const InputContainer = styled.div`
 `
 
 const inputContainerStyles = props => `
-    background-color: ${props.disabled ? theme.tint4 : theme.tint5};
+    background-color: ${props.disabled ? 'transparent' : theme.tint5};
     border-radius: ${props.borderRadius ? props.borderRadius : '4px'};   
   height: ${({ height }) => (height ? height : '100%')};
     padding-left: ${({ message }) => (message ? '45px' : '10px')} !important;
@@ -54,11 +54,12 @@ const inputContainerStyles = props => `
       props.disableBorder
         ? 'none'
         : props.isFocused
-        ? '2px solid black !important'
+        ? '1px solid black !important'
         : props.border
         ? props.border
-        : '2px solid #CED4DA !important'
+        : '1px solid #CED4DA !important'
     };
+
 `
 
 const inputStyles = props => `

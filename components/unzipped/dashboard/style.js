@@ -424,7 +424,7 @@ const DIV = styled.div`
   align-items: ${({ alignItems }) => (alignItems ? alignItems : 'stretch')};
   justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : 'flex-start')};
   flex-direction: ${({ flexDirection }) => (flexDirection ? flexDirection : 'row')};
-  flex-flow: ${({ position }) => (position ? position : 'row nowrap')};
+  flex-flow: ${({ flexFlow }) => (flexFlow ? flexFlow : 'row nowrap')};
   flex: ${({ flex }) => (flex ? flex : '0 1 auto')};
   box-sizing: ${({ boxSizing }) => (boxSizing ? boxSizing : 'content-box')};
   // Style
@@ -501,8 +501,9 @@ const TypingAnimation = styled.div`
     &:nth-child(3) {
       animation: ${bounceAnimation} 1s infinite 0.4s;
     }
-  }`
-  
+  }
+`
+
 module.exports = {
   DIV,
   TEXT,
