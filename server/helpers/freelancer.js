@@ -438,6 +438,9 @@ const createFreelancerInvite = async params => {
     },
     { new: true }
   )
+  if (updateFreelancer) {
+    sendProjectInvitationEmail(createInvite._id)
+  }
   const listData = await listHelper.getSingleList({
     name: 'Invites',
     user: params.userInvited
