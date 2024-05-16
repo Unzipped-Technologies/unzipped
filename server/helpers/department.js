@@ -143,19 +143,20 @@ const getDepartmentById = async (id, filters) => {
                   {
                     $lookup: {
                       from: 'users',
-                      let: { assigneeId: '$assignee' },
+                      let: { assignee: '$assignee' },
+
                       pipeline: [
                         {
                           $match: {
-                            $expr: { $eq: ['$_id', '$$assigneeId'] }
+                            $expr: { $eq: [{ $toString: '$_id' }, '$$assignee'] }
                           }
                         },
                         {
                           $project: {
                             FirstName: 1,
                             LastName: 1,
-                            FullName: 1,
                             email: 1,
+                            FullName: 1,
                             profileImage: 1,
                             freelancers: 1
                           }
@@ -165,7 +166,26 @@ const getDepartmentById = async (id, filters) => {
                     }
                   },
                   {
-                    $unwind: '$assignee.user'
+                    $unwind: {
+                      path: '$assignee.user', // Unwind the user array
+                      preserveNullAndEmptyArrays: true // Keep empty object for "unassigned"
+                    }
+                  },
+                  {
+                    $project: {
+                      assignee: {
+                        user: { $ifNull: ['$assignee.user', {}] } // Nested user object
+                      },
+                      taskName: 1,
+                      status: 1,
+                      tag: 1,
+                      storyPoints: 1,
+                      priority: 1,
+                      description: 1,
+                      ticketCode: 1,
+                      comments: 1
+                      // ... other fields to project
+                    }
                   }
                 ],
                 as: 'tasks'

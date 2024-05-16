@@ -118,6 +118,7 @@ const MessageContainer = ({
       setMessages(prevMessages => [
         ...prevMessages,
         {
+          _id: message?._id,
           message: message?.message,
           attachment: '',
           isAlert: false,
@@ -140,22 +141,22 @@ const MessageContainer = ({
 
     return () => {
       socket.off('chat message')
-      // socket.off('typing')
-      // socket.off('stop-typing')
     }
   })
 
   useEffect(() => {
-    setMessages(data?.messages?.slice().reverse()) || []
-    const receiver = data?.participants?.length && data?.participants?.find(e => e?.userId?.email !== userEmail)
-    const sender = data?.participants?.length && data?.participants?.find(e => e?.userId?.email === userEmail)
-    setReceiver(receiver)
-    setSender(sender)
-    setForm({
-      ...form,
-      receiverId: receiver?.userId?._id,
-      senderId: sender?.userId?._id
-    })
+    setMessages(data?.messages?.slice().reverse())
+    if (data?.participants?.length) {
+      const receiver = data?.participants?.length && data?.participants?.find(e => e?.userId?.email !== userEmail)
+      const sender = data?.participants?.length && data?.participants?.find(e => e?.userId?.email === userEmail)
+      setReceiver(receiver)
+      setSender(sender)
+      setForm({
+        ...form,
+        receiverId: receiver?.userId?._id ?? null,
+        senderId: sender?.userId?._id ?? null
+      })
+    }
   }, [data])
 
   useEffect(() => {
@@ -267,9 +268,10 @@ const MessageContainer = ({
                 id="topScroll">
                 <div>
                   {messages?.map((e, index) => {
-                    if (e?.sender === userId) {
+                    if (e?.sender === userId && e?._id) {
                       return (
                         <WhiteCard
+                          key={e?._id}
                           autoFoucs
                           half
                           row
@@ -307,7 +309,7 @@ const MessageContainer = ({
                           </Span>
                         </WhiteCard>
                       )
-                    } else if (e?.conversationId === data?._id) {
+                    } else if (e?.conversationId === data?._id && e?._id) {
                       return (
                         <WhiteCard half row borderColor="transparent" unset padding="10px" alignEnd>
                           <Span space unset>
@@ -371,7 +373,10 @@ const MessageContainer = ({
                     autosize></FormField>
                 </Message>
                 <Absolute zIndex={10} width="26px" right="25px">
-                  <Button disabled={!(form.message || form.attachment)} type="transparent" onClick={() => send()}>
+                  <Button
+                    disabled={!(form.message || form.attachment) || !selectedConversationId}
+                    type="transparent"
+                    onClick={() => send()}>
                     <Icon name="send" />
                   </Button>
                 </Absolute>
@@ -383,7 +388,7 @@ const MessageContainer = ({
               </Absolute>
               <Spacer></Spacer>
             </WhiteCard>
-            {isProfile && (
+            {isProfile && selectedConversationId && (
               <ProfileContainer
                 data={receiver}
                 userRole={userRole}

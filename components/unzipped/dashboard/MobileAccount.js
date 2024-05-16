@@ -154,7 +154,8 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
             </P>
           </div>
           <P margin="0" padding="0 0 0 12px" fontSize="20px">
-            $ {(balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()} USD
+
+            $ {((balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()) == 'NaN' ? '0.00' : (balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()} USD
           </P>
         </div>
         <div

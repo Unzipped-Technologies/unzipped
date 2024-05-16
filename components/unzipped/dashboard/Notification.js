@@ -59,6 +59,31 @@ const FontStyled = styled.span`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
 `
+const NotificationContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  background: ${({ background }) => (background ? background : '#fff')};
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  color: ${({ color }) => (color ? color : '#000')};
+  border: ${({ borderColor }) => (borderColor ? borderColor : '1px solid #d8d8d8')};
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const NotificationDismissalContainer = styled.div`
+  display: flex;
+`;
+const DismissTextStyled = styled.div`
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center
+`;
 
 const help = [
   {
@@ -120,17 +145,19 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
               </Absolute>
             </WhiteCard>
           )}
-          <BlackCard mallMargin={smallMargin}>
-            <WhiteText>
-              Build your dream business, grow your following, and collaborate with other professionals to <br />
-              make your vision a reality. Start your free trial now.
-            </WhiteText>
-            <Absolute>
+          <NotificationContainer background={"#000"} color='#fff' borderColor="0px">
+            <div style={{ padding: 5 }}>
+              <p>
+                Build your dream business, grow your following, and collaborate with other professionals to
+                make your vision a reality. Start your free trial now.
+              </p>
+            </div>
+            <div>
               <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
                 PICK A PLAN
               </Button>
-            </Absolute>
-          </BlackCard>
+            </div>
+          </NotificationContainer>
         </>
       )
     case 'github':
@@ -147,14 +174,14 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
       )
     case 'browse':
       return (
-        <WhiteCard row>
-          <DarkText noMargin>Browse other projects to inspire ideas</DarkText>
-          <Absolute>
-            <Button noBorder type="default" normal small>
-              BROWSE
-            </Button>
-          </Absolute>
-        </WhiteCard>
+        <NotificationContainer >
+          <div style={{ padding: 5 }}>
+            <p> Browse other projects to inspire ideas </p>
+          </div>
+          <div>
+            <Button noBorder type="default" normal small> BROWSE </Button>
+          </div>
+        </NotificationContainer>
       )
     case 'meetingCalender':
       return (
@@ -165,45 +192,54 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
     case 'dismiss':
       return (
         <>
-          <WhiteCard row>
-            <DarkText noMargin>{children}</DarkText>
-            <Absolute>
-              <Dismiss>Dismiss</Dismiss>
-              <Button noBorder type="default" normal small>
-                UPDATE
-              </Button>
-            </Absolute>
-          </WhiteCard>
+          <NotificationContainer>
+            <div style={{ padding: 5 }}>
+              <p> {children} </p>
+            </div>
+            <NotificationDismissalContainer>
+              <DismissTextStyled>
+                <Dismiss>Dismiss</Dismiss>
+              </DismissTextStyled>
+              <Button noBorder type="default" normal small> UPDATE </Button>
+            </NotificationDismissalContainer>
+          </NotificationContainer>
         </>
       )
     case 'faq':
       return (
-        <WhiteCard row>
-          <DarkText noMargin>Investors are asking about your businss. Update Frequently asked questions now.</DarkText>
-          <Absolute>
-            <Dismiss>Dismiss</Dismiss>
-            <Button noBorder type="default" normal small>
-              UPDATE
-            </Button>
-          </Absolute>
-        </WhiteCard>
+        <NotificationContainer>
+          <div style={{ padding: 5 }}>
+            <p> Investors are asking about your businss. Update Frequently asked questions now. </p>
+          </div>
+          <NotificationDismissalContainer>
+            <DismissTextStyled>
+              <Dismiss>Dismiss</Dismiss>
+            </DismissTextStyled>
+            <Button noBorder type="default" normal small> UPDATE </Button>
+          </NotificationDismissalContainer>
+        </NotificationContainer>
       )
     case 'blue':
       return (
-        <WhiteCard row borderColor="#0029FF" background="#F8FAFF" smallMargin={smallMargin}>
-          <Icon name="question" />
-          <DarkText noMargin paddingLeft>
-            {children}
-          </DarkText>
-          {!noButton && (
-            <Absolute>
+        <NotificationContainer >
+          <div style={{ padding: 5 }}>
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              <div>
+                <Icon name="question" />
+              </div>
+              <div style={{ marginLeft: 5 }}>
+                <p> {children} </p>
+              </div>
+            </div>
+          </div>
+          {!noButton && (<NotificationDismissalContainer>
+            <DismissTextStyled>
               <Dismiss>Dismiss</Dismiss>
-              <Button noBorder type="default" normal small>
-                UPDATE
-              </Button>
-            </Absolute>
+            </DismissTextStyled>
+            <Button noBorder type="default" normal small> UPDATE </Button>
+          </NotificationDismissalContainer>
           )}
-        </WhiteCard>
+        </NotificationContainer>
       )
     case 'createBusiness':
       return (

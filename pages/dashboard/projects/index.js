@@ -3,7 +3,7 @@ import Nav from '../../../components/unzipped/header'
 import SearchBar from '../../../components/ui/SearchBar'
 import { TitleText } from '../../../components/unzipped/dashboard/style'
 import ProjectsContainer from '../../../components/unzipped/dashboard/ProjectsContainer'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getBusinessList } from '../../../redux/actions'
 import { parseCookies } from '../../../services/cookieHelper'
@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import { accountTypeEnum } from '../../../server/enum/accountTypeEnum'
 import MobileFreelancerFooter from '../../../components/unzipped/MobileFreelancerFooter'
 import MobileProjects from '../../../components/unzipped/dashboard/MobileProjects'
+import { getProjectsList } from '../../../redux/Business/actions'
 
 const Desktop = styled.div`
   margin-top: 192px;
@@ -33,23 +34,37 @@ const Title = styled.div`
 
 const Projects = () => {
   const [limit, setLimit] = useState(25)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
+  const dispatch = useDispatch();
+
+  const [filter, setFilter] = useState({
+    searchKey: '',
+  });
+
+  const setSearchKey = value => {
+    setFilter(prevData => ({
+      ...prevData,
+      searchKey: value
+    }))
+  }
+
+  const handleSearch = () => dispatch(getProjectsList(filter));
+
 
   return (
     <React.Fragment>
-      <Nav isSubMenu handleSearch marginBottom={'86px'} />
+      <Nav
+        isSubMenu
+        handleSearchValue={setSearchKey}
+        handleSearch={handleSearch}
+        setFilter={setFilter}
+        marginBottom={window.innerWidth > 600 ? '286px' : '86px'}
+      />
       {window.innerWidth > 680 && (
         <Desktop>
           <Title>
             <TitleText title="true">Projects</TitleText>
           </Title>
-          <SearchBar
-            theme={{ tint3: '#C4C4C4' }}
-            placeHolderColor={'#444444'}
-            margin="0px 0px 20px 0px"
-            take={limit}
-            setTake={setLimit}
-          />
           <ProjectsContainer limit={limit} page={page} />
         </Desktop>
       )}

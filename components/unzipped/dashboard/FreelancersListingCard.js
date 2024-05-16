@@ -106,7 +106,8 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
                 </Button>
             </Left>
             <Right minWidth={width} includeRate={includeRate}>
-                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user?.category}</TitleText>
+                <TitleText half color="#0057FF" onClick={redirectToProfile}>{user?.name}</TitleText>
+                <TitleText half color="#000" onClick={redirectToProfile}>{user?.category}</TitleText>
                 <TitleText noMargin>{user.type}</TitleText>
                 <div style={{ display: 'flex', width: '100%' }}>
                     <div>
@@ -117,17 +118,6 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
                         <RateTextStyled> $ {user?.rate}</RateTextStyled > / hour
                     </div>
                 </div>
-                {/* {includeRate && (
-                    <Flex>
-                        <DarkText small half><DarkSpan large>${user?.rate}</DarkSpan > / hour</DarkText>
-                        {user?.likes > 0 && (
-                            <DarkText right color='#000' fontSize='15px' noMargin>
-                                {`${user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}  UPVOTES BY CLIENTS `}
-
-                            </DarkText>)
-                        }
-                    </Flex>
-                )} */}
 
                 <div style={{ width: '82%', display: 'flex' }}>
                     {user?.cover && (
