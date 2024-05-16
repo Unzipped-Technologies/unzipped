@@ -26,6 +26,7 @@ const createBusiness = async (data, id, files = []) => {
   // create business
   const newBusiness = await business.create({
     ...data,
+    userId: id,
     questionsToAsk: [],
     applicants: [],
     projectImagesUrl: cloudinaryIds

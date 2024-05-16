@@ -104,7 +104,6 @@ Plan.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = state => {
-  console.log(state.Auth)
   return {
     user: state.Auth.user,
     selectedPlan: state.Auth.selectedPlan,

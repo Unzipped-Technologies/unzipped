@@ -86,7 +86,7 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
           </WhiteCard>
         )}
         {notifications.map((item, index) => (
-          <Notification type={item.type} key={`${index}_deskktop`}>
+          <Notification type={item.type} key={`${index}_deskktop`} user={user}>
             {item.text}
           </Notification>
         ))}
@@ -101,6 +101,7 @@ const mapStateToProps = state => {
     success: state?.ProjectApplications?.success,
     passwordChanged: state?.Auth?.passwordChanged,
     token: state.Auth.token,
+    user: state.Auth?.user,
     url: state?.Auth?.verifyUrl
   }
 }

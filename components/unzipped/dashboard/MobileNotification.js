@@ -6,6 +6,8 @@ import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import ScheduleInterview from './ScheduleInterview'
+import { nextPublicGithubClientId } from '../../../config/keys'
 import ScheduleMeetingModal from './ScheduleMeetingModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateWizardSubmission } from '../../../redux/actions'
@@ -83,22 +85,25 @@ const NotificationContainer = styled.div`
   margin-bottom: 5px;
   color: #000;
   border: 1px solid #d8d8d8;
-
-`;
+`
 
 const NotificationDismissalContainer = styled.div`
   display: flex;
-`;
+`
 
 const NotificationIconContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`;
+`
 
-const Notification = ({ type, children, smallMargin, noButton }) => {
+const Notification = ({ type, children, noButton, user }) => {
   const router = useRouter()
+
+  function handleGithub() {
+    router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
+  }
 
   switch (type) {
     case 'plan':
@@ -127,15 +132,23 @@ const Notification = ({ type, children, smallMargin, noButton }) => {
       )
     case 'github':
       return (
-        <WhiteCard size="large" style={{ marginTop: 20 }}>
-          <DarkText style={{ paddingTop: 20, marginTop: 20 }}>
-            You haven't created your first Business yet, create one now so you can begin Collaborating! Need Ideas? View
-            existing projects here.
-            <Button icon="github" webKit noBorder type="dark" normal style={{ marginTop: '20px', marginRight: '10px' }}>
-              CONNECT YOUR GITHUB ACCOUNT
-            </Button>
-          </DarkText>
-        </WhiteCard>
+        !user?.isGithubConnected && (
+          <WhiteCard size="large" style={{ marginTop: 20 }}>
+            <DarkText style={{ paddingTop: 20, marginTop: 20 }}>
+              You haven’t connected your Github account yet, connect it now so we can begin work building your project!
+              <Button
+                icon="github"
+                webKit
+                noBorder
+                type="dark"
+                normal
+                style={{ marginTop: '20px', marginRight: '10px' }}
+                onClick={handleGithub}>
+                CONNECT YOUR GITHUB ACCOUNT
+              </Button>
+            </DarkText>
+          </WhiteCard>
+        )
       )
     case 'browse':
       return (
@@ -144,7 +157,17 @@ const Notification = ({ type, children, smallMargin, noButton }) => {
             <p> Browse other projects to inspire ideas </p>
           </div>
           <div>
-            <Button noBorder type="default" normal small> BROWSE </Button>
+            <Button
+              noBorder
+              type="default"
+              normal
+              small
+              onClick={() => {
+                router.push('/projects')
+              }}>
+              {' '}
+              BROWSE{' '}
+            </Button>
           </div>
         </NotificationContainer>
       )
@@ -156,18 +179,24 @@ const Notification = ({ type, children, smallMargin, noButton }) => {
           </div>
           <NotificationDismissalContainer>
             <Dismiss>Dismiss</Dismiss>
-            <Button noBorder type="default" normal small> UPDATE </Button>
+            <Button noBorder type="default" normal small>
+              {' '}
+              UPDATE{' '}
+            </Button>
           </NotificationDismissalContainer>
         </NotificationContainer>
       )
     case 'faq':
       return (
-        <NotificationContainer >
+        <NotificationContainer>
           <div style={{ padding: 5 }}>
             <p> Investors are asking about your business. Update Frequently asked questions now. </p>
           </div>
           <div>
-            <Button noBorder type="default" normal small> UPDATE </Button>
+            <Button noBorder type="default" normal small>
+              {' '}
+              UPDATE{' '}
+            </Button>
           </div>
         </NotificationContainer>
       )
@@ -192,15 +221,25 @@ const Notification = ({ type, children, smallMargin, noButton }) => {
       )
     case 'createBusiness':
       return (
-        <WhiteCard size="large">
-          <DarkText fontSize={'16'} style={{ paddingTop: 20 }}>
-            You haven't created your first Business yet, create one now so you can begin Collaborating! Need Ideas? View
-            existing projects here.
-            <Button noBorder webKit type="dark" normal style={{ marginTop: '20px', marginRight: '20px' }}>
-              CREATE FIRST PROJECT
-            </Button>
-          </DarkText>
-        </WhiteCard>
+        user?.totalBusiness < 1 && (
+          <WhiteCard size="large">
+            <DarkText fontSize={'16'} style={{ paddingTop: 20 }}>
+              You haven't created your first Project yet, create one now so you can begin Collaborating! Need Ideas?
+              View existing projects here.
+              <Button
+                noBorder
+                webKit
+                type="dark"
+                normal
+                style={{ marginTop: '20px', marginRight: '20px' }}
+                onClick={() => {
+                  router.push('create-your-business')
+                }}>
+                CREATE FIRST PROJECT
+              </Button>
+            </DarkText>
+          </WhiteCard>
+        )
       )
     case 'explore':
       return (
@@ -244,9 +283,9 @@ const Notification = ({ type, children, smallMargin, noButton }) => {
       )
     case 'blue':
       return (
-        <NotificationContainer >
+        <NotificationContainer>
           <div style={{ padding: 5 }}>
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
               <NotificationIconContainer>
                 <Icon name="question" />
               </NotificationIconContainer>
@@ -255,10 +294,14 @@ const Notification = ({ type, children, smallMargin, noButton }) => {
               </div>
             </div>
           </div>
-          {!noButton && (<NotificationDismissalContainer>
-            <Dismiss>Dismiss</Dismiss>
-            <Button noBorder type="default" normal small> UPDATE </Button>
-          </NotificationDismissalContainer>
+          {!noButton && (
+            <NotificationDismissalContainer>
+              <Dismiss>Dismiss</Dismiss>
+              <Button noBorder type="default" normal small>
+                {' '}
+                UPDATE{' '}
+              </Button>
+            </NotificationDismissalContainer>
           )}
         </NotificationContainer>
       )
