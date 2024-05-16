@@ -124,7 +124,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
     })
   }
   setTimeout(() => {
-    if (success || passwordChanged || calenderSuccess) {
+    if (success || passwordChanged || calenderSuccess === true || calenderSuccess === false) {
       hideSuccessAlert()
       hidePasswordAlert()
       hideCalenderSuccessAlert()
@@ -169,7 +169,6 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
   }
 
   const handleDrop = acceptedFiles => {
-    console.log(acceptedFiles)
     closeDropzone()
   }
 
@@ -208,7 +207,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
             </Absolute>
           </WhiteCard>
         )}
-        {calenderSuccess && (
+        {calenderSuccess === true && (
           <WhiteCard
             row
             style={{
@@ -216,7 +215,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
               border: '1px solid #8EDE64',
               background: 'rgba(142, 222, 100, 0.10)'
             }}>
-            <DarkText noMargin>You have successfully setup the calendar!</DarkText>
+            <DarkText noMargin>You have successfully setup the calendarsss!</DarkText>
             <Absolute>
               <Dismiss
                 onClick={() => {

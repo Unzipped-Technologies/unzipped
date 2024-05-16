@@ -38,7 +38,6 @@ const CalenderSetting = (state = INIT_STATE, action) => {
         ...state,
         loading: false,
         error: null,
-        success: action.payload?._id ? true : null,
         calenderSetting: action.payload
       }
     case CREATE_CALENDER_SETTING_ERROR:

@@ -5,8 +5,13 @@ const createCalender = async params => {
   const userData = await UserModel.findOne({ _id: params?.userId })
   if (!userData) throw new Error(`User Not Found`)
 
-  const calenderCreated = await CalenderModel.create(params)
-  return calenderCreated
+  let calendarData = await CalenderModel.findOne({ userId: params?.userId })
+  if (calendarData) {
+    calendarData = await CalenderModel.findByIdAndUpdate(calendarData?._id, { $set: params }, { new: true })
+  } else {
+    calendarData = await CalenderModel.create(params)
+  }
+  return calendarData
 }
 
 const getCalender = async userId => {
