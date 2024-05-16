@@ -136,10 +136,15 @@ const ProfileCard = ({ user }) => {
           CHECK AVAILABILITY
         </Button>
         <Likes>
-          <Icon name="thumbsUp" />
-          <Icon name="thumbsDown" />
+          <div className="inline-flex flex-direction-column">
+            <Icon name="thumbsUp" />
+            <div>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+          </div>
+          <div className="inline-flex flex-direction-column">
+            <Icon name="thumbsDown" />
+            <div>{user?.dislikeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+          </div>
         </Likes>
-        <DarkText>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
       </LikeBox>
     </Container>
   )

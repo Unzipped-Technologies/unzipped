@@ -46,6 +46,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
       freelancerSkills: selectedFreelancer?.freelancerSkills,
       category: selectedFreelancer?.category,
       likeTotal: selectedFreelancer?.likeTotal,
+      dislikeTotal: selectedFreelancer?.dislikeTotal,
       rate: selectedFreelancer?.rate,
       updatedAt: selectedFreelancer?.updatedAt,
       education: selectedFreelancer?.education,
