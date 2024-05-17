@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
-import { 
+import {
     CloseIcon,
     DownIcon,
 } from '../../icons'
@@ -36,7 +36,7 @@ const Logo = styled.img`
 
 const Container = styled.div`
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background-color: #fff;
     z-index: 99;
     @media (max-width: 680px) {
@@ -128,13 +128,13 @@ const Icon = styled.div`
 
 const SubItem = styled.div`
     padding: 10px 15px 10px 35px;
-    cursor: ${({sub}) => sub ? 'default' : 'pointer'};
+    cursor: ${({ sub }) => sub ? 'default' : 'pointer'};
     &:focus {
-        background: ${({sub}) => sub ? '#fff' : '#d8d8d8'};
+        background: ${({ sub }) => sub ? '#fff' : '#d8d8d8'};
         border-radius: 12px;
     }
     &:hover {
-        background: ${({sub}) => sub ? '#fff' : '#d8d8d8'};
+        background: ${({ sub }) => sub ? '#fff' : '#d8d8d8'};
         border-radius: 12px;
     }
 `;
@@ -145,7 +145,7 @@ const SubItemTitle = styled.div`
 `;
 const SubItemDescription = styled.div`
   font-size: 16px;
-  padding-top: ${({sub}) => sub ? '8px' : '0px'};
+  padding-top: ${({ sub }) => sub ? '8px' : '0px'};
 `;
 
 const WikiContainer = styled.div`
@@ -175,7 +175,7 @@ const FooterScroll = styled.div`
   height: 130px;
 `;
 
-const LargeScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, startAProject}) => {
+const LargeScreenDropdown = ({ menuItems, onClose, isAuth = false, logoutUser, startAProject }) => {
     const router = useRouter()
     const [selected, setSelected] = useState(false)
 
@@ -187,68 +187,70 @@ const LargeScreenDropdown = ({menuItems, onClose, isAuth = false, logoutUser, st
             <Header>
                 <div onClick={onClose}>
                     <CloseIcon />
-                    <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />                    
+                    <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
                 </div>
             </Header>
             <ItemContainer>
-            {menuItems.map((item, index) => {
-                return (
-                    <Box key={item.name + index}>
-                        <Row onClick={() => setSelected(selected === item.name ? false : item.name)}>
-                            <Title onClick={() => !item?.subItems && item?.link && linkPush(item.link)}>{item.name}</Title>
-                            {item?.subItems && item?.subItems.length && (
-                                <Icon selected={selected === item.name}>
-                                    <DownIcon width='15' height='9' color={selected === item.name ? '#DE4E4E' : '#333'}/>
-                                </Icon>
-                            )}
-                        </Row>
-                        {selected === item.name && item?.subItems && item?.subItems.length && (
-                            <SubContainer>
-                                <SubHeader>
-                                    {item.subIcon}
-                                    <SubTitle>{item.subTitle}</SubTitle>
-                                </SubHeader>
-                                {item.subItems.map((sub, index) => {
-                                    return (
-                                        <SubItem key={sub.name + index} onClick={() => typeof sub.sub === 'string' && linkPush(sub.link)}  sub={!(typeof sub.sub === 'string')}>
-                                            <SubItemTitle>
-                                                {sub.name}
-                                            </SubItemTitle>
-                                            <SubItemDescription sub={!(typeof sub.sub === 'string')}>
-                                                {typeof sub.sub === 'string' ? sub.sub : sub.sub.map((element, index) => {
-                                                    return (
-                                                        <WikiContainer key={element.name + index} onClick={() => linkPush(element.link)}>
-                                                            {element.icon}
-                                                            <WikiTextBox>
-                                                                <WikiTitle>
-                                                                    {element.name}
-                                                                </WikiTitle>
-                                                                <WikiSubTitle>
-                                                                    {element.sub}
-                                                                </WikiSubTitle>
-                                                            </WikiTextBox>
-                                                        </WikiContainer>
-                                                    )
-                                                })}
-                                            </SubItemDescription>
-                                        </SubItem>
-                                    )
-                                })}
-                            </SubContainer>
+                <>
+                    {menuItems.map((item, index) => {
+                        return (
+                            <Box key={item.name + index}>
+                                <Row onClick={() => setSelected(selected === item.name ? false : item.name)}>
+                                    <Title onClick={() => !item?.subItems && item?.link && linkPush(item.link)}>{item.name}</Title>
+                                    {item?.subItems && item?.subItems.length && (
+                                        <Icon selected={selected === item.name}>
+                                            <DownIcon width='15' height='9' color={selected === item.name ? '#DE4E4E' : '#333'} />
+                                        </Icon>
+                                    )}
+                                </Row>
+                                {selected === item.name && item?.subItems && item?.subItems.length && (
+                                    <SubContainer>
+                                        <SubHeader>
+                                            {item.subIcon}
+                                            <SubTitle>{item.subTitle}</SubTitle>
+                                        </SubHeader>
+                                        {item.subItems.map((sub, index) => {
+                                            return (
+                                                <SubItem key={sub.name + index} onClick={() => typeof sub.sub === 'string' && linkPush(sub.link)} sub={!(typeof sub.sub === 'string')}>
+                                                    <SubItemTitle>
+                                                        {sub.name}
+                                                    </SubItemTitle>
+                                                    <SubItemDescription sub={!(typeof sub.sub === 'string')}>
+                                                        {typeof sub.sub === 'string' ? sub.sub : sub.sub.map((element, index) => {
+                                                            return (
+                                                                <WikiContainer key={element.name + index} onClick={() => linkPush(element.link)}>
+                                                                    {element.icon}
+                                                                    <WikiTextBox>
+                                                                        <WikiTitle>
+                                                                            {element.name}
+                                                                        </WikiTitle>
+                                                                        <WikiSubTitle>
+                                                                            {element.sub}
+                                                                        </WikiSubTitle>
+                                                                    </WikiTextBox>
+                                                                </WikiContainer>
+                                                            )
+                                                        })}
+                                                    </SubItemDescription>
+                                                </SubItem>
+                                            )
+                                        })}
+                                    </SubContainer>
+                                )}
+                            </Box>
+                        )
+                    })}
+                    <FooterScroll />
+                    <Footer>
+                        {isAuth ? (
+                            <TopButton extraWide={true} onClick={logoutUser}>Log Out</TopButton>
+                        ) : (
+                            <TopButton onClick={() => linkPush('/login')} extraWide={true}>Log In</TopButton>
                         )}
-                    </Box>
-                )
-            })}
+                        <BottomButton onClick={startAProject} extraWide={true}>Start A Project</BottomButton>
+                    </Footer>
+                </>
             </ItemContainer>
-            <FooterScroll />
-            <Footer>
-                {isAuth ? (
-                    <TopButton extraWide={true} onClick={logoutUser}>Log Out</TopButton>
-                ) : (
-                    <TopButton onClick={() => linkPush('/login')} extraWide={true}>Log In</TopButton>
-                )}
-                <BottomButton onClick={startAProject} extraWide={true}>Start A Project</BottomButton>
-            </Footer>
         </Container>
     )
 }
