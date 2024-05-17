@@ -42,7 +42,7 @@ router.post('/register', async (req, res, next) => {
       }
     } else {
       const registerUser = await userHelper.registerUser(req.body)
-      if (registerUser?.isLoginWithGoogle) throw Error('Please login with google');
+      if (registerUser?.isLoginWithGoogle) throw Error('Please login with google')
       const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
@@ -138,7 +138,7 @@ router.post('/change-password', requireLogin, async (req, res, next) => {
 
     const result = await userHelper.updateUser(existingUser?._id, { password: hash })
 
-    if(result) {
+    if (result) {
       await Mailer.sendMailWithSG({ email: result?.email, templateName: 'RESET_PASSWORD' })
     }
 

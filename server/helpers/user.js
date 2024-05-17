@@ -18,6 +18,7 @@ const { likeEnum } = require('../enum/likeEnum')
 const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
+const BusinessModel = require('../models/Business')
 const AuthService = require('./authentication')
 const Mailer = require('../../services/Mailer')
 // create user
@@ -131,7 +132,7 @@ const updateUserByEmail = async (email, data) => {
 // get User By Id
 const getUserById = async id => {
   try {
-    return await user
+    const userData = await user
       .findById(id)
       .populate([
         { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
@@ -140,6 +141,13 @@ const getUserById = async id => {
         }
       ])
       .select('-password')
+
+    if (userData?.role === 0) {
+      const userTotalBusiness = await BusinessModel.countDocuments({ userId: id })
+
+      userData._doc['totalBusiness'] = userTotalBusiness
+    }
+    return userData
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
@@ -653,17 +661,16 @@ const registerUser = async ({ email, password }) => {
   if (newuser) {
     const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
     if (result && result.isLoginWithGoogle) {
-      return result;
+      return result
     }
-    return newuser;
+    return newuser
   }
 }
 
 const updateUser = async (id, data) => {
   try {
     return await User.findByIdAndUpdate(id, { $set: { ...data } })
-  }
-  catch (e) {
+  } catch (e) {
     throw Error(`Something went wrong ${e}`)
   }
 }
