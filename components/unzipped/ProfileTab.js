@@ -3,7 +3,9 @@ import { DarkText } from './dashboard/style'
 import styled from 'styled-components'
 import ProjectModal from './ProjectModal'
 
-const Container = styled.div``
+const Container = styled.div`
+  min-width: 100%;
+`
 const Menu = styled.div`
   display: flex;
   align-items: center;

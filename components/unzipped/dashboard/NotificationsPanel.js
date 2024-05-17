@@ -21,18 +21,34 @@ const Notifications = styled.div`
   padding: 0px 10px;
 `
 
-const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl, url, token, passwordChanged }) => {
+const NotificationsPanel = ({
+  notifications,
+  user,
+  success,
+  getVerifyIdentityUrl,
+  url,
+  token,
+  passwordChanged,
+  calenderSuccess
+}) => {
   const dispatch = useDispatch()
   const [initialUrl] = useState(url)
 
   const hideAlert = () => {
     if (success) hideSuccessAlert()
     if (passwordChanged) hidePasswordAlert()
+    if (calenderSuccess) hideCalenderSuccessAlert()
   }
 
   const hideSuccessAlert = () => {
     dispatch({
       type: 'HIDE_SUCCESS_NOTIFICATION',
+      payload: null
+    })
+  }
+  const hideCalenderSuccessAlert = () => {
+    dispatch({
+      type: 'HIDE_CALENDER_SUCCESS_NOTIFICATION',
       payload: null
     })
   }
@@ -43,9 +59,10 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
     })
   }
   setTimeout(() => {
-    if (success || passwordChanged) {
+    if (success || passwordChanged || calenderSuccess) {
       hideSuccessAlert()
       hidePasswordAlert()
+      hideCalenderSuccessAlert()
     }
   }, 5000)
 
@@ -85,13 +102,49 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
             </Absolute>
           </WhiteCard>
         )}
+        {calenderSuccess && (
+          <WhiteCard
+            row
+            style={{
+              borderRadius: '4px',
+              border: '1px solid #8EDE64',
+              background: 'rgba(142, 222, 100, 0.10)'
+            }}>
+            <DarkText noMargin>You have successfully setup the calendar!</DarkText>
+
+            <Absolute
+              onClick={() => {
+                hideCalenderSuccessAlert()
+              }}>
+              <Dismiss>Dismiss</Dismiss>
+            </Absolute>
+          </WhiteCard>
+        )}
+        {calenderSuccess === false && (
+          <WhiteCard
+            row
+            style={{
+              borderRadius: '4px',
+              border: '1px solid #DE4E4E',
+              background: '#FCEDED'
+            }}>
+            <DarkText noMargin>Failed to set up your calendar. Please try again later!</DarkText>
+
+            <Absolute
+              onClick={() => {
+                hideCalenderSuccessAlert()
+              }}>
+              <Dismiss>Dismiss</Dismiss>
+            </Absolute>
+          </WhiteCard>
+        )}
         {notifications.map((item, index) => (
           <Notification type={item.type} key={`${index}_deskktop`}>
             {item.text}
           </Notification>
         ))}
       </Notifications>
-      {token && (<Panel user={user} verifyIdentity={verifyIdentity} />)}
+      {token && <Panel user={user} verifyIdentity={verifyIdentity} />}
     </Container>
   )
 }
@@ -99,6 +152,7 @@ const NotificationsPanel = ({ notifications, user, success, getVerifyIdentityUrl
 const mapStateToProps = state => {
   return {
     success: state?.ProjectApplications?.success,
+    calenderSuccess: state?.CalenderSetting?.success,
     passwordChanged: state?.Auth?.passwordChanged,
     token: state.Auth.token,
     url: state?.Auth?.verifyUrl

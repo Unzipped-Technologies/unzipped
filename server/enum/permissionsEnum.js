@@ -96,7 +96,11 @@ const userPermissions = Object.freeze({
   updateShowCaseProject: 'updateShowCaseProject',
   deleteShowCaseProject: 'deleteShowCaseProject',
   getShowCaseProjectById: 'getShowCaseProjectById',
-  getAllShowCaseProjects: 'getAllShowCaseProjects'
+  getAllShowCaseProjects: 'getAllShowCaseProjects',
+
+  // Calender
+  createCalenderSettings: 'createCalenderSettings',
+  getCalenderSettings: 'getCalenderSettings'
 })
 
 const accountTypePermissions = Object.freeze({
@@ -181,7 +185,11 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // Calender
+    userPermissions.createCalenderSettings,
+    userPermissions.getCalenderSettings
   ],
   [accountTypeEnum.INVESTOR]: [
     // users
@@ -257,7 +265,11 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateShowCaseProject,
     userPermissions.deleteShowCaseProject,
     userPermissions.getShowCaseProjectById,
-    userPermissions.getAllShowCaseProjects
+    userPermissions.getAllShowCaseProjects,
+
+    //  Calender
+    userPermissions.createCalenderSettings,
+    userPermissions.getCalenderSettings
   ],
   [accountTypeEnum.ADMIN]: [
     // users
@@ -348,7 +360,11 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // Calender
+    userPermissions.createCalenderSettings,
+    userPermissions.getCalenderSettings
   ]
 })
 
