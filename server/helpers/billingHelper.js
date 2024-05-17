@@ -319,12 +319,31 @@ async function handleSuccessfulPayment(paymentIntent) {
 }
 
 async function handleFailedPayment(paymentIntent) {
-  const invoiceRecord = await InvoiceRecordModel.findOne({ _id: paymentIntent.metadata.invoiceRecord })
+  const invoiceRecord = await InvoiceRecordModel.findOne({ _id: paymentIntent.metadata.invoiceRecord }).populate({
+    path: 'userId',
+    model: 'users',
+  })
 
   await PaymentHistoryModel.updateMany(
     { _id: { $in: invoiceRecord.paymentHistoryIds } },
     { $set: { isPaymentDeclined: true } }
   )
+
+  if (invoiceRecord && invoiceRecord?.userId) {
+    const mailOptions = {
+      to: invoiceRecord.userId.email,
+      templateId: 'd-9bd86c7f068b4f69bfda9ebb92d3687b',
+      dynamicTemplateData: {
+        subject: 'Action Required: Failed Payment Attempt for Your Account',
+        firstName: invoiceRecord.userId?.FirstName ? invoiceRecord.userId?.FirstName
+          : invoiceRecord.userId?.email.split('@')[0],
+        lastName: invoiceRecord.userId?.LastName ?? '',
+        loginLink: `${keys.redirectDomain}/login`,
+        supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+      }
+    }
+    await Mailer.sendInviteMail(mailOptions);
+  }
 }
 
 async function cronJob() {
@@ -744,10 +763,10 @@ const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', use
         templateId: "d-ecd4393f48de4496a511c74220631ac3",
         dynamicTemplateData: {
           firstName: user?.FirstName ?? '',
-          lastName:  user?.LastName ?? '',
+          lastName: user?.LastName ?? '',
           amount,
           withdrawDate: new Date().toLocaleDateString(),
-          partialPaymentDetails:  `**** **** ${accountInfo?.data[0]?.last4}`,
+          partialPaymentDetails: `**** **** ${accountInfo?.data[0]?.last4}`,
           supportLink: `${keys.redirectDomain}/wiki/getting-started`,
           withdrawLink: `${keys.redirectDomain}/dashboard/withdrawal`,
           transactionHstoryLink: `${keys.redirectDomain}/transaction-history`,
@@ -755,7 +774,9 @@ const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', use
       }
       await Mailer.sendInviteMail(fundsWithdrawMailObj);
     }
-
+    if (!payout) {
+      await failedPaymentNotification(user);
+    }
     return payout;
   } catch (error) {
     console.error('Payout failed:', error)
@@ -832,6 +853,21 @@ const confirmVerificationSession = async (userId, status) => {
   } catch (err) {
     console.log(`Error on verification session: ${err.message}`)
     return false
+  }
+}
+
+const failedPaymentNotification = async (user) => {
+  if (user) {
+    const mailOptions = {
+      to: user?.email,
+      templateId: 'd-9bd86c7f068b4f69bfda9ebb92d3687b',
+      dynamicTemplateData: {
+        firstName: user?.FirstName ? user?.FirstName : user?.email.split('@')[0],
+        lastName: user?.LastName ?? '',
+        supportLink: `${keys.redirectDomain}/wiki/getting-started`
+      }
+    }
+    await Mailer.sendInviteMail(mailOptions);
   }
 }
 
