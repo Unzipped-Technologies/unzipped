@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Button from '../../ui/Button'
 import Icon from '../../ui/Icon'
 import Link from 'next/link'
 import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
+import ScheduleInterview from './ScheduleInterview'
 
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
@@ -304,6 +305,12 @@ const Notification = ({ type, children, noButton, user }) => {
             </NotificationDismissalContainer>
           )}
         </NotificationContainer>
+      )
+    case 'meetingCalender':
+      return (
+        <>
+          <ScheduleInterview />
+        </>
       )
     default:
       return <></>

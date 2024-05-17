@@ -1,39 +1,28 @@
-import * as React from 'react'
+import React, { useState } from 'react'
+import dayjs from 'dayjs'
+
 import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import Modal from '@mui/material/Modal'
 import { DateCalendar } from '@mui/x-date-pickers'
-import { useState } from 'react'
-import { styled } from '@mui/material/styles'
-import Paper from '@mui/material/Paper'
-import Grid from '@mui/material/Grid'
+import { useSelector } from 'react-redux'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import dayjs from 'dayjs'
 const utc = require('dayjs/plugin/utc')
 const timezone = require('dayjs/plugin/timezone')
-import { createMeeting } from '../../redux/Meeting/actions'
+
 import socket from '../../components/sockets/index'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
-import { useDispatch, useSelector } from 'react-redux'
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary
-}))
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  //   width: 400,
   bgcolor: 'background.paper',
   boxShadow: 24,
   borderRadius: '8px',
@@ -50,10 +39,11 @@ export default function ScheduleMeetingModal({
   receiver,
   setScheduleInterviewModal
 }) {
-  const dispatch = useDispatch()
-  const { Auth, Loading } = useSelector(state => state)
+  const { Auth } = useSelector(state => state)
+
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()))
   const [selectedTime, setSelectedTime] = useState([])
+
   const updatedSelectedTime = new Set(selectedTime)
 
   const generateTimeSlots = date => {
@@ -84,18 +74,6 @@ export default function ScheduleMeetingModal({
     generateTimeSlots(date)
   }
 
-  const convertToUserTimeZone = dateString => {
-    console.log('date_string', dateString, typeof dateString)
-
-    const userDate = dayjs(dateString, { format: 'YYYY-MM-DD HH:mm:ss A' })
-    console.log('userDate:', userDate)
-
-    const userTimeZone = 'Asia/Karachi'
-    const convertedDate = userDate.tz(userTimeZone)
-
-    return convertedDate.toDate()
-  }
-
   const handleScheduleMeeting = () => {
     let meetingSlots = Array.from(updatedSelectedTime).map(time => {
       return {
@@ -103,8 +81,6 @@ export default function ScheduleMeetingModal({
         Time: getTime(time)
       }
     })
-
-    console.log('receiver', receiver)
 
     const scheduleMeetingObj = {
       primaryTime: {
@@ -115,27 +91,21 @@ export default function ScheduleMeetingModal({
       senderId: Auth?.user?._id,
       receiverId: receiver?.userId?._id
     }
-
     socket.emit('createMeeting', scheduleMeetingObj)
     setScheduleInterviewModal(false)
-
-    // dispatch(createMeeting(scheduleMeetingObj, Auth.token))
   }
 
   const getDate = val => {
     if (val) {
-      const [datePart, timePart] = val.split(' ')
+      const [datePart] = val.split(' ')
       const slpitDateString = datePart.replace(/:/g, '-') // + 'T' + timePart + 'Z';
-      // const timeString = timePart.split(/:/g);
-      // let formattedDate = dayjs(datePart).hour(timeString[0]).minute(timeString[1]).second(timeString[2])
-      // console.log('converted_date', formattedDate)
       return slpitDateString //formattedDate
     }
   }
 
   const getTime = time => {
     if (time) {
-      const [datePart, timePart, hoursPart] = time.split(' ')
+      const [timePart, hoursPart] = time.split(' ')
       const timeFormat = timePart + ' ' + hoursPart
       return timeFormat
     }
@@ -148,7 +118,12 @@ export default function ScheduleMeetingModal({
         onClose={handleScheduleInterviewModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
-        <Box sx={style}>
+        <Box
+          sx={style}
+          style={{
+            overflowY: 'auto', // Enable vertical scrolling
+            maxHeight: '80vh' // Limit the maximum height
+          }}>
           <Grid container paddingLeft={2} spacing={2}>
             <Grid item sm={12} md={12}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -186,6 +161,7 @@ export default function ScheduleMeetingModal({
                   </Button>
                 ))}
               </>
+
               <Box display={'flex'} justifyContent={{ md: 'end', xs: 'center' }} gap={2} width={'100%'}>
                 <Button variant="outlined" onClick={handleScheduleInterviewModal}>
                   CANCEL

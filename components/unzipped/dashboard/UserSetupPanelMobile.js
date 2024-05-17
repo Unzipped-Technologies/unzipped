@@ -124,7 +124,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
     })
   }
   setTimeout(() => {
-    if (success || passwordChanged || calenderSuccess) {
+    if (success || passwordChanged || calenderSuccess === true || calenderSuccess === false) {
       hideSuccessAlert()
       hidePasswordAlert()
       hideCalenderSuccessAlert()
@@ -207,7 +207,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
             </Absolute>
           </WhiteCard>
         )}
-        {calenderSuccess && (
+        {calenderSuccess === true && (
           <WhiteCard
             row
             style={{
@@ -215,14 +215,14 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
               border: '1px solid #8EDE64',
               background: 'rgba(142, 222, 100, 0.10)'
             }}>
-            <DarkText noMargin>You have successfully setup the calendar!</DarkText>
+            <DarkText noMargin>You have successfully setup the calendarsss!</DarkText>
             <Absolute>
               <Dismiss
                 onClick={() => {
                   hideCalenderSuccessAlert()
                 }}
                 padding="20px 0px 0px 200px"
-                margin="30px 0px 20px 20px">
+                margin="20px 0px 20px 20px">
                 Dismiss
               </Dismiss>
             </Absolute>
@@ -320,6 +320,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
 
 const mapStateToProps = state => {
   return {
+    calenderSuccess: state?.CalenderSetting?.success,
     success: state?.ProjectApplications?.success,
     passwordChanged: state?.Auth?.passwordChanged,
     calenderSuccess: state?.CalenderSetting?.success

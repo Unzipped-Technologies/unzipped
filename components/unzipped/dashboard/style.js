@@ -248,14 +248,14 @@ const Dismiss = styled.div`
   font-weight: 500;
   font-size: 12px;
   line-height: 24px;
-  text-align: center;
+  text-align: right;
   letter-spacing: 0.39998px;
   text-decoration-line: underline;
   text-transform: uppercase;
   cursor: pointer;
   color: #282932;
-
-  margin: 0px 20px;
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px 20px')};
 `
 
 const Grid = styled.div`
@@ -362,22 +362,26 @@ export const MinWidth = styled.span`
 `
 
 export const ScheduleInterviewContainer = styled.div`
-  width: 100%;
-  border: 1px solid #d8d8d8;
   display: flex;
-  padding: 10px;
-  gap: 10px;
   justify-content: space-between;
-  border-radius: 8px;
-  margin-bottom: 5px;
+  align-items: center;
+  width: ${({ width }) => (width ? width : '100%')};
+  border: 1px solid #d8d8d8;
+  margin-bottom: 10px;
 `
 
 export const ScheduleInterviewButtonContainer = styled.div`
-  width: 16%;
+  width: ${({ isMobile }) => (isMobile ? '25%' : '10%')};
   display: flex;
   justify-content: flex-end;
   padding: 10px;
 `
+
+const CalanderParagraphStyled = styled.p`
+  padding: 15px 10px 0px 10px;
+  width: ${({ isMobile }) => (isMobile ? '75%' : '90%')};
+`
+
 const TableHeading = styled.th`
   color: ${({ color }) => (color ? color : '#000')};
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
@@ -413,11 +417,6 @@ const HelpCenterContainer = styled.div`
   @media screen and (max-width: 600px) {
     padding-left: 0px;
   }
-`
-
-const CalanderParagraphStyled = styled.p`
-  margin-left: 30px;
-  width: 87%;
 `
 
 const DIV = styled.div`

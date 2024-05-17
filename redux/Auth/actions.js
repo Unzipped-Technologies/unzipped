@@ -39,6 +39,7 @@ import {
 import _ from 'lodash'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
+import { resetCalenderSetting } from '../actions'
 
 export const loginUser = async dispatch => {
   dispatch({ type: USER_LOADING })
@@ -247,6 +248,7 @@ export const getCurrentUserData = () => async (dispatch, getState) => {
 //Check token & Load User
 export const loadUser = user => async (dispatch, getState) => {
   //User Loading
+  dispatch(resetCalenderSetting())
   dispatch({ type: USER_LOADING })
   await axios
     .post(`/api/auth/login`, user)

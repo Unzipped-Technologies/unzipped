@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, createStyles } from '@material-ui/core/styles'
 import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
@@ -11,18 +11,19 @@ import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
+import { Popover } from '@mui/material'
 
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { createCalenderSetting } from '../../../redux/CalenderSetting/CalenderSettingAction'
 import SetupCalendlyModal from './SetupCalendlyModal'
-dayjs.extend(timezone);
-dayjs.extend(utc);
+dayjs.extend(timezone)
+dayjs.extend(utc)
 
 // Get the user's timezone
-const userTimezone = dayjs.tz.guess();
+const userTimezone = dayjs.tz.guess()
 const useStyles = makeStyles(theme => ({
   modal: {
     display: 'flex',
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme => ({
       border: '2px solid red'
     }
   }
-}));
+}))
 const useStylesSM = makeStyles(theme => ({
   modal: {
     display: 'flex',
@@ -64,7 +65,7 @@ const useStylesSM = makeStyles(theme => ({
       border: '2px solid red'
     }
   }
-}));
+}))
 
 const TimePickerStyled = {
   width: 130,
@@ -73,8 +74,7 @@ const TimePickerStyled = {
     margin: '0 0 0 6px !important'
   },
   button: { background: 'transparent !important' },
-  '&.MuiFocused': {
-  }
+  '&.MuiFocused': {}
 }
 
 const TextTitleStyled = styled.p`
@@ -87,7 +87,7 @@ const TextTitleStyled = styled.p`
   letter-spacing: 0.4px;
   text-transform: capitalize;
   cursor: pointer;
-  @media screen and (max-width: 600px){
+  @media screen and (max-width: 600px) {
     font-size: 18px;
     margin-top: 0px;
     maring-bottom: 0px;
@@ -165,7 +165,7 @@ const DropdownContainer = styled.div`
   position: relative;
   display: inline-block;
   width: 100%;
-`;
+`
 
 const DropdownButton = styled.button`
   padding: 10px;
@@ -181,11 +181,11 @@ const DropdownButton = styled.button`
   &:focus {
     background: #fff !important;
   }
-  @media screen and (max-width: 600px){
+  @media screen and (max-width: 600px) {
     font-size: 14px;
     padding: 8px;
   }
-`;
+`
 
 const DropdownList = styled.ul`
   position: absolute;
@@ -199,47 +199,51 @@ const DropdownList = styled.ul`
   max-height: 200px;
   overflow-y: auto;
   border-radius: 4px;
-  background: #FFF;
+  background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-`;
+`
 
 const DropdownItem = styled.li`
   padding: 10px;
   list-style: none;
   cursor: pointer;
-`;
+  background-color: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : 'transparent')};
+  &:hover {
+    background-color: #dadada; /* Use a default or custom hover color */
+  }
+`
 
 const options = [
   { label: 'Only clients whose projects I have applied to', value: 'APPLIED_TO_PROJECTS' },
   { label: 'Recruiters, and clients whose jobs I have not applied to', value: 'RECURITERS_OTHERS' },
-  { label: 'I do not wish to schedule interviews through the unzipped platform', value: 'DONOT_SCHEDULE_WITH_UNZIPPED' },
-];
+  { label: 'I do not wish to schedule interviews through the unzipped platform', value: 'DONOT_SCHEDULE_WITH_UNZIPPED' }
+]
 
 const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) => {
   // const classes = useStyles();
   // const classesSM = useStylesSM();
   const classes = isSmallWindow ? useStylesSM() : useStyles()
-  const dropdownRef = useRef();
-  const dispatch = useDispatch();
-  const { _id } = useSelector(state => state.Auth.user);
+  const dropdownRef = useRef()
+  const dispatch = useDispatch()
+  const { _id } = useSelector(state => state.Auth.user)
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [availableFromTime, setAvailableFromTime] = useState((dayjs().hour(9).minute(0).second(0)));
-  const [availableEndTime, setAvailableEndTime] = useState(dayjs().hour(17).minute(0).second(0));
-  const [selectedOption, setSelectedOption] = useState('APPLIED_TO_PROJECTS');
-  const [isCalendlyModal, setIsCalendlyModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [availableFromTime, setAvailableFromTime] = useState(dayjs().hour(9).minute(0).second(0))
+  const [availableEndTime, setAvailableEndTime] = useState(dayjs().hour(17).minute(0).second(0))
+  const [selectedOption, setSelectedOption] = useState('APPLIED_TO_PROJECTS')
+  const [isCalendlyModal, setIsCalendlyModal] = useState(false)
 
   const handleClose = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false)
   }
 
   const toggleDropdown = e => {
-    setIsOpen(!isOpen);
+    setIsOpen(!isOpen)
   }
 
   const handleClickOutside = event => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false);
+      setIsOpen(false)
     }
   }
 
@@ -250,30 +254,31 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
     }
   }, [])
 
-  const handleOptionClick = (value) => {
-    setSelectedOption(value);
-    setIsOpen(false);
-  };
+  const handleOptionClick = value => {
+    setSelectedOption(value)
+    setIsOpen(false)
+  }
 
   const handleCalenderSettings = () => {
     let calenderSettingObj = {
       userId: _id,
       startTime: availableFromTime,
       endTime: availableEndTime,
-      timezone: userTimezone
+      timezone: userTimezone,
+      interviewScheduler: selectedOption
     }
 
-    setIsOpen(false);
-    setIsModalOpen(false);
-    setSelectedOption('APPLIED_TO_PROJECTS');
-    dispatch(createCalenderSetting(calenderSettingObj));
+    setIsOpen(false)
+    setIsModalOpen(false)
+    setSelectedOption('APPLIED_TO_PROJECTS')
+    dispatch(createCalenderSetting(calenderSettingObj))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleCalendlyIntegration = () => {
-    setIsModalOpen(false);
-    setIsCalendlyModal(true);
+    setIsModalOpen(false)
+    setIsCalendlyModal(true)
   }
-
 
   return (
     <>
@@ -310,30 +315,52 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
 
                 <ScheduleMeetingContainer>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <div className='d-flex gap-5 mt-3'>
+                    <div className="d-flex gap-5 mt-3">
                       <div>
-                        <Label fontSize="16px" fontWeight={600} htmlFor="start-time-1">Start Time</Label>
+                        <Label fontSize="16px" fontWeight={600} htmlFor="start-time-1">
+                          Start Timess
+                        </Label>
                         <TimePicker
                           value={availableFromTime}
-                          onChange={(e) => {
+                          onChange={e => {
                             setAvailableFromTime(dayjs(e))
                           }}
                           id="start-time-1"
                           minutesStep={30}
-                          renderInput={(params) =>
-                            <input {...params} placeholder="Select start time" />
-                          }
+                          renderInput={params => <input {...params} placeholder="Select start time" />}
                           sx={TimePickerStyled}
+                          slotProps={{
+                            popper: {
+                              sx: {
+                                '& .MuiList-root': {
+                                  height: '200px',
+                                  overflow: 'scroll'
+                                }
+                              }
+                            }
+                          }}
                         />
                       </div>
                       <div>
-                        <Label fontSize="16px" fontWeight={600} htmlFor="end-time">End Time</Label>
+                        <Label fontSize="16px" fontWeight={600} htmlFor="end-time">
+                          End Time
+                        </Label>
                         <TimePicker
                           id="end-time"
                           minutesStep={30}
                           sx={TimePickerStyled}
                           value={availableEndTime}
-                          onChange={(endTime) => setAvailableEndTime(endTime)}
+                          onChange={endTime => setAvailableEndTime(endTime)}
+                          slotProps={{
+                            popper: {
+                              sx: {
+                                '& .MuiList-root': {
+                                  height: '200px',
+                                  overflow: 'scroll'
+                                }
+                              }
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -341,21 +368,24 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                 </ScheduleMeetingContainer>
 
                 <div style={{ marginTop: 10, marginBottom: 5 }}>
-                  <Label fontSize="16px" fontWeight={600} >Who can schedule Interviews with you?</Label>
+                  <Label fontSize="16px" fontWeight={600}>
+                    Who can schedule Interviews with you?
+                  </Label>
                 </div>
                 <div style={{ width: '100%' }}>
-
                   <DropdownContainer ref={dropdownRef}>
                     <DropdownButton onClick={toggleDropdown}>
-                      {selectedOption ? options.find(option => option.value === selectedOption).label : 'Select an option'}
+                      {selectedOption
+                        ? options.find(option => option.value === selectedOption).label
+                        : 'Select an option'}
                     </DropdownButton>
                     {isOpen && (
                       <DropdownList>
-                        {options.map((option) => (
+                        {options.map(option => (
                           <DropdownItem
                             key={option.value}
                             onClick={() => handleOptionClick(option.value)}
-                          >
+                            backgroundColor={selectedOption === option.value ? '#BABABA' : ''}>
                             {option.label}
                           </DropdownItem>
                         ))}
@@ -363,10 +393,12 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                     )}
                   </DropdownContainer>
                 </div>
-                <div className='mt-2'>
-                  <TextTitleStyled weight={400} color="#1976D2" onClick={handleCalendlyIntegration}> Prefer to use Calendly? </TextTitleStyled>
+                <div className="mt-2">
+                  <TextTitleStyled weight={400} color="#1976D2" onClick={handleCalendlyIntegration}>
+                    {' '}
+                    Prefer to use Calendly?{' '}
+                  </TextTitleStyled>
                 </div>
-
               </div>
 
               <div
@@ -375,15 +407,8 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                   flexDirection: 'row',
                   justifyContent: 'flex-end'
                 }}>
-                <CancelButtonStyled
-                  onClick={handleClose}
-                >
-                  cancel
-                </CancelButtonStyled>
-                <AddListButtonStyled
-                  onClick={() => handleCalenderSettings()}>
-                  UPDATE
-                </AddListButtonStyled>
+                <CancelButtonStyled onClick={handleClose}>cancel</CancelButtonStyled>
+                <AddListButtonStyled onClick={() => handleCalenderSettings()}>UPDATE</AddListButtonStyled>
               </div>
             </div>
           </div>
@@ -395,7 +420,6 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
           setIsCalendlyModal={setIsCalendlyModal}
           setIsModalOpen={setIsModalOpen}
         />
-
       )}
     </>
   )

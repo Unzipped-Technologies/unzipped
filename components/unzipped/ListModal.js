@@ -268,7 +268,7 @@ const ListModal = ({
         <ScheduleMeetingModal
           scheduleInterviewModal={scheduleInterviewModal}
           handleScheduleInterviewModal={handleScheduleInterviewModal}
-          receiver={user}
+          receiver={{ userId: { _id: user?.userId } }}
           setScheduleInterviewModal={setScheduleInterviewModal}
         />
       )}
