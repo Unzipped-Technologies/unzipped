@@ -7,7 +7,6 @@ import ScheduleInterview from './ScheduleInterview'
 
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import ScheduleInterview from './ScheduleInterview'
 import { nextPublicGithubClientId } from '../../../config/keys'
 import ScheduleMeetingModal from './ScheduleMeetingModal'
 import { useDispatch, useSelector } from 'react-redux'
