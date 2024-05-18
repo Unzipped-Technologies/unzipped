@@ -9,6 +9,7 @@ import { parseCookies } from '../../services/cookieHelper'
 import { getProjectsList, setDepartment } from '../../redux/actions'
 import TasksPanel from '../../components/unzipped/dashboard/tasks/TasksPanel'
 import ProjectsPanel from '../../components/unzipped/dashboard/tasks/ProjectsPanel'
+import ProjectKanbanBoard from '../../components/unzipped/dashboard/Kanban/KanbanContainer'
 
 const Container = styled.div`
   overflow: overlay;
@@ -43,6 +44,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   const access = token?.access_token || cookie
   const [currentBusiness, setCurrentBusiness] = useState({})
   const [selectedDepartment, setSelectedDepartment] = useState({})
+  const [isFullScreen, setIsFullScreen] = useState(false)
 
   useEffect(() => {
     if (!access) {
@@ -90,29 +92,36 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
           router.back()
         }}
       />
-      {businesses?.length ? (
-        <Container>
-          <ProjectsPanel
-            businesses={businesses}
-            currentBusiness={currentBusiness}
-            selectedDepartment={selectedDepartment}
-            onSelectDepartment={value => {
-              setSelectedDepartment(value)
-              setDepartment(value)
-              if (window.innerWidth <= 600) {
-                router.push(`department/${value._id}`)
-              }
-            }}
-            onSelectBusiness={value => {
-              setCurrentBusiness(value)
-            }}
-          />
-          {window.innerWidth > 600 && (
-            <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
-          )}
-        </Container>
+      <button onClick={() => setIsFullScreen(!isFullScreen)}>View Full Screen</button>
+      {isFullScreen ? (
+        <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
       ) : (
-        !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+        <>
+        {businesses?.length ? (
+          <Container>
+            <ProjectsPanel
+              businesses={businesses}
+              currentBusiness={currentBusiness}
+              selectedDepartment={selectedDepartment}
+              onSelectDepartment={value => {
+                setSelectedDepartment(value)
+                setDepartment(value)
+                if (window.innerWidth <= 600) {
+                  router.push(`department/${value._id}`)
+                }
+              }}
+              onSelectBusiness={value => {
+                setCurrentBusiness(value)
+              }}
+            />
+            {window.innerWidth > 600 && (
+              <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+            )}
+          </Container>
+        ) : (
+          !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+        )}
+        </>
       )}
     </>
   )
