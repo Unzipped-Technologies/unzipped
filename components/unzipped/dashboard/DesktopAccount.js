@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import BackHeader from '../BackHeader'
-import styled from 'styled-components'
+import Link from 'next/link'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
+
+import { Underline } from './style'
+import BackHeader from '../BackHeader'
+import FormField from '../../ui/FormField'
+import { ValidationUtils } from '../../../utils'
+import { areObjectsEqual } from '../../../services/formHelper'
+import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
+
 import {
   getPaymentMethods,
   getAccountOnboardingLink,
@@ -11,13 +20,7 @@ import {
   getCurrentUserData,
   updateCurrentUser
 } from '../../../redux/actions'
-import { useRouter } from 'next/router'
-import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
-import { Underline } from './style'
-import { areObjectsEqual } from '../../../services/formHelper'
-import FormField from '../../ui/FormField'
-import { ValidationUtils } from '../../../utils'
-import Link from 'next/link'
+
 const Shell = styled.div`
   display: flex;
   flex-flow: column;
@@ -142,7 +145,7 @@ const DesktopAccount = ({
     taxId: business?.taxId
   }
 
-  const primaryPM = paymentMethods.find(e => e.isPrimary)
+  const primaryPM = paymentMethods?.find(e => e.isPrimary)
 
   const [firstNameError, setFirstNameError] = useState('')
   const [lastNameError, setLastNameError] = useState('')
@@ -156,7 +159,6 @@ const DesktopAccount = ({
   const [businessPhoneError, setBusinessPhoneError] = useState('')
   const [taxIdError, setTaxIdError] = useState('')
   const [error, setError] = useState('')
-  const [initialUrl] = useState(url?.url)
 
   const [editMode, setMode] = useState({
     editName: false,
@@ -168,24 +170,30 @@ const DesktopAccount = ({
     ...initialState
   })
 
-  useEffect(async () => {
-    await getCurrentUserData()
-    await getPaymentMethods(token)
-    await getBusinessDetails(undefined, token)
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await getCurrentUserData()
+        await getPaymentMethods()
+        await getBusinessDetails(undefined)
+      } catch (error) {}
+    }
+
+    fetchData()
   }, [])
 
   useEffect(() => {
-    if (url && url?.url !== initialUrl) {
-      router.push(url?.url)
+    const fetchBalanceData = async () => {
+      try {
+        getAccountBalance()
+      } catch (error) {}
     }
-  }, [url, router])
 
-  useEffect(() => {
+    fetchBalanceData()
     // Call getAccountBalance on component load
-    getAccountBalance(token)
     // Set up an interval to call getAccountBalance every 5 minutes
     const intervalId = setInterval(() => {
-      getAccountBalance(token)
+      getAccountBalance()
     }, 300000) // 300000 ms = 5 minutes
 
     return () => clearInterval(intervalId)
@@ -198,16 +206,16 @@ const DesktopAccount = ({
     })
   }
 
-  const validateString = ({ item, min, max, message }, setError) => {
+  const validateString = ({ item, min, max, message }, setErrorMessage) => {
     if (item === '') {
-      setError('This field is required!')
+      setErrorMessage('This field is required!')
       return
     }
     const isValid = ValidationUtils._validateString(item, { min, max })
     if (isValid) {
-      setError('')
+      setErrorMessage('')
     } else {
-      setError(message)
+      setErrorMessage(message)
     }
   }
 
@@ -218,8 +226,10 @@ const DesktopAccount = ({
     })
   }
 
-  const fetchAccountOnboardingLink = () => {
-    getAccountOnboardingLink(token, { url: '/dashboard/account' })
+  const fetchAccountOnboardingLink = async () => {
+    try {
+      await getAccountOnboardingLink({ url: '/dashboard/account' })
+    } catch (error) {}
   }
 
   const updateDisabled = () => {
@@ -234,18 +244,35 @@ const DesktopAccount = ({
     }
   }
 
-  const onSubmit = async () => {
-    const response = await updateCurrentUser(userData)
-    if (response?.status === 200) {
-      await router.push('/dashboard/account')
-      setMode({
-        ...editMode,
-        editName: false,
-        editAddress: false,
-        editCompany: false
-      })
+  const validateEin = ({ item, message }, setErrorMessage) => {
+    if (item === '') {
+      setErrorMessage('This field is required!')
+      return
+    }
+    const isValid = ValidationUtils._validateEIN(item)
+    if (isValid) {
+      setErrorMessage('')
     } else {
-      setError(response?.data?.message ?? 'Something went wrong')
+      setErrorMessage(message)
+    }
+  }
+
+  const onSubmit = async () => {
+    try {
+      const response = await updateCurrentUser(userData)
+      if (response?.status === 200) {
+        await router.push('/dashboard/account')
+        setMode({
+          ...editMode,
+          editName: false,
+          editAddress: false,
+          editCompany: false
+        })
+      } else {
+        setError(response?.data?.message ?? 'Something went wrong')
+      }
+    } catch (error) {
+      setError(error?.message ?? 'Something went wrong')
     }
   }
 
@@ -256,6 +283,7 @@ const DesktopAccount = ({
         <LeftOne>
           <TitleOne>Membership & Billing</TitleOne>
           <ButtonOne
+            data-testid={'view_profile'}
             onClick={() => {
               if (user?.role === 1) {
                 router.push(`/freelancers/${user.freelancers?._id}`)
@@ -298,7 +326,9 @@ const DesktopAccount = ({
             {stripeAccountId ? (
               <Link href="/dashboard/withdrawal/terms">Withdraw Funds</Link>
             ) : (
-              <EditButton onClick={() => fetchAccountOnboardingLink()}>Complete Onboarding</EditButton>
+              <EditButton onClick={() => fetchAccountOnboardingLink()} data-testid="complete_onboarding_button">
+                Complete Onboarding
+              </EditButton>
             )}
           </Rows>
         </RightOne>
@@ -321,7 +351,9 @@ const DesktopAccount = ({
         <RightOne>
           <Rows>
             <SubTitle>Name</SubTitle>
-            <EditButton onClick={() => enableEditing('editName', true)}>Edit</EditButton>
+            <EditButton data-testId="edit_name_button" onClick={() => enableEditing('editName', true)}>
+              Edit
+            </EditButton>
           </Rows>
           <Rows>
             <Align>
@@ -405,7 +437,9 @@ const DesktopAccount = ({
           <Underline color="#333" margin="15px 0px 5px 0px" />
           <Rows>
             <SubTitle>Address</SubTitle>
-            <EditButton onClick={() => enableEditing('editAddress', true)}>Edit</EditButton>
+            <EditButton data-testId="edit_address_button" onClick={() => enableEditing('editAddress', true)}>
+              Edit
+            </EditButton>
           </Rows>
           <Rows>
             <FormField
@@ -414,6 +448,7 @@ const DesktopAccount = ({
               placeholder="123 address st."
               borderRadius="10px"
               zIndexUnset
+              id="AddressLineOne"
               error={addressLineOneError}
               onBlur={() => {
                 updateDisabled()
@@ -450,6 +485,7 @@ const DesktopAccount = ({
               width="100%"
               placeholder="apt, bldng, etc."
               borderRadius="10px"
+              id="AddressLineTwo"
               error={addressLineTwoError}
               onBlur={() => {
                 updateDisabled()
@@ -488,6 +524,7 @@ const DesktopAccount = ({
                 width="100%"
                 placeholder="Columbus"
                 borderRadius="10px"
+                id="AddressCity"
                 zIndexUnset
                 disabled={!editMode?.editAddress}
                 error={addressCityError}
@@ -525,6 +562,7 @@ const DesktopAccount = ({
                 width="100%"
                 placeholder="OH"
                 borderRadius="10px"
+                id="AddressState"
                 zIndexUnset
                 disabled={!editMode?.editAddress}
                 error={addressStateError}
@@ -563,6 +601,7 @@ const DesktopAccount = ({
                 placeholder="43220"
                 borderRadius="10px"
                 zIndexUnset
+                id="AddressZip"
                 disabled={!editMode?.editAddress}
                 error={addressZipError}
                 onBlur={() => {
@@ -597,7 +636,7 @@ const DesktopAccount = ({
           <Underline color="#333" margin="15px 0px 5px 0px" />
           <Rows>
             <SubTitle>Company</SubTitle>
-            <EditButton onClick={() => enableEditing('editCompany', true)}>
+            <EditButton data-testId="edit_company_button" onClick={() => enableEditing('editCompany', true)}>
               {!business ? 'verify business details' : 'Edit'}
             </EditButton>
           </Rows>
@@ -608,6 +647,7 @@ const DesktopAccount = ({
                 width="100%"
                 placeholder="Unzipped"
                 zIndexUnset
+                id="businessName"
                 disabled={!editMode?.editCompany}
                 error={businessNameError}
                 onBlur={() => {
@@ -647,6 +687,7 @@ const DesktopAccount = ({
                 width="100%"
                 placeholder="LLC"
                 borderRadius="10px"
+                id="businessType"
                 disabled={!editMode?.editCompany}
                 zIndexUnset
                 error={businessTypeError}
@@ -686,6 +727,7 @@ const DesktopAccount = ({
                   fieldType="input"
                   disabled={!editMode?.editCompany}
                   width="100%"
+                  id="businessPhone"
                   placeholder="1 (833) 366-4285"
                   borderRadius="10px"
                   zIndexUnset
@@ -724,6 +766,7 @@ const DesktopAccount = ({
                   disabled={!editMode?.editCompany}
                   width="100%"
                   placeholder="**-*****42"
+                  id="taxId"
                   borderRadius="10px"
                   error={taxIdError}
                   onBlur={() => {
@@ -761,7 +804,10 @@ const DesktopAccount = ({
         <div></div>
         <Rows>
           <div></div>
-          <ButtonSubmit disabled={areObjectsEqual(userData, initialState)} onClick={onSubmit}>
+          <ButtonSubmit
+            data-testId="submimt_button"
+            disabled={areObjectsEqual(userData, initialState)}
+            onClick={onSubmit}>
             Save Settings
           </ButtonSubmit>
         </Rows>
