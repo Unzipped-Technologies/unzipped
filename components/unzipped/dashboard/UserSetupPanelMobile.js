@@ -322,7 +322,8 @@ const mapStateToProps = state => {
   return {
     calenderSuccess: state?.CalenderSetting?.success,
     success: state?.ProjectApplications?.success,
-    passwordChanged: state?.Auth?.passwordChanged
+    passwordChanged: state?.Auth?.passwordChanged,
+    calenderSuccess: state?.CalenderSetting?.success
   }
 }
 

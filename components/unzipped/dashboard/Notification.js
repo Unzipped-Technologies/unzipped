@@ -1,14 +1,14 @@
 import React from 'react'
-import Button from '../../ui/Button'
-import Icon from '../../ui/Icon'
-
-import { BlackCard, WhiteText, TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
-import ScheduleInterview from './ScheduleInterview'
-
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
+
+import Icon from '../../ui/Icon'
+import Button from '../../ui/Button'
+import ScheduleInterview from './ScheduleInterview'
+import { nextPublicGithubClientId } from '../../../config/keys'
 import { updateWizardSubmission } from '../../../redux/actions'
+import { DarkText, Absolute, WhiteCard, Dismiss } from './style'
 
 const ExploreContainer = styled.div`
   display: flex;
@@ -73,17 +73,17 @@ const NotificationContainer = styled.div`
   @media screen and (max-width: 768px) {
     flex-direction: column;
   }
-`;
+`
 
 const NotificationDismissalContainer = styled.div`
   display: flex;
-`;
+`
 const DismissTextStyled = styled.div`
- display: flex;
- flex-direction: column;
- align-items: center;
- justify-content: center
-`;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
 
 const help = [
   {
@@ -124,13 +124,18 @@ const help = [
   }
 ]
 
-const Notification = ({ type, children, noButton, smallMargin }) => {
+const Notification = ({ type, children, noButton, user }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const { wizardSubmission } = useSelector(state => state.Business)
   const handleNotificationDismissal = () => {
     dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }))
   }
+
+  function handleGithub() {
+    router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
+  }
+
   switch (type) {
     case 'plan':
       return (
@@ -145,11 +150,11 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
               </Absolute>
             </WhiteCard>
           )}
-          <NotificationContainer background={"#000"} color='#fff' borderColor="0px">
+          <NotificationContainer background={'#000'} color="#fff" borderColor="0px">
             <div style={{ padding: 5 }}>
               <p>
-                Build your dream business, grow your following, and collaborate with other professionals to
-                make your vision a reality. Start your free trial now.
+                Build your dream business, grow your following, and collaborate with other professionals to make your
+                vision a reality. Start your free trial now.
               </p>
             </div>
             <div>
@@ -162,24 +167,35 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
       )
     case 'github':
       return (
-        <WhiteCard size="large">
-          <DarkText>
-            Build your dream business, grow your following, and collaborate with other professionals to <br />
-            make your vision a reality. Start your free trial now.
-          </DarkText>
-          <Button icon="github" noBorder type="dark" normal>
-            CONNECT YOUR GITHUB ACCOUNT
-          </Button>
-        </WhiteCard>
+        !user?.isGithubConnected && (
+          <WhiteCard size="large">
+            <DarkText>
+              You haven’t connected your Github account yet, connect it now so we can begin work building your project!
+            </DarkText>
+            <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
+              CONNECT YOUR GITHUB ACCOUNT
+            </Button>
+          </WhiteCard>
+        )
       )
     case 'browse':
       return (
-        <NotificationContainer >
+        <NotificationContainer>
           <div style={{ padding: 5 }}>
             <p> Browse other projects to inspire ideas </p>
           </div>
           <div>
-            <Button noBorder type="default" normal small> BROWSE </Button>
+            <Button
+              noBorder
+              type="default"
+              normal
+              small
+              onClick={() => {
+                router.push('/projects')
+              }}>
+              {' '}
+              BROWSE{' '}
+            </Button>
           </div>
         </NotificationContainer>
       )
@@ -200,7 +216,10 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
               <DismissTextStyled>
                 <Dismiss>Dismiss</Dismiss>
               </DismissTextStyled>
-              <Button noBorder type="default" normal small> UPDATE </Button>
+              <Button noBorder type="default" normal small>
+                {' '}
+                UPDATE{' '}
+              </Button>
             </NotificationDismissalContainer>
           </NotificationContainer>
         </>
@@ -215,15 +234,18 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
             <DismissTextStyled>
               <Dismiss>Dismiss</Dismiss>
             </DismissTextStyled>
-            <Button noBorder type="default" normal small> UPDATE </Button>
+            <Button noBorder type="default" normal small>
+              {' '}
+              UPDATE{' '}
+            </Button>
           </NotificationDismissalContainer>
         </NotificationContainer>
       )
     case 'blue':
       return (
-        <NotificationContainer >
+        <NotificationContainer>
           <div style={{ padding: 5 }}>
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
               <div>
                 <Icon name="question" />
               </div>
@@ -232,26 +254,38 @@ const Notification = ({ type, children, noButton, smallMargin }) => {
               </div>
             </div>
           </div>
-          {!noButton && (<NotificationDismissalContainer>
-            <DismissTextStyled>
-              <Dismiss>Dismiss</Dismiss>
-            </DismissTextStyled>
-            <Button noBorder type="default" normal small> UPDATE </Button>
-          </NotificationDismissalContainer>
+          {!noButton && (
+            <NotificationDismissalContainer>
+              <DismissTextStyled>
+                <Dismiss>Dismiss</Dismiss>
+              </DismissTextStyled>
+              <Button noBorder type="default" normal small>
+                {' '}
+                UPDATE{' '}
+              </Button>
+            </NotificationDismissalContainer>
           )}
         </NotificationContainer>
       )
     case 'createBusiness':
       return (
-        <WhiteCard size="large">
-          <DarkText>
-            You haven't created your first Business yet, create one now so you can begin Collaborating! Need Ideas? View
-            existing projects here.
-          </DarkText>
-          <Button noBorder type="dark" normal>
-            CREATE YOUR FIRST BUSINESS
-          </Button>
-        </WhiteCard>
+        user?.totalBusiness < 1 && (
+          <WhiteCard size="large">
+            <DarkText>
+              You haven't created your first Project yet, create one now so you can begin Collaborating! Need Ideas?
+              View existing projects here.
+            </DarkText>
+            <Button
+              noBorder
+              type="dark"
+              normal
+              onClick={() => {
+                router.push('create-your-business')
+              }}>
+              CREATE FIRST PROJECT{' '}
+            </Button>
+          </WhiteCard>
+        )
       )
     case 'updateBusiness':
       return (
