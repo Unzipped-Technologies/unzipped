@@ -88,6 +88,17 @@ router.patch('/add-entry/:id', requireLogin, async (req, res) => {
   }
 })
 
+// fetch logged-in user's list
+router.get('/current-user/:id', requireLogin, async (req, res) => {
+  try {
+    const lists = await listHelper.getListByUserId(req.params.id)
+    if (!lists) throw Error('list not found')
+    res.json(lists)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 // lets user delete their lists
 router.post('/delete', requireLogin, async (req, res) => {
   // includes lists that are not active. Pass isActive true to get only existing lists

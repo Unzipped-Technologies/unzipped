@@ -141,6 +141,8 @@ const getSingleList = async filter => {
   return await list.findOne({ ...filter })
 }
 
+const getListByUserId = async userId => await list.find({ userId, name: { $ne: 'Recently Viewed' } })
+
 module.exports = {
   createLists,
   addListItemToList,
@@ -149,5 +151,6 @@ module.exports = {
   updateLists,
   deleteLists,
   addListEntriesToList,
-  getSingleList
+  getSingleList,
+  getListByUserId
 }

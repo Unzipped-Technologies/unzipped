@@ -556,6 +556,9 @@ const updateBusinessDetails = async (data, id) => {
   )
 }
 
+const getBusinessCreatedByUser = async userId => {
+  return await business.find({ userId: userId }).select('name _id')
+}
 module.exports = {
   createBusiness,
   listBusinesses,
@@ -570,5 +573,6 @@ module.exports = {
   getBusinessWithoutPopulate,
   createBusinessDetails,
   updateBusinessDetails,
-  getBusinessDetailsByUserId
+  getBusinessDetailsByUserId,
+  getBusinessCreatedByUser
 }
