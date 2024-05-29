@@ -115,14 +115,12 @@ const getCardLogoUrl = cardType => {
 const DesktopAccount = ({
   stripeAccountId,
   user,
-  url,
   getPaymentMethods,
   getAccountOnboardingLink,
   getBusinessDetails,
   balance,
   getAccountBalance,
   business,
-  token,
   paymentMethods = [],
   getCurrentUserData,
   updateCurrentUser
@@ -172,11 +170,9 @@ const DesktopAccount = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        await getCurrentUserData()
-        await getPaymentMethods()
-        await getBusinessDetails(undefined)
-      } catch (error) {}
+      await getCurrentUserData()
+      await getPaymentMethods()
+      await getBusinessDetails(undefined)
     }
 
     fetchData()
@@ -184,9 +180,7 @@ const DesktopAccount = ({
 
   useEffect(() => {
     const fetchBalanceData = async () => {
-      try {
-        getAccountBalance()
-      } catch (error) {}
+      getAccountBalance()
     }
 
     fetchBalanceData()
@@ -227,9 +221,7 @@ const DesktopAccount = ({
   }
 
   const fetchAccountOnboardingLink = async () => {
-    try {
-      await getAccountOnboardingLink({ url: '/dashboard/account' })
-    } catch (error) {}
+    await getAccountOnboardingLink({ url: '/dashboard/account' })
   }
 
   const updateDisabled = () => {
@@ -258,21 +250,17 @@ const DesktopAccount = ({
   }
 
   const onSubmit = async () => {
-    try {
-      const response = await updateCurrentUser(userData)
-      if (response?.status === 200) {
-        await router.push('/dashboard/account')
-        setMode({
-          ...editMode,
-          editName: false,
-          editAddress: false,
-          editCompany: false
-        })
-      } else {
-        setError(response?.data?.message ?? 'Something went wrong')
-      }
-    } catch (error) {
-      setError(error?.message ?? 'Something went wrong')
+    const response = await updateCurrentUser(userData)
+    if (response?.status === 200) {
+      setMode({
+        ...editMode,
+        editName: false,
+        editAddress: false,
+        editCompany: false
+      })
+      await router.push('/dashboard/account')
+    } else {
+      setError(response?.data?.message ?? 'Something went wrong')
     }
   }
 
@@ -799,13 +787,17 @@ const DesktopAccount = ({
           )}
         </RightOne>
       </Container>
-      {error && <p className="red-text">{error}</p>}
+      {error && (
+        <p className="red-text" data-testId="account_error">
+          {error}
+        </p>
+      )}
       <Container border>
         <div></div>
         <Rows>
           <div></div>
           <ButtonSubmit
-            data-testId="submimt_button"
+            data-testId={'submimt_button'}
             disabled={areObjectsEqual(userData, initialState)}
             onClick={onSubmit}>
             Save Settings

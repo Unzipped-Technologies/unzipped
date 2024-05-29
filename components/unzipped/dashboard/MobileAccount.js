@@ -44,24 +44,19 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
     const fetchData = async () => {
       try {
         await getCurrentUserData()
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
+      } catch (error) {}
     }
 
     fetchData()
   }, [])
 
   const linkPush = link => {
-    console.log('linkPushhhh', link)
     router.push(link)
   }
 
   const signOut = async () => {
-    try {
-      await logoutUser()
-      linkPush('/login')
-    } catch (error) {}
+    await logoutUser()
+    linkPush('/login')
   }
 
   return (
@@ -249,3 +244,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MobileAccount)
+export { P } // Exporting P for testing purposes

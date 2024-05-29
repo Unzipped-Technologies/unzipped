@@ -1,37 +1,40 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import * as actions from '../../redux/actions' // Import the actions module
 import { initialState } from '../store/mockInitialState'
 import { renderWithRedux } from '../store/commonTestSetup'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
-import MobileAccount from '../../components/unzipped/dashboard/MobileAccount' // Adjust the import path as needed
+import { fireEvent, screen, waitFor, render } from '@testing-library/react'
+import MobileAccount, { P } from '../../components/unzipped/dashboard/MobileAccount' // Adjust the import path as needed
+import { logoutUser, getCurrentUserData } from '../../redux/actions'
+
+jest.mock('axios')
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }))
 
-jest.mock('../../redux/actions', () => ({
+jest.mock('../../redux/Auth/actions', () => ({
+  ...jest.requireActual('../../redux/Auth/actions'),
   getCurrentUserData: jest.fn(),
-  logoutUser: jest.fn() // Mock logoutUser only
+  logoutUser: jest.fn()
 }))
 
 describe('MobileAccount Component', () => {
-  let mockRouterPush
+  let mockRouterPush, mockRouterBack
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     mockRouterPush = jest.fn()
+    mockRouterBack = jest.fn()
+
     useRouter.mockImplementation(() => ({
       pathname: '/',
       push: mockRouterPush,
       replace: jest.fn(),
-      prefetch: jest.fn()
+      prefetch: jest.fn(),
+      back: mockRouterBack
     }))
-
-    actions.getCurrentUserData()
-    actions.logoutUser()
   })
 
   afterEach(() => {
@@ -45,7 +48,7 @@ describe('MobileAccount Component', () => {
 
     // Wait for async effects to complete
     await waitFor(() => {
-      expect(actions.getCurrentUserData).toHaveBeenCalled()
+      expect(getCurrentUserData).toHaveBeenCalled()
     })
 
     expect(screen.getByText('Account')).toBeInTheDocument()
@@ -69,7 +72,7 @@ describe('MobileAccount Component', () => {
 
     // Wait for async effects to complete
     await waitFor(() => {
-      expect(actions.getCurrentUserData).toHaveBeenCalled()
+      expect(getCurrentUserData).toHaveBeenCalled()
     })
 
     const viewProfileButton = screen.getByText('View Profile')
@@ -82,7 +85,7 @@ describe('MobileAccount Component', () => {
 
     // Wait for async effects to complete
     await waitFor(() => {
-      expect(actions.getCurrentUserData).toHaveBeenCalled()
+      expect(getCurrentUserData).toHaveBeenCalled()
     })
 
     const viewProfileButton = screen.getByText('View Profile')
@@ -95,14 +98,14 @@ describe('MobileAccount Component', () => {
 
     // Wait for async effects to complete
     await waitFor(() => {
-      expect(actions.getCurrentUserData).toHaveBeenCalled()
+      expect(getCurrentUserData).toHaveBeenCalled()
     })
 
     const showSettingContainer = screen.getByTestId('show_setting_container')
     fireEvent.click(showSettingContainer)
 
     expect(screen.getByText('testUser@gmail.com')).toBeInTheDocument()
-    expect(screen.getByText('0111-111-1111')).toBeInTheDocument()
+    expect(screen.getByText('(123) 456-7890')).toBeInTheDocument()
 
     const changeEmailElement = screen.getByText(/Change email/i)
     expect(changeEmailElement).toBeInTheDocument()
@@ -132,17 +135,9 @@ describe('MobileAccount Component', () => {
   it('renders MobileAccount Account and Verify billing detail Link', async () => {
     renderWithRedux(<MobileAccount />, { initialState })
 
-    // const paymentMethodElement = screen.getByText(/Manage payment method/i)
-    // expect(paymentMethodElement).toBeInTheDocument()
-    // expect(paymentMethodElement).toHaveAttribute('href', '/manage-payment-method')
-
     const billingDetailElement = screen.getByText(/Membership/i)
     expect(billingDetailElement).toBeInTheDocument()
     fireEvent.click(billingDetailElement)
-
-    // const changePlanElement = screen.getByText(/Change plan/i)
-    // expect(changePlanElement).toBeInTheDocument()
-    // expect(changePlanElement).toHaveAttribute('href', '/pick-a-plan')
   })
 
   it('renders MobileAccount Account and Verify transaction history Link', async () => {
@@ -162,16 +157,29 @@ describe('MobileAccount Component', () => {
   })
 
   it('renders MobileAccount Account and click on logout', async () => {
-    renderWithRedux(<MobileAccount />, { initialState })
+    logoutUser.mockReturnValue(() => {
+      return {
+        status: 200
+      }
+    })
 
-    actions.logoutUser.mockResolvedValueOnce()
+    renderWithRedux(<MobileAccount getCurrentUserData={getCurrentUserData} logoutUser={logoutUser} />, {
+      initialState
+    })
 
+    // Wait for async effects to complete
+    await waitFor(() => {
+      expect(getCurrentUserData).toHaveBeenCalled()
+    })
     const logoutElement = screen.getByTestId('logout_user_element')
     expect(logoutElement).toBeInTheDocument()
     fireEvent.click(logoutElement)
 
     await waitFor(async () => {
-      expect(actions.logoutUser).toHaveBeenCalled()
+      expect(logoutUser).toHaveBeenCalled()
+    })
+    await waitFor(() => {
+      expect(mockRouterPush).toHaveBeenCalledWith('/login')
     })
   })
 
@@ -192,5 +200,36 @@ describe('MobileAccount Component', () => {
 
     const NotAvailableElement = screen.getByText('$ 0.00 USD')
     expect(NotAvailableElement).toBeInTheDocument()
+  })
+  it('applies custom styles', () => {
+    const customStyles = {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      color: 'red',
+      background: 'yellow',
+      padding: '10px',
+      margin: '',
+      align: 'center',
+      borderBottom: '1px solid black',
+      right: '10px'
+    }
+
+    const { getByText } = render(<P {...customStyles}>Test</P>)
+    const pElement = getByText('Test')
+
+    expect(pElement).toHaveStyle(`font-size: ${customStyles.fontSize}`)
+    expect(pElement).toHaveStyle(`font-weight: ${customStyles.fontWeight}`)
+    expect(pElement).toHaveStyle(`color: ${customStyles.color}`)
+    expect(pElement).toHaveStyle(`background: ${customStyles.background}`)
+    expect(pElement).toHaveStyle(`padding: ${customStyles.padding}`)
+    expect(pElement).toHaveStyle(`margin: ${customStyles.margin}`)
+    expect(pElement).toHaveStyle(`text-align: ${customStyles.align}`)
+    expect(pElement).toHaveStyle(`border-bottom: ${customStyles.borderBottom}`)
+    expect(pElement).toHaveStyle(`right: ${customStyles.right}`)
+  })
+
+  it('renders MobileAccount without userLikes', async () => {
+    initialState.Auth.user.likeTotal = null
+    renderWithRedux(<MobileAccount />, { initialState })
   })
 })
