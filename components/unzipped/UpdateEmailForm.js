@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+
 import BackHeader from './BackHeader'
 import FormField from '../ui/FormField'
 import { ValidationUtils } from '../../utils'
@@ -25,11 +26,6 @@ const Form = styled.form`
   gap: 15px;
   display: flex;
   flex-flow: column;
-`
-
-const Title = styled.p`
-  font-size: 16px;
-  color: #333;
 `
 
 const ButtonSubmit = styled.button`
@@ -125,6 +121,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
     <Container>
       <BackHeader title={title} />
       <Form
+        data-testId="change_email_form"
         mobile={isMobile}
         onSubmit={e => {
           e?.preventDefault()
@@ -139,29 +136,6 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
             width="100%"
             zIndexUnset
             error={currentEmailError}
-            onBlur={() => {
-              validateEmail(
-                {
-                  item: userData.currentEmail,
-                  min: 1,
-                  max: 45,
-                  message: 'Please enter a valid Email!'
-                },
-                setCurrentEmailError
-              )
-            }}
-            validate={() => {
-              validateEmail(
-                {
-                  item: userData.currentEmail,
-                  min: 1,
-                  max: 45,
-                  message: 'Please enter a valid Email!'
-                },
-                setCurrentEmailError
-              )
-            }}
-            onChange={e => updateForm('currentEmail', e.target.value)}
             value={userData.currentEmail}
             disabled={true}>
             Current Email
@@ -181,10 +155,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
             New Email
           </FormField>
           <ButtonContainer mobile={isMobile}>
-            <ButtonBack type="button" onClick={onBack}>
+            <ButtonBack type="button" onClick={onBack} data-testId="cancel_email_changes">
               Cancel
             </ButtonBack>
-            <ButtonSubmit type="submit" disabled={!isFormValid()}>
+            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testId="save_email_changes">
               Save
             </ButtonSubmit>
           </ButtonContainer>

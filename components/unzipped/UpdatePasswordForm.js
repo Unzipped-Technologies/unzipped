@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+
 import BackHeader from './BackHeader'
 import FormField from '../ui/FormField'
-import { useRouter } from 'next/router'
 import { ValidationUtils } from '../../utils'
 
 const Container = styled.div`
@@ -126,6 +126,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
     <Container>
       <BackHeader title={title} />
       <Form
+        data-testId="change_password_form"
         mobile={isMobile}
         onSubmit={e => {
           e?.preventDefault()
@@ -205,10 +206,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
           {error && <p className="red-text"> {error}</p>}
 
           <ButtonContainer mobile={isMobile}>
-            <ButtonBack type="button" onClick={onBack}>
+            <ButtonBack type="button" onClick={onBack} data-testId="cancel_password_changes">
               Cancel
             </ButtonBack>
-            <ButtonSubmit type="submit" disabled={!isFormValid()}>
+            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testId="save_password_changes">
               Save
             </ButtonSubmit>
           </ButtonContainer>

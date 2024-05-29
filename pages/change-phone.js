@@ -1,39 +1,31 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import UpdatePhoneForm from '../components/unzipped/UpdatePhoneForm'
-import { updatePhoneNumber } from '../redux/actions'
+import { bindActionCreators } from 'redux'
+
 import Nav from '../components/unzipped/header'
-import { parseCookies } from '../services/cookieHelper'
-
-import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 import Footer from '../components/unzipped/Footer'
-
-import styled from 'styled-components';
+import { updatePhoneNumber } from '../redux/actions'
+import UpdatePhoneForm from '../components/unzipped/UpdatePhoneForm'
+import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 
 const MainContainer = styled.div`
   min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const FooterContainer = styled.div`
   margin-top: auto;
-`;
+`
 
-const Reset = ({ updateCurrentUser, token, phone }) => {
-  const [loading, setLoading] = useState(false)
-  const [phoneError, setPhoneError] = useState('')
-
+const Reset = ({ updatePhoneNumber, phone }) => {
   const router = useRouter()
 
-  const linkPush = link => {
-    router.push(link)
-  }
-
+  const [phoneError, setPhoneError] = useState('')
   const [marginBottom, setMarginBottom] = useState('0px')
 
   useEffect(() => {
@@ -57,8 +49,11 @@ const Reset = ({ updateCurrentUser, token, phone }) => {
     }
   }, [])
 
+  const linkPush = link => {
+    router.push(link)
+  }
+
   const changePhoneNumber = async data => {
-    setLoading(true)
     const response = await updatePhoneNumber(data)
     if (response?.status === 200) {
       await router.push('/dashboard/account')
@@ -68,7 +63,7 @@ const Reset = ({ updateCurrentUser, token, phone }) => {
   }
 
   return (
-    <MainContainer >
+    <MainContainer>
       <Head>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
@@ -76,7 +71,7 @@ const Reset = ({ updateCurrentUser, token, phone }) => {
         <title>Change Phone | Unzipped</title>
         <meta name="Change Password | Unzipped" content="Change Password" />
       </Head>
-      <Nav token={token} marginBottom={marginBottom} onBackArrowClick={() => linkPush('/dashboard/account')} />
+      <Nav marginBottom={marginBottom} />
       <UpdatePhoneForm
         type="phone"
         title="Change Phone"
@@ -86,23 +81,19 @@ const Reset = ({ updateCurrentUser, token, phone }) => {
         error={phoneError}
       />
 
-      {window.innerWidth >= 680 ? <FooterContainer><Footer /></FooterContainer> : <MobileFreelancerFooter defaultSelected="Account" />}
-
+      {window.innerWidth >= 680 ? (
+        <FooterContainer>
+          <Footer />
+        </FooterContainer>
+      ) : (
+        <MobileFreelancerFooter defaultSelected="Account" />
+      )}
     </MainContainer>
   )
 }
 
-Reset.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-
-  return {
-    token: token && token
-  }
-}
-
 const mapStateToProps = state => {
   return {
-    error: state.Auth.error,
     phone: state.Auth.user.phoneNumber
   }
 }
