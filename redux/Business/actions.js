@@ -17,7 +17,10 @@ import {
   SET_IS_BUSINESS_FIELD_SUBMITTED,
   SET_PROJECT_FILES,
   RESET_PROJECT_FILES,
-  GET_BUSINESS_DETAILS
+  GET_BUSINESS_DETAILS,
+  GET_BUSINESS_CREATED_BY_USER,
+  GET_BUSINESS_CREATED_BY_USER_SUCCESS,
+  GET_BUSINESS_CREATED_BY_USER_FAILED
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -253,4 +256,26 @@ export const resetProjectFiles = () => (dispatch) => {
   dispatch({
     type: RESET_PROJECT_FILES,
   })
+}
+
+export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState) => {
+  try {
+    await dispatch(startLoading())
+
+    const apiResponse = await axios.get(`/api/business/user-owned-business/${userId}`, tokenConfig(getState()?.Auth.token));
+    if (apiResponse?.status === 200) {
+      dispatch({
+        type: GET_BUSINESS_CREATED_BY_USER_SUCCESS,
+        payload: apiResponse.data
+      })
+    }
+    await dispatch(stopLoading())
+  } catch (error) {
+    dispatch({
+      type: GET_BUSINESS_CREATED_BY_USER_FAILED,
+      payload: error.message
+    })
+    await dispatch(stopLoading())
+  }
+
 }

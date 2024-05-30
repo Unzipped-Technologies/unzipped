@@ -18,7 +18,9 @@ import {
   SET_IS_BUSINESS_FIELD_SUBMITTED,
   SET_PROJECT_FILES,
   RESET_PROJECT_FILES,
-  GET_BUSINESS_DETAILS
+  GET_BUSINESS_DETAILS,
+  GET_BUSINESS_CREATED_BY_USER_SUCCESS,
+  GET_BUSINESS_CREATED_BY_USER_FAILED
 } from './constants'
 
 const INIT_STATE = {
@@ -67,7 +69,8 @@ const INIT_STATE = {
     tagId: '',
     tagName: ''
   },
-  error: ''
+  error: '',
+  userOwnedBusiness: []
 }
 
 const Business = (state = INIT_STATE, action = {}) => {
@@ -161,7 +164,14 @@ const Business = (state = INIT_STATE, action = {}) => {
 
     case GET_BUSINESS_DETAILS:
       return { ...state, loading: false, details: action.payload }
-    default:
+    
+    case GET_BUSINESS_CREATED_BY_USER_SUCCESS:
+      return { ...state, loading: false, userOwnedBusiness: action.payload}
+
+    case GET_BUSINESS_CREATED_BY_USER_FAILED:
+      return { ...state, loading: false, userOwnedBusiness: [] }
+
+      default:
       return state
   }
 }
