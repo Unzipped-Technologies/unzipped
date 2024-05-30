@@ -492,7 +492,9 @@ describe('DesktopAccount Component', () => {
     const SubmitButtonElement = screen.getByTestId('submimt_button')
     expect(SubmitButtonElement).toBeEnabled()
 
-    fireEvent.click(SubmitButtonElement)
+    act(() => {
+      fireEvent.click(SubmitButtonElement)
+    })
   })
 
   it('renders Desktop Account and display default error message', async () => {
@@ -576,7 +578,9 @@ describe('DesktopAccount Component', () => {
     const SubmitButtonElement = screen.getByTestId('submimt_button')
     expect(SubmitButtonElement).toBeEnabled()
 
-    fireEvent.click(SubmitButtonElement)
+    act(() => {
+      fireEvent.click(SubmitButtonElement)
+    })
     await waitFor(() => expect(screen.getByTestId('account_error')).toBeInTheDocument())
     expect(screen.getByTestId('account_error')).toHaveTextContent(/Something went wrong/i)
   })
@@ -734,13 +738,17 @@ describe('DesktopAccount Component', () => {
     expect(getAccountBalance).toHaveBeenCalledTimes(1)
 
     // Advance the timers by 5 minutes (300000 ms)
-    jest.advanceTimersByTime(300000)
+    act(() => {
+      jest.advanceTimersByTime(300000)
+    })
 
     // Wait for the interval function to be called
     await waitFor(() => expect(getAccountBalance).toHaveBeenCalledTimes(2))
 
     // Advance the timers by another 5 minutes
-    jest.advanceTimersByTime(300000)
+    act(() => {
+      jest.advanceTimersByTime(300000)
+    })
 
     // Wait for the interval function to be called again
     await waitFor(() => expect(getAccountBalance).toHaveBeenCalledTimes(3))
