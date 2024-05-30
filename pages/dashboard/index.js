@@ -62,8 +62,11 @@ const Dashboard = ({ resetRegisterForm, getVerifyIdentityUrl, token, getCurrentU
     getVerifyIdentityUrl(token)
   }
 
-  useEffect(async () => {
-    await getCurrentUserData()
+  useEffect(() => {
+    async function fetchData() {
+      await getCurrentUserData()
+    }
+    fetchData()
   }, [])
 
   const user = [

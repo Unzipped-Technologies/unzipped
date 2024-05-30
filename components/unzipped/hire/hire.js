@@ -9,7 +9,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import { useRouter } from 'next/router'
 // import Select from 'react-select';
 import { useDispatch, useSelector, connect } from 'react-redux'
-import { getProjectsList, getProjectApplications, getFreelancerById } from '../../../redux/actions'
+import { getFreelancerById, getUserOwnedBusiness } from '../../../redux/actions'
 import ProjectDropdown from './project-dropdown'
 import BackHeader from '../BackHeader'
 import useWindowSize from '../../../hooks/windowWidth'
@@ -47,38 +47,38 @@ const HeadingText = styled.h1`
   padding: 10px 0px;
   margin-top: 0;
   ${getFontStyled({
-    color: COLORS.black,
-    fontSize: FONT_SIZE.PX_20,
-    fontWeight: 500,
-    fontStyle: 'normal',
-    lineHeight: FONT_SIZE.PX_24,
-    letterSpacing: LETTER_SPACING
-  })}
+  color: COLORS.black,
+  fontSize: FONT_SIZE.PX_20,
+  fontWeight: 500,
+  fontStyle: 'normal',
+  lineHeight: FONT_SIZE.PX_24,
+  letterSpacing: LETTER_SPACING
+})}
 `
 
 const Text = styled.span`
   margin: 0;
   ${getFontStyled({
-    color: COLORS.black,
-    fontSize: FONT_SIZE.PX_16,
-    fontWeight: 300,
-    fontStyle: 'normal',
-    lineHeight: FONT_SIZE.PX_19,
-    letterSpacing: LETTER_SPACING
-  })}
+  color: COLORS.black,
+  fontSize: FONT_SIZE.PX_16,
+  fontWeight: 300,
+  fontStyle: 'normal',
+  lineHeight: FONT_SIZE.PX_19,
+  letterSpacing: LETTER_SPACING
+})}
 `
 
 const Label = styled.span`
   text-transform: uppercase;
   display: block;
   ${getFontStyled({
-    color: COLORS.black,
-    fontSize: FONT_SIZE.PX_14,
-    fontWeight: 500,
-    fontStyle: 'normal',
-    lineHeight: FONT_SIZE.PX_24,
-    letterSpacing: LETTER_SPACING
-  })};
+  color: COLORS.black,
+  fontSize: FONT_SIZE.PX_14,
+  fontWeight: 500,
+  fontStyle: 'normal',
+  lineHeight: FONT_SIZE.PX_24,
+  letterSpacing: LETTER_SPACING
+})};
   margin-top: 12px;
   margin-bottom: 6px;
 `
@@ -111,7 +111,7 @@ const TextareaField = styled.textarea`
 
 const HireButton = styled.button`
   background: ${COLORS.hireButton};
-  width: 135px;
+  width: 100%;
   height: 40px;
   border-radius: 5px;
   text-transform: uppercase;
@@ -155,13 +155,13 @@ const Span = styled.span`
   margin-right: 15px;
   margin-left: 15px;
   ${getFontStyled({
-    color: COLORS.black,
-    fontSize: FONT_SIZE.PX_14,
-    fontWeight: 500,
-    fontStyle: 'normal',
-    lineHeight: FONT_SIZE.PX_24,
-    letterSpacing: LETTER_SPACING
-  })}
+  color: COLORS.black,
+  fontSize: FONT_SIZE.PX_14,
+  fontWeight: 500,
+  fontStyle: 'normal',
+  lineHeight: FONT_SIZE.PX_24,
+  letterSpacing: LETTER_SPACING
+})}
 `
 const ButtonText = styled.span`
   text-transform: uppercase;
@@ -169,13 +169,13 @@ const ButtonText = styled.span`
   margin-right: 20px;
   margin-left: 20px;
   ${getFontStyled({
-    color: COLORS.white,
-    fontSize: FONT_SIZE.PX_14,
-    fontWeight: 500,
-    fontStyle: 'normal',
-    lineHeight: FONT_SIZE.PX_24,
-    letterSpacing: LETTER_SPACING
-  })}
+  color: COLORS.white,
+  fontSize: FONT_SIZE.PX_14,
+  fontWeight: 500,
+  fontStyle: 'normal',
+  lineHeight: FONT_SIZE.PX_24,
+  letterSpacing: LETTER_SPACING
+})}
 `
 
 const ContentContainer = styled.div`
@@ -221,8 +221,8 @@ const MiddleContent = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: end;
-  padding-right: 4rem;
   margin-top: 35px;
+  width: 100%;
   @media screen and (max-width: 600px) {
     width: 100%;
     padding-left: 0px;
@@ -230,7 +230,7 @@ const ButtonContainer = styled.div`
   }
 `
 
-const HireComp = ({ name }) => {
+const HireComp = ({ name, token, userId, userOwnedBusiness }) => {
   const dispatch = useDispatch()
   const projects = useSelector(state => state.Business.projectList)
   const router = useRouter()
@@ -250,6 +250,7 @@ const HireComp = ({ name }) => {
   const handleSearchChangeEvent = e => {
     setSelectedVal(e)
   }
+
   useEffect(() => {
     if (width <= 600) {
       setIsSmallWindow(true)
@@ -258,9 +259,13 @@ const HireComp = ({ name }) => {
     }
   }, [width])
 
+  useEffect(() => {
+    dispatch(getUserOwnedBusiness(userId, token))
+  }, [])
+
   const handleSearch = e => {
     if (e.target.value.length >= 3) {
-      dispatch(getProjectsList({ filter: { name: e.target.value } }))
+      dispatch(getUserOwnedBusiness(userId, token))
     }
   }
 
@@ -272,7 +277,7 @@ const HireComp = ({ name }) => {
           <HeadingText>Contact {name} About Your Job</HeadingText>
           <Text>Send a contract request to {name}. More details on the next screen.</Text>
           <Label>Project Name</Label>
-          <ProjectDropdown />
+          <ProjectDropdown userBusinessList={userOwnedBusiness}/>
           <Label>Send a private message</Label>
           <TextareaField rows={50} cols={100} />
           <Label>job type</Label>
@@ -321,18 +326,18 @@ const HireComp = ({ name }) => {
 }
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
     token: state.Auth.token,
-    projectApplications: state.ProjectApplications.projectApplications,
-    name: state.Freelancers?.selectedFreelancer?.userId?.FirstName
+    name: state.Freelancers?.selectedFreelancer?.userId?.FirstName,
+    userId: state.Auth?.user?._id,
+    userOwnedBusiness: state.Business.userOwnedBusiness
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectApplications: bindActionCreators(getProjectApplications, dispatch),
-    getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
+    getUserOwnedBusiness: bindActionCreators(getUserOwnedBusiness, dispatch)
   }
 }
 

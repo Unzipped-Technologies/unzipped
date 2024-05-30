@@ -150,31 +150,41 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
               e.preventDefault()
               handleProfilePage(false)
             }}>
-            <div style={{ background: '#37DEC5', width: '-webkit-fill-available' }}>
-              <button
-                style={{
-                  background: '#37DEC5',
-                  color: 'white',
-                  fontSize: '16px',
-                  border: '0',
-                  padding: '16px 0px',
-                  fontWeight: '600'
-                }}>
-                Schedule an Interview
-              </button>
-            </div>
-            <div style={{ borderLeft: '1.3px solid #B5B5B5', background: '#37DEC5' }}>
-              <button
-                style={{
-                  background: '#37DEC5',
-                  color: 'white',
-                  fontSize: '16px',
-                  border: '0',
-                  padding: '16px 13px',
-                  fontWeight: '600'
-                }}>
-                <IconComponent name="downArrow" width="20" height="20" viewBox="0 0 20 20" fill="white" />
-              </button>
+            <div style={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              background: '#37DEC5',
+              borderRadius: "4px"
+            }}>
+              <div style={{ width: "80%" }}>
+                <button
+                  style={{
+                    background: '#37DEC5',
+                    color: 'white',
+                    fontSize: '18px',
+                    border: '0',
+                    padding: '16px 0px',
+                    fontWeight: '600'
+                  }}>
+                  Schedule an Interview
+                </button>
+              </div>
+              <div style={{
+                borderLeft: '1.3px solid #B5B5B5',
+                background: '#37DEC5',
+                width: "20%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column"
+              }}>
+                <div style={{ position: "relative", top: "15px", left: "8px" }}>
+                  <IconComponent name="downArrow" width="35" height="35" viewBox="0 0 20 20" fill="white" />
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -235,10 +245,10 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
             </P>
             {uniqueSkills?.length
               ? uniqueSkills?.map((skill, index) => (
-                  <P padding="0 10px" key={`${skill}_${index}`}>
-                    {ConverterUtils.capitalize(`${skill} `)}
-                  </P>
-                ))
+                <P padding="0 10px" key={`${skill}_${index}`}>
+                  {ConverterUtils.capitalize(`${skill} `)}
+                </P>
+              ))
               : ''}
           </OtherInformationCard>
           <OtherInformationCard>
@@ -303,19 +313,19 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
 
             {user?.education?.length
               ? user.education.map(education => (
-                  <div key={education?._id}>
-                    <P padding="0 10px" fontWeight="500">
-                      {education?.title}
-                    </P>
-                    <P padding="0 10px" margin="0">
-                      {education?.institute}
-                    </P>
-                    <P padding="0 10px">
-                      {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear}{' '}
-                      years)
-                    </P>
-                  </div>
-                ))
+                <div key={education?._id}>
+                  <P padding="0 10px" fontWeight="500">
+                    {education?.title}
+                  </P>
+                  <P padding="0 10px" margin="0">
+                    {education?.institute}
+                  </P>
+                  <P padding="0 10px">
+                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear}{' '}
+                    years)
+                  </P>
+                </div>
+              ))
               : ''}
           </OtherInformationCard>
         </OtherInformationBox>
