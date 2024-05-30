@@ -12,6 +12,5 @@ module.exports = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
   },
-  testDirectoryName: '__test__',
   testMatch: ['<rootDir>/__test__/**/*.test.(js|jsx)', '<rootDir>/__test__/**/*.spec.(js|jsx)']
 }
