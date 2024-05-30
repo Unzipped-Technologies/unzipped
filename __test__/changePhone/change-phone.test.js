@@ -2,7 +2,6 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 
-// import * as actions from '../../redux/actions' // Import the actions module
 import ChangePhone from '../../pages/change-phone'
 import { initialState } from '../store/mockInitialState'
 import { renderWithRedux } from '../store/commonTestSetup'
@@ -20,16 +19,6 @@ jest.mock('../../redux/Auth/actions', () => ({
   updatePhoneNumber: jest.fn()
 }))
 
-// jest.mock('../../redux/actions', () => ({
-//   updatePhoneNumber: jest.fn(() => {
-//     return {
-//       status: 200
-//     }
-//   }),
-//   logoutUser: jest.fn(),
-//   resetBusinessForm: jest.fn()
-// }))
-
 describe('ChangePhone Component', () => {
   let mockRouterPush, mockRouterBack
 
@@ -46,10 +35,6 @@ describe('ChangePhone Component', () => {
       prefetch: jest.fn(),
       back: mockRouterBack
     }))
-
-    // actions.updatePhoneNumber()
-    // actions.logoutUser()
-    // actions.resetBusinessForm()
   })
 
   afterEach(() => {
