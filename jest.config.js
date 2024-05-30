@@ -12,5 +12,5 @@ module.exports = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
   },
-  testMatch: ['<rootDir>/__test__/TaskList/**/*.(test|spec).(js|jsx)'] // Only pick tests from the 'tests' directory
+  testMatch: ['<rootDir>/__test__/**/*.test.(js|jsx)', '<rootDir>/__test__/**/*.spec.(js|jsx)']
 }
