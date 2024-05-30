@@ -21,20 +21,19 @@ const SelectStyled = styled(Select)`
     }
 `;
 
-const ProjectDropdown = ({getProjectsList}) => {
+const ProjectDropdown = ({getProjectsList, userBusinessList}) => {
 
     const dispatch = useDispatch();
     const projects = useSelector(state => state.Business.projectList);
-
     const [projectList, setProjectList] = useState([]);
     const [selectedVal, setSelectedVal] = useState('');
     const [isSmallWindow, setIsSmallWindow] = useState(false)
 
     const { width } = useWindowSize();
     useEffect(() => {
-        const project = projects.map(item => ({ value: item.name, label: item.name }));
+        const project = userBusinessList.map(item => ({ value: item.name, label: item.name }));
         setProjectList(project);
-    }, [projects])
+    }, [userBusinessList])
 
     const handleSearchChangeEvent = (e) => {
         setSelectedVal(e);
@@ -54,19 +53,12 @@ const ProjectDropdown = ({getProjectsList}) => {
         };
     }
 
-    const handleSearch = debounce((e) => {
-        if (e.target.value.length > 1) {
-            getProjectsList({ filter: { name: e.target.value } });
-        }
-    }, 500);
 
     useEffect(() => {
         if (width <= 600) {
-            console.log('small window')
             setIsSmallWindow(true)
         } else {
             setIsSmallWindow(false)
-            console.log('large window')
         }
     }, [width])
 
@@ -82,7 +74,6 @@ const ProjectDropdown = ({getProjectsList}) => {
                 isClearable={true}
                 isSearchable={true}
                 options={projectList}
-                onKeyDown={handleSearch}
                 onChange={handleSearchChangeEvent}
                 styles={{
 
@@ -103,7 +94,6 @@ const ProjectDropdown = ({getProjectsList}) => {
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
       token: state.Auth.token,
       projectApplications: state.ProjectApplications.projectApplications

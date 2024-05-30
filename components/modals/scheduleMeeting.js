@@ -37,7 +37,9 @@ export default function ScheduleMeetingModal({
   scheduleInterviewModal,
   handleScheduleInterviewModal,
   receiver,
-  setScheduleInterviewModal
+  setScheduleInterviewModal,
+  setScheduleInterview,
+  isMobileViewPanel = false
 }) {
   const { Auth } = useSelector(state => state)
 
@@ -93,6 +95,10 @@ export default function ScheduleMeetingModal({
     }
     socket.emit('createMeeting', scheduleMeetingObj)
     setScheduleInterviewModal(false)
+
+    if (isMobileViewPanel) {
+      setScheduleInterview(false)
+    }
   }
 
   const getDate = val => {
