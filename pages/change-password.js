@@ -1,38 +1,31 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import UpdateKeyDataForm from '../components/unzipped/UpdatePasswordForm'
-import { changePassword } from '../redux/actions'
+import { bindActionCreators } from 'redux'
+
 import Nav from '../components/unzipped/header'
-import { parseCookies } from '../services/cookieHelper'
-
-import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
+import { changePassword } from '../redux/actions'
 import Footer from '../components/unzipped/Footer'
-
-import styled from 'styled-components';
+import UpdateKeyDataForm from '../components/unzipped/UpdatePasswordForm'
+import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 
 const MainContainer = styled.div`
   min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const FooterContainer = styled.div`
   margin-top: auto;
-`;
+`
 
-const Reset = ({ error, token, changePassword }) => {
-  const [loading, setLoading] = useState(false)
-  const [passwordError, setPasswordError] = useState('')
+const Reset = ({ changePassword }) => {
   const router = useRouter()
 
-  const linkPush = link => {
-    router.push(link)
-  }
-
+  const [passwordError, setPasswordError] = useState('')
   const [marginBottom, setMarginBottom] = useState('0px')
 
   useEffect(() => {
@@ -56,9 +49,13 @@ const Reset = ({ error, token, changePassword }) => {
     }
   }, [])
 
+  const linkPush = link => {
+    router.push(link)
+  }
+
   const resetPassword = async userData => {
-    setLoading(true)
     const response = await changePassword(userData)
+
     if (response?.status === 200) {
       await router.push('/dashboard')
     } else {
@@ -67,7 +64,7 @@ const Reset = ({ error, token, changePassword }) => {
   }
 
   return (
-    <MainContainer >
+    <MainContainer>
       <Head>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
@@ -75,7 +72,7 @@ const Reset = ({ error, token, changePassword }) => {
         <title>Change Password | Unzipped</title>
         <meta name="Change Password | Unzipped" content="Change Password" />
       </Head>
-      <Nav token={token} marginBottom={marginBottom} onBackArrowClick={() => linkPush('/dashboard/account')} />
+      <Nav marginBottom={marginBottom} />
       <UpdateKeyDataForm
         type="password"
         title="Change Password"
@@ -83,24 +80,19 @@ const Reset = ({ error, token, changePassword }) => {
         onSubmit={resetPassword}
         error={passwordError}
       />
-      {window.innerWidth >= 680 ?<FooterContainer><Footer /></FooterContainer> : <MobileFreelancerFooter defaultSelected="Projects" />}
+      {window.innerWidth >= 680 ? (
+        <FooterContainer>
+          <Footer />
+        </FooterContainer>
+      ) : (
+        <MobileFreelancerFooter defaultSelected="Projects" />
+      )}
     </MainContainer>
   )
 }
 
-Reset.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-
-  return {
-    token: token && token
-  }
-}
-
 const mapStateToProps = state => {
-  return {
-    error: state.Auth.error,
-    token: state.Auth.token
-  }
+  return {}
 }
 
 const mapDispatchToProps = dispatch => {
