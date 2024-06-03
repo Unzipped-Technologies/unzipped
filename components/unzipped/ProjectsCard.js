@@ -86,7 +86,7 @@ function ProjectsCard({ user, freelancerId }) {
                 <P margin="0" fontSize="15px">
                   {project?.role}
                 </P>
-                <P fontSize="14px" fontWeight="300" data-testid="country_address">
+                <P fontSize="14px" fontWeight="300" data-testid={project?._id + '_address'}>
                   {user?.AddressLineCountry ?? ''}
                 </P>
                 <div>

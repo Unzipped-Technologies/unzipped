@@ -571,6 +571,13 @@ describe('DesktopAccount Component', () => {
     renderWithRedux(<EducationModal />, { initialState })
   })
 
+  it('renders Freelancer profile page for mobile view without user address country', async () => {
+    initialState.Freelancers.selectedFreelancer.userId.AddressLineCountry = undefined
+
+    renderWithRedux(<Profile />, { initialState })
+    expect(screen.getByTestId('663919d0277f230b94c358ad_address')).toHaveTextContent('')
+  })
+
   it('renders ProjectModal without open dialog', async () => {
     renderWithRedux(<ProjectModal />, { initialState })
   })
