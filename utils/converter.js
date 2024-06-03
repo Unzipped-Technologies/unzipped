@@ -299,6 +299,16 @@ class Converter {
       return str
     }
   }
+
+  convertText = text => {
+    if (text) {
+      // Convert text to lowercase
+      const lowercasedText = text?.toLowerCase()
+      // Replace spaces with underscores
+      const result = lowercasedText.replace(/ /g, '_')
+      return result
+    }
+  }
 }
 
 export default new Converter()

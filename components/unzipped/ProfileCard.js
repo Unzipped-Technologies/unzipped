@@ -59,9 +59,9 @@ const ProfileCard = ({ user }) => {
   const month = ValidationUtils.getMonthInText(user?.updatedAt)
   const dateCode = `${month} ${new Date(user?.updatedAt).getDate()}, ${new Date(user?.updatedAt).getFullYear()}`
   return (
-    <Container>
+    <Container data-testid="desktop_profile_container">
       <ImageContainer>
-        <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" />
+        <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" id="freelancer_profile_image" />
       </ImageContainer>
       <Content>
         <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
@@ -70,7 +70,11 @@ const ProfileCard = ({ user }) => {
             SKIILS
           </DarkText>
           {user?.freelancerSkills?.length > 0
-            ? user?.freelancerSkills.map(item => <Badge key={item._id}>{item?.skill}</Badge>)
+            ? user?.freelancerSkills.map(item => (
+                <Badge key={item._id}>
+                  <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
+                </Badge>
+              ))
             : 'N/A'}
         </div>
 

@@ -24,24 +24,27 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, loading, userId }) => {
+const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, userId }) => {
   const router = useRouter()
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
   const [selected, setSelected] = useState(0)
   const [userData, setUserData] = useState({})
 
-  useEffect(async () => {
-    await getFreelancerById(id)
+  useEffect(() => {
+    const fetchData = async () => {
+      await getFreelancerById(id)
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
     setUserData({
       ...selected,
-      FirstName: selectedFreelancer?.userId?.FirstName,
+      FirstName: selectedFreelancer?.userId?.FirstName ?? '',
       profileImage: selectedFreelancer?.userId?.profileImage,
-      LastName: selectedFreelancer?.userId?.LastName,
-      AddressLineCountry: selectedFreelancer?.userId?.AddressLineCountry,
+      LastName: selectedFreelancer?.userId?.LastName ?? '',
+      AddressLineCountry: selectedFreelancer?.userId?.AddressLineCountry ?? '',
       projects: selectedFreelancer?.projects,
       freelancerSkills: selectedFreelancer?.freelancerSkills,
       category: selectedFreelancer?.category,
@@ -53,6 +56,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
       rate: selectedFreelancer?.rate,
       isAcceptEquity: selectedFreelancer?.isAcceptEquity,
       _id: selectedFreelancer?._id,
+      role: selectedFreelancer?.userId?.role,
       isPreferedFreelancer: selectedFreelancer?.isPreferedFreelancer,
       isEmailVerified: selectedFreelancer?.userId?.isEmailVerified,
       isPhoneVerified: selectedFreelancer?.userId?.isPhoneVerified,
@@ -66,31 +70,34 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, lo
   return (
     <>
       <>
-        <Container>
-          <Nav marginBottom={'0px'} />
-          <div>
-            <ProfileCard user={userData} />
-          </div>
-          <div style={{ width: '100%' }}>
-            <ProfileTab
-              tabs={['PROJECTS']}
-              selected={selected}
-              setSelected={setSelected}
-              role={role}
-              freelancerId={freelancerId}
-              userId={userData?._id}
-            />
-          </div>
-          <ProjectsCard user={userData} freelancerId={freelancerId} />
-        </Container>
-        {window.innerWidth <= '680' && (
+        {window.innerWidth > 680 && (
+          <Container>
+            <Nav marginBottom={'0px'} />
+            <div>
+              <ProfileCard user={userData} />
+            </div>
+            <div style={{ width: '100%' }}>
+              <ProfileTab
+                tabs={['PROJECTS']}
+                selected={selected}
+                setSelected={setSelected}
+                role={role}
+                freelancerId={freelancerId}
+                userId={userData?._id}
+              />
+            </div>
+            <ProjectsCard user={userData} freelancerId={freelancerId} />
+          </Container>
+        )}
+
+        {window.innerWidth <= 680 && (
           <MobileContainer>
             {interViewView ? (
               <MobileProfileCard
                 user={userData}
                 handleProfilePage={handleValueFromChild}
                 role={role}
-                freelancerId={id}
+                freelancerId={freelancerId}
               />
             ) : (
               <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />
@@ -107,7 +114,7 @@ const mapStateToProps = state => {
     userId: state?.Auth?.user?._id,
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
     role: state.Auth?.user?.role,
-    freelancerId: state.Auth?.user?.freelancers,
+    freelancerId: state.Auth?.user?.freelancers?._id,
     loading: state.Loading.loading
   }
 }

@@ -30,7 +30,7 @@ const ProjectInnerCard = styled.div`
   padding: 19px 50px 19px 50px;
 `
 
-const P = styled.p`
+export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
   color: ${({ color }) => (color ? color : 'black')};
@@ -42,7 +42,7 @@ const P = styled.p`
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   border: ${({ border }) => (border ? border : '')};
 `
-const OtherInformationCard = styled.div`
+export const OtherInformationCard = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   background: white;
   border: 1px solid #d9d9d9;
@@ -74,7 +74,7 @@ function ProjectsCard({ user, freelancerId }) {
     return filteredArray
   }, [user])
   return (
-    <Container>
+    <Container data-testid="freelancer_profile_projects">
       <div style={{ width: '70%' }}>
         {user?.projects?.length ? (
           user?.projects?.map(project => (
@@ -84,14 +84,14 @@ function ProjectsCard({ user, freelancerId }) {
                   {project?.projectName ?? 'Project Name'}
                 </P>
                 <P margin="0" fontSize="15px">
-                  {user?.category}
+                  {project?.role}
                 </P>
-                <P fontSize="14px" fontWeight="300">
-                  {user?.AddressLineCountry || 'United States'}
+                <P fontSize="14px" fontWeight="300" data-testid="country_address">
+                  {user?.AddressLineCountry ?? ''}
                 </P>
                 <div>
-                  {project?.freelancerSkills?.length > 0
-                    ? project?.freelancerSkills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                  {project?.skills?.length > 0
+                    ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
                     : ''}
                 </div>
                 <div
@@ -106,7 +106,14 @@ function ProjectsCard({ user, freelancerId }) {
                   }}>
                   {project?.images?.length
                     ? project?.images?.map((image, i) => (
-                        <Image src={image?.url} width="171px" height="93px" key={image?._id} alt={`Image ${i}`} />
+                        <Image
+                          src={image?.url}
+                          width="171px"
+                          height="93px"
+                          key={image?._id}
+                          alt={`Image ${i}`}
+                          id={image?._id}
+                        />
                       ))
                     : ''}
                 </div>
@@ -187,9 +194,8 @@ function ProjectsCard({ user, freelancerId }) {
             <P fontWeight="700" padding="12px 10px 10px 10px">
               Education
             </P>
-
-            {user?.userId?.role === 1 && freelancerId === user?._id && (
-              <P color="#2F76FF" onClick={handleOpen}>
+            {user?.role === 1 && freelancerId === user?._id && (
+              <P color="#2F76FF" onClick={handleOpen} data-testid="add_education">
                 <AiOutlinePlusCircle
                   style={{
                     fontSize: '18px',

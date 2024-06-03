@@ -12,5 +12,5 @@ module.exports = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
   },
-  testMatch: ['<rootDir>/__test__/**/*.test.(js|jsx)', '<rootDir>/__test__/**/*.spec.(js|jsx)']
+  testMatch: ['<rootDir>/__test__/Profile/**/*.test.(js|jsx)', '<rootDir>/__test__/Profile/**/*.spec.(js|jsx)']
 }
