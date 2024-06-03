@@ -5,6 +5,7 @@ import '@testing-library/jest-dom' // for the toBeInTheDocument matcher
 import Profile from '../../pages/freelancers/[id]'
 import { initialState } from '../store/mockInitialState'
 import { renderWithRedux } from '../store/commonTestSetup'
+import { FREELANCER_PROJECTS, FREELANCER } from '../store/Freelancer'
 import { fireEvent, screen, act, within, render } from '@testing-library/react'
 import EducationModal from '../../components/unzipped/EducationModal'
 import ProjectModal from '../../components/unzipped/ProjectModal'
@@ -47,6 +48,9 @@ describe('DesktopAccount Component', () => {
   let mockRouterPush, mockRouterBack
 
   beforeEach(() => {
+    initialState.Freelancers.selectedFreelancer.projects = JSON.parse(JSON.stringify(FREELANCER_PROJECTS))
+    initialState.Freelancers.selectedFreelancer = JSON.parse(JSON.stringify(FREELANCER))
+
     initialState.Auth.user.freelancers['_id'] = '6601c2a6149276195c3f8fc2'
 
     getFreelancerById.mockReturnValue(() => {
@@ -1249,5 +1253,23 @@ describe('DesktopAccount Component', () => {
     renderWithRedux(<Profile />, { initialState })
 
     expect(screen.getByTestId('user_name')).toHaveTextContent('')
+  })
+
+  it('renders Freelancer profile page Without skills of first project and project name', async () => {
+    global.innerWidth = 640
+    global.dispatchEvent(new Event('resize'))
+    initialState.Freelancers.selectedFreelancer.projects[1].skills = []
+    initialState.Freelancers.selectedFreelancer.projects[1].projectName = undefined
+
+    renderWithRedux(<Profile />, { initialState })
+  })
+
+  it('renders Freelancer profile page Without project skills and freelancer skills', async () => {
+    global.innerWidth = 640
+    global.dispatchEvent(new Event('resize'))
+    initialState.Freelancers.selectedFreelancer.projects = []
+    initialState.Freelancers.selectedFreelancer.freelancerSkills = []
+
+    renderWithRedux(<Profile />, { initialState })
   })
 })

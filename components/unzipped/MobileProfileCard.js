@@ -60,7 +60,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
     const filteredArray = projectSkills?.filter(
       (str, index) => !projectSkills?.some((otherStr, otherIndex) => index !== otherIndex && otherStr?.includes(str))
     )
-    return filteredArray ?? []
+    return filteredArray
   }, [user])
 
   function formatDate(inputDate) {
@@ -207,8 +207,8 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
                 {user?.AddressLineCountry || 'United States'}
               </P>
               <div>
-                {project?.freelancerSkills?.length > 0
-                  ? project?.freelancerSkills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                {project?.skills?.length > 0
+                  ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
                   : ''}
               </div>
               <div style={{ padding: '0px 19px', display: 'flex' }}>

@@ -1,0 +1,189 @@
+export const FREELANCER_PROJECTS = [
+  {
+    images: [
+      {
+        _id: '663919ca277f230b94c358a7',
+        name: 'image2.png',
+        size: 3835,
+        url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1715018186/6601c2a6149276195c3f8fbd/pqq79y1p3dua4oqjqvnt.png',
+        cloudinaryId: '6601c2a6149276195c3f8fbd/pqq79y1p3dua4oqjqvnt',
+        userId: '6601c2a6149276195c3f8fbd',
+        __v: 0
+      },
+      {
+        _id: '663919cb277f230b94c358a8',
+        name: 'image2.png',
+        size: 3835,
+        url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1715018187/6601c2a6149276195c3f8fbd/qsz3tdtuwvsg8ogykvpo.png',
+        cloudinaryId: '6601c2a6149276195c3f8fbd/qsz3tdtuwvsg8ogykvpo',
+        userId: '6601c2a6149276195c3f8fbd',
+        __v: 0
+      },
+      {
+        _id: '663919cc277f230b94c358a9',
+        name: 'image3.jpeg',
+        size: 11068,
+        url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1715018189/6601c2a6149276195c3f8fbd/vsjwqps7ept3zoehbnzn.jpg',
+        cloudinaryId: '6601c2a6149276195c3f8fbd/vsjwqps7ept3zoehbnzn',
+        userId: '6601c2a6149276195c3f8fbd',
+        __v: 0
+      }
+    ],
+    skills: ['react', 'node', 'mongoDB'],
+    isActive: true,
+    _id: '663919d0277f230b94c358ad',
+    projectName: 'Test Project 1',
+    role: 'Software Engineer',
+    createdAt: '2024-05-06T17:56:32.996Z',
+    updatedAt: '2024-05-06T17:56:32.996Z'
+  },
+  {
+    images: [
+      {
+        _id: '663919da277f230b94c358ae',
+        name: 'image2.png',
+        size: 3835,
+        url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1715018202/6601c2a6149276195c3f8fbd/a7snwiw9n1cej6iktwot.png',
+        cloudinaryId: '6601c2a6149276195c3f8fbd/a7snwiw9n1cej6iktwot',
+        userId: '6601c2a6149276195c3f8fbd',
+        __v: 0
+      },
+      {
+        _id: '663919db277f230b94c358af',
+        name: 'image2.png',
+        size: 3835,
+        url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1715018204/6601c2a6149276195c3f8fbd/jty4tnr1hgejbvgt5wjm.png',
+        cloudinaryId: '6601c2a6149276195c3f8fbd/jty4tnr1hgejbvgt5wjm',
+        userId: '6601c2a6149276195c3f8fbd',
+        __v: 0
+      },
+      {
+        _id: '663919dc277f230b94c358b0',
+        name: 'image3.jpeg',
+        size: 11068,
+        url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1715018205/6601c2a6149276195c3f8fbd/ouuqakfpt8xrfmvv6f38.jpg',
+        cloudinaryId: '6601c2a6149276195c3f8fbd/ouuqakfpt8xrfmvv6f38',
+        userId: '6601c2a6149276195c3f8fbd',
+        __v: 0
+      }
+    ],
+    skills: ['react', 'node', 'mongoDB'],
+    isActive: true,
+    _id: '663919e0277f230b94c358b4',
+    projectName: 'Test Project 2',
+    role: 'Software Engineer',
+    createdAt: '2024-05-06T17:56:48.431Z',
+    updatedAt: '2024-05-06T17:56:48.431Z'
+  }
+]
+
+export const FREELANCER_EDUCATION = [
+  {
+    _id: '6659db6a310bdb1c0f26ab07',
+    title: 'BS(CS)',
+    institute: 'Standford University',
+    startYear: '2017',
+    endYear: '2021',
+    createdAt: '2024-05-31T14:15:06.678Z',
+    updatedAt: '2024-05-31T14:15:06.678Z'
+  },
+  {
+    _id: '6659db6a310bdb1c0f26ab12',
+    title: 'MSC',
+    institute: 'Standford University',
+    startYear: '2022',
+    endYear: '2024',
+    createdAt: '2024-05-31T14:15:06.678Z',
+    updatedAt: '2024-05-31T14:15:06.678Z'
+  }
+]
+
+export const FREELANCER_SKILLS = [
+  {
+    isActive: true,
+    skill: 'React.js',
+    yearsExperience: 2,
+    _id: '6601c30e149276195c3f8fcc'
+  },
+  {
+    isActive: true,
+    skill: 'Node.js',
+    yearsExperience: 3,
+    _id: '6601c30e149276195c3f8fcd'
+  },
+  {
+    isActive: true,
+    skill: 'Express.js',
+    yearsExperience: 1,
+    _id: '6601c30e149276195c3f8fce'
+  },
+  {
+    isActive: true,
+    skill: 'Nest.js',
+    yearsExperience: 3,
+    _id: '6601c30e149276195c3f8fcf'
+  },
+  {
+    isActive: true,
+    skill: 'Next.js',
+    yearsExperience: 2,
+    _id: '6601c30e149276195c3f8fd0'
+  },
+  {
+    isActive: true,
+    skill: 'MongoDB',
+    yearsExperience: 2,
+    _id: '6601c30e149276195c3f8fd1'
+  },
+  {
+    isActive: true,
+    skill: 'Typescript',
+    yearsExperience: 5,
+    _id: '6601c30e149276195c3f8fd2'
+  },
+  {
+    isActive: true,
+    skill: 'React Native',
+    yearsExperience: 5,
+    _id: '6601c30e149276195c3f8fd9'
+  }
+]
+
+export const FREELANCER = {
+  category: 'Full Stack Developer',
+  createdAt: '2024-03-25T18:29:58.851Z',
+  deletedAt: null,
+  dislikeTotal: 5,
+  education: [],
+  freelancerSkills: [...FREELANCER_SKILLS],
+  invites: '662190359587604114b93306',
+  isAcceptEquity: false,
+  isActive: true,
+  isArchived: false,
+  isDeleted: false,
+  isPreferedFreelancer: true,
+  likeTotal: 23,
+  projects: [...FREELANCER_PROJECTS],
+  education: [...FREELANCER_EDUCATION],
+  rate: 23,
+  updatedAt: '2024-05-06T17:58:57.371Z',
+  userId: {
+    isEmailVerified: true,
+    isIdentityVerified: 'SUCCESS',
+    isPhoneVerified: true,
+    AddressLineCountry: 'User Test Address',
+    FirstName: 'test',
+    LastName: 'freelancer1',
+    FullName: 'test freelancer1',
+    profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+    likeTotal: 12,
+    dislikeTotal: 3,
+    _id: '6601c2a6149276195c3f8fbd',
+    email: 'freelancer1@gmail.com',
+    role: 1,
+    createdAt: '2024-03-25T18:29:58.619Z',
+    updatedAt: '2024-05-06T17:58:57.348Z'
+  },
+  __v: 4,
+  _id: '6601c2a6149276195c3f8fc2'
+}
