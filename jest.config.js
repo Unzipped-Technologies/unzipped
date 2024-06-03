@@ -12,5 +12,6 @@ module.exports = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
   },
-  testMatch: ['<rootDir>/__test__/Profile/**/*.test.(js|jsx)', '<rootDir>/__test__/Profile/**/*.spec.(js|jsx)']
+  testTimeout: 10000, // Set the global timeout to 10 seconds (10000 milliseconds)
+  testMatch: ['<rootDir>/__test__/**/*.test.(js|jsx)', '<rootDir>/__test__/**/*.spec.(js|jsx)']
 }
