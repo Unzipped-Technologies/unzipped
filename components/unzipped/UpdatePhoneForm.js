@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+
 import BackHeader from './BackHeader'
 import FormField from '../ui/FormField'
 import { ValidationUtils } from '../../utils'
@@ -25,11 +26,6 @@ const Form = styled.form`
   gap: 15px;
   display: flex;
   flex-flow: column;
-`
-
-const Title = styled.p`
-  font-size: 16px;
-  color: #333;
 `
 
 const ButtonSubmit = styled.button`
@@ -74,15 +70,18 @@ const ButtonContainer = styled.div`
   margin-bottom: ${({ mobile }) => (mobile ? '30px' : '0px')};
 `
 
-const UpdateKeyDataForm = ({ type, title, onBack, onSubmit, phone, error }) => {
+const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
   const isMobile = window.innerWidth >= 680 ? false : true
 
-  const [currentPhoneError, setCurrentPhoneError] = useState('')
   const [PhoneError, setPhoneError] = useState('')
   const [userData, setUserData] = useState({
     currentPhone: phone,
     phoneNumber: ''
   })
+
+  useEffect(() => {
+    setPhoneError(error)
+  }, [error])
 
   useEffect(() => {
     setUserData({
@@ -124,6 +123,7 @@ const UpdateKeyDataForm = ({ type, title, onBack, onSubmit, phone, error }) => {
           setPhoneError('')
         }
       }
+    } else {
     }
   }
 
@@ -135,6 +135,7 @@ const UpdateKeyDataForm = ({ type, title, onBack, onSubmit, phone, error }) => {
     <Container>
       <BackHeader title={title} />
       <Form
+        data-testId="change_phone_form"
         mobile={isMobile}
         onSubmit={e => {
           e.preventDefault()
@@ -148,29 +149,7 @@ const UpdateKeyDataForm = ({ type, title, onBack, onSubmit, phone, error }) => {
             name="currentPhone"
             width="100%"
             zIndexUnset
-            error={currentPhoneError}
-            onBlur={() => {
-              validatePhone(
-                {
-                  item: userData.currentPhone,
-                  min: 1,
-                  max: 45,
-                  message: 'Please enter a valid Phone!'
-                },
-                setCurrentPhoneError
-              )
-            }}
-            validate={() => {
-              validatePhone(
-                {
-                  item: userData.currentPhone,
-                  min: 1,
-                  max: 45,
-                  message: 'Please enter a valid Phone!'
-                },
-                setCurrentPhoneError
-              )
-            }}
+            error={''}
             value={ValidationUtils._formatPhoneNumber(userData.currentPhone)}
             disabled={true}>
             Current Phone
@@ -188,16 +167,18 @@ const UpdateKeyDataForm = ({ type, title, onBack, onSubmit, phone, error }) => {
               validatePhone(ValidationUtils._formatPhoneNumber(e.target.value))
               updateForm('phoneNumber', e.target.value)
             }}
+            onBlur={e => {
+              validatePhone(ValidationUtils._formatPhoneNumber(e.target.value))
+            }}
             value={userData.phoneNumber}>
             Phone
           </FormField>
-          {!PhoneError && error && <p className="red-text"> {error}</p>}
 
           <ButtonContainer mobile={isMobile}>
-            <ButtonBack type="button" onClick={onBack}>
+            <ButtonBack type="button" onClick={onBack} data-testId="cancel_phone_changes">
               Cancel
             </ButtonBack>
-            <ButtonSubmit type="submit" disabled={!isFormValid()}>
+            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testId="save_phone_changes">
               Save
             </ButtonSubmit>
           </ButtonContainer>

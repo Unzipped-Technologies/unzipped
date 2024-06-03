@@ -52,10 +52,10 @@ export const createPaymentMethod = (data, token) => async (dispatch, getState) =
   dispatch(stopLoading())
 }
 
-export const getPaymentMethods = token => async (dispatch, getState) => {
+export const getPaymentMethods = () => async (dispatch, getState) => {
   dispatch(startLoading())
   await axios
-    .get('/api/user/current/payment-methods', tokenConfig(token))
+    .get('/api/user/current/payment-methods', tokenConfig(getState()?.Auth.token))
     .then(res => {
       dispatch({
         type: GET_PAYMENT_METHODS,
@@ -109,10 +109,10 @@ export const retrieveExternalBankAccounts = token => async (dispatch, getState) 
   dispatch(stopLoading())
 }
 
-export const getAccountOnboardingLink = (token, data) => async (dispatch, getState) => {
+export const getAccountOnboardingLink = data => async (dispatch, getState) => {
   dispatch(startLoading())
   await axios
-    .post('/api/stripe/create-account', data, tokenConfig(token))
+    .post('/api/stripe/create-account', data, tokenConfig(getState()?.Auth.token))
     .then(res => {
       dispatch({
         type: GET_ONBOARDING_LINK,
@@ -128,10 +128,10 @@ export const getAccountOnboardingLink = (token, data) => async (dispatch, getSta
   dispatch(stopLoading())
 }
 
-export const getAccountBalance = token => async (dispatch, getState) => {
+export const getAccountBalance = () => async (dispatch, getState) => {
   dispatch(startLoading())
   await axios
-    .post('/api/stripe/retrieve-account-balance', {}, tokenConfig(token))
+    .post('/api/stripe/retrieve-account-balance', {}, tokenConfig(getState()?.Auth.token))
     .then(res => {
       dispatch({
         type: GET_ACCOUNT_BALANCE,
