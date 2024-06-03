@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import { ConverterUtils } from '../../utils'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
-import EducationModal from './EducationModal'
 
-import IconComponent from '../ui/icons/IconComponent'
-import { Badge, Icon, Image } from '../ui'
 import ProfileTab from './ProfileTab'
+import { Badge, Icon, Image } from '../ui'
+import { ConverterUtils } from '../../utils'
+import EducationModal from './EducationModal'
+import IconComponent from '../ui/icons/IconComponent'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};

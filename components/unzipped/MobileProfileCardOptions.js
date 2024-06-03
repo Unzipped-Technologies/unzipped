@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import IconComponent from '../ui/icons/IconComponent'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import { connect, useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/actions'
-import IconSelector from './dashboard/IconSelector'
+import { connect, useDispatch, useSelector } from 'react-redux'
+
 import { IconColors } from '../../utils/FontIcons'
+import IconSelector from './dashboard/IconSelector'
+import IconComponent from '../ui/icons/IconComponent'
+import { getCalenderSetting } from '../../redux/actions'
 import ScheduleInterview from './dashboard/ScheduleInterview'
 import ScheduleMeetingModal from './../modals/scheduleMeeting'
-import { getCalenderSetting } from '../../redux/actions'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
+import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/actions'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};

@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { AiOutlinePlusCircle } from 'react-icons/ai'
+
 import { Badge } from '../ui'
 import { Image } from '../ui'
 import { ConverterUtils } from '../../utils'
-import { AiOutlinePlusCircle } from 'react-icons/ai'
 import EducationModal from './EducationModal'
 
 const Container = styled.div`

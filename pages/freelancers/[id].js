@@ -3,13 +3,14 @@ import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import styled from 'styled-components'
+
 import Nav from '../../components/unzipped/header'
-import ProfileCard from '../../components/unzipped/ProfileCard'
-import ProfileTab from '../../components/unzipped/ProfileTab'
 import { getFreelancerById } from '../../redux/actions'
+import ProfileTab from '../../components/unzipped/ProfileTab'
+import ProfileCard from '../../components/unzipped/ProfileCard'
+import ProjectsCard from '../../components/unzipped/ProjectsCard'
 import MobileProfileCard from '../../components/unzipped/MobileProfileCard'
 import MobileProfileCardOptions from '../../components/unzipped/MobileProfileCardOptions'
-import ProjectsCard from '../../components/unzipped/ProjectsCard'
 
 const Container = styled.div`
   display: flex;
