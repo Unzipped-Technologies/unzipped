@@ -151,6 +151,8 @@ const Input = ({
   placeholder,
   borderRadius,
   disableBorder,
+  id,
+  name,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false)
@@ -180,6 +182,7 @@ const Input = ({
         <Control
           rows="6"
           placeholder={placeholder}
+          data-testid={id ?? name}
           mobile={mobile}
           height={height}
           fontSize={fontSize}

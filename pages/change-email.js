@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import UpdateKeyDataForm from '../components/unzipped/UpdateEmailForm'
-import { updateUserEmail } from '../redux/actions'
-import Nav from '../components/unzipped/header'
-import { parseCookies } from '../services/cookieHelper'
-import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
-import Footer from '../components/unzipped/Footer'
+import { bindActionCreators } from 'redux'
 
-import styled from 'styled-components';
+import Nav from '../components/unzipped/header'
+import Footer from '../components/unzipped/Footer'
+import { updateUserEmail } from '../redux/actions'
+import UpdateKeyDataForm from '../components/unzipped/UpdateEmailForm'
+import MobileFreelancerFooter from '../components/unzipped/MobileFreelancerFooter'
 
 const MainContainer = styled.div`
   min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
-`;
+`
 
 const FooterContainer = styled.div`
   margin-top: auto;
-`;
+`
 
-const Reset = ({ error, token, email, updateUserEmail }) => {
+const ChangeEmail = ({ email, updateUserEmail }) => {
   const [emailError, setEmailError] = useState('')
   const router = useRouter()
 
@@ -64,7 +63,7 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
   }
 
   return (
-    <MainContainer >
+    <MainContainer>
       <Head>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet"></link>
@@ -72,7 +71,7 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
         <title>Change Email | Unzipped</title>
         <meta name="Change Email | Unzipped" content="Change Email" />
       </Head>
-      <Nav token={token} marginBottom={marginBottom} onBackArrowClick={() => linkPush('/dashboard/account')} />
+      <Nav marginBottom={marginBottom} />
       <UpdateKeyDataForm
         title="Change Email"
         onBack={() => linkPush('/dashboard/account')}
@@ -80,24 +79,20 @@ const Reset = ({ error, token, email, updateUserEmail }) => {
         email={email}
         error={emailError}
       />
-      {window.innerWidth >= 680 ? <FooterContainer><Footer /></FooterContainer> : <MobileFreelancerFooter defaultSelected="Account" />}
+      {window.innerWidth >= 680 ? (
+        <FooterContainer>
+          <Footer />
+        </FooterContainer>
+      ) : (
+        <MobileFreelancerFooter defaultSelected="Account" />
+      )}
     </MainContainer>
   )
 }
 
-Reset.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-
-  return {
-    token: token && token
-  }
-}
-
 const mapStateToProps = state => {
   return {
-    error: state.Auth.error?.emailError,
-    email: state.Auth.user.email,
-    userId: state?.Auth?.user?._id
+    email: state.Auth?.user.email
   }
 }
 
@@ -107,4 +102,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Reset)
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeEmail)

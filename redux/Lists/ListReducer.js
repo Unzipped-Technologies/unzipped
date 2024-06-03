@@ -9,7 +9,9 @@ import {
   GET_INVITES_LIST,
   GET_INVITES_LIST_ERROR,
   ADD_ENTRIES_TO_LIST,
-  ADD_ENTRIES_TO_LIST_ERROR
+  ADD_ENTRIES_TO_LIST_ERROR,
+  GET_CURRENT_USER_LIST,
+  GET_CURRENT_USER_LIST_ERROR
 } from './constant'
 
 const INIT_STATE = {
@@ -18,7 +20,8 @@ const INIT_STATE = {
   error: null,
   updatedList: null,
   invitesList: [],
-  inviteListError: null
+  inviteListError: null,
+  currentUserList: []
 }
 
 const Lists = (state = INIT_STATE, action) => {
@@ -63,6 +66,14 @@ const Lists = (state = INIT_STATE, action) => {
     }
     case ADD_ENTRIES_TO_LIST_ERROR: {
       return { ...state, loading: false, inviteListError: action.payload }
+    }
+
+    case GET_CURRENT_USER_LIST: {
+      return { ...state, currentUserList: [...action?.payload]}
+    }
+
+    case GET_CURRENT_USER_LIST_ERROR: {
+      return {  ...state, currentUserList: [] }
     }
     default:
       return state

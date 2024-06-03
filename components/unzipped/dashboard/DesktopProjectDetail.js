@@ -80,12 +80,15 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
   const [isClientPaymentVerified, setVerified] = useState(false)
   const [clientBusinessCount, setBusinessCount] = useState(0)
 
-  useEffect(async () => {
-    if (projectDetails?.userId?._id && id === projectDetails?._id) {
-      const userId = projectDetails?.userId?._id
-      await checkPayentVerification(userId)
-      await countBusiness(userId)
+  useEffect(() => {
+    async function fetchData() {
+      if (projectDetails?.userId?._id && id === projectDetails?._id) {
+        const userId = projectDetails?.userId?._id
+        await checkPayentVerification(userId)
+        await countBusiness(userId)
+      }
     }
+    fetchData()
   }, [projectDetails])
 
   const checkPayentVerification = async userId => {

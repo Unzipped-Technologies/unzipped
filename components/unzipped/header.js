@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Button from '@material-ui/core/Button'
@@ -14,6 +14,8 @@ import { Absolute } from './dashboard/style'
 import { Button as Buttons, SearchBar } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
 import BackArrow from '../../components/icons/backArrow'
+import FullScreenDropdown from '../ui/FullScreenDropdown'
+import LargeScreenDropdown from '../ui/LargeScreenDropdown'
 import { freelancerExpandedOpts, logoutUser, resetBusinessForm } from '../../redux/actions'
 import {
   DownIcon,
@@ -29,8 +31,6 @@ import {
   CircleSearchIcon,
   CircleNotesIcon
 } from '../icons'
-import FullScreenDropdown from '../ui/FullScreenDropdown'
-import LargeScreenDropdown from '../ui/LargeScreenDropdown'
 
 const Div = styled.div`
   width: 100%;
@@ -463,24 +463,19 @@ const Nav = ({
   isExpanded,
   setIsExpanded
 }) => {
-  const router = useRouter()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const classes = useStyles()
-  const wrapperRef = useRef(null)
-  const [highlightColor, setHighlightColor] = useState('#333333')
-  const [highlightedIndex, setHighlightedIndex] = useState(false)
-
-  const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false)
-  const [isHidden, setIsHidden] = useState(false)
-  const [prevScrollPos, setPrevScrollPos] = useState(0)
   const seenNames = new Set()
   const otherNames = new Set()
-  const dispatch = useDispatch()
-  const businessForm = useSelector(state => state.Business.businessForm)
 
-  useEffect(() => {
-    setIsProjectMenuEnabled(router.pathname === '/projects')
-  }, [router.pathname])
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const classes = useStyles()
+
+  const wrapperRef = useRef(null)
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [isHidden, setIsHidden] = useState(false)
+  const [highlightColor, setHighlightColor] = useState('#333333')
+  const [highlightedIndex, setHighlightedIndex] = useState(false)
 
   const setDropdowns = item => {
     setTimeout(function () {
@@ -575,7 +570,7 @@ const Nav = ({
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [prevScrollPos, isHidden])
+  }, [isHidden])
 
   useEffect(() => {
     // Function to remove existing 'Log in' or 'Sign out' item
@@ -688,7 +683,7 @@ const Nav = ({
                 setListName('')
                 setIsLogoHidden(false)
               }}>
-              {!isListViewable && (<BackArrow />)}
+              {!isListViewable && <BackArrow />}
             </div>
             <span
               style={{
@@ -802,15 +797,16 @@ const Nav = ({
                     underline={
                       router.pathname.includes('projects') && item.link.includes('projects')
                         ? true
-                        : (router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard') ? true : router.pathname === item.link
+                        : router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard'
+                        ? true
+                        : router.pathname === item.link
                     }>
                     <Sub>{item.name}</Sub>
                   </SpanWhite>
                 </Link>
               ))}
             </SubMenu>
-          ) 
-         }
+          )}
         </SubMenTop>
       )}
     </Div>

@@ -12,7 +12,9 @@ import {
   GET_INVITES_LIST,
   GET_INVITES_LIST_ERROR,
   ADD_ENTRIES_TO_LIST,
-  ADD_ENTRIES_TO_LIST_ERROR
+  ADD_ENTRIES_TO_LIST_ERROR,
+  GET_CURRENT_USER_LIST_ERROR,
+  GET_CURRENT_USER_LIST
 } from './constant'
 import axios from 'axios'
 import { startLoading, stopLoading } from '../Loading/actions'
@@ -144,4 +146,23 @@ const getInvitesLists = params => async (dispatch, getState) => {
 
   dispatch(stopLoading())
 }
-export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList,getInvitesLists }
+
+const getCurrentUserList = userId => async (dispatch, getState) => {
+  dispatch(startLoading())
+  try {
+    const response = await axios.get(`/api/list/current-user/${userId}`, tokenConfig(getState()?.Auth.token))
+    dispatch({
+      type: GET_CURRENT_USER_LIST,
+      payload: response.data
+    })
+  } catch (error) {
+    dispatch({
+      type: GET_CURRENT_USER_LIST_ERROR,
+      payload: error.response
+    })
+  }
+
+  dispatch(stopLoading())
+}
+
+export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList, getInvitesLists, getCurrentUserList }
