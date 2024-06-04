@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
-import IconComponent from '../../ui/icons/IconComponent'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { logoutUser, getCurrentUserData, updateCurrentUser } from '../../../redux/actions'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
+import { bindActionCreators } from 'redux'
+
+import IconComponent from '../../ui/icons/IconComponent'
+import { logoutUser, getCurrentUserData } from '../../../redux/actions'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -34,21 +35,27 @@ const Like = styled.div`
   align-items: center;
 `
 
-const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCurrentUser }) => {
+const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
   const router = useRouter()
 
   const [showSettings, setShowSettings] = useState(false)
 
-  useEffect(async () => {
-    await getCurrentUserData()
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await getCurrentUserData()
+      } catch (error) {}
+    }
+
+    fetchData()
   }, [])
 
   const linkPush = link => {
     router.push(link)
   }
 
-  const signOut = () => {
-    logoutUser()
+  const signOut = async () => {
+    await logoutUser()
     linkPush('/login')
   }
 
@@ -61,7 +68,13 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
       <Container>
         <div className="d-flex px-3 pb-4 pt-3 mb-6 justify-content-between">
           <div className="d-flex">
-            <img src={user.profileImage} height={54} width={54} className="border rounded" />
+            <img
+              src={user.profileImage}
+              height={54}
+              width={54}
+              className="border rounded"
+              data-testId="user_profile_image"
+            />
             <div className="mx-2">
               <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="20px">
                 {user.FullName}
@@ -104,6 +117,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
         </div>
         <div className="mb-4 px-3  py-1">
           <div
+            data-testId="show_setting_container"
             className="d-flex align-items-center justify-content-between"
             onClick={() => {
               setShowSettings(!showSettings)
@@ -154,8 +168,11 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
             </P>
           </div>
           <P margin="0" padding="0 0 0 12px" fontSize="20px">
-
-            $ {((balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()) == 'NaN' ? '0.00' : (balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()} USD
+            ${' '}
+            {(balance?.available[0]?.amount / 100).toFixed(2).toLocaleString() == 'NaN'
+              ? '0.00'
+              : (balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()}{' '}
+            USD
           </P>
         </div>
         <div
@@ -201,7 +218,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, updateCu
           </div>
           <IconComponent name="rightArrow" width="9" height="14" viewBox="0 0 6 9" fill="black" />
         </div>
-        <div className="d-flex align-items-center  mb-3 px-3 py-1" onClick={signOut}>
+        <div className="d-flex align-items-center  mb-3 px-3 py-1" onClick={signOut} data-testId="logout_user_element">
           <IconComponent name="logOut" width="18" height="16" viewBox="0 0 18 16" fill="black" />
           <P margin="0" padding="0 0 0 12px" fontSize="20px">
             Logout
@@ -227,3 +244,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MobileAccount)
+export { P } // Exporting P for testing purposes
