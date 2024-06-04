@@ -38,6 +38,22 @@ const Container = styled.div`
   }
 `
 
+const ViewFullScreenButton = styled.button`
+  margin-right: 100px;
+  text-transform: uppercase;
+  background: #1976D2;
+  color: white;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: 400;
+  border-radius: 8px;
+  border: 0px;
+  font-family: Roboto;
+  &:focus{
+    background: #1976D2 !important;
+  }
+`;
+
 const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
   const router = useRouter()
 
@@ -81,46 +97,56 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     <>
       <Nav
         isSubMenu
-        marginBottom={window.innerWidth > 600 ? '188px' : '78px'}
+        marginBottom={window.innerWidth > 600 ? '158px' : '78px'}
         isLogoHidden={window.innerWidth > 600 ? false : true}
         listName={'Departments'}
-        setIsViewable={() => {}}
-        setListName={() => {}}
-        setIsLogoHidden={() => {}}
+        setIsViewable={() => { }}
+        setListName={() => { }}
+        setIsLogoHidden={() => { }}
         onBackArrowClick={() => {
           setDepartment(null)
           router.back()
         }}
       />
-      <button onClick={() => setIsFullScreen(!isFullScreen)}>View Full Screen</button>
+      <div style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: 'flex-end',
+        width: "100%",
+        margin: "20px 0px"
+      }}>
+        <ViewFullScreenButton onClick={() => setIsFullScreen(!isFullScreen)}>
+          {isFullScreen ? 'Exit Full Screen' : 'View Full Screen'}
+        </ViewFullScreenButton>
+      </div>
       {isFullScreen ? (
         <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
       ) : (
         <>
-        {businesses?.length ? (
-          <Container>
-            <ProjectsPanel
-              businesses={businesses}
-              currentBusiness={currentBusiness}
-              selectedDepartment={selectedDepartment}
-              onSelectDepartment={value => {
-                setSelectedDepartment(value)
-                setDepartment(value)
-                if (window.innerWidth <= 600) {
-                  router.push(`department/${value._id}`)
-                }
-              }}
-              onSelectBusiness={value => {
-                setCurrentBusiness(value)
-              }}
-            />
-            {window.innerWidth > 600 && (
-              <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
-            )}
-          </Container>
-        ) : (
-          !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
-        )}
+          {businesses?.length ? (
+            <Container>
+              <ProjectsPanel
+                businesses={businesses}
+                currentBusiness={currentBusiness}
+                selectedDepartment={selectedDepartment}
+                onSelectDepartment={value => {
+                  setSelectedDepartment(value)
+                  setDepartment(value)
+                  if (window.innerWidth <= 600) {
+                    router.push(`department/${value._id}`)
+                  }
+                }}
+                onSelectBusiness={value => {
+                  setCurrentBusiness(value)
+                }}
+              />
+              {window.innerWidth > 600 && (
+                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+              )}
+            </Container>
+          ) : (
+            !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+          )}
         </>
       )}
     </>

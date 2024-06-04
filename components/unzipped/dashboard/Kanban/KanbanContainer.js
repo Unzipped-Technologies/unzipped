@@ -2,7 +2,10 @@
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import KanbanBoard from './KanbanBoard';
-import Icon from '../../../ui/Icon'
+import FilterIcon from '../../../icons/filterIcon'
+import Button from '@mui/material/Button';
+import AssignedToList from './AssignedToList';
+import MyProjectsLists from './MyProjectsLists';
 
 // Global Style
 const GlobalStyle = createGlobalStyle`
@@ -19,9 +22,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 73vh;
+  height: auto;
   overflow: hidden;
   background-color: #f0f2f5;
+  width: 100%;
+  justify-content: center;
 `;
 
 const Header = styled.div`
@@ -35,7 +40,6 @@ const Header = styled.div`
 const Title = styled.div`
   display: flex;
   align-items: center;
-  padding: 8px 0px;
   justify-content: space-around;
   cursor: pointer;
   & h6 {
@@ -62,6 +66,33 @@ const BoardContainer = styled.div`
   align-items: flex-start;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+`;
+
+const ProjectFilterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 20px;
+`;
+
+
+const FilterIconContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SearchTextStyled = styled.input`
+  width: 100%;
+  border: 0px !important;
+  border-radius: 0px !important;
+  &:focus {
+    border-bottom: 0px !important;
+  }
 `;
 
 // Main Component
@@ -69,7 +100,6 @@ const ProjectKanbanBoard = () => {
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [currentBusiness, setCurrentBusiness] = useState(null);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const handleProjectChange = (event) => {
     const project = event.target.value;
@@ -84,21 +114,75 @@ const ProjectKanbanBoard = () => {
     <>
       <GlobalStyle />
       <Container>
-        <Header>
-          <Title onClick={() => setIsSelectOpen(!isSelectOpen)}>
-            <h6>Unzipped Team Kanban Board</h6>
-            <Icon name="downArrow" />
-          </Title>
-          {isSelectOpen && (
-            <ProjectSelector value={selectedProject} onChange={handleProjectChange}>
-              <div value="">Select a project</div>
-              <div value="project1">Project 1</div>
-              <div value="project2">Project 2</div>
-              <div value="project3">Project 3</div>
-              {/* Add more projects as needed */}
-            </ProjectSelector>
-          )}
-        </Header>
+        <ProjectFilterContainer>
+          <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              background: "transparent",
+              alignItems: "center",
+              width: "20%"
+            }}>
+              <MyProjectsLists />
+            </div>
+
+            <div style={{
+              display: "flex",
+              width: "64%",
+              boxShadow: " rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
+              borderRadius: "10px"
+            }}>
+              <div style={{
+                width: "70%",
+                display: "flex",
+                paddingLeft: "55px",
+                gap: "20px",
+                paddingTop: "10px",
+                background: "#fff"
+              }}>
+                <FilterIconContainer>
+                  <FilterIcon />
+                </FilterIconContainer>
+                <div style={{ width: "100%" }}>
+                  <SearchTextStyled type="text" placeholder="Filter by keywords" />
+                </div>
+              </div>
+
+              <div style={{
+                width: "40%",
+                display: "flex",
+                padding: "10px",
+                gap: "20px",
+                justifyContent: "center",
+                background: "#fff",
+              }}>
+                <div>
+                  <AssignedToList />
+                </div>
+                <div>
+                  <Button
+                    id="demo-customized-button"
+                    aria-haspopup="true"
+                    disableElevation
+                    sx={{
+                      color: "#000",
+                      background: "#fff !important",
+                      fontSize: "17px",
+                      fontWeight: "500",
+                      textTransform: "none",
+                      '&:active': { background: "transparent !important" },
+                      '&:focus': { backgroundColor: "transparent !important" },
+                      '&:hover': { backgroundColor: "transparent !important" }
+                    }}
+                  >
+                    Return To Default
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </ProjectFilterContainer>
         <BoardContainer>
           <KanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
         </BoardContainer>
