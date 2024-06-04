@@ -53,7 +53,8 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
 
   return (
     <MUIDialog
-      onClose={() => onHide()}
+      data-testId="create_tag_modal"
+      onClose={onHide}
       disableEscapeKeyDown
       open={open}
       aria-labelledby="story-preview-modal"
@@ -77,14 +78,14 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 height="36px !important"
                 onChange={e => updateForm('tagName', e?.target?.value)}
                 value={tagForm?.tagName}
-                clickType="tagName"
-                onUpdate={() => {}}>
+                clickType="tagName">
                 Tag Name
               </FormField>
             </DIV>
           </form>
           <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
             <Button
+              data-testId="cancel_tag_form"
               extraWid
               type="outlineInverse"
               buttonHeight="25px"
@@ -103,6 +104,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
             </Button>
 
             <Button
+              data-testId="save_tag_form"
               disabled={false}
               onClick={async () => {
                 await onSubmit()

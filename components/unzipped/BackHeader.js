@@ -50,7 +50,7 @@ const BackHeader = ({ sub, title, bold, size, children }) => {
   return (
     <Container>
       <Content>
-        <BackButton onClick={() => router.back()}>
+        <BackButton onClick={() => router.back()} data-testId="header_back_arrow">
           <Icon name="BackArrowLong" />
         </BackButton>
         <Right>

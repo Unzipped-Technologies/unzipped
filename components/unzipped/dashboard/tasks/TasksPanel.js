@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { FaRegCheckCircle } from 'react-icons/fa'
 import { AiOutlinePlus } from 'react-icons/ai'
+import { FaRegCheckCircle } from 'react-icons/fa'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
 
 import TagModal from '../TagModal'
@@ -202,6 +202,7 @@ const TasksPanel = ({
         {selectedDepartment?._id && userRole === 0 && (
           <DIV width="72px" margin="0px 20px 0px 80px" display="flex" justifyContent="flex-end">
             <Button
+              data-testId="add_department_tag"
               small
               block
               buttonHeight="27px"
@@ -321,6 +322,7 @@ const TasksPanel = ({
                             : ''}
                           {userRole === 0 && (
                             <WhiteCard
+                              data-testId={`${tag?.tagName}_task`}
                               onClick={() => {
                                 addNewTask(tag._id, tag?.tagName)
                               }}

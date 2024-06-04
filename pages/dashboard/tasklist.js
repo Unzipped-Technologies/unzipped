@@ -37,7 +37,7 @@ const Container = styled.div`
   }
 `
 
-const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
+const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment }) => {
   const router = useRouter()
 
   const access = token?.access_token || cookie
@@ -50,16 +50,19 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     }
   }, [])
 
-  useEffect(async () => {
-    await getProjectsList({
-      take: 'all',
-      skip: 0,
-      populate: false
-    })
+  useEffect(() => {
+    async function fetchData() {
+      await getProjectsList({
+        take: 'all',
+        skip: 0,
+        populate: false
+      })
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
-    if (!selectedDepartment?._id) {
+    if (!selectedDepartment?._id && businesses?.length) {
       setCurrentBusiness(businesses[0])
       if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
       else {
@@ -85,10 +88,6 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
         setIsViewable={() => {}}
         setListName={() => {}}
         setIsLogoHidden={() => {}}
-        onBackArrowClick={() => {
-          setDepartment(null)
-          router.back()
-        }}
       />
       {businesses?.length ? (
         <Container>
@@ -130,7 +129,6 @@ const mapStateToProps = state => {
   return {
     businesses: state?.Business?.projectList,
     cookie: state.Auth.token,
-    currentDepartment: state.Tasks.currentDepartment,
     loading: state.Loading?.loading
   }
 }

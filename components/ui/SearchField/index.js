@@ -106,6 +106,7 @@ const SearchField = ({
   }
   return (
     <Select
+      // menuIsOpen={true}
       ref={reference}
       innerRef={reference}
       value={value?.label ? value : null}
@@ -125,6 +126,8 @@ const SearchField = ({
       options={options}
       placeholder={placeholder}
       className="custom-react-select"
+      classNamePrefix="custom-react-select newClass"
+      data-testid={id ?? name}
       {...rest}
     />
   )

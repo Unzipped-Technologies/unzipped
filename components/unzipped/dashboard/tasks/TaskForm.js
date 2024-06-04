@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { AiOutlineClose } from 'react-icons/ai'
+import Select from 'react-select'
 
 import Icon from '../../../ui/Icon'
 import Image from '../../../ui/Image'
@@ -101,7 +102,7 @@ const TaskForm = ({
     assignee = departmentData?.contracts?.map(contract => ({
       value: contract?.freelancer?.userId,
       label: (
-        <div className="d-flex justify-content-start">
+        <div className="d-flex justify-content-start" data-testid={contract?.freelancer?.userId}>
           <div>
             <Image
               src={contract?.freelancer?.user?.profileImage}
@@ -249,6 +250,10 @@ const TaskForm = ({
     })
   }
   const validateForm = () => {
+    console.log('taskName', taskForm?.taskName)
+    console.log('storyPoints', taskForm?.storyPoints)
+    console.log('priority', taskForm?.priority)
+    console.log('status', taskForm?.status)
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
       return false
@@ -256,17 +261,19 @@ const TaskForm = ({
       setValidationErrors('Sotry points are required.')
       return false
     } else if (!taskForm?.priority) {
-      setValidationErrors('Priority are required.')
+      setValidationErrors('Priority is required.')
       return false
     } else if (!taskForm?.status) {
       setValidationErrors('Status are required.')
       return false
+    } else {
+      setValidationErrors('')
+      setButtonDisable(false)
+      return true
     }
-    setValidationErrors('')
-    setButtonDisable(false)
-    return true
   }
   const onSubmit = async () => {
+    console.log('dataaa', taskForm)
     if (validateForm()) {
       if (newComment?.comment) {
         const comments = [
@@ -338,7 +345,7 @@ const TaskForm = ({
   }
 
   return (
-    <>
+    <div data-testid="taskform">
       <DarkText fontSize="18px" color="#0057FF" lineHeight="normal">
         ISSUE {taskDetail?.ticketCode?.toLowerCase()}
       </DarkText>
@@ -354,6 +361,7 @@ const TaskForm = ({
             enableEditMode('')
           }}>
           <Button
+            data-testId="cancel_task_form"
             extraWid
             type="outlineInverse"
             buttonHeight="25px"
@@ -365,17 +373,14 @@ const TaskForm = ({
               border: '1px',
               wideBorder: '#1976D2'
             }}
-            onClick={() => {
-              onHide()
-            }}>
+            onClick={onHide}>
             CANCEL
           </Button>
 
           <Button
+            data-testId="submit_task_form"
             disabled={disableBtn}
-            onClick={async () => {
-              await onSubmit()
-            }}
+            onClick={onSubmit}
             width="58.25px"
             extraWide
             margin="0px 37px 0px 20px"
@@ -425,7 +430,6 @@ const TaskForm = ({
                 validateForm()
                 enableEditMode('')
               }}
-              onUpdate={() => {}}
             />
           </div>
         </DIV>
@@ -442,11 +446,13 @@ const TaskForm = ({
             {editMode ? (
               <span>
                 <FormField
+                  tabIndex={1}
                   mobile
                   zIndex="10000"
                   disableBorder={!editMode.assignee}
                   fieldType="searchField"
                   isSearchable={true}
+                  id="assignee"
                   name="assignee"
                   disabled={userRole === 1}
                   options={assigneeOptions}
@@ -463,7 +469,6 @@ const TaskForm = ({
                     label: assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label
                   }}
                   clickType="assignee"
-                  onUpdate={() => {}}
                   onMenuOpen={() => {
                     enableEditMode('assignee')
                   }}
@@ -546,15 +551,18 @@ const TaskForm = ({
                     enableEditMode('')
                   }}
                   onChange={e => {
+                    console.log('change', e?.target?.value)
+
                     setTag(e?.target?.value)
                   }}
                   handleEnterKey={e => {
-                    if (e.keyCode === 13 && e.shiftKey === false && taskForm?.tags?.length < 5) {
+                    console.log('evalue', ...taskForm?.tags, e?.target?.value)
+                    if (e.key === 'Enter' && !e.shiftKey && taskForm?.tags?.length < 5) {
+                      console.log('if')
                       updateForm('tags', [...taskForm?.tags, e?.target?.value])
                       setTag('')
                     }
                   }}
-                  onUpdate={() => {}}
                 />
               )}
             </DIV>
@@ -595,12 +603,14 @@ const TaskForm = ({
             </TitleText>
             {editMode ? (
               <FormField
+                tabIndex={2}
                 zIndex="999"
                 zIndexUnset={true}
                 mobile
                 required
                 fieldType="searchField"
                 isSearchable={true}
+                id="priority"
                 name="priority"
                 color="#000000"
                 disabled={userRole === 1}
@@ -614,7 +624,6 @@ const TaskForm = ({
                 onChange={value => updateForm('priority', value?.value)}
                 value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
                 clickType="priority"
-                onUpdate={() => {}}
                 onMenuOpen={() => {
                   enableEditMode('priority')
                 }}
@@ -647,7 +656,6 @@ const TaskForm = ({
               height="30px  !important"
               onChange={e => updateForm('storyPoints', e?.target?.value)}
               value={taskForm?.storyPoints}
-              onUpdate={() => {}}
               onClick={() => {
                 enableEditMode('storyPoints')
               }}
@@ -674,11 +682,13 @@ const TaskForm = ({
             {editMode || userRole === 1 ? (
               <FormField
                 zIndex="1"
+                tabIndex={3}
                 mobile
                 required
                 fieldType="searchField"
                 disableBorder={!editMode.status}
                 isSearchable={true}
+                id="status"
                 name="status"
                 placeholder="Select Status"
                 fontSize="14px"
@@ -688,7 +698,6 @@ const TaskForm = ({
                 onChange={value => updateForm('status', value?.value)}
                 value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
                 clickType="status"
-                onUpdate={() => {}}
                 onMenuOpen={() => {
                   enableEditMode('status')
                 }}
@@ -849,7 +858,7 @@ const TaskForm = ({
             )
           })}
       </form>
-    </>
+    </div>
   )
 }
 const mapStateToProps = state => {

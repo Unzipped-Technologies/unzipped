@@ -46,7 +46,7 @@ const Account = () => {
   }, [])
   return (
     <React.Fragment>
-      <Nav isSubMenu marginBottom={marginBottom} />
+      {/* <Nav isSubMenu marginBottom={marginBottom} /> */}
       {window.innerWidth >= 680 ? (
         <DesktopDisplayBox>
           <DesktopAccount />

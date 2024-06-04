@@ -38,7 +38,13 @@ const FormLabel = ({ children, help, forId, fontSize = '', required, className }
       ? addAsteriskToLastItem(children.props.children.props.children)
       : undefined
   return (
-    <LabelContainer fontSize={fontSize} htmlFor={forId} className={className}>
+    <LabelContainer
+      fontSize={fontSize}
+      htmlFor={forId}
+      className={className}
+      onClick={() => {
+        console.log('clickLabel')
+      }}>
       {childrenWithAsterisk ?? children}
       {required && !childrenWithAsterisk && '*'}
       {help && <HelpIcon fontSize={fontSize} text={help} testId={forId} />}

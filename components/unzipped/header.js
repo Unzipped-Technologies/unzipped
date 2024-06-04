@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Button from '@material-ui/core/Button'
@@ -677,6 +677,7 @@ const Nav = ({
         {isLogoHidden && (
           <>
             <div
+              data-testId="header_back_arrow"
               style={{ marginLeft: 15 }}
               onClick={() => {
                 setIsViewable(false)

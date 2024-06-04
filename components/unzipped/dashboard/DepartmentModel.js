@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { Dialog } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
-import MuiDialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { DIV } from './style'
+import MuiDialogContent from '@material-ui/core/DialogContent'
 
+import { DIV } from './style'
 import Button from '../../ui/Button'
 import { FormField } from '../../ui'
-
-import { updateDepartmentForm, resetDepartmentForm, createDepartment, getProjectsList } from '../../../redux/actions'
+import { updateDepartmentForm, resetDepartmentForm, createDepartment } from '../../../redux/actions'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -35,8 +34,7 @@ const DepartmentModel = ({
   onHide,
   createDepartment,
   departmentForm,
-  currentBusinessId,
-  getProjectsList
+  currentBusinessId
 }) => {
   useEffect(() => {
     updateDepartmentForm({
@@ -58,12 +56,14 @@ const DepartmentModel = ({
 
   return (
     <MUIDialog
-      onClose={() => onHide()}
+      onClose={onHide}
       disableEscapeKeyDown
       open={open}
       aria-labelledby="story-preview-modal"
       aria-describedby="story-preview-modal-description">
-      <DialogTitle id="department-dialog-title">Create Department</DialogTitle>
+      <DialogTitle id="department-dialog-title" data-testId="create_department_modal">
+        Create Department
+      </DialogTitle>
 
       <DialogContent dividers>
         <DIV flex="0 0 auto" boxSizing="border-box">
@@ -82,8 +82,7 @@ const DepartmentModel = ({
                 height="36px !important"
                 onChange={e => updateForm('name', e?.target?.value)}
                 value={departmentForm?.name}
-                clickType="name"
-                onUpdate={() => {}}>
+                clickType="name">
                 Name
               </FormField>
             </DIV>
@@ -91,6 +90,7 @@ const DepartmentModel = ({
           <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
             <DIV>
               <Button
+                data-testId="cancel_department_form"
                 extraWid
                 type="outlineInverse"
                 buttonHeight="25px"
@@ -109,6 +109,7 @@ const DepartmentModel = ({
               </Button>
 
               <Button
+                data-testId="submit_department_form"
                 disabled={false}
                 onClick={async () => {
                   await onSubmit()
@@ -146,8 +147,7 @@ const mapDispatchToProps = dispatch => {
   return {
     updateDepartmentForm: bindActionCreators(updateDepartmentForm, dispatch),
     resetDepartmentForm: bindActionCreators(resetDepartmentForm, dispatch),
-    createDepartment: bindActionCreators(createDepartment, dispatch),
-    getProjectsList: bindActionCreators(getProjectsList, dispatch)
+    createDepartment: bindActionCreators(createDepartment, dispatch)
   }
 }
 
