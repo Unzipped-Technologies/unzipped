@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import React from 'react'
+import styled from 'styled-components'
+import PropTypes from 'prop-types'
 
 const CardContainer = styled.div`
   background: #fff;
   border: 2px solid ${props => (props.noBorder ? 'transparent' : props.theme.border)};
   box-sizing: border-box;
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '4px')};
-  padding: ${({ doubleScreenTop, doubleScreenBottom, mobile }) => 
+  padding: ${({ doubleScreenTop, doubleScreenBottom, mobile }) =>
     doubleScreenTop ? '115px 10px 0px' : doubleScreenBottom ? '0px 10px 115px' : mobile ? '115px 10px' : '30px 50px'};
   font-family: arial;
   width: 100%;
@@ -18,17 +18,17 @@ const CardContainer = styled.div`
 `
 
 const ActionContainer = styled.div`
-    float: right;
-    margin-top: -4px;
-    margin-left: 10px;
-`;
+  float: right;
+  margin-top: -4px;
+  margin-left: 10px;
+`
 
 const CardTitle = styled.h2`
-    color: ${props => props.theme.primary};
-    font-weight: 600;
-    font-size: ${props => props.theme.baseFontSize};
-    line-height: ${props => props.theme.baseLineHeight};
-`;
+  color: ${props => props.theme.primary};
+  font-weight: 600;
+  font-size: ${props => props.theme.baseFontSize};
+  line-height: ${props => props.theme.baseLineHeight};
+`
 
 /**
  * Base Card Component.
@@ -64,26 +64,26 @@ const Card = ({
 )
 
 Card.propTypes = {
-    /** Children the component contains */
-    children: PropTypes.node,
-    /** If to show card inline */
-    inline: PropTypes.bool,
-    /** If to keep padding in card */
-    padding: PropTypes.bool,
-    /** action component to show in the action area (top right) */
-    action: PropTypes.node,
-    /** title of card */
-    title: PropTypes.string,
-    /** margin of card */
-    margin: PropTypes.bool,
-};
+  /** Children the component contains */
+  children: PropTypes.node,
+  /** If to show card inline */
+  inline: PropTypes.bool,
+  /** If to keep padding in card */
+  padding: PropTypes.bool,
+  /** action component to show in the action area (top right) */
+  action: PropTypes.node,
+  /** title of card */
+  title: PropTypes.string,
+  /** margin of card */
+  margin: PropTypes.bool
+}
 
 Card.defaultProps = {
-    children: null,
-    inline: false,
-    padding: true,
-    action: null,
-    margin: false,
-};
+  children: null,
+  inline: false,
+  padding: true,
+  action: null,
+  margin: false
+}
 
-export default Card;
+export default Card

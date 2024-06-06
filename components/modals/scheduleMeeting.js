@@ -116,14 +116,13 @@ export default function ScheduleMeetingModal({
       return timeFormat
     }
   }
-
   return (
-    <div>
+    <div data-testid="schedule_meeting_modal">
       <Modal
         open={scheduleInterviewModal}
         onClose={handleScheduleInterviewModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description">
+        aria-labelledby="meeting_modal_title"
+        aria-describedby="meeting_modal_description">
         <Box
           sx={style}
           style={{

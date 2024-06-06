@@ -339,7 +339,7 @@ const DesktopAccount = ({
         <RightOne>
           <Rows>
             <SubTitle>Name</SubTitle>
-            <EditButton data-testId="edit_name_button" onClick={() => enableEditing('editName', true)}>
+            <EditButton data-testid="edit_name_button" onClick={() => enableEditing('editName', true)}>
               Edit
             </EditButton>
           </Rows>
@@ -425,7 +425,7 @@ const DesktopAccount = ({
           <Underline color="#333" margin="15px 0px 5px 0px" />
           <Rows>
             <SubTitle>Address</SubTitle>
-            <EditButton data-testId="edit_address_button" onClick={() => enableEditing('editAddress', true)}>
+            <EditButton data-testid="edit_address_button" onClick={() => enableEditing('editAddress', true)}>
               Edit
             </EditButton>
           </Rows>
@@ -624,7 +624,7 @@ const DesktopAccount = ({
           <Underline color="#333" margin="15px 0px 5px 0px" />
           <Rows>
             <SubTitle>Company</SubTitle>
-            <EditButton data-testId="edit_company_button" onClick={() => enableEditing('editCompany', true)}>
+            <EditButton data-testid="edit_company_button" onClick={() => enableEditing('editCompany', true)}>
               {!business ? 'verify business details' : 'Edit'}
             </EditButton>
           </Rows>
@@ -788,7 +788,7 @@ const DesktopAccount = ({
         </RightOne>
       </Container>
       {error && (
-        <p className="red-text" data-testId="account_error">
+        <p className="red-text" data-testid="account_error">
           {error}
         </p>
       )}
@@ -797,7 +797,7 @@ const DesktopAccount = ({
         <Rows>
           <div></div>
           <ButtonSubmit
-            data-testId={'submimt_button'}
+            data-testid={'submimt_button'}
             disabled={areObjectsEqual(userData, initialState)}
             onClick={onSubmit}>
             Save Settings

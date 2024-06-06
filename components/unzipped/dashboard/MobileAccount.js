@@ -73,7 +73,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
               height={54}
               width={54}
               className="border rounded"
-              data-testId="user_profile_image"
+              data-testid="user_profile_image"
             />
             <div className="mx-2">
               <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="20px">
@@ -117,7 +117,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
         </div>
         <div className="mb-4 px-3  py-1">
           <div
-            data-testId="show_setting_container"
+            data-testid="show_setting_container"
             className="d-flex align-items-center justify-content-between"
             onClick={() => {
               setShowSettings(!showSettings)
@@ -218,7 +218,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
           </div>
           <IconComponent name="rightArrow" width="9" height="14" viewBox="0 0 6 9" fill="black" />
         </div>
-        <div className="d-flex align-items-center  mb-3 px-3 py-1" onClick={signOut} data-testId="logout_user_element">
+        <div className="d-flex align-items-center  mb-3 px-3 py-1" onClick={signOut} data-testid="logout_user_element">
           <IconComponent name="logOut" width="18" height="16" viewBox="0 0 18 16" fill="black" />
           <P margin="0" padding="0 0 0 12px" fontSize="20px">
             Logout
