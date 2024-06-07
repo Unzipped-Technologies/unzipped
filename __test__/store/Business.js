@@ -1,7 +1,8 @@
 export const BUSINESS = [
   {
     _id: '6601c35b149276195c3f8fd3',
-    description: '',
+    description:
+      'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
     businessAddressLineOne: '',
     businessCountry: '',
     businessCity: '',
@@ -9,7 +10,7 @@ export const BUSINESS = [
     businessZip: '',
     objectives: [],
     requiredSkills: [],
-    likeTotal: 0,
+    likeTotal: 13,
     projectBudgetType: 'Fixed Price',
     projectType: 'Short Term Business',
     isActive: true,

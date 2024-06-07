@@ -167,7 +167,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
                   }}
                   control={
                     <Checkbox
-                      data-testid="budget_type"
+                      data-testid={type}
                       checked={type === filter?.projectBudgetType}
                       inputProps={{ 'aria-label': 'controlled' }}
                       onChange={e => {

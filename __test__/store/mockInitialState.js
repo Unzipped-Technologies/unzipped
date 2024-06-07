@@ -51,7 +51,8 @@ export let defaultInitialState = {
       taxId: '09ijk12C'
     },
     projectList: [...BUSINESS],
-    selectedBusiness: { ...SELECTED_BUSIESS }
+    selectedBusiness: { ...SELECTED_BUSIESS },
+    totalCount: BUSINESS?.length
   },
   ProjectApplications: {
     success: false

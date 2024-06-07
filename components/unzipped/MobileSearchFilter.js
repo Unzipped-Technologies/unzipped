@@ -42,25 +42,6 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
     }
   }, [filter])
 
-  useEffect(() => {
-    const minRateInputElement = document.getElementById('minRate')
-    const maxRateInputElement = document.getElementById('maxRate')
-    if (minRateInputElement) {
-      minRateInputElement.addEventListener('wheel', handleWheel, { passive: false })
-    }
-    if (maxRateInputElement) {
-      maxRateInputElement.addEventListener('wheel', handleWheel, { passive: false })
-    }
-    return () => {
-      if (minRateInputElement) {
-        minRateInputElement.removeEventListener('wheel', handleWheel)
-      }
-      if (maxRateInputElement) {
-        maxRateInputElement.removeEventListener('wheel', handleWheel)
-      }
-    }
-  }, [])
-
   const handleSuggestions = event => {
     const input = event.target.value?.toLowerCase()
     setUserInput(input)
@@ -199,6 +180,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
             <div className="d-flex justify-content-between align-items-center">
               <p style={{ fontSize: '18px', fontWeight: '500', paddingLeft: '4px' }}>Project type</p>
               <p
+                data-testid="clear_type_filter"
                 style={{ fontSize: '14px', fontWeight: '500', color: '#0057FF', cursor: 'pointer' }}
                 onClick={() => {
                   setAllFilters('projectBudgetType', '')
