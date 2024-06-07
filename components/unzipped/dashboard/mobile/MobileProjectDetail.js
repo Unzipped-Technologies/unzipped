@@ -1,5 +1,4 @@
 import React from 'react'
-import * as moment from 'moment'
 import { MdFlag } from 'react-icons/md'
 import { MdPerson } from 'react-icons/md'
 import { MdCreditCard } from 'react-icons/md'
@@ -10,6 +9,7 @@ import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
 import { TEXT, DIV } from '../style'
 import { Image } from '../../../ui'
+import { ConverterUtils } from '../../../../utils'
 
 import Badge from '../../../ui/Badge'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
@@ -31,7 +31,11 @@ const ProjectRequirements = styled.ul`
 
 const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBusinessCount }) => {
   return (
-    <MobileView flexWrap="wrap" background="#fff" padding="10px 15px 80px 15px !important">
+    <MobileView
+      flexWrap="wrap"
+      background="#fff"
+      padding="10px 15px 80px 15px !important"
+      data-testid="mobile_project_detail">
       <TEXT
         fontSize="16px"
         lineHeight="18.75px"
@@ -96,8 +100,15 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
       </TEXT>
       <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
         {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
-          projectDetails.projectImagesUrl.map(item => (
-            <Image src={item.url} alt="project image" width={'100%'} height={'150px'} key={item?._id ?? index} />
+          projectDetails.projectImagesUrl.map((item, index) => (
+            <Image
+              src={item.url}
+              alt="project image"
+              width={'100%'}
+              height={'150px'}
+              key={item?._id ?? index}
+              id={item?._id}
+            />
           ))
         ) : (
           <TEXT
@@ -111,7 +122,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
           </TEXT>
         )}
       </div>
-      <div className="mt-3">
+      <div className="mt-3" data-testid="mobile_about_client">
         <TEXT textColor="#123456" fontSize="20px" fontWeight="600">
           About client
         </TEXT>
@@ -137,7 +148,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
           <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
             <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
             <TEXT textColor="#123456" fontSize="18px" fontWeight="300" lineHeight="18.75px" padding="8px 0px 0px 5px">
-              Member since {moment(projectDetails?.userId?.createdAt).format('MMM DD, YYYY')}
+              Member since {ConverterUtils.toMonthDateYear(projectDetails?.userId?.createdAt)}
             </TEXT>
           </DIV>
         </DIV>

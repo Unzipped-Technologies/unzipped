@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import * as moment from 'moment'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { MdFlag } from 'react-icons/md'
+import { useRouter } from 'next/router'
 import { MdPerson } from 'react-icons/md'
+import { bindActionCreators } from 'redux'
 import { MdAccessTime } from 'react-icons/md'
 import { MdLocationOn } from 'react-icons/md'
 import { MdCreditCard } from 'react-icons/md'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
-import Loading from '../../loading'
-import Badge from '../../ui/Badge'
-import MobileProjectDetail from './mobile/MobileProjectDetail'
-import { TEXT, DIV } from './style'
-import { Image } from '../../ui'
-import { verifyUserStripeAccount, countClientContracts } from '../../../redux/actions'
-import { useRouter } from 'next/router'
 
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { Image } from '../../ui'
+import Badge from '../../ui/Badge'
+import Loading from '../../loading'
+import { TEXT, DIV } from './style'
+import { ConverterUtils } from '../../../utils'
+import MobileProjectDetail from './mobile/MobileProjectDetail'
+import { verifyUserStripeAccount, countClientContracts } from '../../../redux/actions'
 
 const Desktop = styled(DIV)`
   min-width: 82%;
@@ -95,6 +95,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
     const response = await verifyUserStripeAccount(userId)
     if (response?.status === 200) {
       setVerified(true)
+    } else {
+      setVerified(false)
     }
   }
   const countBusiness = async userId => {
@@ -102,6 +104,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
     const response = await countClientContracts(userId)
     if (response?.status === 200) {
       setBusinessCount(response?.data?.count ?? 0)
+    } else {
+      setBusinessCount(0)
     }
   }
   return (
@@ -110,260 +114,273 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
         <>
           {projectDetails ? (
             <>
-              <Desktop>
-                <div style={{ width: '70%' }}>
-                  <ProjectDetail>
-                    <DIV display="flex" justifyContent="space-between" alignItems="center" padding="40px 10px 15px 7px">
+              {window?.innerWidth > 680 ? (
+                <Desktop data-testid="desktop_project_detail">
+                  <div style={{ width: '70%' }}>
+                    <ProjectDetail>
+                      <DIV
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        padding="40px 10px 15px 7px">
+                        <TEXT
+                          fontSize="24px"
+                          fontWeight="500"
+                          lineHeight="23px"
+                          textColor="#12151B
+">
+                          Project Hires
+                        </TEXT>
+                        <TEXT
+                          fontSize="18px"
+                          lineHeight="24.5px"
+                          textColor="#12151B
+"
+                          style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          Budget: ${projectDetails?.budget || 0}
+                        </TEXT>
+                      </DIV>
+                      <TEXT fontSize="20px" fontWeight="500" lineHeight="23px" textColor=" #12151B">
+                        Project Length
+                      </TEXT>
                       <TEXT
-                        fontSize="24px"
+                        padding="10px 0px 0px 0px"
+                        fontWeight="300"
+                        fontSize="20px"
+                        lineHeight="25.78px"
+                        textColor="#12151B">
+                        {projectDetails?.projectType || 'N/A'}
+                      </TEXT>
+
+                      <TEXT
+                        margin="15px 0px 0px 0px"
+                        fontSize="20px"
                         fontWeight="500"
                         lineHeight="23px"
-                        textColor="#12151B
-">
-                        Project Hires
+                        textColor=" #12151B">
+                        Description
                       </TEXT>
                       <TEXT
-                        fontSize="18px"
-                        lineHeight="24.5px"
-                        textColor="#12151B
-"
-                        style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        Budget: ${projectDetails?.budget || 0}
+                        padding="10px 0px 0px 0px"
+                        fontWeight="300"
+                        fontSize="20px"
+                        lineHeight="25.78px"
+                        textColor="#12151B">
+                        {projectDetails?.description || 'N/A'}
                       </TEXT>
-                    </DIV>
-                    <TEXT fontSize="20px" fontWeight="500" lineHeight="23px" textColor=" #12151B">
-                      Project Length
-                    </TEXT>
-                    <TEXT
-                      padding="10px 0px 0px 0px"
-                      fontWeight="300"
-                      fontSize="20px"
-                      lineHeight="25.78px"
-                      textColor="#12151B">
-                      {projectDetails?.projectType || 'N/A'}
-                    </TEXT>
 
-                    <TEXT
-                      margin="15px 0px 0px 0px"
-                      fontSize="20px"
-                      fontWeight="500"
-                      lineHeight="23px"
-                      textColor=" #12151B">
-                      Description
-                    </TEXT>
-                    <TEXT
-                      padding="10px 0px 0px 0px"
-                      fontWeight="300"
-                      fontSize="20px"
-                      lineHeight="25.78px"
-                      textColor="#12151B">
-                      {projectDetails?.description || 'N/A'}
-                    </TEXT>
-
-                    <TEXT
-                      margin="15px 0px 0px 0px"
-                      fontSize="20px"
-                      fontWeight="500"
-                      lineHeight="23px"
-                      textColor=" #12151B">
-                      Requirements
-                    </TEXT>
-                    <ProjectRequirements>
-                      {projectDetails?.objectives?.length ? (
-                        projectDetails?.objectives?.map((objective, index) => (
-                          <li key={`${objective}_${index}`}>
-                            <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
-                              {objective}
-                            </TEXT>
-                          </li>
-                        ))
-                      ) : (
-                        <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
-                          N/A
-                        </TEXT>
-                      )}
-                    </ProjectRequirements>
-                    <TEXT padding="10px 0px 10px 0px" fontSize="20px" lineHeight="23px" textColor=" #12151B">
-                      Skills Required
-                    </TEXT>
-                    {projectDetails?.requiredSkills?.length
-                      ? projectDetails?.requiredSkills?.map((skill, index) => {
-                          return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-                        })
-                      : 'N/A'}
-
-                    <TEXT topPadding fontSize="13px" lineHeight="24.5px">
-                      Project ID: {projectDetails?._id || 'N / A'}
-                    </TEXT>
-                  </ProjectDetail>
-                  <ProjectDetail margin="10px 0px 0px 0px">
-                    <TEXT
-                      padding="20px 10px 10px 0px"
-                      fontSize="24px"
-                      fontWeight="500"
-                      lineHeight="23px"
-                      textColor="#12151B">
-                      Project Goals
-                    </TEXT>
-                    <TEXT textAlign="justify" fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#12151B">
-                      {projectDetails?.goals || 'N/A'}
-                    </TEXT>
-                  </ProjectDetail>
-                  <ProjectDetail margin="10px 0px 0px 0px">
-                    <div style={{ borderBottom: '1px solid #BCC5D3', margin: '0px auto' }}>
                       <TEXT
-                        padding="20px 0px 10px 0px"
+                        margin="15px 0px 0px 0px"
+                        fontSize="20px"
+                        fontWeight="500"
+                        lineHeight="23px"
+                        textColor=" #12151B">
+                        Requirements
+                      </TEXT>
+                      <ProjectRequirements>
+                        {projectDetails?.objectives?.length ? (
+                          projectDetails?.objectives?.map((objective, index) => (
+                            <li key={`${objective}_${index}`}>
+                              <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                                {objective}
+                              </TEXT>
+                            </li>
+                          ))
+                        ) : (
+                          <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                            N/A
+                          </TEXT>
+                        )}
+                      </ProjectRequirements>
+                      <TEXT padding="10px 0px 10px 0px" fontSize="20px" lineHeight="23px" textColor=" #12151B">
+                        Skills Required
+                      </TEXT>
+                      {projectDetails?.requiredSkills?.length
+                        ? projectDetails?.requiredSkills?.map((skill, index) => {
+                            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+                          })
+                        : 'N/A'}
+
+                      <TEXT topPadding fontSize="13px" lineHeight="24.5px">
+                        Project ID: {projectDetails?._id || 'N / A'}
+                      </TEXT>
+                    </ProjectDetail>
+                    <ProjectDetail margin="10px 0px 0px 0px">
+                      <TEXT
+                        padding="20px 10px 10px 0px"
                         fontSize="24px"
                         fontWeight="500"
                         lineHeight="23px"
                         textColor="#12151B">
-                        Additional Details
+                        Project Goals
                       </TEXT>
-                    </div>
-
-                    <TEXT padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
-                      Budget
-                    </TEXT>
-                    <TEXT fontSize="20px" lineHeight="24.5px" fontWeight="300" textColor="#444444">
-                      ${projectDetails?.budget || 0}{' '}
-                      {projectDetails?.projectBudgetType === 'Hourly Rate' ? 'per Hour' : 'Fixed'}
-                    </TEXT>
-
-                    <TEXT padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
-                      Project Image
-                    </TEXT>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
-                      {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
-                        projectDetails.projectImagesUrl.map((item, index) => (
-                          <Image
-                            src={item.url}
-                            alt="project image"
-                            width={'100%'}
-                            height={'150px'}
-                            key={item?._id ?? index}
-                          />
-                        ))
-                      ) : (
-                        <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
-                          N/A
+                      <TEXT
+                        textAlign="justify"
+                        fontWeight="300"
+                        fontSize="20px"
+                        lineHeight="25.78px"
+                        textColor="#12151B">
+                        {projectDetails?.goals || 'N/A'}
+                      </TEXT>
+                    </ProjectDetail>
+                    <ProjectDetail margin="10px 0px 0px 0px">
+                      <div style={{ borderBottom: '1px solid #BCC5D3', margin: '0px auto' }}>
+                        <TEXT
+                          padding="20px 0px 10px 0px"
+                          fontSize="24px"
+                          fontWeight="500"
+                          lineHeight="23px"
+                          textColor="#12151B">
+                          Additional Details
                         </TEXT>
-                      )}
-                    </div>
-                  </ProjectDetail>
-                </div>
-                <AboutClient>
-                  <TEXT topMargin="20px" fontSize="20px" fontWeight="500" lineHeight="24.5px" textColor="#123456">
-                    About client
-                  </TEXT>
-                  <DIV margin="15px 0px 15px 0px">
-                    <DIV display="flex" flexDirection="column">
-                      <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-                      <TEXT
-                        fontSize="20px"
-                        lineHeight="24.5px"
-                        textColor="#123456"
-                        fontWeight="500"
-                        padding="3px 0px 0px 5px">
-                        {projectDetails?.businessCity || 'N/A'}
-                      </TEXT>
-                    </DIV>
-                    <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
-                      <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-                      <TEXT
-                        fontSize="20px"
-                        lineHeight="24.5px"
-                        textColor="#123456"
-                        fontWeight="500"
-                        padding="3px 0px 0px 5px">
-                        {projectDetails?.businessCountry || 'N/A'}
-                      </TEXT>
-                    </DIV>
-                    <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
-                      <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-                      <TEXT
-                        fontWeight="300"
-                        fontSize="20px"
-                        lineHeight="24.5px"
-                        textColor="#123456"
-                        padding="3px 0px 0px 5px">
-                        {projectDetails?.likeTotal || 0} upvotes
-                      </TEXT>
-                    </DIV>
-                    <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
-                      <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
-                      <TEXT
-                        fontWeight="300"
-                        fontSize="20px"
-                        lineHeight="24.5px"
-                        textColor="#123456"
-                        padding="3px 0px 0px 5px">
-                        Member since {moment(projectDetails?.userId?.createdAt).format('MMM DD, YYYY')}
-                      </TEXT>
-                    </DIV>
-                  </DIV>
+                      </div>
 
-                  <DIV>
-                    <TEXT
-                      padding="20px 0px 0px 0px"
-                      fontSize="20px"
-                      fontWeight="500"
-                      lineHeight="24.5px"
-                      textColor="#123456">
-                      Client Verification
+                      <TEXT padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
+                        Budget
+                      </TEXT>
+                      <TEXT fontSize="20px" lineHeight="24.5px" fontWeight="300" textColor="#444444">
+                        ${projectDetails?.budget || 0}{' '}
+                        {projectDetails?.projectBudgetType === 'Hourly Rate' ? 'per Hour' : 'Fixed'}
+                      </TEXT>
+
+                      <TEXT padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
+                        Project Image
+                      </TEXT>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
+                        {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
+                          projectDetails.projectImagesUrl.map((item, index) => (
+                            <Image
+                              src={item.url}
+                              id={item?._id}
+                              alt="project image"
+                              width={'100%'}
+                              height={'150px'}
+                              key={item?._id ?? index}
+                            />
+                          ))
+                        ) : (
+                          <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                            N/A
+                          </TEXT>
+                        )}
+                      </div>
+                    </ProjectDetail>
+                  </div>
+                  <AboutClient data-testid="about_client_container">
+                    <TEXT topMargin="20px" fontSize="20px" fontWeight="500" lineHeight="24.5px" textColor="#123456">
+                      About client
                     </TEXT>
-                    <DIV display="flex" flexDirection="column" padding="20px 0px 0px 0px">
-                      <MdCreditCard
-                        style={{
-                          marginTop: '4px',
-                          fontSize: '24px',
-                          color: projectDetails?.userId?.isIdentityVerified === 'SUCCESS' ? '#8EDE64' : 'red'
-                        }}
-                      />{' '}
-                      <TEXT
-                        fontWeight="300"
-                        fontSize="20px"
-                        lineHeight="24.5px"
-                        textColor="#123456"
-                        padding="3px 0px 0px 5px">
-                        Identity Verified
-                      </TEXT>
+                    <DIV margin="15px 0px 15px 0px">
+                      <DIV display="flex" flexDirection="column">
+                        <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                        <TEXT
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          fontWeight="500"
+                          padding="3px 0px 0px 5px">
+                          {projectDetails?.businessCity || 'N/A'}
+                        </TEXT>
+                      </DIV>
+                      <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
+                        <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                        <TEXT
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          fontWeight="500"
+                          padding="3px 0px 0px 5px">
+                          {projectDetails?.businessCountry || 'N/A'}
+                        </TEXT>
+                      </DIV>
+                      <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
+                        <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                        <TEXT
+                          fontWeight="300"
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          padding="3px 0px 0px 5px">
+                          {projectDetails?.likeTotal || 0} upvotes
+                        </TEXT>
+                      </DIV>
+                      <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+                        <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
+                        <TEXT
+                          fontWeight="300"
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          padding="3px 0px 0px 5px">
+                          Member since {ConverterUtils.toMonthDateYear(projectDetails?.userId?.createdAt)}
+                        </TEXT>
+                      </DIV>
                     </DIV>
-                    <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
-                      <MdMonetizationOn
-                        style={{
-                          marginTop: '4px',
-                          fontSize: '24px',
-                          color: isClientPaymentVerified ? '#8EDE64' : 'red'
-                        }}
-                      />{' '}
+
+                    <DIV>
                       <TEXT
-                        fontWeight="300"
+                        padding="20px 0px 0px 0px"
                         fontSize="20px"
+                        fontWeight="500"
                         lineHeight="24.5px"
-                        textColor="#123456"
-                        padding="3px 0px 0px 5px">
-                        Payment Verified
+                        textColor="#123456">
+                        Client Verification
                       </TEXT>
+                      <DIV display="flex" flexDirection="column" padding="20px 0px 0px 0px">
+                        <MdCreditCard
+                          style={{
+                            marginTop: '4px',
+                            fontSize: '24px',
+                            color: projectDetails?.userId?.isIdentityVerified === 'SUCCESS' ? '#8EDE64' : 'red'
+                          }}
+                        />{' '}
+                        <TEXT
+                          fontWeight="300"
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          padding="3px 0px 0px 5px">
+                          Identity Verified
+                        </TEXT>
+                      </DIV>
+                      <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+                        <MdMonetizationOn
+                          style={{
+                            marginTop: '4px',
+                            fontSize: '24px',
+                            color: isClientPaymentVerified ? '#8EDE64' : 'red'
+                          }}
+                        />{' '}
+                        <TEXT
+                          fontWeight="300"
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          padding="3px 0px 0px 5px">
+                          Payment Verified
+                        </TEXT>
+                      </DIV>
+                      <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
+                        <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
+                        <TEXT
+                          fontWeight="300"
+                          fontSize="20px"
+                          lineHeight="24.5px"
+                          textColor="#123456"
+                          padding="3px 0px 0px 5px">
+                          Completed {clientBusinessCount} projects
+                        </TEXT>
+                      </DIV>
                     </DIV>
-                    <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
-                      <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
-                      <TEXT
-                        fontWeight="300"
-                        fontSize="20px"
-                        lineHeight="24.5px"
-                        textColor="#123456"
-                        padding="3px 0px 0px 5px">
-                        Completed {clientBusinessCount ?? 0} projects
-                      </TEXT>
-                    </DIV>
-                  </DIV>
-                </AboutClient>
-              </Desktop>
-              <MobileProjectDetail
-                projectDetails={projectDetails}
-                isClientPaymentVerified={isClientPaymentVerified}
-                clientBusinessCount={clientBusinessCount}
-              />
+                  </AboutClient>
+                </Desktop>
+              ) : (
+                <MobileProjectDetail
+                  projectDetails={projectDetails}
+                  isClientPaymentVerified={isClientPaymentVerified}
+                  clientBusinessCount={clientBusinessCount}
+                />
+              )}
             </>
           ) : (
             <h4 className="text-center mt-5">Project Not Found</h4>

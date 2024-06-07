@@ -90,6 +90,10 @@ class Converter {
     }
   }
 
+  toMonthDateYear(date) {
+    return moment(date).format('MMM DD, YYYY')
+  }
+
   utcDateToDateTimeFormat(date) {
     return moment(date).format('MM-DD-YYYY HH:mm:ss ')
   }

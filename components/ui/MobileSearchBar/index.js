@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react'
+
 import IconComponent from '../icons/IconComponent'
 
 function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey }) {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    if (searchKey !== undefined && searchKey !== null) setSearch(searchKey)
+    setSearch(searchKey)
   }, [searchKey])
 
   const handleEnter = e => {
     if (e?.key === 'Enter') {
       setFilters('searchKey', e?.target?.value)
+    } else {
     }
   }
   return (
     <div
+      data-testid="search_bar"
       style={{
         borderTop: '3px solid #F6F7F9',
         borderBottom: '3px solid #F6F7F9',
@@ -27,6 +30,7 @@ function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey }) {
       <div className="d-flex align-items-center justify-content-between mx-3 bg-white">
         <div className="d-flex align-items-center w-100">
           <span
+            data-testid="search_icon"
             onClick={() => {
               setFilters('searchKey', search)
             }}>
@@ -44,6 +48,7 @@ function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey }) {
         <div className="d-flex align-items-center">
           <span style={{ color: '#0057FF', fontSize: '12px', marginRight: '17px' }}>SAVE</span>
           <span
+            data-testid="toggle_filter"
             onClick={() => {
               handleFilterOpenClose(true)
             }}>

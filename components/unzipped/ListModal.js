@@ -21,7 +21,7 @@ import {
   checkUserConversation
 } from '../../redux/actions'
 
-const P = styled.p`
+export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
   color: ${({ color }) => (color ? color : 'black')};
@@ -37,7 +37,7 @@ const P = styled.p`
   }
 `
 const DropDown = styled.div`
-  display: ${({ display }) => (display ? display : '')};
+  display: ${({ display }) => display};
   position: absolute;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -110,7 +110,7 @@ const ListModal = ({
     if (response?.status === 200) {
       handleClose()
     } else {
-      setError(response?.response?.data?.msg || 'Something went wrong')
+      setError(response?.response?.data?.msg ?? 'Something went wrong')
     }
   }
 
@@ -129,6 +129,7 @@ const ListModal = ({
       if (response?.data?._id || response?.data === true) {
         router.push(`/dashboard/chat/${response?.data?._id}`)
         setUserIdForChat(null)
+      } else {
       }
     } else {
       router.push('/dashboard/inbox')
@@ -138,9 +139,8 @@ const ListModal = ({
   return (
     <>
       <MUIDialog
-        onClose={() => {
-          handleClose()
-        }}
+        data-testid={`${userId}_list_modal`}
+        onClose={handleClose}
         disableEscapeKeyDown
         open={open}
         maxWidth="sm"
@@ -148,6 +148,7 @@ const ListModal = ({
         aria-describedby="story-preview-modal-description">
         <DialogContent dividers>
           <IconButton
+            data-testid="close_list_modal_icon"
             aria-label="close"
             onClick={handleClose}
             sx={{
@@ -227,6 +228,7 @@ const ListModal = ({
                   list =>
                     list?.name !== 'Recently Viewed' && (
                       <div
+                        data-testid={list?._id}
                         className="d-flex px-4 py-2 me-2"
                         style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}
                         key={list?._id}

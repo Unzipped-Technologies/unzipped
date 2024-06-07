@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Checkbox from '@mui/material/Checkbox'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
 import { Icon } from '../ui'
+import { TEXT } from './dashboard/style'
 import IconComponent from '../ui/icons/IconComponent'
 import { BUDGET_TYPE, RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
 
@@ -16,19 +17,6 @@ const Container = styled.div`
   border-radius: 10px;
   padding: 15px;
   min-width: 300px;
-`
-
-const P = styled.p`
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
-  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
-  color: ${({ color }) => (color ? color : 'black')};
-  background: ${({ background }) => (background ? background : '#fff')};
-  padding: ${({ padding }) => (padding ? padding : '')};
-  margin: ${({ margin }) => (margin ? margin : '')};
-  text-align: ${({ align }) => (align ? align : '')};
-  border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
-  right: ${({ right }) => (right ? right : '')};
-  cursor: ${({ cursor }) => (cursor ? cursor : '')};
 `
 
 const Li = styled.li`
@@ -64,11 +52,8 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
     const input = event.target.value.toLowerCase()
     setUserInput(input)
     var matchingSkills = RECENT_SKILLS.filter(skill => skill.value.toLowerCase().includes(input))
-    if (!input) {
-      setSuggestions([])
-    } else {
-      setSuggestions([...matchingSkills])
-    }
+
+    setSuggestions([...matchingSkills])
   }
 
   const handleSuggestionClick = ({ value }) => {
@@ -78,18 +63,11 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
 
   const handleBlur = e => {
     const { name, value } = e.target
-    const { minRate, maxRate } = filter
     if (name === 'minRate') {
       if (+value > +maxRate && +maxRate) {
         setError(prev => ({
           ...prev,
           minError: 'Minimum should be lesser than the maximum value.'
-        }))
-      }
-      if (+value < +maxRate) {
-        setError(prev => ({
-          ...prev,
-          maxError: ''
         }))
       }
       if (+!value || +value < +maxRate) {
@@ -98,17 +76,11 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
           minError: ''
         }))
       }
-    } else if (name === 'maxRate') {
+    } else {
       if (+value < +minRate && +minRate) {
         setError(prev => ({
           ...prev,
           maxError: 'Maximum should be greater than the minimum value.'
-        }))
-      }
-      if (+value > +minRate) {
-        setError(prev => ({
-          ...prev,
-          minError: ''
         }))
       }
       if (+!value || +value > +minRate) {
@@ -126,27 +98,28 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
   }
 
   return (
-    <Container>
+    <Container data-testid="desktop_filters">
       <div>
-        <P fontSize="20px" fontWeight="600">
+        <TEXT fontSize="20px" fontWeight="600" margin="0px 0px 20px 0px">
           Filters
-        </P>
+        </TEXT>
         {filterType === 'freelancer' && (
           <>
             <div className="d-flex justify-content-between">
-              <P fontSize="20px" fontWeight="600">
+              <TEXT fontSize="20px" fontWeight="600">
                 Sort By
-              </P>
-              <P
+              </TEXT>
+              <TEXT
+                data-testid="clear_sort_filter"
                 cursor="pointer"
                 fontSize="18px"
                 fontWeight="500"
-                color="#0057FF"
+                textColor="#0057FF"
                 onClick={() => {
                   setFilters('sort', '')
                 }}>
                 Clear
-              </P>
+              </TEXT>
             </div>
             <select
               style={{ display: 'block', border: '1px solid #BCC5D3', height: '45px' }}
@@ -164,19 +137,20 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
         {filterType === 'projects' && (
           <>
             <div className="d-flex justify-content-between pt-4">
-              <P fontSize="20px" fontWeight="600">
+              <TEXT fontSize="20px" fontWeight="600">
                 Project type
-              </P>
-              <P
+              </TEXT>
+              <TEXT
+                data-testid="clear_type_filter"
                 cursor="pointer"
                 fontSize="18px"
                 fontWeight="500"
-                color="#0057FF"
+                textColor="#0057FF"
                 onClick={() => {
                   setFilters('projectBudgetType', '')
                 }}>
                 Clear
-              </P>
+              </TEXT>
             </div>
             <FormGroup>
               {BUDGET_TYPE?.map((type, index) => (
@@ -193,6 +167,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
                   }}
                   control={
                     <Checkbox
+                      data-testid="budget_type"
                       checked={type === filter?.projectBudgetType}
                       inputProps={{ 'aria-label': 'controlled' }}
                       onChange={e => {
@@ -208,14 +183,15 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
         )}
 
         <div className="d-flex justify-content-between align-items-center pt-3">
-          <P fontSize="20px" fontWeight="600">
+          <TEXT fontSize="20px" fontWeight="600">
             Rate
-          </P>
-          <P
+          </TEXT>
+          <TEXT
+            data-testid="clear_rates"
             cursor="pointer"
             fontSize="18px"
             fontWeight="500"
-            color="#0057FF"
+            textColor="#0057FF"
             onClick={() => {
               setFilters('minRate', '')
               setFilters('maxRate', '')
@@ -224,12 +200,12 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
               setError({ maxError: '', minError: '' })
             }}>
             Clear
-          </P>
+          </TEXT>
         </div>
         <div>
-          <P margin="10px 0 0 0" fontSize="18px" fontWeight="600">
+          <TEXT margin="10px 0 0 0" fontSize="18px" fontWeight="500">
             min
-          </P>
+          </TEXT>
           <div className="d-flex align-items-center border" style={{ border: '1px solid #BCC5D3' }}>
             <span style={{ padding: '0 18px 0 9px', display: 'flex', alignSelf: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512">
@@ -237,13 +213,14 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
               </svg>
             </span>
             <input
+              data-testid="min_rate"
               type="number"
               value={minRate}
               id="minRate"
               name="minRate"
               onBlur={handleBlur}
               onChange={handleBlur}
-              onKeyDown={event => {
+              onKeyPress={event => {
                 if (event?.key === 'Enter') {
                   setFilters('minRate', event?.target?.value)
                 }
@@ -256,9 +233,9 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
           {error?.minError && <p style={{ fontSize: '12px', color: 'red' }}>{error?.minError}</p>}
         </div>
         <div>
-          <P margin="24px 0 0 0" fontSize="18px" fontWeight="600">
+          <TEXT margin="24px 0 0 0" fontSize="18px" fontWeight="500">
             max
-          </P>
+          </TEXT>
           <div className="d-flex align-items-center " style={{ border: '1px solid #BCC5D3' }}>
             <span style={{ padding: '0 18px 0 9px', display: 'flex', alignSelf: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 320 512">
@@ -267,6 +244,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
             </span>
             <input
               type="number"
+              data-testid="max_rate"
               value={maxRate}
               id="maxRate"
               name="maxRate"
@@ -285,19 +263,20 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
           {error?.maxError && <p style={{ fontSize: '12px', color: 'red' }}>{error?.maxError}</p>}
         </div>
         <div className="d-flex justify-content-between align-items-center pt-5">
-          <P fontSize="20px" fontWeight="600">
+          <TEXT fontSize="20px" fontWeight="600">
             Skills
-          </P>
-          <P
+          </TEXT>
+          <TEXT
+            data-testid="clear_skills"
             cursor="pointer"
             fontSize="18px"
             fontWeight="500"
-            color="#0057FF"
+            textColor="#0057FF"
             onClick={() => {
               setFilters('skill', [])
             }}>
             Clear
-          </P>
+          </TEXT>
         </div>
         <div
           className="d-flex"
@@ -305,12 +284,14 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
           <IconComponent name="footerSearch" width="24" height="20" viewBox="0 0 24 20" fill="black" />
           <input
             placeholder="Search"
+            data-testid="skills"
             style={{ margin: '0', border: '0', height: 'auto' }}
             type="text"
             value={userInput}
             onChange={handleSuggestions}
           />
           <ClearIcon
+            data-testid="clear_skill_field"
             onClick={() => {
               setUserInput('')
               setSuggestions([])
@@ -324,6 +305,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
             {suggestions?.map((skill, index) => (
               <Li
                 key={index}
+                data-testid={`${skill?.text}_suggestion`}
                 onClick={() => {
                   handleSuggestionClick(skill)
                   setUserInput('')
@@ -342,13 +324,14 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
                   fontFamily: 'Roboto',
                   fontSize: '18px',
                   fontWeight: 400,
-                  lineHeight: '20px',
+                  lineHeight: '19.5px',
                   letterSpacing: '0.15007999539375305px',
                   textAlign: 'left',
                   color: '#000000'
                 }}
                 control={
                   <Checkbox
+                    data-testid={`${skill.value}_${index}`}
                     checked={filter?.skill?.includes(skill?.value)}
                     inputProps={{ 'aria-label': 'controlled' }}
                     onChange={e => {
@@ -358,9 +341,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
                         updatedSkills.push(skill.value)
                       } else {
                         const index = updatedSkills.indexOf(skill.value)
-                        if (index !== -1) {
-                          updatedSkills.splice(index, 1)
-                        }
+                        index !== -1 && updatedSkills.splice(index, 1)
                       }
                       setFilters('skill', updatedSkills)
                     }}

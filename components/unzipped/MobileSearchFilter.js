@@ -62,56 +62,41 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
   }, [])
 
   const handleSuggestions = event => {
-    const input = event.target.value.toLowerCase()
+    const input = event.target.value?.toLowerCase()
     setUserInput(input)
-    var matchingSkills = RECENT_SKILLS.filter(skill => skill.value.toLowerCase().includes(input))
-    if (!input) {
-      setSuggestions([])
-    } else {
-      setSuggestions([...matchingSkills])
-    }
+    var matchingSkills = RECENT_SKILLS.filter(skill => skill.value?.toLowerCase().includes(input))
+
+    setSuggestions([...matchingSkills])
   }
 
   const handleSuggestionClick = value => {
-    setFilters('setAllFilters', value)
+    setAllFilters('skill', value)
     setUserInput(value)
   }
 
   const handleBlur = e => {
     const { name, value } = e.target
     if (name === 'minRate') {
-      if (+value > +maxRate && +maxRate) {
+      if (+value > +filters?.maxRate && +filters?.maxRate) {
         setError(prev => ({
           ...prev,
           minError: 'Minimum should be lesser than the maximum value.'
         }))
-        if (+value < +maxRate) {
-          setError(prev => ({
-            ...prev,
-            maxError: ''
-          }))
-        }
       }
-      if (+!value || +value < +maxRate) {
+      if (+!value || +value < +filters?.maxRate) {
         setError(prev => ({
           ...prev,
           minError: ''
         }))
       }
-    } else if (name === 'maxRate') {
-      if (+value < +minRate && +minRate) {
+    } else {
+      if (+value < +filters?.minRate && +filters?.minRate) {
         setError(prev => ({
           ...prev,
           maxError: 'Maximum should be greater than the minimum value.'
         }))
-        if (+value > +minRate) {
-          setError(prev => ({
-            ...prev,
-            minError: ''
-          }))
-        }
       }
-      if (+!value || +value > +minRate) {
+      if (+!value || +value > +filters?.minRate) {
         setError(prev => ({
           ...prev,
           maxError: ''
@@ -161,7 +146,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
   }
 
   return (
-    <div style={{ backgroundColor: 'white', color: 'black' }}>
+    <div style={{ backgroundColor: 'white', color: 'black' }} data-testid="mobile_filters">
       <div
         className="py-3 px-2 d-flex align-items-center"
         style={{
@@ -173,6 +158,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           zIndex: '100'
         }}>
         <span
+          data-testid="close_mobile_filters"
           onClick={() => {
             handleFilterOpenClose(false)
           }}
@@ -187,6 +173,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
             <div className="d-flex justify-content-between align-items-center">
               <p style={{ fontSize: '18px', fontWeight: '500', paddingLeft: '4px' }}>Sort By</p>
               <p
+                data-testid="clear_sort_filter"
                 style={{ fontSize: '14px', fontWeight: '500', color: '#0057FF', cursor: 'pointer' }}
                 onClick={() => {
                   setAllFilters('sort', '')
@@ -251,6 +238,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
         <div className="d-flex justify-content-between align-items-center pt-3">
           <p style={{ fontSize: '18px', fontWeight: '500', paddingLeft: '4px' }}> Rate</p>
           <p
+            data-testid="clear_rates"
             onClick={() => {
               setAllFilters('minRate', '')
               setAllFilters('maxRate', '')
@@ -278,6 +266,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                 value={filters.minRate}
                 id="minRate"
                 name="minRate"
+                data-testid="min_rate"
                 ref={minRef}
                 onBlur={handleBlur}
                 onChange={handleBlur}
@@ -314,6 +303,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                 ref={maxRef}
                 name="maxRate"
                 id="maxRate"
+                data-testid="max_rate"
                 onWheel={handleWheel} // Attach the wheel event handler
                 onBlur={handleBlur}
                 onChange={handleBlur}
@@ -338,6 +328,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
         <div className="d-flex justify-content-between align-items-center pt-5">
           <p style={{ fontSize: '18px', fontWeight: '500', paddingLeft: '4px' }}>Skills</p>
           <p
+            data-testid="clear_skills"
             style={{ fontSize: '14px', fontWeight: '500', color: '#0057FF', cursor: 'pointer' }}
             onClick={() => {
               setAllFilters('skill', [])
@@ -350,6 +341,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           style={{ padding: '7.5px 20px', borderRadius: '7px', gap: '20px' }}>
           <IconComponent name="footerSearch" width="24" height="20" viewBox="0 0 24 20" fill="black" />
           <input
+            data-testid="skills"
             placeholder="Search Skills"
             style={{ margin: '0', border: '0', height: 'auto' }}
             type="text"
@@ -357,6 +349,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
             onChange={handleSuggestions}
           />
           <ClearIcon
+            data-testid="clear_skill_field"
             onClick={() => {
               setUserInput('')
               setSuggestions([])
@@ -369,6 +362,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           <ul>
             {suggestions?.map((skill, index) => (
               <li
+                data-testid={`${skill?.text}_suggestion`}
                 key={index}
                 onClick={() => {
                   handleSuggestionClick(skill)
@@ -395,7 +389,8 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                 }}
                 control={
                   <Checkbox
-                    checked={filters?.skill?.includes(skill?.value) ?? false}
+                    data-testid={`${skill.value}_${index}`}
+                    checked={filters?.skill?.includes(skill?.value)}
                     inputProps={{ 'aria-label': 'controlled' }}
                     onChange={e => {
                       const updatedSkills = [...filters?.skill]
@@ -404,9 +399,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                         updatedSkills.push(skill.value)
                       } else {
                         const index = updatedSkills.indexOf(skill.value)
-                        if (index !== -1) {
-                          updatedSkills.splice(index, 1)
-                        }
+                        index !== -1 && updatedSkills.splice(index, 1)
                       }
                       setAllFilters('skill', updatedSkills)
                     }}

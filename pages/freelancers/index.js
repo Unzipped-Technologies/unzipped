@@ -4,10 +4,9 @@ import { bindActionCreators } from 'redux'
 import { connect, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
-import { getFreelancerList, clearSelectedFreelancer, getAllFreelancers } from '../../redux/actions'
+
 import Nav from '../../components/unzipped/header'
 import Footer from '../../components/unzipped/Footer'
-import { parseCookies } from '../../services/cookieHelper'
 import MobileSearchBar from '../../components/ui/MobileSearchBar'
 import MobileSearchFilter from '../../components/unzipped/MobileSearchFilter'
 import DesktopSearchFilter from '../../components/unzipped/DesktopSearchFilter'
@@ -15,6 +14,7 @@ import FreelancerCard from '../../components/unzipped/dashboard/FreelancerCard'
 import { DarkText, WhiteCard } from '../../components/unzipped/dashboard/style'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 import MobileFreelancerCard from '../../components/unzipped/dashboard/MobileFreelancerCard'
+import { getFreelancerList, clearSelectedFreelancer, getAllFreelancers } from '../../redux/actions'
 
 const Container = styled.div`
   display: flex;
@@ -84,10 +84,10 @@ const Freelancers = ({
     skill: []
   })
   const [skip] = useState(0)
-  const [take, setTake] = useState(20)
+  const [take, setTake] = useState(10)
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
-  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? undefined : '70px')
+  const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
 
   const { isExpanded } = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
@@ -100,9 +100,7 @@ const Freelancers = ({
   ).current
 
   useEffect(() => {
-    if (filter) {
-      debouncedSearch(filter)
-    }
+    debouncedSearch(filter)
   }, [filter, createdInvitation, take, debouncedSearch])
 
   const getFreelancersAfterInvitation = () => {
@@ -111,7 +109,7 @@ const Freelancers = ({
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 680) setMarginBottom(undefined)
+      if (window.innerWidth < 680) setMarginBottom('80px')
       else setMarginBottom('0px')
     }
 
@@ -166,7 +164,7 @@ const Freelancers = ({
     const freelancer = {
       id: item?._id,
       userId: item?.user?._id,
-      name: `${item?.user?.FirstName} ${item?.user?.LastName}`,
+      name: `${item?.user?.FirstName ?? ''} ${item?.user?.LastName ?? ''}`,
       type: item?.category,
       isPreferedFreelancer: item?.isPreferedFreelancer,
       country: item?.user?.AddressLineCountry || 'United States',
@@ -199,6 +197,7 @@ const Freelancers = ({
       } else {
         updatedFilter[field] = value
       }
+      updatedFilter[field] = value
 
       return updatedFilter
     })
@@ -222,7 +221,7 @@ const Freelancers = ({
   }
 
   return (
-    <SearchContainer>
+    <SearchContainer data-testid="freelancer_page">
       {handleAccountVerification() && (
         <>
           <Nav
@@ -265,26 +264,31 @@ const Freelancers = ({
                 </MobileDisplayBox>
               )
             )}
-            <Box
-              style={{
-                marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
-              }}>
-              <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
-              <div className="overflow-auto">
-                <div className="d-flex align-items-baseline py-4 bg-white">
-                  <h5 className="px-4">
-                    <b>Top Results</b>
-                  </h5>
-                  <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
-                </div>
-                {freelancerList?.length === 0 && (
-                  <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                    No freelancers found for this search
-                  </DarkText>
-                )}
-                {freelancerList?.map((item, index) => {
-                  const freelancer = constructFreelancerModel(item)
-                  if (item?.user?.FirstName) {
+            {window?.innerWidth > 680 && (
+              <Box
+                data-testid="desktop_freelancer_container"
+                style={{
+                  marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
+                }}>
+                <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
+                <div className="overflow-auto">
+                  <div className="d-flex align-items-baseline py-4 bg-white">
+                    <h5 className="px-4">
+                      <b>Top Results</b>
+                    </h5>
+                    <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+                  </div>
+                  {freelancerList?.length === 0 && (
+                    <DarkText
+                      fontSize="20px"
+                      padding="20px 40px"
+                      backgroundColor="white"
+                      width="-webkit-fill-available">
+                      No freelancers found for this search
+                    </DarkText>
+                  )}
+                  {freelancerList?.map((item, index) => {
+                    const freelancer = constructFreelancerModel(item)
                     return (
                       <div key={item?._id}>
                         <WhiteCard noMargin overlayDesktop cardHeightDesktop>
@@ -293,7 +297,6 @@ const Freelancers = ({
                             includeRate
                             clearSelectedFreelancer={clearSelectedFreelancer}
                             filter={filter}
-                            afterInvitation={getFreelancersAfterInvitation}
                             userId={userId}
                           />
                         </WhiteCard>
@@ -302,33 +305,32 @@ const Freelancers = ({
                         )}
                       </div>
                     )
-                  }
-                })}
-              </div>
-            </Box>
-            {window?.innerWidth < 680 &&
+                  })}
+                </div>
+              </Box>
+            )}
+
+            {window?.innerWidth <= 680 &&
               freelancerList?.map((item, index) => {
                 const freelancer = constructFreelancerModel(item)
-                if (item?.user?.FirstName) {
-                  return (
-                    <div key={`${item._id}_${index}`}>
-                      {!filterOpenClose && (
-                        <MobileDisplayBox>
-                          <MobileFreelancerCard
-                            user={freelancer}
-                            includeRate
-                            clearSelectedFreelancer={clearSelectedFreelancer}
-                            afterInvitation={getFreelancersAfterInvitation}
-                            userId={userId}
-                          />
-                        </MobileDisplayBox>
-                      )}
-                      {freelancerList.length < 1000 && freelancerList.length < totalCount && (
-                        <div ref={containerRef}></div>
-                      )}
-                    </div>
-                  )
-                }
+                return (
+                  <div key={`${item._id}_${index}`}>
+                    {!filterOpenClose && (
+                      <MobileDisplayBox>
+                        <MobileFreelancerCard
+                          user={freelancer}
+                          includeRate
+                          clearSelectedFreelancer={clearSelectedFreelancer}
+                          afterInvitation={getFreelancersAfterInvitation}
+                          userId={userId}
+                        />
+                      </MobileDisplayBox>
+                    )}
+                    {freelancerList.length < 1000 && freelancerList.length < totalCount && (
+                      <div ref={containerRef}></div>
+                    )}
+                  </div>
+                )
               })}
           </Container>
           <DesktopDisplayBox>
@@ -343,13 +345,6 @@ const Freelancers = ({
       )}
     </SearchContainer>
   )
-}
-
-Freelancers.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-  return {
-    token: token && token
-  }
 }
 
 const mapStateToProps = state => {

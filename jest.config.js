@@ -9,6 +9,8 @@ module.exports = {
     '^@/components/(.*)$': '<rootDir>/components/$1',
     '^@/pages/(.*)$': '<rootDir>/pages/$1'
   },
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
+
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
   },
