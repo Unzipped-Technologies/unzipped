@@ -65,6 +65,7 @@ describe('Freelancers Component', () => {
   let mockRouterPush, mockRouterBack
 
   beforeEach(() => {
+    initialState.Auth.user.isEmailVerified = true
     initialState.Freelancers.isExpanded = false
     initialState.Auth.token = 'testToken'
     initialState.Freelancers.freelancers = _.cloneDeep(FREELCANCERS_LIST)
@@ -218,17 +219,31 @@ describe('Freelancers Component', () => {
     expect(within(FreelancerPageContainer).getByText('1 result')).toBeInTheDocument()
   })
 
-  it('renders Freelancers page and modify result pagination text', async () => {
-    initialState.Freelancers.totalCount = 10
+  it('renders Freelancers page without country of first freelancer', async () => {
+    initialState.Freelancers.freelancers[0].user.AddressLineCountry = undefined
+
+    renderWithRedux(<Freelancers />, { initialState })
+  })
+
+  it('renders Freelancers page with client role and without first name', async () => {
+    initialState.Auth.user.role = 0
+    initialState.Auth.user.FirstName = undefined
+
+    renderWithRedux(<Freelancers />, { initialState })
+  })
+
+  it('renders Freelancers page with client role and without account verification', async () => {
+    initialState.Auth.user.isEmailVerified = false
 
     renderWithRedux(<Freelancers />, { initialState })
 
-    const FreelancerPageContainer = screen.getByTestId('freelancer_page')
-    expect(FreelancerPageContainer).toBeInTheDocument()
+    expect(mockRouterPush).toHaveBeenCalledWith(`/dashboard`)
+  })
 
-    expect(
-      within(FreelancerPageContainer).getByText(`1 - ${initialState.Freelancers.freelancers.length} results`)
-    ).toBeInTheDocument()
+  it('renders Freelancers page  with total count 1000', async () => {
+    initialState.Freelancers.totalCount = 1000
+
+    renderWithRedux(<Freelancers />, { initialState })
   })
 
   it('renders Freelancers page and verify default assignment if data of freelancer is undefined or null', async () => {

@@ -179,8 +179,7 @@ const Freelancers = ({
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       rate: item?.rate,
       likes: item?.likeTotal,
-      invites: item?.invites,
-      isInvited: item?.invites && item?.invites.userInvited == userId ? true : false
+      invites: item?.invites
     }
     return freelancer
   }
