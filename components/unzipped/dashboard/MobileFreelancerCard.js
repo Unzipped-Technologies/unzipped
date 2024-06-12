@@ -75,6 +75,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
       }
       await dispatch(createUserInvitation(inviteFreelancer))
       await afterInvitation()
+    } else {
     }
   }
 
@@ -85,9 +86,11 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
   const handleClose = () => {
     setOpen(false)
   }
-
   return (
-    <div className="bg-" style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}>
+    <div
+      className="bg-"
+      style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}
+      data-testid={`${user?.id}_mobile`}>
       <div className="px-3 py-2">
         <div className="d-flex">
           <img src={user?.profilePic} alt="Profile Pic" style={{ width: '55px', height: '55px' }} className="mt-2" />
@@ -97,7 +100,9 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
                 {user?.name}
               </p>
               {user?.isPreferedFreelancer && (
-                <IconComponent name="verifiedUser" width="27" height="27" viewBox="0 0 20 27" fill="#37DEC5" />
+                <span data-testid={`${user?.id}_prefered`}>
+                  <IconComponent name="verifiedUser" width="27" height="27" viewBox="0 0 20 27" fill="#37DEC5" />
+                </span>
               )}
             </div>
             <p className="mb-0" style={{ fontSize: '15px', fontWeight: '600' }}>
@@ -106,7 +111,7 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
             <p className="mb-0">{user?.country}</p>
           </div>
           {userId && (
-            <ButtonTwo onClick={handlOpen}>
+            <ButtonTwo onClick={handlOpen} data-testid={`open_${user?.id}_mobile`}>
               <Icon name="actionIcon" color="#333" />
             </ButtonTwo>
           )}

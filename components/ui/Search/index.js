@@ -141,7 +141,7 @@ const Search = ({
     onChange(e.target.value)
   }
   const handleEnter = e => {
-    if (e.keyCode === 13) {
+    if (e.key === 'Enter') {
       handleSearchText()
     }
   }
@@ -156,6 +156,7 @@ const Search = ({
         border={border}
         borderRadius={borderRadius}>
         <SearchIcon
+          data-testid="header_search_icon"
           onClick={handleSearchText}
           style={{
             color: '#333333',

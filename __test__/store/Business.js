@@ -1,7 +1,8 @@
 export const BUSINESS = [
   {
     _id: '6601c35b149276195c3f8fd3',
-    description: '',
+    description:
+      'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
     businessAddressLineOne: '',
     businessCountry: '',
     businessCity: '',
@@ -9,7 +10,7 @@ export const BUSINESS = [
     businessZip: '',
     objectives: [],
     requiredSkills: [],
-    likeTotal: 0,
+    likeTotal: 13,
     projectBudgetType: 'Fixed Price',
     projectType: 'Short Term Business',
     isActive: true,
@@ -287,3 +288,180 @@ export const BUSINESS = [
     ]
   }
 ]
+
+export const SELECTED_BUSIESS = {
+  description:
+    'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
+  incomePlatform: [],
+  socialMediaPlatforms: [],
+  typesOfHires: [],
+  businessAddressLineOne: 'Address Line 1',
+  businessAddressLineTwo: 'Address Line 2',
+  businessCountry: 'USA',
+  businessFirstName: 'Unzipped',
+  businessLastName: 'LLC',
+  businessCity: 'Washington',
+  businessState: 'Washington',
+  businessZip: '300000',
+  totalSpent: 0,
+  objectives: [
+    'Requirement one will go here',
+    'Requirement two will go here',
+    'Requirement three will go here',
+    'Requirement four will go here'
+  ],
+  requiredSkills: ['React', 'Node', 'MongoDB', 'Redux', 'Express', 'Nest.js', 'Next.js'],
+  budget: 90000,
+  totalTimeInvested: 0,
+  likeTotal: 0,
+  projectBudgetType: 'Fixed Price',
+  projectType: 'Short Term Business',
+  dislikeTotal: 0,
+  isActive: true,
+  isEquity: false,
+  isArchived: false,
+  isSelected: true,
+  isFirstBusiness: true,
+  isBusinessUpdated: false,
+  isExistingAudience: false,
+  tags: [],
+  departments: [
+    {
+      tags: [
+        {
+          _id: '661e93017277db0ed9b6ff3f',
+          tagName: 'To Do'
+        },
+        {
+          _id: '661e93017277db0ed9b6ff40',
+          tagName: 'In Progress'
+        },
+        {
+          _id: '661e93017277db0ed9b6ff41',
+          tagName: 'Done'
+        }
+      ],
+      _id: '661e93017277db0ed9b6ff3e',
+      name: 'Management'
+    }
+  ],
+  employees: ['663d0a7f518771127e11897f', '663d0a9b518771127e118980', '663d0aa9518771127e118981'],
+  applicants: [
+    {
+      rate: 0,
+      category: '',
+      freelancerSkills: [],
+      likeTotal: 0,
+      dislikeTotal: 0,
+      _id: '6611b6efa65bc0120aa3394f',
+      userId: {
+        FirstName: 'freelancer',
+        LastName: '23',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6611b6efa65bc0120aa3394a',
+        email: 'freelancer23@gmail.com',
+        freelancers: '6611b6efa65bc0120aa3394f'
+      }
+    },
+    {
+      rate: 23,
+      category: 'Full Stack Developer',
+      freelancerSkills: [
+        '6601c30e149276195c3f8fcc',
+        '6601c30e149276195c3f8fcd',
+        '6601c30e149276195c3f8fce',
+        '6601c30e149276195c3f8fcf',
+        '6601c30e149276195c3f8fd0',
+        '6601c30e149276195c3f8fd1',
+        '6601c30e149276195c3f8fd2'
+      ],
+      likeTotal: 23,
+      dislikeTotal: 5,
+      _id: '6601c2a6149276195c3f8fc2',
+      userId: {
+        FirstName: 'test',
+        LastName: 'freelancer1',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6601c2a6149276195c3f8fbd',
+        email: 'freelancer1@gmail.com',
+        freelancers: '6601c2a6149276195c3f8fc2'
+      }
+    }
+  ],
+  questionsToAsk: [
+    {
+      _id: '661e93017277db0ed9b6ff3b',
+      question: 'Do You have the experience of MERN Stack?',
+      answers: [
+        {
+          answer: 'mmm',
+          _id: '6626a3839b897a1855335c74',
+          userId: '6611b6efa65bc0120aa3394f'
+        },
+        {
+          answer: 'Yes',
+          _id: '663f9e6bb45df60ff9352b8c',
+          userId: '6601c2a6149276195c3f8fc2'
+        }
+      ]
+    },
+    {
+      _id: '661e93017277db0ed9b6ff3c',
+      question: 'Do you have the idea of AWS?',
+      answers: [
+        {
+          answer: 'nnn',
+          _id: '6626a3839b897a1855335c75',
+          userId: '6611b6efa65bc0120aa3394f'
+        },
+        {
+          answer: 'Yes',
+          _id: '663f9e6bb45df60ff9352b8d',
+          userId: '6601c2a6149276195c3f8fc2'
+        }
+      ]
+    },
+    {
+      _id: '661e93017277db0ed9b6ff3d',
+      question: 'Have you the exprience of github pipieline?',
+      answers: [
+        {
+          answer: 'mm',
+          _id: '6626a3839b897a1855335c76',
+          userId: '6611b6efa65bc0120aa3394f'
+        },
+        {
+          answer: 'Yes',
+          _id: '663f9e6bb45df60ff9352b8e',
+          userId: '6601c2a6149276195c3f8fc2'
+        }
+      ]
+    }
+  ],
+  projectImagesUrl: [
+    {
+      _id: '66106dd562048827e88a67b0',
+      url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1712352725/6601c288149276195c3f8faf/a6vbdcgxel892muwvque.png'
+    }
+  ],
+  _id: '661e93017277db0ed9b6ff39',
+  name: 'Hospital Management System',
+  userId: {
+    isIdentityVerified: 'SUCCESS',
+    FirstName: 'Test',
+    LastName: 'Client',
+    stripeSubscription: '',
+    profileImage:
+      'https://allthings.how/content/images/wordpress/2020/10/allthings.how-how-to-change-your-profile-picture-on-google-meet-profile-photo.png',
+    _id: '6601c288149276195c3f8faf',
+    email: 'client@gmail.com',
+    createdAt: '2024-03-25T18:29:28.250Z',
+    stripeId: '4242 4242 4242 4242'
+  },
+  createdAt: '2024-04-16T15:02:25.121Z',
+  updatedAt: '2024-05-30T16:02:43.306Z',
+  __v: 3,
+  audience: '661e93017277db0ed9b6ff3a',
+  goals:
+    "Project goals will go here. I am adding this additional text so that we can see how it might look. Only show this window if there is project goals listed on the project. Don't show if it was skipped.If there are any spaces or new lines that are included in the text then it will show."
+}

@@ -1,5 +1,6 @@
-import { BUSINESS } from './Business'
-import { FREELANCER } from './Freelancer'
+import { BUSINESS, SELECTED_BUSIESS } from './Business'
+import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
+import { LIST_ENTRIES } from './ListEntries'
 
 export let defaultInitialState = {
   Auth: {
@@ -7,7 +8,10 @@ export let defaultInitialState = {
     isAuthenticated: true,
     loading: false,
     user: {
-      _id: null,
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isIdentityVerified: 'SUCCESS',
+      _id: '6601c288149276195c3f8faf',
       role: 1,
       FirstName: 'Test',
       FullName: 'Test User',
@@ -46,7 +50,12 @@ export let defaultInitialState = {
       businessPhone: '0111-111-1112',
       taxId: '09ijk12C'
     },
-    projectList: [...BUSINESS]
+    projectList: [...BUSINESS],
+    selectedBusiness: { ...SELECTED_BUSIESS },
+    totalCount: BUSINESS?.length
+  },
+  ProjectApplications: {
+    success: false
   },
   Tasks: {
     currentDepartment: {},
@@ -298,6 +307,9 @@ export let defaultInitialState = {
     loading: false
   },
   Freelancers: {
+    isExpanded: false,
+    freelancers: [...FREELCANCERS_LIST],
+    totalCount: FREELCANCERS_LIST.length,
     selectedFreelancer: { ...FREELANCER }
   },
   CalenderSetting: {
@@ -316,6 +328,7 @@ export let defaultInitialState = {
     error: null
   },
   Lists: {
+    invitesList: [...LIST_ENTRIES],
     currentUserList: [
       {
         icon: 'HeartOutlined',
@@ -360,6 +373,9 @@ export let defaultInitialState = {
         __v: 0
       }
     ]
+  },
+  ListEntries: {
+    userLists: [...LIST_ENTRIES]
   }
 }
 

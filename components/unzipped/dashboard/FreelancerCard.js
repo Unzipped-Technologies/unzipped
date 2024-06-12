@@ -26,7 +26,7 @@ const Left = styled.div`
 `
 const Right = styled.div`
   padding: ${({ includeRate }) => (includeRate ? '5px 30px' : '15px 30px')};
-  min-width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
+  min-width: ${({ minWidth }) => minWidth};
 `
 
 const ButtonTwo = styled.div`
@@ -72,6 +72,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         business: project
       }
       dispatch(createUserInvitation(inviteFreelancer, filter))
+    } else {
     }
   }
 
@@ -84,7 +85,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
   }
 
   return (
-    <Container includeRate={includeRate}>
+    <Container includeRate={includeRate} data-testid={user?.id}>
       <Left>
         <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
         {project && (
@@ -143,7 +144,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           View Profile
         </Button>
         {userId && (
-          <ButtonTwo onClick={handlOpen}>
+          <ButtonTwo onClick={handlOpen} data-testid={`open_${userId}_list_modal`}>
             <Icon name="actionIcon" color="#333" />
           </ButtonTwo>
         )}
