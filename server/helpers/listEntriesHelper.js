@@ -108,22 +108,20 @@ const findListEntriesById = async id => {
       path: 'freelancerId',
       model: 'freelancers',
       select: 'category rate likeTotal freelancerSkills',
-      populate: [{
-        path: 'freelancerSkills',
-        model: 'freelancerskills',
-        select: 'yearsExperience skill '
-      },
-      {
-        path: 'userId',
-        model: 'users',
-        select: 'FirstName LastName profileImage AddressLineCountry',
-        match: {
-          $or: [
-            { FirstName: { $ne: null, $ne: '' } },
-            { LastName: { $ne: null, $ne: '' } }
-          ]
+      populate: [
+        {
+          path: 'freelancerSkills',
+          model: 'freelancerskills',
+          select: 'yearsExperience skill '
+        },
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName profileImage AddressLineCountry',
+          match: {
+            $or: [{ FirstName: { $ne: null, $ne: '' } }, { LastName: { $ne: null, $ne: '' } }]
+          }
         }
-      }
       ]
     })
     .sort({ createdAt: -1 })
@@ -188,7 +186,12 @@ const getUserListEntries = async ({ filter }) => {
         {
           path: 'businessId',
           model: 'businesses',
-          select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills'
+          select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills',
+          populate: {
+            path: 'projectImagesUrl',
+            model: 'file',
+            select: 'url'
+          }
         }
       ])
       .exec()

@@ -154,7 +154,12 @@ const AddTasksModal = ({
       {window.innerWidth > 680 ? (
         <>
           {loading && <Loading />}
-          <Modal onHide={HideNewTasksModal} background="#D9D9D9 " width="600px" hasHiddenIcon={false}>
+          <Modal
+            onHide={HideNewTasksModal}
+            background="#D9D9D9 "
+            width="600px"
+            hasHiddenIcon={false}
+            id="desktop_add_tasks">
             <div style={{ marginTop: '-10px' }}>
               <TitleText mobile color="#222222">
                 <b>Select a ticket</b>
@@ -168,6 +173,7 @@ const AddTasksModal = ({
                 }}>
                 <label>
                   <Autocomplete
+                    data-testid="autocomplete"
                     sx={{
                       display: 'inline-block',
                       '& input': {
@@ -187,23 +193,38 @@ const AddTasksModal = ({
                     options={taskOptions}
                     renderInput={params => (
                       <div ref={params.InputProps.ref}>
-                        <input type="text" {...params.inputProps} />
+                        <input type="text" {...params.inputProps} data-testid="task_name" />
                       </div>
                     )}
                     freeSolo
                     autoComplete
+                    // onInputChange={(e, value, reason) => {
+                    // e?.target.value && setTaskName(e?.target.value)
+                    // }}
+                    value={taskName}
                     onChange={(event, newValue) => {
+                      console.log('newValue', newValue)
                       if (typeof newValue === 'string') {
                       } else if (newValue && newValue.inputValue) {
                       } else {
                         addTasks(newValue?.label)
+                        setTaskName(newValue?.label)
                       }
                     }}
                     onKeyDown={e => {
-                      if (e?.keyCode === 13) {
+                      if (e?.key === 'Enter') {
                         addTasks(e?.target.value)
+                        setTaskName(e?.target.value)
                       }
                     }}
+                    // onChange={(e, value, reason) => {
+                    //   setTaskName(value?.label)
+                    //   value?.label && addTasks(value?.label)
+                    // }}
+                    // onKeyDown={e => {
+                    //   setTaskName(e?.target.value)
+                    //   e?.key === 'Enter' && addTasks(e?.target.value)
+                    // }}
                   />
                 </label>
 
@@ -215,6 +236,9 @@ const AddTasksModal = ({
                   colors={{
                     background: '#BA68C8',
                     text: '#FFFFFF'
+                  }}
+                  onClick={() => {
+                    addTasks(taskName)
                   }}>
                   Add
                 </Button>

@@ -93,19 +93,20 @@ const HoursDiv = styled.div`
 
 const Timesheet = ({
   projectDetails,
-  businessId,
-  getInvoices,
+  role,
+  freelancerId,
   invoices,
-  updateInvoice,
+  getInvoices,
   createInvoice,
   addInvoiceTasks,
+  updateInvoice,
   updateTaskHour,
-  role,
+
+  businessId,
   timeSheet = false,
   displayFormat = false,
   invoice = null,
-  freelancer,
-  freelancerId
+  freelancer
 }) => {
   const router = useRouter()
   const { week } = router.query
@@ -306,6 +307,7 @@ const Timesheet = ({
       const isoString = dateIso.toISOString()
       setDayDate(isoString)
     }
+    console.log('opening...')
     setDay(daysToAdd)
     setTasksModal(true)
   }
@@ -372,19 +374,20 @@ const Timesheet = ({
   }
 
   return (
-    <Container style={{ justifyContent: timeSheet ? 'center' : 'flex-end' }}>
+    <Container style={{ justifyContent: timeSheet ? 'center' : 'flex-end' }} data-testid={'desktop_timesheet'}>
       <div
         style={{
           width: '830px'
         }}>
         <TableTop>
           <div style={{ display: 'flex' }}>
-            <P margin="0px" fontSize="24px" fontWeight="500" width="182px">
+            <P margin="0px" fontSize="24px" fontWeight="500" width="182px" data-testid={'timesheet_user_name'}>
               {ConverterUtils.capitalize(`${selectedInvoice?.freelancer?.user?.FullName.slice(0, 15) || 'User'}`)}
               {selectedInvoice?.freelancer?.user?.FullName?.length > 17 && '...'}
             </P>
             {!invoice && (
               <select
+                data-testid="timesheet_week_options"
                 onChange={e => {
                   handleWeekChange(e?.target?.value)
                 }}
@@ -431,7 +434,7 @@ const Timesheet = ({
               return (
                 <div key={day} className="day">
                   {!displayFormat ? (
-                    <DaysDiv>
+                    <DaysDiv data-testid={`${day}_header`}>
                       <P margin="0px" fontWeight="500" width={'40%'}>
                         {' '}
                         {day.toUpperCase()}{' '}
@@ -449,7 +452,7 @@ const Timesheet = ({
                         )
                       })}
                       {isCurrenWeek && role === 1 && timeSheet ? (
-                        <span onClick={() => handleAddModal(day)}>
+                        <span onClick={() => handleAddModal(day)} data-testid={`${day}_add_task_icon`}>
                           <AddInvoiceTask />
                         </span>
                       ) : (
@@ -466,6 +469,7 @@ const Timesheet = ({
                         {tableColumns().map(column => {
                           return (
                             <P
+                              data-testid={column.name}
                               fontWeight="500"
                               width={`${60 / tableColumns()?.length}%`}
                               align="center"
@@ -516,7 +520,12 @@ const Timesheet = ({
                                   />
                                 </div>
 
-                                <P margin="0px" padding="0 0 0 10px" width={'40%'} fontWeight="500">
+                                <P
+                                  margin="0px"
+                                  padding="0 0 0 10px"
+                                  width={'40%'}
+                                  fontWeight="500"
+                                  data-testid={`${item?._id}_task`}>
                                   {' '}
                                   {item?.task?.taskName}{' '}
                                 </P>
@@ -549,9 +558,8 @@ const Timesheet = ({
                                         value={item.hours}
                                         maxLength="30"
                                         onChange={e => addHours(e?.target?.value, item?.invoiceId, item._id)}
-                                        onUpdate={() => {}}
                                         handleEnterKey={async e => {
-                                          if (e?.keyCode === 13) {
+                                          if (e?.key === 'Enter') {
                                             await updateTaskHour(item._id, item)
                                             setTaskId('')
                                           }

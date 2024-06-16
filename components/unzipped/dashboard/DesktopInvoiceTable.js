@@ -62,7 +62,10 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
   }
 
   useEffect(() => {
-    getInvoices({ businessId: id, limit: 'all', page: 1 })
+    async function fetchData() {
+      await getInvoices({ businessId: id, limit: 'all', page: 1 })
+    }
+    fetchData()
   }, [])
 
   return (

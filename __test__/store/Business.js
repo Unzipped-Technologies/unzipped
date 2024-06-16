@@ -22,6 +22,7 @@ export const BUSINESS = [
     budget: 100000,
     userId: '6601c288149276195c3f8faf',
     createdAt: '2024-03-25T18:32:59.159Z',
+    deadline: '2024-03-25T18:32:59.159Z',
     updatedAt: '2024-04-18T13:55:54.902Z',
     projectImages: [],
     questions: [],
@@ -107,86 +108,7 @@ export const BUSINESS = [
       }
     ]
   },
-  {
-    _id: '661e8d3f7277db0ed9b6ff33',
-    description: '',
-    businessAddressLineOne: '',
-    businessCountry: '',
-    businessCity: '',
-    businessState: '',
-    businessZip: '',
-    objectives: [],
-    requiredSkills: [],
-    likeTotal: 0,
-    projectBudgetType: 'Fixed Price',
-    projectType: 'Short Term Business',
-    isActive: true,
-    departments: ['661e8d3f7277db0ed9b6ff35'],
-    applicants: [],
-    questionsToAsk: [],
-    projectImagesUrl: [],
-    name: 'Online LMMS',
-    budget: 90000,
-    userId: '6601c288149276195c3f8faf',
-    createdAt: '2024-04-16T14:37:51.188Z',
-    updatedAt: '2024-04-24T19:38:15.692Z',
-    projectImages: [],
-    questions: [],
-    user: {
-      _id: '6601c288149276195c3f8faf',
-      FirstName: 'Test',
-      LastName: 'Client',
-      FullName: 'Test Client'
-    },
-    businessDepartments: [
-      {
-        _id: '661e8d3f7277db0ed9b6ff35',
-        tags: ['661e8d3f7277db0ed9b6ff36', '661e8d3f7277db0ed9b6ff37', '661e8d3f7277db0ed9b6ff38'],
-        name: 'Management',
-        businessId: '661e8d3f7277db0ed9b6ff33'
-      }
-    ]
-  },
-  {
-    _id: '661e8d107277db0ed9b6ff2d',
-    description: '',
-    businessAddressLineOne: '',
-    businessCountry: '',
-    businessCity: '',
-    businessState: '',
-    businessZip: '',
-    objectives: [],
-    requiredSkills: [],
-    likeTotal: 0,
-    projectBudgetType: 'Fixed Price',
-    projectType: 'Short Term Business',
-    isActive: true,
-    departments: ['661e8d107277db0ed9b6ff2f'],
-    applicants: [],
-    questionsToAsk: [],
-    projectImagesUrl: [],
-    name: 'Online LMMS',
-    budget: 90000,
-    userId: '6601c288149276195c3f8faf',
-    createdAt: '2024-04-16T14:37:04.441Z',
-    updatedAt: '2024-04-16T14:37:04.508Z',
-    projectImages: [],
-    questions: [],
-    user: {
-      _id: '6601c288149276195c3f8faf',
-      FirstName: 'Test',
-      LastName: 'Client',
-      FullName: 'Test Client'
-    },
-    businessDepartments: [
-      {
-        _id: '661e8d107277db0ed9b6ff2f',
-        tags: ['661e8d107277db0ed9b6ff30', '661e8d107277db0ed9b6ff31', '661e8d107277db0ed9b6ff32'],
-        name: 'Management',
-        businessId: '661e8d107277db0ed9b6ff2d'
-      }
-    ]
-  },
+
   {
     _id: '66106dd562048827e88a67b1',
     description:

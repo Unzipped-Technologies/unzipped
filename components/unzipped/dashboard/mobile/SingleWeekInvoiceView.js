@@ -237,12 +237,15 @@ const SingleWeekInvoiceView = ({
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
   useEffect(async () => {
-    await getInvoices({
-      businessId: id,
-      freelancerId: freelancerId,
-      limit: take,
-      page: 1
-    })
+    async function fetchData() {
+      await getInvoices({
+        businessId: id,
+        freelancerId: freelancerId,
+        limit: take,
+        page: 1
+      })
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {

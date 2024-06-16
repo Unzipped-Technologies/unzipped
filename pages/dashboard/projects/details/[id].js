@@ -223,12 +223,11 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
   }, [])
 
   useEffect(() => {
-    getBusinessById(id)
+    async function fetchData() {
+      await getBusinessById(id)
+    }
+    fetchData()
   }, [id])
-
-  const handleWeekChange = value => {
-    setSelectedWeek(value)
-  }
 
   return (
     <>
@@ -236,7 +235,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         <Nav isSubMenu marginBottom={'100px'} />
       </Navbar>
       <Desktop>
-        <HeaderDetail>
+        <HeaderDetail data-testid="desktop_project_detail_header">
           <Header>
             <ProjectName>
               {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name ?? ''}` : 'PROJECT') : ''}
@@ -261,7 +260,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
           {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
         </HeaderDetail>
 
-        <Tabs>
+        <Tabs data-testid="desktop_project_detail_tabs">
           {projectTabs.map((tab, index) => {
             return (
               <TabButton

@@ -220,14 +220,16 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices, role
   const [totalAmount, setAmount] = useState(0)
 
   useEffect(() => {
-    getInvoices({
-      businessId: id,
-      freelancerId: freelancer,
-      limit: take,
-      page: 1
-    })
+    async function fetchData() {
+      getInvoices({
+        businessId: id,
+        freelancerId: freelancer,
+        limit: take,
+        page: 1
+      })
+    }
     if (id !== undefined) {
-      getBusinessById(id)
+      fetchData()
     }
   }, [])
 
