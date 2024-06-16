@@ -1,4 +1,6 @@
-import { BUSINESS } from './Business'
+import { BUSINESS, SELECTED_BUSIESS } from './Business'
+import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
+import { LIST_ENTRIES } from './ListEntries'
 
 export let defaultInitialState = {
   Auth: {
@@ -6,6 +8,10 @@ export let defaultInitialState = {
     isAuthenticated: true,
     loading: false,
     user: {
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isIdentityVerified: 'SUCCESS',
+      _id: '6601c288149276195c3f8faf',
       role: 1,
       FirstName: 'Test',
       FullName: 'Test User',
@@ -19,9 +25,9 @@ export let defaultInitialState = {
       AddressZip: '40000',
       likeTotal: 10,
       profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-
       freelancers: {
-        category: 'Full Stack Developer'
+        category: 'Full Stack Developer',
+        _id: null
       }
     }
   },
@@ -44,7 +50,12 @@ export let defaultInitialState = {
       businessPhone: '0111-111-1112',
       taxId: '09ijk12C'
     },
-    projectList: [...BUSINESS]
+    projectList: [...BUSINESS],
+    selectedBusiness: { ...SELECTED_BUSIESS },
+    totalCount: BUSINESS?.length
+  },
+  ProjectApplications: {
+    success: false
   },
   Tasks: {
     currentDepartment: {},
@@ -291,6 +302,80 @@ export let defaultInitialState = {
       isArchived: false,
       departmentId: ''
     }
+  },
+  Loading: {
+    loading: false
+  },
+  Freelancers: {
+    isExpanded: false,
+    freelancers: [...FREELCANCERS_LIST],
+    totalCount: FREELCANCERS_LIST.length,
+    selectedFreelancer: { ...FREELANCER }
+  },
+  CalenderSetting: {
+    calenderSetting: {
+      userId: '6601c2a6149276195c3f8fbd',
+      startTime: '2024-05-16T20:00:00.828Z',
+      endTime: '2024-05-17T16:00:00.828Z',
+      timezone: 'Asia/Karachi',
+      interviewScheduler: 'RECURITERS_OTHERS',
+      createdAt: '2024-05-16T20:11:30.183Z',
+      updatedAt: '2024-05-16T20:12:27.509Z',
+      __v: 0
+    },
+    success: null,
+    loading: false,
+    error: null
+  },
+  Lists: {
+    invitesList: [...LIST_ENTRIES],
+    currentUserList: [
+      {
+        icon: 'HeartOutlined',
+        isActive: true,
+        listEntries: [],
+        isDefault: true,
+        isPrivate: false,
+        _id: '6601c2a6149276195c3f8fbe',
+        name: 'Favorites',
+        userId: '6601c2a6149276195c3f8fbd',
+        user: '6601c2a6149276195c3f8fbd',
+        createdAt: '2024-03-25T18:29:58.642Z',
+        updatedAt: '2024-03-25T18:29:58.642Z',
+        __v: 0
+      },
+      {
+        icon: 'EyeOutlined',
+        isActive: true,
+        listEntries: [],
+        isDefault: true,
+        isPrivate: false,
+        _id: '6601c2a6149276195c3f8fbf',
+        name: 'Recently Viewed',
+        userId: '6601c2a6149276195c3f8fbd',
+        user: '6601c2a6149276195c3f8fbd',
+        createdAt: '2024-03-25T18:29:58.658Z',
+        updatedAt: '2024-03-25T18:29:58.658Z',
+        __v: 0
+      },
+      {
+        icon: 'TeamOutlined',
+        isActive: true,
+        listEntries: [],
+        isDefault: true,
+        isPrivate: true,
+        _id: '6601c2a6149276195c3f8fc0',
+        name: 'My Team',
+        userId: '6601c2a6149276195c3f8fbd',
+        user: '6601c2a6149276195c3f8fbd',
+        createdAt: '2024-03-25T18:29:58.680Z',
+        updatedAt: '2024-03-25T18:29:58.680Z',
+        __v: 0
+      }
+    ]
+  },
+  ListEntries: {
+    userLists: [...LIST_ENTRIES]
   }
 }
 

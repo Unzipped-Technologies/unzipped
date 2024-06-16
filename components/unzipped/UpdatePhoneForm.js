@@ -135,7 +135,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
     <Container>
       <BackHeader title={title} />
       <Form
-        data-testId="change_phone_form"
+        data-testid="change_phone_form"
         mobile={isMobile}
         onSubmit={e => {
           e.preventDefault()
@@ -175,10 +175,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
           </FormField>
 
           <ButtonContainer mobile={isMobile}>
-            <ButtonBack type="button" onClick={onBack} data-testId="cancel_phone_changes">
+            <ButtonBack type="button" onClick={onBack} data-testid="cancel_phone_changes">
               Cancel
             </ButtonBack>
-            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testId="save_phone_changes">
+            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testid="save_phone_changes">
               Save
             </ButtonSubmit>
           </ButtonContainer>

@@ -130,7 +130,8 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
       <>
         {loading && <Loading />}
         <MUIDialog
-          onClose={() => onHide()}
+          data-testid="freelancer_education_modal"
+          onClose={onHide}
           disableEscapeKeyDown
           open={open}
           maxWidth="md"
@@ -160,8 +161,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                   min={0}
                   onChange={e => {
                     setValues('title', e.target.value)
-                  }}
-                  onUpdate={() => {}}>
+                  }}>
                   Degree Title
                 </FormField>
                 {error?.title && (
@@ -186,8 +186,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                   min={0}
                   onChange={e => {
                     setValues('institute', e.target.value)
-                  }}
-                  onUpdate={() => {}}>
+                  }}>
                   Institute
                 </FormField>
                 {error?.institute && (
@@ -214,6 +213,13 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                         disableFuture
                         className="custom-input"
                         value={data.startYear}
+                        slotProps={{
+                          textField: {
+                            inputProps: {
+                              'data-testid': 'startYear'
+                            }
+                          }
+                        }}
                         maxDate={data.endYear}
                         onChange={newValue => {
                           setValues('startYear', newValue)
@@ -232,6 +238,13 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                         End Year
                       </TitleText>
                       <DatePicker
+                        slotProps={{
+                          textField: {
+                            inputProps: {
+                              'data-testid': 'endYear'
+                            }
+                          }
+                        }}
                         openTo="year"
                         views={['year']}
                         name="endYear"
@@ -246,28 +259,6 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
                     </div>
                   </LocalizationProvider>
                 </div>
-
-                {/* <FormField
-                  zIndexUnset
-                  fieldType="input"
-                  type="text"
-                  placeholder="Years..."
-                  fontSize="14px"
-                  name="projectRole"
-                  margin="50px 0px 0px 0px"
-                  width={isMobile ? '100%' : '662px'}
-                  height="47px  !important"
-                  borderRadius="10px"
-                  border="2px solid #CED4DA"
-                  value={data.role}
-                  maxLength="30"
-                  min={0}
-                  onChange={e => {
-                    setValues('role', e.target.value)
-                  }}
-                  onUpdate={() => {}}>
-                  Role On Project
-                </FormField> */}
               </div>
             </div>
           </DialogContent>

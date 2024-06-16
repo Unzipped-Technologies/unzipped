@@ -1,22 +1,23 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import { Dialog } from '@material-ui/core'
+import { bindActionCreators } from 'redux'
 import { withStyles } from '@material-ui/core/styles'
+import DialogActions from '@material-ui/core/DialogActions'
 import MuiDialogContent from '@material-ui/core/DialogContent'
-import ProgressBar from './../ui/ProgressBar'
-import { FormField } from './../ui'
-import Button from './../ui/Button'
-import { TitleText, DarkText } from './dashboard/style'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import UploadImage from './image-upload/UploadImage'
+
+import Loading from '../loading'
+import Image from './../ui/Image'
+import Button from './../ui/Button'
+import { FormField } from './../ui'
 import CloseIcon from '../icons/close'
 import { ConverterUtils } from '../../utils'
+import ProgressBar from './../ui/ProgressBar'
+import UploadImage from './image-upload/UploadImage'
+import { TitleText, DarkText } from './dashboard/style'
 import { createShowCaseProject, getFreelancerById } from '../../redux/actions'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import Image from './../ui/Image'
-import Loading from '../loading'
-import DialogActions from '@material-ui/core/DialogActions'
-import { useRouter } from 'next/router'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -71,9 +72,9 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
     if (stage === 1) {
       return data.projectName && data.role
     } else if (stage === 2) {
-      return data.skills?.length
-    } else if (stage === 3) {
-      return files?.length
+      return data.skills?.length > 0
+    } else {
+      return files?.length > 0
     }
   }
 
@@ -83,12 +84,8 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
   }
 
   const goBack = () => {
-    if (stage > 1) {
-      setStage(preValue => (preValue -= 1))
-      setProgress(preValue => (preValue -= 3.33))
-    } else {
-      router.push('/dashboard')
-    }
+    setStage(preValue => (preValue -= 1))
+    setProgress(preValue => (preValue -= 3.33))
   }
 
   const setValues = (field, value) => {
@@ -97,7 +94,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
       if (Array.isArray(updatedData[field])) {
         if (!Array.isArray(value) && !updatedData[field].includes(value)) {
           updatedData[field].push(value)
-        } else if (Array.isArray(value)) {
+        } else {
           updatedData[field] = value
         }
       } else {
@@ -131,10 +128,8 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
           formData.append(field, data[field])
         }
       }
-      if (files?.length) {
-        for (var file in files) {
-          formData.append(`projectImages`, files[file])
-        }
+      for (var file in files) {
+        formData.append(`projectImages`, files[file])
       }
       await createShowCaseProject(formData)
       await onHide()
@@ -142,7 +137,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
     }
   }
 
-  const stepContent = (mobile = false) => {
+  const stepContent = mobile => {
     switch (stage) {
       case 1:
         return (
@@ -163,8 +158,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
               min={0}
               onChange={e => {
                 setValues('projectName', e.target.value)
-              }}
-              onUpdate={() => {}}>
+              }}>
               Project Name
             </FormField>
             <FormField
@@ -184,8 +178,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
               min={0}
               onChange={e => {
                 setValues('role', e.target.value)
-              }}
-              onUpdate={() => {}}>
+              }}>
               Role On Project
             </FormField>
           </div>
@@ -211,6 +204,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
                           overflow: 'scroll'
                         }}>
                         <span
+                          data-testid={`delete_${skill}`}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -259,12 +253,11 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
                   setSkill(e.target.value)
                 }}
                 onKeyDown={e => {
-                  if (e?.keyCode === 13 && e.target.value && data.skills?.length < 20) {
+                  if (e.key === 'Enter' && e.target.value && data.skills?.length < 20) {
                     setValues('skills', e.target.value)
                     setSkill('')
                   }
                 }}
-                onUpdate={() => {}}
               />
               <Button
                 width="74px"
@@ -292,7 +285,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
             <TitleText fontSize="16px" lineHeight="18.75px" color="#333333">
               Upload a photo here to represent your project. This will display in the projects section of your profile.
             </TitleText>
-            <UploadImage setFiles={setFiles} files={files} accept="image/*" />
+            <UploadImage setFiles={setFiles} files={files} projectFiles={files} accept="image/*" id="project_images" />
             <div className="mt-3 d-flex mb-3">
               {files?.length
                 ? files?.map((file, index) => (
@@ -304,6 +297,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
                           {ConverterUtils.truncateString(file?.name, mobile ? 6 : 13)}
                         </TitleText>
                         <span
+                          data-testid={`${file?.name}_${index}`}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -323,7 +317,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
                         </span>
                       </div>
                       <img
-                        src={URL.createObjectURL(file)}
+                        src={URL?.createObjectURL(file)}
                         alt="logo"
                         className="w-100 h-100"
                         style={{
@@ -345,7 +339,8 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
       <>
         {loading && <Loading />}
         <MUIDialog
-          onClose={() => onHide()}
+          data-testid="freelancer_showCase_projects_modal"
+          onClose={onHide}
           disableEscapeKeyDown
           open={open}
           maxWidth="md"

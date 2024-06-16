@@ -90,6 +90,10 @@ class Converter {
     }
   }
 
+  toMonthDateYear(date) {
+    return moment(date).format('MMM DD, YYYY')
+  }
+
   utcDateToDateTimeFormat(date) {
     return moment(date).format('MM-DD-YYYY HH:mm:ss ')
   }
@@ -297,6 +301,16 @@ class Converter {
       return str.substring(0, maxLength) + '...'
     } else {
       return str
+    }
+  }
+
+  convertText = text => {
+    if (text) {
+      // Convert text to lowercase
+      const lowercasedText = text?.toLowerCase()
+      // Replace spaces with underscores
+      const result = lowercasedText.replace(/ /g, '_')
+      return result
     }
   }
 }

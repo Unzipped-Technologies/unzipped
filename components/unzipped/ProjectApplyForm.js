@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
+import { SubmitButton, SubmitButtonContainer } from '../../pages/projects/[id]'
 
 const Container = styled.div`
   width: 57.5%;
@@ -152,7 +153,7 @@ const Project = styled.div`
   background: rgba(217, 217, 217, 0);
   flex-direction: column;
   padding: 5px 5px 5px 5px;
-  margin: ${({ margin }) => (margin ? margin : '0px')};
+  margin: ${({ margin }) => margin};
 
   margin-top: 5px;
   @media (max-width: 680px) {
@@ -168,37 +169,6 @@ const ProjectImages = styled.div`
   flex-direction: row;
   width: 100%;
   margin-top: 10px;
-`
-
-const SubmitButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin: ${({ margin }) => (margin ? margin : '0px')};
-`
-
-const SubmitButton = styled.button`
-  color: #fff;
-  text-align: center;
-  font-family: Roboto;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24.5px; /* 163.333% */
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  width: 184px;
-  height: 27px;
-  flex-shrink: 0;
-  border-radius: 5px;
-  background: #1976d2 !important;
-  outline: none !important;
-  border: none !important;
-  ${({ active }) =>
-    active &&
-    css`
-      outline: none !important;
-      border: none !important;
-    `};
 `
 
 const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
@@ -231,7 +201,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
   }
 
   return (
-    <Container>
+    <Container data-testid="project_apply_form">
       <HeadingContainer>
         <ApplyHeading>Apply to this project</ApplyHeading>
       </HeadingContainer>
@@ -250,6 +220,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
             <span>$</span>
             <StyledInput
               type="number"
+              data-testid="desired_rate"
               onChange={e => {
                 setData(prevData => ({
                   ...prevData,
@@ -263,6 +234,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
         <FieldContainer>
           <FieldHeading>Cover Letter</FieldHeading>
           <TextArea
+            data-testid="cover_letter"
             value={data.coverLetter}
             onChange={e => {
               setData(prevData => ({
@@ -277,7 +249,11 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
               return (
                 <FieldContainer key={question.question}>
                   <FieldHeading>{question?.questionText}</FieldHeading>
-                  <TextArea value={question.answer} onChange={e => updateAnswer(e.target.value, question.question)} />
+                  <TextArea
+                    data-testid={question.question}
+                    value={question.answer}
+                    onChange={e => updateAnswer(e.target.value, question.question)}
+                  />
                 </FieldContainer>
               )
             })
@@ -355,6 +331,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
           </Projects>
           <SubmitButtonContainer margin="0px 20px 0px 0px">
             <SubmitButton
+              data-testid="submit_from_form"
               onClick={() => {
                 applyToProject(data)
               }}>
