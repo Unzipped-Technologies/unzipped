@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import * as moment from 'moment'
+import moment from 'moment'
 import { connect } from 'react-redux'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'

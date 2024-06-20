@@ -243,6 +243,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
             </ProjectName>
             {(selectedTab === 3) & (window.innerWidth < 680) ? (
               <Select
+                data-testid="timesheet_week_options"
                 onChange={e => {
                   setSelectedWeek(e.target.value)
                 }}
@@ -276,7 +277,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
 
       <TabContent>
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />}
-        {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
+        {selectedTab === 1 && <ApplicationCard includeRate />}
         {selectedTab === 2 && <HiringTable />}
         {selectedTab === 3 && (
           <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} role={role} businessId={id} />
