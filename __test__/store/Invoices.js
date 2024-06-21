@@ -104,7 +104,7 @@ export const INVOICES = [
       }
     ],
     hoursWorked: 33,
-    status: 'approved',
+    status: 'pending',
     businessId: '6601c35b149276195c3f8fd3',
     freelancerId: '6601c2a6149276195c3f8fc2',
     clientId: '6601c288149276195c3f8faf',
@@ -137,7 +137,7 @@ export const INVOICES = [
     }
   },
   {
-    _id: '6601c9b25657f51de61d2625',
+    _id: '6601c9b25657f51de61d2623',
     tasks: [
       {
         _id: '6601c9b35657f51de61d2626',

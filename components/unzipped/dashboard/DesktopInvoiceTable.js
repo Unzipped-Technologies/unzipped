@@ -76,8 +76,8 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
           border: '1px solid #D9D9D9',
           background: 'rgba(255, 255, 255, 0.36)'
         }}>
-        <thead>
-          <tr style={{}}>
+        <thead data-testid="project_invoices_table_header">
+          <tr>
             {role !== 1 && (
               <TableHeading
                 style={{
@@ -117,10 +117,10 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
             <TableHeading style={{ textAlign: 'right', paddingRight: '50px' }}>ACTIONS</TableHeading>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-testid="project_invoices_table_body">
           {invoices?.length > 0 &&
             invoices?.map(row => (
-              <tr key={row._id}>
+              <tr key={row._id} data-testid={row?._id}>
                 {role !== 1 && (
                   <TableData>
                     {ConverterUtils.capitalize(

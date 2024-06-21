@@ -216,7 +216,7 @@ describe('Freelancers Component', () => {
     createTask.mockReturnValue(() => {
       return {
         status: 200,
-        data: { data: [{ ...TASKS[0] }] }
+        data: { data: [{ ...TASKS[0] }, { _id: '6601dd4036e96924aedf6a2c' }] }
       }
     })
     getTasks.mockReturnValue(() => {
@@ -1547,6 +1547,126 @@ describe('Freelancers Component', () => {
     fireEvent.click(InvitedFreelancerButton)
   })
 
+  it('renders dashboard Projects and verify invoices data for client role', async () => {
+    const SelectProject = initialState.Business.projectList[0]
+    renderWithRedux(<Projects />, { initialState })
+
+    const TableBodyContainer = screen.getByTestId('dashboard_projects_table_body')
+    expect(TableBodyContainer).toBeInTheDocument()
+
+    const rowElement = within(TableBodyContainer).getByTestId(SelectProject._id)
+
+    const ProjectNameElement = within(rowElement).getByText(SelectProject?.name)
+
+    await fireEvent.click(ProjectNameElement)
+
+    renderWithRedux(<ProjectDetails />, { initialState })
+
+    const tabsContainer = screen.getByTestId('desktop_project_detail_tabs')
+
+    const InvoicesTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
+    fireEvent.click(InvoicesTab)
+
+    const DetailHeader = screen.getByTestId('desktop_project_detail_header')
+    expect(DetailHeader).toBeInTheDocument()
+
+    expect(within(DetailHeader).getByText('Invoice History')).toBeInTheDocument()
+
+    const InvoiceTableHeader = screen.getByTestId('project_invoices_table_header')
+    expect(InvoiceTableHeader).toBeInTheDocument()
+
+    expect(within(InvoiceTableHeader).getByText('NAME')).toBeInTheDocument()
+    expect(within(InvoiceTableHeader).getByText('Dates')).toBeInTheDocument()
+    expect(within(InvoiceTableHeader).getByText('HOURS')).toBeInTheDocument()
+    expect(within(InvoiceTableHeader).getByText('STATUS')).toBeInTheDocument()
+    expect(within(InvoiceTableHeader).getByText('HIRE DATE')).toBeInTheDocument()
+    expect(within(InvoiceTableHeader).getByText('ACTIONS')).toBeInTheDocument()
+
+    const InvoicesTableContainer = screen.getByTestId('project_invoices_table_body')
+    expect(InvoicesTableContainer).toBeInTheDocument()
+
+    initialState.Invoices.invoices.forEach(row => {
+      const rowElement = within(InvoicesTableContainer).getByTestId(row?._id)
+
+      const UserName =
+        ConverterUtils.capitalize(`${row?.freelancer?.user?.FirstName} ${row?.freelancer?.user?.LastName}`) ||
+        row?.freelancer?.user?.FullName
+
+      expect(within(rowElement).getByText(UserName)).toBeInTheDocument()
+
+      expect(within(rowElement).getByText(row?.hoursWorked)).toBeInTheDocument()
+
+      expect(within(rowElement).getByText(ConverterUtils.capitalize(`${row.status}`))).toBeInTheDocument()
+
+      const HireDate =
+        (row?.contract?.createdAt && ValidationUtils.formatDate(row?.contract?.createdAt)) ||
+        ValidationUtils.formatDate(row?.contract?.updatedAt || row?.contract?.updatedAt)
+      expect(within(rowElement).getByText(HireDate)).toBeInTheDocument()
+
+      const DetailButton = within(rowElement).getByText('Details')
+      expect(DetailButton).toBeInTheDocument()
+
+      fireEvent.click(DetailButton)
+
+      expect(within(rowElement).getByText('Approve Invoice')).toBeInTheDocument()
+      expect(within(rowElement).getByText('View Details')).toBeInTheDocument()
+      expect(within(rowElement).getByText('View Profile')).toBeInTheDocument()
+      expect(within(rowElement).getByText('Archive Invoice')).toBeInTheDocument()
+    })
+
+    const SingleInvoiceRow = within(InvoicesTableContainer).getByTestId(initialState.Invoices.invoices[0]?._id)
+
+    const SingleInvoiceDetail = within(SingleInvoiceRow).getByText('Details')
+    expect(SingleInvoiceDetail).toBeInTheDocument()
+
+    fireEvent.click(SingleInvoiceDetail)
+
+    fireEvent.click(within(SingleInvoiceRow).getByText('View Details'))
+
+    const selectedInvoice = INVOICES[0]
+
+    renderWithRedux(
+      <Timesheet displayFormat={false} businessId={selectedInvoice.business._id} approveInvoice={true} />,
+      {
+        initialState
+      }
+    )
+
+    const TimeSheetContainer = screen.getByTestId('desktop_timesheet')
+    expect(TimeSheetContainer).toBeInTheDocument()
+
+    const Task1 = within(TimeSheetContainer).getByTestId(`${selectedInvoice.tasks[0]._id}_task`)
+    expect(Task1).toHaveTextContent(selectedInvoice?.tasks[0]?.task?.taskName)
+    fireEvent.click(Task1)
+
+    const DayContainer = within(TimeSheetContainer).getByTestId(selectedInvoice.tasks[0]._id)
+
+    const freelancerImage = within(DayContainer).getByRole('img')
+    expect(freelancerImage).toBeInTheDocument()
+    expect(freelancerImage).toHaveAttribute('src', selectedInvoice.freelancer.user.profileImage)
+
+    const InvoiceTotals = screen.getByTestId('client_invoice_totals')
+    expect(InvoiceTotals).toBeInTheDocument()
+    expect(
+      within(InvoiceTotals).getByText(
+        ConverterUtils.capitalize(
+          `${selectedInvoice?.freelancer?.user?.FirstName} ${selectedInvoice?.freelancer?.user?.LastName}`
+        )
+      )
+    ).toBeInTheDocument()
+
+    const SubTotal = selectedInvoice?.contract?.hourlyRate * selectedInvoice?.hoursWorked
+    const fee = SubTotal * 0.05
+    const totalAmount = SubTotal - fee
+
+    expect(within(InvoiceTotals).getAllByText(`$${SubTotal}`)[0]).toBeInTheDocument()
+    expect(within(InvoiceTotals).getByText(`$${Math.round(fee)}`)).toBeInTheDocument()
+    expect(within(InvoiceTotals).getByText(`$${totalAmount}`)).toBeInTheDocument()
+
+    const ApproveInvoiceButton = within(TimeSheetContainer).getByRole('button', { name: 'Approve' })
+    fireEvent.click(ApproveInvoiceButton)
+  })
+
   //  As A Freelancer
 
   it('renders dashboard Projects and verify table body as a freelancer role', async () => {
@@ -1877,6 +1997,8 @@ describe('Freelancers Component', () => {
     initialState.Auth.user = FREELANCER_AUTH
     const selectedInvoice = initialState.Invoices.invoices[0]
 
+    initialState.Invoices.invoices[0].tasks[1].invoiceId = 'invoice_id'
+
     const SelectProject = initialState.Business.projectList[0]
     renderWithRedux(<Projects />, { initialState })
 
@@ -1960,6 +2082,21 @@ describe('Freelancers Component', () => {
     fireEvent.focus(TaskHoursField)
     fireEvent.keyDown(TaskHoursField, { key: 'Shift', code: 'Shift' })
 
+    const Task2 = within(TimeSheetContainer).getByTestId(`${selectedInvoice.tasks[1]._id}_task`)
+    expect(Task2).toHaveTextContent(selectedInvoice?.tasks[1]?.task?.taskName)
+    fireEvent.click(Task2)
+
+    const TaskHoursField2 = screen.getByTestId(`${selectedInvoice.tasks[1]._id}_hours`)
+    expect(TaskHoursField2).toBeInTheDocument()
+    fireEvent.focus(TaskHoursField2)
+
+    fireEvent.change(TaskHoursField2, {
+      target: {
+        value: 12
+      }
+    })
+    fireEvent.keyDown(TaskHoursField2, { key: 'Enter', code: 'Enter' })
+
     const SubmitButton = within(TimeSheetContainer).getByRole('button', { name: `SUBMIT` })
     fireEvent.click(SubmitButton)
   })
@@ -1993,7 +2130,7 @@ describe('Freelancers Component', () => {
     })
   })
 
-  it('Verify loading component in Add Tas Model and hide modal by clicking cancel button', async () => {
+  it('Verify loading component in Add Tasks Model and hide modal by clicking cancel button', async () => {
     initialState.Loading.loading = true
     initialState.Auth.user = FREELANCER_AUTH
 
@@ -2083,16 +2220,13 @@ describe('Freelancers Component', () => {
 
     autocomplete.click()
     autocomplete.focus()
-
     fireEvent.change(TaskNameField, { target: { value: 'Task 2' } })
-
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 0))
     })
     fireEvent.click(screen.getAllByText('Task 2')[0])
 
     const newTaskName = 'Task 2ss'
-
     fireEvent.change(TaskNameField, { target: { value: newTaskName } })
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 0))
@@ -2167,6 +2301,120 @@ describe('Freelancers Component', () => {
     const AddNewTasks = within(AddTasksDataModal).getByRole('button', { name: 'ADD TASK(S)' })
     await act(async () => {
       await fireEvent.click(AddNewTasks)
+    })
+  })
+
+  it('add existing task to invoice from tasks modal with success 200 response', async () => {
+    initialState.Auth.user = FREELANCER_AUTH
+
+    const SelectProject = initialState.Business.projectList[0]
+    renderWithRedux(<Projects />, { initialState })
+
+    const TableBodyContainer = screen.getByTestId('dashboard_projects_table_body')
+    expect(TableBodyContainer).toBeInTheDocument()
+
+    const rowElement = within(TableBodyContainer).getByTestId(SelectProject._id)
+
+    const ProjectNameElement = within(rowElement).getByText(SelectProject?.name)
+
+    await fireEvent.click(ProjectNameElement)
+
+    renderWithRedux(<ProjectDetails />, { initialState })
+
+    const tabsContainer = screen.getByTestId('desktop_project_detail_tabs')
+
+    const InvoicesTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
+    fireEvent.click(InvoicesTab)
+
+    const DetailHeader = screen.getByTestId('desktop_project_detail_header')
+    expect(DetailHeader).toBeInTheDocument()
+
+    const TimeSheetContainer = screen.getByTestId('desktop_timesheet')
+    expect(TimeSheetContainer).toBeInTheDocument()
+
+    const AddTaskIcon = screen.getByTestId(`Monday_add_task_icon`)
+    expect(AddTaskIcon).toBeInTheDocument()
+    fireEvent.click(AddTaskIcon)
+
+    const TaskModalContainer = screen.getByTestId('desktop_add_tasks')
+    expect(TaskModalContainer).toBeInTheDocument()
+
+    expect(within(TaskModalContainer).getByText('Select a ticket')).toBeInTheDocument()
+    expect(within(TaskModalContainer).getByText('Start typing to select an assigned task')).toBeInTheDocument()
+
+    const autocomplete = screen.getByTestId('autocomplete')
+
+    const TaskNameField = within(autocomplete).getByTestId('task_name')
+    expect(TaskNameField).toBeInTheDocument()
+
+    autocomplete.click()
+    autocomplete.focus()
+    fireEvent.change(TaskNameField, { target: { value: 'task 1 update' } })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+    fireEvent.click(screen.getAllByText('task 1 update')[0])
+
+    const AddTasksButton = within(TaskModalContainer).getByRole('button', { name: 'ADD TASK' })
+
+    await act(async () => {
+      await fireEvent.click(AddTasksButton)
+    })
+  })
+
+  it('create new invoice with success 200 response', async () => {
+    initialState.Auth.user = FREELANCER_AUTH
+    initialState.Invoices.invoices[0] = {}
+
+    const SelectProject = initialState.Business.projectList[0]
+    renderWithRedux(<Projects />, { initialState })
+
+    const TableBodyContainer = screen.getByTestId('dashboard_projects_table_body')
+    expect(TableBodyContainer).toBeInTheDocument()
+
+    const rowElement = within(TableBodyContainer).getByTestId(SelectProject._id)
+
+    const ProjectNameElement = within(rowElement).getByText(SelectProject?.name)
+
+    await fireEvent.click(ProjectNameElement)
+
+    renderWithRedux(<ProjectDetails />, { initialState })
+
+    const tabsContainer = screen.getByTestId('desktop_project_detail_tabs')
+
+    const InvoicesTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
+    fireEvent.click(InvoicesTab)
+
+    const DetailHeader = screen.getByTestId('desktop_project_detail_header')
+    expect(DetailHeader).toBeInTheDocument()
+
+    const TimeSheetContainer = screen.getByTestId('desktop_timesheet')
+    expect(TimeSheetContainer).toBeInTheDocument()
+
+    const AddTaskIcon = screen.getByTestId(`Monday_add_task_icon`)
+    expect(AddTaskIcon).toBeInTheDocument()
+    fireEvent.click(AddTaskIcon)
+
+    const TaskModalContainer = screen.getByTestId('desktop_add_tasks')
+    expect(TaskModalContainer).toBeInTheDocument()
+
+    const autocomplete = screen.getByTestId('autocomplete')
+
+    const TaskNameField = within(autocomplete).getByTestId('task_name')
+    expect(TaskNameField).toBeInTheDocument()
+
+    autocomplete.click()
+    autocomplete.focus()
+    fireEvent.change(TaskNameField, { target: { value: 'task 1 update' } })
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
+    fireEvent.click(screen.getAllByText('task 1 update')[0])
+
+    const AddTasksButton = within(TaskModalContainer).getByRole('button', { name: 'ADD TASK' })
+
+    await act(async () => {
+      await fireEvent.click(AddTasksButton)
     })
   })
 
@@ -2310,8 +2558,82 @@ describe('Freelancers Component', () => {
       await fireEvent.click(AddTasksButton)
     })
   })
+  it('renders dashboard Projects and verify project invoice timesheet with total for freelancer role', async () => {
+    initialState.Auth.user = FREELANCER_AUTH
+    renderWithRedux(<Projects />, { initialState })
 
-  //  Mobile View Test
+    expect(screen.getByRole('table')).toBeInTheDocument()
+
+    const TableBodyContainer = screen.getByTestId('dashboard_projects_table_body')
+    expect(TableBodyContainer).toBeInTheDocument()
+
+    const rowElement = within(TableBodyContainer).getByTestId(BUSINESS[0]?._id)
+
+    const DetailButton = within(rowElement).getByText('Details')
+    expect(DetailButton).toBeInTheDocument()
+
+    fireEvent.click(DetailButton)
+
+    const ViewInvoice = within(rowElement).getByText('View Invoice')
+    expect(ViewInvoice).toBeInTheDocument()
+    fireEvent.click(ViewInvoice)
+
+    const selectedInvoice = INVOICES[0]
+
+    renderWithRedux(<Timesheet displayFormat={false} businessId={selectedInvoice.business._id} />, {
+      initialState
+    })
+
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+    const InvoiceTotalContainer = within(screen.getByTestId('desktop_timesheet')).getByTestId(
+      'freelancer_invoice_totals'
+    )
+
+    daysOfWeek.forEach(day => {
+      let hours = 0
+      selectedInvoice?.tasks?.forEach(task => {
+        const taskDate = new Date(task.updatedAt)
+        const dayOfWeek = daysOfWeek[taskDate.getDay()]
+
+        if (dayOfWeek === day) {
+          hours += task?.hours
+        }
+      })
+      expect(within(InvoiceTotalContainer).getByTestId(`${day}_hours`)).toHaveTextContent(`${day}${hours}`)
+    })
+
+    const rateValueElement = within(screen.getByTestId('freelancer_invoice_totals')).getByText((content, element) => {
+      const combinedText = Array.from(element.childNodes)
+        .map(node => node.textContent)
+        .join('')
+        .trim()
+      return combinedText === `RATE$${selectedInvoice?.contract?.hourlyRate} /HOUR`
+    })
+    expect(rateValueElement).toBeInTheDocument()
+
+    const subTotal = selectedInvoice?.contract.hourlyRate * selectedInvoice.hoursWorked
+
+    const feeElement = within(screen.getByTestId('freelancer_invoice_totals')).getByText((content, element) => {
+      const combinedText = Array.from(element.childNodes)
+        .map(node => node.textContent)
+        .join('')
+        .trim()
+      return combinedText === `FEE$${Math.round(subTotal * 0.05)}`
+    })
+    expect(feeElement).toBeInTheDocument()
+
+    const totalAmountElement = within(screen.getByTestId('freelancer_invoice_totals')).getByText((content, element) => {
+      const combinedText = Array.from(element.childNodes)
+        .map(node => node.textContent)
+        .join('')
+        .trim()
+      return combinedText === `TOTAL$${subTotal - subTotal * 0.05}`
+    })
+    expect(totalAmountElement).toBeInTheDocument()
+  })
+
+  // //  Mobile View Test
   it('renders Projects page on mobile view', async () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))

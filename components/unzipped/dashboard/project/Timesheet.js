@@ -24,13 +24,13 @@ import { bindActionCreators } from 'redux'
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
-  color: ${({ color }) => (color ? color : 'black')};
-  background: ${({ background }) => (background ? background : '')};
+  color: black;
+  background: '';
   padding: ${({ padding }) => (padding ? padding : '0px !important')};
   margin: ${({ margin }) => (margin ? margin : '0px !important')};
   text-align: ${({ align }) => (align ? align : '')};
-  border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
-  right: ${({ right }) => (right ? right : '')};
+  border-bottom: '';
+  right: '';
   width: ${({ width }) => (width ? width : '')};
 `
 
@@ -43,7 +43,6 @@ const Container = styled.div`
   justify-content: flex-end;
   flex-flow: row;
   margin-bottom: 100px;
-  background: ${({ background }) => (background ? background : '')};
 `
 
 const DragDiv = styled.div`
@@ -307,7 +306,6 @@ const Timesheet = ({
       const isoString = dateIso.toISOString()
       setDayDate(isoString)
     }
-    console.log('opening...')
     setDay(daysToAdd)
     setTasksModal(true)
   }
@@ -319,9 +317,7 @@ const Timesheet = ({
 
       if (invoiceToUpdate) {
         const taskHourtoUpdate = invoiceToUpdate?.tasks?.find(taskHour => taskHour?._id === taskHourId)
-        if (taskHourtoUpdate) {
-          taskHourtoUpdate.hours = value
-        }
+        taskHourtoUpdate.hours = value
       }
 
       return newData
@@ -341,7 +337,7 @@ const Timesheet = ({
         taskHours.push({
           taskId: task,
           hours: 0,
-          invoiceId: selectedInvoice?._id || null,
+          invoiceId: selectedInvoice?._id,
           day: selectedDay,
           createdAt: selectedDayDate,
           updatedAt: selectedDayDate
@@ -417,15 +413,15 @@ const Timesheet = ({
             ) : (
               ''
             )
-          ) : selectedInvoice?.status !== 'approved' ? (
-            <ButtonComp
-              onClick={() => {
-                handleSubmit('approved')
-              }}>
-              Approve
-            </ButtonComp>
           ) : (
-            ''
+            selectedInvoice?.status !== 'approved' && (
+              <ButtonComp
+                onClick={() => {
+                  handleSubmit('approved')
+                }}>
+                Approve
+              </ButtonComp>
+            )
           )}
         </TableTop>
         <DragDropContext onDragEnd={onDragEnd}>
@@ -495,6 +491,7 @@ const Timesheet = ({
                           <Draggable key={item._id} draggableId={`${item._id}`} index={itemIndex}>
                             {(provided, snapshot) => (
                               <div
+                                data-testid={item._id}
                                 style={{
                                   ...provided.draggableProps.style,
                                   background: snapshot.isDragging ? 'red' : 'white',
@@ -591,8 +588,7 @@ const Timesheet = ({
                                       src={item?.freelancer?.user?.profileImage}
                                       style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
                                     />
-                                    {item?.freelancer?.user?.FirstName + ' ' + item?.freelancer?.user?.LastName ??
-                                      'Anonymous'}
+                                    {item?.freelancer?.user?.FirstName + '' + item?.freelancer?.user?.LastName}
                                   </P>
                                 )}
                               </div>
@@ -611,7 +607,7 @@ const Timesheet = ({
       </div>
       {!timeSheet ? (
         role === 1 ? (
-          <HoursDiv>
+          <HoursDiv data-testid="freelancer_invoice_totals">
             <div className="d-flex justify-content-between  mb-3" style={{ borderBottom: '1px solid #777' }}>
               <P fontWeight="500">DAY</P>
               <P fontWeight="500">HOURS</P>
@@ -619,7 +615,10 @@ const Timesheet = ({
             {sortedData &&
               Object?.keys(sortedData)?.map((day, index) => {
                 return (
-                  <div className="d-flex justify-content-between pb-3" key={`day_hours_${index}`}>
+                  <div
+                    className="d-flex justify-content-between pb-3"
+                    key={`day_hours_${index}`}
+                    data-testid={`${day}_hours`}>
                     <P fontWeight="500">{day}</P>
                     <P fontWeight="500">{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
                   </div>
@@ -639,7 +638,7 @@ const Timesheet = ({
             </div>
           </HoursDiv>
         ) : (
-          <HoursDiv>
+          <HoursDiv data-testid="client_invoice_totals">
             <div className="d-flex justify-content-between mb-3 pb-2" style={{ borderBottom: '1px solid #777' }}>
               <P fontWeight="500">Name</P>
               <P fontWeight="500">Amount</P>
