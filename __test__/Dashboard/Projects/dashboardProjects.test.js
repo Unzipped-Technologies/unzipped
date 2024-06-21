@@ -2631,9 +2631,15 @@ describe('Freelancers Component', () => {
       return combinedText === `TOTAL$${subTotal - subTotal * 0.05}`
     })
     expect(totalAmountElement).toBeInTheDocument()
+
+    const WeekOptionsDropDown = within(screen.getByTestId('desktop_timesheet')).getByTestId('timesheet_week_options')
+    expect(WeekOptionsDropDown).toBeInTheDocument()
+
+    fireEvent.change(WeekOptionsDropDown, { target: { value: null } })
+    fireEvent.change(WeekOptionsDropDown, { target: { value: undefined } })
   })
 
-  // //  Mobile View Test
+  // // //  Mobile View Test
   it('renders Projects page on mobile view', async () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))

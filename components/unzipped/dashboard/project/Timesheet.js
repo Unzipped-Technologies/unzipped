@@ -153,10 +153,6 @@ const Timesheet = ({
   }
 
   useEffect(() => {
-    if (+week && week > 0) setSelectedWeek(week)
-  }, [week])
-
-  useEffect(() => {
     getInvoices({ businessId: businessId, _id: invoice, freelancerId: freelancer })
   }, [businessId])
 
@@ -182,7 +178,7 @@ const Timesheet = ({
   }, [])
 
   useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined) {
+    if (selectedWeek !== null && selectedWeek !== undefined && selectedWeek !== '') {
       setSelectedInvoice(null)
       const currentDate = new Date()
       const startOfWeek = weekOptions[selectedWeek]?.startOfWeek
@@ -211,19 +207,17 @@ const Timesheet = ({
   }, [selectedWeek, weekOptions, invoices])
 
   useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined) {
-      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
-      filteredData?.forEach(item => {
-        item?.tasks?.forEach(task => {
-          const taskDate = new Date(task.updatedAt)
-          const dayOfWeek = daysOfWeek[taskDate.getDay()]
-          task['contract'] = item.contract
-          task['freelancer'] = item.freelancer
-          organizedItems[dayOfWeek].push(task)
-        })
+    const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
+    filteredData?.forEach(item => {
+      item?.tasks?.forEach(task => {
+        const taskDate = new Date(task.updatedAt)
+        const dayOfWeek = daysOfWeek[taskDate.getDay()]
+        task['contract'] = item.contract
+        task['freelancer'] = item.freelancer
+        organizedItems[dayOfWeek].push(task)
       })
-      setSortedData(organizedItems)
-    }
+    })
+    setSortedData(organizedItems)
   }, [filteredData])
 
   useEffect(() => {
@@ -297,15 +291,13 @@ const Timesheet = ({
 
   const handleAddModal = day => {
     const daysToAdd = daysOfWeek.indexOf(day)
-    if (daysToAdd !== -1) {
-      const date = new Date(startDate)
-      date.setHours(0, 0, 0, 0)
+    const date = new Date(startDate)
+    date.setHours(0, 0, 0, 0)
 
-      date.setDate(date.getDate() + daysToAdd)
-      const dateIso = new Date(date)
-      const isoString = dateIso.toISOString()
-      setDayDate(isoString)
-    }
+    date.setDate(date.getDate() + daysToAdd)
+    const dateIso = new Date(date)
+    const isoString = dateIso.toISOString()
+    setDayDate(isoString)
     setDay(daysToAdd)
     setTasksModal(true)
   }
