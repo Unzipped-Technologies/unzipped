@@ -134,7 +134,10 @@ const getUserById = async id => {
   try {
     const userData = await user
       .findById(id)
-      .populate([{ path: 'thirdPartyCredentials', model: 'thirdPartyApplications' }])
+      .populate([
+        { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
+        { path: 'freelancers', model: 'freelancers' }
+      ])
       .select('-password')
 
     if (userData?.role === 0) {

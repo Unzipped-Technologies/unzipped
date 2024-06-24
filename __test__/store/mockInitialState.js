@@ -29,8 +29,13 @@ export let defaultInitialState = {
       likeTotal: 10,
       profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       freelancers: {
-        category: 'Full Stack Developer',
-        _id: null
+        _id: '6601c2a6149276195c3f8fc2',
+        rate: 23,
+        isActive: true,
+        isArchived: false,
+        isPreferedFreelancer: true,
+        isAcceptEquity: true,
+        category: 'Full Stack Developer'
       }
     }
   },

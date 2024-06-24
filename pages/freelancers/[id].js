@@ -115,7 +115,7 @@ const mapStateToProps = state => {
     userId: state?.Auth?.user?._id,
     selectedFreelancer: state.Freelancers?.selectedFreelancer,
     role: state.Auth?.user?.role,
-    freelancerId: state.Auth?.user?.freelancers,
+    freelancerId: state.Auth?.user?.freelancers?._id,
     loading: state.Loading.loading
   }
 }
