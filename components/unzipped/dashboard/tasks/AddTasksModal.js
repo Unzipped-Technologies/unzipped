@@ -718,7 +718,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
 const mapStateToProps = state => {
   return {
     businessId: state.Business.selectedBusiness?._id,
-    freelancerId: state.Auth.user.freelancers,
+    freelancerId: state.Auth.user.freelancers?._id,
     projectTasks: state.Tasks.tasks,
     newCreatedTasks: state.Tasks.newCreatedTasks,
     loading: state.Loading.loading
