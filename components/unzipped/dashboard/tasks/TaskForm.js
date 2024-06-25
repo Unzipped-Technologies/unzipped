@@ -559,7 +559,7 @@ const TaskForm = ({
               ''
             )}
           </DIV>
-          <DIV display="flex" alignItems="center" padding="0px 0px 0px 0px" width="40%">
+          <DIV display="flex" alignItems="center" padding="0px 0px 0px 0px" width="40%" overflow={'none'}>
             <DIV display="flex" alignItems="center">
               <TitleText
                 color="#000"
@@ -699,10 +699,8 @@ const TaskForm = ({
                     <TextField
                       {...params}
                       variant="standard"
-                      // label="Multiple values"
                       placeholder="Tags"
                       onKeyDown={(e) => {
-                        console.log('e.key', e.key)
                         if (e.key === 'Enter') {
                           e.preventDefault();
                           handleAddTag();
@@ -714,13 +712,7 @@ const TaskForm = ({
                 />
               )}
             </DIV>
-            <DIV
-              display="flex"
-              alignItems="center"
-              margin="10px 0px 0px 10px"
-              overflow="scroll"
-              width={editMode.tag ? '40%' : '100%'}>
-            </DIV>
+
           </DIV>
         </DIV>
 

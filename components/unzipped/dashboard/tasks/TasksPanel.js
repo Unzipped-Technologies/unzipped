@@ -32,7 +32,8 @@ const TasksPanel = ({
   departmentData,
   resetStoryForm,
   currentBusiness,
-  isEditable
+  isEditable, 
+  taskForm
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [tagModal, setTagModal] = React.useState(false)
@@ -370,6 +371,7 @@ const TasksPanel = ({
           onHide={() => {
             closeStoryModal()
           }}
+          taskForm={taskForm}
         />
       )}
 
