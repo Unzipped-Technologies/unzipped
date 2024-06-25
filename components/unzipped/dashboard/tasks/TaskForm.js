@@ -741,7 +741,7 @@ const TaskForm = ({
               <>
                 <Autocomplete
                   disablePortal
-                  value={selectedTaskId ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority) : ''}
+                  value={selectedTaskId ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority) : taskForm?.priority}
                   id="combo-box-demo"
                   options={PRIORITY_OPTIONS_ARR}
                   onChange={(event, value) => {
@@ -822,7 +822,7 @@ const TaskForm = ({
             </TitleText>
             {editMode || userRole === 1 ? (
               <Autocomplete
-                value={selectedTaskId ? STATUS_OPTIONS_ARR.filter(elem => elem == taskDetail?.status) : ''}
+                value={selectedTaskId ? STATUS_OPTIONS_ARR.filter(elem => elem == taskDetail?.status) : taskForm?.status}
                 disablePortal
                 id="combo-box-demo"
                 options={STATUS_OPTIONS_ARR}
