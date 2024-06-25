@@ -31,7 +31,8 @@ const TasksPanel = ({
   userRole,
   departmentData,
   resetStoryForm,
-  currentBusiness
+  currentBusiness,
+  isEditable
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [tagModal, setTagModal] = React.useState(false)
@@ -213,7 +214,7 @@ const TasksPanel = ({
               onClick={() => {
                 openTagModal()
               }}>
-              <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add
+              <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add 
             </Button>
           </DIV>
         )}
@@ -365,6 +366,7 @@ const TasksPanel = ({
           open={storyModal}
           selectedTaskId={taskId}
           isEditing={isEditing}
+          isEditable={isEditable}
           onHide={() => {
             closeStoryModal()
           }}

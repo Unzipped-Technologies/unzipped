@@ -61,6 +61,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   const [currentBusiness, setCurrentBusiness] = useState({})
   const [selectedDepartment, setSelectedDepartment] = useState({})
   const [isFullScreen, setIsFullScreen] = useState(false)
+  const [isEditable, setIsEditable] = useState(false)
 
   useEffect(() => {
     if (!access) {
@@ -129,6 +130,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 businesses={businesses}
                 currentBusiness={currentBusiness}
                 selectedDepartment={selectedDepartment}
+                setIsEditable={setIsEditable}
                 onSelectDepartment={value => {
                   setSelectedDepartment(value)
                   setDepartment(value)
@@ -141,7 +143,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 }}
               />
               {window.innerWidth > 600 && (
-                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} />
               )}
             </Container>
           ) : (

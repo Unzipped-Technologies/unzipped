@@ -10,7 +10,8 @@ import {
   SET_CURRENT_TICKET,
   LOAD_STATE,
   SUCCESS,
-  TASK_ERROR
+  TASK_ERROR,
+  REST_TAGS_LIST
 } from './constants'
 
 const INITIAL_TASKS = {
@@ -80,6 +81,14 @@ const Tasks = (state = INIT_STATE, action = {}) => {
       return { ...state, loading: false, currentDepartment: action.payload }
     case SET_CURRENT_TICKET:
       return { ...state, loading: false, selectedTask: action.payload }
+    case REST_TAGS_LIST:
+      {
+        state.createStoryForm.tags = []
+        return {
+          ...state,
+        }
+      }
+
     default:
       return state
   }

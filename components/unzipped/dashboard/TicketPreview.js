@@ -35,7 +35,8 @@ const TicketPreview = ({
   tagOptions,
   taskForm,
   taskPriorityOptions,
-  taskStatusOptions
+  taskStatusOptions,
+  isEditable
 }) => {
   return (
     <MUIDialog
@@ -53,6 +54,7 @@ const TicketPreview = ({
           isEditing={isEditing}
           onSubmit={onSubmit}
           selectedTaskId={selectedTaskId}
+          isEditable={isEditable}
         />
       </DialogContent>
     </MUIDialog>

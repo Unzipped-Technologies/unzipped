@@ -14,7 +14,8 @@ import {
   REORDER_STORIES,
   SET_CURRENT_TICKET,
   RESET_STORY_FORM,
-  REMOVE_COMMENT_FROM_STORY
+  REMOVE_COMMENT_FROM_STORY,
+  REST_TAGS_LIST
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -47,28 +48,28 @@ export const createTask = data => async (dispatch, getState) => {
 
 export const getTasks =
   ({ businessId, freelancerId = '', limit = 25, page = 1 }) =>
-  async (dispatch, getState) => {
-    dispatch(startLoading())
+    async (dispatch, getState) => {
+      dispatch(startLoading())
 
-    await axios
-      .get(
-        `/api/tasks?businessId=${businessId}&freelancerId=${freelancerId}&limit=${limit}&page=${page}`,
-        tokenConfig(getState()?.Auth.token)
-      )
-      .then(res => {
-        dispatch({
-          type: GET_TASKS,
-          payload: res.data
+      await axios
+        .get(
+          `/api/tasks?businessId=${businessId}&freelancerId=${freelancerId}&limit=${limit}&page=${page}`,
+          tokenConfig(getState()?.Auth.token)
+        )
+        .then(res => {
+          dispatch({
+            type: GET_TASKS,
+            payload: res.data
+          })
         })
-      })
-      .catch(err => {
-        dispatch({
-          type: TASK_ERROR,
-          payload: err.response
+        .catch(err => {
+          dispatch({
+            type: TASK_ERROR,
+            payload: err.response
+          })
         })
-      })
-    dispatch(stopLoading())
-  }
+      dispatch(stopLoading())
+    }
 
 export const getTaskById = taskID => async (dispatch, getState) => {
   dispatch(startLoading())
@@ -139,19 +140,6 @@ export const updateTasksOrder = (data, token) => async (dispatch, getState) => {
     type: TASK_ORDER,
     payload: data
   })
-  // await axios
-  //     .post(`/api/dashboard/status`, {status, order}, tokenConfig(token))
-  //     .then(res => dispatch({
-  //         type: SORT_STORIES_ON_DRAG,
-  //         payload: res.data,
-  //     }))
-  //     .catch(err => {
-  //         // dispatch(returnErrors(err.response, err.response))
-  //         dispatch({
-  //             type: UPDATE_ERROR,
-  //             payload: err.response
-  //         })
-  //     })
 }
 
 export const reorderStories = (data, token) => async (dispatch, getState) => {
@@ -257,4 +245,11 @@ export const updateComment = (taskId, commentId, data) => async (dispatch, getSt
         payload: err.response
       })
     })
+}
+
+
+export const restTagsList = () => (dispatch, getState) => {
+  dispatch({
+    type: REST_TAGS_LIST,
+  })
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { AiOutlineClose } from 'react-icons/ai'
 
@@ -24,8 +24,17 @@ import {
   updateTask,
   addCommentToStory,
   resetStoryForm,
-  updateComment
+  updateComment,
+  restTagsList
 } from '../../../../redux/actions'
+
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
+
+const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest'];
+const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing'];
+
 
 const TaskForm = ({
   onHide,
@@ -40,7 +49,10 @@ const TaskForm = ({
   updateComment,
   userId,
   departmentData,
-  userRole
+  userRole,
+  resetStoryForm,
+  restTagsList,
+  isEditable
 }) => {
   const [editMode, setEditMode] = useState({
     taskName: false,
@@ -62,6 +74,11 @@ const TaskForm = ({
   const [commentId, setCommentId] = useState('')
   const [hoverCommentId, setHoverCommentId] = useState('')
   const [error, setError] = useState('')
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+
+  const [editSelectedTags, setEditSelectedTags] = useState([]);
+  const [editInputValue, setEditInputValue] = useState('');
 
   useEffect(() => {
     setComments(taskDetail?.comments)
@@ -293,6 +310,7 @@ const TaskForm = ({
         if (response?.status === 200) {
           await onHide()
           await getDepartmentById(departmentData?._id)
+          setSelectedTags([])
         } else {
           setValidationErrors(response?.data?.message ?? 'Something went wrong')
         }
@@ -337,6 +355,50 @@ const TaskForm = ({
     setError(error)
   }
 
+
+  const handleInputChange = (event, newInputValue) => {
+    setInputValue(newInputValue);
+  };
+
+  const handleAddTag = () => {
+    if (inputValue.trim() !== '' && !selectedTags.includes(inputValue)) {
+      setSelectedTags([...selectedTags, inputValue.trim()]);
+      setInputValue('');
+
+    }
+  };
+
+  const handleEditInputTags = () => {
+    if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
+      setEditSelectedTags([...editSelectedTags, editInputValue.trim()]);
+      setEditInputValue('');
+
+    }
+  };
+
+  const handleEditInputChange = (event, newInputValue) => {
+    setEditInputValue(newInputValue);
+  };
+
+  useEffect(() => {
+    restTagsList()
+    updateForm('tags', [...taskForm?.tags, ...selectedTags])
+  }, [selectedTags])
+
+  useEffect(() => {
+    restTagsList()
+    updateForm('tags', [...taskForm?.tags, ...editSelectedTags])
+  }, [editSelectedTags])
+
+  useEffect(() => {
+    if (taskDetail?.tags?.length > 0) {
+      setEditSelectedTags([...editSelectedTags, ...taskDetail?.tags])
+    }
+  }, [taskDetail?.tags])
+
+  const handleRestForm = () => resetStoryForm()
+
+
   return (
     <>
       <DarkText fontSize="18px" color="#0057FF" lineHeight="normal">
@@ -367,6 +429,7 @@ const TaskForm = ({
             }}
             onClick={() => {
               onHide()
+              handleRestForm()
             }}>
             CANCEL
           </Button>
@@ -425,7 +488,7 @@ const TaskForm = ({
                 validateForm()
                 enableEditMode('')
               }}
-              onUpdate={() => {}}
+              onUpdate={() => { }}
             />
           </div>
         </DIV>
@@ -453,7 +516,7 @@ const TaskForm = ({
                   placeholder="assignee"
                   fontSize="14px"
                   margin="0px 0px 0px 30px"
-                  width="160px"
+                  width="225px"
                   height={taskForm?.assignee ? '15px' : '36px'}
                   dropdownList={assigneeOptions}
                   onChange={value => {
@@ -463,7 +526,7 @@ const TaskForm = ({
                     label: assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label
                   }}
                   clickType="assignee"
-                  onUpdate={() => {}}
+                  onUpdate={() => { }}
                   onMenuOpen={() => {
                     enableEditMode('assignee')
                   }}
@@ -510,51 +573,144 @@ const TaskForm = ({
               </TitleText>
 
               {!editMode?.tag && userRole !== 1 && (
-                <div
-                  style={{
-                    width: '17px',
-                    height: '17px',
-                    background: '#D9D9D9',
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginRight: '10px',
-                    marginTop: '5px'
-                  }}
-                  onClick={() => {
-                    enableEditMode('tag')
-                    setTimeout(() => {
-                      document.getElementById('tags').focus()
-                    }, 1)
-                  }}>
-                  <Plus width="17" height="17" id="add_task_icon" />
-                </div>
-              )}
-              {editMode?.tag && (
-                <FormField
-                  zIndexUnset
-                  fieldType="input"
-                  placeholder="Tags"
-                  fontSize="14px"
-                  name="tags"
-                  disabled={userRole === 1}
-                  width="160px"
-                  margin="0px 0px 0px 20px"
-                  height="30px  !important"
-                  value={tag}
-                  maxLength="30"
-                  onBlur={() => {
-                    enableEditMode('')
-                  }}
-                  onChange={e => {
-                    setTag(e?.target?.value)
-                  }}
-                  handleEnterKey={e => {
-                    if (e.keyCode === 13 && e.shiftKey === false && taskForm?.tags?.length < 5) {
-                      updateForm('tags', [...taskForm?.tags, e?.target?.value])
-                      setTag('')
+                <Autocomplete
+                  multiple
+                  id="tags-standard"
+                  value={editSelectedTags}
+                  onChange={(event, newValue) => setEditSelectedTags(newValue)}
+                  inputValue={editInputValue}
+                  onInputChange={handleEditInputChange}
+                  options={editSelectedTags}
+                  getOptionLabel={(option) => option}
+                  sx={{
+                    width: 300,
+                    '& .Mui-focused': {
+                      border: '0px !important',
+                    },
+                    '& .Mui-focused:after': {
+                      border: '0px !important',
+                    },
+                    '& .MuiInputBase-root': {
+                      maxHeight: 200,
+                      overflowY: "scroll",
+                      overflowX: "hidden",
+                      '::-webkit-scrollbar': {
+                        width: 5,
+                        height: 0,
+                      },
+
+                      '::-webkit-scrollbar-track': {
+                        background: 'transparent'
+                      },
+
+                      '::-webkit-scrollbar-thumb': {
+                        background: 'transparent'
+                      }
+                    },
+                    '& input': {
+                      border: "0px !important",
+                      boxShadow: 'none !important',
+                    },
+                    '& input:focus': {
+                      border: '0px !important',
+                      boxShadow: 'none !important',
+                    },
+                    '& .MuiAutocomplete-root': {
+                      borderRadius: '8px !important',
+                      padding: '10px !important',
+                      border: '1px solid purple !important',
+                    },
+                    '& .MuiInputBase-root-MuiInput-root:after': {
+                      border: '0px !important',
+                      width: "100%"
                     }
                   }}
-                  onUpdate={() => {}}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      placeholder="Tags"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleEditInputTags();
+                        }
+                      }}
+                    />
+                  )}
+                  noOptionsText="Add Tag"
+                />
+
+              )}
+              {editMode?.tag && (
+                <Autocomplete
+                  multiple
+                  id="tags-standard"
+                  value={selectedTags}
+                  onChange={(event, newValue) => setSelectedTags(newValue)}
+                  inputValue={inputValue}
+                  onInputChange={handleInputChange}
+                  options={selectedTags}
+                  getOptionLabel={(option) => option}
+                  sx={{
+                    width: 300,
+                    '& .Mui-focused': {
+                      border: '0px !important',
+                    },
+                    '& .Mui-focused:after': {
+                      border: '0px !important',
+                    },
+                    '& .MuiInputBase-root': {
+                      maxHeight: 200,
+                      overflowY: "scroll",
+                      overflowX: "hidden",
+                      '::-webkit-scrollbar': {
+                        width: 5,
+                        height: 0,
+                      },
+
+                      '::-webkit-scrollbar-track': {
+                        background: 'transparent'
+                      },
+
+                      '::-webkit-scrollbar-thumb': {
+                        background: 'transparent'
+                      }
+                    },
+                    '& input': {
+                      border: "0px !important",
+                      boxShadow: 'none !important',
+                    },
+                    '& input:focus': {
+                      border: '0px !important',
+                      boxShadow: 'none !important',
+                    },
+                    '& .MuiAutocomplete-root': {
+                      borderRadius: '8px !important',
+                      padding: '10px !important',
+                      border: '1px solid purple !important',
+                    },
+                    '& .MuiInputBase-root-MuiInput-root:after': {
+                      border: '0px !important',
+                      width: "100%"
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      // label="Multiple values"
+                      placeholder="Tags"
+                      onKeyDown={(e) => {
+                        console.log('e.key', e.key)
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddTag();
+                        }
+                      }}
+                    />
+                  )}
+                  noOptionsText="Add Tag"
                 />
               )}
             </DIV>
@@ -564,19 +720,6 @@ const TaskForm = ({
               margin="10px 0px 0px 10px"
               overflow="scroll"
               width={editMode.tag ? '40%' : '100%'}>
-              {taskForm.tags.map(tag => {
-                return (
-                  <Badge key={tag} small>
-                    {ConverterUtils.capitalize(`${tag}`)}
-                    <AiOutlineClose
-                      style={{ width: '14px', height: '14px', marginLeft: '10px' }}
-                      onClick={() => {
-                        removeTag(tag)
-                      }}
-                    />
-                  </Badge>
-                )
-              })}
             </DIV>
           </DIV>
         </DIV>
@@ -594,39 +737,45 @@ const TaskForm = ({
               Priority:
             </TitleText>
             {editMode ? (
-              <FormField
-                zIndex="999"
-                zIndexUnset={true}
-                mobile
-                required
-                fieldType="searchField"
-                isSearchable={true}
-                name="priority"
-                color="#000000"
-                disabled={userRole === 1}
-                disableBorder={!editMode.priority}
-                placeholder="Select Priority"
-                fontSize="14px"
-                width="160px"
-                height={taskForm?.priority ? '15px' : '36px'}
-                options={taskPriorityOptions}
-                dropdownList={taskPriorityOptions}
-                onChange={value => updateForm('priority', value?.value)}
-                value={{ label: taskPriorityOptions?.find(priority => priority.value === taskForm?.priority)?.label }}
-                clickType="priority"
-                onUpdate={() => {}}
-                onMenuOpen={() => {
-                  enableEditMode('priority')
-                }}
-                onBlur={() => {
-                  validateForm()
-                  enableEditMode('')
-                }}
-              />
+
+              <>
+                <Autocomplete
+                  disablePortal
+                  value={selectedTaskId ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority) : ''}
+                  id="combo-box-demo"
+                  options={PRIORITY_OPTIONS_ARR}
+                  onChange={(event, value) => {
+                    updateForm('priority', value)
+                  }}
+                  sx={{
+                    width: 225,
+                    '& input': {
+                      bgcolor: 'background.paper',
+                      border: '0px !important',
+                      borderRadius: '0px !important',
+                      margin: '0px !important',
+                      padding: '0px !important',
+                      fontSize: '16px',
+                      boxShadow: 'none',
+                      height: '20px !important',
+                      boxShadow: 'none !important',
+
+                      color: theme => theme.palette.getContrastText(theme.palette.background.paper)
+                    },
+                    '& input:focus': {
+                      border: '0px !important',
+                    },
+                    '& svg': { display: 'none' }
+                  }}
+
+                  renderInput={(params) => <TextField {...params} />}
+                />
+
+              </>
+
             ) : (
-              <DarkText fontSize="18px" lineHeight="21.09px" color="#000000" topMargin="10px" f>
-                {taskPriorityOptions?.find(priority => priority.value === taskDetail?.priority)?.label || 'priority'}
-              </DarkText>
+              <></>
+
             )}
           </DIV>
           <DIV width="50%" display="flex" alignItems="center" padding="0px 0px 0px 90px">
@@ -647,7 +796,7 @@ const TaskForm = ({
               height="30px  !important"
               onChange={e => updateForm('storyPoints', e?.target?.value)}
               value={taskForm?.storyPoints}
-              onUpdate={() => {}}
+              onUpdate={() => { }}
               onClick={() => {
                 enableEditMode('storyPoints')
               }}
@@ -672,30 +821,36 @@ const TaskForm = ({
               Status:
             </TitleText>
             {editMode || userRole === 1 ? (
-              <FormField
-                zIndex="1"
-                mobile
-                required
-                fieldType="searchField"
-                disableBorder={!editMode.status}
-                isSearchable={true}
-                name="status"
-                placeholder="Select Status"
-                fontSize="14px"
-                width="160px"
-                height={taskForm?.status ? '15px' : '36px'}
-                options={taskStatusOptions}
-                onChange={value => updateForm('status', value?.value)}
-                value={{ label: taskStatusOptions?.find(status => status.value === taskForm?.status)?.label }}
-                clickType="status"
-                onUpdate={() => {}}
-                onMenuOpen={() => {
-                  enableEditMode('status')
+              <Autocomplete
+                value={selectedTaskId ? STATUS_OPTIONS_ARR.filter(elem => elem == taskDetail?.status) : ''}
+                disablePortal
+                id="combo-box-demo"
+                options={STATUS_OPTIONS_ARR}
+                onChange={(event, value) => {
+                  updateForm('status', value)
                 }}
-                onBlur={() => {
-                  validateForm()
-                  enableEditMode('')
+                sx={{
+                  width: 225,
+                  '& input': {
+                    bgcolor: 'background.paper',
+                    border: '0px !important',
+                    borderRadius: '0px !important',
+                    margin: '0px !important',
+                    padding: '0px !important',
+                    fontSize: '16px',
+                    boxShadow: 'none',
+                    height: '20px !important',
+                    boxShadow: 'none !important',
+
+                    color: theme => theme.palette.getContrastText(theme.palette.background.paper)
+                  },
+                  '& input:focus': {
+                    border: '0px !important',
+                  },
+                  '& svg': { display: 'none' }
                 }}
+
+                renderInput={(params) => <TextField {...params} />}
               />
             ) : (
               <DarkText fontSize="18px" lineHeight="21.09px" color="##000000" topMargin="10px">
@@ -871,7 +1026,9 @@ const mapDispatchToProps = dispatch => {
     addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
     resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
     getDepartmentById: bindActionCreators(getDepartmentById, dispatch),
-    updateComment: bindActionCreators(updateComment, dispatch)
+    updateComment: bindActionCreators(updateComment, dispatch),
+    resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
+    restTagsList: bindActionCreators(restTagsList, dispatch)
   }
 }
 
