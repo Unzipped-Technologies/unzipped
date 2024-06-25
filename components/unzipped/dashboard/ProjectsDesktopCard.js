@@ -45,7 +45,7 @@ const Flex = styled.div`
 const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
   const router = useRouter()
   return (
-    <Container includeRate={includeRate}>
+    <Container includeRate={includeRate} data-testid={project?._id}>
       <Left>
         <Image
           src={project?.projectImages?.[0]?.url}
@@ -79,7 +79,6 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
         </Flex>
         <div className="d-flex justify-content-between">
           <P fontSize="13px">{project?.description}</P>
-          <P fontSize="15px">{project?.likes ? `${project?.likes} Upvotes by Freelancers` : ''}</P>
         </div>
         {project?.requiredSkills?.map(item => (
           <Badge key={`${item}_desktop_card`}>{item}</Badge>

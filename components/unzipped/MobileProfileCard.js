@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import { ConverterUtils } from '../../utils'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
-import EducationModal from './EducationModal'
 
-import IconComponent from '../ui/icons/IconComponent'
-import { Badge, Icon, Image } from '../ui'
 import ProfileTab from './ProfileTab'
+import { Badge, Icon, Image } from '../ui'
+import { ConverterUtils } from '../../utils'
+import EducationModal from './EducationModal'
+import IconComponent from '../ui/icons/IconComponent'
 
-const P = styled.p`
+export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
   color: ${({ color }) => (color ? color : 'black')};
@@ -26,7 +26,7 @@ const OtherInformationBox = styled.div`
   width: 100%;
 `
 
-const OtherInformationCard = styled.div`
+export const OtherInformationCard = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   background: white;
   border: 1px solid #d9d9d9;
@@ -60,7 +60,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
     const filteredArray = projectSkills?.filter(
       (str, index) => !projectSkills?.some((otherStr, otherIndex) => index !== otherIndex && otherStr?.includes(str))
     )
-    return filteredArray ?? []
+    return filteredArray
   }, [user])
 
   function formatDate(inputDate) {
@@ -69,7 +69,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
   }
 
   return (
-    <>
+    <div data-testid="mobile_profile_container">
       <div className="text-center">
         <div
           className="py-3 px-2 d-flex align-items-center"
@@ -82,6 +82,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
             zIndex: '2'
           }}>
           <span
+            data-testid="back_profile"
             onClick={() => {
               router.back()
             }}
@@ -98,8 +99,8 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
             alt="Picture of the author"
             style={{ borderRadius: '15px' }}
           />
-          <P fontSize="26px" margin="0">
-            {user?.FirstName + ' ' + user?.LastName || ''}
+          <P fontSize="26px" margin="0" data-testid="user_name">
+            {user?.FirstName + ' ' + user?.LastName}
           </P>
           {user?.category && (
             <P fontSize="15px" fontWeight="400" margin="0">
@@ -114,8 +115,8 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
               </div>
             )}
             {user?.AddressLineCountry && (
-              <P fontSize="14px" fontWeight="300">
-                {user?.AddressLineCountry || 'N/A'}
+              <P fontSize="14px" fontWeight="300" data-testid="address_country">
+                {user?.AddressLineCountry}
               </P>
             )}
           </div>
@@ -146,19 +147,21 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
           </div>
           <div
             className="d-flex"
+            data-testid="profile_schedule_interview"
             onClick={e => {
               e.preventDefault()
               handleProfilePage(false)
             }}>
-            <div style={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              background: '#37DEC5',
-              borderRadius: "4px"
-            }}>
-              <div style={{ width: "80%" }}>
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: '#37DEC5',
+                borderRadius: '4px'
+              }}>
+              <div style={{ width: '80%' }}>
                 <button
                   style={{
                     background: '#37DEC5',
@@ -171,18 +174,18 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
                   Schedule an Interview
                 </button>
               </div>
-              <div style={{
-                borderLeft: '1.3px solid #B5B5B5',
-                background: '#37DEC5',
-                width: "20%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column"
-              }}>
-                <div style={{ position: "relative", top: "15px", left: "8px" }}>
+              <div
+                style={{
+                  borderLeft: '1.3px solid #B5B5B5',
+                  background: '#37DEC5',
+                  width: '20%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column'
+                }}>
+                <div style={{ position: 'relative', top: '15px', left: '8px' }}>
                   <IconComponent name="downArrow" width="35" height="35" viewBox="0 0 20 20" fill="white" />
-
                 </div>
               </div>
             </div>
@@ -204,8 +207,8 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
                 {user?.AddressLineCountry || 'United States'}
               </P>
               <div>
-                {project?.freelancerSkills?.length > 0
-                  ? project?.freelancerSkills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                {project?.skills?.length > 0
+                  ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
                   : ''}
               </div>
               <div style={{ padding: '0px 19px', display: 'flex' }}>
@@ -245,10 +248,10 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
             </P>
             {uniqueSkills?.length
               ? uniqueSkills?.map((skill, index) => (
-                <P padding="0 10px" key={`${skill}_${index}`}>
-                  {ConverterUtils.capitalize(`${skill} `)}
-                </P>
-              ))
+                  <P padding="0 10px" key={`${skill}_${index}`}>
+                    {ConverterUtils.capitalize(`${skill} `)}
+                  </P>
+                ))
               : ''}
           </OtherInformationCard>
           <OtherInformationCard>
@@ -299,7 +302,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
                 Education
               </P>
               {role === 1 && freelancerId === user?._id && (
-                <P color="#2F76FF" onClick={handleOpen}>
+                <P color="#2F76FF" onClick={handleOpen} data-testid="add_education">
                   <AiOutlinePlusCircle
                     style={{
                       fontSize: '18px',
@@ -313,25 +316,25 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
 
             {user?.education?.length
               ? user.education.map(education => (
-                <div key={education?._id}>
-                  <P padding="0 10px" fontWeight="500">
-                    {education?.title}
-                  </P>
-                  <P padding="0 10px" margin="0">
-                    {education?.institute}
-                  </P>
-                  <P padding="0 10px">
-                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear}{' '}
-                    years)
-                  </P>
-                </div>
-              ))
+                  <div key={education?._id}>
+                    <P padding="0 10px" fontWeight="500">
+                      {education?.title}
+                    </P>
+                    <P padding="0 10px" margin="0">
+                      {education?.institute}
+                    </P>
+                    <P padding="0 10px">
+                      {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear}{' '}
+                      years)
+                    </P>
+                  </div>
+                ))
               : ''}
           </OtherInformationCard>
         </OtherInformationBox>
         {open && <EducationModal open={open} onHide={handleClose} />}
       </div>
-    </>
+    </div>
   )
 }
 

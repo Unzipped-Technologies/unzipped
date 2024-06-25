@@ -47,7 +47,7 @@ const DesktopDisplayBox = styled.div`
     display: none;
   }
 `
-const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelancerId, loading }) => {
+const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId, loading }) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -99,15 +99,6 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
     setFilterOpenClose(value)
   }
 
-  const handleSearch = intersectionObserver => {
-    getPublicProjectsList({
-      intersectionObserver,
-      filter,
-      take,
-      skip
-    })
-  }
-
   const setFilters = (field, value) => {
     setFilter(prevFilter => {
       const updatedFilter = { ...prevFilter }
@@ -152,25 +143,9 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
     }
   }
 
-  const setSearchKey = value => {
-    setFilter(prevData => ({
-      ...prevData,
-      searchKey: value
-    }))
-  }
-
   return (
-    <div>
-      {!filterOpenClose && (
-        <Nav
-          searchValue={filter}
-          handleSearchValue={setSearchKey}
-          handleSearch={handleSearch}
-          searchButton
-          margin={'0px'}
-          marginBottom={marginBottom}
-        />
-      )}
+    <div data-testid="projects_page">
+      {!filterOpenClose && <Nav searchValue={filter} searchButton margin={'0px'} marginBottom={marginBottom} />}
       {!filterOpenClose && window?.innerWidth <= 680 && (
         <MobileDisplayBox>
           <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
@@ -191,7 +166,7 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
           </MobileDisplayBox>
         )}
 
-        <Box>
+        <Box data-testid="desktop_projects_container">
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
           {!loading ? (
             <div className="overflow-auto">
@@ -239,13 +214,6 @@ const Projects = ({ projectList, totalCount = [], getPublicProjectsList, freelan
       </DesktopDisplayBox>
     </div>
   )
-}
-
-Projects.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-  return {
-    token: token && token
-  }
 }
 
 const mapStateToProps = state => {

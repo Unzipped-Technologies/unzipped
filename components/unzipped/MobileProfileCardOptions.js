@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import IconComponent from '../ui/icons/IconComponent'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-import { connect, useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/actions'
-import IconSelector from './dashboard/IconSelector'
+import { connect, useDispatch, useSelector } from 'react-redux'
+
 import { IconColors } from '../../utils/FontIcons'
+import IconSelector from './dashboard/IconSelector'
+import IconComponent from '../ui/icons/IconComponent'
+import { getCalenderSetting } from '../../redux/actions'
 import ScheduleInterview from './dashboard/ScheduleInterview'
 import ScheduleMeetingModal from './../modals/scheduleMeeting'
-import { getCalenderSetting } from '../../redux/actions'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
+import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/actions'
 
-
-const P = styled.p`
+export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
   color: ${({ color }) => (color ? color : 'black')};
@@ -25,7 +25,7 @@ const P = styled.p`
   right: ${({ right }) => (right ? right : '')};
 `
 
-const DropDown = styled.div`
+export const DropDown = styled.div`
   display: ${({ display }) => (display ? display : '')};
   position: absolute;
   background-color: white;
@@ -35,7 +35,6 @@ const DropDown = styled.div`
   border: 1px solid #ccc;
 `
 function MobileProfileCardOptions({
-  sendMessage,
   handleProfilePage,
   freelancerId,
   addEntriesToList,
@@ -59,11 +58,14 @@ function MobileProfileCardOptions({
   }
 
   useEffect(() => {
-    if (_id !== calenderSetting?.userId || !calenderSetting) dispatch(getCalenderSetting())
+    if (_id !== calenderSetting?.userId || !calenderSetting) {
+      dispatch(getCalenderSetting())
+    } else {
+      console.log('')
+    }
     dispatch(getFreelancerById(navigate.query.id))
     dispatch(getCurrentUserList(_id))
   }, [])
-
 
   useEffect(() => {
     getInvitesLists({
@@ -98,11 +100,12 @@ function MobileProfileCardOptions({
   }
 
   return (
-    <div>
+    <div data-testid="mobile_profile_card_options">
       <div
         className="py-3 px-2 d-flex align-items-center"
         style={{ boxShadow: '0px 2px 4px 0px rgba(0, 0, 0, 0.25)', gap: '11px' }}>
         <span
+          data-testid="show_mobile_profile"
           onClick={() => {
             handleProfilePage(true)
           }}
@@ -127,60 +130,61 @@ function MobileProfileCardOptions({
           }}>
           Make An Offer
         </P>
-        <div style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          borderBottom: "3px solid #EFF1F4"
-        }}>
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            borderBottom: '3px solid #EFF1F4'
+          }}>
           <div>
-            <P padding="12px 0 18px 0" margin="0" fontWeight="600" onClick={() => handleMeetingScheduling()} >
+            <P padding="12px 0 18px 0" margin="0" fontWeight="600" onClick={handleMeetingScheduling}>
               Schedule an Interview
             </P>
           </div>
           {scheduleInterview && (
             <div>
-              {calenderSetting ? (<ScheduleMeetingModal
-                scheduleInterviewModal={scheduleInterviewModal}
-                handleScheduleInterviewModal={handleScheduleInterviewModal}
-                receiver={{ userId: { _id: receiverInfo?.userId?._id } }}
-                setScheduleInterviewModal={setScheduleInterviewModal}
-                setScheduleInterview={setScheduleInterview}
-                isMobileViewPanle={true}
-              />) : (<ScheduleInterview />)}
+              {calenderSetting ? (
+                <ScheduleMeetingModal
+                  scheduleInterviewModal={scheduleInterviewModal}
+                  handleScheduleInterviewModal={handleScheduleInterviewModal}
+                  receiver={{ userId: { _id: receiverInfo?.userId?._id } }}
+                  setScheduleInterviewModal={setScheduleInterviewModal}
+                  setScheduleInterview={setScheduleInterview}
+                  isMobileViewPanle={true}
+                />
+              ) : (
+                <ScheduleInterview />
+              )}
             </div>
           )}
         </div>
 
-
-        {sendMessage ? (
-          <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
-            Send A Message
-          </P>
-        ) : (
-          <></>
-        )}
+        <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
+          Send A Message
+        </P>
         <div
           onClick={() => setOpenList(!openList)}
           style={{
             padding: '12px 0 10px 0',
             borderBottom: '3px solid #EFF1F4',
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%'
           }}>
           <div>
             <P fontWeight="600" margin="0">
               Add User To A List
             </P>
           </div>
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <div style={{ position: "relative", top: "10px" }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+            <div style={{ position: 'relative', top: '10px' }}>
               <span>
                 <IconComponent name="downArrow" width="30" height="30" viewBox="0 0 20 20" fill="black" />
               </span>
@@ -192,43 +196,49 @@ function MobileProfileCardOptions({
       <DropDown display={openList ? 'block' : 'none'}>
         {lists?.length
           ? lists.map(list => (
-            <div
-              className="d-flex px-4 py-2 me-2"
-              style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}
-              key={list?._id}
-              onClick={() => {
-                addToList(list)
-              }}>
-              <div>
-
-                {list?.icon &&
-                  <IconSelector icon={list.icon} size={24} style={{ color: IconColors[list.icon] || "#1C1C1C" }} twoToneColor={IconColors[list.icon]} />}
-              </div>
-              <div>
-                <P fontSize="16px" margin="0">
-                  {list?.name || 'Favourites'}
-                </P>
-                <div className="d-flex align-items-center">
-                  <IconComponent
-                    name="closedLock"
-                    width="4.47"
-                    height="5.11"
-                    viewBox="0 0 4.47 5.11"
-                    fill="#B2B9C5"
-                  />
-                  <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                    {list?.isPrivate && 'Private'}
+              <div
+                className="d-flex px-4 py-2 me-2"
+                style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}
+                key={list?._id}
+                data-testid={list?._id}
+                onClick={() => {
+                  addToList(list)
+                }}>
+                <div>
+                  {list?.icon && (
+                    <IconSelector
+                      icon={list.icon}
+                      size={24}
+                      style={{ color: IconColors[list.icon] || '#1C1C1C' }}
+                      twoToneColor={IconColors[list.icon]}
+                    />
+                  )}
+                </div>
+                <div>
+                  <P fontSize="16px" margin="0">
+                    {list?.name || 'Favourites'}
                   </P>
-                  <P fontSize="7px" margin="0">
-                    .
-                  </P>
-                  <P fontSize="7px" margin="0">
-                    {list?.listEntries?.length || 0} member
-                  </P>
+                  <div className="d-flex align-items-center">
+                    <IconComponent
+                      name="closedLock"
+                      width="4.47"
+                      height="5.11"
+                      viewBox="0 0 4.47 5.11"
+                      fill="#B2B9C5"
+                    />
+                    <P fontSize="7px" margin="0" padding="0 0 0 3px">
+                      {list?.isPrivate && 'Private'}
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      .
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      {list?.listEntries?.length || 0} member
+                    </P>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))
           : ''}
       </DropDown>
     </div>

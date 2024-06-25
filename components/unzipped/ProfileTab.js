@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { DarkText } from './dashboard/style'
 import styled from 'styled-components'
+import { DarkText } from './dashboard/style'
+
 import ProjectModal from './ProjectModal'
 
 const Container = styled.div`
@@ -36,9 +37,8 @@ const ProfileTab = ({ tabs, selected, setSelected, children, role, freelancerId,
   const handleClose = () => {
     setOpen(false)
   }
-
   return (
-    <Container>
+    <Container data-testid="projects_tab">
       <Menu style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {tabs.map((item, index) => (
           <MenuItem selected={selected === index} onClick={() => setSelected(index)} key={item}>

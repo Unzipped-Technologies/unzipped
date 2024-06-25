@@ -19,7 +19,7 @@ const Img = styled.img`
   border-radius: ${({ radius }) => (radius ? radius : '0px')};
 `
 
-const Image = ({ src, alt = 'img', name, radius, height, width, onMouseEnter, onClick, margin }) => {
+const Image = ({ src, alt = 'img', name, radius, height, width, onMouseEnter, onClick, margin, id }) => {
   return (
     <Container
       radius={radius}
@@ -30,7 +30,7 @@ const Image = ({ src, alt = 'img', name, radius, height, width, onMouseEnter, on
       name={name}
       onClick={onClick}
       onMouseEnter={onMouseEnter}>
-      <Img radius={radius} src={src} alt={alt} height={height} width={width} />
+      <Img radius={radius} src={src} alt={alt} height={height} width={width} data-testid={id} />
     </Container>
   )
 }

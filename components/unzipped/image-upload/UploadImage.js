@@ -29,14 +29,14 @@ const ImageTextStyled = styled.p`
   margin-top: 15px;
 `
 
-const UploadImage = ({ setFiles, files, projectFiles }) => {
+const UploadImage = ({ setFiles, files, projectFiles, id }) => {
   const dropzoneRef = useRef(null)
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
   const [isMaxFileLimit, setIsMaxFileLimit] = useState(false)
 
   const openDropzone = () => {
-    if (dropzoneRef.current && projectFiles.length < 3) {
+    if (dropzoneRef.current && projectFiles?.length < 3) {
       dropzoneRef.current.open()
     }
   }
@@ -46,18 +46,26 @@ const UploadImage = ({ setFiles, files, projectFiles }) => {
   }
 
   const handleDrop = acceptedFiles => {
-    if (projectFiles.length <= 3) {
-      const imagesToAdded = 3 - projectFiles.length
+    if (projectFiles?.length <= 3) {
+      let imagesToAdded = 3 - projectFiles.length
+      imagesToAdded = acceptedFiles?.length <= imagesToAdded ? acceptedFiles?.length : imagesToAdded
+
       if (imagesToAdded > 0) {
-        dispatch(setProjectFiles([...projectFiles, ...acceptedFiles?.splice(0, imagesToAdded)]))
-        setFiles([...files, ...acceptedFiles?.splice(0, imagesToAdded)])
+        let allFiles = acceptedFiles?.splice(0, imagesToAdded)
+        dispatch(setProjectFiles([...projectFiles, ...allFiles]))
+        if (files?.length) {
+          allFiles = [...files, ...allFiles]
+        } else {
+          allFiles = allFiles
+        }
+        setFiles(allFiles)
       }
     }
     closeDropzone()
   }
 
   useEffect(() => {
-    if (projectFiles.length >= 3) {
+    if (projectFiles?.length >= 3) {
       setIsMaxFileLimit(true)
     } else {
       setIsMaxFileLimit(false)
@@ -67,6 +75,7 @@ const UploadImage = ({ setFiles, files, projectFiles }) => {
   return (
     <>
       <ImageWrapper
+        data-testid={id ?? 'upload_images'}
         display="flex"
         width="100%"
         borderRadius="10px"
