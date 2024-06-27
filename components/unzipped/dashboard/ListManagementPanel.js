@@ -19,8 +19,9 @@ import {
     updateList
 } from '../../../redux/Lists/ListsAction';
 import { getUserLists } from '../../../redux/ListEntries/action';
-import { IconPicker } from 'react-fa-icon-picker';
-
+import IconPicker from './../IconPicker'
+import * as Icons from '@ant-design/icons/lib/icons';
+import { IconColors } from '../../../utils/FontIcons';
 
 const TextTitleStyled = styled.p`
     color: #000;
@@ -105,7 +106,23 @@ overflow-y: auto; /* Enable vertical scrollbar when needed */
         background-color: #555;
       }
       
-`
+`;
+
+const SelectIconLabel = styled.span`
+    text-transform: uppercase;
+    display: block;
+    cursor: pointer;
+    ${getFontStyled(
+    {
+        color: COLORS.black,
+        fontSize: FONT_SIZE.PX_12,
+        fontWeight: 500,
+        fontStyle: 'normal',
+        lineHeight: '4.5rem',
+        letterSpacing: LETTER_SPACING,
+    })};<
+`;
+
 const useStyles = makeStyles((theme) => ({
     modal: {
         display: 'flex',
@@ -131,33 +148,43 @@ const ListManagementPanel = ({
     isEditMode,
     setIsEditMode,
     userId,
-    setSelectedValue
+    setIsViewable,
+    setIsListViewable,
+    setListName,
+    setIsLogoHidden,
+    setListInfo,
+    isViewable
 }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const { token } = useSelector(state => state.Auth);
-    const [listName, setListName] = useState('');
+    const [listNamee, setListNamee] = useState('');
     const [listIcon, setListIcon] = useState('');
-
+    const [searchIconTerm, setSearchIconTerm] = useState('');
+    const [isIconDropdownOpen, setIsIconDropdownOpen] = useState(false);
+    const IconComponent = Icons[listIcon];
+    const [isIconSelected, setIsIconSelected] = useState(false);
+    const [filteredIcons, setFilterdIcons] = useState([]);
 
     const handleIconChangeEvent = (event) => {
         setListIcon(event.target.value)
     }
 
     const handleNameChangeEvent = (event) => {
-        setListName(event.target.value)
+        setListNamee(event.target.value)
     }
+
 
     useEffect(() => {
         if (isEditMode) {
-            setListName(listInfo.listTitle)
+            setListNamee(listInfo.listTitle)
             setListIcon(listInfo.listIcon)
         }
     }, [isEditMode])
 
     const handleListSaveEvent = () => {
         let listObj = {
-            name: listName,
+            name: listNamee,
             icon: listIcon,
             userId,
             ...(isEditMode ? { listId: listInfo.listId } : {})
@@ -166,10 +193,20 @@ const ListManagementPanel = ({
         if (isEditMode) {
             dispatch(updateList(listObj, token, () => dispatch(getUserLists(userId))))
         } else {
-            dispatch(createList(listObj, token, () => dispatch(getUserLists(userId))))
+            dispatch(createList(listObj, token, () => dispatch(getUserLists(userId))));
         }
-
+        
+        handleMobileViewListing();
         handleClose();
+    }
+
+    const handleMobileViewListing = () => {
+        if (isViewable) {
+            setListName('');
+            setIsLogoHidden(true)
+            setIsListViewable(true);
+            setListInfo(null)
+        }
     }
 
     const handleOpen = () => {
@@ -177,7 +214,7 @@ const ListManagementPanel = ({
     };
 
     const handleClose = () => {
-        setListName('');
+        setListNamee('');
         setListIcon('');
         setIsModalOpen(false);
         setIsEditMode(false);
@@ -199,6 +236,13 @@ const ListManagementPanel = ({
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+    const handleIconDropdown = () => {
+        setIsIconDropdownOpen(!isIconDropdownOpen);
+        setIsIconSelected(!isIconSelected)
+        setFilterdIcons([]);
+    }
+
     return (
         <div>
             <Modal
@@ -209,13 +253,15 @@ const ListManagementPanel = ({
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{ timeout: 500, }}
+                onClose={handleClose}
             >
                 <Fade in={isModalOpen}>
                     <div className={classes.paper}>
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 40
+                            gap: 40,
+                            position: 'relative',
                         }}>
                             <div>
                                 <TextTitleStyled>
@@ -229,46 +275,37 @@ const ListManagementPanel = ({
                                         border: '1px solid #D9D9D9',
                                         borderRadius: '5px',
                                     }}
-                                    value={listName}
+                                    value={listNamee}
                                     onChange={handleNameChangeEvent}
                                 />
 
-                                <Label>select an icon</Label>
+                                <div style={{ display: "flex", flexDirection: "row", gap: 20 }}>
+                                    <div style={{ background: "" }}>
+                                        <SelectIconLabel onClick={() => setIsIconDropdownOpen(true)}>select an icon</SelectIconLabel>
+                                    </div>
+                                    <div style={{ background: "", display: "flex", flexDirection: "column", alignItems: "baseline" }}>
+                                        {listIcon && (<>
+                                            <div style={{ fontSize: '30px', padding: '5px', textAlign: "center" }} onClick={handleIconDropdown}>
+                                                <IconComponent style={{ color: IconColors[listIcon] }} twoToneColor={IconColors[listIcon]}/>
+                                            </div>
+                                        </>)}
+                                    </div>
+                                </div>
 
                                 <IconPicker
-                                    value={listIcon}
-                                    onChange={(icon) => setListIcon(icon)}
-                                    buttonStyles={{
-                                        width: '100%',
-                                        border: '1px solid rgb(217, 217, 217)',
-                                        paddingLeft: '15px !important',
-                                        borderRadius: '5px'
-                                    }}
-                                    containerStyles={{
-                                        border: '0px',
-                                        boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
-                                        width: '60%',
-
-                                    }}
-                                    pickerIconStyles={{ color: '#e25050', padding: 10 }}
-                                    searchInputStyles={{
-                                        borderBottom: '1px solid gray !important'
-                                    }}
-                                    buttonIconStyles={{ color: '#e25050' }}
+                                    setListIcon={setListIcon}
+                                    isIconDropdownOpen={isIconDropdownOpen}
+                                    setIsIconDropdownOpen={setIsIconDropdownOpen}
+                                    setIsIconSelected={setIsIconSelected}
+                                    isIconSelected={isIconSelected}
+                                    filteredIcons={filteredIcons}
+                                    setFilterdIcons={setFilterdIcons}
                                 />
 
                             </div>
 
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-end',
-                            }}>
-                                <CancelButtonStyled
-                                    onClick={handleClose}
-                                >
-                                    cancel
-                                </CancelButtonStyled>
+                            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                <CancelButtonStyled onClick={handleClose} > cancel </CancelButtonStyled>
                                 <AddListButtonStyled
                                     onClick={handleListSaveEvent}
                                 >

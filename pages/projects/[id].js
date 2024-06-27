@@ -1,13 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import styled, { css } from 'styled-components'
-import { getBusinessById } from '../../redux/Business/actions'
-import { createProjectApplication } from '../../redux/ProjectApplications/actions'
 
-import ProjectApplyForm from '../../components/unzipped/ProjectApplyForm'
 import Nav from '../../components/unzipped/header'
+import { getBusinessById } from '../../redux/Business/actions'
+import ProjectApplyForm from '../../components/unzipped/ProjectApplyForm'
+import { createProjectApplication } from '../../redux/ProjectApplications/actions'
 import DesktopProjectDetail from '../../components/unzipped/dashboard/DesktopProjectDetail'
 
 const Desktop = styled.div`
@@ -119,13 +119,13 @@ const TabContent = styled.div`
   padding-bottom: 50px;
 `
 
-const SubmitButtonContainer = styled.div`
+export const SubmitButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin: ${({ margin }) => (margin ? margin : '0px')};
+  margin: ${({ margin }) => margin};
 `
 
-const SubmitButton = styled.button`
+export const SubmitButton = styled.button`
   color: #fff;
   text-align: center;
   font-family: Roboto;
@@ -150,9 +150,16 @@ const SubmitButton = styled.button`
     `};
 `
 
-const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById, createProjectApplication, role }) => {
-  const [filterOpenClose, setFilterOpenClose] = useState(false)
-
+const ProjectDetail = ({
+  projectDetails,
+  success,
+  freelancerId,
+  getBusinessById,
+  createProjectApplication,
+  role,
+  loading,
+  userId
+}) => {
   const router = useRouter()
   const { id } = router.query
 
@@ -163,13 +170,18 @@ const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById,
   let projectTabs = [{ name: 'Details', index: 0 }]
 
   useEffect(() => {
-    getBusinessById(id)
+    const fetchData = async () => {
+      await getBusinessById(id)
+    }
+
+    fetchData()
   }, [id])
 
   const applyToProject = async data => {
     await createProjectApplication({
       projectId: id,
       freelancerId: freelancerId,
+      userId,
       ...data
     })
   }
@@ -179,23 +191,18 @@ const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById,
   }, [success])
   return (
     <>
-      {!filterOpenClose && <Nav marginBottom={window.innerWidth >= 680 ? '100px' : '78px'} />}
+      <Nav marginBottom={window.innerWidth >= 680 ? '100px' : '78px'} />
       <Desktop>
-        <Header>
+        <Header data-testid="project_detail_header">
           <ProjectName>PROJECT</ProjectName>
           <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>
-          {window.innerWidth >= 680 && (
+          {window.innerWidth >= 680 && !projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
             <SubmitButtonContainer margin="0px 0px -30px 0px">
-              <SubmitButton
-                onClick={() => {
-                  applyToProject()
-                }}>
-                SUBMIT APPLICATION
-              </SubmitButton>
+              <SubmitButton onClick={applyToProject}>SUBMIT APPLICATION</SubmitButton>
             </SubmitButtonContainer>
           )}
         </Header>
-        <Tabs>
+        <Tabs data-testid="project_detail_tabs">
           {projectTabs.map((tab, index) => {
             return (
               <TabButton
@@ -211,7 +218,7 @@ const ProjectDetail = ({ projectDetails, success, freelancerId, getBusinessById,
       <TabContent>
         {selectedTab === 0 && (
           <>
-            <DesktopProjectDetail projectDetails={projectDetails} />
+            <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />
             {!projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
               <ProjectApplyForm applyToProject={applyToProject} projectDetails={projectDetails} />
             )}
@@ -227,7 +234,9 @@ const mapStateToProps = state => {
     projectDetails: state.Business.selectedBusiness,
     freelancerId: state?.Auth?.user?.freelancers,
     role: state?.Auth?.user?.role,
-    success: state?.ProjectApplications?.success
+    success: state?.ProjectApplications?.success,
+    loading: state.Loading.loading,
+    userId: state?.Auth?.user?._id
   }
 }
 

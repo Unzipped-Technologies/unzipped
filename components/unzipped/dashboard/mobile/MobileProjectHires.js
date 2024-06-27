@@ -97,6 +97,7 @@ const MobileProjectHires = ({ data = [] }) => {
                     background: 'rgba(217, 217, 217, 0.28)'
                   }}>
                   <Button
+                    zIndex="auto"
                     icon="largeExpand"
                     popoutWidth="324px"
                     noBorder

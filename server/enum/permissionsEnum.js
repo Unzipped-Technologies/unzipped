@@ -46,7 +46,7 @@ const userPermissions = Object.freeze({
   UpdateTag: 'updateTag',
   GetTagById: 'getTagById',
   DeleteTag: 'deleteTag',
-  ListTag: 'listTags',
+  ListTags: 'listTags',
   addComment: 'addComment',
   removeComment: 'removeComment',
   // tasks
@@ -89,7 +89,18 @@ const userPermissions = Object.freeze({
   updateQuestion: 'updateQuestion',
   deleteQuestion: 'deleteQuestion',
   getQuestionById: 'getQuestionById',
-  getAllQuestions: 'getAllQuestions'
+  getAllQuestions: 'getAllQuestions',
+
+  // showcase projects
+  createShowCaseProject: 'createShowCaseProject',
+  updateShowCaseProject: 'updateShowCaseProject',
+  deleteShowCaseProject: 'deleteShowCaseProject',
+  getShowCaseProjectById: 'getShowCaseProjectById',
+  getAllShowCaseProjects: 'getAllShowCaseProjects',
+
+  // Calender
+  createCalenderSettings: 'createCalenderSettings',
+  getCalenderSettings: 'getCalenderSettings'
 })
 
 const accountTypePermissions = Object.freeze({
@@ -174,7 +185,11 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // Calender
+    userPermissions.createCalenderSettings,
+    userPermissions.getCalenderSettings
   ],
   [accountTypeEnum.INVESTOR]: [
     // users
@@ -194,6 +209,7 @@ const accountTypePermissions = Object.freeze({
     userPermissions.createBusinessDetails,
     userPermissions.listAllBusinesses,
     userPermissions.getBusinessById,
+    userPermissions.GetDepartmentById,
 
     // likes
     userPermissions.UserLike,
@@ -242,7 +258,18 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // showcase projects
+    userPermissions.createShowCaseProject,
+    userPermissions.updateShowCaseProject,
+    userPermissions.deleteShowCaseProject,
+    userPermissions.getShowCaseProjectById,
+    userPermissions.getAllShowCaseProjects,
+
+    //  Calender
+    userPermissions.createCalenderSettings,
+    userPermissions.getCalenderSettings
   ],
   [accountTypeEnum.ADMIN]: [
     // users
@@ -333,7 +360,11 @@ const accountTypePermissions = Object.freeze({
     userPermissions.updateQuestion,
     userPermissions.deleteQuestion,
     userPermissions.getQuestionById,
-    userPermissions.getAllQuestions
+    userPermissions.getAllQuestions,
+
+    // Calender
+    userPermissions.createCalenderSettings,
+    userPermissions.getCalenderSettings
   ]
 })
 

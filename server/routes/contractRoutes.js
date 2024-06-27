@@ -26,6 +26,16 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('getAllContrac
   }
 })
 
+// Get a contract by ID (GET)
+router.get('/count/:userId', async (req, res) => {
+  try {
+    const counts = await contractHelper.countUserContracts(req.params?.userId)
+    res.json(counts)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 // Get a contract for current user only
 router.get('/current', requireLogin, permissionCheckHelper.hasPermission('getAllContracts'), async (req, res) => {
   try {
@@ -59,9 +69,9 @@ router.get('/freelancer/:id', requireLogin, async (req, res) => {
 })
 
 // Update a contract (PUT)
-router.put('/update', requireLogin, async (req, res) => {
+router.put('/update/:id', requireLogin, async (req, res) => {
   try {
-    const updatedContract = await contractHelper.updateContract(req.body)
+    const updatedContract = await contractHelper.updateContract(req.params?.id, req.body)
     if (!updatedContract) throw Error('Contract not found')
     res.json(updatedContract)
   } catch (e) {
@@ -87,7 +97,7 @@ router.put('/freelancer', requireLogin, async (req, res) => {
 // Delete a contract by ID (DELETE)
 router.delete('/delete/:id', requireLogin, async (req, res) => {
   try {
-    await contractHelper.deleteContract(req.params.id)
+    const response = await contractHelper.deleteContract(req.params.id)
     res.json({ msg: 'Contract successfully deleted' })
   } catch (e) {
     res.status(400).json({ msg: e.message })

@@ -1,25 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
-import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
-import {
-  DarkText,
-  Span,
-  WhiteCard,
-  Absolute
-} from './dashboard/style'
+import styled from 'styled-components'
+
 import Icon from '../ui/Icon'
+import theme from '../ui/theme'
+import Image from '../ui/Image'
 import Button from '../ui/Button'
 import FormField from '../ui/FormField'
-import Image from '../ui/Image'
 import AttachmentModal from './AttachmentModal'
 import ProfileContainer from './ProfileContainer'
-import { ValidationUtils } from '../../utils'
-import theme from '../ui/theme'
-import { useSelect } from '@mui/base';
-import { useSelector } from 'react-redux';
-import styled from "styled-components"
-import MeetingTemplate from './MeetingTemplate';
-import Link from 'next/link';
+import { ValidationUtils, ConverterUtils } from '../../utils'
+import { DarkText, Span, WhiteCard, Absolute, TypingAnimation } from './dashboard/style'
+
 const Right = styled.div`
   display: grid;
   position: relative;
@@ -72,54 +63,9 @@ export const Div = styled.div`
 `
 
 const Spacer = styled.div`
-    height: 64px;
-    width: 100%;
-`;
-// Message Box
-
-const MessageTemplateContainer = styled.div`
-  display: flex;
+  height: 64px;
   width: 100%;
-  justify-content: flex-end;
-  align-items: end;
-`;
-
-const MessageContentTemplate = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
-  width: 450px;
-  height: auto;
-  letter-spacing: 0.15px;
-  color: white;
-  border-radius: 8px 8px 0px 8px;
-  background: ${({ bgColor }) => bgColor ? bgColor : '#007FED'};
-  padding: 10px;
 `
-const ButtonContainer = styled.div`
-    display: flex;
-    background: transparent;
-    width: 100%;
-    justify-content: flex-end;
-    padding: 10px;
-`;
-
-const ButtonStyled = styled.button`
-    color: #fff;
-    text-decoration: ${({ textDecoration }) => textDecoration ? textDecoration : 'none'};
-    border: 0px;
-    background: transparent;
-    &:focus{
-        background: transparent !important;
-    }
-`;
-
-const ParagrapStyled = styled.p`
-    margin: 0 !important;
-    color: ${({ color }) => color ? color : '#fff'}
-`
-const DECLINE_MESSAGE_TEXT = 'The freelancer has proposed some additional times:';
-
 const MessageContainer = ({
   data = {},
   userEmail,
@@ -131,36 +77,48 @@ const MessageContainer = ({
   createTempFile,
   access,
   socket,
+  userRole,
   onlineUsers,
   handleUnreadCount,
-  handleMessagesOnScroll
+  handleMessagesOnScroll,
+  setUnreadToZero,
+  userName,
+  selectedConversationId
 }) => {
+  const messagesEndRef = useRef()
+
   const [typing, setTyping] = useState({})
   const [messages, setMessages] = useState([])
-  const [receiver, setReceiver] = useState(
-    data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail)
-  )
-  const [sender, setSender] = useState(
-    data?.participants && data?.participants.find(e => e?.userId?.email === userEmail)
-  )
+  const [receiver, setReceiver] = useState({})
+  const [sender, setSender] = useState({})
   const [isProfile, setIsProfile] = useState(true)
   const [fileUploadModal, setFileUploadModal] = useState(false)
-  const [top, setTop] = useState()
   const [form, setForm] = useState({
-    senderId: sender?.userId?._id,
-    receiverId: receiver?.userId?._id,
+    senderId: null,
+    receiverId: null,
     message: '',
     attachment: ''
   })
-  const messagesEndRef = useRef()
+
+  useEffect(() => {
+    socket.on('typing', typingData => {
+      setTyping(typingData)
+    })
+  })
+
+  useEffect(() => {
+    socket.on('stop-typing', typingData => {
+      setTyping(typingData)
+    })
+  })
 
   useEffect(() => {
     socket.on('chat message', message => {
       handleUnreadCount(message)
-      console.log('message', message)
       setMessages(prevMessages => [
         ...prevMessages,
         {
+          _id: message?._id,
           message: message?.message,
           attachment: '',
           isAlert: false,
@@ -174,89 +132,44 @@ const MessageContainer = ({
           __v: 0
         }
       ])
-      socket.on('typing', typingData => {
-        setTyping(typingData)
-      })
-      socket.on('stop-typing', typingData => {
-        setTyping(typingData)
-      })
-    })
-  })
+      const scroll = document.getElementById('topScroll')
 
-  const [userMessage, setUserMessage] = useState('');
-
-  useEffect(() => {
-    socket.on('chat message', message => {
-      handleUnreadCount(message)
-      setMessages(prevMessages => [
-        ...prevMessages,
-        {
-          message: message?.message,
-          attachment: "",
-          isAlert: false,
-          isRead: false,
-          isActive: true,
-          isArchived: false,
-          isSingle: true,
-          sender: message?.sender?.userId || message?.sender,
-          conversationId: message?.conversationId,
-          updatedAt: message?.updatedAt,
-          __v: 0
-        }
-      ]);
-
-      socket.on('typing', typingData => {
-        setTyping(typingData)
-      })
-      socket.on('stop-typing', typingData => {
-        setTyping(typingData)
-      })
-    })
-  })
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
-  }, [typing])
-
-  useEffect(() => {
-    if (messages && messages.length > 0) {
-      if (messages[messages.length - 1]?.isSingle === true) {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
-      } else if (messages.length < 11) {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
-      } else {
-        const scroll = document.getElementById('topScroll')
-        if (scroll) {
-          scroll.scrollTop = top
-        }
+      if (scroll?.scrollTop + scroll.clientHeight >= scroll.scrollHeight) {
+        setUnreadToZero(selectedConversationId, sender?.userId?._id)
       }
-    }
-  }, [messages])
+    })
 
+    return () => {
+      socket.off('chat message')
+    }
+  })
 
   useEffect(() => {
-    setMessages(data?.messages?.slice().reverse());
-    setReceiver(data?.participants && data?.participants.find(e => e?.userId?.email !== userEmail))
-    setSender(data?.participants && data?.participants.find(e => e?.userId?.email === userEmail))
+    setMessages(data?.messages?.slice().reverse())
+    if (data?.participants?.length) {
+      const receiver = data?.participants?.length && data?.participants?.find(e => e?.userId?.email !== userEmail)
+      const sender = data?.participants?.length && data?.participants?.find(e => e?.userId?.email === userEmail)
+      setReceiver(receiver)
+      setSender(sender)
+      setForm({
+        ...form,
+        receiverId: receiver?.userId?._id ?? null,
+        senderId: sender?.userId?._id ?? null
+      })
+    }
   }, [data])
 
   useEffect(() => {
-  }, [receiver])
-
-  useEffect(() => {
-    socket.on('refreshMessageList', () => {
-      console.log('refreshMessageList',);
-    });
+    socket.on('refreshMessageList', () => {})
 
     return () => {
-      socket.off('refreshMessageList');
-    };
-  }, []);
+      socket.off('refreshMessageList')
+    }
+  }, [])
 
   const handleLastMessageScroll = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
   }
-
 
   const send = () => {
     if (form.message || form.attachment) {
@@ -273,22 +186,20 @@ const MessageContainer = ({
         conversationId: data._id || null,
         updatedAt: new Date().toISOString(),
         access
-      });
+      })
       socket.emit('stop-typing', {
         receiverId: form.receiverId,
         conversationId: data._id || null,
-        isTyping: false,
-      });
+        isTyping: false
+      })
       handleLastMessageScroll()
       setForm({
         ...form,
         message: '',
-        attachment: '',
-      });
-
+        attachment: ''
+      })
     }
   }
-
 
   const handleMute = value => {
     handleChatMute(value)
@@ -302,17 +213,21 @@ const MessageContainer = ({
     socket.emit('stop-typing', {
       receiverId: form.receiverId,
       conversationId: data._id || null,
+      name: null,
       isTyping: false
     })
   }
 
   const handleScroll = () => {
     const scroll = document.getElementById('topScroll')
-    setTop(scroll.scrollHeight - scroll.clientHeight)
     if (scroll.scrollTop === 0) {
       if (messageLimit < messagesCount) {
         handleMessagesOnScroll()
       }
+    }
+
+    if (scroll.scrollHeight - scroll.scrollTop <= scroll.clientHeight + 1) {
+      setUnreadToZero(selectedConversationId, sender?.userId?._id)
     }
   }
 
@@ -328,7 +243,14 @@ const MessageContainer = ({
         <WhiteCard noMargin height="100%" padding="0px">
           <WhiteCard noMargin row padding="10px 40px">
             <DarkText noMargin>
-              <p className="mb-0">{ValidationUtils.getFullNameFromUser(receiver?.userId)}</p>
+              <DarkText className="mb-0" fontSize="16px" color="#000000" lineHeight="23px">
+                {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
+              </DarkText>
+              {receiver?.userId?.freelancers?.category && (
+                <DarkText fontSize="14px" lighter color="#808080" lineHeight="23px" className="mb-0">
+                  {receiver?.userId?.freelancers?.category}
+                </DarkText>
+              )}
               <p className={`mb-0 ${onlineUsers.includes(receiver?.userId?._id) ? 'text-primary' : 'text-warning'}`}>
                 {onlineUsers.includes(receiver?.userId?._id) ? 'Online' : 'Offline'}
               </p>
@@ -346,9 +268,10 @@ const MessageContainer = ({
                 id="topScroll">
                 <div>
                   {messages?.map((e, index) => {
-                    if (e?.sender === userId) {
+                    if (e?.sender === userId && e?._id) {
                       return (
                         <WhiteCard
+                          key={e?._id}
                           autoFoucs
                           half
                           row
@@ -361,16 +284,22 @@ const MessageContainer = ({
                             background="#007FED"
                             noMargin
                             maxWidth="50%"
-                            width="20%"
+                            width="436px"
                             unset
                             borderRadius="15px 15px 3px 15px"
-                            padding="10px 10px"
+                            padding="15px 15px"
                             style={{ width: '20px !important' }}>
                             <DarkText small noMargin color="#fff">
                               {e?.message}
                             </DarkText>
-                            <Absolute right="-65px" bottom="5px" width="100px">
-                              <DarkText noMargin color="#fff" fontSize="12px" topPadding="15px">
+                            <Absolute bottom="5px" width="100px">
+                              <DarkText
+                                noMargin
+                                color="#fff"
+                                fontSize="12px"
+                                right
+                                topPadding="15px"
+                                padding="0px 0px 0px 0px">
                                 {ValidationUtils.getTimeFormated(e?.updatedAt)}
                               </DarkText>
                             </Absolute>
@@ -380,7 +309,7 @@ const MessageContainer = ({
                           </Span>
                         </WhiteCard>
                       )
-                    } else if (e?.conversationId === data?._id) {
+                    } else if (e?.conversationId === data?._id && e?._id) {
                       return (
                         <WhiteCard half row borderColor="transparent" unset padding="10px" alignEnd>
                           <Span space unset>
@@ -391,7 +320,7 @@ const MessageContainer = ({
                             borderColor="transparent"
                             noMargin
                             maxWidth="50%"
-                            width="20%"
+                            width="306px"
                             unset
                             borderRadius="15px 15px 3px 15px"
                             padding="10px 10px">
@@ -408,28 +337,18 @@ const MessageContainer = ({
                       )
                     }
                   })}
-                  {typing?.isTyping && typing?.receiverId === form.senderId && typing?.conversationId === data?._id && (
-                    <WhiteCard half row borderColor="transparent" unset padding="10px" alignEnd>
-                      <Span space unset>
-                        <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-                      </Span>
-                      <WhiteCard
-                        background="transparent"
-                        borderColor="transparent"
-                        noMargin
-                        maxWidth="50%"
-                        unset
-                        borderRadius="15px 15px 3px 15px"
-                        padding="10px 10px">
-                        <DarkText small noMargin>
-                          Is typing...
-                        </DarkText>
-                      </WhiteCard>
-                    </WhiteCard>
-                  )}
                 </div>
                 <div ref={messagesEndRef} />
               </Div>
+              {typing?.isTyping && typing?.receiverId === form.senderId && typing?.conversationId === data?._id && (
+                <TypingAnimation style={{ paddingTop: '20px' }}>
+                  {typing?.name?.substring(0, 20)} {'    '}
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </TypingAnimation>
+              )}
+
               <Absolute bottom="10px" width="95%" right="2.5%">
                 <Message>
                   <FormField
@@ -439,6 +358,7 @@ const MessageContainer = ({
                       socket.emit('typing', {
                         receiverId: form.receiverId,
                         conversationId: data._id || null,
+                        name: userName,
                         isTyping: true
                       })
                     }}
@@ -447,13 +367,16 @@ const MessageContainer = ({
                     }}
                     onBlur={handleBlurTyping}
                     message
-                    placeholder="type a message..."
+                    placeholder="Type a message..."
                     width="100%"
                     fieldType="input"
                     autosize></FormField>
                 </Message>
                 <Absolute zIndex={10} width="26px" right="25px">
-                  <Button disabled={!(form.message || form.attachment)} type="transparent" onClick={() => send()}>
+                  <Button
+                    disabled={!(form.message || form.attachment) || !selectedConversationId}
+                    type="transparent"
+                    onClick={() => send()}>
                     <Icon name="send" />
                   </Button>
                 </Absolute>
@@ -465,9 +388,10 @@ const MessageContainer = ({
               </Absolute>
               <Spacer></Spacer>
             </WhiteCard>
-            {isProfile && (
+            {isProfile && selectedConversationId && (
               <ProfileContainer
                 data={receiver}
+                userRole={userRole}
                 sender={data}
                 isArchived={data?.isArchived}
                 isMute={data?.isMute}

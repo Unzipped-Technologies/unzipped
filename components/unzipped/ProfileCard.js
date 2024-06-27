@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+
 import Image from '../ui/Image'
 import Icon from '../ui/Icon'
 import Badge from '../ui/Badge'
@@ -11,30 +12,35 @@ const Container = styled.div`
   display: flex;
   flex-flow: row;
   align-self: center;
-  max-width: 1300px;
+  max-width: 100%;
+  min-width: 100%;
+  padding-left: 10%;
+  padding-right: 10%;
   margin-top: 119px;
-  margin-left: 10%;
 `
 const Content = styled.div``
 const Box = styled.div`
+  width: 100%;
   display: flex;
   flex-flow: row;
+  justify-content: space-between;
 `
 const Description = styled.div`
-  width: 445px;
+  width: 100%;
 `
 const ImageContainer = styled.div`
   padding: 0px 55px 10px 0px;
 `
-const Badges = styled.div``
+const Badges = styled.div`
+  width: 100%;
+  padding-left: 20%;
+`
 const TextBox = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  width: 300px;
 `
 const Span = styled.span`
-  width: 160px;
   font-weight: ${({ bold }) => (bold ? 500 : 'normal')};
 `
 const LikeBox = styled.span`
@@ -54,18 +60,22 @@ const ProfileCard = ({ user }) => {
   const month = ValidationUtils.getMonthInText(user?.updatedAt)
   const dateCode = `${month} ${new Date(user?.updatedAt).getDate()}, ${new Date(user?.updatedAt).getFullYear()}`
   return (
-    <Container>
+    <Container data-testid="desktop_profile_container">
       <ImageContainer>
-        <Image src={user?.userId?.profileImage} alt="profile pic" width="218px" radius="15px" />
+        <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" id="freelancer_profile_image" />
       </ImageContainer>
       <Content>
-        <TitleText title>{ConverterUtils.capitalize(`${user?.userId?.FirstName} ${user?.userId?.LastName}`)}</TitleText>
-        <div style={{ width: '600px' }}>
+        <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
+        <div>
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKIILS
           </DarkText>
           {user?.freelancerSkills?.length > 0
-            ? user?.freelancerSkills.map((item, index) => <Badge key={item._id}>{item?.skill}</Badge>)
+            ? user?.freelancerSkills.map(item => (
+                <Badge key={item._id}>
+                  <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
+                </Badge>
+              ))
             : 'N/A'}
         </div>
 
@@ -80,52 +90,66 @@ const ProfileCard = ({ user }) => {
             <TextBox>
               <Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span>
             </TextBox>
-            {user?.rate && (
-              <TextBox>
-                <Span bold>SALARY</Span> <Span>${user?.rate.toFixed(2)} / HOUR</Span>
-              </TextBox>
-            )}
+            <TextBox>
+              <Span bold>SALARY</Span>
+              {'     '}
+              <Span>{user.rate > 0 ? `  $${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
+            </TextBox>
+
             <TextBox>
               <Span bold>EQUITY</Span> <Span>{user?.isAcceptEquity ? 'YES' : 'NO'}</Span>
             </TextBox>
           </Description>
           <Badges>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorUser" />
-              <DarkText clickable noMargin paddingLeft hover padding="3px 0px 0px 5px">
-                Identity Verified
-              </DarkText>
-            </WhiteCard>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorEmail" />
-              <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
-                Email Verified
-              </DarkText>
-            </WhiteCard>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorSheild" />
-              <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
-                Preferred Verified
-              </DarkText>
-            </WhiteCard>
-            <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
-              <Icon name="colorPhone" />
-              <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
-                Phone Verified
-              </DarkText>
-            </WhiteCard>
+            {user?.isIdentityVerified == 'SUCCESS' && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorUser" />
+                <DarkText clickable noMargin paddingLeft hover padding="3px 0px 0px 5px">
+                  Identity Verified
+                </DarkText>
+              </WhiteCard>
+            )}
+            {user?.isEmailVerified && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorEmail" />
+                <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
+                  Email Verified
+                </DarkText>
+              </WhiteCard>
+            )}
+            {user?.isPreferedFreelancer && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorSheild" />
+                <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
+                  Preferred Verified
+                </DarkText>
+              </WhiteCard>
+            )}
+            {user?.isPhoneVerified && (
+              <WhiteCard borderColor="transparent" height="30px" row noMargin clickable>
+                <Icon name="colorPhone" />
+                <DarkText clickable noMargin paddingLeft hover padding="0px 0px 0px 5px">
+                  Phone Verified
+                </DarkText>
+              </WhiteCard>
+            )}
           </Badges>
         </Box>
       </Content>
       <LikeBox>
-        <Button padding="10px 22px" noBorder>
+        <Button block width="36px" type="button" buttonHeight="36px" fontSize="15px" noBorder>
           CHECK AVAILABILITY
         </Button>
         <Likes>
-          <Icon name="thumbsUp" />
-          <Icon name="thumbsDown" />
+          <div className="inline-flex flex-direction-column">
+            <Icon name="thumbsUp" />
+            <div>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+          </div>
+          <div className="inline-flex flex-direction-column">
+            <Icon name="thumbsDown" />
+            <div>{user?.dislikeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+          </div>
         </Likes>
-        <DarkText>{user?.likeTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Likes</DarkText>
       </LikeBox>
     </Container>
   )

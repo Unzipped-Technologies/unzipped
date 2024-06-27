@@ -113,7 +113,11 @@ const HiringTable = ({ getContracts, contracts }) => {
                             },
                             {
                               text: 'View Invoices',
-                              onClick: () => {}
+                              onClick: () => {
+                                router.push(
+                                  `/dashboard/projects/client/invoice/${row.businessId}?tab=invoices&freelancer=${row?.freelancerId?._id}`
+                                )
+                              }
                             },
                             {
                               text: 'Assign Department',

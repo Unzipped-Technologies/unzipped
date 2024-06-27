@@ -13,7 +13,7 @@ const ProgressBarContainer = styled.div`
     font-family: arial;
     font-weight: 600;
     font-size: ${props => (props.$tileView ? '1.5rem' : '1.625rem')};
-    padding: ${props => (props.mobile? '15px 0px 32px' : props.$showValue ? '20px 0px' : ' 5px 20px')};
+    padding: ${props => (props.mobile ? '15px 0px 32px' : props.$showValue ? '20px 0px' : ' 5px 20px')};
     color: ${props => (props.$tileView ? props.theme.secondary : '#fff')};
     height: auto;
     ${props =>
@@ -67,7 +67,7 @@ const Value = styled.span`
  * Progress Bar Component.
  */
 const ProgressBar = ({ tileView, showValue, status, value, width, bar, mobile, doubleScreenBottom }) => {
-    const barWidth = (width / ( mobile ? 7 : 10 )) * value;
+    const barWidth = (width / (mobile ? 7 : 11)) * value;
     const displayedStatus = statusFormat(status);
     const showHeader = showValue || status;
 

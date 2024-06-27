@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import theme from '../../ui/theme'
 
 const BlackCard = styled.div`
@@ -11,7 +11,7 @@ const BlackCard = styled.div`
   align-items: center;
   padding: 0px 40px;
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: ${({ smallMargin }) => (smallMargin ? '10px' : '24px')};
   @media (max-width: 681px) {
     justify-content: space-between;
     padding: 15px 20px;
@@ -41,17 +41,20 @@ const TitleText = styled.div`
   letter-spacing: 0.15008px;
   margin-bottom: ${({ mobile, noMargin, half, large }) =>
     mobile ? '8px' : noMargin ? '0px' : half ? '7px' : large ? '45px' : '15px'};
-  margin-left: ${({ paddingLeft }) => (paddingLeft ? '20px' : '0px')};
+  margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '0px')};
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? '20px' : '0px')};
   text-align: ${({ center }) => (center ? 'center' : 'unset')};
   width: ${({ width }) => (width ? width : '96%')};
   align-items: center;
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
-  white-space: ${({ textOverflow }) => (textOverflow ? 'nowrap' : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? 'normal' : 'unset')};
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
   color: ${({ color }) => (color ? color : theme.text2)};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '')};
-  padding-right: ${paddingRight => (paddingRight ? paddingRight : '')} @media screen and (max-width: 600px) {
-    width: 100%;
+  padding-right: ${paddingRight => (paddingRight ? paddingRight : '')};
+  padding-top: ${paddingTop => (paddingTop ? paddingTop : '')};
+  @media screen and (max-width: 600px) {
+    width: ${({ width }) => (width ? width : '100%')};
     display: flex;
   }
 `
@@ -69,12 +72,13 @@ const DarkText = styled.div`
   font-family: 'Roboto';
   font-style: normal;
   position: relative;
+  word-break: break-word;
   font-weight: ${({ bold, lighter }) => (bold ? '600' : lighter ? '300' : '400')};
   font-size: ${({ small, fontSize }) => (small ? '14px' : fontSize ? fontSize : '16px')};
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
   line-height: ${({ lineHeight, fontSize }) => (lineHeight ? lineHeight : fontSize ? fontSize : '24px')};
   letter-spacing: 0.15008px;
-  margin-top: ${({ topMargin }) => (topMargin ? topMargin : 'unset')};
+  margin-top: ${({ topMargin }) => (topMargin ? topMargin : '0px')};
   margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) =>
     bottomMargin ? '22px' : noMargin ? '0px' : marginLarge ? '35px' : half ? '7px' : '15px'};
   margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '0px')};
@@ -83,11 +87,11 @@ const DarkText = styled.div`
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
   white-space: ${({ textOverflow }) => (textOverflow ? 'nowrap' : 'pre-line')};
   overflow: ${({ textOverflow }) => (textOverflow ? 'hidden' : 'unset')};
-  padding: ${({ padding }) => (padding ? padding : '')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? (smallPadding ? smallPadding : '20px') : '0px')};
   width: ${({ width }) => (width ? width : '96%')};
-  padding-left: ${({ paddingLeft, smallPadding }) => (paddingLeft ? smallPadding ? smallPadding : '20px' : '0px')};
   text-align-last: ${({ textAlignLast }) => (textAlignLast ? textAlignLast : '')};
-  text-align: ${({ center, right }) => (center ? 'center' : right ? 'right' : 'unset')};
+  text-align: ${({ center, right, justify }) => (center ? 'center' : right ? 'right' : justify ? 'justify' : 'unset')};
   color: ${({ error, color }) => (!error ? (color ? color : theme.text2) : theme.error)};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '')};
   &:hover {
@@ -95,21 +99,21 @@ const DarkText = styled.div`
   }
   @media (max-width: 750px) {
     font-size: ${({ small, fontSize }) =>
-    small
-      ? '14px'
-      : fontSize
+      small
+        ? '14px'
+        : fontSize
         ? `${fontSize.replace('px', '') * 0.75 > 16 ? fontSize.replace('px', '') * 0.75 : 16}px`
         : '16px'};
     line-height: ${({ lineHeight, fontSize }) =>
-    lineHeight
-      ? `${lineHeight.replace('px', '') * 0.75 > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px`
-      : fontSize
+      lineHeight
+        ? `${lineHeight.replace('px', '') * 0.75 > 16 ? lineHeight.replace('px', '') * 0.75 : 16}px`
+        : fontSize
         ? `${fontSize.replace('px', '') * 0.75 > 16 ? fontSize.replace('px', '') * 0.75 : 18}px`
         : '18px'};
   }
 
-  @media screen and (max-width: 600px){
-    padding-left: 0px;
+  @media screen and (max-width: 600px) {
+    padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
     margin-left: 10px;
     font-size: 16px;
     line-height: '18px';
@@ -120,7 +124,6 @@ const DarkText = styled.div`
     font-size: ${({ small }) => (small ? '12px' : '14px')};
     line-height: '16px';
   }
-
 `
 
 const Absolute = styled.div`
@@ -166,17 +169,17 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-    size === 'large'
-      ? '151px'
-      : size === 'extraLarge'
+      size === 'large'
+        ? '151px'
+        : size === 'extraLarge'
         ? '370px'
         : unset
-          ? 'unset'
-          : cardHeightDesktop
-            ? '262px'
-            : height
-              ? height
-              : '63px'};
+        ? 'unset'
+        : cardHeightDesktop
+        ? '262px'
+        : height
+        ? height
+        : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: ${({ padding }) => (padding ? padding : '20px 20px')};
@@ -196,30 +199,31 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-    size === 'large'
-      ? '151px'
-      : size === 'extraLarge'
+      size === 'large'
+        ? '151px'
+        : size === 'extraLarge'
         ? '370px'
         : unset
-          ? 'unset'
-          : cardHeightDesktop
-            ? '262px'
-            : height
-              ? height
-              : '63px'};
+        ? 'unset'
+        : cardHeightDesktop
+        ? '262px'
+        : height
+        ? height
+        : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: 0px;
     position: relative;
     box-shadow: ${({ shadow }) => (shadow ? shadow : 'none')};
     margin-bottom: ${({ noMargin, half, marginBottom }) =>
-    noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
+      noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
   }
   @media screen and (max-width: 600px) {
     display: flex;
     width: 100%;
     justify-content: space-between;
+    padding: ${({ padding }) => (padding ? padding : '0px')};
   }
 `
 
@@ -244,14 +248,14 @@ const Dismiss = styled.div`
   font-weight: 500;
   font-size: 12px;
   line-height: 24px;
-  text-align: center;
+  text-align: right;
   letter-spacing: 0.39998px;
   text-decoration-line: underline;
   text-transform: uppercase;
   cursor: pointer;
   color: #282932;
-
-  margin: 0px 20px;
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px 20px')};
 `
 
 const Grid = styled.div`
@@ -326,7 +330,6 @@ export const SimpleText = styled.span`
 export const Span = styled.span`
   display: flex;
   flex-flow: row;
-  position: relative;
   font-family: 'Roboto';
   font-style: normal;
   font-weight: ${({ bold }) => (bold ? 600 : 400)};
@@ -359,63 +362,152 @@ export const MinWidth = styled.span`
 `
 
 export const ScheduleInterviewContainer = styled.div`
-  width: 100%;
-  border: 1px solid #D8D8D8;
   display: flex;
-  padding: 10px;
-  gap: 10px;
   justify-content: space-between;
-`;
+  align-items: center;
+  width: ${({ width }) => (width ? width : '100%')};
+  border: 1px solid #d8d8d8;
+  margin-bottom: 10px;
+`
 
 export const ScheduleInterviewButtonContainer = styled.div`
-  width: 16%;
+  width: ${({ isMobile }) => (isMobile ? '25%' : '10%')};
   display: flex;
   justify-content: flex-end;
   padding: 10px;
-`;
+`
+
+const CalanderParagraphStyled = styled.p`
+  padding: 15px 10px 0px 10px;
+  width: ${({ isMobile }) => (isMobile ? '75%' : '90%')};
+`
+
 const TableHeading = styled.th`
-  color: ${({ $color }) => ($color ? $color : '#000')};
-  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
-  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : 'Roboto')};
-  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
-  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
-  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '500')};
-  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
-  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
-  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  color: ${({ color }) => (color ? color : '#000')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : 'Roboto')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '500')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
 `
 
 const TableData = styled.td`
-  color: ${({ $color }) => ($color ? $color : '#000')};
-  text-align: ${({ $textAlign }) => ($textAlign ? $textAlign : 'center')};
-  font-family: ${({ $fontFamily }) => ($fontFamily ? $fontFamily : '')};
-  font-size: ${({ $fontSize }) => ($fontSize ? $fontSize : '16px')};
-  font-style: ${({ $fontStyle }) => ($fontStyle ? $fontStyle : 'normal')};
-  font-weight: ${({ $fontWeight }) => ($fontWeight ? $fontWeight : '400')};
-  line-height: ${({ $lineHeight }) => ($lineHeight ? $lineHeight : '24.5px')};
-  letter-spacing: ${({ $letterSpacing }) => ($letterSpacing ? $letterSpacing : '0.4px')};
-  text-transform: ${({ $textTransform }) => ($textTransform ? $textTransform : 'uppercase')};
+  color: ${({ color }) => (color ? color : '#000')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'center')};
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : '')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
   ${({ $default }) => ($default ? 'cursor: pointer;' : '')}
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
   }
-`;
+`
 
 const HelpCenterContainer = styled.div`
-  padding-left: 35px; 
-  display: flex; 
+  padding-left: 35px;
+  display: flex;
   width: 100%;
   @media screen and (max-width: 600px) {
-    padding-left: 0px ;
+    padding-left: 0px;
   }
-`;
+`
 
-const CalanderParagraphStyled = styled.p`
-  margin-left: 30px;
-  width: 87%;
+const DIV = styled.div`
+  // Display
+  display: ${({ display }) => (display ? display : 'block')};
+  align-items: ${({ alignItems }) => (alignItems ? alignItems : 'stretch')};
+  justify-content: ${({ justifyContent }) => (justifyContent ? justifyContent : 'flex-start')};
+  flex-direction: ${({ flexDirection }) => (flexDirection ? flexDirection : 'row')};
+  flex-flow: ${({ flexFlow }) => (flexFlow ? flexFlow : 'row nowrap')};
+  flex: ${({ flex }) => (flex ? flex : '0 1 auto')};
+  box-sizing: ${({ boxSizing }) => (boxSizing ? boxSizing : 'content-box')};
+  // Style
+  width: ${({ width }) => (width ? width : 'auto')};
+  min-width: ${({ minWidth }) => (minWidth ? minWidth : 'auto')};
+
+  height: ${({ height }) => (height ? height : 'auto')};
+  position: ${({ position }) => (position ? position : 'static')};
+  background: ${({ background }) => (background ? background : 'transparent')};
+  border: ${({ border }) => (border ? border : '#d8d8d8')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
+  z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
+`
+
+const TEXT = styled.p`
+  width: ${({ width }) => (width ? width : 'auto')};
+  height: ${({ height }) => (height ? height : 'auto')};
+  position: ${({ position }) => (position ? position : 'static')};
+  background: ${({ background }) => (background ? background : 'transparent')};
+  border: ${({ border }) => (border ? border : 'none')};
+  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '0px')};
+  margin: ${({ margin }) => (margin ? margin : '0px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
+  word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
+  cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
+  letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
+  text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
+  overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
+  color: ${({ textColor }) => (textColor ? textColor : '#000000')};
+`
+const bounceAnimation = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`
+
+const TypingAnimation = styled.div`
+  width: 100%;
+  padding-left: 10px;
+  span {
+    width: 7px;
+    height: 7px;
+    background-color: #848891;
+    display: inline-block;
+    margin: 1px;
+    border-radius: 50%;
+    &:nth-child(1) {
+      animation: ${bounceAnimation} 1s infinite;
+    }
+    &:nth-child(2) {
+      animation: ${bounceAnimation} 1s infinite 0.2s;
+    }
+    &:nth-child(3) {
+      animation: ${bounceAnimation} 1s infinite 0.4s;
+    }
+  }
 `
 
 module.exports = {
+  DIV,
+  TEXT,
   HeadingText,
   BlackCard,
   MinWidth,
@@ -435,6 +527,7 @@ module.exports = {
   Span,
   Box,
   PaddingLeft,
+  TypingAnimation,
   Title,
   ScheduleInterviewContainer,
   ScheduleInterviewButtonContainer,

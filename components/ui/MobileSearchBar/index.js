@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+
 import IconComponent from '../icons/IconComponent'
 
-function MobileSearchBar({ handleFilterOpenClose, setFilter, filter, handleSearch }) {
+function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey }) {
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    setSearch(searchKey)
+  }, [searchKey])
+
   const handleEnter = e => {
-    if (e.keyCode === 13) {
-      handleSearch()
+    if (e?.key === 'Enter') {
+      setFilters('searchKey', e?.target?.value)
+    } else {
     }
   }
   return (
     <div
+      data-testid="search_bar"
       style={{
         borderTop: '3px solid #F6F7F9',
         borderBottom: '3px solid #F6F7F9',
@@ -21,16 +30,17 @@ function MobileSearchBar({ handleFilterOpenClose, setFilter, filter, handleSearc
       <div className="d-flex align-items-center justify-content-between mx-3 bg-white">
         <div className="d-flex align-items-center w-100">
           <span
+            data-testid="search_icon"
             onClick={() => {
-              handleSearch()
+              setFilters('searchKey', search)
             }}>
             <IconComponent name="mobileSearchicon" width="20" height="18" viewBox="0 0 20 18" fill="#333333" />
           </span>
           <input
             type="text"
-            value={filter}
+            value={search}
             onKeyDown={handleEnter}
-            onChange={e => setFilter(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
             placeholder="SEARCH"
             style={{ borderBottom: '0', margin: '0 0 0 16px' }}
           />
@@ -38,6 +48,7 @@ function MobileSearchBar({ handleFilterOpenClose, setFilter, filter, handleSearc
         <div className="d-flex align-items-center">
           <span style={{ color: '#0057FF', fontSize: '12px', marginRight: '17px' }}>SAVE</span>
           <span
+            data-testid="toggle_filter"
             onClick={() => {
               handleFilterOpenClose(true)
             }}>

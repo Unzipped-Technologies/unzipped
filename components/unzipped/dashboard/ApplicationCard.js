@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import { MdVerifiedUser } from 'react-icons/md'
 import styled, { css } from 'styled-components'
+import Button from '../../ui/Button'
 
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
@@ -24,7 +25,7 @@ const ProjectApplications = styled.div`
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  height: 270px;
+  height: auto;
   width: 984px;
   margin-left: 150px;
   border-radius: 5px;
@@ -62,7 +63,7 @@ const InviteButton = styled.button`
 const Grid2 = styled.div`
   display: flex;
   align-items: center;
-`;
+`
 
 const UserInfo = styled.div`
   display: flex;
@@ -142,8 +143,8 @@ const DefaultDisplay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 100px;
-`;
+  padding-top: 30px;
+`
 
 const ApplicationCard = ({ projectApplications, getProjectApplications, getFreelancerById, token }) => {
   const router = useRouter()
@@ -167,141 +168,168 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
   return (
     <>
       <DesktopContainer>
-        {projectApplications?.length ? (
-          projectApplications.map(application => {
-            return (
-              <ProjectApplications key={application._id}>
-                <ProfileImage>
-                  {application?.freelancerId?.userId?.profileImage ? (
-                    <Image
-                      src={application?.freelancerId?.userId?.profileImage}
-                      alt={
-                        application?.freelancerId?.userId?.FirstName + application?.freelancerId?.userId?.LastName ||
-                        application._id
-                      }
-                      height="102px"
-                      width="102px"
-                      radius="50%"
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexFlow: 'column',
-                        alignItems: 'center',
-                        margin: '20px 20px',
-                        height: '102px',
-                        width: '102px',
-                        borderRadius: '50%',
-                        color: 'white',
-                        backgroundColor: '#0e1724',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                      {application?.freelancerId?.userId?.FirstName[0] ||
-                        application?.freelancerId?.userId?.LastName[0]}
-                    </div>
-                  )}
+        {projectApplications?.length
+          ? projectApplications.map(application => {
+              return (
+                <ProjectApplications key={application._id}>
+                  <ProfileImage>
+                    {application?.freelancerId?.userId?.profileImage ? (
+                      <Image
+                        src={application?.freelancerId?.userId?.profileImage}
+                        alt={
+                          application?.freelancerId?.userId?.FirstName + application?.freelancerId?.userId?.LastName ||
+                          application._id
+                        }
+                        height="102px"
+                        width="102px"
+                        radius="50%"
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexFlow: 'column',
+                          alignItems: 'center',
+                          margin: '20px 20px',
+                          height: '102px',
+                          width: '102px',
+                          borderRadius: '50%',
+                          color: 'white',
+                          backgroundColor: '#0e1724',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                        {application?.freelancerId?.userId?.FirstName[0] ||
+                          application?.freelancerId?.userId?.LastName[0]}
+                      </div>
+                    )}
 
-                  <InviteButton>Invited</InviteButton>
-                </ProfileImage>
-                <UserInfo>
-                  <div style={{ display: 'flex' }}>
-                    <UserName>
-                      {ConverterUtils.capitalize(
-                        `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
+                    <InviteButton>Invited</InviteButton>
+                  </ProfileImage>
+                  <UserInfo>
+                    <div style={{ display: 'flex' }}>
+                      <UserName>
+                        {ConverterUtils.capitalize(
+                          `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
+                        )}
+                      </UserName>
+                      <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
+                        <MdVerifiedUser />
+                      </div>
+                    </div>
+
+                    <UserCategory>{application?.freelancerId?.category}</UserCategory>
+                    <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                    <UserRate>
+                      {application?.rate > 0 ? (
+                        <div>
+                          {`${application?.rate}`}{' '}
+                          <span
+                            style={{
+                              fontWeight: '100',
+                              color: '#000',
+                              fontSize: '15px',
+                              fontWeight: '300',
+                              letterSpacing: '0.4px',
+                              marginTop: '-100px'
+                            }}>
+                            / hour
+                          </span>
+                        </div>
+                      ) : (
+                        <span
+                          style={{
+                            color: '#000',
+                            fontSize: '15px'
+                          }}>
+                          Negotiable
+                        </span>
                       )}
-                    </UserName>
-                    <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
-                      <MdVerifiedUser />
+                    </UserRate>
+                    <Skills>
+                      {application?.freelancerId?.freelancerSkills?.length
+                        ? application?.freelancerId?.freelancerSkills.map(skill => {
+                            return <Badge key={skill._id}>{skill?.skill}</Badge>
+                          })
+                        : 'N/A'}
+                    </Skills>
+                    <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                      <p>
+                        <b style={{ fontSize: '11px' }}>cover letter:</b>
+                        <CoverLetter>
+                          {ConverterUtils.truncateString(application?.coverLetter, 150)}
+                          {application?.coverLetter?.length > 150 && (
+                            <a style={{ textDecoration: 'underline' }}>Read More</a>
+                          )}
+                        </CoverLetter>
+                      </p>
                     </div>
-                  </div>
-
-                  <UserCategory>{application?.freelancerId?.category}</UserCategory>
-                  <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
-                  <UserRate>
-                    ${application?.rate || 0}{' '}
+                  </UserInfo>
+                  <ViewProfile>
+                    <Grid2>
+                      <ViewProfileButton
+                        onClick={() => {
+                          redirectToProfile(application?.freelancerId?._id)
+                        }}>
+                        View Profile
+                      </ViewProfileButton>
+                      <VerticalDropdown
+                        dropdownOptions={[
+                          {
+                            name: 'Hire User',
+                            action: () => {
+                              getFreelancerById(application?.freelancerId?._id, token)
+                              router.push(`/hire`)
+                            }
+                          },
+                          {
+                            name: 'View Application',
+                            action: () => {}
+                          },
+                          {
+                            name: 'Dismiss Application',
+                            action: () => {}
+                          }
+                        ]}
+                      />
+                    </Grid2>
                     <span
                       style={{
-                        fontWeight: '100',
                         color: ' #000',
+                        fontFamily: 'Roboto',
                         fontSize: '15px',
-                        fontWeight: '300',
+                        fontStyle: 'normal',
+                        fontWeight: '400',
+                        lineHeight: '24.5px' /* 163.333% */,
                         letterSpacing: '0.4px',
-                        marginTop: '-100px'
+                        marginTop: '50px'
                       }}>
-                      / hour
+                      {application?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
                     </span>
-                  </UserRate>
-                  <Skills>
-                    {application?.freelancerId?.freelancerSkills?.length
-                      ? application?.freelancerId?.freelancerSkills.map(skill => {
-                          return <Badge key={skill._id}>{skill?.skill}</Badge>
-                        })
-                      : 'N/A'}
-                  </Skills>
-                  <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-                    <p>
-                      <b style={{ fontSize: '11px' }}>cover letter:</b>
-                      <CoverLetter>
-                        {ConverterUtils.truncateString(application?.coverLetter, 150)}
-                        {application?.coverLetter?.length > 150 && (
-                          <a style={{ textDecoration: 'underline' }}>Read More</a>
-                        )}
-                      </CoverLetter>
-                    </p>
-                  </div>
-                </UserInfo>
-                <ViewProfile>
-                  <Grid2>
-                    <ViewProfileButton
-                      onClick={() => {
-                        redirectToProfile(application?.freelancerId?._id)
-                      }}>
-                      View Profile
-                    </ViewProfileButton>
-                    <VerticalDropdown 
-                      dropdownOptions={[
-                        {
-                          name: 'Hire User',
-                          action: () => {
-                            getFreelancerById(application?.freelancerId?._id, token)
-                            router.push(`/hire`)
-                          }
-                        },
-                        {
-                          name: 'View Application',
-                          action: () => {},
-                        },
-                        {
-                          name: 'Dismiss Application',
-                          action: () => {},
-                        },
-                      ]}
-                    />
-                  </Grid2>
-                  <span
-                    style={{
-                      color: ' #000',
-                      fontFamily: 'Roboto',
-                      fontSize: '15px',
-                      fontStyle: 'normal',
-                      fontWeight: '400',
-                      lineHeight: '24.5px' /* 163.333% */,
-                      letterSpacing: '0.4px',
-                      marginTop: '50px'
-                    }}>
-                    {application?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
-                  </span>
-                </ViewProfile>
-              </ProjectApplications>
-            )
-          })
-        ) : (
-          <DefaultDisplay>
-            <p>When someone applies to this project, it will display here!</p>
-          </DefaultDisplay>
-        )}
+                  </ViewProfile>
+                </ProjectApplications>
+              )
+            })
+          : ''}
+        <DefaultDisplay>
+          <Button
+            extraWid
+            type="outlineInverse"
+            buttonHeight="25px"
+            fontSize="15px"
+            contentMargin="0px !important"
+            colors={{
+              text: '#1976D2',
+              background: 'white',
+              border: '1px',
+              wideBorder: '#1976D2'
+            }}
+            onClick={() => {
+              router.push(`/freelancers?project=${id}`)
+            }}>
+            Invite Freelancer
+          </Button>
+        </DefaultDisplay>
       </DesktopContainer>
       <MobileApplicationCard projectApplications={projectApplications}></MobileApplicationCard>
     </>
@@ -309,7 +337,6 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
 }
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
     token: state.Auth.token,
     projectApplications: state.ProjectApplications.projectApplications

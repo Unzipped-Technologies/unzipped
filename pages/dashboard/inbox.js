@@ -1,228 +1,297 @@
-import React, { useEffect, useState } from 'react';
-import router from 'next/router';
-import { connect, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux'
+import React, { useEffect, useState } from 'react'
+import router from 'next/router'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
-import Nav from '../../components/unzipped/header';
-import ConversationContainer from '../../components/unzipped/ConversationContainer';
-import MessageContainer from '../../components/unzipped/MessageContainer';
-import {
-    getConversationList,
-    selectConversation,
-    getFreelancerById,
-    createTempFile,
-    updateChatStatus,
-    handleUnreadMessages,
-} from '../../redux/actions';
-import { parseCookies } from "../../services/cookieHelper";
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter';
+import { bindActionCreators } from 'redux'
+
+import Nav from '../../components/unzipped/header'
 import socket from '../../components/sockets/index'
+import { parseCookies } from '../../services/cookieHelper'
+import MessageContainer from '../../components/unzipped/MessageContainer'
+import MobileInbox from '../../components/unzipped/dashboard/mobile/MobileInbox'
+import ConversationContainer from '../../components/unzipped/ConversationContainer'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
+import {
+  getConversationList,
+  selectConversation,
+  getFreelancerById,
+  createTempFile,
+  updateChatStatus,
+  handleUnreadMessages,
+  setCountToZero,
+  setUserIdForChat,
+  checkUserConversation
+} from '../../redux/actions'
 
 const MobileDisplayBox = styled.div`
-    position: relative;
-    @media(min-width: 680px) {
-        display: none;
-    }
-`;
+  position: relative;
+  @media (min-width: 680px) {
+    display: none;
+  }
+`
 
 const Page = styled.div`
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-    top: 0px;
-    flex-flow: column nowrap;
-`;
+  display: flex;
+  height: 10vh;
+  top: 0px;
+  flex-flow: column nowrap;
+`
 
 const Container = styled.div`
-    display: flex;
-    flex-flow: row;
-    height: calc(100% - 185px);
-    max-height: 100%;
-    @media(max-width: 600px) {
-        height: calc(100% - 140px);
-    }
-`;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  height: calc(100% - 127px);
+  max-height: 100%;
+  @media (max-width: 600px) {
+    height: calc(100% - 140px);
+  }
+`
 
 const MobileContainer = styled.div`
-    @media(max-width: 600px) {
-        display: none;
-    }
-`;
+  @media (max-width: 600px) {
+    display: none;
+  }
+`
 
 const Inbox = ({
-    token,
-    cookie,
-    user,
-    conversations,
-    selectedConversationId,
-    selectedConversation,
-    messagesCount,
-    getConversationList,
-    selectConversation,
-    createTempFile,
-    updateChatStatus,
-    handleUnreadMessages,
+  token,
+  cookie,
+  user,
+  conversations,
+  selectedConversationId,
+  selectedConversation,
+  messagesCount,
+  getConversationList,
+  selectConversation,
+  createTempFile,
+  updateChatStatus,
+  handleUnreadMessages,
+  setCountToZero,
+  setUserIdForChat,
+  selectedUserId,
+  checkUserConversation
 }) => {
-    const [onlineUsers, setOnlineUsers] = useState([])
-    const access = token.access_token || cookie
-    const [form, setForm] = useState({
-        filter: {},
-        skip: 0,
-        take: 25
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const access = token.access_token || cookie
+  const [form, setForm] = useState({
+    filter: {},
+    skip: 0,
+    take: 25
+  })
+  const [messageLimit, setMessageLimit] = useState(0)
+  const [conversationId, setConversationId] = useState(selectedConversationId)
+  const [windowSize, setWindowsize] = useState('126px')
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (!access) {
+      router.push('/login')
+    }
+    getConversationList(form, access)
+    socket.emit('userConnected', user._id)
+    socket.on('updateOnlineUsers', onlineUsers => {
+      setOnlineUsers(Object.keys(onlineUsers))
     })
-    const [messageLimit, setMessageLimit] = useState(0)
-    const [conversationId, setConversationId] = useState(selectedConversationId);
-    const store = useSelector(state => state.Messages.conversations);
-
-    useEffect(() => {
-        if (!access) {
-            router.push('/login')
-        }
-        getConversationList(form, access)
-        socket.emit('userConnected', user._id);
-        socket.on('updateOnlineUsers', (onlineUsers) => {
-            setOnlineUsers(Object.keys(onlineUsers))
-        });
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
-                socket.emit('userConnected', user._id);
-            } else {
-                socket.emit('updateOnlineUsers');
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [])
-
-    const createNewFile = (data) => {
-        createTempFile(data, access)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        socket.emit('userConnected', user._id)
+      } else {
+        socket.emit('updateOnlineUsers')
+      }
     }
-
-    const openConversation = (id) => {
-        setConversationId(id)
-        setMessageLimit(10)
-        selectConversation(id, access, 10)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
+  }, [])
 
-    const handleMute = (status) => {
-        updateChatStatus("isMute", status, selectedConversation._id, access)
+  useEffect(async () => {
+    if (selectedUserId !== null) {
+      await checkUserConversation({
+        freelancerId: selectedUserId,
+        clientId: user?._id
+      })
+      await getConversationList(form, access)
+      await setUserIdForChat(null)
     }
-    const handleArchive = async (status) => {
-        updateChatStatus("isArchived", status, selectedConversation._id, access)
+  }, [selectedUserId])
+
+  useEffect(() => {
+    socket.on('refreshConversationList', () => {
+      getConversationList(form, access)
+    })
+
+    return () => {
+      socket.off('refreshConversationList')
     }
+  }, [])
 
-    const handleUnreadCount = (selectedConversation) => {
-        handleUnreadMessages(selectedConversation)
+  useEffect(() => {
+    socket.on('chat unread', response => {
+      setCountToZero(response)
+    })
+
+    return () => {
+      socket.off('chat unread')
     }
+  }, [])
 
-    const handleMessagesOnScroll = () => {
-        setMessageLimit(prevLimit => prevLimit + 10);
-        selectConversation(conversationId, access, +messageLimit + 10)
+  useEffect(() => {
+    let conversationId = null
+    if (selectedUserId) {
+      conversationId = conversations.find(obj =>
+        obj.participants.some(participant => participant.userId?._id === selectedUserId)
+      )?._id
+      openConversation(conversationId)
+    } else if (conversations.length && !selectedConversation) {
+      conversationId = conversations[0]?._id
+
+      openConversation(conversationId)
+    } else {
+      openConversation(selectedConversation?._id)
     }
+  }, [conversations])
 
-    useEffect(() => {
-        socket.on('refreshConversationList', () => {
-            console.log('Received refreshConversationList event', selectConversation);
-            getConversationList(form, access)
-        });
+  const createNewFile = data => {
+    createTempFile(data, access)
+  }
 
-        return () => {
-            socket.off('refreshConversationList');
-        };
-    }, []);
+  const openConversation = async id => {
+    if (id) {
+      setConversationId(id)
+      setMessageLimit(10)
+      await selectConversation(id, 10)
+    }
+  }
 
-    useEffect(() => {
-        if (conversations && conversations.length > 0) {
-            const item = conversations[conversations.length - 1];
-            openConversation(item._id)
-        }
-    }, [conversations])
+  const handleMute = status => {
+    updateChatStatus('isMute', status, selectedConversation._id, access)
+  }
+  const handleArchive = async status => {
+    updateChatStatus('isArchived', status, selectedConversation._id, access)
+  }
 
-    
-    const [windowSize, setWindowsize] = useState('126px');
-    const [isMobile, setIsMobile] = useState(false);
+  const handleUnreadCount = selectedConversation => {
+    handleUnreadMessages(selectedConversation)
+  }
 
-    const handleResize = () => {
-        let windowSize = (window.innerWidth <= 600) ? '85px' : '126px'
-        setWindowsize(windowSize);
-        if (window.innerWidth <= 600) {
-            setIsMobile(true)
-        } else {
-            setIsMobile(false)
-        }
-    };
+  const handleMessagesOnScroll = () => {
+    setMessageLimit(prevLimit => prevLimit + 10)
+    selectConversation(conversationId, +messageLimit + 10)
+  }
 
-    useEffect(() => {
-        handleResize();
+  const handleResize = () => {
+    let windowSize = window.innerWidth <= 600 ? '85px' : '125px'
+    setWindowsize(windowSize)
+    if (window.innerWidth <= 600) {
+      setIsMobile(true)
+    } else {
+      setIsMobile(false)
+    }
+  }
 
-        window.addEventListener('resize', handleResize);
+  useEffect(() => {
+    handleResize()
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
+    window.addEventListener('resize', handleResize)
 
-    console.log(selectedConversation, "select")
-    return (
-        <Page>
-            <Nav isSubMenu marginBottom={windowSize}/>
-            <Container>
-                <ConversationContainer isMobile={isMobile} conversations={conversations} userEmail={user.email} userId={user._id} openConversation={openConversation} />
-                <MobileContainer>
-                    <MessageContainer
-                        data={selectedConversation}
-                        userEmail={user.email}
-                        userId={user._id}
-                        createTempFile={createNewFile}
-                        handleChatArchive={handleArchive}
-                        handleChatMute={handleMute}
-                        access={access}
-                        socket={socket}
-                        onlineUsers={onlineUsers}
-                        handleUnreadCount={handleUnreadCount}
-                        messagesCount={messagesCount}
-                        messageLimit={messageLimit}
-                        handleMessagesOnScroll={handleMessagesOnScroll}
-                        isMobile={isMobile}
-                    />
-                </MobileContainer>
-            </Container>
-            <MobileDisplayBox>
-                <MobileFreelancerFooter defaultSelected="Messages" />
-            </MobileDisplayBox>
-        </Page>
-    )
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  const setUnreadToZero = (conversationId, receiverId) => {
+    socket.emit('chat unread', {
+      conversationId: conversationId,
+      receiverId: receiverId
+    })
+  }
+  return (
+    <Page>
+      {window.innerWidth >= 680 ? (
+        <>
+          <Nav isSubMenu marginBottom={windowSize} />
+
+          <Container>
+            <ConversationContainer
+              selectedConversation={selectedConversation}
+              conversations={conversations}
+              userEmail={user.email}
+              userId={user._id}
+              openConversation={openConversation}
+              socket={socket}
+            />
+            <MobileContainer>
+              <MessageContainer
+                selectedConversationId={conversationId}
+                data={selectedConversation}
+                setUnreadToZero={setUnreadToZero}
+                userEmail={user.email}
+                userName={`${user.FirstName} ${user.LastName}` ?? user?.FullName}
+                userId={user._id}
+                userRole={user?.role}
+                createTempFile={createNewFile}
+                handleChatArchive={handleArchive}
+                handleChatMute={handleMute}
+                access={access}
+                socket={socket}
+                onlineUsers={onlineUsers}
+                handleUnreadCount={handleUnreadCount}
+                messagesCount={messagesCount}
+                messageLimit={messageLimit}
+                handleMessagesOnScroll={handleMessagesOnScroll}
+                isMobile={isMobile}
+              />
+            </MobileContainer>
+          </Container>
+        </>
+      ) : (
+        <MobileInbox
+          conversations={conversations}
+          userId={user._id}
+          userEmail={user.email}
+          openConversation={openConversation}
+          handleUnreadCount={handleUnreadCount}
+        />
+      )}
+      <MobileDisplayBox>
+        <MobileFreelancerFooter defaultSelected="Messages" />
+      </MobileDisplayBox>
+    </Page>
+  )
 }
 
 Inbox.getInitialProps = async ({ req, res }) => {
-    const token = parseCookies(req)
-    return {
-        token: token && token,
-    }
+  const token = parseCookies(req)
+  return {
+    token: token && token
+  }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        cookie: state.Auth.token,
-        user: state.Auth?.user,
-        conversations: state.Messages?.conversations,
-        selectedConversation: state.Messages?.selectedConversation,
-        messagesCount: state.Messages?.messagesCount,
-        selectedConversationId: state.Messages?.conversationId,
-    }
+const mapStateToProps = state => {
+  return {
+    cookie: state.Auth.token,
+    user: state.Auth?.user,
+    conversations: state.Messages?.conversations,
+    selectedConversation: state.Messages?.selectedConversation,
+    messagesCount: state.Messages?.messagesCount,
+    selectedConversationId: state.Messages?.conversationId,
+    selectedUserId: state.Messages?.selectedUserId
+  }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        getConversationList: bindActionCreators(getConversationList, dispatch),
-        selectConversation: bindActionCreators(selectConversation, dispatch),
-        getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
-        createTempFile: bindActionCreators(createTempFile, dispatch),
-        updateChatStatus: bindActionCreators(updateChatStatus, dispatch),
-        handleUnreadMessages: bindActionCreators(handleUnreadMessages, dispatch)
-    }
+const mapDispatchToProps = dispatch => {
+  return {
+    getConversationList: bindActionCreators(getConversationList, dispatch),
+    selectConversation: bindActionCreators(selectConversation, dispatch),
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
+    createTempFile: bindActionCreators(createTempFile, dispatch),
+    updateChatStatus: bindActionCreators(updateChatStatus, dispatch),
+    handleUnreadMessages: bindActionCreators(handleUnreadMessages, dispatch),
+    setCountToZero: bindActionCreators(setCountToZero, dispatch),
+    setUserIdForChat: bindActionCreators(setUserIdForChat, dispatch),
+    checkUserConversation: bindActionCreators(checkUserConversation, dispatch)
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Inbox);
+export default connect(mapStateToProps, mapDispatchToProps)(Inbox)

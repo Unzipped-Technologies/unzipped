@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import Select from '../Select'
+import SearchField from '../SearchField'
 import Radio from '../Radio'
 import Checkbox from '../Checkbox'
 import Input from '../Input'
@@ -16,21 +17,23 @@ const types = {
   checkbox: Checkbox,
   input: Input,
   phoneNumberInput: PhoneNumberInput,
-  select: Select
+  select: Select,
+  searchField: SearchField
 }
 
 const FormFieldContainer = styled.div`
+  border: none !important;
   vertical-align: top;
-  width: ${({width}) => width ? width : '100%'};
-  justify-self: ${({justifySelf}) => justifySelf ? justifySelf : 'auto'};
-  height: 100%;
-  z-index: ${({ zIndex, zIndexUnset }) => (zIndexUnset ? '0' : zIndex ? '1000' : '10')};
+  width: ${({ width }) => (width ? width : '100%')};
+  height: ${({ height }) => (height ? height : '100%')};
+  justify-self: ${({ justifySelf }) => (justifySelf ? justifySelf : 'auto')};
+  z-index: ${({ zIndex, zIndexUnset }) => (zIndex ? zIndex : zIndexUnset ? '0' : 'auto')};
   color: ${props => props.theme.textSecondary};
   font-weight: 400;
   font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
   line-height: ${props => props.theme.baseLineHeight};
   font-family: arial;
-  display: ${props => (props.$inline ? 'inline-block' : 'block')};
+  display: ${({ display }) => (display ? display : 'block')};
   max-width: ${props => props.maxWidth};
   margin: ${({ margin }) => (margin ? margin : 'unset')};
   padding-bottom: ${({ $bottom }) => $bottom};
@@ -47,7 +50,7 @@ const FormFieldContainer = styled.div`
     // label { margin-bottom: 0 !important; }
     margin-bottom: ${({ noMargin }) => (noMargin ? '0px' : '5px !important')};
     color: #333;
-    font-size: 16px;
+    font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px%')};
   }
   & > label {
     width: 100%;
@@ -94,6 +97,7 @@ const Scroll = styled(SimpleBar)`
 const FormField = ({
   mobile,
   zIndexUnset,
+  zIndex,
   className,
   fieldType,
   inputType,
@@ -101,6 +105,7 @@ const FormField = ({
   inline,
   error,
   children,
+  id,
   name,
   help,
   bottom,
@@ -109,6 +114,7 @@ const FormField = ({
   disabled,
   onBlur,
   maxWidth,
+  width,
   modalSelect,
   currency,
   onChange,
@@ -122,14 +128,18 @@ const FormField = ({
   fontSize = '',
   handleEnterKey,
   borderRadius,
+  borderColor,
+  disableBorder,
+  border,
   height,
+  placeholder,
   ...rest
 }) => {
   const Control = types[fieldType]
   const [currentError, setCurrentError] = useState(error)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isClicked, setIsClicked] = useState(!!rest.value)
-  
+
   const wrapperRef = useRef(null)
   useEffect(() => {
     function handleClickOutside(event) {
@@ -185,13 +195,13 @@ const FormField = ({
   const handleHeight = () => {
     if (height) {
       return height
-    }else{
+    } else {
       return 'auto'
     }
   }
 
   const handleEnter = e => {
-    if(handleEnterKey){
+    if (handleEnterKey) {
       handleEnterKey(e)
     }
   }
@@ -211,12 +221,17 @@ const FormField = ({
   return (
     <FormFieldContainer
       zIndexUnset={zIndexUnset}
-      zIndex={dropdownOpen}
+      zIndex={zIndex}
       className={className}
+      name="aria-live-color"
       $inline={inline}
       noMargin={noMargin}
+      display={display}
       margin={margin}
       $bottom={bottom}
+      width={width}
+      height={handleHeight()}
+      fontSize={fontSize}
       maxWidth={maxWidth}>
       {children && (
         <FormLabel forId={name} fontSize={fontSize} help={help} required={required}>
@@ -229,20 +244,27 @@ const FormField = ({
         error={currentError}
         type={fieldType === 'input' && inputType}
         name={name}
-        id={name}
+        id={id || name}
+        placeholder={placeholder}
         onKeyDown={handleEnter}
         fontSize={fontSize}
         disabled={disabled}
+        display={display}
         $modalSelect={modalSelect}
         currency={currency}
         onChange={fieldType === 'input' || fieldType === 'select' ? onInputChange : onChange}
         onFocus={handleFocus}
         borderRadius={borderRadius}
-        height={handleHeight}
+        borderColor={borderColor}
+        border={border}
+        disableBorder={disableBorder}
+        height={handleHeight()}
+        zIndex={zIndex}
+        width={width}
         {...rest}
       />
       {dropdownList.length > 0 && dropdownOpen && (
-        <Absolute smallLeft {...rest}>
+        <Absolute smallLeft {...rest} zIndex="10000">
           <WhiteCard
             height={50 * dropdownList.length < 300 ? 50 * dropdownList.length + 15 + 'px' : '300px'}
             padding="10px 10px"
@@ -289,6 +311,8 @@ FormField.propTypes = {
   requiredError: PropTypes.string,
   /** Unique name for this field */
   name: PropTypes.string,
+  /** Unique id for this field */
+  id: PropTypes.string,
   /** Help tooltip text */
   help: PropTypes.string,
   /** Validate the input. Returns true if input is valid. */
@@ -305,12 +329,22 @@ FormField.propTypes = {
   onChange: PropTypes.func,
   /** maxWidth for FormFieldContainer */
   maxWidth: PropTypes.string,
+  /** width for FormFieldContainer */
+  width: PropTypes.string,
   /** Additional classNames, supports styled-components  */
   className: PropTypes.string,
   /** Function to call on blur of Control */
   onFocus: PropTypes.func,
   /** String to override the base font size */
-  fontSize: PropTypes.string
+  fontSize: PropTypes.string,
+  /** String to override the base border */
+  disableBorder: PropTypes.bool,
+  /** String to override the base border */
+  border: PropTypes.string,
+  /** boolean to override the display*/
+  display: PropTypes.string,
+  /** string to override the zIndex*/
+  zIndex: PropTypes.string
 }
 
 FormField.defaultProps = {
@@ -326,9 +360,9 @@ FormField.defaultProps = {
   currency: false,
   bottom: '0px',
   modalSelect: false,
-  onChange: () => { },
+  onChange: () => {},
   maxWidth: 'none',
-  onFocus: () => { }
+  onFocus: () => {}
 }
 
 export default FormField

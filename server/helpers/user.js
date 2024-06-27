@@ -1,75 +1,75 @@
 const mongoose = require('mongoose')
-const user = require('../../models/User')
-const taxDataTables = require('../../models/TaxDataTable')
-const thirdPartyApplications = require('../../models/ThirdPartyApplications')
-const freelancerSkills = require('../../models/FreelancerSkills')
-const list = require('../../models/List')
-const freelancer = require('../../models/Freelancer')
-const notifications = require('../../models/Notifications')
-const emailList = require('../../models/EmailList')
-const Subscriptions = require('../../models/Subscription')
-const PaymentMethods = require('../../models/PaymentMethod')
+const user = require('../models/User')
+const taxDataTables = require('../models/TaxDataTable')
+const thirdPartyApplications = require('../models/ThirdPartyApplications')
+const freelancerSkills = require('../models/FreelancerSkills')
+const list = require('../models/List')
+const freelancer = require('../models/Freelancer')
+const notifications = require('../models/Notifications')
+const emailList = require('../models/EmailList')
+const Subscriptions = require('../models/Subscription')
+const PaymentMethods = require('../models/PaymentMethod')
 const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
-const likeHistory = require('../../models/LikeHistory')
+const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../../models/FreelancerSkills')
-const User = require('../../models/User')
-
+const FreelancerSkills = require('../models/FreelancerSkills')
+const User = require('../models/User')
+const InviteModel = require('../models/Invited')
+const BusinessModel = require('../models/Business')
+const AuthService = require('./authentication')
+const Mailer = require('../../services/Mailer')
 // create user
 const createUser = async (data, hash) => {
   // create User
+  data.FullName = (data.FirstName || '') + (data.FirstName && data.LastName ? ' ' : '') + (data.LastName || '')
   const newUser = await user.create({
     ...data,
-    // TODO: needs to be removed once email is back online
-    isEmailVerified: true,
     password: hash,
     plan: planEnum.UNSUBSCRIBED
   })
   // create favorites and recently viewed list
-  if (accountTypeEnum.FOUNDER === data.role || accountTypeEnum.ADMIN === data.role) {
-    const listsToCreate = [
-      {
-        name: 'Favorites',
-        icon: 'heart'
-      },
-      {
-        name: 'Recently Viewed',
-        icon: 'eye'
-      },
-      {
-        name: 'My Team',
-        icon: 'work'
-      }
-    ]
-    for (const item of listsToCreate) {
-      const list = {
-        name: item.name,
-        icon: item.icon,
-        userId: newUser.id,
-        user: await user.findById(newUser.id)
-      }
-      await listHelper.createLists(list)
+  const listsToCreate = [
+    {
+      name: 'Favorites',
+      icon: 'HeartOutlined'
+    },
+    {
+      name: 'Recently Viewed',
+      icon: 'EyeOutlined'
+    },
+    {
+      name: 'My Team',
+      icon: 'TeamOutlined'
     }
-    const ids = await list.find({ userId: newUser.id })
-    // update users to have skills
-    await user.findByIdAndUpdate(newUser.id, {
-      lists: ids.map(item => mongoose.Types.ObjectId(item.id))
-    })
+  ]
+  for (const item of listsToCreate) {
+    const list = {
+      name: item.name,
+      icon: item.icon,
+      userId: newUser.id,
+      isDefault: true,
+      user: await user.findById(newUser.id)
+    }
+    await listHelper.createLists(list)
   }
-
+  const ids = await list.find({ userId: newUser.id })
+  // update users to have skills
+  await user.findByIdAndUpdate(newUser.id, {
+    lists: ids.map(item => mongoose.Types.ObjectId(item.id))
+  })
   // create 3rd party application row with googleId if have it
   thirdPartyApplications.create({ _id: newUser.id, userId: newUser.id })
-  if (accountTypeEnum.INVESTOR === data.role) {
+  if (accountTypeEnum.INVESTOR === data?.role) {
     const response = await createFreelanceAccount({
       isAcceptEquity: data.isAcceptEquity,
       rate: data.rate,
       category: data.category,
       userId: newUser.id
     })
-    if (data.skills && data.skills.length > 0) {
+    if (data?.skills?.length) {
       for (const skill of data.skills) {
         await freelancerSkills.create({
           ...skill,
@@ -97,9 +97,17 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    return await user.findByIdAndUpdate(id, { $set: { ...data } })
+    const userData = await getSingleUser({ _id: id }, '-password')
+
+    for (var field in data) {
+      userData[field] = data[field]
+    }
+
+    await userData.save()
+
+    return userData
   } catch (e) {
-    throw Error(`Something went wrong ${e}`)
+    throw new Error(`${e}`)
   }
 }
 
@@ -124,7 +132,22 @@ const updateUserByEmail = async (email, data) => {
 // get User By Id
 const getUserById = async id => {
   try {
-    return await user.findById(id).select('-password')
+    const userData = await user
+      .findById(id)
+      .populate([
+        { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
+        {
+          path: 'freelancers'
+        }
+      ])
+      .select('-password')
+
+    if (userData?.role === 0) {
+      const userTotalBusiness = await BusinessModel.countDocuments({ userId: id })
+
+      userData._doc['totalBusiness'] = userTotalBusiness
+    }
+    return userData
   } catch (e) {
     throw Error(`Could not find user, error: ${e}`)
   }
@@ -304,27 +327,6 @@ const createFreelanceAccount = async data => {
     user: await user.findById(data.userId)
   })
 }
-
-// add skills to freelancer
-
-const addSkillsToFreelancer = async (data, freelancerId) => {
-  try {
-    const updateFreelancer = await freelancer.findById(freelancerId)
-    const ids = []
-    for (const item of data.skills) {
-      item['user'] = freelancerId
-      const id = await freelancerSkills.create({
-        ...item
-      })
-      ids.push(id.id)
-    }
-    updateFreelancer.freelancerSkills = [...updateFreelancer.freelancerSkills, ...ids]
-    updateFreelancer.save()
-    return updateFreelancer
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
 // add list to freelancer
 
 const addListsToFreelancer = async (data, id) => {
@@ -373,16 +375,16 @@ const addLikeToFreelancer = async (data, id) => {
       await freelancer.findByIdAndUpdate(data.profileId, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length,
+        dislikeTotal: dislikes?.length ?? 0
       })
       await user.findByIdAndUpdate(id, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length ?? 0,
+        dislikeTotal: dislikes?.length ?? 0
       })
-      return { likes: ids.length, msg: 'success' }
+      return { likes: ids?.length, msg: 'success' }
     }
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -402,16 +404,16 @@ const removeLikeToFreelancer = async (data, id) => {
       await freelancer.findByIdAndUpdate(data.profileId, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length ?? 0,
+        dislikeTotal: dislikes?.length ?? 0
       })
       await user.findByIdAndUpdate(id, {
         likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
         dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
+        likeTotal: likes?.length ?? 0,
+        dislikeTotal: dislikes?.length ?? 0
       })
-      return { likes: ids.length, msg: 'success' }
+      return { likes: ids?.length, msg: 'success' }
     }
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -437,9 +439,8 @@ const retrieveSubscriptions = async id => {
 }
 
 const retrievePaymentMethods = async id => {
-  const payment = await PaymentMethods.find({userId: id})
-  console.log(payment)
-  return await PaymentMethods.find({userId: id})
+  const payment = await PaymentMethods.find({ userId: id })
+  return await PaymentMethods.find({ userId: id })
 }
 
 const setUpNotificationsForUser = async id => {
@@ -474,34 +475,214 @@ const setUpNotificationsForUser = async id => {
   }
 }
 
-const getAllFreelancers = async () => {
-  const freelancers = await freelancer.find().populate(
-    [
+const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name, sort) => {
+  try {
+    const queryFilters = buildQueryFilters(+minRate, +maxRate, skill, name)
+    let sortStage = buildSortStageFilters(sort)
+    const PROJECTION = {
+      $project: {
+        _id: 1,
+        category: 1,
+        rate: 1,
+        likeTotal: 1,
+        dislikeTotal: 1,
+        'userId._id': 1,
+        'userId.FirstName': 1,
+        'userId.LastName': 1,
+        'userId.AddressLineCountry': 1,
+        'userId.profileImage': 1,
+        freelancerSkills: 1,
+        'invites._id': '$invites._id',
+        'invites.userInvited': '$invites.userInvited'
+      }
+    }
+
+    const lookup = [
       {
-        path: 'userId',
-        model: 'users',
-        select: 'AddressLineCountry FirstName LastName profileImage _id' 
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userId'
+        }
       },
       {
-        path: 'freelancerSkills',
-        model: 'freelancerskills',
-        select: 'yearsExperience _id skill' 
+        $lookup: {
+          from: 'invites',
+          localField: 'invites',
+          foreignField: '_id',
+          as: 'invites'
+        }
+      },
+      {
+        $lookup: {
+          from: 'freelancerskills',
+          localField: 'freelancerSkills',
+          foreignField: '_id',
+          as: 'freelancerSkills'
+        }
+      },
+
+      { $unwind: '$userId' },
+      {
+        $project: {
+          _id: 1,
+          category: 1,
+          rate: 1,
+          likeTotal: 1,
+          dislikeTotal: 1,
+          'userId._id': 1,
+          'userId.FirstName': 1,
+          'userId.LastName': 1,
+          'userId.AddressLineCountry': 1,
+          'userId.profileImage': 1,
+          'userId.FullName': 1,
+
+          freelancerSkills: {
+            $map: {
+              input: '$freelancerSkills',
+              as: 'skill',
+              in: {
+                _id: '$$skill._id',
+                yearsExperience: '$$skill.yearsExperience',
+                skill: '$$skill.skill'
+              }
+            }
+          },
+          invites: {
+            $arrayElemAt: ['$invites', 0]
+          }
+        }
+      },
+      {
+        $match: {
+          $or: [queryFilters]
+        }
+      },
+      ...(Object.keys(sortStage).length > 0 && sortStage.rate !== 0 ? [{ $sort: sortStage }] : []),
+      PROJECTION,
+      {
+        $facet: {
+          freelancers: [{ $skip: +skip }, { $limit: +take }],
+          totalCount: [{ $count: 'count' }]
+        }
       }
     ]
-  ).select('_id rate dislike likeTotal category');
 
-  return freelancers;
+    const result = await freelancer.aggregate(lookup)
+    return {
+      freelancers: result[0].freelancers,
+      totalCount: result[0].totalCount[0]?.count || 0
+    }
+  } catch (error) {}
+}
 
+const buildSortStageFilters = sort => {
+  let sortStage = {}
+  if (sort === 'Most reviews' || sort === 'recomended') {
+    sortStage = {
+      likeTotal: -1
+    }
+  }
+  if (sort == 'lowest hourly rate' || sort == 'highest hourly rate') {
+    sortStage = {
+      rate: sort === 'lowest hourly rate' ? 1 : -1
+    }
+  }
+  return sortStage
+}
+
+const buildQueryFilters = (minRate, maxRate, skills, name) => {
+  let filter = {}
+
+  if (minRate) filter.rate = { $gte: minRate }
+
+  if (maxRate) filter.rate = { ...filter.rate, $lte: maxRate }
+
+  if (skills && skills?.length > 0 && !skills?.includes('undefined')) {
+    if (skills.includes(',')) {
+      let skillsArray
+      skillsArray = skills.split(',')
+      filter['freelancerSkills.skill'] = {
+        $in: skillsArray.map(skill => new RegExp(skill, 'i'))
+      }
+    }
+  }
+
+  if (name && !name.includes('undefined')) {
+    filter['$or'] = [
+      { 'userId.FirstName': { $regex: name, $options: 'i' } },
+      { 'userId.LastName': { $regex: name, $options: 'i' } }
+    ]
+  }
+
+  return filter
+}
+
+const createFreelancerInvite = async params => {
+  const createInvite = await InviteModel.create(params)
+  const updateFreelancer = await freelancer.findByIdAndUpdate(
+    params.freelancer,
+    {
+      $set: {
+        invites: createInvite._doc._id
+      }
+    },
+    { new: true }
+  )
+
+  return updateFreelancer
+}
+
+const changeEmail = async (userId, data) => {
+  const userData = await user.findById(userId)
+  if (!userData) throw Error(`User not exist`)
+  if (userData.email !== data.currentEmail) throw Error(`User with this email not exist.`)
+
+  const newEmailUser = await user.findOne({ email: data.email })
+  if (newEmailUser) throw Error(`New email already registered.`)
+
+  userData.email = data.email
+  await userData.save()
+  return userData
+}
+
+const getSingleUser = async (filter, fields) => {
+  try {
+    return await User.findOne(filter).select(fields)
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
+}
+
+const registerUser = async ({ email, password }) => {
+  const hash = await AuthService.bcryptAndHashing(password)
+  const newuser = await createUser({ email, password }, hash)
+  if (newuser) {
+    const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
+    if (result && result.isLoginWithGoogle) {
+      return result
+    }
+    return newuser
+  }
+}
+
+const updateUser = async (id, data) => {
+  try {
+    return await User.findByIdAndUpdate(id, { $set: { ...data } })
+  } catch (e) {
+    throw Error(`Something went wrong ${e}`)
+  }
 }
 
 module.exports = {
+  changeEmail,
   createUser,
   updateUserByEmail,
   getUserById,
   listUsers,
   deleteUser,
   createFreelanceAccount,
-  addSkillsToFreelancer,
   updateUserByid,
   retrieveSubscriptions,
   listFreelancers,
@@ -513,6 +694,9 @@ module.exports = {
   removeLikeToFreelancer,
   listLikes,
   addToNewsletter,
-  retrievePaymentMethods,
   getAllFreelancers,
+  getSingleUser,
+  retrievePaymentMethods,
+  registerUser,
+  updateUser
 }

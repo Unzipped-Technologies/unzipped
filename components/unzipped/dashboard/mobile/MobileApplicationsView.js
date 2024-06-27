@@ -140,6 +140,8 @@ const ViewProfileButton = styled.button`
 
 const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSelectedFreelancer, width }) => {
   const router = useRouter()
+  const { id } = router.query
+
   const redirectToProfile = freelancerId => {
     router.push(`/freelancers/${freelancerId}`)
   }
@@ -259,7 +261,23 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
               alignItems: 'center',
               paddingTop: '200px'
             }}>
-            <p>N/A</p>
+            <Button
+              extraWid
+              type="outlineInverse"
+              buttonHeight="25px"
+              fontSize="15px"
+              contentMargin="0px !important"
+              colors={{
+                text: '#1976D2',
+                background: 'white',
+                border: '1px',
+                wideBorder: '#1976D2'
+              }}
+              onClick={() => {
+                router.push(`/freelancers?project=${id}`)
+              }}>
+              Invite Freelancer
+            </Button>
           </div>
         )}
       </Container>

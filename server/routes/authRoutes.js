@@ -12,6 +12,7 @@ const resetTemplate = require('../../services/emailTemplates/reset-password')
 const contact = require('../../services/emailTemplates/contact')
 const API = require('../helpers/axios')
 const AuthService = require('../helpers/authentication')
+const messageHelper = require('../helpers/message')
 
 router.get(
   '/google',
@@ -30,11 +31,8 @@ router.get('/google/callback', passport.authenticate('google'), (req, res) => {
 })
 
 router.post('/register', async (req, res, next) => {
-  const { email, password } = req.body
-  const data = req.body
-
   try {
-    const existingUser = await AuthService.isExistingUser(email, false)
+    const existingUser = await AuthService.isExistingUser(req.body?.email, false)
 
     if (existingUser) {
       if (existingUser.googleId) {
@@ -43,14 +41,13 @@ router.post('/register', async (req, res, next) => {
         throw Error('User with this email already exists')
       }
     } else {
-      data.isEmailVerified = true
-      const hash = await AuthService.bcryptAndHashing(password)
-      let newuser = await userHelper.createUser(data, hash)
-      const existingUsers = await AuthService.isExistingUser(email, false)
+      const registerUser = await userHelper.registerUser(req.body)
+      if (registerUser?.isLoginWithGoogle) throw Error('Please login with google')
+      const existingUsers = await AuthService.isExistingUser(req.body?.email, false)
       await userHelper.setUpNotificationsForUser()
 
-      res.cookie('access_token', token.signToken(newuser._id), { httpOnly: true })
-      res.send({ ...existingUsers._doc, cookie: token.signToken(newuser._id) })
+      res.cookie('access_token', token.signToken(registerUser._id), { httpOnly: true })
+      res.send({ ...existingUsers._doc, cookie: token.signToken(registerUser._id) })
       next()
     }
   } catch (e) {
@@ -62,8 +59,50 @@ router.get('/verify/:id', async (req, res, next) => {
   const id = req.params.id
   try {
     await AuthService.verifyUser(id)
-    res.cookie('access_token', token.signToken(id), { httpOnly: true })
-    res.redirect(`/`)
+    const supportUser = await userHelper.getSingleUser({ email: keys.supportEmail })
+    if (!supportUser) {
+      const hash = await AuthService.bcryptAndHashing(keys.supportAccountPassword)
+      let newSupportUser = await userHelper.createUser(
+        {
+          email: keys.supportEmail,
+          FirstName: keys.supportFirstName,
+          LastName: keys.supportLastName,
+          FullName: keys.supportFullName,
+          role: keys.supportRole
+        },
+        hash
+      )
+      const message = {
+        conversationId: null,
+        sender: {
+          userId: newSupportUser._id,
+          isInitiated: true
+        },
+        receiver: {
+          userId: id
+        },
+        attachment: null,
+        message:
+          'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
+      }
+      await messageHelper.sendMessage(message, newSupportUser._id)
+    } else {
+      const message = {
+        conversationId: null,
+        sender: {
+          userId: supportUser._id,
+          isInitiated: true
+        },
+        receiver: {
+          userId: id
+        },
+        attachment: null,
+        message:
+          'Welcome to the Unzipped platform. Here you can Post projects, hire freelancers, or even find work. If you run into any problems while using the site, feel free to message our support team here to receive assistance. If you do run into issues, go easy on us, we’re a relatively new platform, and are working hard to get everything right.'
+      }
+      await messageHelper.sendMessage(message, supportUser._id)
+    }
+    res.send({ message: 'SUCCESS' })
   } catch {
     res.status(400).send('verify failed')
   }
@@ -78,29 +117,46 @@ router.get('/reset/:id', async (req, res, next) => {
   res.redirect(`/change-password`)
 })
 
-router.post('/password', requireLogin, async (req, res, next) => {
-  const password = req.body.password
-  const existingUser = await AuthService.isExistingUser(req.user.sub, true)
-  //salt password
+router.post('/change-password', requireLogin, async (req, res, next) => {
   try {
-    const hash = await AuthService.bcryptAndHashing(password)
-    if (!hash) throw Error('Something went wrong hashing the password')
+    const existingUser = await userHelper.getSingleUser({ _id: req.user.sub }, 'password email')
+    if (!existingUser) throw new Error('User not found')
 
-    await AuthService.modifyExistingUser(existingUser, false)
+    const isCorrectPassword = await AuthService.passwordComparing(existingUser?.email, req.body?.currentPassword)
+    if (!isCorrectPassword) throw new Error('Incorrect password')
+
+    if (!token.signToken(existingUser._id)) throw new Error('Invalid Password')
+
+    if (req.body?.newPassword === req.body?.currentPassword)
+      throw new Error('New password must be different from current password')
+
+    if (req.body?.newPassword !== req.body?.confirmNewPassword)
+      throw new Error('Password and confirm password do not match')
+
+    const hash = await AuthService.bcryptAndHashing(req.body?.newPassword)
+    if (!hash) throw new Error('Something went wrong hashing the password')
+
+    const result = await userHelper.updateUser(existingUser?._id, { password: hash })
+
+    if (result) {
+      await Mailer.sendMailWithSG({ email: result?.email, templateName: 'RESET_PASSWORD' })
+    }
+
     const existingUsers = await AuthService.isExistingUser(req.user.sub, true)
-
     res.cookie('access_token', token.signToken(req.user.sub), { httpOnly: true })
-    res.send({ ...existingUsers._doc, cookie: token })
-  } catch {
-    res.status(400).send('Bad request')
+    res.send({ ...existingUsers._doc, cookie: token.signToken(existingUser._id) })
+  } catch (err) {
+    res.status(400).json({ message: err?.message ?? 'Something went wrong' })
   }
 })
 
 router.post('/verify', async (req, res) => {
   try {
-    const send = await Mailer.sendVerificationMail(req.body)
+    const send = await Mailer.sendMailWithSG(req.body)
     if (send) {
       res.send({ send: 'Email sent successfully.' })
+    } else {
+      res.send({ send: 'Failed to send an email.' })
     }
   } catch (error) {
     res.status(400).json({ message: error.message })
@@ -186,7 +242,7 @@ router.post('/login', async (req, res, next) => {
     const existingUser = await AuthService.isExistingUser(email, false)
     if (!existingUser) throw Error('User does not exist')
 
-    const isMatch = await AuthService.passwordComparing(email, password, existingUser.password)
+    const isMatch = await AuthService.passwordComparing(email, password)
 
     if (!isMatch) throw Error('Invalid credentials')
     if (!token.signToken(existingUser._id)) throw Error('Invalid Credentials')
@@ -212,7 +268,7 @@ router.get('/current_user', requireLogin, async (req, res) => {
   try {
     const existinguser = await userHelper.getUserById(req.user.sub)
     if (!existinguser) throw Error('user does not exist')
-    res.json(existinguser)
+    res.json({ ...existinguser._doc, cookie: token.signToken(existinguser._id) })
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }
@@ -282,10 +338,21 @@ router.get('/github', async (req, res) => {
     } else {
       githubUser.emails = [githubUser.email]
     }
+    let isGithubVerified = false
     const existingUser = await AuthService.isExistingUser(githubUser.email, false)
-    await AuthService.updateUsersGithubDetails(existingUser.id)
-    await AuthService.addThirdPartyAppDetails(existingUser, res, githubToken)
-    res.redirect(`/create-your-business?github-connect=true`)
+    if (existingUser) {
+      await AuthService.updateUsersGithubDetails(existingUser.id)
+      await AuthService.addThirdPartyAppDetails({
+        userId: existingUser.id,
+        github: {
+          githubId: githubUser.id,
+          userName: githubUser.login,
+          avatarUrl: githubUser.avatar_url
+        }
+      })
+      isGithubVerified = true
+    }
+    res.redirect(`/create-your-business?github-connect=${isGithubVerified}`)
   } catch (error) {
     res.status(400).send({ message: 'Exception occured when retrieving github user details' })
   }

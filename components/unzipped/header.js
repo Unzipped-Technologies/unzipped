@@ -14,6 +14,8 @@ import { Absolute } from './dashboard/style'
 import { Button as Buttons, SearchBar } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
 import BackArrow from '../../components/icons/backArrow'
+import FullScreenDropdown from '../ui/FullScreenDropdown'
+import LargeScreenDropdown from '../ui/LargeScreenDropdown'
 import { freelancerExpandedOpts, logoutUser, resetBusinessForm } from '../../redux/actions'
 import {
   DownIcon,
@@ -27,10 +29,8 @@ import {
   CircleLightningIcon,
   CircleShipIcon,
   CircleSearchIcon,
-  CircleNotesIcon,
+  CircleNotesIcon
 } from '../icons'
-import FullScreenDropdown from '../ui/FullScreenDropdown'
-import LargeScreenDropdown from '../ui/LargeScreenDropdown'
 
 const Div = styled.div`
   width: 100%;
@@ -178,7 +178,7 @@ const SubMenTop = styled.div`
   position: fixed;
   top: 78px;
   z-index: 1;
-  padding: 0px 15%;
+  padding: ${({ padding }) => (padding ? padding : '0px')};
   @media (max-width: 680px) {
     display: none;
   }
@@ -243,7 +243,7 @@ const mobileMenuItems = [
         name: 'How it Works',
         sub: 'Learn how to hire & grow your team',
         link: '/how-it-works/client'
-      },
+      }
     ]
   },
   {
@@ -260,7 +260,7 @@ const mobileMenuItems = [
         name: 'Search by Company',
         sub: 'Narrow down your search',
         link: '/projects'
-      },
+      }
     ]
   },
   {
@@ -285,22 +285,22 @@ const mobileMenuItems = [
             name: 'Freelancer',
             sub: 'How to get started as a freelancer?',
             link: '/wiki/getting-started',
-            icon: <CircleNotesIcon />,
+            icon: <CircleNotesIcon />
           },
           {
             name: 'Business',
             sub: 'Hiring & working with independent talent',
             link: '/wiki/working-with-independent-contractors',
-            icon: <CircleSearchIcon />,
+            icon: <CircleSearchIcon />
           },
           {
             name: 'Freelancer',
             sub: 'Growing your freelancing career',
             link: '/wiki/grow-your-career',
-            icon: <CircleShipIcon />,
-          },
-        ],
-      },
+            icon: <CircleShipIcon />
+          }
+        ]
+      }
     ]
   },
   {
@@ -438,7 +438,8 @@ const useStyles = makeStyles(theme => ({
 
 const Nav = ({
   isSubMenu,
-  handleSearchValue,
+  searchValue,
+  setFilter,
   filter,
   handleSearch,
   searchButton,
@@ -457,25 +458,24 @@ const Nav = ({
   setIsLogoHidden,
   isListViewable,
   setIsListViewable,
+  onBackArrowClick,
+  isViewable,
+  isExpanded,
   setIsExpanded
 }) => {
+  const seenNames = new Set()
+  const otherNames = new Set()
+
   const router = useRouter()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const dispatch = useDispatch()
   const classes = useStyles()
+
   const wrapperRef = useRef(null)
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [isHidden, setIsHidden] = useState(false)
   const [highlightColor, setHighlightColor] = useState('#333333')
   const [highlightedIndex, setHighlightedIndex] = useState(false)
-
-  const [isProjectMenuEnabled, setIsProjectMenuEnabled] = useState(false)
-  const [isHidden, setIsHidden] = useState(false)
-  const [prevScrollPos, setPrevScrollPos] = useState(0)
-  const seenNames = new Set();
-  const otherNames = new Set();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    setIsProjectMenuEnabled(router.pathname === '/projects')
-  }, [router.pathname])
 
   const setDropdowns = item => {
     setTimeout(function () {
@@ -499,7 +499,6 @@ const Nav = ({
     router.push('/create-your-business')
   }
 
-
   const getButtons = () => {
     if (isAuthenticated) {
       return (
@@ -521,21 +520,21 @@ const Nav = ({
             // <Dropdowns items={profileItems} onClose={() => setCloseDropdowns(0)} token={token} />
             <Desktop>
               <Absolute right="0px" top="0px" width="400px">
-                  <LargeScreenDropdown 
+                <LargeScreenDropdown
                   menuItems={mobileMenuItems.filter(item => {
                     // Check if the item's name has already been seen
                     if (otherNames.has(item.name)) {
                       // If so, filter this item out
-                      return false;
+                      return false
                     } else {
                       // If not, add the name to the Set and keep the item
-                      otherNames.add(item.name);
-                      return true;
+                      otherNames.add(item.name)
+                      return true
                     }
-                  })} 
-                  startAProject={startAProject} 
-                  isAuth={isAuthenticated} 
-                  logoutUser={signOut} 
+                  })}
+                  startAProject={startAProject}
+                  isAuth={isAuthenticated}
+                  logoutUser={signOut}
                   onClose={() => setMenuOpen(false)}
                 />
               </Absolute>
@@ -571,7 +570,7 @@ const Nav = ({
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [prevScrollPos, isHidden])
+  }, [isHidden])
 
   useEffect(() => {
     // Function to remove existing 'Log in' or 'Sign out' item
@@ -635,7 +634,7 @@ const Nav = ({
             name: 'Account',
             sub: 'Manage your account details',
             link: '/dashboard/account'
-          },
+          }
         ]
       })
     }
@@ -643,55 +642,61 @@ const Nav = ({
   return (
     <Div marginBottom={marginBottom && marginBottom}>
       <Container zIndex={zIndex}>
-        {!isLogoHidden && !isListViewable && (<Link href="/">
-          <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
-        </Link>)}
+        {!isLogoHidden && !isListViewable && (
+          <Link href="/">
+            <Logo src="/img/Unzipped-Primary-Logo.png" alt="logo" />
+          </Link>
+        )}
 
-        {(isListViewable) && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-              setIsListViewable(false)
-              setIsExpanded(false);
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
-              Lists
-            </span>
-          </div>
-        </>)}
+        {isListViewable && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+                setIsListViewable(false)
+                setIsExpanded(false)
+              }}>
+              <BackArrow />
+              <span
+                style={{
+                  marginLeft: 10,
+                  fontSize: 20,
+                  fontWeight: 600,
+                  letterSpacing: '0.15px',
+                  lineHeight: '19.5px'
+                }}>
+                Lists
+              </span>
+            </div>
+          </>
+        )}
 
-        {isLogoHidden && (<>
-          <div style={{ marginLeft: 15 }}
-            onClick={() => {
-              setIsViewable(false)
-              setListName('')
-              setIsLogoHidden(false)
-            }
-            }
-          >
-            <BackArrow />
-            <span style={{
-              marginLeft: 10,
-              fontSize: 20,
-              fontWeight: 600,
-              letterSpacing: '0.15px',
-              lineHeight: '19.5px'
-            }}>
+        {isLogoHidden && (
+          <>
+            <div
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                setIsViewable(false)
+                setListName('')
+                setIsLogoHidden(false)
+              }}>
+              {!isListViewable && <BackArrow />}
+            </div>
+            <span
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                fontWeight: 600,
+                letterSpacing: '0.15px',
+                lineHeight: '19.5px'
+              }}>
               {listName ? listName : ''}
             </span>
-          </div>
-        </>)}
+          </>
+        )}
 
         <Menu>
           {menuItems &&
@@ -742,17 +747,14 @@ const Nav = ({
             </MenuIcon>
             {menuOpen === 'mobile' && (
               <Absolute right="0px" top="0px">
-                {/* <Dropdowns items={menuItems} onClose={() => setCloseDropdowns(0)} token={token} /> */}
                 <FullScreenDropdown
                   menuItems={mobileMenuItems.filter(item => {
-                    // Check if the item's name has already been seen
                     if (seenNames.has(item.name)) {
                       // If so, filter this item out
-                      return false;
+                      return false
                     } else {
-                      // If not, add the name to the Set and keep the item
-                      seenNames.add(item.name);
-                      return true;
+                      seenNames.add(item.name)
+                      return true
                     }
                   })}
                   startAProject={startAProject}
@@ -765,11 +767,12 @@ const Nav = ({
           </Mobile>
         </Right>
       </Container>
-      {isSubMenu && token && (
+      {isSubMenu && (
         <SubMenTop
+          padding={token ? '0px 0px 0px 15%;' : '0px 0px 25px 15%;'}
           style={{
             transition: 'transform 0.3s ease-in-out',
-            transform: isHidden ? 'translateY(-70%)' : 'translateY(0)'
+            transform: isHidden ? 'translateY(-110%)' : 'translateY(0)'
           }}>
           {handleSearch && (
             <>
@@ -777,33 +780,28 @@ const Nav = ({
                 <h4>Browse</h4>
                 <SearchBar
                   handleSearch={handleSearch}
-                  filter={filter}
-                  setFilter={handleSearchValue}
+                  filter={searchValue}
+                  setFilter={setFilter}
                   searchButton={searchButton}
-                  margin={margin}
                   alignItems={'start'}
                 />
               </div>
             </>
           )}
-          {isProjectMenuEnabled && token ? (
+          {token && (
             <SubMenu>
               {subMenuItems.map((item, key) => (
                 <Link href={item.link} key={key}>
-                  <SpanWhite count={key} underline={router.pathname === item.link}>
-                    <Sub>{item.name} </Sub>
-                  </SpanWhite>
-                </Link>
-              ))}
-            </SubMenu>
-          ) : isProjectMenuEnabled ? (
-            <></>
-          ) : (
-            <SubMenu>
-              {subMenuItems.map((item, key) => (
-                <Link href={item.link} key={key}>
-                  <SpanWhite count={key} underline={router.pathname === item.link}>
-                    <Sub>{item.name} </Sub>
+                  <SpanWhite
+                    count={key}
+                    underline={
+                      router.pathname.includes('projects') && item.link.includes('projects')
+                        ? true
+                        : router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard'
+                        ? true
+                        : router.pathname === item.link
+                    }>
+                    <Sub>{item.name}</Sub>
                   </SpanWhite>
                 </Link>
               ))}

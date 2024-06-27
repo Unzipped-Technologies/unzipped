@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { verifyUser } from '../redux/actions';
+import { registerUser } from '../redux/actions';
 import { useRouter } from 'next/router';
 import Notification from '../components/animation/notifications';
 import styled from 'styled-components'
@@ -126,7 +126,7 @@ const Contain = styled.div`
     align-items: left;
 `;
 
-const Register = ({ loading, PassError, verifyUser, isEmailSent, error }) => {
+const Register = ({ loading, PassError, isEmailSent, error, registerUser }) => {
     const [emailAlert, setEmailAlert] = useState('');
     const [passwordAlert, setPasswordAlert] = useState('');
     const [email, setEmail] = useState('');
@@ -147,9 +147,10 @@ const Register = ({ loading, PassError, verifyUser, isEmailSent, error }) => {
         });
     };
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = async (event) => {
         if (event.key === 'Enter') {
-            RegisterUsers();
+            if (!user || !user.email || !user.password) return;
+            await RegisterUsers(user);
         }
     };
 
@@ -192,7 +193,7 @@ const Register = ({ loading, PassError, verifyUser, isEmailSent, error }) => {
         if (passwordAlert || emailAlert) {
             return;
         }
-        await verifyUser(user);
+        await registerUser(user);
     };
 
     const google = () => {
@@ -276,7 +277,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        verifyUser: bindActionCreators(verifyUser, dispatch)
+        registerUser: bindActionCreators(registerUser, dispatch),
     }
 }
 

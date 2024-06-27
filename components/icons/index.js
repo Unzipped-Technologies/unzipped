@@ -50,6 +50,8 @@ import CircleShipIcon from './circleShip'
 import CircleNotesIcon from './circleNotes'
 import VerifiedIcon from './verifiedIcon'
 import ReactCodeIcon from './reactIcon'
+import ManIcon from './man'
+import VerifyUserIcon from './verify'
 
 export {
     ClearFitLogo,
@@ -57,6 +59,7 @@ export {
     HexagonIcon,
     ReactCodeIcon,
     MailIcon,
+      ManIcon,
     CloseIcon,
     PhoneIcon,
     DiamondIcon,
@@ -103,5 +106,6 @@ export {
     ReviewHalfSmall,
     UpArrow,
     GoBack,
+    VerifyUserIcon,
     UpdateUserIcon
 };

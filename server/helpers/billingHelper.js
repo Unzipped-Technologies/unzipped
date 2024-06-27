@@ -1,17 +1,18 @@
 const keys = require('../../config/keys')
 const stripe = require('stripe')(`${keys.stripeSecretKey}`)
-const UserModel = require('../../models/User')
-const OrderModel = require('../../models/Orders')
-const PromoModel = require('../../models/Promo')
-const ProductModel = require('../../models/Product')
-const SubscriptionModel = require('../../models/Subscription')
-const PaymentHistoryModel = require('../../models/PaymentHistory')
-const InvoiceModel = require('../../models/Invoice')
-const PaymentMethodModel = require('../../models/PaymentMethod')
-const InvoiceRecordModel = require('../../models/InvoiceRecord')
+const UserModel = require('../models/User')
+const OrderModel = require('../models/Orders')
+const PromoModel = require('../models/Promo')
+const ProductModel = require('../models/Product')
+const SubscriptionModel = require('../models/Subscription')
+const PaymentHistoryModel = require('../models/PaymentHistory')
+const InvoiceModel = require('../models/Invoice')
+const PaymentMethodModel = require('../models/PaymentMethod')
+const InvoiceRecordModel = require('../models/InvoiceRecord')
 const Mailer = require('../../services/Mailer')
 const receiptTemplate = require('../../services/emailTemplates/receipt')
 const { paymentStatusEnum, paymentTypeEnum } = require('../enum/paymentEnum')
+const ThirdPartyApplicationModel = require('../models/ThirdPartyApplications')
 const { ObjectId } = require('mongoose').Types
 
 const stripePayment = async (obj, user) => {
@@ -190,7 +191,7 @@ const createSubscription = async (req, obj, user) => {
   const [newSubscription] = await Promise.all([
     stripe.subscriptions.create({
       customer: customerId,
-      items: [{ price: subscriptionType.stripePriceId }],
+      items: [{ price: subscriptionType?.stripePriceId }],
       trial_end: new Date(trialEnd),
       default_payment_method: obj.paymentMethod.card.id,
       metadata: {
@@ -215,7 +216,7 @@ const createSubscription = async (req, obj, user) => {
       userId: user,
       ipAddress: ip,
       paymentStatus: paymentStatusEnum.INITIATED,
-      paymentType: paymentTypeEnum.SUBSCRIPTION,
+      paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
       paymentAmount: subscriptionType.price
     })
   ])
@@ -258,7 +259,7 @@ const subscriptionPayment = async (obj, user) => {
       userId: current_user.id,
       ipAddress: ip,
       paymentStatus: paymentStatusEnum.SUCCESSFUL,
-      paymentType: paymentTypeEnum.SUBSCRIPTION,
+      paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
       paymentAmount: UserSubscription.product.price
     })
   ])
@@ -318,12 +319,31 @@ async function handleSuccessfulPayment(paymentIntent) {
 }
 
 async function handleFailedPayment(paymentIntent) {
-  const invoiceRecord = await InvoiceRecordModel.findOne({ _id: paymentIntent.metadata.invoiceRecord })
+  const invoiceRecord = await InvoiceRecordModel.findOne({ _id: paymentIntent.metadata.invoiceRecord }).populate({
+    path: 'userId',
+    model: 'users',
+  })
 
   await PaymentHistoryModel.updateMany(
     { _id: { $in: invoiceRecord.paymentHistoryIds } },
     { $set: { isPaymentDeclined: true } }
   )
+
+  if (invoiceRecord && invoiceRecord?.userId) {
+    const mailOptions = {
+      to: invoiceRecord.userId.email,
+      templateId: 'd-9bd86c7f068b4f69bfda9ebb92d3687b',
+      dynamicTemplateData: {
+        subject: 'Action Required: Failed Payment Attempt for Your Account',
+        firstName: invoiceRecord.userId?.FirstName ? invoiceRecord.userId?.FirstName
+          : invoiceRecord.userId?.email.split('@')[0],
+        lastName: invoiceRecord.userId?.LastName ?? '',
+        loginLink: `${keys.redirectDomain}/login`,
+        supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+      }
+    }
+    await Mailer.sendInviteMail(mailOptions);
+  }
 }
 
 async function cronJob() {
@@ -365,7 +385,7 @@ async function cronJob() {
         userId: userId,
         invoiceId: invoice._id,
         paymentStatus: paymentStatusEnum.INITIATED,
-        paymentType: paymentTypeEnum.FREELANCER_PAYMENT,
+        paymentType: paymentTypeEnum.ACCOUNT_WITHDRAW,
         paymentAmount: invoice.hoursWorked * invoice.hourlyRate,
         paymentCurrency: 'USD'
       }
@@ -491,13 +511,390 @@ const handleWebhookEvent = event => {
   }
 }
 
+const linkExternalBankAccount = async (customerId, bankAccountToken) => {
+  return await stripe.customers.createSource(customerId, {
+    source: bankAccountToken
+  })
+}
+
+const removeExternalBankAccount = async (customerId, bankAccountId) => {
+  return await stripe.customers.deleteSource(customerId, bankAccountId)
+}
+
+const getUserAccountById = async userId => {
+  const user = await UserModel.findById(userId)
+
+  if (user && user.stripeAccountId) {
+    return await retreiveAccountInfo(user.stripeAccountId)
+  }
+  throw new Error(`Account not exist.`)
+}
+
+const getUserByAccountId = async accountId => {
+  return await UserModel.findOne({ stripeAccountId: accountId })
+}
+
+const createAccountOnboarding = async (type, userId) => {
+  // Create a new Stripe Connected Account for the user
+  const account = await stripe.accounts.create({
+    type: 'express',
+    country: 'US',
+    business_type: type
+  })
+
+  if (account) {
+    // associate the accoutn with the user
+    await UserModel.updateOne({ _id: userId }, { $set: { stripeAccountId: account.id } })
+
+    // Create or update the document in the third-party application collection
+    // Ensure userId and stripeAccountId are correctly mapped to your third-party model schema
+    await ThirdPartyApplicationModel.updateOne(
+      { userId },
+      { $set: { userId, stripeAccountId: account.id } },
+      { upsert: true }
+    )
+  }
+
+  return account
+}
+
+const retreiveAccountInfo = async id => {
+  // Create a new Stripe Connected Account for the user
+  const account = await stripe.accounts.retrieve(id)
+  return account
+}
+
+const getAccountOnboardingLink = async (account, url) => {
+  const redirect = url || '/kyc'
+  // Create an account link for the onboarding process
+  const accountLink = await stripe.accountLinks.create({
+    account: account.id,
+    refresh_url: `${keys.redirectDomain}${redirect}`, // Your URL for re-onboarding
+    return_url: `${keys.redirectDomain}${redirect}`, // Your URL for successful onboarding
+    type: 'account_onboarding'
+  })
+
+  return accountLink
+}
+
+const retrieveExternalBankAccounts = async userStripeAccountId => {
+  // List all bank accounts associated with the Stripe account
+  const bankAccounts = await stripe.accounts.listExternalAccounts(userStripeAccountId, { object: 'bank_account' })
+
+  return bankAccounts
+}
+
+// charge client
+async function createPaymentAndTransfer(clientPaymentMethodId, amountToCharge) {
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountToCharge,
+      currency: 'usd',
+      customer: customerId,
+      payment_method: paymentMethodId,
+      off_session: true, // Assuming the customer is not present
+      confirm: true // Automatically confirm the payment intent
+      // Add any other necessary parameters here
+    })
+
+    // step 3: create a payment history in the db
+
+    // payment history for client
+    await PaymentHistoryModel.create({
+      chargeId: id,
+      userId: current_user.id,
+      ipAddress: ip,
+      paymentStatus: paymentStatusEnum.SUCCESSFUL,
+      paymentType: paymentTypeEnum.PAYROLL_CHARGE,
+      paymentAmount: UserSubscription.product.price,
+
+      invoiceId: invoice.id, // get invoices
+      description: `Payment to ${freelanceUser.firstName} ${freelanceUser.lastName}`,
+      cardLastFour: String,
+      card: String,
+      payPeriod: String,
+      subtotal: String,
+      paymentAmount: Number
+    })
+
+    // get user by freelancer id
+    const freelanceUser = {}
+
+    // payment history for freelancer
+    await PaymentHistoryModel.create({
+      chargeId: id,
+      userId: freelanceUser.id,
+      ipAddress: ip,
+      paymentStatus: paymentStatusEnum.SUCCESSFUL,
+      paymentType: paymentTypeEnum.PAYROLL_RECIEPT,
+      paymentAmount: UserSubscription.product.price,
+
+      invoiceId: invoice.id, // get invoices
+      description: `Payment to ${freelanceUser.firstName} ${freelanceUser.lastName}`,
+      cardLastFour: String,
+      card: String,
+      payPeriod: String,
+      subtotal: String,
+      paymentAmount: Number
+    })
+    console.log('Charge created:', charge.id)
+    console.log('payment history created:', payment)
+    console.log('Transfer created:', transfer.id)
+
+    return { charge }
+  } catch (error) {
+    console.error('Error creating payment and transfer:', error)
+    throw error // Rethrow or handle as appropriate for your application
+  }
+}
+
+const transferPaymentToFreelancers = async data => {
+  const { amount_captured, id } = data.data.object
+  const amountToFreelancer = amount_captured * 0.9
+  // step 1: retrieve invoices that are being paid and figure which freelancers are to be paid
+  // const Invoices = await InvoiceModel.aggregate([
+  //   {
+  //     $match: { isApproved: true, isPaid: false }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: '$clientId',
+  //       invoices: { $push: '$$ROOT' },
+  //       totalAmount: { $sum: { $multiply: ['$hourlyRate', '$hoursWorked'] } }
+  //     }
+  //   },
+  //   {
+  //     $project: {
+  //       _id: 1,
+  //       totalAmount: 1,
+  //       invoices: {
+  //         $map: {
+  //           input: '$invoices',
+  //           as: 'invoice',
+  //           in: {
+  //             _id: '$$invoice._id',
+  //             hoursWorked: '$$invoice.hoursWorked',
+  //             hourlyRate: '$$invoice.hourlyRate'
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // ])
+  // you will need to retrieve this info from the transaction history created for this event
+  const accountId = 'acct_1OtzJDQmnBKiGech'
+  // step 2: get charge from db
+  // const charge = await PaymentHistoryModel.findOne({chargeId: id})
+  // Step 2: Transfer a portion to the freelancer
+  const transfer = await stripe.transfers.create({
+    amount: 2000, // Amount to transfer to freelancer in cents
+    currency: 'usd',
+    destination: accountId, // Freelancer's Stripe account ID
+    transfer_group: data.id // Group the transfer with the charge for easy reconciliation
+  })
+
+  return transfer
+}
+
+const getFreelancerBalance = async stripeAccountId => {
+  try {
+    const balance = await stripe.balance.retrieve({
+      stripeAccount: stripeAccountId // The ID of the connected Stripe account
+    })
+
+    // The balance object contains amounts in different categories
+    // For example, balance.available and balance.pending
+    console.log(balance)
+
+    return balance
+  } catch (error) {
+    console.error('Error retrieving balance:', error)
+    throw error
+  }
+}
+
+const createTestCharge = async () => {
+  try {
+    const charge = await stripe.charges.create({
+      amount: 20000000,
+      currency: 'usd',
+      source: 'tok_visa',
+      description: 'Test charge for $200000.00'
+    })
+
+    console.log('Charge successful:', charge)
+    return charge
+  } catch (error) {
+    console.error('Charge failed:', error)
+    throw error
+  }
+}
+
+const retrieveStripeBalance = async () => {
+  try {
+    const balance = await stripe.balance.retrieve()
+    console.log(balance) // Logs the entire balance object to the console
+    return balance
+  } catch (error) {
+    console.error('Error retrieving Stripe balance:', error)
+  }
+}
+
+const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', userId) => {
+  try {
+    // Create a payout to the connected account's external bank account
+    const accountInfo = await retrieveExternalBankAccounts(account.id);
+    const payout = await stripe.payouts.create({
+      amount: amount,
+      currency: currency,
+    }, {
+      stripeAccount: accountId, // Specify the connected account ID
+    });
+    const user = await UserModel.findById(userId);
+    if (payout
+      &&
+      accountInfo &&
+      accountInfo?.data &&
+      accountInfo?.data?.length > 0 &&
+      user
+    ) {
+      const fundsWithdrawMailObj = {
+        to: user?.email,
+        templateId: "d-ecd4393f48de4496a511c74220631ac3",
+        dynamicTemplateData: {
+          firstName: user?.FirstName ?? '',
+          lastName: user?.LastName ?? '',
+          amount,
+          withdrawDate: new Date().toLocaleDateString(),
+          partialPaymentDetails: `**** **** ${accountInfo?.data[0]?.last4}`,
+          supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+          withdrawLink: `${keys.redirectDomain}/dashboard/withdrawal`,
+          transactionHstoryLink: `${keys.redirectDomain}/transaction-history`,
+        }
+      }
+      await Mailer.sendInviteMail(fundsWithdrawMailObj);
+    }
+    if (!payout) {
+      await failedPaymentNotification(user);
+    }
+    return payout;
+  } catch (error) {
+    console.error('Payout failed:', error)
+    throw error
+  }
+}
+
+const listTransactions = async (accountId = null, lastObjectId = null, limit = 25) => {
+  try {
+    const params = {
+      limit: limit
+    }
+
+    if (lastObjectId) {
+      params.starting_after = lastObjectId
+    }
+
+    // If retrieving transactions for a connected account, use the `stripeAccount` option
+    const options = accountId ? { stripeAccount: accountId } : {}
+
+    const transactions = await stripe.balanceTransactions.list(params, options)
+
+    return transactions
+  } catch (error) {
+    console.error('Error retrieving transactions:', error)
+    throw error
+  }
+}
+
+// verfify identity session
+const createVerificationSession = async customerId => {
+  const verificationSession = await stripe.identity.verificationSessions.create({
+    type: 'document',
+    metadata: {
+      customer: customerId
+    },
+    options: {
+      document: {
+        require_matching_selfie: true
+      }
+    }
+  })
+
+  return verificationSession
+}
+
+const confirmVerificationSession = async (userId, status) => {
+  try {
+    if (userId && status && status === 'verified') {
+      const user = await UserModel.findById(userId);
+      if (user && user.isIdentityVerified !== "SUCCESS") {
+        const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
+        if (updateUser && updateUser?.email) {
+          await Mailer.sendInviteMail({
+            to: updateUser?.email,
+            templateId: 'd-53bdcde93b8e42edbc7d77d10322f3cc',
+            dynamicTemplateData: {
+              firstName: updateUser?.FirstName ?? '',
+              lastName: updateUser?.LastName ?? '',
+              supportLink: `${keys.redirectDomain}/wiki/getting-started`
+            }
+          })
+          return true;
+        } else {
+          const updateUser = await UserModel.updateOne(
+            { _id: userId },
+            { $set: { isIdentityVerified: 'REJECTED' } },
+            { new: true }
+          )
+        }
+      }
+      return false
+    }
+  } catch (err) {
+    console.log(`Error on verification session: ${err.message}`)
+    return false
+  }
+}
+
+const failedPaymentNotification = async (user) => {
+  if (user) {
+    const mailOptions = {
+      to: user?.email,
+      templateId: 'd-9bd86c7f068b4f69bfda9ebb92d3687b',
+      dynamicTemplateData: {
+        firstName: user?.FirstName ? user?.FirstName : user?.email.split('@')[0],
+        lastName: user?.LastName ?? '',
+        supportLink: `${keys.redirectDomain}/wiki/getting-started`
+      }
+    }
+    await Mailer.sendInviteMail(mailOptions);
+  }
+}
+
 module.exports = {
   stripePayment,
   createPromo,
   getPromo,
+  listTransactions,
   receiptMail,
+  withdrawFundsToBankAccount,
+  createTestCharge,
+  getFreelancerBalance,
   createSubscription,
   subscriptionPayment,
   cronJob,
-  handleWebhookEvent
+  retrieveStripeBalance,
+  getUserAccountById,
+  getUserByAccountId,
+  retrieveExternalBankAccounts,
+  retreiveAccountInfo,
+  handleWebhookEvent,
+  linkExternalBankAccount,
+  removeExternalBankAccount,
+  getAccountOnboardingLink,
+  createAccountOnboarding,
+  transferPaymentToFreelancers,
+  createVerificationSession,
+  createPaymentAndTransfer,
+  confirmVerificationSession
 }

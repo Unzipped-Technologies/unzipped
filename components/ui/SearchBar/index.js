@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: ${({ alignItems }) => (alignItems ? alignItems : 'center')};
   justify-content: center;
   flex-flow: column;
-  padding: ${({ margin }) => (margin ? margin : '45px 0px 0px 0px')};
+  padding: ${({ margin }) => (margin ? margin : '0px 0px 0px 0px')};
   @media (max-width: 680px) {
     width: -webkit-fill-available;
   }
@@ -27,6 +27,7 @@ const TitleBlock = styled.div`
 
 const Block = styled.div`
   width: ${({ $width }) => ($width ? $width : '80%')};
+  height: ${({ $height }) => ($height ? $height : '35px')};
   display: flex;
   flex-flow: row;
   justify-content: space-between;
@@ -52,10 +53,15 @@ const SearchBar = ({
   margin,
   alignItems,
   width,
+  height,
   handleSearch,
   setFilter,
-  searchButton
+  border,
+  borderRadius,
+  searchButton,
+  filter
 }) => {
+
   return (
     <Container margin={margin} alignItems={alignItems}>
       {title && (
@@ -65,15 +71,18 @@ const SearchBar = ({
           </TitleText>
         </TitleBlock>
       )}
-      <Block $width={width}>
+      <Block $width={width} $height={height}>
         <Search
           placeHolderColor={placeHolderColor}
           handleSearch={handleSearch}
           searchButton={searchButton && searchButton}
           width="100%"
+          height={height}
           keys={['name']}
+          border={border}
+          borderRadius={borderRadius}
           onChange={filteredResults => {
-            setFilter(filteredResults)
+            setFilter({ ...filter,  searchKey: filteredResults })
           }}
           placeholder={'Search'}
           theme={theme}

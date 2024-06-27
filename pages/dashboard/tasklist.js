@@ -1,164 +1,182 @@
-import React, {useEffect} from 'react';
-import Nav from '../../components/unzipped/header';
-import Icon from '../../components/ui/Icon'
-import ListPanel from '../../components/unzipped/dashboard/ListPanel';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react'
+import { connect } from 'react-redux'
+import styled from 'styled-components'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-import { 
-    updateTasksOrder, 
-    getDepartmentsForBusiness, 
-    getDepartmentsById, 
-    updateCreateStoryForm, 
-    createStory, 
-    getBusinessById, 
-    reorderStories,
-    addCommentToStory,
-    getBusinessList
-} from '../../redux/actions';
-import { parseCookies } from "../../services/cookieHelper";
 
-const Tasklist = ({
-    token, 
-    cookie,
-    selectedBusiness, 
-    businesses = [], 
-    departments = [],
-    business='Lists', 
-    selectedDepartment, 
-    form,
-    tags = [], 
-    stories = [],
-    employees,
-    user,
-    // Actions
-    updateTasksOrder, 
-    getDepartmentsForBusiness,
-    getDepartmentsById,
-    updateCreateStoryForm,
-    createStory,
-    getBusinessById,
-    reorderStories,
-    addCommentToStory,
-    getBusinessList
-}) => {
-    const access = token?.access_token || cookie
+import Nav from '../../components/unzipped/header'
+import { parseCookies } from '../../services/cookieHelper'
+import { getProjectsList, setDepartment } from '../../redux/actions'
+import TasksPanel from '../../components/unzipped/dashboard/tasks/TasksPanel'
+import ProjectsPanel from '../../components/unzipped/dashboard/tasks/ProjectsPanel'
+import ProjectKanbanBoard from '../../components/unzipped/dashboard/Kanban/KanbanContainer'
 
-    const selectDepartment = (item) => {
-        getDepartmentsById(item?._id, access)
+const Container = styled.div`
+  overflow: overlay;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  margin: 40px 10%;
+  border-radius: 10px;
+  /* Hide the scrollbar but keep it functional */
+  ::-webkit-scrollbar {
+    width: 0; /* Set width to 0 to hide it */
+    height: 0; /* Set height to 0 if you're hiding the horizontal scrollbar */
+  }
+
+  /* Optionally, you can style the scrollbar track and thumb as needed */
+  ::-webkit-scrollbar-track {
+    background-color: transparent; /* Make the track transparent */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Make the thumb transparent */
+  }
+
+  @media screen and (max-width: 600px) {
+    margin: 0 !important;
+    display: block;
+  }
+`
+
+const ViewFullScreenButton = styled.button`
+  margin-right: 100px;
+  text-transform: uppercase;
+  background: #1976D2;
+  color: white;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: 400;
+  border-radius: 8px;
+  border: 0px;
+  font-family: Roboto;
+  &:focus{
+    background: #1976D2 !important;
+  }
+`;
+
+const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
+  const router = useRouter()
+
+  const access = token?.access_token || cookie
+  const [currentBusiness, setCurrentBusiness] = useState({})
+  const [selectedDepartment, setSelectedDepartment] = useState({})
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [isEditable, setIsEditable] = useState(false)
+
+  useEffect(() => {
+    if (!access) {
+      router.push('/login')
     }
+  }, [])
 
-    const createNewStory = () => {
-        createStory({
-            departmentId: selectedDepartment?._id,
-            taskName: form?.taskName,
-            assigneeId: form?.assigneeId || employees.find(item => item?.FirstName.toLowerCase().includes(form?.assignee.toLowerCase().split(' ')[0]) && item.LastName.toLowerCase().includes(form?.assignee.toLowerCase()?.split(' ')[1]))?._id,
-            storyPoints: form?.storyPoints,
-            priority: form?.priority,
-            description: form?.description,
-            tagId: form?.tagId || tags[0]?._id
-        }, access)
+  useEffect(async () => {
+    await getProjectsList({
+      take: 'all',
+      skip: 0,
+      populate: false
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!selectedDepartment?._id) {
+      setCurrentBusiness(businesses[0])
+      if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
+      else {
+        setSelectedDepartment({})
+      }
     }
+  }, [businesses])
 
-    useEffect(() => {
-        if (!selectedBusiness?._id) {
-            if (businesses.length === 0) {
-                getBusinessList({
-                    take: 10,
-                    skip: 0,
-                }, access)
-            }
-            if(businesses[0]) {
-                getBusinessById(businesses[0]?._id, access)                
-            }
+  useEffect(() => {
+    if (currentBusiness?.businessDepartments?.length) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
+    else {
+      setSelectedDepartment({})
+    }
+  }, [currentBusiness])
 
-        }
-        getDepartmentsForBusiness({
-            take: 10,
-            filter: {
-                businessId: selectedBusiness?._id || businesses[0]?._id
-            }
-        }, access)
-    }, [selectedBusiness])
-
-    useEffect(() => {
-        if (selectedDepartment) {
-            getDepartmentsById(selectedDepartment?._id, access)
-        }
-        if (!access) {
-            router.push('/login')
-        }
-    }, [])
-
-    return (
+  return (
+    <>
+      <Nav
+        isSubMenu
+        marginBottom={window.innerWidth > 600 ? '158px' : '78px'}
+        isLogoHidden={window.innerWidth > 600 ? false : true}
+        listName={'Departments'}
+        setIsViewable={() => { }}
+        setListName={() => { }}
+        setIsLogoHidden={() => { }}
+        onBackArrowClick={() => {
+          setDepartment(null)
+          router.back()
+        }}
+      />
+      <div style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: 'flex-end',
+        width: "100%",
+        margin: "20px 0px"
+      }}>
+        <ViewFullScreenButton onClick={() => setIsFullScreen(!isFullScreen)}>
+          {isFullScreen ? 'Exit Full Screen' : 'View Full Screen'}
+        </ViewFullScreenButton>
+      </div>
+      {isFullScreen ? (
+        <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+      ) : (
         <>
-            <Nav marginBottom={'188px'} isSubMenu/>
-            <ListPanel 
-                departments={departments} 
-                updateTasksOrder={updateTasksOrder} 
-                updateCreateStoryForm={updateCreateStoryForm}
-                reorderStories={reorderStories}
-                addCommentToStory={addCommentToStory}
-                createNewStory={createNewStory}
-                tags={tags} 
-                access={access}
-                form={form}
-                dropdownList={employees}
-                stories={stories} 
-                user={user}
-                list={departments.map(e => {
-                    return {
-                        ...e,
-                        text: e?.name,
-                        icon: <Icon name={(e.isSelected || e?._id === selectedDepartment?._id) ? "selectedDepartment" : "department"}/>,
-                        padding: true
-                    }
-                })} 
-                business={selectedBusiness?.name} 
-                selectedList={selectedDepartment?.name} 
-                selectList={selectDepartment}
-                type="department"
-            />
+          {businesses?.length ? (
+            <Container>
+              <ProjectsPanel
+                businesses={businesses}
+                currentBusiness={currentBusiness}
+                selectedDepartment={selectedDepartment}
+                setIsEditable={setIsEditable}
+                onSelectDepartment={value => {
+                  setSelectedDepartment(value)
+                  setDepartment(value)
+                  if (window.innerWidth <= 600) {
+                    router.push(`department/${value._id}`)
+                  }
+                }}
+                onSelectBusiness={value => {
+                  setCurrentBusiness(value)
+                }}
+              />
+              {window.innerWidth > 600 && (
+                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} />
+              )}
+            </Container>
+          ) : (
+            !loading && <h4 className="d-flex align-items-center justify-content-center">No Projects</h4>
+          )}
         </>
-    )
+      )}
+    </>
+  )
 }
 
 Tasklist.getInitialProps = async ({ req, res }) => {
-    const token = parseCookies(req)
-    
-      return {
-        token: token && token,
-      }
-    }
+  const token = parseCookies(req)
 
-const mapStateToProps = (state) => {
-    console.log(state)
-    return {
-        tags: state.Business.tags,
-        loading: state.Business?.loading,
-        stories: state.Business.stories,
-        selectedBusiness: state.Business.selectedBusiness,
-        selectedDepartment: state.Business.selectedDepartment,
-        businesses: state.Business.businesses,
-        cookie: state.Auth.token,
-        user: state.Auth.user,
-        departments: state.Business.departments,
-        form: state.Business?.createStoryForm,
-        employees: state.Business?.employees
-    }
+  return {
+    token: token && token
   }
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        updateTasksOrder: bindActionCreators(updateTasksOrder, dispatch),
-        getDepartmentsForBusiness: bindActionCreators(getDepartmentsForBusiness, dispatch),
-        getDepartmentsById: bindActionCreators(getDepartmentsById, dispatch),
-        updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
-        getBusinessById: bindActionCreators(getBusinessById, dispatch),
-        createStory: bindActionCreators(createStory, dispatch),
-        reorderStories: bindActionCreators(reorderStories, dispatch),
-        addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
-        getBusinessList: bindActionCreators(getBusinessList, dispatch),
-    }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Tasklist);
+const mapStateToProps = state => {
+  return {
+    businesses: state?.Business?.projectList,
+    cookie: state.Auth.token,
+    currentDepartment: state.Tasks.currentDepartment,
+    loading: state.Loading?.loading
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
+    setDepartment: bindActionCreators(setDepartment, dispatch)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tasklist)

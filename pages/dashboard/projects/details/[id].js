@@ -7,9 +7,11 @@ import styled, { css } from 'styled-components'
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
+import Invites from '../../../../components/unzipped/dashboard/Invites'
 import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
-import InvoicesTable from '../../../../components/unzipped/dashboard/InvoicesTable'
 import DesktopProjectDetail from '../../../../components/unzipped/dashboard/DesktopProjectDetail'
+import Invoices from '../../../../components/unzipped/dashboard/Invoices'
+import FreelancerInvites from '../../../../components/unzipped/dashboard/FreelancerInvites'
 
 const Navbar = styled.div`
   margin-bottom: 160px;
@@ -19,7 +21,7 @@ const Navbar = styled.div`
 `
 
 const Desktop = styled.div`
-  width: 80%;
+  width: 82%;
   margin: auto;
   @media (max-width: 680px) {
     width: 100%;
@@ -161,15 +163,12 @@ const Select = styled.select`
   margin-right: 10px;
 `
 
-const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
   const [weekOptions, setWeekOptions] = useState([])
-  const [selectedWeek, setSelectedWeek] = useState({})
+  const [selectedWeek, setSelectedWeek] = useState(0)
 
   const router = useRouter()
-  const { id } = router.query
-  const { tab } = router.query
-
+  const { id, tab } = router.query
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)
@@ -180,7 +179,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
     case 1:
       projectTabs = [
         { name: 'Details', index: 0 },
-        { name: 'Invoices', index: 3 }
+        { name: 'Invoices', index: 3 },
+        { name: 'Invites', index: 4 }
       ]
       break
     default:
@@ -188,7 +188,8 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         { name: 'Details', index: 0 },
         { name: 'Applications', index: 1 },
         { name: 'Hires', index: 2 },
-        { name: 'Invoices', index: 3 }
+        { name: 'Invoices', index: 3 },
+        { name: 'Invites', index: 4 }
       ]
   }
 
@@ -218,14 +219,16 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       options.unshift({ startOfWeek, endOfWeek })
     }
     setWeekOptions(options)
-    setSelectedWeek(JSON.stringify(options[0]))
+    setSelectedWeek(0)
   }, [])
 
-  useMemo(() => {
-    if (id !== undefined) {
-      getBusinessById(id)
-    }
+  useEffect(() => {
+    getBusinessById(id)
   }, [id])
+
+  const handleWeekChange = value => {
+    setSelectedWeek(value)
+  }
 
   return (
     <>
@@ -236,17 +239,17 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
         <HeaderDetail>
           <Header>
             <ProjectName>
-              {selectedTab !== 3 ? (screenWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
-              {selectedTab === 3 && screenWidth > 680 ? 'Invoice History' : ''}
+              {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name ?? ''}` : 'PROJECT') : ''}
+              {selectedTab === 3 && window.innerWidth > 680 ? (role === 1 ? 'TIMESHEET' : 'Invoice History') : ''}
             </ProjectName>
-            {(selectedTab === 3) & (screenWidth < 680) ? (
+            {(selectedTab === 3) & (window.innerWidth < 680) ? (
               <Select
                 onChange={e => {
                   setSelectedWeek(e.target.value)
                 }}
                 value={selectedWeek}>
                 {weekOptions.map((week, index) => (
-                  <option key={index} value={JSON.stringify(week)} style={{ fontSize: '4px' }}>
+                  <option key={index} value={index} style={{ fontSize: '4px' }}>
                     Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
                   </option>
                 ))}
@@ -273,10 +276,18 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
       </Desktop>
 
       <TabContent>
-        {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
+        {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />}
         {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
         {selectedTab === 2 && <HiringTable />}
-        {selectedTab === 3 && <InvoicesTable selectedWeek={selectedWeek} />}
+        {selectedTab === 3 && (
+          <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} role={role} businessId={id} />
+        )}
+        {selectedTab === 4 &&
+          (role === 0 ? (
+            <Invites role={role} businessId={id} projectDetails={projectDetails} />
+          ) : (
+            <FreelancerInvites businessId={id} projectDetails={projectDetails} />
+          ))}
       </TabContent>
     </>
   )
@@ -284,9 +295,9 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role }) => {
 
 const mapStateToProps = state => {
   return {
-    access_token: state.Auth.token,
     projectDetails: state.Business.selectedBusiness,
-    role: state.Auth.user.role
+    role: state.Auth.user.role,
+    loading: state.Loading.loading
   }
 }
 
