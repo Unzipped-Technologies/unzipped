@@ -130,13 +130,21 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
   }, [conversations])
 
   const handleSearch = e => {
+    const { searchKey } = e;
     const filteredConversations = conversations.filter(convo => {
       const participants = convo.participants
       return participants.some(participant => {
-        const fullName = `${participant.userId.FirstName} ${participant.userId.LastName}`
-        const searchChars = e.split('')
+        const fullName = `${participant.userId?.FirstName} ${participant.userId?.LastName}`
+        const searchChars = searchKey.split('')
 
-        return participant.userId._id !== userId && searchChars.every(char => fullName.includes(char))
+        return participant.userId?._id !== userId && searchChars.every(char =>
+          fullName
+            .toLocaleLowerCase()
+            .includes(
+              char
+                .toLocaleLowerCase()
+            )
+        )
       })
     })
 
