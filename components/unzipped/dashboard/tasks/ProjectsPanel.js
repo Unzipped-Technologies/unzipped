@@ -4,7 +4,8 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 import MenuIcon from '../../../ui/icons/menu'
 import { FaRegCheckCircle } from 'react-icons/fa'
 
-const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness }) => {
+const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness, setIsEditable }) => {
+
   return (
     <>
       <DIV
