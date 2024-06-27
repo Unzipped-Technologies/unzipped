@@ -52,17 +52,17 @@ const WhiteCard = styled.div`
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
 
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-      size === 'large'
-        ? '151px'
-        : size === 'extraLarge'
+    size === 'large'
+      ? '151px'
+      : size === 'extraLarge'
         ? '370px'
         : unset
-        ? 'unset'
-        : cardHeightDesktop
-        ? '262px'
-        : height
-        ? height
-        : '63px'};
+          ? 'unset'
+          : cardHeightDesktop
+            ? '262px'
+            : height
+              ? height
+              : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: ${({ padding }) => (padding ? padding : '20px 20px')};
@@ -88,17 +88,17 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-      size === 'large'
-        ? '151px'
-        : size === 'extraLarge'
+    size === 'large'
+      ? '151px'
+      : size === 'extraLarge'
         ? '370px'
         : unset
-        ? 'unset'
-        : cardHeightDesktop
-        ? '262px'
-        : height
-        ? height
-        : '63px'};
+          ? 'unset'
+          : cardHeightDesktop
+            ? '262px'
+            : height
+              ? height
+              : '63px'};
 
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
@@ -106,7 +106,7 @@ const WhiteCard = styled.div`
     position: relative;
     box-shadow: ${({ shadow }) => (shadow ? shadow : 'none')};
     margin-bottom: ${({ noMargin, half, marginBottom }) =>
-      noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
+    noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
   }
   @media (max-width: 600px) {
@@ -195,13 +195,19 @@ const ConversationContainer = ({
   })
 
   const handleSearch = e => {
+    const { searchKey } = e
     const filteredConversations = conversations.filter(convo => {
       const participants = convo.participants
       return participants.some(participant => {
-        const fullName = `${participant.userId.FirstName} ${participant.userId.LastName}`
-        const searchChars = e.split('')
+        const fullName = `${participant.userId?.FirstName} ${participant.userId?.LastName}`
+        const searchChars = searchKey.split('')
 
-        return participant.userId._id !== userId && searchChars.every(char => fullName.includes(char))
+        return participant.userId?._id !== userId &&
+          searchChars.every(char =>
+            fullName
+              .toLocaleLowerCase()
+              .includes(char.toLocaleLowerCase())
+          )
       })
     })
 

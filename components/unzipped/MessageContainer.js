@@ -287,7 +287,7 @@ const MessageContainer = ({
                             width="436px"
                             unset
                             borderRadius="15px 15px 3px 15px"
-                            padding="10px 10px"
+                            padding="15px 15px"
                             style={{ width: '20px !important' }}>
                             <DarkText small noMargin color="#fff">
                               {e?.message}

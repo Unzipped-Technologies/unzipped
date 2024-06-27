@@ -336,7 +336,7 @@ const Chat = ({
                     <Container key={`message_${index}`} display="flex" justifyContent="flex-end" padding="10px">
                       <Container width="auto" minWidth="auto" padding="5px 10px 10px 10px">
                         <Container background="#007FED" borderRadius="8px 8px 0px 8px" padding="20px 20px 10px 20px">
-                          <DarkText small noMargin fontSize="16px" lineHeight="23px">
+                          <DarkText small noMargin fontSize="16px" lineHeight="23px" color={'#fff'}>
                             {e?.message}
                           </DarkText>
                         </Container>
