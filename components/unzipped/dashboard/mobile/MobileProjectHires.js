@@ -69,14 +69,14 @@ const MobileProjectHires = ({ data = [] }) => {
 
   return (
     <MobileDisplayBox>
-      <ProjectsList>
+      <ProjectsList data-testid="mobile_hires_container">
         {data?.length ? (
           data?.map(row => {
             return (
-              <ProjectCard key={row._id}>
+              <ProjectCard key={row._id} data-testid={`${row?._id}_contracts`}>
                 <ProjectDate>
                   {(row?.createdAt && ValidationUtils.formatDate(row?.createdAt)) ||
-                    ValidationUtils.formatDate(row?.updatedAt || row?.updatedAt)}
+                    ValidationUtils.formatDate(row?.updatedAt)}
                 </ProjectDate>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <ProjectName>

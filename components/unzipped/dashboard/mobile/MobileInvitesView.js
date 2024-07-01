@@ -8,12 +8,6 @@ import { MdVerifiedUser } from 'react-icons/md'
 import IconComponent from '../../../ui/icons/IconComponent'
 import { ConverterUtils } from '../../../../utils'
 
-const Container = styled.div`
-  @media (min-width: 680px) {
-    display: none;
-  }
-`
-
 const ApplicationView = styled.div`
   display: flex;
   flex-direction: column;
@@ -146,19 +140,18 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
   }
   return (
     <>
-      <Container>
+      <div data-testid="mobile_invites">
         {invitesList?.length && invitesList[0]?.listEntries?.length ? (
           invitesList[0]?.listEntries.map(invitation => {
             return (
-              <ApplicationView key={invitation._id}>
+              <ApplicationView key={invitation._id} data-testid={`${invitation?._id}_invite`}>
                 <PersonalInfo>
                   <ProfileImage>
                     <Image
                       src={invitation?.freelancerId?.userId?.profileImage}
-                      alt={
-                        invitation?.freelancerId?.userId?.FirstName + invitation?.freelancerId?.userId?.LastName ||
-                        invitation._id
-                      }
+                      alt={`${
+                        invitation?.freelancerId?.userId?.FirstName + ' ' + invitation?.freelancerId?.userId?.LastName
+                      }`}
                       height="65px"
                       width="65px"
                     />
@@ -214,7 +207,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
                     <TotlaLikes>{invitation?.freelancerId?.likeTotal || 0}</TotlaLikes>
                   </Likes>
                 </div>
-                <Skills>
+                <Skills data-testid={`${invitation._id}_skills`}>
                   {invitation?.freelancerId?.freelancerSkills?.length
                     ? invitation?.freelancerId?.freelancerSkills.map(skill => {
                         return <Badge key={skill._id}>{skill?.skill}</Badge>
@@ -257,7 +250,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
             </Button>
           </div>
         )}
-      </Container>
+      </div>
     </>
   )
 }

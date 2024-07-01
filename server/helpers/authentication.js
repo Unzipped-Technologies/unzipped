@@ -5,9 +5,23 @@ const ThirdPartyApplicationModel = require('../models/ThirdPartyApplications')
 
 const isExistingUser = async (params, isFindById) => {
   if (isFindById) {
-    return await UserModel.findById(params).select('-password')
+    return await UserModel.findById(params)
+      .select('-password')
+      .populate([
+        {
+          path: 'freelancers',
+          model: 'freelancers'
+        }
+      ])
   }
-  return await UserModel.findOne({ email: params }).select('-password')
+  return await UserModel.findOne({ email: params })
+    .select('-password')
+    .populate([
+      {
+        path: 'freelancers',
+        model: 'freelancers'
+      }
+    ])
 }
 
 const verifyUser = async id => {

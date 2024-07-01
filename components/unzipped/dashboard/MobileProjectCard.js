@@ -35,23 +35,30 @@ function MobileProjectCard({ project }) {
                 style={{ color: '#0057FF', fontWeight: '500', fontSize: '16px' }}
                 onClick={() => {
                   router.push(`/projects/${project._id}`)
-                }}>
+                }}
+                data-testid={`${project?._id}_name`}>
                 {project?.name}
               </p>
             </div>
           </div>
         </div>
         <div className="d-flex justify-content-between align-items-center">
-          <p className="mb-0">{project?.country}</p>
+          <p className="mb-0" data-testid={`${project?._id}_country`}>
+            {project?.businessCountry}
+          </p>
           <div className="d-flex">
             <div className="d-flex align-items-center ps-3">
               <IconComponent name="thumbUp" width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
-              <span style={{ fontSize: '16px', paddingLeft: '3px' }}>{project?.likeTotal}</span>
+              <span style={{ fontSize: '16px', paddingLeft: '3px' }} data-testid={`${project?._id}_likeTotal`}>
+                {project?.likeTotal}
+              </span>
             </div>
           </div>
         </div>
       </div>
-      <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', marginLeft: '8px' }}>
+      <UserSkills
+        style={{ overflowX: 'scroll', overflowY: 'hidden', marginLeft: '8px' }}
+        data-testid={`required_skill`}>
         {project?.requiredSkills?.map((skill, index) => (
           <span
             key={index}
@@ -70,7 +77,7 @@ function MobileProjectCard({ project }) {
         ))}
       </UserSkills>
       <div className="px-4">
-        <p>{project?.description}</p>
+        <p data-testid={`${project?._id}description`}>{project?.description}</p>
       </div>
       <div className="px-4 mb-3" style={{ display: 'grid' }}>
         <button

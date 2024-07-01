@@ -148,138 +148,138 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
   return (
     <>
       <Container>
-        {projectApplications?.length ? (
-          projectApplications.map(application => {
-            return (
-              <ApplicationView key={application._id}>
-                <PersonalInfo>
-                  <ProfileImage>
-                    <Image
-                      src={application?.freelancerId?.userId?.profileImage}
-                      alt={
-                        application?.freelancerId?.userId?.FirstName + application?.freelancerId?.userId?.LastName ||
-                        application._id
-                      }
-                      height="65px"
-                      width="65px"
-                    />
-                  </ProfileImage>
-                  <UserInfo>
-                    <div style={{ display: 'flex' }}>
-                      <UserName>
-                        {ConverterUtils.capitalize(
-                          `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
-                        )}
-                      </UserName>
-                      <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
-                        <MdVerifiedUser />
+        {projectApplications?.length
+          ? projectApplications.map(application => {
+              return (
+                <ApplicationView key={application._id} data-testid={`${application._id}_application_card`}>
+                  <PersonalInfo>
+                    <ProfileImage>
+                      <Image
+                        src={application?.freelancerId?.userId?.profileImage}
+                        alt={`${
+                          application?.freelancerId?.userId?.FirstName +
+                          ' ' +
+                          application?.freelancerId?.userId?.LastName
+                        }`}
+                        height="65px"
+                        width="65px"
+                      />
+                    </ProfileImage>
+                    <UserInfo>
+                      <div style={{ display: 'flex' }}>
+                        <UserName>
+                          {ConverterUtils.capitalize(
+                            `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
+                          )}
+                        </UserName>
+                        <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
+                          <MdVerifiedUser />
+                        </div>
                       </div>
-                    </div>
 
-                    <UserCategory>{application?.freelancerId?.category}</UserCategory>
-                    <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
-                  </UserInfo>
-                </PersonalInfo>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    margin: '0px 20px 0px 20px'
-                  }}>
-                  <UserRate>
-                    <Rate>${application?.freelancerId?.rate || 0}&nbsp;</Rate>
-                    <small
-                      style={{
-                        fontWeight: '100',
-                        color: ' #000',
-                        fontSize: '15px',
-                        fontWeight: '500',
-                        letterSpacing: '0.4px',
-                        marginTop: '8px'
-                      }}>
-                      /&nbsp;hour
-                    </small>
-                  </UserRate>
-                  <Likes>
-                    <IconComponent name="thumbUp" width="14" height="14" viewBox="0 0 14 14" fill="#0057FF" />
+                      <UserCategory>{application?.freelancerId?.category}</UserCategory>
+                      <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                    </UserInfo>
+                  </PersonalInfo>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      margin: '0px 20px 0px 20px'
+                    }}>
+                    <UserRate>
+                      <Rate>${application?.rate ?? 0} </Rate>
+                      <small
+                        style={{
+                          fontWeight: '100',
+                          color: ' #000',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          letterSpacing: '0.4px',
+                          marginTop: '8px'
+                        }}>
+                        / hour
+                      </small>
+                    </UserRate>
+                    <Likes>
+                      <IconComponent name="thumbUp" width="14" height="14" viewBox="0 0 14 14" fill="#0057FF" />
 
-                    <TotlaLikes>{application?.freelancerId?.likeTotal || 0}</TotlaLikes>
-                  </Likes>
-                </div>
-                <Skills>
-                  {application?.freelancerId?.freelancerSkills?.length
-                    ? application?.freelancerId?.freelancerSkills.map(skill => {
-                        return <Badge key={skill._id}>{skill?.skill}</Badge>
-                      })
-                    : 'N/A'}
-                </Skills>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    margin: '0px 20px 0px 20px',
-                    textAlign: 'justify'
-                  }}>
-                  <p>
-                    <b>cover letter:</b>
-                    <CoverLetter>
-                      {ConverterUtils.truncateString(application?.coverLetter, 150)}
-                      {application?.coverLetter?.length > 150 && (
-                        <a
-                          style={{
-                            textDecoration: 'underline',
-                            color: '#0057FF',
-                            fontFamily: 'Roboto',
-                            fontSize: '13px',
-                            fontStyle: 'normal',
-                            fontWeight: '300',
-                            lineHeight: '17.5px',
-                            letterSpacing: '0.4px'
-                          }}>
-                          More
-                        </a>
-                      )}
-                    </CoverLetter>
-                  </p>
-                </div>
-                <ViewProfileButton
-                  onClick={() => {
-                    redirectToProfile(application?.freelancerId?._id)
-                  }}>
-                  View Profile
-                </ViewProfileButton>
-              </ApplicationView>
-            )
-          })
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingTop: '200px'
+                      <TotlaLikes>{application?.freelancerId?.likeTotal || 0}</TotlaLikes>
+                    </Likes>
+                  </div>
+                  <Skills data-testid={`${application._id}_application_skills`}>
+                    {application?.freelancerId?.freelancerSkills?.length
+                      ? application?.freelancerId?.freelancerSkills.map(skill => {
+                          return <Badge key={skill._id}>{skill?.skill}</Badge>
+                        })
+                      : 'N/A'}
+                  </Skills>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      margin: '0px 20px 0px 20px',
+                      textAlign: 'justify'
+                    }}>
+                    <p>
+                      <b>cover letter:</b>
+                      <CoverLetter>
+                        {ConverterUtils.truncateString(application?.coverLetter, 150)}
+                        {application?.coverLetter?.length > 150 && (
+                          <a
+                            style={{
+                              textDecoration: 'underline',
+                              color: '#0057FF',
+                              fontFamily: 'Roboto',
+                              fontSize: '13px',
+                              fontStyle: 'normal',
+                              fontWeight: '300',
+                              lineHeight: '17.5px',
+                              letterSpacing: '0.4px'
+                            }}>
+                            More
+                          </a>
+                        )}
+                      </CoverLetter>
+                    </p>
+                  </div>
+                  <ViewProfileButton
+                    onClick={() => {
+                      redirectToProfile(application?.freelancerId?._id)
+                    }}>
+                    View Profile
+                  </ViewProfileButton>
+                </ApplicationView>
+              )
+            })
+          : ''}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: '200px'
+          }}>
+          <Button
+            extraWid
+            type="outlineInverse"
+            buttonHeight="25px"
+            fontSize="15px"
+            contentMargin="0px !important"
+            colors={{
+              text: '#1976D2',
+              background: 'white',
+              border: '1px',
+              wideBorder: '#1976D2'
+            }}
+            onClick={() => {
+              router.push(`/freelancers?project=${id}`)
             }}>
-            <Button
-              extraWid
-              type="outlineInverse"
-              buttonHeight="25px"
-              fontSize="15px"
-              contentMargin="0px !important"
-              colors={{
-                text: '#1976D2',
-                background: 'white',
-                border: '1px',
-                wideBorder: '#1976D2'
-              }}
-              onClick={() => {
-                router.push(`/freelancers?project=${id}`)
-              }}>
-              Invite Freelancer
-            </Button>
-          </div>
-        )}
+            Invite Freelancer
+          </Button>
+        </div>
       </Container>
     </>
   )

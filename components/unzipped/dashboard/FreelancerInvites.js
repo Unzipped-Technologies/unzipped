@@ -2,10 +2,8 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 
 import { getUserListEntries } from '../../../redux/actions'
-import MobileInvitesView from './mobile/MobileInvitesView'
 import ProjectDesktopCard from './ProjectsDesktopCard'
 import { WhiteCard } from './style'
 import MobileProjectCard from './MobileProjectCard'
@@ -34,19 +32,19 @@ const MobileDisplayBox = styled.div`
   }
 `
 
-const InvitesList = ({ businessId, projectDetails, invitesList, getUserListEntries, freelancerId, role }) => {
-  const router = useRouter()
-
+const InvitesList = ({ businessId, invitesList, getUserListEntries, freelancerId }) => {
   useEffect(() => {
-    // Below we are only sending pagination data, Other data we are using from redux store.
-    getUserListEntries({
-      filter: {
-        freelancerId: freelancerId,
-        name: 'Invites',
-        businessId: businessId
-      },
-      take: 1000
-    })
+    async function fetchData() {
+      await getUserListEntries({
+        filter: {
+          freelancerId: freelancerId?._id,
+          name: 'Invites',
+          businessId: businessId
+        },
+        take: 1000
+      })
+    }
+    fetchData()
   }, [])
 
   return (
@@ -57,11 +55,16 @@ const InvitesList = ({ businessId, projectDetails, invitesList, getUserListEntri
             {invitesList?.length
               ? invitesList.map(invitation => {
                   return (
-                    <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${invitation._id}_listing`}>
+                    <WhiteCard
+                      noMargin
+                      overlayDesktop
+                      cardHeightDesktop
+                      key={`${invitation._id}_listing`}
+                      data-testid={`${invitation._id}_desktop_freelancer_invite`}>
                       <ProjectDesktopCard
                         project={invitation?.businessId}
                         includeRate
-                        freelancerId={invitation?.freelancerId?._id}
+                        freelancerId={invitation?.freelancerId}
                       />
                     </WhiteCard>
                   )
@@ -72,7 +75,9 @@ const InvitesList = ({ businessId, projectDetails, invitesList, getUserListEntri
       ) : invitesList?.length ? (
         invitesList.map(invitation => {
           return (
-            <MobileDisplayBox key={`${invitation._id}_mobile_listing`}>
+            <MobileDisplayBox
+              key={`${invitation._id}_mobile_listing`}
+              data-testid={`${invitation._id}_mobile_freelancer_invite`}>
               <MobileProjectCard project={invitation?.businessId} includeRate />
             </MobileDisplayBox>
           )

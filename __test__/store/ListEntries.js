@@ -1,5 +1,81 @@
 export const LIST_ENTRIES = [
   {
+    icon: 'TeamOutlined',
+    isActive: true,
+    listEntries: [
+      {
+        _id: '6633eec5e646211f2eb6af53',
+        name: 'Invites',
+        icon: 'TeamOutlined',
+        freelancerId: {
+          rate: 23,
+          category: 'Full Stack Developer',
+          freelancerSkills: [
+            {
+              _id: '6601c30e149276195c3f8fcc',
+              skill: 'React.js'
+            },
+            {
+              _id: '6601c30e149276195c3f8fcd',
+              skill: 'Node.js'
+            },
+            {
+              _id: '6601c30e149276195c3f8fce',
+              skill: 'Express.js'
+            },
+            {
+              _id: '6601c30e149276195c3f8fcf',
+              skill: 'Nest.js'
+            },
+            {
+              _id: '6601c30e149276195c3f8fd0',
+              skill: 'Next.js'
+            },
+            {
+              _id: '6601c30e149276195c3f8fd1',
+              skill: 'MongoDB'
+            },
+            {
+              _id: '6601c30e149276195c3f8fd2',
+              skill: 'Typescript'
+            }
+          ],
+          likeTotal: 5,
+          dislikeTotal: 0,
+          _id: '6611b437e91bbe0fbeb934ad',
+          userId: {
+            AddressLineCountry: 'United Stats',
+            FirstName: 'test',
+            LastName: 'freelancer16',
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            _id: '6611b437e91bbe0fbeb934a8',
+            email: 'freelancer16@gmail.com'
+          }
+        },
+        businessId: {
+          description:
+            'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
+          requiredSkills: ['React', 'Node', 'MongoDB', 'Redux', 'Express', 'Nest.js', 'Next.js'],
+          budget: 90000,
+          likeTotal: 0,
+          projectBudgetType: 'Fixed Price',
+          projectImagesUrl: ['66106dd562048827e88a67b0'],
+          _id: '661e93017277db0ed9b6ff39',
+          name: 'Hospital Management System'
+        }
+      }
+    ],
+    isDefault: false,
+    isPrivate: true,
+    _id: '6633eec5e646211f2eb6af52',
+    name: 'Invites',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-05-02T19:51:33.654Z',
+    updatedAt: '2024-05-07T15:08:12.023Z',
+    __v: 7
+  },
+  {
     icon: 'HeartOutlined',
     isActive: true,
     listEntries: [
@@ -625,261 +701,41 @@ export const LIST_ENTRIES = [
     createdAt: '2024-03-25T18:29:29.039Z',
     updatedAt: '2024-05-02T19:53:17.826Z',
     __v: 11
-  },
+  }
+]
+
+export const USER_LIST_ENTRIES = [
   {
-    icon: 'TeamOutlined',
-    isActive: true,
-    listEntries: [
-      {
-        _id: '6633eec5e646211f2eb6af53',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '6611b437e91bbe0fbeb934ad',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer16',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6611b437e91bbe0fbeb934a8',
-            email: 'freelancer16@gmail.com'
-          }
-        },
-        businessId: {
-          description:
-            'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
-          requiredSkills: ['React', 'Node', 'MongoDB', 'Redux', 'Express', 'Nest.js', 'Next.js'],
-          budget: 90000,
-          likeTotal: 0,
-          projectBudgetType: 'Fixed Price',
-          projectImagesUrl: ['66106dd562048827e88a67b0'],
-          _id: '661e93017277db0ed9b6ff39',
-          name: 'Hospital Management System'
-        }
-      },
-      {
-        _id: '6633eec8e646211f2eb6af55',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '6611b4b1111518101337a71c',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer17',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6611b4b1111518101337a717',
-            email: 'freelancer17@gmail.com'
-          }
-        },
-        businessId: {
-          description:
-            'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
-          requiredSkills: ['React', 'Node', 'MongoDB', 'Redux', 'Express', 'Nest.js', 'Next.js'],
-          budget: 90000,
-          likeTotal: 0,
-          projectBudgetType: 'Fixed Price',
-          projectImagesUrl: ['66106dd562048827e88a67b0'],
-          _id: '661e93017277db0ed9b6ff39',
-          name: 'Hospital Management System'
-        }
-      },
-      {
-        _id: '6633ef26e646211f2eb6af58',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6633ef34e646211f2eb6af5a',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '660340f679de512379878b4d',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer3',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '660340f679de512379878b48',
-            email: 'freelancer3@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6633ef6ce646211f2eb6af5c',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '660467e8cf181113fdd9bf77',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'zdsrtol',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '660467e8cf181113fdd9bf72',
-            email: 'freelancer4@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6634edc7dabc000b4f78b7ac',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '663a43dbe427f70706465b0e',
-        name: 'Invites',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '660340f679de512379878b4d',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer3',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '660340f679de512379878b48',
-            email: 'freelancer3@gmail.com'
-          }
-        }
-      }
-    ],
-    isDefault: false,
     isPrivate: true,
-    _id: '6633eec5e646211f2eb6af52',
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '6629613366872424c97da285',
     name: 'Invites',
+    icon: 'TeamOutlined',
+    listId: '6629613366872424c97da284',
     userId: '6601c288149276195c3f8faf',
-    user: '6601c288149276195c3f8faf',
-    createdAt: '2024-05-02T19:51:33.654Z',
-    updatedAt: '2024-05-07T15:08:12.023Z',
-    __v: 7
+    freelancerId: '6611b1e8d8938d0d6de9cef6',
+    businessId: {
+      description:
+        'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
+      requiredSkills: ['React', 'Node', 'MongoDB', 'Redux', 'Express', 'Nest.js', 'Next.js'],
+      budget: 90000,
+      likeTotal: 0,
+      projectBudgetType: 'Fixed Price',
+      businessCountry: 'United States',
+      projectImagesUrl: [
+        {
+          _id: '66106dd562048827e88a67b0',
+          url: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1712352725/6601c288149276195c3f8faf/a6vbdcgxel892muwvque.png'
+        }
+      ],
+      _id: '661e93017277db0ed9b6ff39',
+      name: 'Hospital Management System',
+      applicants: []
+    },
+    createdAt: '2024-04-24T19:44:51.039Z',
+    updatedAt: '2024-04-24T19:44:51.039Z',
+    __v: 0
   }
 ]
