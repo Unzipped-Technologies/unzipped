@@ -3,28 +3,24 @@ import styled, { css } from 'styled-components'
 import { useRouter } from 'next/router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { DarkText } from '../../../../../components/unzipped/dashboard/style'
+import { DIV, TEXT } from '../../../../../components/unzipped/dashboard/style'
 
 import { getBusinessById } from '../../../../../redux/actions'
 import Nav from '../../../../../components/unzipped/header'
 import ClientMobileInvoices from '../../../../../components/unzipped/dashboard/mobile/ClinetMobileInvoices'
 import Timesheet from '../../../../../components/unzipped/dashboard/project/Timesheet'
-import Invites from '../../../../components/unzipped/dashboard/Invites'
-import FreelancerInvites from '../../../../components/unzipped/dashboard/FreelancerInvites'
+import FreelancerInvites from '../../../../../components/unzipped/dashboard/FreelancerInvites'
 
-import ApplicationCard from '../../../../../components/unzipped/dashboard/ApplicationCard'
-import HiringTable from '../../../../../components/unzipped/dashboard/HiresTable'
 import DesktopProjectDetail from '../../../../../components/unzipped/dashboard/DesktopProjectDetail'
 
 const Desktop = styled.div`
   width: 80%;
   margin: auto;
   @media (max-width: 680px) {
-    display: none;
+    width: 100%;
   }
 `
 const MobileDisplayBox = styled.div`
-  margin-top: -40px;
   @media (min-width: 680px) {
     display: none;
   }
@@ -45,37 +41,8 @@ const Title = styled.div`
   flex-flow: row;
   margin: 60px 0px 0px 0px;
 `
-const Toggle = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 260px;
-  height: 34px;
-  background-color: #d8d8d8;
-  border-radius: 5px;
-  overflow: hidden;
-`
-const Left = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ displayFormat }) => (!displayFormat ? '#5E99D4' : 'transparent')};
-`
-const Right = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding-top: 5px;
-  height: 100%;
-  width: 100%;
-  background: ${({ displayFormat }) => (displayFormat ? '#5E99D4' : 'transparent')};
-`
 
-const Header = styled.header`
+const Header = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -86,12 +53,12 @@ const Header = styled.header`
     margin: 0px;
   }
 `
-const HeaderDetail = styled.header`
+const HeaderDetail = styled.div`
   justify-content: space-between;
   right: 0px;
   top: 10px;
   width: 100%;
-  padding: 0px 0px 24px 15px;
+  padding: 0px 0px 0px 15px;
   @media (max-width: 680px) {
     width: 100%;
     top: 0;
@@ -120,13 +87,7 @@ const ProjectName = styled.div`
   }
 `
 
-const ProjectSubHeading = styled.p`
-  color: #444;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 24.5px; /* 102.083% */
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+const ProjectSubHeading = styled(TEXT)`
   @media (max-width: 680px) {
     display: none;
   }
@@ -187,11 +148,6 @@ const TabButton = styled.button`
   }
 `
 
-const TabContent = styled.div`
-  display: block;
-  padding-bottom: 50px;
-`
-
 const Select = styled.select`
   display: block;
   border: 0;
@@ -204,15 +160,14 @@ const Select = styled.select`
   font-weight: 400;
   line-height: 19.5px; /* 121.875% */
   letter-spacing: 0.15px;
-  margin-top: -20px;
+  margin-top: -40px;
   margin-bottom: -10px !important;
   margin-right: 10px;
 `
 
-const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
+const FounderInvoice = ({ projectDetails, getBusinessById }) => {
   const [selectedWeek, setSelectedWeek] = useState(null)
   const [weekOptions, setWeekOptions] = useState([])
-  const [take, setTake] = useState('all')
   const [displayFormat, setDisplayFormat] = useState(false)
 
   const router = useRouter()
@@ -222,24 +177,11 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
 
   const handleClick = index => setSelectedTab(index)
 
-  let projectTabs = []
-
-  switch (role) {
-    case 1:
-      projectTabs = [
-        { name: 'Details', index: 0 },
-        { name: 'Invoices', index: 3 },
-        { name: 'Invites', index: 4 }
-      ]
-      break
-    default:
-      projectTabs = [
-        { name: 'Details', index: 0 },
-        { name: 'Applications', index: 1 },
-        { name: 'Hires', index: 2 },
-        { name: 'Invoices', index: 3 }
-      ]
-  }
+  let projectTabs = [
+    { name: 'Details', index: 0 },
+    { name: 'Invoices', index: 3 },
+    { name: 'Invites', index: 4 }
+  ]
 
   useEffect(() => {
     switch (tab) {
@@ -279,14 +221,6 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
     setSelectedWeek(value)
   }
 
-  const handletake = value => {
-    setTake(value)
-  }
-
-  const toggleDisplayFormat = () => {
-    setDisplayFormat(!displayFormat)
-  }
-
   return (
     <>
       <Navbar>
@@ -300,21 +234,37 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
                 {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
                 {selectedTab === 3 && window.innerWidth > 680 ? 'Invoice History' : ''}
               </ProjectName>
+              {(selectedTab === 3) & (window.innerWidth <= 680) ? (
+                <Select
+                  data-testid="timesheet_week_options"
+                  onChange={e => {
+                    handleWeekChange(e.target.value)
+                  }}
+                  value={selectedWeek}>
+                  {weekOptions.map((week, index) => (
+                    <option key={index} value={index} style={{ fontSize: '4px' }}>
+                      Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                ''
+              )}
             </Header>
-            {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
+            {selectedTab !== 3 && (
+              <ProjectSubHeading
+                textColor="#444"
+                fontSize="24px"
+                fontWeight="400"
+                lineHeight="24.5px"
+                letterSpacing="0.4px"
+                textTsransform="uppercase">
+                {projectDetails?.name}
+              </ProjectSubHeading>
+            )}
           </HeaderDetail>
-          {selectedTab === 3 && role === 0 && (
-            <Toggle>
-              <Left displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-                <DarkText small>Day</DarkText>
-              </Left>
-              <Right displayFormat={displayFormat} onClick={toggleDisplayFormat}>
-                <DarkText small>Week</DarkText>
-              </Right>
-            </Toggle>
-          )}
         </Title>
-        <Tabs>
+        <Tabs data-testid="desktop_project_detail_tabs">
           {projectTabs.map((tab, index) => {
             return (
               <TabButton
@@ -327,10 +277,8 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
           })}
         </Tabs>
       </Desktop>
-      <TabContent>
+      <DIV display="block" padding="0px 0px 50px 0px">
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
-        {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
-        {selectedTab === 2 && <HiringTable />}
         {selectedTab === 3 && (
           <>
             {window.innerWidth > 680 ? (
@@ -346,20 +294,15 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
             )}
           </>
         )}
-        {selectedTab === 4 && role === 0 ? (
-          <Invites role={role} businessId={id} projectDetails={projectDetails} />
-        ) : (
-          <FreelancerInvites businessId={id} projectDetails={projectDetails} />
-        )}
-      </TabContent>
+        {selectedTab === 4 && <FreelancerInvites businessId={id} projectDetails={projectDetails} />}
+      </DIV>
     </>
   )
 }
 
 const mapStateToProps = state => {
   return {
-    projectDetails: state.Business.selectedBusiness,
-    role: state.Auth.user.role
+    projectDetails: state.Business.selectedBusiness
   }
 }
 

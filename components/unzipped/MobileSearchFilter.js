@@ -347,7 +347,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                 data-testid={`${skill?.text}_suggestion`}
                 key={index}
                 onClick={() => {
-                  handleSuggestionClick(skill)
+                  handleSuggestionClick(skill?.text)
                   setUserInput('')
                   setSuggestions([])
                 }}>

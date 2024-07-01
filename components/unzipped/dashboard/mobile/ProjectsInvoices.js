@@ -12,8 +12,7 @@ import { FaRegCheckCircle } from 'react-icons/fa'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import Button from '../../../ui/Button'
-import { Absolute } from '../../dashboard/style'
-import { ConverterUtils, ValidationUtils } from '../../../../utils'
+import { ConverterUtils } from '../../../../utils'
 import { getInvoices, updateInvoice } from '../../../../redux/actions'
 import MobileFreelancerFooter from '../../../unzipped/MobileFreelancerFooter'
 
@@ -78,8 +77,9 @@ const TaskHours = styled.div`
 
 const TaskIcon = styled.div`
   margin-left: 10px;
-  color: ${({ color }) => (color ? color : '#5dc26a')};
+  color: #5dc26a;
   font-size: 13px;
+  color: ${({ color }) => color};
 `
 
 const useStyles = makeStyles(theme => ({
@@ -152,12 +152,19 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
     }
   }
 
+  const viewInvoice = (businessId = null, freelancerId = null, invoiceId = null) => {
+    if (role === 1) {
+      router.push(`/dashboard/projects/freelancer/invoice/${businessId}?tab=invoices&freelancer=${freelancerId}`)
+    } else {
+      router.push(`/dashboard/projects/client/invoice/${businessId}?tab=invoices&invoice=${invoiceId}`)
+    }
+  }
   return (
-    <MobileDisplayBox>
+    <MobileDisplayBox data-testid="freelancer_all_invoices">
       {allInvoices?.length ? (
         allInvoices?.map(invoice => {
           return (
-            <Accordion key={`${invoice._id}_${invoice?.user?._id}`}>
+            <Accordion key={`${invoice._id}_${invoice?.user?._id}`} data-testid={`${invoice?.business?._id}_invoices`}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                 <Typography className={classes.heading}>
                   {ConverterUtils.capitalize(`${invoice?.business?.name}`)}
@@ -167,7 +174,7 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
                 {invoice?.invoices?.map(row => {
                   const { startDate, endDate } = getWeekStartDate(row?.createdAt)
                   return (
-                    <Accordion key={`${row._id}`}>
+                    <Accordion key={`${row._id}`} data-testid={`${row?._id}_invoice`}>
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
@@ -210,9 +217,7 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
                                 text: '#FFF'
                               }}
                               onClick={() => {
-                                router.push(
-                                  `/dashboard/projects/freelancer/invoice/${invoice?.business._id}?tab=invoices&freelancer=${row?.freelancerId}`
-                                )
+                                viewInvoice(invoice?.business._id, row?.freelancerId, row?._id)
                               }}>
                               View Invoice
                             </Button>

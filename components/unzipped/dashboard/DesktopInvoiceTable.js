@@ -9,7 +9,7 @@ import { TableHeading, TableData } from './style'
 import { ConverterUtils, ValidationUtils } from '../../../utils'
 import { getInvoices, updateInvoice } from '../../../redux/Invoices/actions'
 
-const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) => {
+const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice }) => {
   const router = useRouter()
   const { id } = router.query
 
@@ -22,43 +22,32 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
   }
 
   const menus = rowData => {
-    if (role === 1) {
-      return [
-        {
-          text: 'View Details',
-          onClick: () => {
-            router.push(`/dashboard/projects/freelancer/invoice/${rowData.businessId}?tab=invoices`)
-          }
+    return [
+      {
+        text: 'Approve Invoice',
+        onClick: () => {
+          approveInvoice(rowData._id)
         }
-      ]
-    } else {
-      return [
-        {
-          text: 'Approve Invoice',
-          onClick: () => {
-            approveInvoice(rowData._id)
-          }
-        },
-        {
-          text: 'View Details',
-          onClick: () => {
-            router.push(`/dashboard/projects/client/invoice/${rowData.businessId}?tab=invoices&invoice=${rowData._id}`)
-          }
-        },
-        {
-          text: 'View Profile',
-          onClick: () => {
-            if (rowData?.freelancerId) router.push(`/freelancers/${rowData.freelancerId}`)
-          }
-        },
-        {
-          text: 'Archive Invoice',
-          onClick: () => {
-            archiveapproveInvoice(rowData._id)
-          }
+      },
+      {
+        text: 'View Details',
+        onClick: () => {
+          router.push(`/dashboard/projects/client/invoice/${rowData.businessId}?tab=invoices&invoice=${rowData._id}`)
         }
-      ]
-    }
+      },
+      {
+        text: 'View Profile',
+        onClick: () => {
+          if (rowData?.freelancerId) router.push(`/freelancers/${rowData.freelancerId}`)
+        }
+      },
+      {
+        text: 'Archive Invoice',
+        onClick: () => {
+          archiveapproveInvoice(rowData._id)
+        }
+      }
+    ]
   }
 
   useEffect(() => {
@@ -73,41 +62,24 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
           border: '1px solid #D9D9D9',
           background: 'rgba(255, 255, 255, 0.36)'
         }}>
-        <thead>
-          <tr style={{}}>
-            {role !== 1 && (
-              <TableHeading
-                style={{
-                  color: '#000',
-                  textAlign: 'center',
-                  fontFamily: 'Roboto',
-                  fontSize: '16px',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  lineHeight: '24.5px' /* 153.125% */,
-                  letterSpacing: '0.4px',
-                  textTransform: 'uppercase'
-                }}>
-                NAME
-              </TableHeading>
-            )}
+        <thead data-testid="project_invoices_table_header">
+          <tr>
+            <TableHeading
+              style={{
+                color: '#000',
+                textAlign: 'center',
+                fontFamily: 'Roboto',
+                fontSize: '16px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: '24.5px' /* 153.125% */,
+                letterSpacing: '0.4px',
+                textTransform: 'uppercase'
+              }}>
+              NAME
+            </TableHeading>
             <TableHeading>Dates</TableHeading>
-            {role === 1 && (
-              <TableHeading
-                style={{
-                  color: '#000',
-                  textAlign: 'center',
-                  fontFamily: 'Roboto',
-                  fontSize: '16px',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  lineHeight: '24.5px' /* 153.125% */,
-                  letterSpacing: '0.4px',
-                  textTransform: 'uppercase'
-                }}>
-                PROJECT
-              </TableHeading>
-            )}
+
             <TableHeading>HOURS</TableHeading>
             <TableHeading>STATUS</TableHeading>
             <TableHeading>HIRE DATE</TableHeading>
@@ -117,22 +89,18 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
         <tbody>
           {invoices?.length > 0 &&
             invoices?.map(row => (
-              <tr key={row._id}>
-                {role !== 1 && (
-                  <TableData>
-                    {ConverterUtils.capitalize(
-                      `${row?.freelancer?.user?.FirstName} ${row?.freelancer?.user?.LastName}`
-                    ) || row?.freelancer?.user?.FullName}
-                  </TableData>
-                )}
+              <tr key={row._id} data-testid={row?._id}>
+                <TableData>
+                  {ConverterUtils.capitalize(
+                    `${row?.freelancer?.user?.FirstName} ${row?.freelancer?.user?.LastName}`
+                  ) || row?.freelancer?.user?.FullName}
+                </TableData>
                 <TableData>
                   {' '}
                   {moment(moment(row?.createdAt).startOf('isoWeek')).format('MM-DD-YYYY')} -{' '}
                   {moment(moment(row?.createdAt).endOf('isoWeek')).format('MM-DD-YYYY')}
                 </TableData>
-                {role === 1 && (
-                  <TableData>{ConverterUtils.capitalize(`${row?.business?.name}`) || 'Project Name'}</TableData>
-                )}
+
                 <TableData>{row.hoursWorked}</TableData>
                 <TableData>{ConverterUtils.capitalize(`${row.status}`)}</TableData>
                 <TableData>
@@ -176,8 +144,7 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice, role }) =>
 
 const mapStateToProps = state => {
   return {
-    invoices: state.Invoices.invoices,
-    role: state.Auth.user.role
+    invoices: state.Invoices.invoices
   }
 }
 

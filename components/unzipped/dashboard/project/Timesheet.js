@@ -346,6 +346,7 @@ const Timesheet = ({
         })
       }
     }
+
     if (taskHours?.length) {
       if (selectedInvoice?._id) {
         await addInvoiceTasks(selectedInvoice?._id, {
