@@ -13,12 +13,6 @@ import { getInvitesLists } from '../../../redux/actions'
 import MobileInvitesView from './mobile/MobileInvitesView'
 import ProjectDesktopCard from './ProjectsDesktopCard'
 
-const DesktopContainer = styled.div`
-  @media (max-width: 680px) {
-    display: none;
-  }
-`
-
 const ProjectApplications = styled.div`
   display: flex;
   flex-flow: row;
@@ -123,169 +117,172 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
   const router = useRouter()
 
   const redirectToProfile = freelancerId => {
-    if (freelancerId) {
-      router.push(`/freelancers/${freelancerId}`)
-    }
+    router.push(`/freelancers/${freelancerId}`)
   }
 
   useEffect(() => {
-    // Below we are only sending pagination data, Other data we are using from redux store.
-    getInvitesLists({
-      filter: {
-        user: userId,
-        name: 'Invites'
-      },
-      take: 1000
-    })
+    async function fetchData() {
+      await getInvitesLists({
+        filter: {
+          user: userId,
+          name: 'Invites'
+        },
+        take: 1000
+      })
+    }
+    fetchData()
   }, [])
 
   return (
     <>
-      <DesktopContainer>
-        {invitesList?.length && invitesList[0]?.listEntries?.length ? (
-          invitesList[0]?.listEntries.map(invitation => {
-            return (
-              <>
-                {role === 0 ? (
-                  <ProjectApplications key={invitation._id}>
-                    <ProfileImage>
-                      {invitation?.freelancerId?.userId?.profileImage ? (
-                        <Image
-                          src={invitation?.freelancerId?.userId?.profileImage}
-                          alt={
-                            invitation?.freelancerId?.userId?.FirstName + invitation?.freelancerId?.userId?.LastName ||
-                            invitation._id
-                          }
-                          height="102px"
-                          width="102px"
-                          radius="50%"
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexFlow: 'column',
-                            alignItems: 'center',
-                            margin: '20px 20px',
-                            height: '102px',
-                            width: '102px',
-                            borderRadius: '50%',
-                            color: 'white',
-                            backgroundColor: '#0e1724',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                          {invitation?.freelancerId?.userId?.FirstName[0] ||
-                            invitation?.freelancerId?.userId?.LastName[0]}
+      {window?.innerWidth > 680 ? (
+        <div data-testid="desktop_invites">
+          {invitesList?.length && invitesList[0]?.listEntries?.length ? (
+            invitesList[0]?.listEntries.map(invitation => {
+              return (
+                <span key={invitation._id} data-testid={`${invitation?._id}_invite`}>
+                  {role === 0 ? (
+                    <ProjectApplications>
+                      <ProfileImage>
+                        {invitation?.freelancerId?.userId?.profileImage ? (
+                          <Image
+                            src={invitation?.freelancerId?.userId?.profileImage}
+                            alt={`${
+                              invitation?.freelancerId?.userId?.FirstName +
+                              ' ' +
+                              invitation?.freelancerId?.userId?.LastName
+                            }`}
+                            height="102px"
+                            width="102px"
+                            radius="50%"
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexFlow: 'column',
+                              alignItems: 'center',
+                              margin: '20px 20px',
+                              height: '102px',
+                              width: '102px',
+                              borderRadius: '50%',
+                              color: 'white',
+                              backgroundColor: '#0e1724',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}>
+                            {invitation?.freelancerId?.userId?.FirstName?.[0] ??
+                              invitation?.freelancerId?.userId?.LastName?.[0]}
+                          </div>
+                        )}
+                      </ProfileImage>
+                      <UserInfo>
+                        <div style={{ display: 'flex' }}>
+                          <UserName>
+                            {ConverterUtils.capitalize(
+                              `${invitation?.freelancerId?.userId?.FirstName} ${invitation?.freelancerId?.userId?.LastName}`
+                            )}
+                          </UserName>
+                          <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
+                            <MdVerifiedUser />
+                          </div>
                         </div>
-                      )}
-                    </ProfileImage>
-                    <UserInfo>
-                      <div style={{ display: 'flex' }}>
-                        <UserName>
-                          {ConverterUtils.capitalize(
-                            `${invitation?.freelancerId?.userId?.FirstName} ${invitation?.freelancerId?.userId?.LastName}`
-                          )}
-                        </UserName>
-                        <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
-                          <MdVerifiedUser />
-                        </div>
-                      </div>
 
-                      <UserCategory>{invitation?.freelancerId?.category}</UserCategory>
-                      <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
-                      <UserRate>
-                        {invitation?.freelancerId?.rate > 0 ? (
-                          <div>
-                            {`$${invitation?.freelancerId?.rate}`}{' '}
+                        <UserCategory>{invitation?.freelancerId?.category}</UserCategory>
+                        <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                        <UserRate>
+                          {invitation?.freelancerId?.rate > 0 ? (
+                            <div>
+                              {`$${invitation?.freelancerId?.rate}`}{' '}
+                              <span
+                                style={{
+                                  fontWeight: '100',
+                                  color: '#000',
+                                  fontSize: '15px',
+                                  fontWeight: '300',
+                                  letterSpacing: '0.4px',
+                                  marginTop: '-100px'
+                                }}>
+                                / hour
+                              </span>
+                            </div>
+                          ) : (
                             <span
                               style={{
-                                fontWeight: '100',
                                 color: '#000',
-                                fontSize: '15px',
-                                fontWeight: '300',
-                                letterSpacing: '0.4px',
-                                marginTop: '-100px'
+                                fontSize: '15px'
                               }}>
-                              / hour
+                              Negotiable
                             </span>
-                          </div>
-                        ) : (
-                          <span
-                            style={{
-                              color: '#000',
-                              fontSize: '15px'
+                          )}
+                        </UserRate>
+                        <Skills data-testid={`${invitation._id}_skills`}>
+                          {invitation?.freelancerId?.freelancerSkills?.length
+                            ? invitation?.freelancerId?.freelancerSkills.map(skill => {
+                                return <Badge key={skill._id}>{skill?.skill}</Badge>
+                              })
+                            : ''}
+                        </Skills>
+                      </UserInfo>
+                      <ViewProfile>
+                        <Grid2>
+                          <ViewProfileButton
+                            onClick={() => {
+                              redirectToProfile(invitation?.freelancerId?._id)
                             }}>
-                            Negotiable
-                          </span>
-                        )}
-                      </UserRate>
-                      <Skills>
-                        {invitation?.freelancerId?.freelancerSkills?.length
-                          ? invitation?.freelancerId?.freelancerSkills.map(skill => {
-                              return <Badge key={skill._id}>{skill?.skill}</Badge>
-                            })
-                          : ''}
-                      </Skills>
-                    </UserInfo>
-                    <ViewProfile>
-                      <Grid2>
-                        <ViewProfileButton
-                          onClick={() => {
-                            redirectToProfile(invitation?.freelancerId?._id)
+                            View Profile
+                          </ViewProfileButton>
+                        </Grid2>
+                        <span
+                          style={{
+                            color: ' #000',
+                            fontFamily: 'Roboto',
+                            fontSize: '15px',
+                            fontStyle: 'normal',
+                            fontWeight: '400',
+                            lineHeight: '24.5px' /* 163.333% */,
+                            letterSpacing: '0.4px',
+                            marginTop: '50px'
                           }}>
-                          View Profile
-                        </ViewProfileButton>
-                      </Grid2>
-                      <span
-                        style={{
-                          color: ' #000',
-                          fontFamily: 'Roboto',
-                          fontSize: '15px',
-                          fontStyle: 'normal',
-                          fontWeight: '400',
-                          lineHeight: '24.5px' /* 163.333% */,
-                          letterSpacing: '0.4px',
-                          marginTop: '50px'
-                        }}>
-                        {invitation?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
-                      </span>
-                    </ViewProfile>
-                  </ProjectApplications>
-                ) : (
-                  <ProjectDesktopCard
-                    project={invitation?.businessId}
-                    includeRate
-                    freelancerId={invitation?.freelancerId?._id}
-                  />
-                )}
-              </>
-            )
-          })
-        ) : (
-          <DefaultDisplay>
-            <Button
-              extraWid
-              type="outlineInverse"
-              buttonHeight="25px"
-              fontSize="15px"
-              contentMargin="0px !important"
-              colors={{
-                text: '#1976D2',
-                background: 'white',
-                border: '1px',
-                wideBorder: '#1976D2'
-              }}
-              onClick={() => {
-                router.push(`/freelancers?project=${projectDetails?._id}`)
-              }}>
-              Invite Freelancer
-            </Button>
-          </DefaultDisplay>
-        )}
-      </DesktopContainer>
-
-      <MobileInvitesView projectDetails={projectDetails} invitesList={invitesList}></MobileInvitesView>
+                          {invitation?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
+                        </span>
+                      </ViewProfile>
+                    </ProjectApplications>
+                  ) : (
+                    <ProjectDesktopCard
+                      project={invitation?.businessId}
+                      includeRate
+                      freelancerId={invitation?.freelancerId?._id}
+                    />
+                  )}
+                </span>
+              )
+            })
+          ) : (
+            <DefaultDisplay>
+              <Button
+                extraWid
+                type="outlineInverse"
+                buttonHeight="25px"
+                fontSize="15px"
+                contentMargin="0px !important"
+                colors={{
+                  text: '#1976D2',
+                  background: 'white',
+                  border: '1px',
+                  wideBorder: '#1976D2'
+                }}
+                onClick={() => {
+                  router.push(`/freelancers?project=${projectDetails?._id}`)
+                }}>
+                Invite Freelancer
+              </Button>
+            </DefaultDisplay>
+          )}
+        </div>
+      ) : (
+        <MobileInvitesView projectDetails={projectDetails} invitesList={invitesList}></MobileInvitesView>
+      )}
     </>
   )
 }

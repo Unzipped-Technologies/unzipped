@@ -136,9 +136,7 @@ const getUserById = async id => {
       .findById(id)
       .populate([
         { path: 'thirdPartyCredentials', model: 'thirdPartyApplications' },
-        {
-          path: 'freelancers'
-        }
+        { path: 'freelancers', model: 'freelancers' }
       ])
       .select('-password')
 

@@ -15,17 +15,13 @@ const Desktop = styled.div`
   }
 `
 
-const Invoices = ({ selectedWeek, weekOptions, role, businessId, invoice }) => {
+const Invoices = ({ selectedWeek, weekOptions, role, businessId }) => {
   return (
     <>
       {window.innerWidth >= 680 ? (
         <Desktop>
           {role === 0 ? (
-            invoice ? (
-              <Timesheet businessId={businessId} invoice={invoice} />
-            ) : (
-              <InvoicesTable selectedWeek={selectedWeek} weekOptions={weekOptions} />
-            )
+            <InvoicesTable selectedWeek={selectedWeek} weekOptions={weekOptions} />
           ) : (
             <Timesheet businessId={businessId} timeSheet={true} />
           )}
