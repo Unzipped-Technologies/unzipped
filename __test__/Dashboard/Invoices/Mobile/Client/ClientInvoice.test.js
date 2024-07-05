@@ -5,12 +5,11 @@ import { fireEvent, screen, act, within } from '@testing-library/react'
 
 import { TASKS } from '../../../../store/Tasks'
 import { INVOICES } from '../../../../store/Invoices'
+import { CLIENT_AUTH } from '../../../../store/Users'
 import { initialState } from '../../../../store/mockInitialState'
 import { renderWithRedux } from '../../../../store/commonTestSetup'
-import { BUSINESS, SELECTED_BUSIESS } from '../../../../store/Business'
-import { CLIENT_AUTH } from '../../../../store/Users'
-
 import { ValidationUtils, ConverterUtils } from '../../../../../utils'
+import { BUSINESS, SELECTED_BUSIESS } from '../../../../store/Business'
 import ProjectDetails from '../../../../../pages/dashboard/projects/details/[id]'
 
 import AllProjects from '../../../../../pages/dashboard/projects/view'
@@ -740,7 +739,9 @@ describe('Freelancers Invoices', () => {
     expect(inviteTab).toBeInTheDocument()
     fireEvent.click(inviteTab)
     // Verify Project Detail
-    fireEvent.click(detailTab)
+    await act(async () => {
+      await fireEvent.click(detailTab)
+    })
   })
 
   it('open dropdown options and click on option View Project for project detail', async () => {
@@ -773,7 +774,10 @@ describe('Freelancers Invoices', () => {
     // Verify Project Detail Tabs
     const detailTab = within(tabsContainer).getByRole('button', { name: 'Details' })
     expect(detailTab).toBeInTheDocument()
-    fireEvent.click(detailTab)
+
+    await act(async () => {
+      await fireEvent.click(detailTab)
+    })
 
     const applicationTab = within(tabsContainer).getByRole('button', { name: 'Applications' })
     expect(applicationTab).toBeInTheDocument()
@@ -791,6 +795,8 @@ describe('Freelancers Invoices', () => {
     expect(inviteTab).toBeInTheDocument()
     fireEvent.click(inviteTab)
     // Verify Project Detail
-    fireEvent.click(detailTab)
+    await act(async () => {
+      await fireEvent.click(detailTab)
+    })
   })
 })

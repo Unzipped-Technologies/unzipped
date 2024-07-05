@@ -131,25 +131,25 @@ const InputControlArea = styled(InputControl).attrs({ as: 'textarea' })`
  * Form Input Component.
  */
 const Input = ({
+  type = 'text',
+  disabled = false,
+  accepted = null,
+  error = null,
+  textarea = null,
+  autosize = null,
+  currency = null,
+  width = null,
+  borderRadius = null,
+  height = 'auto',
   mobile,
-  disabled,
-  type,
-  accepted,
-  error,
-  textarea,
-  height,
-  autosize,
   children,
-  currency,
   message,
-  width,
   border,
   fontSize = '',
   borderColor = '',
   onFocus,
   display,
   placeholder,
-  borderRadius,
   disableBorder,
   id,
   name,
@@ -230,20 +230,6 @@ Input.propTypes = {
   disableBorder: PropTypes.bool,
   /** boolean to override the display*/
   display: PropTypes.string
-}
-
-Input.defaultProps = {
-  type: 'text',
-  disabled: false,
-  accepted: null,
-  error: null,
-  textarea: null,
-  autosize: null,
-  currency: null,
-  height: null,
-  width: null,
-  borderRadius: null,
-  height: 'auto'
 }
 
 export default Input

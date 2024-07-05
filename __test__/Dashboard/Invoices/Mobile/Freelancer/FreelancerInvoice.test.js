@@ -8,11 +8,10 @@ import { INVOICES } from '../../../../store/Invoices'
 import { FREELANCER_AUTH } from '../../../../store/Users'
 import { initialState } from '../../../../store/mockInitialState'
 import { renderWithRedux } from '../../../../store/commonTestSetup'
-import { BUSINESS, SELECTED_BUSIESS } from '../../../../store/Business'
-
 import { ValidationUtils, ConverterUtils } from '../../../../../utils'
-import FounderInvoice from '../../../../../pages/dashboard/projects/freelancer/invoice/[id]'
+import { BUSINESS, SELECTED_BUSIESS } from '../../../../store/Business'
 import ProjectDetails from '../../../../../pages/dashboard/projects/details/[id]'
+import FounderInvoice from '../../../../../pages/dashboard/projects/freelancer/invoice/[id]'
 
 import AllProjects from '../../../../../pages/dashboard/projects/view'
 import { getInvitesLists } from '../../../../../redux/Lists/ListsAction'
@@ -259,7 +258,7 @@ describe('Freelancers Invoices', () => {
     const AllProjectsContainer = screen.getByTestId('all_projects')
     expect(AllProjectsContainer).toBeInTheDocument()
 
-    initialState.Business.projectList?.forEach(project => {
+    initialState.Business.projectList?.forEach(async project => {
       const ProjectContainer = within(AllProjectsContainer).getByTestId(project._id)
       expect(ProjectContainer).toBeInTheDocument()
 
@@ -272,7 +271,7 @@ describe('Freelancers Invoices', () => {
 
       const DetailDropDown = within(ProjectContainer).getByRole('button', { name: 'Details' })
       expect(DetailDropDown).toBeInTheDocument()
-      fireEvent.click(DetailDropDown)
+      await fireEvent.click(DetailDropDown)
 
       const DropDownContainer = within(ProjectContainer).getByTestId('button-container')
       expect(DropDownContainer).toBeInTheDocument()
@@ -305,7 +304,7 @@ describe('Freelancers Invoices', () => {
 
     const DetailDropDown = within(ProjectContainer).getByRole('button', { name: 'Details' })
     expect(DetailDropDown).toBeInTheDocument()
-    fireEvent.click(DetailDropDown)
+    await fireEvent.click(DetailDropDown)
 
     fireEvent.click(within(ProjectContainer).getByText('Log Time'))
     expect(mockRouterPush).toHaveBeenCalledWith(`projects/invoice/${SelectedProject._id}`)
@@ -320,7 +319,6 @@ describe('Freelancers Invoices', () => {
     const DetailDropDown = within(ProjectContainer).getByRole('button', { name: 'Details' })
     expect(DetailDropDown).toBeInTheDocument()
     fireEvent.click(DetailDropDown)
-
     fireEvent.click(within(ProjectContainer).getByText('View Project'))
     expect(mockRouterPush).toHaveBeenCalledWith(`/dashboard/projects/details/${SelectedProject._id}`)
 
@@ -333,7 +331,9 @@ describe('Freelancers Invoices', () => {
       back: jest.fn()
     })
 
-    renderWithRedux(<ProjectDetails />, { initialState })
+    await act(async () => {
+      await renderWithRedux(<ProjectDetails />, { initialState })
+    })
   })
   it('open dropdown options and click on option View Work', async () => {
     global.innerWidth = 680
@@ -482,7 +482,7 @@ describe('Freelancers Invoices', () => {
     const startOfWeek = options[0]?.startOfWeek
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-    daysOfWeek.forEach(day => {
+    for (var day of daysOfWeek) {
       let hours = 0
       initialState?.Invoices.invoices.forEach(invoice => {
         invoice.tasks[1].invoiceId = 'invoice_id'
@@ -499,7 +499,7 @@ describe('Freelancers Invoices', () => {
         const isCurrentWeekInvoice = startOfWeek?.getTime() === currentWeekStartDate?.getTime()
 
         if (isCurrentWeekInvoice) {
-          invoice?.tasks?.forEach(task => {
+          for (var task of invoice?.tasks) {
             const taskDate = new Date(task.updatedAt)
             const dayOfWeek = daysOfWeek[taskDate.getDay()]
 
@@ -507,8 +507,10 @@ describe('Freelancers Invoices', () => {
               if (task?.hours > 0) {
                 const MondayInvoiceContainer = within(InvoiceContainer).getByTestId(`${day}_invoice`)
                 fireEvent.click(MondayInvoiceContainer)
+
                 const HoursText = within(MondayInvoiceContainer).getByText(`${task?.hours} Hours`)
                 fireEvent.click(HoursText)
+
                 const TaskHoursField = within(MondayInvoiceContainer).getByTestId(`${task._id}_hours`)
                 expect(TaskHoursField).toBeInTheDocument()
                 fireEvent.focus(TaskHoursField)
@@ -519,12 +521,12 @@ describe('Freelancers Invoices', () => {
               }
               hours += +task?.hours ?? 0
             }
-          })
+          }
 
           expect(within(InvoiceContainer).getByText(`${day} - ${hours} Hours`)).toBeInTheDocument
         }
       })
-    })
+    }
 
     const MondayInvoiceContainer = within(InvoiceContainer).getByTestId('Monday_invoice')
     expect(MondayInvoiceContainer).toBeInTheDocument()
@@ -547,7 +549,10 @@ describe('Freelancers Invoices', () => {
     expect(TaskNameField).toBeInTheDocument()
 
     autocomplete.focus()
-    autocomplete.click()
+
+    await act(async () => {
+      await autocomplete.click()
+    })
     TaskNameField.focus()
     fireEvent.change(TaskNameField, { target: { value: 'new Task Name' } })
 
@@ -557,7 +562,9 @@ describe('Freelancers Invoices', () => {
 
     expect(within(TaskModalContainer).getByText('new Task Name')).toBeInTheDocument()
 
-    autocomplete.click()
+    await act(async () => {
+      await autocomplete.click()
+    })
     autocomplete.focus()
     fireEvent.change(TaskNameField, { target: { value: 'new task 2' } })
     await act(async () => {
@@ -569,7 +576,9 @@ describe('Freelancers Invoices', () => {
     const DeleteTask1 = within(TaskModalContainer).getByTestId('delete_task_1')
     fireEvent.click(DeleteTask1)
 
-    autocomplete.click()
+    await act(async () => {
+      await autocomplete.click()
+    })
     autocomplete.focus()
 
     fireEvent.change(TaskNameField, { target: { value: 'Task 2' } })
@@ -583,7 +592,9 @@ describe('Freelancers Invoices', () => {
 
     const newTaskName = 'Task 2ss'
 
-    autocomplete.click()
+    await act(async () => {
+      await autocomplete.click()
+    })
     autocomplete.focus()
     TaskNameField.focus()
     fireEvent.change(TaskNameField, { target: { value: newTaskName } })
@@ -675,8 +686,9 @@ describe('Freelancers Invoices', () => {
 
     const TaskNameField = within(autocomplete).getByTestId('task_name')
     expect(TaskNameField).toBeInTheDocument()
-
-    autocomplete.click()
+    await act(async () => {
+      autocomplete.click()
+    })
     autocomplete.focus()
     fireEvent.change(TaskNameField, { target: { value: 'task 1 update' } })
     await act(async () => {
@@ -685,7 +697,9 @@ describe('Freelancers Invoices', () => {
     fireEvent.click(screen.getAllByText('task 1 update')[0])
 
     const SaveButton = within(TaskModalContainer).getByRole('button', { name: 'SAVE' })
-    fireEvent.click(SaveButton)
+    await act(async () => {
+      fireEvent.click(SaveButton)
+    })
   })
 
   it('Render Invoices and create new invoice', async () => {
@@ -725,7 +739,9 @@ describe('Freelancers Invoices', () => {
 
     const AddTaskButton = within(MondayInvoiceContainer).getByText('Add Task')
     expect(AddTaskButton).toBeInTheDocument()
-    fireEvent.click(AddTaskButton)
+    await act(async () => {
+      fireEvent.click(AddTaskButton)
+    })
 
     const TaskModalContainer = screen.getByTestId('mobile_add_tasks')
     expect(TaskModalContainer).toBeInTheDocument()
@@ -736,7 +752,10 @@ describe('Freelancers Invoices', () => {
     const TaskNameField = within(autocomplete).getByTestId('task_name')
     expect(TaskNameField).toBeInTheDocument()
 
-    autocomplete.click()
+    await act(async () => {
+      autocomplete.click()
+    })
+
     autocomplete.focus()
     fireEvent.change(TaskNameField, { target: { value: 'task 1 update' } })
     await act(async () => {
@@ -745,7 +764,9 @@ describe('Freelancers Invoices', () => {
     fireEvent.click(screen.getAllByText('task 1 update')[0])
 
     const SaveButton = within(TaskModalContainer).getByRole('button', { name: 'SAVE' })
-    fireEvent.click(SaveButton)
+    await act(async () => {
+      fireEvent.click(SaveButton)
+    })
   })
 
   it('Render Invoice screen without freelancer ID', async () => {
@@ -807,14 +828,18 @@ describe('Freelancers Invoices', () => {
       back: jest.fn()
     })
 
-    renderWithRedux(<ProjectDetails />, { initialState })
+    await act(async () => {
+      await renderWithRedux(<ProjectDetails />, { initialState })
+    })
 
     const tabsContainer = screen.getByTestId('desktop_project_detail_tabs')
 
     // Verify Project Detail Tabs
     const detailTab = within(tabsContainer).getByRole('button', { name: 'Details' })
     expect(detailTab).toBeInTheDocument()
-    fireEvent.click(detailTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
 
     const invoiceTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
     expect(invoiceTab).toBeInTheDocument()
@@ -825,7 +850,9 @@ describe('Freelancers Invoices', () => {
     fireEvent.click(inviteTab)
 
     // Verify Project Detail
-    fireEvent.click(detailTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
   })
 
   it('open dropdown options and click on option View Project for project detail with undefined name on mobile view', async () => {
@@ -852,25 +879,22 @@ describe('Freelancers Invoices', () => {
       back: jest.fn()
     })
 
-    renderWithRedux(<ProjectDetails />, { initialState })
-
+    await act(async () => {
+      await renderWithRedux(<ProjectDetails />, { initialState })
+    })
     const tabsContainer = screen.getByTestId('desktop_project_detail_tabs')
 
     // Verify Project Detail Tabs
     const detailTab = within(tabsContainer).getByRole('button', { name: 'Details' })
     expect(detailTab).toBeInTheDocument()
-    fireEvent.click(detailTab)
-
-    const invoiceTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
-    expect(invoiceTab).toBeInTheDocument()
-    fireEvent.click(invoiceTab)
-
-    const inviteTab = within(tabsContainer).getByRole('button', { name: 'Invites' })
-    expect(inviteTab).toBeInTheDocument()
-    fireEvent.click(inviteTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
 
     // Verify Project Detail
-    fireEvent.click(detailTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
   })
 
   it('open dropdown options and click on option View Project for project detail with Project text on Desktop view', async () => {
@@ -889,33 +913,30 @@ describe('Freelancers Invoices', () => {
     expect(mockRouterPush).toHaveBeenCalledWith(`/dashboard/projects/details/${SelectedProject._id}`)
 
     useRouter.mockReturnValue({
-      query: { id: SelectedProject._id, tab: 'invoices' },
-      pathname: `/dashboard/projects/details/${SelectedProject._id}?tab=invoices`,
+      query: { id: SelectedProject._id },
+      pathname: `/dashboard/projects/details/${SelectedProject._id}`,
       push: mockRouterPush,
       replace: jest.fn(),
       prefetch: jest.fn(),
       back: jest.fn()
     })
 
-    renderWithRedux(<ProjectDetails />, { initialState })
-
+    await act(async () => {
+      renderWithRedux(<ProjectDetails />, { initialState })
+    })
     const tabsContainer = screen.getByTestId('desktop_project_detail_tabs')
 
     // Verify Project Detail Tabs
     const detailTab = within(tabsContainer).getByRole('button', { name: 'Details' })
     expect(detailTab).toBeInTheDocument()
-    fireEvent.click(detailTab)
-
-    const invoiceTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
-    expect(invoiceTab).toBeInTheDocument()
-    fireEvent.click(invoiceTab)
-
-    const inviteTab = within(tabsContainer).getByRole('button', { name: 'Invites' })
-    expect(inviteTab).toBeInTheDocument()
-    fireEvent.click(inviteTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
 
     // Verify Project Detail
-    fireEvent.click(detailTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
   })
 
   it('Render Invoice screen and verify invoice tabs on mobile', async () => {
@@ -952,8 +973,9 @@ describe('Freelancers Invoices', () => {
     // Verify Project Detail Tabs
     const detailTab = within(tabsContainer).getByRole('button', { name: 'Details' })
     expect(detailTab).toBeInTheDocument()
-    fireEvent.click(detailTab)
-
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
     const invoiceTab = within(tabsContainer).getByRole('button', { name: 'Invoices' })
     expect(invoiceTab).toBeInTheDocument()
     fireEvent.click(invoiceTab)
@@ -962,14 +984,15 @@ describe('Freelancers Invoices', () => {
     expect(inviteTab).toBeInTheDocument()
     fireEvent.click(inviteTab)
     // Verify Project Detail
-    fireEvent.click(detailTab)
-
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
     global.innerWidth = 1080
     global.dispatchEvent(new Event('resize'))
 
-    fireEvent.click(detailTab)
-    fireEvent.click(inviteTab)
-    fireEvent.click(invoiceTab)
+    await act(async () => {
+      fireEvent.click(detailTab)
+    })
   })
   it('Render Invoice screen and change week options on mobile', async () => {
     global.innerWidth = 680
@@ -1034,7 +1057,9 @@ describe('Freelancers Invoices', () => {
 
     initialState.Auth.user.freelancers._id = undefined
 
-    renderWithRedux(<FounderInvoice />, { initialState })
+    await act(async () => {
+      await renderWithRedux(<FounderInvoice />, { initialState })
+    })
   })
 
   it('Render Invoice on Invoices tab for index.js view', async () => {

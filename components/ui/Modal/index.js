@@ -70,11 +70,11 @@ const Heading = styled.h2`
 `
 
 const Modal = ({
-  heading,
-  children,
-  onHide,
+  heading = null,
+  children = null,
+  hideOnClickOutside = true,
   hasHiddenIcon = true,
-  hideOnClickOutside,
+  onHide,
   className,
   height,
   width,
@@ -108,13 +108,6 @@ Modal.propTypes = {
   hideOnClickOutside: PropTypes.bool,
   /** Indicate whether hide icons show or not */
   hasHiddenIcon: PropTypes.bool
-}
-
-Modal.defaultProps = {
-  heading: null,
-  children: null,
-  hideOnClickOutside: true,
-  hasHiddenIcon: true
 }
 
 export default Modal

@@ -285,49 +285,50 @@ const SingleWeekInvoiceView = ({
                             width="167px">
                             {task?.task?.taskName}
                           </TEXT>
-                          <TEXT
-                            width="100px"
-                            textColor="#333"
-                            textAlign="center"
-                            font-size="14px"
-                            fontStyle="normal"
-                            fontWeight="400"
-                            lineHeight="24.5px" /* 175% */
-                            letterSpacing="0.4px"
-                            textTransform="capitalize"
-                            padding="0px 10px 0px 0px "
-                            margin="auto"
-                            onClick={() => {
-                              role === 1 && setTaskId(task._id)
-                            }}>
-                            {selectedTaskId === task._id && isCurrenWeek ? (
-                              <FormField
-                                zIndexUnset
-                                fieldType="input"
-                                type="number"
-                                placeholder="Hours"
-                                fontSize="14px"
-                                name={`${task._id}_hours`}
-                                id={`${task._id}_hours`}
-                                width="60px"
-                                margin="0px 0px 0px 20px"
-                                height="30px  !important"
-                                borderRadius="4px"
-                                border="1px solid #A5A0A0"
-                                value={task.hours}
-                                maxLength="30"
-                                onChange={e => addHours(e?.target?.value, task?.invoiceId, task._id)}
-                                handleEnterKey={async e => {
-                                  if (e?.key === 'Enter') {
-                                    await updateTaskHour(task._id, task)
-                                    setTaskId('')
-                                  }
-                                }}
-                              />
-                            ) : (
+
+                          {selectedTaskId === task._id && isCurrenWeek ? (
+                            <FormField
+                              zIndexUnset
+                              fieldType="input"
+                              type="number"
+                              placeholder="Hours"
+                              fontSize="14px"
+                              name={`${task._id}_hours`}
+                              id={`${task._id}_hours`}
+                              width="60px"
+                              margin="0px 0px 0px 20px"
+                              height="30px  !important"
+                              borderRadius="4px"
+                              border="1px solid #A5A0A0"
+                              value={task.hours}
+                              maxLength="30"
+                              onChange={e => addHours(e?.target?.value, task?.invoiceId, task._id)}
+                              handleEnterKey={e => {
+                                if (e?.key === 'Enter') {
+                                  updateTaskHour(task._id, task)
+                                  setTaskId('')
+                                }
+                              }}
+                            />
+                          ) : (
+                            <TEXT
+                              width="100px"
+                              textColor="#333"
+                              textAlign="center"
+                              font-size="14px"
+                              fontStyle="normal"
+                              fontWeight="400"
+                              lineHeight="24.5px" /* 175% */
+                              letterSpacing="0.4px"
+                              textTransform="capitalize"
+                              padding="0px 10px 0px 0px "
+                              margin="auto"
+                              onClick={() => {
+                                role === 1 && setTaskId(task._id)
+                              }}>
                               <span>{task?.hours || 0} Hours</span>
-                            )}
-                          </TEXT>
+                            </TEXT>
+                          )}
                         </Tasks>
                       )
                     })}

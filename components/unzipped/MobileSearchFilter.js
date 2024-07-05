@@ -31,7 +31,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
     projectBudgetType: ''
   })
   const [suggestions, setSuggestions] = useState([])
-  const [userInput, setUserInput] = useState()
+  const [userInput, setUserInput] = useState('')
 
   const [error, setError] = useState({ maxError: '', minError: '' })
 
