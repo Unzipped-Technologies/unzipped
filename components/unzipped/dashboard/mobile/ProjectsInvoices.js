@@ -103,13 +103,16 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
 
   const router = useRouter()
 
-  useEffect(async () => {
-    await getInvoices({
-      businessId: '',
-      freelancerId: '',
-      limit: 'all',
-      page: 1
-    })
+  useEffect(() => {
+    async function fetchData() {
+      await getInvoices({
+        businessId: '',
+        freelancerId: '',
+        limit: 'all',
+        page: 1
+      })
+    }
+    fetchData()
   }, [])
 
   const allInvoices = useMemo(() => {

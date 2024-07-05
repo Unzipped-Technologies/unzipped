@@ -551,7 +551,7 @@ describe('Freelancers Component', () => {
     expect(within(ListModal).getByText('Private')).toBeInTheDocument()
     expect(within(ListModal).getByText('0 member')).toBeInTheDocument()
     expect(
-      within(ListModal).getByText(`${initialState.Lists?.invitesList[0]?.listEntries?.length} member`)
+      within(ListModal).getAllByText(`${initialState.Lists?.invitesList[0]?.listEntries?.length} member`)[0]
     ).toBeInTheDocument()
 
     const AddToListOption = within(ListModal).getByText('Add User To A List')
@@ -1387,7 +1387,7 @@ describe('Freelancers Component', () => {
     expect(within(ListModal).getByText('Private')).toBeInTheDocument()
     expect(within(ListModal).getByText('0 member')).toBeInTheDocument()
     expect(
-      within(ListModal).getByText(`${initialState.Lists?.invitesList[0]?.listEntries?.length} member`)
+      within(ListModal).getAllByText(`${initialState.Lists?.invitesList[0]?.listEntries?.length} member`)[0]
     ).toBeInTheDocument()
 
     const AddToListOption = within(ListModal).getByText('Add User To A List')

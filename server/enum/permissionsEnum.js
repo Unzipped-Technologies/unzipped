@@ -120,6 +120,8 @@ const accountTypePermissions = Object.freeze({
     userPermissions.createBusiness,
     userPermissions.createBusinessDetails,
     userPermissions.userUpdateBusiness,
+    userPermissions.updateBusiness,
+
     userPermissions.userListBusinesses,
     userPermissions.getBusinessById,
     userPermissions.listAllBusinesses,

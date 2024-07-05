@@ -1,7 +1,10 @@
 import { BUSINESS, SELECTED_BUSIESS } from './Business'
+import { INVOICES } from './Invoices'
+import { TASKS } from './Tasks'
+import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
-import { LIST_ENTRIES } from './ListEntries'
-
+import { LIST_ENTRIES, USER_LIST_ENTRIES } from './ListEntries'
+import { PROJECT_APPLICATIONS } from './ProjectApplications'
 export let defaultInitialState = {
   Auth: {
     token: 'testToken',
@@ -26,8 +29,13 @@ export let defaultInitialState = {
       likeTotal: 10,
       profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       freelancers: {
-        category: 'Full Stack Developer',
-        _id: null
+        _id: '6601c2a6149276195c3f8fc2',
+        rate: 23,
+        isActive: true,
+        isArchived: false,
+        isPreferedFreelancer: true,
+        isAcceptEquity: true,
+        category: 'Full Stack Developer'
       }
     }
   },
@@ -42,6 +50,17 @@ export let defaultInitialState = {
       ]
     }
   },
+  Contracts: {
+    contracts: [...CONTRACTS]
+  },
+  Invoices: {
+    invoices: [...INVOICES],
+    unpaidInvoices: [],
+    selectedInvoice: {},
+    error: '',
+    loading: false,
+    totalCount: INVOICES?.length
+  },
   Business: {
     details: {
       name: 'Unzipped',
@@ -52,12 +71,23 @@ export let defaultInitialState = {
     },
     projectList: [...BUSINESS],
     selectedBusiness: { ...SELECTED_BUSIESS },
-    totalCount: BUSINESS?.length
+    totalCount: BUSINESS?.length,
+    loading: false
   },
   ProjectApplications: {
-    success: false
+    success: false,
+    selectedApplication: {},
+    error: '',
+    loading: false,
+    totalCount: PROJECT_APPLICATIONS?.length,
+    projectApplications: [...PROJECT_APPLICATIONS]
   },
   Tasks: {
+    tasks: [...TASKS],
+    selectedTask: {},
+    error: '',
+    loading: false,
+    totalCount: TASKS?.length,
     currentDepartment: {},
     createStoryForm: {
       taskName: '',
@@ -375,7 +405,8 @@ export let defaultInitialState = {
     ]
   },
   ListEntries: {
-    userLists: [...LIST_ENTRIES]
+    userLists: [...LIST_ENTRIES],
+    userListEntries: [...USER_LIST_ENTRIES]
   }
 }
 

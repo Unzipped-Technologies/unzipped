@@ -24,13 +24,13 @@ import { bindActionCreators } from 'redux'
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '')};
-  color: ${({ color }) => (color ? color : 'black')};
-  background: ${({ background }) => (background ? background : '')};
+  color: black;
+  background: '';
   padding: ${({ padding }) => (padding ? padding : '0px !important')};
   margin: ${({ margin }) => (margin ? margin : '0px !important')};
   text-align: ${({ align }) => (align ? align : '')};
-  border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
-  right: ${({ right }) => (right ? right : '')};
+  border-bottom: '';
+  right: '';
   width: ${({ width }) => (width ? width : '')};
 `
 
@@ -43,7 +43,6 @@ const Container = styled.div`
   justify-content: flex-end;
   flex-flow: row;
   margin-bottom: 100px;
-  background: ${({ background }) => (background ? background : '')};
 `
 
 const DragDiv = styled.div`
@@ -93,19 +92,20 @@ const HoursDiv = styled.div`
 
 const Timesheet = ({
   projectDetails,
-  businessId,
-  getInvoices,
+  role,
+  freelancerId,
   invoices,
-  updateInvoice,
+  getInvoices,
   createInvoice,
   addInvoiceTasks,
+  updateInvoice,
   updateTaskHour,
-  role,
+
+  businessId,
   timeSheet = false,
   displayFormat = false,
   invoice = null,
-  freelancer,
-  freelancerId
+  freelancer
 }) => {
   const router = useRouter()
   const { week } = router.query
@@ -153,10 +153,6 @@ const Timesheet = ({
   }
 
   useEffect(() => {
-    if (+week && week > 0) setSelectedWeek(week)
-  }, [week])
-
-  useEffect(() => {
     getInvoices({ businessId: businessId, _id: invoice, freelancerId: freelancer })
   }, [businessId])
 
@@ -182,7 +178,7 @@ const Timesheet = ({
   }, [])
 
   useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined) {
+    if (selectedWeek !== null && selectedWeek !== undefined && selectedWeek !== '') {
       setSelectedInvoice(null)
       const currentDate = new Date()
       const startOfWeek = weekOptions[selectedWeek]?.startOfWeek
@@ -211,19 +207,17 @@ const Timesheet = ({
   }, [selectedWeek, weekOptions, invoices])
 
   useEffect(() => {
-    if (selectedWeek !== null && selectedWeek !== undefined) {
-      const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
-      filteredData?.forEach(item => {
-        item?.tasks?.forEach(task => {
-          const taskDate = new Date(task.updatedAt)
-          const dayOfWeek = daysOfWeek[taskDate.getDay()]
-          task['contract'] = item.contract
-          task['freelancer'] = item.freelancer
-          organizedItems[dayOfWeek].push(task)
-        })
+    const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
+    filteredData?.forEach(item => {
+      item?.tasks?.forEach(task => {
+        const taskDate = new Date(task.updatedAt)
+        const dayOfWeek = daysOfWeek[taskDate.getDay()]
+        task['contract'] = item.contract
+        task['freelancer'] = item.freelancer
+        organizedItems[dayOfWeek].push(task)
       })
-      setSortedData(organizedItems)
-    }
+    })
+    setSortedData(organizedItems)
   }, [filteredData])
 
   useEffect(() => {
@@ -297,15 +291,13 @@ const Timesheet = ({
 
   const handleAddModal = day => {
     const daysToAdd = daysOfWeek.indexOf(day)
-    if (daysToAdd !== -1) {
-      const date = new Date(startDate)
-      date.setHours(0, 0, 0, 0)
+    const date = new Date(startDate)
+    date.setHours(0, 0, 0, 0)
 
-      date.setDate(date.getDate() + daysToAdd)
-      const dateIso = new Date(date)
-      const isoString = dateIso.toISOString()
-      setDayDate(isoString)
-    }
+    date.setDate(date.getDate() + daysToAdd)
+    const dateIso = new Date(date)
+    const isoString = dateIso.toISOString()
+    setDayDate(isoString)
     setDay(daysToAdd)
     setTasksModal(true)
   }
@@ -317,9 +309,7 @@ const Timesheet = ({
 
       if (invoiceToUpdate) {
         const taskHourtoUpdate = invoiceToUpdate?.tasks?.find(taskHour => taskHour?._id === taskHourId)
-        if (taskHourtoUpdate) {
-          taskHourtoUpdate.hours = value
-        }
+        taskHourtoUpdate.hours = value
       }
 
       return newData
@@ -339,7 +329,7 @@ const Timesheet = ({
         taskHours.push({
           taskId: task,
           hours: 0,
-          invoiceId: selectedInvoice?._id || null,
+          invoiceId: selectedInvoice?._id,
           day: selectedDay,
           createdAt: selectedDayDate,
           updatedAt: selectedDayDate
@@ -373,19 +363,20 @@ const Timesheet = ({
   }
 
   return (
-    <Container style={{ justifyContent: timeSheet ? 'center' : 'flex-end' }}>
+    <Container style={{ justifyContent: timeSheet ? 'center' : 'flex-end' }} data-testid={'desktop_timesheet'}>
       <div
         style={{
           width: '830px'
         }}>
         <TableTop>
           <div style={{ display: 'flex' }}>
-            <P margin="0px" fontSize="24px" fontWeight="500" width="182px">
+            <P margin="0px" fontSize="24px" fontWeight="500" width="182px" data-testid={'timesheet_user_name'}>
               {ConverterUtils.capitalize(`${selectedInvoice?.freelancer?.user?.FullName.slice(0, 15) || 'User'}`)}
               {selectedInvoice?.freelancer?.user?.FullName?.length > 17 && '...'}
             </P>
             {!invoice && (
               <select
+                data-testid="timesheet_week_options"
                 onChange={e => {
                   handleWeekChange(e?.target?.value)
                 }}
@@ -415,15 +406,15 @@ const Timesheet = ({
             ) : (
               ''
             )
-          ) : selectedInvoice?.status !== 'approved' ? (
-            <ButtonComp
-              onClick={() => {
-                handleSubmit('approved')
-              }}>
-              Approve
-            </ButtonComp>
           ) : (
-            ''
+            selectedInvoice?.status !== 'approved' && (
+              <ButtonComp
+                onClick={() => {
+                  handleSubmit('approved')
+                }}>
+                Approve
+              </ButtonComp>
+            )
           )}
         </TableTop>
         <DragDropContext onDragEnd={onDragEnd}>
@@ -432,7 +423,7 @@ const Timesheet = ({
               return (
                 <div key={day} className="day">
                   {!displayFormat ? (
-                    <DaysDiv>
+                    <DaysDiv data-testid={`${day}_header`}>
                       <P margin="0px" fontWeight="500" width={'40%'}>
                         {' '}
                         {day.toUpperCase()}{' '}
@@ -450,7 +441,7 @@ const Timesheet = ({
                         )
                       })}
                       {isCurrenWeek && role === 1 && timeSheet ? (
-                        <span onClick={() => handleAddModal(day)}>
+                        <span onClick={() => handleAddModal(day)} data-testid={`${day}_add_task_icon`}>
                           <AddInvoiceTask />
                         </span>
                       ) : (
@@ -467,6 +458,7 @@ const Timesheet = ({
                         {tableColumns().map(column => {
                           return (
                             <P
+                              data-testid={column.name}
                               fontWeight="500"
                               width={`${60 / tableColumns()?.length}%`}
                               align="center"
@@ -492,6 +484,7 @@ const Timesheet = ({
                           <Draggable key={item._id} draggableId={`${item._id}`} index={itemIndex}>
                             {(provided, snapshot) => (
                               <div
+                                data-testid={item._id}
                                 style={{
                                   ...provided.draggableProps.style,
                                   background: snapshot.isDragging ? 'red' : 'white',
@@ -517,7 +510,12 @@ const Timesheet = ({
                                   />
                                 </div>
 
-                                <P margin="0px" padding="0 0 0 10px" width={'40%'} fontWeight="500">
+                                <P
+                                  margin="0px"
+                                  padding="0 0 0 10px"
+                                  width={'40%'}
+                                  fontWeight="500"
+                                  data-testid={`${item?._id}_task`}>
                                   {' '}
                                   {item?.task?.taskName}{' '}
                                 </P>
@@ -550,9 +548,8 @@ const Timesheet = ({
                                         value={item.hours}
                                         maxLength="30"
                                         onChange={e => addHours(e?.target?.value, item?.invoiceId, item._id)}
-                                        onUpdate={() => {}}
                                         handleEnterKey={async e => {
-                                          if (e?.keyCode === 13) {
+                                          if (e?.key === 'Enter') {
                                             await updateTaskHour(item._id, item)
                                             setTaskId('')
                                           }
@@ -584,8 +581,7 @@ const Timesheet = ({
                                       src={item?.freelancer?.user?.profileImage}
                                       style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
                                     />
-                                    {item?.freelancer?.user?.FirstName + ' ' + item?.freelancer?.user?.LastName ??
-                                      'Anonymous'}
+                                    {item?.freelancer?.user?.FirstName + '' + item?.freelancer?.user?.LastName}
                                   </P>
                                 )}
                               </div>
@@ -604,7 +600,7 @@ const Timesheet = ({
       </div>
       {!timeSheet ? (
         role === 1 ? (
-          <HoursDiv>
+          <HoursDiv data-testid="freelancer_invoice_totals">
             <div className="d-flex justify-content-between  mb-3" style={{ borderBottom: '1px solid #777' }}>
               <P fontWeight="500">DAY</P>
               <P fontWeight="500">HOURS</P>
@@ -612,7 +608,10 @@ const Timesheet = ({
             {sortedData &&
               Object?.keys(sortedData)?.map((day, index) => {
                 return (
-                  <div className="d-flex justify-content-between pb-3" key={`day_hours_${index}`}>
+                  <div
+                    className="d-flex justify-content-between pb-3"
+                    key={`day_hours_${index}`}
+                    data-testid={`${day}_hours`}>
                     <P fontWeight="500">{day}</P>
                     <P fontWeight="500">{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
                   </div>
@@ -632,7 +631,7 @@ const Timesheet = ({
             </div>
           </HoursDiv>
         ) : (
-          <HoursDiv>
+          <HoursDiv data-testid="client_invoice_totals">
             <div className="d-flex justify-content-between mb-3 pb-2" style={{ borderBottom: '1px solid #777' }}>
               <P fontWeight="500">Name</P>
               <P fontWeight="500">Amount</P>

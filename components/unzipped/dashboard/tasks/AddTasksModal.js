@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Loading from '../../../loading'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -12,8 +12,7 @@ import { bindActionCreators } from 'redux'
 import Modal from '../../../ui/Modal'
 import Button from '../../../ui/Button'
 import { FormField } from '../../../ui'
-import SearchField from '../../../ui/SearchField'
-import { TitleText, DarkText, Absolute, Grid3 } from '../style'
+import { TitleText, DarkText } from '../style'
 import CloseIcon from '../../../icons/close'
 import { getTasks, createTask } from '../../../../redux/actions'
 const List = styled.ul`
@@ -21,9 +20,9 @@ const List = styled.ul`
   flex-flow: column nowrap;
   list-style-type: circle !important; /* or any other value like disc, square, etc. */
   justify-items: center;
-  min-width: ${({ $containOverFlow }) => ($containOverFlow ? '112px' : '120px')};
-  padding-right: ${props => (props.$NoPadding ? '0px' : '20px')};
-  padding-left: ${props => (props.$NoPadding ? '10px' : 'auto')};
+  min-width: 120px;
+  padding-right: 20px;
+  padding-left: auto;
   flex-wrap: wrap;
 `
 
@@ -33,7 +32,7 @@ const Item = styled.li`
   display: flex;
   flex-direction: row;
   letter-spacing: 0.39998000860214233px;
-  color: ${({ color }) => (color ? color : '#000000')};
+  color: #000000;
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '500')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '25px')};
@@ -61,18 +60,7 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent)
 
-const AddTasksModal = ({
-  onHide,
-  onAdd,
-  open = false,
-  loading,
-  getTasks,
-  businessId,
-  freelancerId,
-  projectTasks,
-  createTask,
-  newCreatedTasks
-}) => {
+const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, businessId, projectTasks, createTask }) => {
   const [taskOptions, setTaskOptions] = useState([])
   const [detailIndex, setDetailIndex] = useState(null)
   const [tasks, setTasks] = useState([])
@@ -149,12 +137,24 @@ const AddTasksModal = ({
     }
   }
 
+  const deleteAddedTask = taskIndex => {
+    let allTasks = [...tasks]
+    allTasks = allTasks.filter((item, index) => index !== taskIndex)
+
+    setTasks(allTasks)
+  }
+
   return (
     <>
       {window.innerWidth > 680 ? (
         <>
           {loading && <Loading />}
-          <Modal onHide={HideNewTasksModal} background="#D9D9D9 " width="600px" hasHiddenIcon={false}>
+          <Modal
+            onHide={HideNewTasksModal}
+            background="#D9D9D9 "
+            width="600px"
+            hasHiddenIcon={false}
+            id="desktop_add_tasks">
             <div style={{ marginTop: '-10px' }}>
               <TitleText mobile color="#222222">
                 <b>Select a ticket</b>
@@ -168,6 +168,7 @@ const AddTasksModal = ({
                 }}>
                 <label>
                   <Autocomplete
+                    data-testid="autocomplete"
                     sx={{
                       display: 'inline-block',
                       '& input': {
@@ -187,20 +188,21 @@ const AddTasksModal = ({
                     options={taskOptions}
                     renderInput={params => (
                       <div ref={params.InputProps.ref}>
-                        <input type="text" {...params.inputProps} />
+                        <input type="text" {...params.inputProps} data-testid="task_name" />
                       </div>
                     )}
                     freeSolo
                     autoComplete
-                    onChange={(event, newValue) => {
-                      if (typeof newValue === 'string') {
-                      } else if (newValue && newValue.inputValue) {
-                      } else {
-                        addTasks(newValue?.label)
+                    value={taskName}
+                    onChange={(event, value) => {
+                      if (value?.label) {
+                        addTasks(value?.label)
+                        setTaskName(value?.label)
                       }
                     }}
                     onKeyDown={e => {
-                      if (e?.keyCode === 13) {
+                      setTaskName(e?.target.value)
+                      if (e?.key === 'Enter') {
                         addTasks(e?.target.value)
                       }
                     }}
@@ -215,6 +217,9 @@ const AddTasksModal = ({
                   colors={{
                     background: '#BA68C8',
                     text: '#FFFFFF'
+                  }}
+                  onClick={() => {
+                    addTasks(taskName)
                   }}>
                   Add
                 </Button>
@@ -228,6 +233,7 @@ const AddTasksModal = ({
                             style={{ display: 'flex', flexDirection: 'row' }}
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
+                              data-testid={`delete_task_${index}`}
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -238,6 +244,9 @@ const AddTasksModal = ({
                                 height: '7px',
                                 margin: '10px 5px 0px 0px',
                                 padding: '0px !important'
+                              }}
+                              onClick={() => {
+                                deleteAddedTask(index)
                               }}>
                               <CloseIcon width="7px" height="7px" color="#FFFFFF" />
                             </span>
@@ -268,7 +277,12 @@ const AddTasksModal = ({
             </div>
           </Modal>
           {newTasksModal && (
-            <Modal onHide={onHide} background="#D9D9D9 " width="900px" hasHiddenIcon={false}>
+            <Modal
+              onHide={onHide}
+              background="#D9D9D9 "
+              width="900px"
+              hasHiddenIcon={false}
+              id="desktop_add_tasks_data">
               <div style={{ marginTop: '-10px', marginRight: '100px' }}>
                 <TitleText mobile color="#222222">
                   <b>Create new tasks</b>
@@ -276,98 +290,99 @@ const AddTasksModal = ({
                 <TitleText color="#333333" paddingTop="10px" width="60%">
                   A few of the tasks you are adding are not assigned to you. Please add more details to create them.
                 </TitleText>
-                {newTasks?.length
-                  ? newTasks.map((task, taskIndex) => {
-                      return (
-                        <div key={`${task?.taskName}`} style={{ marginBottom: '20px' }}>
+                {newTasks?.length &&
+                  newTasks.map((task, taskIndex) => {
+                    return (
+                      <div key={`${task?.taskName}`} style={{ marginBottom: '20px' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            flexWrap: 'wrap'
+                          }}>
+                          <div style={{ width: '60%' }}>
+                            <TitleText color="#333333" paddingTop="30px" fontSize="15px" paddingLeft="10px">
+                              {task?.taskName}
+                            </TitleText>
+                          </div>
+                          <FormField
+                            zIndexUnset
+                            fieldType="input"
+                            type="number"
+                            placeholder="Story Points"
+                            fontSize="14px"
+                            name={'story points' + taskIndex}
+                            id={'story points' + taskIndex}
+                            width="130px"
+                            margin="-6px 0px 0px 10px"
+                            height="30px  !important"
+                            borderRadius="4px"
+                            border="1px solid #A5A0A0"
+                            value={task?.storyPoints}
+                            maxLength="30"
+                            min={0}
+                            onChange={e => {
+                              setNewTasks(prevArray =>
+                                prevArray.map((item, index) =>
+                                  index === taskIndex ? { ...item, storyPoints: e?.target.value } : item
+                                )
+                              )
+                            }}>
+                            Story Points
+                          </FormField>
+
+                          <div
+                            style={{ padding: '25px 0px 0px 20px', textDecoration: 'underline' }}
+                            onClick={() => {
+                              if (detailIndex === taskIndex) {
+                                setDetailIndex(null)
+                              } else {
+                                setDetailIndex(taskIndex)
+                              }
+                            }}
+                            data-testid={`add_details${taskIndex}`}>
+                            <TitleText color="#1976D2" fontSize="12px" width="100px">
+                              {detailIndex === taskIndex ? 'COLLAPSE' : 'ADD DETAILS'}
+                            </TitleText>
+                          </div>
+                        </div>
+                        {detailIndex === taskIndex ? (
                           <div
                             style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              flexWrap: 'wrap'
+                              marginTop: '20px',
+                              alignItems: 'flex-end',
+                              justifyContent: 'flex-end',
+                              width: '100%'
                             }}>
-                            <div style={{ width: '60%' }}>
-                              <TitleText color="#333333" paddingTop="30px" fontSize="15px" paddingLeft="10px">
-                                {task?.taskName}
-                              </TitleText>
-                            </div>
                             <FormField
-                              zIndexUnset
                               fieldType="input"
-                              type="number"
-                              placeholder="Story Points"
                               fontSize="14px"
-                              name="story points"
-                              width="130px"
-                              margin="-6px 0px 0px 10px"
-                              height="30px  !important"
-                              borderRadius="4px"
-                              border="1px solid #A5A0A0"
-                              value={task?.storyPoints}
-                              maxLength="30"
-                              min={0}
+                              placeholder="Description..."
+                              noMargin
+                              height="auto"
+                              name={'description' + taskIndex}
+                              id={'description' + taskIndex}
+                              textarea
+                              width="100%"
+                              display="inline !important"
+                              value={task?.description}
                               onChange={e => {
                                 setNewTasks(prevArray =>
                                   prevArray.map((item, index) =>
-                                    index === taskIndex ? { ...item, storyPoints: e?.target.value } : item
+                                    index === taskIndex ? { ...item, description: e?.target.value } : item
                                   )
                                 )
                               }}
-                              onUpdate={() => {}}>
-                              Story Points
-                            </FormField>
-
-                            <div
-                              style={{ padding: '25px 0px 0px 20px', textDecoration: 'underline' }}
-                              onClick={() => {
-                                if (detailIndex === taskIndex) {
-                                  setDetailIndex(null)
-                                } else {
-                                  setDetailIndex(taskIndex)
-                                }
-                              }}>
-                              <TitleText color="#1976D2" fontSize="12px" width="100px">
-                                {detailIndex === taskIndex ? 'COLLAPSE' : 'ADD DETAILS'}
-                              </TitleText>
-                            </div>
+                            />
                           </div>
-                          {detailIndex === taskIndex ? (
-                            <div
-                              style={{
-                                marginTop: '20px',
-                                alignItems: 'flex-end',
-                                justifyContent: 'flex-end',
-                                width: '100%'
-                              }}>
-                              <FormField
-                                fieldType="input"
-                                fontSize="14px"
-                                placeholder="Description..."
-                                noMargin
-                                height="auto"
-                                name="description"
-                                textarea
-                                width="100%"
-                                display="inline !important"
-                                value={task?.description}
-                                onChange={e => {
-                                  setNewTasks(prevArray =>
-                                    prevArray.map((item, index) =>
-                                      index === taskIndex ? { ...item, description: e?.target.value } : item
-                                    )
-                                  )
-                                }}
-                              />
-                            </div>
-                          ) : (
-                            <DarkText color="#333333" fontSize="15px" paddingLeft="10px">
-                              {task?.description}
-                            </DarkText>
-                          )}
-                        </div>
-                      )
-                    })
-                  : ''}
+                        ) : (
+                          <DarkText color="#333333" fontSize="15px" paddingLeft="10px">
+                            {task?.description}
+                          </DarkText>
+                        )}
+                      </div>
+                    )
+                  })}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
                   <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={HideNewTasksModal}>
@@ -391,7 +406,8 @@ const AddTasksModal = ({
       ) : (
         <>
           <MUIDialog
-            onClose={() => onHide()}
+            data-testid="mobile_add_tasks"
+            onClose={onHide}
             disableEscapeKeyDown
             open={open}
             maxWidth="md"
@@ -412,6 +428,7 @@ const AddTasksModal = ({
                   }}>
                   <label>
                     <Autocomplete
+                      data-testid="autocomplete"
                       sx={{
                         display: 'inline-block',
                         '& input': {
@@ -431,7 +448,12 @@ const AddTasksModal = ({
                       options={taskOptions}
                       renderInput={params => (
                         <div ref={params.InputProps.ref}>
-                          <input type="text" {...params.inputProps} placeholder="Type a task and hit enter..." />
+                          <input
+                            type="text"
+                            {...params.inputProps}
+                            placeholder="Type a task and hit enter..."
+                            data-testid="task_name"
+                          />
                         </div>
                       )}
                       freeSolo
@@ -440,18 +462,14 @@ const AddTasksModal = ({
                         setTaskName(e?.target.value)
                       }}
                       inputValue={taskName}
-                      onChange={(event, newValue) => {
-                        if (typeof newValue === 'string') {
-                        } else if (newValue && newValue.inputValue) {
-                        } else {
-                          addTasks(newValue?.label)
-                          setTaskName(newValue?.label)
-                        }
+                      onChange={(event, value) => {
+                        addTasks(value?.label)
+                        setTaskName(value?.label)
                       }}
                       onKeyDown={e => {
-                        if (e?.keyCode === 13) {
+                        setTaskName(e?.target.value)
+                        if (e?.key === 'Enter') {
                           addTasks(e?.target.value)
-                          setTaskName(e?.target.value)
                         }
                       }}
                     />
@@ -482,6 +500,7 @@ const AddTasksModal = ({
                             style={{ display: 'flex', flexDirection: 'row', marginLeft: '10px' }}
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
+                              data-testid={`delete_task_${index}`}
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -492,6 +511,9 @@ const AddTasksModal = ({
                                 height: '7px',
                                 margin: '6px 5px 0px 0px',
                                 padding: '0px !important'
+                              }}
+                              onClick={() => {
+                                deleteAddedTask(index)
                               }}>
                               <CloseIcon width="8px" height="8px" color="#FFFFFF" />
                             </span>
@@ -527,7 +549,8 @@ const AddTasksModal = ({
             </DialogContent>
           </MUIDialog>
           <MUIDialog
-            onClose={() => onHide()}
+            data-testid="mobile_add_tasks_data"
+            onClose={onHide}
             disableEscapeKeyDown
             open={newTasksModal}
             maxWidth="md"
@@ -567,7 +590,8 @@ const AddTasksModal = ({
                               type="number"
                               placeholder="Story Points"
                               fontSize="14px"
-                              name="story points"
+                              name={'story points' + taskIndex}
+                              id={'story points' + taskIndex}
                               width="90px"
                               margin="0px 0px 0px 15px"
                               height="30px  !important"
@@ -582,8 +606,7 @@ const AddTasksModal = ({
                                     index === taskIndex ? { ...item, storyPoints: e?.target.value } : item
                                   )
                                 )
-                              }}
-                              onUpdate={() => {}}>
+                              }}>
                               <label
                                 style={{
                                   fontFamily: 'Roboto',
@@ -600,6 +623,7 @@ const AddTasksModal = ({
 
                             <div
                               style={{ padding: '25px 0px 0px 20px', textDecoration: 'underline' }}
+                              data-testid={`add_details${taskIndex}`}
                               onClick={() => {
                                 if (detailIndex === taskIndex) {
                                   setDetailIndex(null)
@@ -631,7 +655,8 @@ const AddTasksModal = ({
                                 placeholder="Description..."
                                 noMargin
                                 height="auto"
-                                name="description"
+                                name={'description' + taskIndex}
+                                id={'description' + taskIndex}
                                 textarea
                                 width="100%"
                                 display="inline !important"
@@ -693,7 +718,7 @@ const AddTasksModal = ({
 const mapStateToProps = state => {
   return {
     businessId: state.Business.selectedBusiness?._id,
-    freelancerId: state.Auth.user.freelancers,
+    freelancerId: state.Auth.user.freelancers?._id,
     projectTasks: state.Tasks.tasks,
     newCreatedTasks: state.Tasks.newCreatedTasks,
     loading: state.Loading.loading

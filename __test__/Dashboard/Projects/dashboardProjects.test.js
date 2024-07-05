@@ -16,22 +16,19 @@ import { LIST_ENTRIES, USER_LIST_ENTRIES } from '../../store/ListEntries'
 
 import { ValidationUtils, ConverterUtils } from '../../../utils'
 import ProjectDetails from '../../../pages/dashboard/projects/details/[id]'
-import Projects from '../../../pages/dashboard/projects/index'
-import FounderInvoice from '../../../pages/dashboard/projects/client/invoice/[id]'
-
 import { getProjectsList, updateBusiness, getBusinessById } from '../../../redux/Business/actions'
 import { getProjectApplications } from '../../../redux/ProjectApplications/actions'
 import { getFreelancerById } from '../../../redux/Freelancers/actions'
 import { getInvitesLists } from '../../../redux/Lists/ListsAction'
+import Projects from '../../../pages/dashboard/projects/index'
+import { Container, Right } from '../../../components/unzipped/dashboard/ProjectsDesktopCard'
 import { verifyUserStripeAccount } from '../../../redux/Stripe/actions'
-import { createTask, getTasks } from '../../../redux/Tasks/actions'
 import { countClientContracts, getContracts } from '../../../redux/Contract/actions'
 import { getUserListEntries } from '../../../redux/ListEntries/action'
 import { getInvoices, updateInvoice, createInvoice, addInvoiceTasks } from '../../../redux/Invoices/actions'
-
 import { createTaskHour, updateTaskHour } from '../../../redux/TaskHours/actions'
+import { createTask, getTasks } from '../../../redux/Tasks/actions'
 import Timesheet from '../../../components/unzipped/dashboard/project/Timesheet'
-import { Container, Right } from '../../../components/unzipped/dashboard/ProjectsDesktopCard'
 
 const _ = require('lodash')
 
@@ -384,8 +381,6 @@ describe('Freelancers Component', () => {
     fireEvent.click(InvoiceOption)
 
     expect(mockRouterPush).toHaveBeenCalledWith(`projects/client/invoice/${SelectProject._id}?tab=invoices`)
-
-    renderWithRedux(<FounderInvoice />, { initialState })
   })
 
   it('renders dashboard Projects and click on dropdown option View Detail', async () => {

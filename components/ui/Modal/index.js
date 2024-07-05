@@ -69,10 +69,20 @@ const Heading = styled.h2`
   }
 `
 
-const Modal = ({ heading, children, onHide, hasHiddenIcon = true, hideOnClickOutside, className, height, width }) => {
+const Modal = ({
+  heading,
+  children,
+  onHide,
+  hasHiddenIcon = true,
+  hideOnClickOutside,
+  className,
+  height,
+  width,
+  id = ''
+}) => {
   const onModalClick = e => e.stopPropagation()
   return (
-    <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}}>
+    <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}} data-testid={id}>
       <ModalContainer onClick={onModalClick} $height={height} width={width}>
         {hasHiddenIcon && (
           <Absolute onClick={onHide}>

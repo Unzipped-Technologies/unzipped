@@ -244,7 +244,7 @@ const SingleWeekInvoiceView = ({
         {sortedData &&
           Object?.keys(sortedData)?.map((day, index) => {
             return (
-              <Accordion style={{ marginTop: '0px' }} key={`${day}`}>
+              <Accordion style={{ marginTop: '0px' }} key={`${day}`} data-testid={`${day}_invoice`}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                   <Typography className={classes.heading}>
                     {day} -{' '}
@@ -334,6 +334,7 @@ const SingleWeekInvoiceView = ({
                     {isCurrenWeek && role === 1 && (
                       <div style={{ width: '90%', margin: '0px auto' }}>
                         <Button
+                          data-testid={`${day}_add_task_icon`}
                           background="#1976D2"
                           noBorder
                           margin="5px 0px 5px 0px"

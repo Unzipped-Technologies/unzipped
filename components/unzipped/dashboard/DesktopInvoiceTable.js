@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import * as moment from 'moment'
+import moment from 'moment'
 import { connect } from 'react-redux'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
@@ -51,7 +51,10 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice }) => {
   }
 
   useEffect(() => {
-    getInvoices({ businessId: id, limit: 'all', page: 1 })
+    async function fetchData() {
+      await getInvoices({ businessId: id, limit: 'all', page: 1 })
+    }
+    fetchData()
   }, [])
 
   return (
@@ -86,7 +89,7 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice }) => {
             <TableHeading style={{ textAlign: 'right', paddingRight: '50px' }}>ACTIONS</TableHeading>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-testid="project_invoices_table_body">
           {invoices?.length > 0 &&
             invoices?.map(row => (
               <tr key={row._id} data-testid={row?._id}>

@@ -141,7 +141,7 @@ export const INVOICES = [
     tasks: [
       {
         _id: '6601c9b35657f51de61d2626',
-        hours: 3,
+        hours: 2,
         updatedAt: '2024-03-23T19:00:00.000Z',
         isDeleted: false,
         deletedAt: null,

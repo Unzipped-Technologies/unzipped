@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { MdFlag } from 'react-icons/md'
-import { useRouter } from 'next/router'
 import { MdPerson } from 'react-icons/md'
 import { bindActionCreators } from 'redux'
 import { MdAccessTime } from 'react-icons/md'
@@ -10,6 +9,7 @@ import { MdLocationOn } from 'react-icons/md'
 import { MdCreditCard } from 'react-icons/md'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
+import { useRouter } from 'next/router'
 
 import { Image } from '../../ui'
 import Badge from '../../ui/Badge'
@@ -76,13 +76,11 @@ const AboutClient = styled.div`
 const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount, countClientContracts }) => {
   const router = useRouter()
   const { id } = router.query
-
   const [isClientPaymentVerified, setVerified] = useState(false)
   const [clientBusinessCount, setBusinessCount] = useState(0)
-
   useEffect(() => {
     async function fetchData() {
-      if (projectDetails?.userId?._id && id === projectDetails?._id) {
+      if (projectDetails?.userId?._id) {
         const userId = projectDetails?.userId?._id
         await checkPayentVerification(userId)
         await countBusiness(userId)

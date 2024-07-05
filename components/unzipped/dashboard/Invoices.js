@@ -17,7 +17,7 @@ const Desktop = styled.div`
   }
 `
 
-const Invoices = ({ selectedWeek, weekOptions, role, businessId, invoice }) => {
+const Invoices = ({ selectedWeek, weekOptions, role, businessId }) => {
   return (
     <>
       {window.innerWidth > 680 ? (
