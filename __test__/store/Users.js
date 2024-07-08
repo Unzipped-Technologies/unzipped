@@ -38,7 +38,7 @@ export const CLIENT_AUTH = {
   __v: 0,
   phoneNumber: '(333) 333-3333',
   stripeId: '4242 4242 4242 4242',
-  stripeAccountId: 'acct_1OtzJDQmnBKiGech',
+  stripeAccountId: null,
   msg: 'success',
   cookie:
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjY2MDFjMjg4MTQ5Mjc2MTk1YzNmOGZhZiIsImlhdCI6MTcxODA0MDM4NiwiZXhwIjo0MzEwMDQwMzg2fQ.YTqfpfxMQVIgLuUwC4gTAaTdbH4wpysNg9dcpGDN5YU'
@@ -50,7 +50,7 @@ export const FREELANCER_AUTH = {
   isGithubConnected: false,
   isAdmin: false,
   isUserSubscribed: false,
-  isIdentityVerified: 'INCOMPLETE',
+  isIdentityVerified: 'SUCCESS',
   isPhoneVerified: false,
   isSuspended: false,
   plan: 0,

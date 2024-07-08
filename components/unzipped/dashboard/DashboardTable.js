@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import Loading from '../../loading'
- 
+
 import Button from '../../ui/Button'
 import { ValidationUtils } from '../../../utils'
 import { TableHeading, TableData } from './style'
@@ -120,19 +120,19 @@ const DashboardTable = ({
 
   return (
     <Container>
-      <table>
-        <thead data-testid="dashboard_projects_table_header">
-          <tr>
-            <TableHeading textAlign="left">Project Name</TableHeading>
-            <TableHeading>Budget</TableHeading>
-            <TableHeading>Points</TableHeading>
-            <TableHeading>Value Estimate</TableHeading>
-            <TableHeading>Deadline</TableHeading>
-            <TableHeading>ACTIONS</TableHeading>
-          </tr>
-        </thead>
-        {!loading ? (
-          businesses?.length > 0 && (
+      {!loading ? (
+        <table>
+          <thead data-testid="dashboard_projects_table_header">
+            <tr>
+              <TableHeading textAlign="left">Project Name</TableHeading>
+              <TableHeading>Budget</TableHeading>
+              <TableHeading>Points</TableHeading>
+              <TableHeading>Value Estimate</TableHeading>
+              <TableHeading>Deadline</TableHeading>
+              <TableHeading>ACTIONS</TableHeading>
+            </tr>
+          </thead>
+          {businesses?.length > 0 && (
             <tbody data-testid="dashboard_projects_table_body">
               {businesses?.map(row => (
                 <tr key={row._id} data-testid={row?._id}>
@@ -179,13 +179,11 @@ const DashboardTable = ({
                 </tr>
               ))}
             </tbody>
-          )
-        ) : (
-          <>
-            <Loading />
-          </>
-        )}
-      </table>
+          )}
+        </table>
+      ) : (
+        <Loading />
+      )}
     </Container>
   )
 }

@@ -2,11 +2,19 @@
 module.exports = {
   verbose: true,
 
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/server/',
+    '<rootDir>/redux/',
+    '<rootDir>/utils/',
+    '<rootDir>/components/ui/',
+    '<rootDir>/components/icons/'
+  ],
 
   moduleNameMapper: {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
-    '^@/components/(.*)$': '<rootDir>/components/$1',
+    '^@/components/unzipped/(.*)$': '<rootDir>/components/unzipped/$1',
     '^@/pages/(.*)$': '<rootDir>/pages/$1'
   },
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],

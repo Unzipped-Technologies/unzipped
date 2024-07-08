@@ -356,6 +356,15 @@ const Timesheet = ({
     }
   }
 
+  const sumHours = data => {
+    let hours = 0
+    for (var item of data) {
+      hours += +item.hours ?? 0
+    }
+
+    return hours?.toString()
+  }
+
   const handleSubmit = async status => {
     await updateInvoice(selectedInvoice?._id, {
       status: status
@@ -613,7 +622,7 @@ const Timesheet = ({
                     key={`day_hours_${index}`}
                     data-testid={`${day}_hours`}>
                     <P fontWeight="500">{day}</P>
-                    <P fontWeight="500">{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
+                    <P fontWeight="500">{sumHours(sortedData[day])}</P>
                   </div>
                 )
               })}

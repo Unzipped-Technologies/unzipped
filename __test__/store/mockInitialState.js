@@ -5,11 +5,19 @@ import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
 import { LIST_ENTRIES, USER_LIST_ENTRIES } from './ListEntries'
 import { PROJECT_APPLICATIONS } from './ProjectApplications'
+import { CALENDAR_SETTINGS } from './CalendarSettings'
+import { PLANS } from './Plans'
 export let defaultInitialState = {
   Auth: {
     token: 'testToken',
     isAuthenticated: true,
     loading: false,
+    passwordChanged: false,
+    verifyUrl: '',
+    trialLength: 7,
+    plans: [...PLANS],
+    selectedPlan: null,
+    planCost: 29,
     user: {
       isEmailVerified: true,
       isPhoneVerified: true,
@@ -62,6 +70,11 @@ export let defaultInitialState = {
     totalCount: INVOICES?.length
   },
   Business: {
+    wizardSubmission: {
+      isSuccessfull: false,
+      error: '',
+      projectName: ''
+    },
     details: {
       name: 'Unzipped',
       businessName: 'Unzipped',
@@ -343,16 +356,7 @@ export let defaultInitialState = {
     selectedFreelancer: { ...FREELANCER }
   },
   CalenderSetting: {
-    calenderSetting: {
-      userId: '6601c2a6149276195c3f8fbd',
-      startTime: '2024-05-16T20:00:00.828Z',
-      endTime: '2024-05-17T16:00:00.828Z',
-      timezone: 'Asia/Karachi',
-      interviewScheduler: 'RECURITERS_OTHERS',
-      createdAt: '2024-05-16T20:11:30.183Z',
-      updatedAt: '2024-05-16T20:12:27.509Z',
-      __v: 0
-    },
+    calenderSetting: { ...CALENDAR_SETTINGS },
     success: null,
     loading: false,
     error: null
