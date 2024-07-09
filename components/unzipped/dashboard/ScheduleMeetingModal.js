@@ -1,17 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { makeStyles, createStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
 import styled from 'styled-components'
 import { COLORS, getFontStyled, FONT_SIZE, LETTER_SPACING } from '../../ui/TextMaskInput/core/utilities'
-import DownArrow from '../../../components/icons/downArrow'
-import { SELECT_MEETING_TIME } from '../../../utils/constants'
 import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
-import { Popover } from '@mui/material'
+import TextField from '@mui/material/TextField'
 
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -220,10 +218,10 @@ const options = [
 ]
 
 const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) => {
-  // const classes = useStyles();
-  // const classesSM = useStylesSM();
   const classes = isSmallWindow ? useStylesSM() : useStyles()
   const dropdownRef = useRef()
+  const textFieldRef = useRef(null)
+
   const dispatch = useDispatch()
   const { _id } = useSelector(state => state.Auth.user)
 
@@ -259,7 +257,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
     setIsOpen(false)
   }
 
-  const handleCalenderSettings = () => {
+  const handleCalenderSettings = async () => {
     let calenderSettingObj = {
       userId: _id,
       startTime: availableFromTime,
@@ -271,7 +269,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
     setIsOpen(false)
     setIsModalOpen(false)
     setSelectedOption('APPLIED_TO_PROJECTS')
-    dispatch(createCalenderSetting(calenderSettingObj))
+    await dispatch(createCalenderSetting(calenderSettingObj))
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -283,6 +281,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
   return (
     <>
       <Modal
+        data-testid="setup_calender"
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         className={classes.modal}
@@ -316,9 +315,9 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                 <ScheduleMeetingContainer>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <div className="d-flex gap-5 mt-3">
-                      <div>
+                      <div data-testid="calender_start_time">
                         <Label fontSize="16px" fontWeight={600} htmlFor="start-time-1">
-                          Start Timess
+                          Start Time
                         </Label>
                         <TimePicker
                           value={availableFromTime}
@@ -327,7 +326,11 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                           }}
                           id="start-time-1"
                           minutesStep={30}
-                          renderInput={params => <input {...params} placeholder="Select start time" />}
+                          slots={{
+                            textField: params => (
+                              <TextField {...params} placeholder="Select start time" ref={textFieldRef} />
+                            )
+                          }}
                           sx={TimePickerStyled}
                           slotProps={{
                             popper: {
@@ -341,7 +344,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                           }}
                         />
                       </div>
-                      <div>
+                      <div data-testid="calender_end_time">
                         <Label fontSize="16px" fontWeight={600} htmlFor="end-time">
                           End Time
                         </Label>
@@ -351,6 +354,9 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                           sx={TimePickerStyled}
                           value={availableEndTime}
                           onChange={endTime => setAvailableEndTime(endTime)}
+                          slots={{
+                            textField: params => <TextField {...params} placeholder="Select start time" />
+                          }}
                           slotProps={{
                             popper: {
                               sx: {
@@ -374,7 +380,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                 </div>
                 <div style={{ width: '100%' }}>
                   <DropdownContainer ref={dropdownRef}>
-                    <DropdownButton onClick={toggleDropdown}>
+                    <DropdownButton onClick={toggleDropdown} data-testid="interviewer_options">
                       {selectedOption
                         ? options.find(option => option.value === selectedOption).label
                         : 'Select an option'}
@@ -384,6 +390,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                         {options.map(option => (
                           <DropdownItem
                             key={option.value}
+                            data-testid={option.value}
                             onClick={() => handleOptionClick(option.value)}
                             backgroundColor={selectedOption === option.value ? '#BABABA' : ''}>
                             {option.label}
