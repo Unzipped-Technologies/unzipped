@@ -134,7 +134,7 @@ const DesktopAccount = ({
     LastName: user?.LastName,
     AddressLineOne: user?.AddressLineOne,
     AddressLineTwo: user?.AddressLineTwo,
-    AddressState: user?.AddressState,
+    AddressState: user?.AddressState ?? '',
     AddressCity: user?.AddressCity,
     AddressZip: user?.AddressZip,
     businessName: business?.name,

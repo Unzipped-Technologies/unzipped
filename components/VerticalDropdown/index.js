@@ -47,7 +47,11 @@ const VerticalDropdown = ({ dropdownOptions }) => {
       {isOpen && (
         <Dropdown onMouseLeave={() => setIsOpen(false)}>
           {dropdownOptions.map(item => {
-            return <ButtonSubmit onClick={item.action}>{item.name}</ButtonSubmit>
+            return (
+              <ButtonSubmit onClick={item.action} key={item.name}>
+                {item.name}
+              </ButtonSubmit>
+            )
           })}
         </Dropdown>
       )}

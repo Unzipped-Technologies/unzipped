@@ -14,8 +14,6 @@ const Profile = ({ user, getCurrentUserData, role }) => {
     await getCurrentUserData()
   }, [])
 
-  console.log('role', role, user)
-
   useEffect(() => {
     setUserData({
       ...selected,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import IconComponent from '../icons/IconComponent'
 
-function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey }) {
+function MobileSearchBar({ handleFilterOpenClose, setFilters, searchKey = '' }) {
   const [search, setSearch] = useState('')
 
   useEffect(() => {

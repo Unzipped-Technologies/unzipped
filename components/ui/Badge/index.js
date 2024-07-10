@@ -37,54 +37,61 @@ const statusColor = {
 }
 
 const colors = {
-    default: {
-        text: '#333',
-        background: '#D0D0D0',
-    },
-    primary: {
-        text: '#fff',
-        background: theme.primary,
-    },
-    secondary: {
-        text: '#fff',
-        background: theme.secondary,
-    },
-    secondaryLight: {
-        text: theme.secondary,
-        background: theme.secondaryLight,
-    },
-    success: {
-        text: theme.successText,
-        background: theme.success,
-    },
-    highlight: {
-        text: theme.text,
-        background: theme.important,
-    },
-    green: {
-        text: theme.green,
-        background: theme.greenLight,
-    },
-    red: {
-        text: theme.error,
-        background: theme.errorLight,
-    },
-    darkRed: {
-        text: '#fff',
-        background: theme.error,
-    },
-    grey: {
-        text: '#333',
-        background: '#E5E5E5',
-    },
-};
+  default: {
+    text: '#333',
+    background: '#D0D0D0'
+  },
+  primary: {
+    text: '#fff',
+    background: theme.primary
+  },
+  secondary: {
+    text: '#fff',
+    background: theme.secondary
+  },
+  secondaryLight: {
+    text: theme.secondary,
+    background: theme.secondaryLight
+  },
+  success: {
+    text: theme.successText,
+    background: theme.success
+  },
+  highlight: {
+    text: theme.text,
+    background: theme.important
+  },
+  green: {
+    text: theme.green,
+    background: theme.greenLight
+  },
+  red: {
+    text: theme.error,
+    background: theme.errorLight
+  },
+  darkRed: {
+    text: '#fff',
+    background: theme.error
+  },
+  grey: {
+    text: '#333',
+    background: '#E5E5E5'
+  }
+}
 
 const getStatusColor = status => statusColor[status]
 const getColor = color => (colors[color] ? colors[color] : colors.default)
 /**
  * Badge Component. Colors can be set either through status value, or directly by providing color name.
  */
-const Badge = ({ children, className, color, status, small }) => {
+const Badge = ({
+  children = null,
+  color = null,
+  status = null,
+  small = false,
+
+  className
+}) => {
   const badgeColor = status ? getStatusColor(status) : color
   return (
     <BadgeContainer color={getColor(badgeColor)} small={small} className={className}>
@@ -102,13 +109,6 @@ Badge.propTypes = {
   status: PropTypes.string,
   /** display a smaller version */
   small: PropTypes.bool
-}
-
-Badge.defaultProps = {
-  children: null,
-  color: null,
-  status: null,
-  small: false
 }
 
 export default Badge

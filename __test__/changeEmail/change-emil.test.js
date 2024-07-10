@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 
 import ChangeEmail from '../../pages/change-email'
 import { initialState } from '../store/mockInitialState'
@@ -193,7 +193,9 @@ describe('ChangeEmail Component', () => {
       initialState
     })
 
-    fireEvent.submit(screen.getByTestId('change_email_form'))
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_email_form'))
+    })
   })
 
   it('renders ChangeEmail and send default error message', async () => {
@@ -207,6 +209,8 @@ describe('ChangeEmail Component', () => {
       initialState
     })
 
-    fireEvent.submit(screen.getByTestId('change_email_form'))
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_email_form'))
+    })
   })
 })

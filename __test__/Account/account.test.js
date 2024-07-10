@@ -412,8 +412,8 @@ describe('DesktopAccount Component', () => {
     const SubmitButtonElement = screen.getByTestId('submimt_button')
     expect(SubmitButtonElement).toBeEnabled()
 
-    act(() => {
-      fireEvent.click(SubmitButtonElement)
+    await act(async () => {
+      await fireEvent.click(SubmitButtonElement)
     })
   })
 
@@ -492,8 +492,8 @@ describe('DesktopAccount Component', () => {
     const SubmitButtonElement = screen.getByTestId('submimt_button')
     expect(SubmitButtonElement).toBeEnabled()
 
-    act(() => {
-      fireEvent.click(SubmitButtonElement)
+    await act(async () => {
+      await fireEvent.click(SubmitButtonElement)
     })
   })
 
@@ -578,8 +578,8 @@ describe('DesktopAccount Component', () => {
     const SubmitButtonElement = screen.getByTestId('submimt_button')
     expect(SubmitButtonElement).toBeEnabled()
 
-    act(() => {
-      fireEvent.click(SubmitButtonElement)
+    await act(async () => {
+      await fireEvent.click(SubmitButtonElement)
     })
     await waitFor(() => expect(screen.getByTestId('account_error')).toBeInTheDocument())
     expect(screen.getByTestId('account_error')).toHaveTextContent(/Something went wrong/i)

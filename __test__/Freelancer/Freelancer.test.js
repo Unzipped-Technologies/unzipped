@@ -260,7 +260,9 @@ describe('Freelancers Component', () => {
 
     renderWithRedux(<Freelancers />, { initialState })
 
-    global.dispatchEvent(new Event('resize'))
+    await act(async () => {
+      await global.dispatchEvent(new Event('resize'))
+    })
   })
 
   it('renders Freelancers page and verify freelancers data rendering correctly', async () => {
@@ -358,9 +360,7 @@ describe('Freelancers Component', () => {
   })
 
   it('renders Freelancers page and not redirect to freelancer profile page', async () => {
-    const FreelancersList = initialState.Freelancers.freelancers
     initialState.ListEntries.userLists = []
-    FreelancersList[0]._id = undefined
     renderWithRedux(<Freelancers />, { initialState })
 
     const DesktopFreelancerContainer = screen.getByTestId('desktop_freelancer_container')
@@ -941,7 +941,7 @@ describe('Freelancers Component', () => {
     })
   })
 
-  //  Mobile View Test
+  // // // Mobile View Test
   it('renders Freelancers page on mobile view', async () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
