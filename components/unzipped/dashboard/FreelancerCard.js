@@ -6,7 +6,7 @@ import { Icon } from '../../ui'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import { TitleText, DarkText, Absolute, DarkSpan } from './style'
+import { DarkText, Absolute, DarkSpan, TEXT } from './style'
 import { useDispatch, useSelector } from 'react-redux'
 import ListModal from '../ListModal'
 import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
@@ -59,9 +59,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
     if (listObj) {
       dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
     }
-    if (user?.id) {
-      router.push(`/freelancers/${user.id}`)
-    }
+    user?.id && router.push(`/freelancers/${user.id}`)
   }
 
   const handleUserInvite = async () => {
@@ -100,10 +98,10 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         )}
       </Left>
       <Right minWidth={width} includeRate={includeRate}>
-        <TitleText half color="#0057FF" onClick={redirectToProfile}>
+        <TEXT textColor="#0057FF" onClick={redirectToProfile}>
           {user.name}
-        </TitleText>
-        <TitleText noMargin>{user.type}</TitleText>
+        </TEXT>
+        <TEXT margin="0px">{user.type}</TEXT>
         {user?.country && <DarkText half>{user.country}</DarkText>}
         {includeRate && (
           <Flex>
@@ -124,7 +122,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
             )}
           </Flex>
         )}
-        {user.skills?.length > 0 && user.skills.map((item, index) => <Badge key={index}>{item}</Badge>)}
+        {user.skills?.length > 0 && user.skills.map((item, index) => <Badge key={`${index}_badge`}>{item}</Badge>)}
         {user?.cover && (
           <DarkText topMargin="10px">
             <strong>cover letter: </strong>

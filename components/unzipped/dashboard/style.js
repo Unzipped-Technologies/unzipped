@@ -436,6 +436,9 @@ const DIV = styled.div`
   position: ${({ position }) => (position ? position : 'static')};
   background: ${({ background }) => (background ? background : 'transparent')};
   border: ${({ border }) => (border ? border : '#d8d8d8')};
+  border-bottom: ${({ borderBottom, border }) => (borderBottom ? borderBottom : border ? borderBottom : '#d8d8d8')};
+  border-left: ${({ borderLeft, border }) => (border ? border : borderLeft ? borderLeft : 'none')};
+
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
   padding: ${({ padding }) => (padding ? padding : '0px')};
 
@@ -460,12 +463,14 @@ const TEXT = styled.p`
   padding: ${({ padding }) => (padding ? padding : '')};
   margin: ${({ margin }) => (margin ? margin : '')};
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
   word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
   cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
   letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'none')};
   white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
   overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};

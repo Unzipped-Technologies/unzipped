@@ -55,9 +55,8 @@ const Reset = ({ changePassword }) => {
 
   const resetPassword = async userData => {
     const response = await changePassword(userData)
-
     if (response?.status === 200) {
-      await router.push('/dashboard')
+      router.push('/dashboard')
     } else {
       setPasswordError(response?.data?.message ?? 'Something went wrong')
     }

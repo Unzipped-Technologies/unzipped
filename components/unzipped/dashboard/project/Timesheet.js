@@ -336,6 +336,7 @@ const Timesheet = ({
         })
       }
     }
+
     if (taskHours?.length) {
       if (selectedInvoice?._id) {
         await addInvoiceTasks(selectedInvoice?._id, {
@@ -353,6 +354,15 @@ const Timesheet = ({
       }
       await getInvoices({ businessId: businessId })
     }
+  }
+
+  const sumHours = data => {
+    let hours = 0
+    for (var item of data) {
+      hours += +item.hours ?? 0
+    }
+
+    return hours?.toString()
   }
 
   const handleSubmit = async status => {
@@ -612,7 +622,7 @@ const Timesheet = ({
                     key={`day_hours_${index}`}
                     data-testid={`${day}_hours`}>
                     <P fontWeight="500">{day}</P>
-                    <P fontWeight="500">{sortedData[day].reduce((acc, obj) => acc + obj.hours, 0)}</P>
+                    <P fontWeight="500">{sumHours(sortedData[day])}</P>
                   </div>
                 )
               })}

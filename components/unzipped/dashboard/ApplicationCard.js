@@ -150,7 +150,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                         letterSpacing="0.4px"
                         padding="5px 0px 0px 0px">
                         {application?.rate > 0 ? (
-                          <div>
+                          <span>
                             {`$${application?.rate}`}{' '}
                             <span
                               style={{
@@ -163,7 +163,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                               }}>
                               / hour
                             </span>
-                          </div>
+                          </span>
                         ) : (
                           <span
                             style={{
@@ -182,21 +182,20 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           : 'N/A'}
                       </DIV>
                       <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
-                        <p>
-                          <b style={{ fontSize: '11px' }}>cover letter:</b>
-                          <TEXT
-                            textColor="#000"
-                            fontSize="13px"
-                            fontWeight="100"
-                            lineHeight="21px" /* 175% */
-                            letterSpacing="0.4px"
-                            padding="0px 0px 15px 3px">
-                            {ConverterUtils.truncateString(application?.coverLetter, 150)}
-                            {application?.coverLetter?.length > 150 && (
-                              <a style={{ textDecoration: 'underline' }}>Read More</a>
-                            )}
-                          </TEXT>
-                        </p>
+                        <TEXT
+                          textColor="#000"
+                          fontSize="13px"
+                          fontWeight="100"
+                          lineHeight="21px" /* 175% */
+                          letterSpacing="0.4px"
+                          padding="0px 0px 15px 3px">
+                          <b style={{ fontSize: '11px', fontWeight: '800', paddingRight: '5px' }}>cover letter:</b>
+
+                          {ConverterUtils.truncateString(application?.coverLetter, 150)}
+                          {application?.coverLetter?.length > 150 && (
+                            <a style={{ textDecoration: 'underline' }}>Read More</a>
+                          )}
+                        </TEXT>
                       </div>
                     </DIV>
                     <DIV

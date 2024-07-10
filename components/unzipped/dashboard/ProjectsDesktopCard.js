@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
-import { TitleText, DarkText } from './style'
+import { TEXT, DarkText } from './style'
 
 export const Container = styled.div`
   display: flex;
@@ -50,16 +50,15 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
         )}
       </Left>
       <Right includeRate={includeRate} minWidth="62%">
-        <TitleText
-          half
-          clickable
-          color="#0057FF"
+        <TEXT
+          cursor="pointer"
+          textColor="#0057FF"
           onClick={() => {
             router.push(`/projects/${project._id}`)
           }}
           data-testid={`${project?._id}_name`}>
           {project?.name}
-        </TitleText>
+        </TEXT>
         <Flex>
           <DarkText half data-testid={`${project?._id}_country`}>
             {project?.businessCountry}
@@ -76,7 +75,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
         </div>
         <div data-testid={`required_skill`}>
           {project?.requiredSkills?.map(item => (
-            <Badge key={`${item}_desktop_card`}>{item}ss</Badge>
+            <Badge key={`${item}_desktop_card`}>{item}</Badge>
           ))}
         </div>
       </Right>

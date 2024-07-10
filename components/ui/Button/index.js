@@ -239,39 +239,39 @@ const typeColors = {
  * Button Component.
  */
 const Button = ({
+  isAnimated = false,
+  block = false,
+  type = 'default',
+  onClick = () => {},
+  disabled = false,
+  small = false,
+  children = null,
+  icon = null,
+  condensed = false,
+  iconRight = false,
+  popout = null,
+  separateRightIcon = false,
+  margin = '',
+  noBorder = false,
+  noUppercase = false,
+  popoutWidth = '200px',
+  contentMargin = '',
   dropDownRight,
   className,
-  isAnimated,
-  block,
-  type,
-  onClick,
-  disabled,
-  small,
-  children,
-  icon,
-  condensed,
-  iconRight,
-  popout,
-  separateRightIcon,
-  margin,
-  noBorder,
-  noUppercase,
   fontSize,
   extraTall,
-  popoutWidth,
   extraWide,
   normal,
   oval,
   submit,
   noPadding,
-  height,
+  height = '',
   buttonHeight,
   position,
   right,
   top,
   zIndex,
   mobile,
-  contentMargin,
   ...rest
 }) => {
   const colors = typeColors[type] ? typeColors[type] : typeColors.default
@@ -381,27 +381,6 @@ Button.propTypes = {
   height: PropTypes.string,
   /** contentMargin of button */
   contentMargin: PropTypes.string
-}
-
-Button.defaultProps = {
-  isAnimated: false,
-  block: false,
-  children: null,
-  type: 'default',
-  small: false,
-  disabled: false,
-  onClick: () => {},
-  icon: null,
-  iconRight: false,
-  condensed: false,
-  popout: null,
-  separateRightIcon: false,
-  margin: '0',
-  noBorder: false,
-  noUppercase: false,
-  popoutWidth: '200px',
-  height: '',
-  contentMargin: ''
 }
 
 export default Button

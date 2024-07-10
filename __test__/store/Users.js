@@ -38,7 +38,7 @@ export const CLIENT_AUTH = {
   __v: 0,
   phoneNumber: '(333) 333-3333',
   stripeId: '4242 4242 4242 4242',
-  stripeAccountId: 'acct_1OtzJDQmnBKiGech',
+  stripeAccountId: null,
   msg: 'success',
   cookie:
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjY2MDFjMjg4MTQ5Mjc2MTk1YzNmOGZhZiIsImlhdCI6MTcxODA0MDM4NiwiZXhwIjo0MzEwMDQwMzg2fQ.YTqfpfxMQVIgLuUwC4gTAaTdbH4wpysNg9dcpGDN5YU'
@@ -50,7 +50,7 @@ export const FREELANCER_AUTH = {
   isGithubConnected: false,
   isAdmin: false,
   isUserSubscribed: false,
-  isIdentityVerified: 'INCOMPLETE',
+  isIdentityVerified: 'SUCCESS',
   isPhoneVerified: false,
   isSuspended: false,
   plan: 0,
@@ -100,7 +100,15 @@ export const FREELANCER_AUTH = {
   createdAt: '2024-03-25T18:29:58.619Z',
   updatedAt: '2024-06-03T17:09:09.900Z',
   __v: 0,
-  freelancers: '6601c2a6149276195c3f8fc2',
+  freelancers: {
+    _id: '6601c2a6149276195c3f8fc2',
+    rate: 23,
+    isActive: true,
+    isArchived: false,
+    isPreferedFreelancer: true,
+    isAcceptEquity: true,
+    category: 'Full Stack Developer'
+  },
   msg: 'success',
   cookie:
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJVbnppcHBlZCIsInN1YiI6IjY2MDFjMmE2MTQ5Mjc2MTk1YzNmOGZiZCIsImlhdCI6MTcxODA0MzI1MiwiZXhwIjo0MzEwMDQzMjUyfQ.G1Zk25wZAE9O5Pm6IeRj5KpviH7KJfPhXu4qJx7GMxs'

@@ -162,7 +162,6 @@ const ProjectDetail = ({
 }) => {
   const router = useRouter()
   const { id } = router.query
-
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleClick = index => setSelectedTab(index)

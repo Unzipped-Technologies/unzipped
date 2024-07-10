@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 
 import { initialState } from '../store/mockInitialState'
 import ChangePassword from '../../pages/change-password'
@@ -264,7 +264,9 @@ describe('ChangePassword Component', () => {
     })
     fireEvent.blur(confirmNewPasswordElement)
 
-    fireEvent.submit(screen.getByTestId('change_password_form'))
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_password_form'))
+    })
   })
 
   it('renders ChangePassword and send default error message', async () => {
@@ -329,6 +331,8 @@ describe('ChangePassword Component', () => {
     })
     fireEvent.blur(confirmNewPasswordElement)
 
-    fireEvent.submit(screen.getByTestId('change_password_form'))
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_password_form'))
+    })
   })
 })

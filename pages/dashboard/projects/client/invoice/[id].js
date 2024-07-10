@@ -139,7 +139,7 @@ const Tabs = styled.div`
     justify-content: space-around;
     display: flex;
     overflow-x: auto;
-    margin-left: 10px;
+    margin: 0px 0px 40px 10px;
   }
 `
 
@@ -189,6 +189,23 @@ const TabButton = styled.button`
 const TabContent = styled.div`
   display: block;
   padding-bottom: 50px;
+`
+
+const Select = styled.select`
+  display: block;
+  border: 0;
+  width: fit-content;
+  background-color: transparent;
+  color: #222;
+  font-family: Roboto;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 19.5px; /* 121.875% */
+  letter-spacing: 0.15px;
+  margin-top: -20px;
+  margin-bottom: -60px !important;
+  margin-right: 10px;
 `
 
 const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
@@ -282,6 +299,21 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
                 {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name}` : 'PROJECT') : ''}
                 {selectedTab === 3 && window.innerWidth > 680 ? 'Invoice History' : ''}
               </ProjectName>
+              {selectedTab === 3 && window.innerWidth <= 680 && !invoice ? (
+                <Select
+                  data-testid="timesheet_week_options"
+                  onChange={e => {
+                    handleWeekChange(e.target.value)
+                  }}>
+                  {weekOptions.map((week, index) => (
+                    <option key={`week_${index}`} value={index}>
+                      Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                ''
+              )}
             </Header>
             {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
           </HeaderDetail>
@@ -325,6 +357,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById, role }) => {
             ) : (
               <MobileDisplayBox>
                 <ClientMobileInvoices
+                  invoice={invoice}
                   weekOptions={weekOptions}
                   selectedWeek={selectedWeek}
                   handleWeekChange={handleWeekChange}

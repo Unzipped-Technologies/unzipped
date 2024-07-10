@@ -334,7 +334,8 @@ const Freelancers = ({
               })}
           </Container>
           <DesktopDisplayBox>
-            <Footer />
+            {' '}
+            <Footer />{' '}
           </DesktopDisplayBox>
           {!filterOpenClose && window?.innerWidth <= 680 && (
             <MobileDisplayBox>

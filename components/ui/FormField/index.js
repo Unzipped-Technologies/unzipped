@@ -10,7 +10,7 @@ import SimpleBar from 'simplebar-react'
 import PhoneNumberInput from '../PhoneNumberInput'
 import PropTypes from 'prop-types'
 import FormLabel from '../FormLabel'
-import { TitleText, DarkText, Absolute, WhiteCard, Underline, Grid2 } from '../../unzipped/dashboard/style'
+import { DarkText, Absolute, WhiteCard } from '../../unzipped/dashboard/style'
 
 const types = {
   radio: Radio,
@@ -101,26 +101,26 @@ const FormField = ({
   className,
   fieldType,
   inputType,
-  required,
-  inline,
-  error,
-  children,
   id,
-  name,
-  help,
-  bottom,
-  requiredError,
-  validate,
-  disabled,
-  onBlur,
-  maxWidth,
   width,
-  modalSelect,
-  currency,
-  onChange,
-  onFocus,
-  noMargin,
+  required = false,
+  inline = false,
+  children = null,
+  error = null,
+  requiredError = 'This field is required.',
+  name = null,
+  help = null,
+  validate = () => true,
+  bottom = '0px',
+  disabled,
+  onBlur = null,
+  maxWidth = 'none',
+  modalSelect = false,
+  currency = false,
+  onChange = () => {},
+  onFocus = () => {},
   dropdownList = [],
+  noMargin,
   margin,
   display,
   onUpdate,
@@ -345,24 +345,6 @@ FormField.propTypes = {
   display: PropTypes.string,
   /** string to override the zIndex*/
   zIndex: PropTypes.string
-}
-
-FormField.defaultProps = {
-  required: false,
-  inline: false,
-  children: null,
-  error: null,
-  requiredError: 'This field is required.',
-  name: null,
-  help: null,
-  validate: () => true,
-  onBlur: null,
-  currency: false,
-  bottom: '0px',
-  modalSelect: false,
-  onChange: () => {},
-  maxWidth: 'none',
-  onFocus: () => {}
 }
 
 export default FormField

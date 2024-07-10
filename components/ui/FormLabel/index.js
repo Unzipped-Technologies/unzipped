@@ -29,7 +29,15 @@ const addAsteriskToLastItem = array => {
 /**
  * Form label Component.
  */
-const FormLabel = ({ children, help, forId, fontSize = '', required, className }) => {
+const FormLabel = ({
+  children = null,
+  help = null,
+  required = false,
+  forId = null,
+
+  fontSize = '',
+  className
+}) => {
   const childrenWithAsterisk =
     required && children?.props?.children && typeof children?.props?.children === 'string'
       ? `${children.props.children}*`
@@ -59,13 +67,6 @@ FormLabel.propTypes = {
   fontSize: PropTypes.string,
   /** Additional classNames  */
   className: PropTypes.string
-}
-
-FormLabel.defaultProps = {
-  children: null,
-  help: null,
-  required: false,
-  forId: null
 }
 
 export default FormLabel

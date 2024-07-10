@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import styled from 'styled-components'
 
-import { getUserListEntries } from '../../../redux/actions'
-import ProjectDesktopCard from './ProjectsDesktopCard'
 import { WhiteCard } from './style'
 import MobileProjectCard from './MobileProjectCard'
+import ProjectDesktopCard from './ProjectsDesktopCard'
+import { getUserListEntries } from '../../../redux/actions'
 
 const Box = styled.div`
   display: flex;
