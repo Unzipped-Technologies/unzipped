@@ -69,13 +69,19 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     }
   }, [])
 
-  useEffect(async () => {
-    await getProjectsList({
-      take: 'all',
-      skip: 0,
-      populate: false
-    })
-  }, [])
+  useEffect(() => {
+    (async () => {
+      try {
+        await getProjectsList({
+          take: 'all',
+          skip: 0,
+          populate: false
+        });
+      } catch (error) {
+        console.error('Error fetching project list:', error);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (!selectedDepartment?._id) {
