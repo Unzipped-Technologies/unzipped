@@ -52,17 +52,17 @@ const WhiteCard = styled.div`
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
 
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-    size === 'large'
-      ? '151px'
-      : size === 'extraLarge'
+      size === 'large'
+        ? '151px'
+        : size === 'extraLarge'
         ? '370px'
         : unset
-          ? 'unset'
-          : cardHeightDesktop
-            ? '262px'
-            : height
-              ? height
-              : '63px'};
+        ? 'unset'
+        : cardHeightDesktop
+        ? '262px'
+        : height
+        ? height
+        : '63px'};
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
     padding: ${({ padding }) => (padding ? padding : '20px 20px')};
@@ -88,17 +88,17 @@ const WhiteCard = styled.div`
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
     min-height: ${({ size, unset, height, cardHeightDesktop }) =>
-    size === 'large'
-      ? '151px'
-      : size === 'extraLarge'
+      size === 'large'
+        ? '151px'
+        : size === 'extraLarge'
         ? '370px'
         : unset
-          ? 'unset'
-          : cardHeightDesktop
-            ? '262px'
-            : height
-              ? height
-              : '63px'};
+        ? 'unset'
+        : cardHeightDesktop
+        ? '262px'
+        : height
+        ? height
+        : '63px'};
 
     align-items: ${({ alignEnd }) => (alignEnd ? 'flex-end' : 'center')};
     justify-content: ${({ center, justifyEnd }) => (center ? 'center' : justifyEnd ? 'flex-end' : 'normal')};
@@ -106,7 +106,7 @@ const WhiteCard = styled.div`
     position: relative;
     box-shadow: ${({ shadow }) => (shadow ? shadow : 'none')};
     margin-bottom: ${({ noMargin, half, marginBottom }) =>
-    noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
+      noMargin ? '0px' : half ? '12px' : marginBottom ? marginBottom : '24px'};
     overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
   }
   @media (max-width: 600px) {
@@ -202,12 +202,10 @@ const ConversationContainer = ({
         const fullName = `${participant.userId?.FirstName} ${participant.userId?.LastName}`
         const searchChars = searchKey.split('')
 
-        return participant.userId?._id !== userId &&
-          searchChars.every(char =>
-            fullName
-              .toLocaleLowerCase()
-              .includes(char.toLocaleLowerCase())
-          )
+        return (
+          participant.userId?._id !== userId &&
+          searchChars.every(char => fullName.toLocaleLowerCase().includes(char.toLocaleLowerCase()))
+        )
       })
     })
 
@@ -217,59 +215,65 @@ const ConversationContainer = ({
     }
   }
 
-  const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) => (
-    <WhiteCard
-      key={index}
-      background={_id === selectedConversation?._id ? '#BABABA' : '#fff'}
-      noMargin
-      minWidth="100%"
-      padding="5px"
-      overflow="hidden"
-      height="63px"
-      style={{
-        border: '0.25px solid #000000'
-      }}
-      onClick={() => {
-        openConversation(_id)
-      }}>
-      <Span>
-        <DIV display="flex" justifyContent="space-between">
-          <DIV display="flex">
-            <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-            <DIV width="200px">
-              <DarkText fontSize="16px" style={{ height: '20px' }} marginLeft="10px" lineHeight="23px" color="#000000">
-                {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
-              </DarkText>
-              <DarkText fontSize="11px" color="#000000" noMargin marginLeft="10px">
-                {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
-              </DarkText>
-            </DIV>
-          </DIV>
-
-          <div>
-            <DarkText padding="5px 0px 0px 05px" width="85px" center fontSize="11px" lighter noMargin color="#000000">
-              {ValidationUtils.formatDateWithDate(updatedAt)}
-            </DarkText>
-            {typing?.isTyping &&
-              typing?.receiverId === sender?.userId?._id &&
-              typing?.conversationId === _id &&
-              selectedConversation?._id !== typing?.conversationId && (
-                <DarkText center noMargin width="55px">
-                  <TypingAnimation>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </TypingAnimation>
+  const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) =>
+    receiver?.userId && (
+      <WhiteCard
+        key={index}
+        background={_id === selectedConversation?._id ? '#BABABA' : '#fff'}
+        noMargin
+        minWidth="100%"
+        padding="5px"
+        overflow="hidden"
+        height="63px"
+        style={{
+          border: '0.25px solid #000000'
+        }}
+        onClick={() => {
+          openConversation(_id)
+        }}>
+        <Span>
+          <DIV display="flex" justifyContent="space-between">
+            <DIV display="flex">
+              <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
+              <DIV width="200px">
+                <DarkText
+                  fontSize="16px"
+                  style={{ height: '20px' }}
+                  marginLeft="10px"
+                  lineHeight="23px"
+                  color="#000000">
+                  {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
                 </DarkText>
-              )}
-          </div>
-          {+sender?.unreadCount > 0 && (
-            <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
-          )}
-        </DIV>
-      </Span>
-    </WhiteCard>
-  )
+                <DarkText fontSize="11px" color="#000000" noMargin marginLeft="10px">
+                  {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
+                </DarkText>
+              </DIV>
+            </DIV>
+
+            <div>
+              <DarkText padding="5px 0px 0px 05px" width="85px" center fontSize="11px" lighter noMargin color="#000000">
+                {ValidationUtils.formatDateWithDate(updatedAt)}
+              </DarkText>
+              {typing?.isTyping &&
+                typing?.receiverId === sender?.userId?._id &&
+                typing?.conversationId === _id &&
+                selectedConversation?._id !== typing?.conversationId && (
+                  <DarkText center noMargin width="55px">
+                    <TypingAnimation>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </TypingAnimation>
+                  </DarkText>
+                )}
+            </div>
+            {+sender?.unreadCount > 0 && (
+              <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
+            )}
+          </DIV>
+        </Span>
+      </WhiteCard>
+    )
 
   const RenderConversations = ({ type }) =>
     conversation
