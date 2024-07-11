@@ -27,11 +27,10 @@ export const Message = styled.div`
 export const Div = styled.div`
   width: 100%;
   z-index: 1;
-  height: 75vh;
-  z-index: 1;
+  height: 73vh;
   overflow: hidden auto;
   &::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
@@ -48,16 +47,22 @@ export const Div = styled.div`
     opacity: 1;
   }
 
-  @media (max-height: 845px) {
-    height: 67vh;
+  @media (max-height: 1049px) {
+    height: 70vh;
   }
-  @media (max-height: 761px) {
-    height: 65vh;
+  @media (max-height: 944px) {
+    height: 68vh;
   }
-  @media (max-height: 721px) {
-    height: 63vh;
+  @media (max-height: 885px) {
+    height: 66vh;
   }
-  @media (max-height: 669px) {
+  @media (max-height: 832px) {
+    height: 64vh;
+  }
+  @media (max-height: 788px) {
+    height: 62vh;
+  }
+  @media (max-height: 746px) {
     height: 60vh;
   }
 `
@@ -241,7 +246,7 @@ const MessageContainer = ({
     <>
       {data ? (
         <WhiteCard noMargin height="100%" padding="0px">
-          <WhiteCard noMargin row padding="10px 40px">
+          <WhiteCard noMargin row padding="8px 40px">
             <DarkText noMargin>
               <DarkText className="mb-0" fontSize="16px" color="#000000" lineHeight="23px">
                 {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
