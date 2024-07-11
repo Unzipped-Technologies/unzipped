@@ -19,6 +19,16 @@ const Right = styled.div`
   height: 100%;
 `
 
+const LoadingHistory = styled.span`
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: larger;
+  color: darkgray;
+  font-weight: 500;
+`
+
 export const Message = styled.div`
   position: relative;
   width: 100%;
@@ -104,6 +114,7 @@ const MessageContainer = ({
     message: '',
     attachment: ''
   })
+  const [isMessagesLoading, setIsMessagesLoading] = useState(false)
 
   useEffect(() => {
     socket.on('typing', typingData => {
@@ -227,6 +238,10 @@ const MessageContainer = ({
     const scroll = document.getElementById('topScroll')
     if (scroll.scrollTop === 0) {
       if (messageLimit < messagesCount) {
+        setIsMessagesLoading(true)
+        setTimeout(() => {
+          setIsMessagesLoading(false)
+        }, 1200)
         handleMessagesOnScroll()
       }
     }
@@ -271,6 +286,7 @@ const MessageContainer = ({
                   handleScroll()
                 }}
                 id="topScroll">
+                {isMessagesLoading && <LoadingHistory>Loading history...</LoadingHistory>}
                 <div>
                   {messages?.map((e, index) => {
                     if (e?.sender === userId && e?._id) {
