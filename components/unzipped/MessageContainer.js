@@ -241,7 +241,7 @@ const MessageContainer = ({
         setIsMessagesLoading(true)
         setTimeout(() => {
           setIsMessagesLoading(false)
-        }, 1200)
+        }, 1000)
         handleMessagesOnScroll()
       }
     }
