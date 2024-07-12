@@ -18,7 +18,9 @@ const Container = styled.div`
   padding-right: 10%;
   margin-top: 119px;
 `
-const Content = styled.div``
+const Content = styled.div`
+  width: -webkit-fill-available
+`
 const Box = styled.div`
   width: 100%;
   display: flex;
