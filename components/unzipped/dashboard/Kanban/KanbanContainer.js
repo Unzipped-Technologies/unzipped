@@ -27,6 +27,8 @@ const Container = styled.div`
   background-color: #f0f2f5;
   width: 100%;
   justify-content: center;
+  padding-left: 20px;
+  padding-right: 40px;
 `;
 
 const Header = styled.div`
@@ -59,8 +61,38 @@ const ProjectSelector = styled.select`
 
 
 `;
+const DIV = styled.div`
+  width: 40%;
+  display: flex;
+  padding: 10px;
+  gap: 20px;
+  justify-content: center;
+  background: #fff;
+
+  @media only screen and (max-width: 992px) {
+    width: 70%;
+    gap: 10px;
+  }
+`;
+
+const FilterDiv = styled.div`
+  width: 70%;
+  display: flex;
+  padding-left: 55px;
+  gap: 20px;
+  padding-top: 10px;
+  background: #fff;
+
+  @media only screen and (max-width: 992px) {
+    width: 30%;
+    padding-left: 20px;
+    gap: 10px;
+  }
+`;
+
 
 const BoardContainer = styled.div`
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -128,34 +160,20 @@ const ProjectKanbanBoard = () => {
 
             <div style={{
               display: "flex",
-              width: "64%",
+              width: "80%",
               boxShadow: " rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
               borderRadius: "10px"
             }}>
-              <div style={{
-                width: "70%",
-                display: "flex",
-                paddingLeft: "55px",
-                gap: "20px",
-                paddingTop: "10px",
-                background: "#fff"
-              }}>
+              <FilterDiv>
                 <FilterIconContainer>
                   <FilterIcon />
                 </FilterIconContainer>
                 <div style={{ width: "100%" }}>
                   <SearchTextStyled type="text" placeholder="Filter by keywords" />
                 </div>
-              </div>
+              </FilterDiv>
 
-              <div style={{
-                width: "40%",
-                display: "flex",
-                padding: "10px",
-                gap: "20px",
-                justifyContent: "center",
-                background: "#fff",
-              }}>
+              <DIV>
                 <div>
                   <AssignedToList />
                 </div>
@@ -165,6 +183,7 @@ const ProjectKanbanBoard = () => {
                     aria-haspopup="true"
                     disableElevation
                     sx={{
+                      width: 'max-content',
                       color: "#000",
                       background: "#fff !important",
                       fontSize: "17px",
@@ -178,7 +197,7 @@ const ProjectKanbanBoard = () => {
                     Return To Default
                   </Button>
                 </div>
-              </div>
+              </DIV>
             </div>
 
           </div>

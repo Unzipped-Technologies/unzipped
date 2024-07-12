@@ -22,6 +22,9 @@ const DraggableItem = styled.div`
   border-left: 4px solid #E25050;
   max-width: 300px;
   height: 245px;
+  @media (max-height: 768px) {
+    height: 230px;
+  }
 `;
 
 const CardHeader = styled.div`

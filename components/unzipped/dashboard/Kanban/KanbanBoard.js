@@ -59,18 +59,16 @@ const Container = styled.div`
 
 const Board = styled.div`
   display: flex;
-  justify-content: space-around;
   align-items: flex-start;
   background-color: #ffffff;
   border-radius: 8px;
   padding: 0px 20px;
-  width: 100%;
-  height: calc(100vh - 244px); 
+  width: 100%; 
   overflow: scroll;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 0px;
   }
 
   ::-webkit-scrollbar-track {
@@ -84,6 +82,11 @@ const Board = styled.div`
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+  
+  @media only screen and (max-width:1080px) {
+    padding: 0px 8px;
+  }
+    
 `;
 
 const ColumnContainer = styled.div`
@@ -178,15 +181,14 @@ const TaskList = styled.div`
   display: flex;
   flex-direction: column;
   background: #f3f3f3;
-  min-width: 340px;
+  width: 100%;
   border-radius: 10px;
-  padding: 15px 15px;
-  margin-right: 45px;
-  min-height: 80vh;
+  padding: 5px 5px;
+  min-height: 60vh;
   overflow-y: scroll;
-  max-height: 80vh;
+  max-height: 60vh;
   ::-webkit-scrollbar {
-    width: 5px; 
+    width: 0px; 
   }
 
   ::-webkit-scrollbar-track {
@@ -201,15 +203,57 @@ const TaskList = styled.div`
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+  @media (max-height: 651px) {
+    min-height: 41vh;
+  }
+  
 `;
 
 const TaskColumnStyles = styled.div`
-  margin: 8px;
+  margin: 8px 8px 0 8px;
   display: flex;
+  gap: 20px;
   width: 100%;
-  min-height: 80vh;
-`;
+  min-height: 72vh;
 
+  @media (max-height: 1072px) {
+    min-height: 70vh;
+  }
+  @media (max-height: 1000px) {
+    min-height: 68vh;
+  }
+  @media (max-height: 934px) {
+    min-height: 66vh;
+  }
+  @media (max-height: 888px) {
+    height: 64vh;
+    min-height: 64vh;
+  }
+  @media (max-height: 832px) {
+    height: 62vh;
+    min-height: 62vh;
+  }
+  @media (max-height: 788px) {
+    height: 60vh;
+    min-height: 60vh;
+  }
+  @media (max-height: 748px) {
+    height: 58vh;
+    min-height: 58vh;
+  }
+  @media (max-height: 713px) {
+    height: 56vh;
+    min-height: 56vh;
+  }
+  @media (max-height: 680px) {
+    height: 54vh;
+    min-height: 54vh;
+  }
+  @media (max-height: 651px) {
+    height: 52vh;
+    min-height: 52vh;
+  }
+`;
 const Title = styled.span`
   color: #10957d;
   background: rgba(16, 149, 125, 0.15);
@@ -292,7 +336,8 @@ function KanbanBoard() {
                     <div style={{
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "center"
+                      width: '100%',
+                      justifyContent: 'space-around'
                     }}>
                       <div>
                         <ColumnTitle>{column.name}</ColumnTitle>
