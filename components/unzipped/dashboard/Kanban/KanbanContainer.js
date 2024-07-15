@@ -20,15 +20,14 @@ const GlobalStyle = createGlobalStyle`
 // Styled Components
 const Container = styled.div`
   display: flex;
+  gap: 20px;
   flex-direction: column;
   align-items: center;
   height: auto;
-  overflow: hidden;
   background-color: #f0f2f5;
   width: 100%;
   justify-content: center;
-  padding-left: 20px;
-  padding-right: 40px;
+  padding: 0px 20px;
 `;
 
 const Header = styled.div`
@@ -96,9 +95,8 @@ const BoardContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
 `;
 
 const ProjectFilterContainer = styled.div`
@@ -107,7 +105,6 @@ const ProjectFilterContainer = styled.div`
   justify-content: center;
   width: 100%;
   gap: 10px;
-  margin-bottom: 20px;
 `;
 
 

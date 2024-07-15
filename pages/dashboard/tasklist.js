@@ -40,6 +40,7 @@ const Container = styled.div`
 
 const ViewFullScreenButton = styled.button`
   margin-right: 40px;
+  margin-top: 8px;
   text-transform: uppercase;
   background: #1976D2;
   color: white;
@@ -98,7 +99,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     <>
       <Nav
         isSubMenu
-        marginBottom={window.innerWidth > 600 ? '135px' : '78px'}
+        marginBottom={window.innerWidth > 600 ? '125px' : '78px'}
         isLogoHidden={window.innerWidth > 600 ? false : true}
         listName={'Departments'}
         setIsViewable={() => { }}
