@@ -490,6 +490,7 @@ const bounceAnimation = keyframes`
 const TypingAnimation = styled.div`
   width: 100%;
   padding-left: 10px;
+  line-height: 12px;
   span {
     width: 7px;
     height: 7px;

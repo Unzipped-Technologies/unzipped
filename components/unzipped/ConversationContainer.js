@@ -34,6 +34,10 @@ const Scroll = styled(SimpleBar)`
     width: auto !important;
     height: 1px !important;
   }
+
+  @media (max-width: 1080px) {
+    width: 101%;
+  }
 `
 
 const WhiteCard = styled.div`
@@ -72,7 +76,7 @@ const WhiteCard = styled.div`
     overflow: ${({ overflow, overlayDesktop }) => (overflow ? overflow : overlayDesktop ? 'overlay' : 'visible')};
   }
   @media (max-width: 1080px) {
-    min-width: 270px;
+    min-width: 290px;
   }
   @media (max-width: 840px) {
     min-width: 240px;
@@ -165,6 +169,17 @@ const UnreadCount = styled.span`
   transform: translate(50%, -50%);
 `
 
+const UsernameDiv = styled.div`
+  color: #000000;
+  font-size: 16px;
+  font-weight: 100;
+  font-family: system-ui;
+
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`
+
 const ConversationContainer = ({
   conversations = [],
   userId,
@@ -237,14 +252,10 @@ const ConversationContainer = ({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '14px'
+              gap: '14px',
+              width: '100%'
             }}>
-            <DIV
-              display="flex"
-              justifyContent="space-between"
-              style={{
-                gap: '5px'
-              }}>
+            <DIV display="flex" justifyContent="space-between">
               <DIV>
                 <DarkText
                   fontSize="16px"
@@ -257,16 +268,8 @@ const ConversationContainer = ({
                   {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
                 </DarkText>
               </DIV>
-              <div
-                style={{
-                  color: '#000000',
-                  fontSize: '16px',
-                  fontWeight: '100',
-                  fontFamily: 'system-ui'
-                }}>
-                @{receiver.userId.email.split('@')[0]}
-              </div>
-              <div style={{ minWidth: '84px' }}>
+              <UsernameDiv>@{ValidationUtils.truncate(receiver.userId.email.split('@')[0], 10)}</UsernameDiv>
+              <div style={{ minWidth: '80px' }}>
                 <DarkText
                   width="auto"
                   center
@@ -276,26 +279,28 @@ const ConversationContainer = ({
                   style={{ fontFamily: 'system-ui' }}>
                   {ValidationUtils.formatDateWithDate(updatedAt)}
                 </DarkText>
-                {typing?.isTyping &&
-                  typing?.receiverId === sender?.userId?._id &&
-                  typing?.conversationId === _id &&
-                  selectedConversation?._id !== typing?.conversationId && (
-                    <DarkText center noMargin width="55px">
-                      <TypingAnimation>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </TypingAnimation>
-                    </DarkText>
-                  )}
               </div>
               {+sender?.unreadCount > 0 && (
                 <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
               )}
             </DIV>
-            <DarkText fontSize="12px" color="#000000" marginLeft="10px" noMargin>
-              {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 48)}
-            </DarkText>
+            <div style={{ display: 'flex' }}>
+              <DarkText fontSize="12px" color="#000000" marginLeft="6px" noMargin>
+                {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 34)}
+              </DarkText>
+              {typing?.isTyping &&
+                typing?.receiverId === sender?.userId?._id &&
+                typing?.conversationId === _id &&
+                selectedConversation?._id !== typing?.conversationId && (
+                  <DarkText noMargin width="74px">
+                    <TypingAnimation>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </TypingAnimation>
+                  </DarkText>
+                )}
+            </div>
           </div>
         </Span>
       </WhiteCard>
