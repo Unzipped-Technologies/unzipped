@@ -164,7 +164,6 @@ const WhiteCard = styled.div`
     border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '5px')};
     max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : 'unset')};
     width: ${({ width }) => (width ? width : '100%')};
-    // width: 100%;
     display: flex;
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
@@ -334,7 +333,7 @@ export const Span = styled.span`
   font-style: normal;
   font-weight: ${({ bold }) => (bold ? 600 : 400)};
   font-size: ${({ size }) => (size ? size : '26px')};
-  line-height: 45px;
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '45px')};
   letter-spacing: 0.39998px;
   width: ${({ unset }) => (unset ? 'unset' : '100%')};
   margin: ${({ margin }) => (margin ? margin : 'unset')};

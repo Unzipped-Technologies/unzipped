@@ -222,7 +222,7 @@ const ConversationContainer = ({
         background={_id === selectedConversation?._id ? '#BABABA' : '#fff'}
         noMargin
         minWidth="100%"
-        padding="5px"
+        padding="8px"
         overflow="hidden"
         height="63px"
         style={{
@@ -231,46 +231,72 @@ const ConversationContainer = ({
         onClick={() => {
           openConversation(_id)
         }}>
-        <Span>
-          <DIV display="flex" justifyContent="space-between">
-            <DIV display="flex">
-              <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-              <DIV width="200px">
+        <Span style={{ lineHeight: '16px' }}>
+          <Image src={receiver?.userId?.profileImage} height="48px" width="48px" radius="22%" />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px'
+            }}>
+            <DIV
+              display="flex"
+              justifyContent="space-between"
+              style={{
+                gap: '5px'
+              }}>
+              <DIV>
                 <DarkText
                   fontSize="16px"
-                  style={{ height: '20px' }}
-                  marginLeft="10px"
-                  lineHeight="23px"
+                  style={{ minWidth: '135px' }}
+                  lineHeight="18px"
+                  bold
+                  marginLeft="6px"
+                  noMargin
                   color="#000000">
                   {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
                 </DarkText>
-                <DarkText fontSize="11px" color="#000000" noMargin marginLeft="10px">
-                  {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 58)}
-                </DarkText>
               </DIV>
+              <div
+                style={{
+                  color: '#000000',
+                  fontSize: '16px',
+                  fontWeight: '100',
+                  fontFamily: 'system-ui'
+                }}>
+                @{receiver.userId.email.split('@')[0]}
+              </div>
+              <div style={{ minWidth: '84px' }}>
+                <DarkText
+                  width="auto"
+                  center
+                  fontSize="14px"
+                  noMargin
+                  color="#000000"
+                  style={{ fontFamily: 'system-ui' }}>
+                  {ValidationUtils.formatDateWithDate(updatedAt)}
+                </DarkText>
+                {typing?.isTyping &&
+                  typing?.receiverId === sender?.userId?._id &&
+                  typing?.conversationId === _id &&
+                  selectedConversation?._id !== typing?.conversationId && (
+                    <DarkText center noMargin width="55px">
+                      <TypingAnimation>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </TypingAnimation>
+                    </DarkText>
+                  )}
+              </div>
+              {+sender?.unreadCount > 0 && (
+                <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
+              )}
             </DIV>
-
-            <div>
-              <DarkText padding="5px 0px 0px 05px" width="85px" center fontSize="11px" lighter noMargin color="#000000">
-                {ValidationUtils.formatDateWithDate(updatedAt)}
-              </DarkText>
-              {typing?.isTyping &&
-                typing?.receiverId === sender?.userId?._id &&
-                typing?.conversationId === _id &&
-                selectedConversation?._id !== typing?.conversationId && (
-                  <DarkText center noMargin width="55px">
-                    <TypingAnimation>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </TypingAnimation>
-                  </DarkText>
-                )}
-            </div>
-            {+sender?.unreadCount > 0 && (
-              <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
-            )}
-          </DIV>
+            <DarkText fontSize="12px" color="#000000" marginLeft="10px" noMargin>
+              {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 48)}
+            </DarkText>
+          </div>
         </Span>
       </WhiteCard>
     )
@@ -287,7 +313,7 @@ const ConversationContainer = ({
       })
 
   return (
-    <WhiteCard minWidth="341px" padding="10px 0px 0px 0px" overflow="hidden" noMargin>
+    <WhiteCard minWidth="420px" padding="10px 0px 0px 0px" overflow="hidden" noMargin>
       <Div>
         <SearchBar margin="10px 0px 10px 0px" width="100%" setFilter={handleSearch} />
       </Div>
@@ -300,8 +326,6 @@ const ConversationContainer = ({
           </b>
         )}
         {archivedChatsShow && <RenderConversations type="archived" />}
-
-        <Extra></Extra>
       </Scroll>
     </WhiteCard>
   )
