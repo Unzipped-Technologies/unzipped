@@ -18,6 +18,16 @@ const Container = styled.div`
   margin-left: 10px;
   border-radius: 10px;
   overflow: hidden;
+  @media (max-width: 1301px) {
+    width: 271px;
+    margin-left: 5px;
+  }
+  @media (max-width: 1032px) {
+    width: 220px;
+  }
+  @media (max-width: 900px) {
+    width: max-content;
+  }
 `
 
 const Action = styled.div`
@@ -74,18 +84,17 @@ const Panel = ({
       isDefaultListItem = true
       dispatch(getTeamMembers(userId))
     }
-    setListTitle({ listId: item?._id, listTitle: item?.name, listIcon: item?.icon });
+    setListTitle({ listId: item?._id, listTitle: item?.name, listIcon: item?.icon })
     if (!isDefaultListItem) {
       setIsMyTeam(false)
-      setIsRecentlyViewed(false);
-      setIsFavourite(false);
+      setIsRecentlyViewed(false)
+      setIsFavourite(false)
       dispatch(getListEntriesById(item._id))
     }
   }
 
-    useEffect(() => {
-      setSelectedMenuOption(listInfo)
-  
+  useEffect(() => {
+    setSelectedMenuOption(listInfo)
   }, [listInfo])
 
   return (
@@ -102,38 +111,44 @@ const Panel = ({
         </Absolute>
       </TitleText>
       <Underline />
-      {userListItems?.length > 0 && userListItems
-        .filter(item => (isDepartment ? item.tags.length > 0 : true))
-        .map((item, index) => (
-          <WhiteCard
-            borderColor="transparent"
-            padding="5px"
-            height="30px"
-            paddingLeft="15px"
-            row
-            noMargin
-            clickable
-            borderLeft={listInfo?.listTitle == item.name ? '#1976D2' : 'transparent'}
-            borderRadius={listInfo?.listTitle == item.name ? '0' : ''}
-            key={index}>
-
-            {item?.icon &&
-              <IconSelector icon={item.icon} size={24} style={{ color: IconColors[item.icon] || "#1C1C1C" }} twoToneColor={IconColors[item.icon]} />}
-
-            <DarkText
-              clickable
+      {userListItems?.length > 0 &&
+        userListItems
+          .filter(item => (isDepartment ? item.tags.length > 0 : true))
+          .map((item, index) => (
+            <WhiteCard
+              borderColor="transparent"
+              padding="5px"
+              height="30px"
+              paddingLeft="15px"
+              row
               noMargin
-              paddingLeft
-              smallPadding="12px"
-              hover
-              onClick={() => {
-                handleListChangeEv(item)
-                setSelectedMenuOption(item)
-              }}>
-              {item.name}
-            </DarkText>
-          </WhiteCard>
-        ))}
+              clickable
+              borderLeft={listInfo?.listTitle == item.name ? '#1976D2' : 'transparent'}
+              borderRadius={listInfo?.listTitle == item.name ? '0' : ''}
+              key={index}>
+              {item?.icon && (
+                <IconSelector
+                  icon={item.icon}
+                  size={24}
+                  style={{ color: IconColors[item.icon] || '#1C1C1C' }}
+                  twoToneColor={IconColors[item.icon]}
+                />
+              )}
+
+              <DarkText
+                clickable
+                noMargin
+                paddingLeft
+                smallPadding="12px"
+                hover
+                onClick={() => {
+                  handleListChangeEv(item)
+                  setSelectedMenuOption(item)
+                }}>
+                {item.name}
+              </DarkText>
+            </WhiteCard>
+          ))}
       <ListManagementPanel
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
