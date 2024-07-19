@@ -40,7 +40,7 @@ const freelancerSchema = new Schema(
     freelancerSkills: { type: [Schema.Types.ObjectId], ref: 'freelancerskills' },
     lists: { type: Schema.Types.ObjectId, ref: 'lists' },
     invites: { type: Schema.Types.ObjectId, ref: 'invites' },
-    cover: String,
+    cover: { type: String, default: null },
     likeTotal: { type: Number, default: 0 },
     dislikeTotal: { type: Number, default: 0 },
     likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },

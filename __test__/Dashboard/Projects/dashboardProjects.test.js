@@ -115,7 +115,6 @@ describe('Freelancers Component', () => {
     initialState.Auth.token = 'testToken'
     initialState.Auth.user = _.cloneDeep(CLIENT_AUTH)
     initialState.Business.projectList = _.cloneDeep(BUSINESS)
-    initialState.ListEntries.userLists = _.cloneDeep(LIST_ENTRIES)
     initialState.Lists.invitesList = _.cloneDeep(LIST_ENTRIES)
     initialState.Business.selectedBusiness = _.cloneDeep(SELECTED_BUSIESS)
     initialState.ProjectApplications.projectApplications = _.cloneDeep(PROJECT_APPLICATIONS)

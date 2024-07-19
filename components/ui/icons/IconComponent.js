@@ -58,7 +58,7 @@ const IconComponent = ({ name, width, height, viewBox, fill, strokeWidth, stroke
       height={height}
       viewBox={viewBox}
       fill={fill}
-      style={{ overflow: 'visible' }}>
+      style={{ overflow: 'visible', width: { width }, height: { height } }}>
       <path d={pathData} strokeWidth={strokeWidth} stroke={stroke} />
     </svg>
   )

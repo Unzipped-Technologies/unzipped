@@ -69,7 +69,6 @@ describe('Freelancers Component', () => {
     initialState.Freelancers.isExpanded = false
     initialState.Auth.token = 'testToken'
     initialState.Freelancers.freelancers = _.cloneDeep(FREELCANCERS_LIST)
-    initialState.ListEntries.userLists = _.cloneDeep(LIST_ENTRIES)
     initialState.Lists.invitesList = _.cloneDeep(LIST_ENTRIES)
 
     getFreelancerList.mockReturnValue(() => {
@@ -360,7 +359,6 @@ describe('Freelancers Component', () => {
   })
 
   it('renders Freelancers page and not redirect to freelancer profile page', async () => {
-    initialState.ListEntries.userLists = []
     renderWithRedux(<Freelancers />, { initialState })
 
     const DesktopFreelancerContainer = screen.getByTestId('desktop_freelancer_container')
@@ -1188,7 +1186,6 @@ describe('Freelancers Component', () => {
     global.dispatchEvent(new Event('resize'))
 
     const FreelancersList = initialState.Freelancers.freelancers
-    initialState.ListEntries.userLists = []
     FreelancersList[0]._id = undefined
     renderWithRedux(<Freelancers />, { initialState })
 

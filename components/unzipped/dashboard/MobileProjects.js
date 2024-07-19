@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import RenderIcon from '../RenderIcon'
 import { TEXT } from './style'
 import IconComponent from '../../ui/icons/IconComponent'
 import { getProjectsList } from '../../../redux/Business/actions'
-import { getListEntriesById, getRecentlyViewedList, getTeamMembers } from '../../../redux/ListEntries/action'
 
 import { getInvitesLists } from '../../../redux/Lists/ListsAction'
 
@@ -26,10 +25,9 @@ const Container = styled.div`
   }
 `
 
-function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, lists }) {
+function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, userListItems, setIsViewable }) {
   const router = useRouter()
 
-  const dispatch = useDispatch()
   const userId = useSelector(state => state.Auth?.user?._id)
 
   useEffect(() => {
@@ -50,18 +48,6 @@ function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, lis
   }, [])
 
   const limitedProjects = useMemo(() => businesses.slice(0, 3), [businesses])
-
-  const handleListChangeEv = item => {
-    if (item.name === 'Favorites') {
-      dispatch(getListEntriesById(item._id))
-    }
-    if (item.name === 'Recently Viewed') {
-      dispatch(getRecentlyViewedList(item._id))
-    }
-    if (item.name === 'My Team') {
-      dispatch(getTeamMembers(userId))
-    }
-  }
 
   return (
     <Container className="px-4 mb-5 pb-4">
@@ -98,21 +84,26 @@ function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, lis
           <TEXT fontSize="16px" fontWeight="500" textColor="#000">
             Lists
           </TEXT>
-          <TEXT fontSize="12px" fontWeight="500" textColor="#0057FF" onClick={() => {}}>
+          <TEXT
+            fontSize="12px"
+            fontWeight="500"
+            textColor="#0057FF"
+            onClick={() => {
+              router.push(`/dashboard/lists/view`)
+            }}>
             VIEW ALL
           </TEXT>
         </div>
 
-        {lists?.length &&
-          lists.slice(0, 3).map(item => (
-            <Heading key={item?._id}>
+        {userListItems?.length &&
+          userListItems.slice(0, 3).map(item => (
+            <Heading
+              key={item?._id}
+              onClick={() => {
+                router.push(`lists/${item?._id}`)
+              }}>
               {item.icon && <RenderIcon iconName={item.icon} />}
-              <TEXT
-                onClick={() => {
-                  handleListChangeEv(item)
-                }}>
-                {item.name}
-              </TEXT>
+              <TEXT>{item.name ?? 'List Name'}</TEXT>
             </Heading>
           ))}
       </span>
@@ -144,7 +135,6 @@ function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, lis
 
 const mapStateToProps = state => {
   return {
-    lists: state.Lists?.invitesList,
     businesses: state.Business?.projectList
   }
 }
