@@ -169,7 +169,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
                     </div>
 
                     <UserCategory>{invitation?.freelancerId?.category}</UserCategory>
-                    <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                    <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || '-'}</UserCountry>
                   </UserInfo>
                 </PersonalInfo>
                 <div

@@ -141,7 +141,7 @@ const DashboardTable = ({
                   </TableData>
                   <TableData>{row.budget || 0}</TableData>
                   <TableData>27</TableData>
-                  <TableData>{row.valueEstimate || 'N/A'}</TableData>
+                  <TableData>{row.valueEstimate || '-'}</TableData>
                   <TableData>
                     {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
                       ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}

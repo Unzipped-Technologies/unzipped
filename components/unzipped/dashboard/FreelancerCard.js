@@ -125,7 +125,15 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         {user.skills?.length > 0 && user.skills.map((item, index) => <Badge key={`${index}_badge`}>{item}</Badge>)}
         {user?.cover && (
           <DarkText topMargin="10px">
-            <strong>cover letter: </strong>
+            <b
+              style={{
+                fontSize: '11px',
+                fontWeight: '800',
+                paddingRight: '5px',
+                lineHeight: '21px'
+              }}>
+              Cover letter:
+            </b>
             {user.cover}
           </DarkText>
         )}

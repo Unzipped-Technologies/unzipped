@@ -116,7 +116,9 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
         <div style={{ display: 'flex' }}>
           {user?.cover && (
             <DarkText topMargin="10px" width="auto">
-              <strong>Cover letter: </strong>
+              <b style={{ fontSize: '11px', fontWeight: '800', paddingRight: '5px', lineHeight: '21px' }}>
+                Cover letter:
+              </b>
               {isTextHidden ? (
                 <>
                   <div style={{ display: 'flex' }}>

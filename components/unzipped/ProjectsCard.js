@@ -144,7 +144,7 @@ function ProjectsCard({ user, freelancerId }) {
             ))
           ) : (
             <P padding="0 10px" align="center">
-              {' '}
+              {'-'}
             </P>
           )}
         </OtherInformationCard>

@@ -80,7 +80,7 @@ const ProfileCard = ({ user }) => {
                   <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
                 </Badge>
               ))
-            : ''}
+            : '-'}
         </div>
 
         <Box>
@@ -92,7 +92,8 @@ const ProfileCard = ({ user }) => {
               </DarkText>
             )}
             <TextBox>
-              <Span bold>LAST UPDATED</Span> {dateCode !== 'Invalid Date NaN, NaN' && <Span>{dateCode}</Span>}
+              <Span bold>LAST UPDATED</Span>{' '}
+              {dateCode === 'Invalid Date NaN, NaN' ? <span>-</span> : <Span>{dateCode}</Span>}
             </TextBox>
             <TextBox>
               <Span bold>SALARY</Span>

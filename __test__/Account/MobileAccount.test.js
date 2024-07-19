@@ -190,7 +190,7 @@ describe('MobileAccount Component', () => {
     const showSettingContainer = screen.getByTestId('show_setting_container')
     fireEvent.click(showSettingContainer)
 
-    const NotAvailableElement = screen.getByText('N/A')
+    const NotAvailableElement = screen.getByText('-')
     expect(NotAvailableElement).toBeInTheDocument()
   })
 
