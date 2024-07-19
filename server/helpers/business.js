@@ -183,24 +183,24 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           name: { $regex: regexQuery },
           ...(filter?.skill?.length > 0
             ? {
-                requiredSkills: {
-                  $elemMatch: {
-                    $regex: new RegExp(regexPattern, 'i')
-                  }
+              requiredSkills: {
+                $elemMatch: {
+                  $regex: new RegExp(regexPattern, 'i')
                 }
               }
+            }
             : {}),
           ...(filter?.projectBudgetType && {
             projectBudgetType: { $regex: regexType }
           }),
           ...(filter?.minRate &&
             +filter?.minRate > 0 && {
-              budget: { $gte: +filter?.minRate }
-            }),
+            budget: { $gte: +filter?.minRate }
+          }),
           ...(filter?.maxRate &&
             +filter?.maxRate > 0 && {
-              budget: { $lte: +filter?.maxRate }
-            }),
+            budget: { $lte: +filter?.maxRate }
+          }),
           ...filters
         }
       },
@@ -560,6 +560,43 @@ const updateBusinessDetails = async (data, id) => {
 const getBusinessCreatedByUser = async userId => {
   return await business.find({ userId: userId }).select('name _id')
 }
+
+const getBusinessEmployees = async businessId => {
+  const businessEmployees = await business.find({ _id: businessId })
+    .populate({
+      path: 'employees',
+      model: 'contracts',
+      select: 'freelancerId',
+      populate: {
+        path: 'freelancerId',
+        model: 'freelancers',
+        select: 'userId',
+        populate: {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName email _id profileImage ',
+        }
+      }
+    }).select('employees');
+
+  const empLists = businessEmployees.map( elem => {
+    const hiredEmployees = {
+      businessId: elem._id,
+      contractId: elem.employees.length > 0 ? elem.employees[0]._id: null, 
+      FirstName:elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.FirstName ?? '' : '', 
+      LastName: elem.employees.length > 0 ?  elem.employees[0].freelancerId?.userId?.LastName ?? '' : '',
+      userId: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?._id : null,
+      email: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.email : null,
+      profileImage: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.profileImage : ''
+    }
+    return hiredEmployees;
+  })
+  
+  return empLists;
+}
+
+
+
 module.exports = {
   createBusiness,
   listBusinesses,
@@ -575,5 +612,6 @@ module.exports = {
   createBusinessDetails,
   updateBusinessDetails,
   getBusinessDetailsByUserId,
-  getBusinessCreatedByUser
+  getBusinessCreatedByUser,
+  getBusinessEmployees,
 }

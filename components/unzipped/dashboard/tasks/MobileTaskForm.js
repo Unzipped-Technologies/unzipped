@@ -364,7 +364,7 @@ const MobileTaskForm = ({
       setValidationErrors('Task Name is required.')
       return false
     } else if (!taskForm?.storyPoints) {
-      setValidationErrors('Sotry points are required.')
+      setValidationErrors('Story points are required.')
       return false
     } else if (!taskForm?.priority) {
       setValidationErrors('Priority are required.')

@@ -8,7 +8,8 @@ import {
   UPDATE_DEPARTMENT_FORM,
   RESET_DEPARTMENT_FORM,
   LOAD_STATE,
-  SUCCESS
+  SUCCESS,
+  UPDATE_DEPARTMENT_INFO
 } from './constants'
 
 const INITIAL_DEPARTMENT_FORM = {
@@ -81,6 +82,16 @@ const Departments = (state = INIT_STATE, action = {}) => {
         tags: [...state.tags],
         createDepartmentForm: { ...INITIAL_DEPARTMENT_FORM },
         selectedDepartment: {}
+      }
+
+    case UPDATE_DEPARTMENT_INFO:
+      return {
+        ...state,
+        loading: false,
+        selectedDepartment: {
+          ...state.selectedDepartment,
+          name: action.payload?.name
+        }
       }
     default:
       return state

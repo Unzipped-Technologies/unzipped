@@ -47,22 +47,33 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('listDepartmen
 })
 
 router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('updateDepartment'), async (req, res) => {
-  try {
-    let updateFields = {}
-    for (let field in req.body) {
-      updateFields[field] = req.body[field]
-    }
-    if (Object.keys(updateFields).length === 0) {
-      throw new Error('No valid fields provided for update')
-    }
-    const response = await departmentHelper.updateDepartment(updateFields, req.params.id)
-    if (!response) throw new Error('Department not found')
+    try {
+      const { isEditingDepartment } = req.query;
+      let filters = {}
+      let currentUser = req?.user?.userInfo
 
-    res.json(response)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
+      if (currentUser) {
+        if (currentUser?.role === 1) {
+          filters['assignee'] = {
+            $eq: ['$assignee', `${req?.user?.sub}`]
+          }
+        }
+      }
+      let updateFields = {}
+      for (let field in req.body) {
+        updateFields[field] = req.body[field]
+      }
+      if (Object.keys(updateFields).length === 0) {
+        throw new Error('No valid fields provided for update')
+      }
+      const response = await departmentHelper.updateDepartment(req.params.id, updateFields, !!isEditingDepartment, filters)
+      if (!response) throw new Error('Department not found')
+
+      res.json(response)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  })
 
 router.patch(
   '/:departmentId/add-task/:taskId',

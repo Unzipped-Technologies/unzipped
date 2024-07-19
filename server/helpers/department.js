@@ -440,10 +440,15 @@ const listDepartments = async query => {
   }
 }
 
-const updateDepartment = async (id, data) => {
+const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => {
   try {
+
     const updatedDepartment = await departmentModel.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
-    return updatedDepartment
+    if(isEditingDepartment){
+      const updatedResp = await getDepartmentById(id, filters);
+      return updatedResp 
+    }
+    return  updatedDepartment;
   } catch (err) {
     throw new Error(`Could not update department, error: ${err.message}`)
   }

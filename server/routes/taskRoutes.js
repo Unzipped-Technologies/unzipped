@@ -59,6 +59,17 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('updateTa
     res.status(400).json({ msg: e.message })
   }
 })
+router.patch('/update-task-status-on-drag/:id', requireLogin, permissionCheckHelper.hasPermission('updateTask'), async (req, res) => {
+  try {
+    
+    const response = await taskHelper.updateTaskStatusOnDrag(req.params.id, req.body)
+    if (!response) throw new Error('Task not found')
+
+    res.json(response)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
 
 router.patch('/status/:_id', requireLogin, permissionCheckHelper.hasPermission('taskHours'), async (req, res) => {
   try {

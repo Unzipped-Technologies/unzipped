@@ -230,4 +230,22 @@ router.get("/user-owned-business/:userId",
     }
 })
 
+router.get("/get-business-employees/:id",
+  async (req, res) => {
+    try {
+      let i = 0;
+      console.log(`${i++} - incoming__request`)
+      const businesses = await businessHelper
+        .getBusinessEmployees(
+          req.params.id
+        )
+      res.json(businesses)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+})
+
+
+
+
 module.exports = router

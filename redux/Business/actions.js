@@ -20,7 +20,12 @@ import {
   GET_BUSINESS_DETAILS,
   GET_BUSINESS_CREATED_BY_USER,
   GET_BUSINESS_CREATED_BY_USER_SUCCESS,
-  GET_BUSINESS_CREATED_BY_USER_FAILED
+  GET_BUSINESS_CREATED_BY_USER_FAILED,
+  GET_BUSINESS_EMPLOYEES,
+  GET_BUSINESS_EMPLOYEES_FAILED,
+  RESET_HIRED_EMPLOYEES,
+  RESET_HIRED_EMPLOYEES_FAILED,
+  GET_BUSINESS_INFO_TASKLIST_PANEL
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -84,38 +89,38 @@ export const getBusinessDetails = userId => async (dispatch, getState) => {
 
 export const createBusiness =
   (data, isWizard = false) =>
-  async (dispatch, getState) => {
-    dispatch({ type: LOAD_STATE })
-    dispatch(startLoading())
-    await axios
-      .post(`/api/business/create`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
-      .then(async res => {
-        dispatch({
-          type: CREATE_BUSINESS,
-          payload: { projectName: res.data?.business?.name, isSuccessfull: true }
-        })
-        if (isWizard) {
+    async (dispatch, getState) => {
+      dispatch({ type: LOAD_STATE })
+      dispatch(startLoading())
+      await axios
+        .post(`/api/business/create`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+        .then(async res => {
           dispatch({
-            type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+            type: CREATE_BUSINESS,
             payload: { projectName: res.data?.business?.name, isSuccessfull: true }
           })
-        }
-        dispatch({ type: RESET_BUSINESS_FORM })
-      })
-      .catch(err => {
-        dispatch({
-          type: BUSINESS_ERROR,
-          payload: err.response
+          if (isWizard) {
+            dispatch({
+              type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+              payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+            })
+          }
+          dispatch({ type: RESET_BUSINESS_FORM })
         })
-        if (isWizard) {
+        .catch(err => {
           dispatch({
-            type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
-            payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+            type: BUSINESS_ERROR,
+            payload: err.response
           })
-        }
-      })
-    dispatch(stopLoading())
-  }
+          if (isWizard) {
+            dispatch({
+              type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+              payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+            })
+          }
+        })
+      dispatch(stopLoading())
+    }
 
 export const updateBusiness = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
@@ -141,11 +146,11 @@ export const updateBusiness = data => async (dispatch, getState) => {
 
 export const nullBusinessForm =
   (data = {}) =>
-  dispatch => {
-    dispatch({
-      type: RESET_BUSINESS_FORM
-    })
-  }
+    dispatch => {
+      dispatch({
+        type: RESET_BUSINESS_FORM
+      })
+    }
 
 export const updateWizardSubmission = data => dispatch => {
   dispatch({
@@ -164,13 +169,13 @@ export const getProjectsList = queryParams => async (dispatch, getState) => {
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -194,13 +199,13 @@ export const getPublicProjectsList = queryParams => async (dispatch, getState) =
     .then(res => {
       queryParams?.intersectionObserver
         ? dispatch({
-            type: GET_PROJECT_LIST_AND_APPEND,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST_AND_APPEND,
+          payload: res.data
+        })
         : dispatch({
-            type: GET_PROJECT_LIST,
-            payload: res.data
-          })
+          type: GET_PROJECT_LIST,
+          payload: res.data
+        })
     })
     .catch(err => {
       dispatch({
@@ -276,6 +281,45 @@ export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState
       payload: error.message
     })
     await dispatch(stopLoading())
+  }
+
+}
+
+export const getBusinessEmployees = (businessId) => async (dispatch, getState) => {
+  try {
+    await dispatch(startLoading())
+
+    const response = await axios.get(`/api/business/get-business-employees/${businessId}`, tokenConfig(getState()?.Auth.token));
+    if (response?.status === 200) {
+      dispatch({
+        type: GET_BUSINESS_EMPLOYEES,
+        payload: response.data
+      })
+    }
+    await dispatch(stopLoading())
+  } catch (error) {
+    dispatch({
+      type: GET_BUSINESS_EMPLOYEES_FAILED,
+      payload: error.message
+    })
+    await dispatch(stopLoading())
+  }
+
+}
+
+
+export const resetHiredEmployees = () => (dispatch, getState) => {
+  try {
+    dispatch({
+      type: RESET_HIRED_EMPLOYEES,
+      payload: response.data
+    })
+
+  } catch (error) {
+    dispatch({
+      type: RESET_HIRED_EMPLOYEES_FAILED,
+      payload: error.message
+    })
   }
 
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { FaRegCheckCircle } from 'react-icons/fa'
 import { AiOutlinePlus } from 'react-icons/ai'
@@ -18,8 +18,10 @@ import {
   getDepartmentById,
   updateCreateStoryForm,
   resetStoryForm,
-  reorderStories
+  reorderStories,
+  updateStatusOnDrag
 } from '../../../../redux/actions'
+import ProjectUsers from '../Kanban/ProjectusersDropdown'
 
 const TasksPanel = ({
   getProjectsList,
@@ -32,14 +34,17 @@ const TasksPanel = ({
   departmentData,
   resetStoryForm,
   currentBusiness,
-  isEditable, 
+  isEditable,
   taskForm
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
+  const [isDepartmentEditMode, setIsDepartmentEditMode] = React.useState(false)
   const [tagModal, setTagModal] = React.useState(false)
   const [storyModal, setStoryModal] = React.useState(false)
   const [taskId, setTaskId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
+  const [editDeptInfo, setEditDeptInfo] = useState({});
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (selectedDepartment?._id) getDepartmentById(selectedDepartment._id)
@@ -55,15 +60,30 @@ const TasksPanel = ({
     }
   }
 
+  useEffect(() => {
+    if (departmentData) {
+      setEditDeptInfo(departmentData)
+    }
+  }, [departmentData])
+
   const handleOnDragEnd = async result => {
     if (!result.destination) return
     const { source, destination } = result
     const allStories = []
+
     if (source.droppableId !== destination.droppableId && destination.droppableId !== 'droppable') {
       const sourceColumn = departmentData?.departmentTags.find(e => source.droppableId === e._id)
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
       const destItems = destColumn?.tasks || []
+      const sourcedObj = sourceItems[source.index];
+      sourcedObj.status = destColumn?.tagName;
+      let ticketStatus = sourcedObj.status;
+      if (!ticketStatus.includes('In Progress')) {
+        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
+      }
+
+      dispatch(updateStatusOnDrag(sourcedObj._id, { status: ticketStatus }))
       const [removed] = sourceItems.splice(source.index, 1)
       removed.tag = destColumn._id
       destItems.splice(destination.index, 0, removed).map((e, index) => {
@@ -123,6 +143,7 @@ const TasksPanel = ({
   }
 
   const closeDepartmentModal = async () => {
+    setIsDepartmentEditMode(false)
     setDepartmentModel(false)
     await getProjectsList({
       take: 'all',
@@ -140,10 +161,10 @@ const TasksPanel = ({
       status: tagName?.toLowerCase().includes('to')
         ? TODO_STATUS
         : tagName?.toLowerCase().includes('in')
-        ? IN_PROGRESS
-        : tagName?.toLowerCase().includes('done')
-        ? DONE
-        : TODO_STATUS
+          ? IN_PROGRESS
+          : tagName?.toLowerCase().includes('done')
+            ? DONE
+            : TODO_STATUS
     })
     setIsEditing(false)
     setStoryModal(true)
@@ -170,7 +191,7 @@ const TasksPanel = ({
         boxShadow="0px 4px 8px 0px rgba(0, 0, 0, 0.10)">
         <DIV display="fle" alignItems="center">
           <TEXT width="max-content" fontSize="24px" padding="0px 20px 0px 0px">
-            {selectedDepartment?.name ?? 'Create Department'}
+            {editDeptInfo?.name ?? 'Create Department'}
           </TEXT>
           {userRole === 0 && (
             <Button
@@ -190,7 +211,10 @@ const TasksPanel = ({
                 },
                 {
                   text: 'Edit',
-                  onClick: () => console.log('ITEM 2')
+                  onClick: () => {
+                    openDepartmentModal()
+                    setIsDepartmentEditMode(true)
+                  }
                 },
                 {
                   text: 'Delete',
@@ -215,7 +239,7 @@ const TasksPanel = ({
               onClick={() => {
                 openTagModal()
               }}>
-              <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add 
+              <AiOutlinePlus style={{ fontSize: '16px', fontWeight: 'bold' }} /> Add
             </Button>
           </DIV>
         )}
@@ -227,17 +251,18 @@ const TasksPanel = ({
         background="rgba(217, 217, 217, 0.25)"
         paddingBottom="10px"
         zIndex="auto">
-        <DragDropContext onDragEnd={handleOnDragEnd}>
+        <DragDropContext onDragEnd={handleOnDragEnd} >
           <DIV>
             {selectedDepartment?._id && departmentData?.departmentTags?.length ? (
               departmentData?.departmentTags.map(tag => {
                 return (
                   <DIV key={tag._id}>
-                    <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
+                    <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable" >
                       {(provided, snapshot) => (
                         <DIV
                           {...provided.droppableProps}
                           ref={provided.innerRef}
+                          droppableRef={provided.innerRef}
                           background={snapshot.isDraggingOver ? 'lightblue' : 'white'}
                           padding="1px 0px 0px 0px"
                           borderRadius="4px">
@@ -262,64 +287,68 @@ const TasksPanel = ({
 
                           {tag?.tasks?.length
                             ? tag?.tasks.map((task, index) => {
-                                return (
-                                  <DIV key={task._id}>
-                                    <Draggable key={task._id} draggableId={task._id} index={index}>
-                                      {(provided, snapshot) => (
-                                        <DIV
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
+                              return (
+                                <DIV key={task._id}>
+                                  <Draggable key={task._id} draggableId={task._id} index={index}>
+                                    {(provided, snapshot) => (
+                                      <DIV
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
                                           {...provided.dragHandleProps}>
-                                          <WhiteCard
-                                            padding="0px 10px"
-                                            noMargin
-                                            borderRadius="0px"
-                                            row
+                                        <WhiteCard
+                                          padding="0px 10px"
+                                          noMargin
+                                          borderRadius="0px"
+                                          row
                                             background="#F7F7F7">
-                                            <TEXT
-                                              fontWeight="bold"
-                                              width="300px"
-                                              onClick={async () => {
-                                                setTaskId(task._id)
-                                                openStoryModal()
-                                              }}>
-                                              <DIV display="flex" flexDirection="row" alignItems="center">
-                                                <DIV padding="0px 10px 0px 0px">
-                                                  <FaRegCheckCircle color={getStatusColor(task)} />
-                                                </DIV>
-                                                {task.taskName}
+                                          <TEXT
+                                            fontWeight="bold"
+                                            width="300px"
+                                            onClick={async () => {
+                                              setTaskId(task._id)
+                                              openStoryModal()
+                                            }}>
+                                            <DIV display="flex" flexDirection="row" alignItems="center">
+                                              <DIV padding="0px 10px 0px 0px">
+                                                <FaRegCheckCircle color={getStatusColor(task)} />
                                               </DIV>
-                                            </TEXT>
-                                            <TEXT
-                                              textAlign="center"
-                                              fontWeight="bold"
-                                              width="200px"
-                                              margin="0px 0px 0px 30px">
-                                              {task.storyPoints}
-                                            </TEXT>
-                                            <DIV width="100px" display="flex" justifyContent="center">
+                                              {task.taskName}
+                                            </DIV>
+                                          </TEXT>
+                                          <TEXT
+                                            textAlign="center"
+                                            fontWeight="bold"
+                                            width="200px"
+                                            margin="0px 0px 0px 30px">
+                                            {task.storyPoints}
+                                          </TEXT>
+                                          <DIV width="auto" display="flex" justifyContent="center">
+                                            <>
+
                                               {task?.assignee?.user ? (
-                                                <img
-                                                  src={task?.assignee?.user?.profileImage}
-                                                  style={{
-                                                    width: '24px',
-                                                    height: '24px',
-                                                    borderRadius: '50%'
-                                                  }}
+                                                <ProjectUsers
+                                                  isEmailRequired={false}
+                                                  selectedDepartment={selectedDepartment}
+                                                  assignee={task?.assignee?.user}
+                                                  task={task}
                                                 />
+
                                               ) : (
                                                 <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
                                                   Unassigned
                                                 </TEXT>
                                               )}
-                                            </DIV>
-                                          </WhiteCard>
-                                        </DIV>
-                                      )}
-                                    </Draggable>
-                                  </DIV>
-                                )
-                              })
+                                            </>
+                                          </DIV>
+
+
+                                        </WhiteCard>
+                                      </DIV>
+                                    )}
+                                  </Draggable>
+                                </DIV>
+                              )
+                            })
                             : ''}
                           {userRole === 0 && (
                             <WhiteCard
@@ -389,6 +418,8 @@ const TasksPanel = ({
           open={departmentModel}
           currentBusinessId={currentBusiness?._id}
           isEditing={isEditing}
+          selectedDepartment={editDeptInfo}
+          isDepartmentEditMode={isDepartmentEditMode}
           onHide={() => {
             closeDepartmentModal()
           }}
