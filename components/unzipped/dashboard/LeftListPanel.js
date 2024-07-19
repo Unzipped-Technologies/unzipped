@@ -19,11 +19,11 @@ const Container = styled.div`
   border-radius: 10px;
   overflow: hidden;
   @media (max-width: 1301px) {
-    width: 271px;
+    width: 210px;
     margin-left: 5px;
   }
   @media (max-width: 1032px) {
-    width: 220px;
+    width: 200px;
   }
   @media (max-width: 900px) {
     width: max-content;

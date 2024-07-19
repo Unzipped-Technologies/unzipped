@@ -12,8 +12,6 @@ import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
 const Container = styled.div`
   display: flex;
   flex-flow: row;
-  justify-content: space-between;
-  // width: 100%;
   padding: ${({ includeRate }) => (includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px')};
   border-radius: 5px;
   border: 1px solid #d9d9d9;
@@ -87,9 +85,9 @@ const SpanStyled = styled.span`
 
 const DIV = styled.div`
   display: flex;
-  width: max-content;
   justify-content: space-between;
   width: 70%;
+  max-width: 500px;
 `
 const FreelancerListingCard = ({ user, includeRate, width }) => {
   const router = useRouter()
@@ -136,7 +134,7 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
         </TitleText>
         <DIV>
           <div>{user?.country && <span>{user.country}</span>}</div>
-          <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '2px', width: '200px' }}>
             <span>Estimated Rate:</span>
             <RateTextStyled> $ {user?.rate}</RateTextStyled> / hour
           </div>
