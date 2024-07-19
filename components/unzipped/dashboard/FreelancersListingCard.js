@@ -105,7 +105,7 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
           {user.type}
         </TitleText>
         <DIV>
-          <div>{user?.country && <span>{user.country}</span>}</div>
+          <div>{user?.country ? <span>{user.country}</span> : <span>-</span>}</div>
           <div
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '2px', width: '200px' }}>
             <span>Estimated Rate:</span>

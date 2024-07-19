@@ -102,7 +102,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           {user.name}
         </TEXT>
         <TEXT margin="0px">{user.type}</TEXT>
-        {user?.country && <DarkText half>{user.country}</DarkText>}
+        {user?.country ? <DarkText half>{user.country}</DarkText> : <DarkText half>-</DarkText>}
         {includeRate && (
           <Flex>
             {user?.rate > 0 ? (
