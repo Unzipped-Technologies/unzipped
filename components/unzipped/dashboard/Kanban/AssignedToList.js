@@ -129,6 +129,7 @@ const AssignedToList = () => {
                         onClick={handleClick}
                         endIcon={<DndFilterIcon />}
                         sx={{
+                            width: 'max-content',
                             color: "#000",
                             background: "#fff !important",
                             fontSize: "17px",

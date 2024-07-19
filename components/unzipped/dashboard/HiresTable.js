@@ -78,7 +78,7 @@ const HiringTable = ({ getContracts, contracts }) => {
                         </TableData>
                         <TableData>{row.hourlyRate || 0}</TableData>
                         <TableData>{row.totalStoryPoints || 0}</TableData>
-                        <TableData>{row.departmentId?.name || 'N/A'}</TableData>
+                        <TableData>{row.departmentId?.name || '-'}</TableData>
                         <TableData>
                           {(row?.createdAt && ValidationUtils.formatDate(row?.createdAt)) ||
                             ValidationUtils.formatDate(row?.updatedAt)}

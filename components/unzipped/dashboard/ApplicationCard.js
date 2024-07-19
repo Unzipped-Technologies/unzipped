@@ -140,7 +140,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                         fontWeight=" 300"
                         lineHeight=" 24.5px" /* 175% */
                         letterSpacing=" 0.4px">
-                        {application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}
+                        {application?.freelancerId?.userId?.AddressLineCountry || '-'}
                       </TEXT>
                       <TEXT
                         textColor="#000"
@@ -179,7 +179,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           ? application?.freelancerId?.freelancerSkills.map(skill => {
                               return <Badge key={skill._id}>{skill?.skill}</Badge>
                             })
-                          : 'N/A'}
+                          : '-'}
                       </DIV>
                       <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
                         <TEXT
@@ -189,7 +189,9 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           lineHeight="21px" /* 175% */
                           letterSpacing="0.4px"
                           padding="0px 0px 15px 3px">
-                          <b style={{ fontSize: '11px', fontWeight: '800', paddingRight: '5px' }}>cover letter:</b>
+                          <b style={{ fontSize: '11px', fontWeight: '800', paddingRight: '5px', fontFamily: 'Roboto' }}>
+                            Cover letter:
+                          </b>
 
                           {ConverterUtils.truncateString(application?.coverLetter, 150)}
                           {application?.coverLetter?.length > 150 && (

@@ -87,25 +87,25 @@ const getCustomFieldID = async customFieldName => {
   return allCustomFields.find(x => x.name === customFieldName).id
 }
 
-const sendMailWithSG = async (params) => {
-  const { email, templateName } = params;
-  let userName = '';
-  if (!email) return 'Email is required';
+const sendMailWithSG = async params => {
+  const { email, templateName } = params
+  let userName = ''
+  if (!email) return 'Email is required'
   const existingUser = await User.findOne({ email })
 
   try {
-    if (templateName === "VERIFY_EMAIL_ADDRESS" && existingUser) {
+    if (templateName === 'VERIFY_EMAIL_ADDRESS' && existingUser) {
       if (existingUser.googleId) {
         return { isLoginWithGoogle: true }
       }
     }
 
     if (existingUser?.FirstName || existingUser?.LastName) {
-      userName = `${existingUser?.FirstName} ${existingUser?.LastName}`;
+      userName = `${existingUser?.FirstName} ${existingUser?.LastName}`
     } else {
-      userName = email.split('@')[0];
+      userName = email.split('@')[0]
     }
-    const { templateId, dynamicTemplateData } = getTemplateDetails(templateName, userName, existingUser);
+    const { templateId, dynamicTemplateData } = getTemplateDetails(templateName, userName, existingUser)
 
     const msg = {
       to: email,
@@ -118,16 +118,12 @@ const sendMailWithSG = async (params) => {
     }
 
     return await sgMail.send(msg)
-
-  }
-  catch (error) {
+  } catch (error) {
     throw new Error(error.message)
   }
 }
 
-
 const sendInviteMail = async ({ to, subject, templateId, dynamicTemplateData }) => {
-
   try {
     const msg = {
       to,
@@ -140,12 +136,11 @@ const sendInviteMail = async ({ to, subject, templateId, dynamicTemplateData }) 
       dynamicTemplateData
     }
 
-    const emailResponse =  await sgMail.send(msg)
-    if(emailResponse) return emailResponse;
-    return false;
-  }
-  catch (error) {
-    throw new Error(error.message)
+    const emailResponse = await sgMail.send(msg)
+    if (emailResponse) return emailResponse
+    return false
+  } catch (error) {
+    return error.message
   }
 }
 
@@ -166,12 +161,12 @@ const getTemplateDetails = (templateName, userName, existingUser) => {
         dynamicTemplateData: {
           firstName: userName,
           lastName: '',
-          dashboardLink: `${keys.redirectDomain}/dashboard`,
+          dashboardLink: `${keys.redirectDomain}/dashboard`
         }
       }
 
     default:
-      break;
+      break
   }
 }
 

@@ -10,7 +10,7 @@ const DraggableItem = styled.div`
   flex-direction: column;
   justify-content: space-between;
   user-select: none;
-  padding: 16px;
+  padding: 6px 10px;
   margin: 0 0 8px 0;
   min-height: 100px;
   background-color: ${(props) => (props.isDragging ? '#263B4A' : '#ffffff')};
@@ -20,19 +20,14 @@ const DraggableItem = styled.div`
   border-bottom-right-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 4px solid #E25050;
-  max-width: 300px;
-  height: 245px;
 `;
 
 const CardHeader = styled.div`
   font-weight: 500;
-  font-size: 19px;
   margin-bottom: 8px;
 `;
 
 const CardBody = styled.div`
-  font-size: 14px;
-  margin-bottom: 8px;
   color: #555;
 `;
 
@@ -91,7 +86,7 @@ const KanbanCard = ({ item, index }) => {
         >
           <DraggableItem>
             <CardHeader>
-              <span style={{ fontWeight: 500, fontSize: 28 }}> {item.ticketNumber}</span>
+              <span style={{ fontWeight: 500, fontSize: 18 }}> {item.ticketNumber}</span>
               {` ${item.title}`}
             </CardHeader>
             <CardBody>

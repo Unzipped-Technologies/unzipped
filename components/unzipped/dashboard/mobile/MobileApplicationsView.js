@@ -178,7 +178,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                       </div>
 
                       <UserCategory>{application?.freelancerId?.category}</UserCategory>
-                      <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                      <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || '-'}</UserCountry>
                     </UserInfo>
                   </PersonalInfo>
                   <div
@@ -213,7 +213,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                       ? application?.freelancerId?.freelancerSkills.map(skill => {
                           return <Badge key={skill._id}>{skill?.skill}</Badge>
                         })
-                      : 'N/A'}
+                      : '-'}
                   </Skills>
                   <div
                     style={{

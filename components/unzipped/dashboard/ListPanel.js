@@ -6,15 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getListEntriesById } from '../../../redux/actions';
 
 const Container = styled.div`
-    overflow: overlay;
     display: grid;
-    grid-template-columns: 1fr 3fr;
-    margin: 40px 10%;
+    grid-template-columns: 1fr 4fr;
+    margin: 40px;
     border-radius: 10px;
     /* Hide the scrollbar but keep it functional */
     ::-webkit-scrollbar {
-        width: 0; /* Set width to 0 to hide it */
-        height: 0; /* Set height to 0 if you're hiding the horizontal scrollbar */
+        width: 0px; /* Set width to 0 to hide it */
+        height: 0px; /* Set height to 0 if you're hiding the horizontal scrollbar */
     }
     
     /* Optionally, you can style the scrollbar track and thumb as needed */
@@ -25,7 +24,9 @@ const Container = styled.div`
     ::-webkit-scrollbar-thumb {
         background-color: transparent; /* Make the thumb transparent */
     }
-
+    @media (max-width: 1301px) {
+      margin: 20px;
+    }
     @media screen and (max-width: 600px){
         display: none;
     }
