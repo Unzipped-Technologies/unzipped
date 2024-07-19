@@ -391,6 +391,7 @@ const TableHeading = styled.th`
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
   letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
   text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
+  padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
 `
 
 const TableData = styled.td`
@@ -407,6 +408,7 @@ const TableData = styled.td`
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
   }
+  padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
 `
 
 const HelpCenterContainer = styled.div`
