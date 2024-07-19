@@ -16,34 +16,6 @@ const Container = styled.div`
   border-radius: 5px;
   border: 1px solid #d9d9d9;
   padding: 10px;
-  @media (max-width: 1300px) and (min-width: 1278x) {
-    width: 900px;
-    padding: 3px;
-  }
-  @media (max-width: 1277px) and (min-width: 1181x) {
-    width: 850px;
-    padding: 3px;
-  }
-  @media (max-width: 1180px) and (min-width: 1133x) {
-    width: 800px;
-    padding: 3px;
-  }
-  @media (max-width: 1132px) and (min-width: 1083px) {
-    width: 750px;
-    padding: 3px;
-  }
-  @media (max-width: 1082px) and (min-width: 982px) {
-    width: 700px;
-    padding: 3px;
-  }
-  @media (max-width: 981px) and (min-width: 932px) {
-    width: 650px;
-    padding: 3px;
-  }
-  @media (max-width: 931px) {
-    width: 600px;
-    padding: 3px;
-  }
 `
 const Left = styled.div`
   display: flex;
@@ -134,7 +106,8 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
         </TitleText>
         <DIV>
           <div>{user?.country && <span>{user.country}</span>}</div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '2px', width: '200px' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '2px', width: '200px' }}>
             <span>Estimated Rate:</span>
             <RateTextStyled> $ {user?.rate}</RateTextStyled> / hour
           </div>
@@ -142,8 +115,8 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
 
         <div style={{ display: 'flex' }}>
           {user?.cover && (
-            <DarkText topMargin="10px">
-              <strong>cover letter: </strong>
+            <DarkText topMargin="10px" width="auto">
+              <strong>Cover letter: </strong>
               {isTextHidden ? (
                 <>
                   <div style={{ display: 'flex' }}>

@@ -7,7 +7,7 @@ import { getListEntriesById } from '../../../redux/actions';
 
 const Container = styled.div`
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 4fr;
     margin: 40px;
     border-radius: 10px;
     /* Hide the scrollbar but keep it functional */
@@ -26,7 +26,6 @@ const Container = styled.div`
     }
     @media (max-width: 1301px) {
       margin: 20px;
-      grid-template-columns: 0.5fr 3.5fr;
     }
     @media screen and (max-width: 600px){
         display: none;

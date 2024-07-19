@@ -12,22 +12,22 @@ const Container = styled.div`
   display: flex;
   flex-flow: column;
   border: 1px solid #d9d9d9;
-  width: 371px;
   height: fit-content;
   padding: 20px 0px;
   margin-left: 10px;
   border-radius: 10px;
   overflow: hidden;
-  @media (max-width: 1301px) {
-    width: 210px;
-    margin-left: 5px;
-  }
-  @media (max-width: 1032px) {
-    width: 200px;
-  }
-  @media (max-width: 900px) {
-    width: max-content;
-  }
+  
+  // @media (max-width: 1301px) {
+  //   width: 210px;
+  //   margin-left: 5px;
+  // }
+  // @media (max-width: 1032px) {
+  //   width: 200px;
+  // }
+  // @media (max-width: 900px) {
+  //   width: max-content;
+  // }
 `
 
 const Action = styled.div`

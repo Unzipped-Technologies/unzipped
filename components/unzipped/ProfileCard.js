@@ -19,7 +19,7 @@ const Container = styled.div`
   margin-top: 119px;
 `
 const Content = styled.div`
-  width: -webkit-fill-available
+  width: -webkit-fill-available;
 `
 const Box = styled.div`
   width: 100%;
@@ -67,7 +67,9 @@ const ProfileCard = ({ user }) => {
         <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" id="freelancer_profile_image" />
       </ImageContainer>
       <Content>
-        <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
+        {user.FirstName !== undefined && user.LastName !== undefined && (
+          <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
+        )}
         <div>
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKIILS
@@ -78,7 +80,7 @@ const ProfileCard = ({ user }) => {
                   <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
                 </Badge>
               ))
-            : 'N/A'}
+            : ''}
         </div>
 
         <Box>
@@ -90,7 +92,7 @@ const ProfileCard = ({ user }) => {
               </DarkText>
             )}
             <TextBox>
-              <Span bold>LAST UPDATED</Span> <Span>{dateCode}</Span>
+              <Span bold>LAST UPDATED</Span> {dateCode !== 'Invalid Date NaN, NaN' && <Span>{dateCode}</Span>}
             </TextBox>
             <TextBox>
               <Span bold>SALARY</Span>

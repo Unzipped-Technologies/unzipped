@@ -8,7 +8,7 @@ import { ConverterUtils } from '../../utils'
 import EducationModal from './EducationModal'
 
 const Container = styled.div`
-  margin-top: 42px;
+  margin-top: 28px;
   margin-left: 10%;
   max-width: 100%;
   display: flex;
@@ -136,7 +136,7 @@ function ProjectsCard({ user, freelancerId }) {
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
             Top Skills
           </P>
-          {uniqueSkills?.length ? (
+          {uniqueSkills?.length && uniqueSkills[0] !== undefined ? (
             uniqueSkills?.map((skill, index) => (
               <P padding="0 10px" key={`${skill}_${index}`}>
                 {ConverterUtils.capitalize(`${skill} `)}
@@ -144,7 +144,7 @@ function ProjectsCard({ user, freelancerId }) {
             ))
           ) : (
             <P padding="0 10px" align="center">
-              N/A
+              {' '}
             </P>
           )}
         </OtherInformationCard>
@@ -153,7 +153,7 @@ function ProjectsCard({ user, freelancerId }) {
             Browse Similar Freelancers
           </P>
           <div style={{ gap: '6px', display: 'flex', padding: '20px 10px', flexWrap: 'wrap' }}>
-            {uniqueSkills?.length ? (
+            {uniqueSkills?.length && uniqueSkills[0] !== undefined ? (
               uniqueSkills?.map((skill, index) => (
                 <P
                   border="1px solid #666666"

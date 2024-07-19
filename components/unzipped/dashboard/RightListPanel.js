@@ -29,11 +29,10 @@ const Container = styled.div`
   display: flex;
   flex-flow: column;
   background: ${({ background }) => (background ? background : '#D9D9D930')};
-  margin-left: 34px;
-  width: max-content;
+  margin: 0 34px;
   border-radius: 10px;
   @media (max-width: 1301px) {
-    margin-left: 17px;
+    margin: 0 17px;
   }
 `
 
