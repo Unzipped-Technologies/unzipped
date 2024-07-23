@@ -231,7 +231,7 @@ const ConversationContainer = ({
   }
 
   const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) =>
-    receiver?.userId && (
+    receiver?.userId ? (
       <WhiteCard
         key={index}
         background={_id === selectedConversation?._id ? '#BABABA' : '#fff'}
@@ -304,7 +304,7 @@ const ConversationContainer = ({
           </div>
         </Span>
       </WhiteCard>
-    )
+    ): (<></>)
 
   const RenderConversations = ({ type }) =>
     conversation
