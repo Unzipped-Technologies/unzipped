@@ -25,11 +25,12 @@ const P = styled.p`
 
 const DropDown = styled.div`
   display: ${({ display }) => (display ? display : '')};
+  position: absolute;
+  top: 100%;
   background-color: white;
   z-index: 1;
   width: 100%; /* Adjust the width as needed */
   border: 0.5px solid #ccc;
-  border-top: 0px;
 `
 const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleChatMute, userRole }) => {
   const router = useRouter()
@@ -50,10 +51,9 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
     <div
       style={{
         overflow: 'auto',
-        maxHeight: '70vh',
         width: '333px'
       }}>
-      <WhiteCard padding="10px 10px">
+      <WhiteCard padding="10px 10px" noMargin style={{ height: '100%' }}>
         <Image
           src={data?.userId?.profileImage}
           radius="15px"
@@ -116,7 +116,12 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
           <div
             onClick={() => setOpenList(!openList)}
             className="d-flex justify-content-between align-items-center pt-4"
-            style={{ padding: '12px 0 18px 0', border: '1px solid #ccc', borderBottom: '3px solid #EFF1F4' }}>
+            style={{
+              padding: '12px 0 18px 0',
+              border: '1px solid #ccc',
+              borderBottom: '3px solid #EFF1F4',
+              position: 'relative'
+            }}>
             <P
               fontSize="14px"
               fontWeight="600"
@@ -126,102 +131,125 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
               padding="0px 0px 0px 5px">
               Add User To A List
             </P>
-            <span style={{ position: 'absolute', right: '23px', marginRight: '5px' }} className=" pt-4">
+            <span style={{ position: 'absolute', right: '23px', marginRight: '5px', top: '4px' }} className=" pt-4">
               <IconComponent name="downArrow" width="20" height="20" viewBox="0 0 20 20" fill="black" />
             </span>
+            <DropDown display={openList ? 'block' : 'none'}>
+              <div
+                className="d-flex mx-2"
+                style={{ gap: '15px', borderBottom: '3px solid #EFF1F4', padding: '5px 24px' }}>
+                <div>
+                  <img src="/img/heart.png" />
+                </div>
+                <div>
+                  <P fontSize="16px" margin="0">
+                    Favourites
+                  </P>
+                  <div className="d-flex align-items-center">
+                    <IconComponent
+                      name="closedLock"
+                      width="4.47"
+                      height="5.11"
+                      viewBox="0 0 4.47 5.11"
+                      fill="#B2B9C5"
+                    />
+                    <P fontSize="7px" margin="0" padding="0 0 0 3px">
+                      Private
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      .
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      1 member
+                    </P>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="d-flex mx-2"
+                style={{ gap: '15px', borderBottom: '3px solid #EFF1F4', padding: '5px 24px' }}>
+                <div>
+                  <IconComponent name="eye" width="20" height="13" viewBox="0 0 20 13" fill="#8EDE64" />
+                </div>
+                <div>
+                  <P fontSize="16px" margin="0">
+                    Recently Viewed
+                  </P>
+                  <div className="d-flex align-items-center">
+                    <IconComponent
+                      name="closedLock"
+                      width="4.47"
+                      height="5.11"
+                      viewBox="0 0 4.47 5.11"
+                      fill="#B2B9C5"
+                    />
+                    <P fontSize="7px" margin="0" padding="0 0 0 3px">
+                      Private
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      .
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      1 member
+                    </P>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="d-flex mx-2"
+                style={{ gap: '15px', borderBottom: '3px solid #EFF1F4', padding: '5px 24px' }}>
+                <div>
+                  <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
+                </div>
+                <div>
+                  <P fontSize="16px" margin="0">
+                    My Team
+                  </P>
+                  <div className="d-flex align-items-center">
+                    <IconComponent
+                      name="closedLock"
+                      width="4.47"
+                      height="5.11"
+                      viewBox="0 0 4.47 5.11"
+                      fill="#B2B9C5"
+                    />
+                    <P fontSize="7px" margin="0" padding="0 0 0 3px">
+                      Private
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      .
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      1 member
+                    </P>
+                  </div>
+                </div>
+              </div>
+              <div className="d-flex mx-2" style={{ gap: '15px', padding: '5px 24px' }}>
+                <div>
+                  <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
+                </div>
+                <div>
+                  <P fontSize="16px" margin="0">
+                    My Team
+                  </P>
+                  <div className="d-flex align-items-center">
+                    <IconComponent name="openLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
+                    <P fontSize="7px" margin="0" padding="0 0 0 3px">
+                      Public
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      .
+                    </P>
+                    <P fontSize="7px" margin="0">
+                      1 member
+                    </P>
+                  </div>
+                </div>
+              </div>
+            </DropDown>
           </div>
         </div>
-
-        <DropDown display={openList ? 'block' : 'none'}>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}>
-            <div>
-              <img src="/img/heart.png" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                Favourites
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="closedLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Private
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}>
-            <div>
-              <IconComponent name="eye" width="20" height="13" viewBox="0 0 20 13" fill="#8EDE64" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                Recently Viewed
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="closedLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Private
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}>
-            <div>
-              <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                My Team
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="closedLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Private
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px' }}>
-            <div>
-              <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                My Team
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="openLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Public
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-        </DropDown>
 
         <Toggle
           className="mt-3"

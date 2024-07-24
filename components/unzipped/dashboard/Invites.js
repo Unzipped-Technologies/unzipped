@@ -189,7 +189,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                         </div>
 
                         <UserCategory>{invitation?.freelancerId?.category}</UserCategory>
-                        <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                        <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || '-'}</UserCountry>
                         <UserRate>
                           {invitation?.freelancerId?.rate > 0 ? (
                             <div>

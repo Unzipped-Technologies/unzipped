@@ -29,9 +29,11 @@ const Container = styled.div`
   display: flex;
   flex-flow: column;
   background: ${({ background }) => (background ? background : '#D9D9D930')};
-  padding: 20px 0px;
-  margin-left: 34px;
+  margin: 0 34px;
   border-radius: 10px;
+  @media (max-width: 1301px) {
+    margin: 0 17px;
+  }
 `
 
 const NoUsersInList = styled.div`
@@ -43,7 +45,6 @@ const NoUsersInList = styled.div`
 `
 
 const UserContainer = styled.div`
-  width: 100%;
   display: flex;
   flex-flow: column;
 `
@@ -288,7 +289,6 @@ const Panel = ({
           icon: <Icon name="contacts" width={27} height={27} style={{ marginLeft: '8px' }} />
         }
       ]
-
 
       useEffect(() => {
         const storyList = []
@@ -575,7 +575,7 @@ const Panel = ({
     }
     if (value == 'DELETE') {
       dispatch(deleteList(listInfo.listId, () => dispatch(getUserLists(userInfo))))
-      setSelectedValue("Details")
+      setSelectedValue('Details')
       setIsFavourite(true)
     }
   }
@@ -592,7 +592,7 @@ const Panel = ({
           boxShadow: ' 0px 4px 8px 0px rgba(0, 0, 0, 0.10)'
         }}>
         <div className="d-flex align-items-center">
-          <TitleText width="max-content" noMargin size="24px" paddingRight="20px">
+          <TitleText width="max-content" noMargin size="18px" paddingRight="20px">
             {listInfo.listTitle}
           </TitleText>
           {type === 'department' && (
@@ -679,29 +679,33 @@ const Panel = ({
         </NoUsersInList>
       )}
 
-      {
-        !isFavLoading ? (isFavourite && freelancer.length > 0) ? (
-          <>{
-            freelancer.map((item, index) => (
+      {!isFavLoading ? (
+        isFavourite && freelancer.length > 0 ? (
+          <>
+            {freelancer.map((item, index) => (
               <FreelancerListingCard user={item} width={'650px'} key={index} includeRate={10} />
-            ))
-          }
+            ))}
           </>
-        ) : (
-          ((isFavourite && freelancer.length < 1) ? (
-            <>
-              <div style={{
+        ) : isFavourite && freelancer.length < 1 ? (
+          <>
+            <div
+              style={{
                 display: 'flex',
                 justifyContent: 'center',
                 flexDirection: 'column',
                 alignItems: 'center',
                 paddingBottom: '15px'
               }}>
-                <div style={{ position: 'relative', top: 10 }}> <UserNotFound /> </div>
-                <FreelancerNotFound />
-                <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
-                <p>Add freelancer to your list to quickly find them later. </p>
-                <Button onClick={hanleFreelancersBrowsing} style={{
+              <div style={{ position: 'relative', top: 10 }}>
+                {' '}
+                <UserNotFound />{' '}
+              </div>
+              <FreelancerNotFound />
+              <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
+              <p>Add freelancer to your list to quickly find them later. </p>
+              <Button
+                onClick={hanleFreelancersBrowsing}
+                style={{
                   background: '#37DEC5',
                   color: '#363636',
                   lineHeight: '24.5px',
@@ -710,13 +714,16 @@ const Panel = ({
                   border: '0',
                   borderRadius: '32px'
                 }}>
-                  Browse Freelancers
-                </Button>
-              </div>
-            </>
-          ) : (<></>))
-        ) : (<></>)
-      }
+                Browse Freelancers
+              </Button>
+            </div>
+          </>
+        ) : (
+          <></>
+        )
+      ) : (
+        <></>
+      )}
       <ListManagementPanel
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

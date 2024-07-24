@@ -124,7 +124,7 @@ const DashboardTable = ({
         <table>
           <thead data-testid="dashboard_projects_table_header">
             <tr>
-              <TableHeading textAlign="left">Project Name</TableHeading>
+              <TableHeading textAlign="left" paddingLeft='25px'>Project Name</TableHeading>
               <TableHeading>Budget</TableHeading>
               <TableHeading>Points</TableHeading>
               <TableHeading>Value Estimate</TableHeading>
@@ -136,12 +136,12 @@ const DashboardTable = ({
             <tbody data-testid="dashboard_projects_table_body">
               {businesses?.map(row => (
                 <tr key={row._id} data-testid={row?._id}>
-                  <TableData $default onClick={() => router.push(`projects/details/${row._id}`)} textAlign="left">
+                  <TableData paddingLeft='25px' $default onClick={() => router.push(`projects/details/${row._id}`)} textAlign="left">
                     {ValidationUtils.truncate(row.name, 40)}
                   </TableData>
                   <TableData>{row.budget || 0}</TableData>
                   <TableData>27</TableData>
-                  <TableData>{row.valueEstimate || 'N/A'}</TableData>
+                  <TableData>{row.valueEstimate || '-'}</TableData>
                   <TableData>
                     {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
                       ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}

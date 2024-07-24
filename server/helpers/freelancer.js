@@ -518,7 +518,7 @@ const sendProjectInvitationEmail = async (inviteId) => {
       supportLink: `${keys.redirectDomain}/wiki/getting-started`,
       projectName: inviteInfo?.business?.name,
       clientName: inviteInfo?.userInvited?.FirstName + " " + inviteInfo?.userInvited?.LastName,
-      duration: inviteInfo?.duration ?? 'N/A',
+      duration: inviteInfo?.duration ?? '-',
       skills: inviteInfo?.business?.requiredSkills,
     }
   }
