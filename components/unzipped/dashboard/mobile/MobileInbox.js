@@ -103,6 +103,17 @@ const UnreadCount = styled.span`
   transform: translate(50%, -50%);
 `
 
+const UsernameDiv = styled.div`
+  color: #000000;
+  font-size: 16px;
+  font-weight: 100;
+  font-family: system-ui;
+
+  @media (max-width: 430px) {
+    display: none;
+  }
+`
+
 const MobileInbox = ({ conversations, userId, userEmail, openConversation, handleUnreadCount }) => {
   const router = useRouter()
 
@@ -130,20 +141,16 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
   }, [conversations])
 
   const handleSearch = e => {
-    const { searchKey } = e;
+    const { searchKey } = e
     const filteredConversations = conversations.filter(convo => {
       const participants = convo.participants
       return participants.some(participant => {
         const fullName = `${participant.userId?.FirstName} ${participant.userId?.LastName}`
         const searchChars = searchKey.split('')
 
-        return participant.userId?._id !== userId && searchChars.every(char =>
-          fullName
-            .toLocaleLowerCase()
-            .includes(
-              char
-                .toLocaleLowerCase()
-            )
+        return (
+          participant.userId?._id !== userId &&
+          searchChars.every(char => fullName.toLocaleLowerCase().includes(char.toLocaleLowerCase()))
         )
       })
     })
@@ -154,90 +161,75 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
     }
   }
 
-  const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) => (
-    <WhiteCard
-      key={index}
-      noMargin
-      minWidth="100%"
-      padding="10px 5px 10px 5px"
-      overflow="hidden"
-      border="1px  solid #d8d8d8"
-      height="63px"
-      justifyStart
-      alignStart
-      onClick={() => {
-        router.push(`/dashboard/chat/${_id}`)
-      }}>
-      <Span>
-        <DIV display="flex" justifyContent="space-between">
-          <DIV display="flex">
-            <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
-            <DIV width="200px">
-              <DarkText fontSize="16px" style={{ height: '15px' }} marginLeft="10px" lineHeight="23px" color="#000000">
-                {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
-              </DarkText>
-              <DarkText fontSize="11px" color="#000000" noMargin marginLeft="10px">
-                {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 40)}
-              </DarkText>
+  const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) =>
+    receiver?.userId && (
+      <WhiteCard
+        key={index}
+        noMargin
+        minWidth="100%"
+        padding="10px 5px"
+        overflow="hidden"
+        border="1px solid #d8d8d8"
+        height="63px"
+        justifyStart
+        alignStart
+        onClick={() => {
+          router.push(`/dashboard/chat/${_id}`)
+        }}>
+        <Span style={{ lineHeight: '16px' }}>
+          <Image src={receiver?.userId?.profileImage} height="48px" width="48px" radius="22%" />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px',
+              width: '100%'
+            }}>
+            <DIV display="flex" justifyContent="space-between">
+              <DIV>
+                <DarkText
+                  fontSize="16px"
+                  style={{ minWidth: '135px' }}
+                  lineHeight="18px"
+                  bold
+                  marginLeft="6px"
+                  noMargin
+                  color="#000000">
+                  {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
+                </DarkText>
+              </DIV>
+              {/* <div
+                style={{
+                  color: '#000000',
+                  fontSize: '16px',
+                  fontWeight: '100',
+                  fontFamily: 'system-ui'
+                }}>
+                @{receiver.userId.email.split('@')[0]}
+              </div> */}
+              <UsernameDiv>@{receiver.userId.email.split('@')[0]}</UsernameDiv>
+              <div style={{ minWidth: '100px' }}>
+                <DarkText
+                  width="auto"
+                  center
+                  fontSize="14px"
+                  noMargin
+                  color="#000000"
+                  style={{ fontFamily: 'system-ui' }}>
+                  {ValidationUtils.formatDateWithDate(updatedAt)}
+                </DarkText>
+              </div>
+              {+sender?.unreadCount > 0 && (
+                <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
+              )}
             </DIV>
-          </DIV>
-          <div>
-            <DarkText padding="5px 0px 0px 0px" width="130px" center fontSize="11px" lighter noMargin color="#000000">
-              {ValidationUtils.formatDateWithDate(updatedAt)}
+            <DarkText fontSize="12px" color="#000000" marginLeft="6px" noMargin>
+              {ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(messages)?.message, 34)}
             </DarkText>
           </div>
-          {+sender?.unreadCount > 0 && (
-            <UnreadCount>{sender?.unreadCount > 100 ? `${sender?.unreadCount}+` : sender?.unreadCount}</UnreadCount>
-          )}
-        </DIV>
-      </Span>
-      {/* <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" /> */}
-      {/* <div>
-        <span
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            padding: '0px !important',
-            margin: '5px 0px 0px 0px',
-            height: '23px'
-          }}>
-          <DarkText width="300px" fontSize="16px" marginLeft="75px" lineHeight="23px" color="#000000">
-            {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
-          </DarkText>
-          <DarkText center fontSize="11px" lighter color="#000000" paddingLeft>
-            {ValidationUtils.formatDateWithDate(updatedAt)}
-          </DarkText>
-        </span>
-        <DarkText
-          fontSize="11px"
-          color="#000000"
-          padding="5px 0px 0px 0px"
-          marginLeft="100px"
-          textOverflow="ellipsis"
-          noMargin>
-          {ValidationUtils.getMostRecentlyUpdated(messages)?.message}
-        </DarkText>
-      </div>
-      {+sender?.unreadCount > 0 && (
-        <span
-          style={{
-            color: 'white',
-            background: 'green',
-            padding: '3px 6px',
-            marginTop: '5px',
-            borderRadius: '10px',
-            height: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            width: 'maxContent',
-            fontSize: '14px'
-          }}>
-          {sender?.unreadCount}
-        </span>
-      )} */}
-    </WhiteCard>
-  )
+        </Span>
+      </WhiteCard>
+    )
 
   const RenderConversations = ({ type }) =>
     conversation
@@ -279,7 +271,7 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
           </div>
         )}
         {archivedChatsShow && <RenderConversations type="archived" />}
-        <Extra></Extra>
+        {/* <Extra></Extra> */}
       </Scroll>
     </>
   )

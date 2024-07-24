@@ -7,12 +7,12 @@ import { useRouter } from 'next/router'
 import Dropzone from 'react-dropzone'
 import { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+
 const Container = styled.div`
   display: flex;
   flex-flow: column;
   width: 100%;
   padding: 0px 15px;
-  // margin: 0px 10px;
 `
 
 const ContainerAccount = styled.div`
@@ -42,7 +42,7 @@ const ProgressBarFiller = styled.div`
   width: ${props => props.percentage}%;
   display: flex;
   background-color: #ff4081;
-  padding: ${({ padding }) => (padding ? padding : '0px')};
+  padding: 0px;
   border-radius: 20px;
   text-align: center;
   justify-content: center;
@@ -61,18 +61,13 @@ const AccountSetup = styled.div`
   display: flex;
 `
 
-const AccountIcon = styled.div`
-  width: 25px;
-  display: flex;
-`
-
 const Text = styled.p`
   font-family: Arial;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   color: ${({ color }) => (color ? color : '#000')};
-  margin: ${({ margin }) => (margin ? margin : '0')};
+  margin:  0px
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '40px')};
 `
 
@@ -89,7 +84,7 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
-const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) => {
+const Panel = ({ success, passwordChanged, calenderSuccess }) => {
   const { user } = useSelector(state => state.Auth)
 
   const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
@@ -99,9 +94,8 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
   const dispatch = useDispatch()
 
   const hideAlert = () => {
-    if (success) hideSuccessAlert()
-    if (passwordChanged) hidePasswordAlert()
-    if (calenderSuccess) hideCalenderSuccessAlert()
+    success && hideSuccessAlert()
+    passwordChanged && hidePasswordAlert()
   }
 
   const hideCalenderSuccessAlert = () => {
@@ -124,33 +118,30 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
     })
   }
   setTimeout(() => {
-    if (success || passwordChanged || calenderSuccess === true || calenderSuccess === false) {
-      hideSuccessAlert()
-      hidePasswordAlert()
-      hideCalenderSuccessAlert()
-    }
+    success && hideSuccessAlert()
+    passwordChanged && hidePasswordAlert()
+    calenderSuccess && hideCalenderSuccessAlert()
   }, 5000)
 
   useEffect(() => {
-    if (user.role != '0' && user.FirstName && user.AddressCity) {
+    if (user?.role != '0' && user?.FirstName && user?.AddressCity) {
       setHasUserInfo(true)
     } else {
       setHasUserInfo(false)
     }
-  }),
-    [user]
+  }, [user])
 
   useEffect(() => {
     if (user && trackProgress < 100) {
       let incrementalProgress = 0
 
-      if (user.role != 0 && user.FirstName && user.AddressCity) {
+      if (user?.role != 0 && user?.FirstName && user?.AddressCity) {
         incrementalProgress += 25
       }
-      if (user.profileImage) {
+      if (user?.profileImage) {
         incrementalProgress += 25
       }
-      if (user.plan > 0) {
+      if (user?.plan > 0) {
         incrementalProgress += 25
       }
 
@@ -159,9 +150,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
   }, [user])
 
   const openDropzone = () => {
-    if (dropzoneRef.current) {
-      dropzoneRef.current.open()
-    }
+    dropzoneRef.current && dropzoneRef.current.open()
   }
 
   const closeDropzone = () => {
@@ -174,28 +163,20 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
 
   const router = useRouter()
   return (
-    <ContainerAccount>
+    <ContainerAccount data-testid="user_profile_panel_mobile">
       <Container>
         {(success || passwordChanged) && (
           <WhiteCard
+            data-testid="password_change_notification"
             row
             style={{
               borderRadius: '4px',
               border: '1px solid #8EDE64',
               background: 'rgba(142, 222, 100, 0.10)'
             }}>
-            {success ? (
-              <DarkText noMargin>You have successfully applied for project!</DarkText>
-            ) : passwordChanged ? (
-              <DarkText noMargin>Password changed successfully!</DarkText>
-            ) : (
-              ''
-            )}
-            <Absolute
-              width="100%"
-              onClick={() => {
-                hideAlert()
-              }}>
+            {success && <DarkText noMargin>You have successfully applied for project!</DarkText>}{' '}
+            {passwordChanged && <DarkText noMargin>Password changed successfully!</DarkText>}
+            <Absolute width="100%" onClick={hideAlert}>
               <Dismiss
                 style={{
                   paddingTop: '20px',
@@ -209,20 +190,16 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
         )}
         {calenderSuccess === true && (
           <WhiteCard
+            data-testid="calender_success_notification"
             row
             style={{
               borderRadius: '4px',
               border: '1px solid #8EDE64',
               background: 'rgba(142, 222, 100, 0.10)'
             }}>
-            <DarkText noMargin>You have successfully setup the calendarsss!</DarkText>
+            <DarkText noMargin>You have successfully setup the calendar!</DarkText>
             <Absolute>
-              <Dismiss
-                onClick={() => {
-                  hideCalenderSuccessAlert()
-                }}
-                padding="20px 0px 0px 200px"
-                margin="20px 0px 20px 20px">
+              <Dismiss onClick={hideCalenderSuccessAlert} padding="20px 0px 0px 200px" margin="20px 0px 20px 20px">
                 Dismiss
               </Dismiss>
             </Absolute>
@@ -230,6 +207,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
         )}
         {calenderSuccess === false && (
           <WhiteCard
+            data-testid="calender_fail_notification"
             row
             style={{
               borderRadius: '4px',
@@ -238,12 +216,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
             }}>
             <DarkText noMargin>Failed to set up your calendar. Please try again later!</DarkText>
             <Absolute>
-              <Dismiss
-                onClick={() => {
-                  hideCalenderSuccessAlert()
-                }}
-                padding="20px 0px 0px 200px"
-                margin="20px 0px 20px 20px">
+              <Dismiss onClick={hideCalenderSuccessAlert} padding="20px 0px 0px 200px" margin="20px 0px 20px 20px">
                 Dismiss
               </Dismiss>
             </Absolute>
@@ -251,7 +224,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
         )}
         <TitleText size={18}>Set up your account</TitleText>
         <ProgressBarContainer>
-          <ProgressBarFiller percentage={trackProgress} padding={'0px'}>
+          <ProgressBarFiller percentage={trackProgress}>
             <Text size={18} color="#FFF" lineHeight={'30px'}>
               {trackProgress}%
             </Text>
@@ -286,7 +259,7 @@ const Panel = ({ user: userProps, success, passwordChanged, calenderSuccess }) =
             </AccountSetup>
             <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true}>
               {({ getRootProps, getInputProps }) => (
-                <div className="dropzone" {...getRootProps()}>
+                <div className="dropzone" {...getRootProps()} data-testid="dropzone">
                   <input {...getInputProps()} />
                 </div>
               )}

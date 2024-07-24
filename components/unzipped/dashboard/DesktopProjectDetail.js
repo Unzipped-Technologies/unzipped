@@ -147,7 +147,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         fontSize="20px"
                         lineHeight="25.78px"
                         textColor="#12151B">
-                        {projectDetails?.projectType || 'N/A'}
+                        {projectDetails?.projectType || '-'}
                       </TEXT>
 
                       <TEXT
@@ -164,7 +164,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         fontSize="20px"
                         lineHeight="25.78px"
                         textColor="#12151B">
-                        {projectDetails?.description || 'N/A'}
+                        {projectDetails?.description || '-'}
                       </TEXT>
 
                       <TEXT
@@ -186,7 +186,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           ))
                         ) : (
                           <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
-                            N/A
+                            -
                           </TEXT>
                         )}
                       </ProjectRequirements>
@@ -197,7 +197,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         ? projectDetails?.requiredSkills?.map((skill, index) => {
                             return <Badge key={`${skill}_${index}`}>{skill}</Badge>
                           })
-                        : 'N/A'}
+                        : '-'}
 
                       <TEXT topPadding fontSize="13px" lineHeight="24.5px">
                         Project ID: {projectDetails?._id || 'N / A'}
@@ -218,7 +218,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         fontSize="20px"
                         lineHeight="25.78px"
                         textColor="#12151B">
-                        {projectDetails?.goals || 'N/A'}
+                        {projectDetails?.goals || '-'}
                       </TEXT>
                     </ProjectDetail>
                     <ProjectDetail margin="10px 0px 0px 0px">
@@ -258,7 +258,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           ))
                         ) : (
                           <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
-                            N/A
+                            -
                           </TEXT>
                         )}
                       </div>
@@ -277,7 +277,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           textColor="#123456"
                           fontWeight="500"
                           padding="3px 0px 0px 5px">
-                          {projectDetails?.businessCity || 'N/A'}
+                          {projectDetails?.businessCity || '-'}
                         </TEXT>
                       </DIV>
                       <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
@@ -288,7 +288,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           textColor="#123456"
                           fontWeight="500"
                           padding="3px 0px 0px 5px">
-                          {projectDetails?.businessCountry || 'N/A'}
+                          {projectDetails?.businessCountry || '-'}
                         </TEXT>
                       </DIV>
                       <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">

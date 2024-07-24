@@ -298,7 +298,7 @@ describe('Freelancers Component', () => {
 
       expect(within(rowElement).getByText(ValidationUtils.truncate(business.name, 40))).toBeInTheDocument()
       expect(within(rowElement).getByText(business?.budget || 0)).toBeInTheDocument()
-      expect(within(rowElement).getByText(business?.valueEstimate || 'N/A')).toBeInTheDocument()
+      expect(within(rowElement).getByText(business?.valueEstimate || '-')).toBeInTheDocument()
       const expectedDate = business.deadline
         ? ValidationUtils.formatDate(business.deadline)
         : ValidationUtils.formatDate(business.updatedAt || business.createdAt)
@@ -331,7 +331,7 @@ describe('Freelancers Component', () => {
 
       expect(within(rowElement).getByText(ValidationUtils.truncate(business.name, 40))).toBeInTheDocument()
       expect(within(rowElement).getByText(business?.budget || 0)).toBeInTheDocument()
-      expect(within(rowElement).getByText(business?.valueEstimate || 'N/A')).toBeInTheDocument()
+      expect(within(rowElement).getByText(business?.valueEstimate || '-')).toBeInTheDocument()
       const expectedDate = business.deadline
         ? ValidationUtils.formatDate(business.deadline)
         : ValidationUtils.formatDate(business.updatedAt || business.createdAt)
@@ -743,7 +743,7 @@ describe('Freelancers Component', () => {
     expect(within(clientDetailContainer).getByText(`Identity Verified`)).toBeInTheDocument()
     expect(within(clientDetailContainer).getByText(`Payment Verified`)).toBeInTheDocument()
 
-    // verify N/A display if data not available
+    // verify - display if data not available
     initialState.Business.selectedBusiness = {}
     initialState.Business.selectedBusiness.projectBudgetType = 'Hourly Rate'
     renderWithRedux(<ProjectDetails />, { initialState })

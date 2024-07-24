@@ -8,57 +8,8 @@ import Button from '../../ui/Button'
 import ScheduleInterview from './ScheduleInterview'
 import { nextPublicGithubClientId } from '../../../config/keys'
 import { updateWizardSubmission } from '../../../redux/actions'
-import { DarkText, Absolute, WhiteCard, Dismiss } from './style'
+import { DarkText, Absolute, WhiteCard, Dismiss, DIV, TEXT } from './style'
 
-const ExploreContainer = styled.div`
-  display: flex;
-  width: 100%;
-  background: #fafafa;
-  flex-direction: column;
-  border-radius: 5px;
-  border: 1px solid #d8d8d8;
-  padding: 25px;
-`
-
-const TextContent = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  margin-bottom: 20px;
-`
-
-const ExploreItems = styled.div`
-  display: flex;
-  width: 100%;
-  border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
-  // border-radius: 10px 10px 0px 0px;
-  border: 1px solid #d8d8d8;
-  background: #f1f0f0;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-`
-
-const ExploreIconContainer = styled.div`
-  display: flex;
-  padding: 20px;
-`
-
-const HeadingStyled = styled.p`
-  margin: 0px !important;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
-  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
-  display: block;
-`
-
-const ExploreItemTextContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 5px 20px;
-`
-
-const FontStyled = styled.span`
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
-  font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : 300)};
-`
 const NotificationContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -78,14 +29,8 @@ const NotificationContainer = styled.div`
 const NotificationDismissalContainer = styled.div`
   display: flex;
 `
-const DismissTextStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`
 
-const help = [
+export const help = [
   {
     name: 'Help Center',
     icon: 'glasses',
@@ -141,7 +86,7 @@ const Notification = ({ type, children, noButton, user }) => {
       return (
         <>
           {wizardSubmission?.isSuccessfull && (
-            <WhiteCard row borderColor="#8EDE64" background="#f4fcef">
+            <WhiteCard row borderColor="#8EDE64" background="#f4fcef" data-testid="project_created_notification">
               <DarkText noMargin>
                 <span>{`Project ${wizardSubmission?.projectName} successfully created!`}</span>
               </DarkText>
@@ -150,7 +95,11 @@ const Notification = ({ type, children, noButton, user }) => {
               </Absolute>
             </WhiteCard>
           )}
-          <NotificationContainer background={'#000'} color="#fff" borderColor="0px">
+          <NotificationContainer
+            background={'#000'}
+            color="#fff"
+            borderColor="0px"
+            data-testid="pick_plan_notification">
             <div style={{ padding: 5 }}>
               <p>
                 Build your dream business, grow your following, and collaborate with other professionals to make your
@@ -168,7 +117,7 @@ const Notification = ({ type, children, noButton, user }) => {
     case 'github':
       return (
         !user?.isGithubConnected && (
-          <WhiteCard size="large">
+          <WhiteCard size="large" data-testid="github_connected_notification">
             <DarkText>
               You haven’t connected your Github account yet, connect it now so we can begin work building your project!
             </DarkText>
@@ -178,9 +127,20 @@ const Notification = ({ type, children, noButton, user }) => {
           </WhiteCard>
         )
       )
+    case 'paymentMethod':
+      return (
+        !user?.stripeAccountId && (
+          <WhiteCard size="large" data-testid="stripe_connected_notification">
+            <DarkText>You haven’t connected your stripe account!</DarkText>
+            <Button icon="github" noBorder type="dark" normal onClick={() => router.push('manage-payment-method')}>
+              CONNECT YOUR STRIPE ACCOUNT
+            </Button>
+          </WhiteCard>
+        )
+      )
     case 'browse':
       return (
-        <NotificationContainer>
+        <NotificationContainer data-testid="browse_projects_notification">
           <div style={{ padding: 5 }}>
             <p> Browse other projects to inspire ideas </p>
           </div>
@@ -213,9 +173,9 @@ const Notification = ({ type, children, noButton, user }) => {
               <p> {children} </p>
             </div>
             <NotificationDismissalContainer>
-              <DismissTextStyled>
+              <DIV display="flex" flexDirection="column" flexFlow="column" alignItems="center" justifyContent="center">
                 <Dismiss>Dismiss</Dismiss>
-              </DismissTextStyled>
+              </DIV>
               <Button noBorder type="default" normal small>
                 {' '}
                 UPDATE{' '}
@@ -226,14 +186,14 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'faq':
       return (
-        <NotificationContainer>
+        <NotificationContainer data-testid="faq_notification">
           <div style={{ padding: 5 }}>
             <p> Investors are asking about your businss. Update Frequently asked questions now. </p>
           </div>
           <NotificationDismissalContainer>
-            <DismissTextStyled>
+            <DIV display="flex" flexDirection="column" flexFlow="column" alignItems="center" justifyContent="center">
               <Dismiss>Dismiss</Dismiss>
-            </DismissTextStyled>
+            </DIV>
             <Button noBorder type="default" normal small>
               {' '}
               UPDATE{' '}
@@ -243,22 +203,22 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'blue':
       return (
-        <NotificationContainer>
+        <NotificationContainer data-testid="blue_type_notification">
           <div style={{ padding: 5 }}>
             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
               <div>
                 <Icon name="question" />
               </div>
               <div style={{ marginLeft: 5 }}>
-                <p> {children} </p>
+                <div> {children} </div>
               </div>
             </div>
           </div>
           {!noButton && (
             <NotificationDismissalContainer>
-              <DismissTextStyled>
+              <DIV display="flex" flexDirection="column" flexFlow="column" alignItems="center" justifyContent="center">
                 <Dismiss>Dismiss</Dismiss>
-              </DismissTextStyled>
+              </DIV>
               <Button noBorder type="default" normal small>
                 {' '}
                 UPDATE{' '}
@@ -269,8 +229,8 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'createBusiness':
       return (
-        user?.totalBusiness < 1 && (
-          <WhiteCard size="large">
+        !user?.totalBusiness && (
+          <WhiteCard size="large" data-testid="create_business_notification">
             <DarkText>
               You haven't created your first Project yet, create one now so you can begin Collaborating! Need Ideas?
               View existing projects here.
@@ -289,7 +249,7 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'updateBusiness':
       return (
-        <WhiteCard size="large">
+        <WhiteCard size="large" data-testid="business_page_notification">
           <DarkText>
             You created your first business. Hooray! Now you need to customize your business homepage to attract better
             talent.
@@ -301,28 +261,45 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'explore':
       return (
-        <ExploreContainer>
-          <TextContent>
+        <DIV
+          width="93.3%"
+          display="flex"
+          flexDirection="column"
+          flexFlow="column"
+          background="#fafafa"
+          borderRadius="5px"
+          border="1px solid #d8d8d8"
+          padding="25px"
+          data-testid="explore_notification">
+          <DIV display="flex" width="100%" flexDirection="column" margin="0px 0px 20px 0px" flexFlow="column">
             <div>
-              <FontStyled fontWeight={500} fontSize={'16px'}>
-                Explore more support
-              </FontStyled>
+              <TEXT fontWeight="500">Explore more support</TEXT>
             </div>
             <div>
-              <FontStyled>
+              <TEXT font-weight="300">
                 Check out these resources for answers to your questions, videos, and best practices.
-              </FontStyled>
+              </TEXT>
             </div>
-          </TextContent>
+          </DIV>
           {help.map((item, index) => (
-            <ExploreItems borderRadius={index === 0 ? '10px 10px 0px 0px' : '0px'} key={`${item.name}_${index}`}>
+            <DIV
+              display="flex"
+              width="100%"
+              borderRadius={index === 0 ? '10px 10px 0px 0px' : '0px'}
+              border="1px solid #d8d8d8"
+              background="#f1f0f0"
+              boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25)"
+              key={`${item.name}_${index}`}
+              data-testid={`${item.name}_${index}`}>
               <div style={{ display: 'flex' }}>
-                <ExploreIconContainer>
+                <DIV display="flex" padding="20px">
                   <Icon name={item.icon} />
-                </ExploreIconContainer>
+                </DIV>
 
-                <ExploreItemTextContainer>
-                  <HeadingStyled fontWeight={400}>{item.name}</HeadingStyled>
+                <DIV display="flex" flexDirection="column" flexFlow="column" padding="5px 20px">
+                  <TEXT margin="0px !important" fontWeight="400" display="block">
+                    {item.name}
+                  </TEXT>
                   <div>
                     <span style={{ display: 'inline' }}> {item.text} </span>
                     <span
@@ -336,11 +313,11 @@ const Notification = ({ type, children, noButton, user }) => {
                       {item.link.text}
                     </span>
                   </div>
-                </ExploreItemTextContainer>
+                </DIV>
               </div>
-            </ExploreItems>
+            </DIV>
           ))}
-        </ExploreContainer>
+        </DIV>
       )
     default:
       return <></>
