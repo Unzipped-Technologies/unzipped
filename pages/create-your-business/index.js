@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import router from 'next/router'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/router'
+import { connect, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import Nav from '../../components/unzipped/header'
-import { updateBusinessForm, createBusiness, getUserById, businessFieldsValidation, setProjectFiles } from '../../redux/actions'
+import {
+  updateBusinessForm,
+  createBusiness,
+  getUserById,
+  businessFieldsValidation,
+  setProjectFiles
+} from '../../redux/actions'
 import { parseCookies } from '../../services/cookieHelper'
 import { nextPublicGithubClientId } from '../../config/keys'
 import GetCardDesktop from '../../components/unzipped/CreateABusiness/BusinessDesktopCard'
 import GetCardMobile from '../../components/unzipped/CreateABusiness/BusinessMobileCard'
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
-import useWindowSize from '../../components/ui/hooks/useWindowSize';
+import useWindowSize from '../../components/ui/hooks/useWindowSize'
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background: #d9d9d9;
-  height: ${({ stage }) => stage !== 12 ? '100vh' : 'auto'};
+  height: ${({ stage }) => (stage !== 12 ? '100vh' : 'auto')};
   width: 100vw;
   @media (max-width: 680px) {
     display: block;
@@ -71,10 +77,6 @@ export const ContainedSpan = styled.span`
   text-wrap: nowrap;
 `
 
-function handleGithub() {
-  router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
-}
-
 const convertToBoolean = value => {
   if (value === 'true') return true
   if (value === 'false') return false
@@ -100,19 +102,29 @@ const CreateBusiness = ({
   token,
   accessToken,
   userDetails,
-  projectFiles
+  projectFiles,
+  businessForm
 }) => {
-  const dispatch = useDispatch();
-  const businessForm = useSelector(state => state.Business?.businessForm);
-  const isGithubConnected = (convertToBoolean(router?.query?.['github-connect']));
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter()
 
-  const updateForm = data => updateBusinessForm({ ...data })
+  const dispatch = useDispatch()
+  const isGithubConnected = convertToBoolean(router?.query?.['github-connect'])
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [data, setData] = useState(null)
+  const updateForm = data => {
+    setData(data)
+    updateBusinessForm({ ...data })
+  }
+
+  useEffect(() => {
+    console.log('businessForm', businessForm)
+  }, [businessForm, stage])
+
   const [inputValue, setInputValue] = useState('')
   const [files, setFiles] = useState([])
 
   const [isSmallWindow, setIsSmallWindow] = useState(false)
-  const { width } = useWindowSize();
+  const { width } = useWindowSize()
 
   useEffect(() => {
     if (width <= 600) {
@@ -123,14 +135,15 @@ const CreateBusiness = ({
   }, [width])
 
   const submitForm = step => {
-
     if (step < 12) {
-      const isInputValNotValid = handleValidation(step);
-      if (isInputValNotValid) return;
+      const isInputValNotValid = handleValidation(step)
+      if (isInputValNotValid) return
       dispatch(businessFieldsValidation(false))
-
+      setData({
+        stage: step ? step + 1 : businessForm.stage
+      })
       updateBusinessForm({
-        stage: step ? step + 1 : stage
+        stage: step ? step + 1 : businessForm.stage
       })
     } else {
       const formData = new FormData()
@@ -162,6 +175,10 @@ const CreateBusiness = ({
         .catch(e => {})
     }
   }
+
+  function handleGithub() {
+    router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
+  }
   const goBack = step => {
     if (stage > 1) {
       updateBusinessForm({
@@ -192,12 +209,12 @@ const CreateBusiness = ({
   }
 
   const handleEnterKey = (fieldName, data, e) => {
-    if (e.keyCode === 13 && e.shiftKey === false) {
+    if (e.key === 'Enter' && e.shiftKey === false) {
       if (fieldName === 'questionsToAsk' && data[data.length] <= 10) {
         dispatch(businessFieldsValidation(true))
-        setIsSubmitted(true);
-        return true;
-      };
+        setIsSubmitted(true)
+        return true
+      }
       updateForm({ [fieldName]: [...data, inputValue] })
       handleInput('')
     }
@@ -207,38 +224,42 @@ const CreateBusiness = ({
     if (isGithubConnected && userDetails && userDetails._id) {
       dispatch(getUserById(userDetails._id))
     }
-  }, [isGithubConnected]);
+  }, [isGithubConnected])
 
-  const handleValidation = (step) => {
-    const roleOrDescriptionStep = isSmallWindow ? 4 : 3;
-    if ((businessForm?.projectType == 'Long Term Collaboration')
-      && businessForm?.role.length < 200
-      && (step === roleOrDescriptionStep)) {
+  const handleValidation = step => {
+    const roleOrDescriptionStep = isSmallWindow ? 4 : 3
+    if (
+      businessForm?.projectType == 'Long Term Collaboration' &&
+      businessForm?.role.length < 200 &&
+      step === roleOrDescriptionStep
+    ) {
       dispatch(businessFieldsValidation(true))
-      setIsSubmitted(true);
-      return true;
+      setIsSubmitted(true)
+      return true
     }
-    if ((businessForm?.projectType == 'Short Term Business')
-      && businessForm?.challenge.length < 200
-      && (step === roleOrDescriptionStep)) {
+    if (
+      businessForm?.projectType == 'Short Term Business' &&
+      businessForm?.challenge.length < 200 &&
+      step === roleOrDescriptionStep
+    ) {
       dispatch(businessFieldsValidation(true))
-      setIsSubmitted(true);
-      return true;
+      setIsSubmitted(true)
+      return true
     }
     if (businessForm?.name.length < 10 && step === 2) {
       dispatch(businessFieldsValidation(true))
-      setIsSubmitted(true);
-      return true;
+      setIsSubmitted(true)
+      return true
     }
   }
 
   return (
     <>
-      {businessForm?.stage > 11 && <Nav isSubMenu marginBottom={'0px'} zIndex={20} />}
-      <Container stage={stage}>
-        <DesktopBox>
+      {/* {businessForm?.stage > 11 && <Nav isSubMenu marginBottom={'0px'} zIndex={20} />} */}
+      <Container stage={businessForm?.stage}>
+        <DesktopBox data-testid="desktop_card">
           <GetCardDesktop
-            stage={stage}
+            stage={businessForm?.stage}
             submitForm={submitForm}
             updateForm={updateForm}
             goBack={goBack}
@@ -249,18 +270,18 @@ const CreateBusiness = ({
             handleCancelIcon={handleCancelIcon}
             handleEnterKey={handleEnterKey}
             loading={loading}
-            projectType={projectType}
-            name={name}
-            challenge={challenge}
-            role={role}
+            projectType={businessForm?.projectType}
+            name={businessForm?.name}
+            challenge={businessForm?.challenge}
+            role={businessForm?.role}
             objectives={objectives}
-            teamDynamics={teamDynamics}
-            requiredSkills={requiredSkills}
-            goals={goals}
-            companyBackground={companyBackground}
-            budgetRange={budgetRange}
-            questionsToAsk={questionsToAsk}
-            files={files}
+            teamDynamics={businessForm?.teamDynamics}
+            requiredSkills={businessForm?.requiredSkills}
+            goals={businessForm?.goals}
+            companyBackground={businessForm?.companyBackground}
+            budgetRange={businessForm?.budgetRange}
+            questionsToAsk={businessForm?.questionsToAsk}
+            files={businessForm?.files}
             setFiles={setFiles}
             handleGithub={handleGithub}
             userDetails={userDetails}
@@ -284,7 +305,7 @@ const CreateBusiness = ({
             handleCancelIcon={handleCancelIcon}
             handleEnterKey={handleEnterKey}
             loading={loading}
-            projectType={projectType}
+            projectType={businessForm?.projectType}
             name={name}
             challenge={challenge}
             role={role}
@@ -315,6 +336,7 @@ CreateBusiness.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     name: state.Business?.businessForm.name,
+    businessForm: state.Business?.businessForm,
     projectType: state.Business?.businessForm.projectType,
     challenge: state.Business?.businessForm.challenge,
     role: state.Business?.businessForm.role,

@@ -117,6 +117,7 @@ const SearchField = ({
       aria-errormessage={name}
       name={name}
       id={id}
+      data-testid={id ?? name}
       onChange={onChange}
       onBlur={onBlur}
       onFocus={onFocus}

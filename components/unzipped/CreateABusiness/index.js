@@ -46,9 +46,8 @@ const CreateBusiness = ({
   const store = useSelector(state => state)
   const dispatch = useDispatch()
   const router = useRouter()
-
   return (
-    <CardContainer>
+    <CardContainer id={`step_${stage}`}>
       <Card
         doubleScreenTop={doubleScreenTop}
         doubleScreenBottom={doubleScreenBottom}
@@ -58,7 +57,7 @@ const CreateBusiness = ({
         {mobile ? (
           <HeadingText doubleScreenBottom={doubleScreenBottom}>Create A Project</HeadingText>
         ) : (
-          <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
+          <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" id="steps_logo" />
         )}
         <ProgressBar
           doubleScreenBottom={doubleScreenBottom}

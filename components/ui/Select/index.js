@@ -66,30 +66,30 @@ const CheckboxStyled = styled(Checkbox)`
 `
 
 const SelectInput = ({
+  placeholder = '=== Choose one ===',
+  name = '',
+  fontSize = undefined,
+  options = [],
+  error = null,
+  onChange = () => {},
+  accepted = false,
+  value = null,
+  isSearchable = true,
+  isMulti = false,
+  $modalSelect = false,
+  viewAll = false,
+  menuIsOpen = undefined,
+  onBlur = () => {},
+  onFocus = () => {},
+  width = '',
+  disabled = false,
+  height = '',
+  borderRadius = '4px',
   mobile,
-  placeholder,
-  name,
-  fontSize,
-  options,
-  error,
-  accepted,
-  onChange,
-  value,
-  isSearchable,
-  isMulti,
-  onBlur,
-  onFocus,
-  menuIsOpen,
   valueForMulti,
   small,
-  $modalSelect,
   input,
-  viewAll,
-  width,
-  height,
   widthInModal,
-  disabled,
-  borderRadius,
   disableBorder,
   dateTime = false
 }) => {
@@ -274,28 +274,6 @@ SelectInput.propTypes = {
   borderRadius: PropTypes.string,
   /** Disable border of component */
   disableBorder: PropTypes.bool
-}
-
-SelectInput.defaultProps = {
-  placeholder: '=== Choose one ===',
-  name: '',
-  fontSize: undefined,
-  options: [],
-  error: null,
-  onChange: () => {},
-  accepted: false,
-  value: null,
-  isSearchable: true,
-  isMulti: false,
-  $modalSelect: false,
-  viewAll: false,
-  menuIsOpen: undefined,
-  onBlur: () => {},
-  onFocus: () => {},
-  width: '',
-  disabled: false,
-  height: '',
-  borderRadius: '4px'
 }
 
 export default SelectInput

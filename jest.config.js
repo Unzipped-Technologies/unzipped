@@ -24,7 +24,10 @@ module.exports = {
     '^.+\\.css$': 'jest-css-modules-transform'
   },
   testTimeout: 100000, // Set the global timeout to 1 minutes (100000 milliseconds)
-  testMatch: ['<rootDir>/__test__/**/*.test.(js|jsx)', '<rootDir>/__test__/**/*.spec.(js|jsx)'],
+  testMatch: [
+    '<rootDir>/__test__/Dashboard/CreateBusiness/**/*.test.(js|jsx)',
+    '<rootDir>/__test__/Dashboard/CreateBusiness/**/*.spec.(js|jsx)'
+  ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom'
 }

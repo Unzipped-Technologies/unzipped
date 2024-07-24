@@ -82,6 +82,23 @@ export let defaultInitialState = {
       businessPhone: '0111-111-1112',
       taxId: '09ijk12C'
     },
+    businessForm: {
+      desc: '',
+      projectType: '',
+      name: '',
+      challenge: '',
+      role: '',
+      objectives: [],
+      teamDynamics: '',
+      requiredSkills: [],
+      goals: '',
+      companyBackground: '',
+      budgetRange: '',
+      questionsToAsk: [],
+      stage: 1,
+      isFieldSubmitted: false
+    },
+    files: [],
     projectList: [...BUSINESS],
     selectedBusiness: { ...SELECTED_BUSIESS },
     totalCount: BUSINESS?.length,
