@@ -34,7 +34,7 @@ export const CLIENT_AUTH = {
   role: 0,
   lists: ['6601c288149276195c3f8fb0', '6601c288149276195c3f8fb1', '6601c289149276195c3f8fb2'],
   createdAt: '2024-03-25T18:29:28.250Z',
-  updatedAt: '2024-05-30T10:50:33.138Z',
+  updatedAt: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), //'2024-03-25T19:00:02.865Z',
   __v: 0,
   phoneNumber: '(333) 333-3333',
   stripeId: '4242 4242 4242 4242',
@@ -98,7 +98,7 @@ export const FREELANCER_AUTH = {
   role: 1,
   lists: ['6601c2a6149276195c3f8fbe', '6601c2a6149276195c3f8fbf', '6601c2a6149276195c3f8fc0'],
   createdAt: '2024-03-25T18:29:58.619Z',
-  updatedAt: '2024-06-03T17:09:09.900Z',
+  updatedAt: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), //'2024-03-25T19:00:02.865Z',
   __v: 0,
   freelancers: {
     _id: '6601c2a6149276195c3f8fc2',

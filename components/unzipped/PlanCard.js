@@ -23,7 +23,7 @@ const Span = styled.span`
   font-size: 14px;
 `
 
-const PlanCard = ({ data, onClick }) => {
+const PlanCard = ({ data, selectPlan }) => {
   return (
     <Container data-testid={`${data?.id}_plans`}>
       <TitleText bold size="24px" data-testid="name">
@@ -35,7 +35,12 @@ const PlanCard = ({ data, onClick }) => {
       <DarkText fontSize="32px" data-testid="cost">
         ${data?.cost} <Span>USD / month</Span>
       </DarkText>
-      <Button margin="10px 0px" noBorder onClick={() => onClick(1)}>
+      <Button
+        margin="10px 0px"
+        noBorder
+        onClick={() => {
+          selectPlan(data?.id)
+        }}>
         CHOOSE THIS PLAN
       </Button>
       <Underline color="#333" margin="5px 0px 15px 0px" />

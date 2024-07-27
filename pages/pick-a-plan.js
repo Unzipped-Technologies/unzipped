@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
-import BackHeader from '../components/unzipped/BackHeader'
-import PlanCard from '../components/unzipped/PlanCard'
+import { useRouter } from 'next/router'
+import { bindActionCreators } from 'redux'
+
+import { ValidationUtils } from '../utils'
+import { selectAPlan } from '../redux/actions'
 import Nav from '../components/unzipped/header'
 import Footer from '../components/unzipped/Footer'
 import { planEnum } from '../server/enum/planEnum'
-import { ValidationUtils } from '../utils'
-
-//redux
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { selectAPlan } from '../redux/actions'
+import PlanCard from '../components/unzipped/PlanCard'
 import { parseCookies } from '../services/cookieHelper'
-import { useRouter } from 'next/router'
+import BackHeader from '../components/unzipped/BackHeader'
+import { Button } from '../components/ui'
 
 const Container = styled.div`
   display: flex;
@@ -32,18 +32,7 @@ const Plans = styled.div`
   }
 `
 
-const getPlanCost = id => {
-  switch (id) {
-    case planEnum.BASIC:
-      return 29
-    case planEnum.STANDARD:
-      return 79
-    case planEnum.ADVANCED:
-      return 299
-  }
-}
-
-const Plan = ({ plans = [], user, selectedPlan, selectAPlan, trialLength = 7, planCost }) => {
+const Plan = ({ plans = [], user, selectAPlan, trialLength = 7, planCost }) => {
   const router = useRouter()
   const updatedDate = ValidationUtils.addDaysToDate(user?.updatedAt || new Date(), trialLength)
   const month = ValidationUtils.getMonthInText(updatedDate)
@@ -70,24 +59,37 @@ const Plan = ({ plans = [], user, selectedPlan, selectAPlan, trialLength = 7, pl
     }
   }, [])
 
-  const selectPlan = id => {
-    selectAPlan({
+  const getPlanCost = id => {
+    switch (id) {
+      case planEnum.BASIC:
+        return 29
+      case planEnum.STANDARD:
+        return 79
+      case planEnum.ADVANCED:
+        return 299
+    }
+  }
+
+  const selectPlan = async id => {
+    await selectAPlan({
       selectedPlan: id,
       planCost: getPlanCost(id)
     })
+
     router.push('/subscribe')
   }
 
   return (
-    <Container>
+    <Container data-testid="pick_plan">
       <Nav marginBottom={marginBottom} />
       <BackHeader
         title="Pick a plan"
         sub={`Cancel before ${month} ${new Date(updatedDate).getDate()} and you won’t be charged.`}
       />
+
       <Plans>
-        {plans.map((item, key) => (
-          <PlanCard key={key} data={item} onClick={selectPlan} planCost={planCost} />
+        {plans?.map((item, key) => (
+          <PlanCard key={key} data={item} selectPlan={selectPlan} planCost={planCost} />
         ))}
       </Plans>
       <Footer />
@@ -106,7 +108,6 @@ Plan.getInitialProps = async ({ req, res }) => {
 const mapStateToProps = state => {
   return {
     user: state.Auth.user,
-    selectedPlan: state.Auth.selectedPlan,
     trialLength: state.Auth.trialLength,
     planCost: state.Auth.planCost,
     plans: state.Auth.plans

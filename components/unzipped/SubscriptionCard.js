@@ -23,18 +23,13 @@ const Blue = styled.span`
   font-size: 13px;
 `
 
-const Span = styled.div`
-  width: 200px;
-`
-
-const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription, onClick, loading }) => {
+const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription }) => {
   const isMobile = window.innerWidth >= 680 ? false : true
 
   const [isBillingCycle, setIsBillingCycle] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
 
   const billingCycleUpdate = () => {
-    onClick && onClick()
     setIsBillingCycle(false)
     setIsLoading(true)
     setTimeout(() => {
@@ -105,6 +100,7 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription, 
               borderRadius={index === 0 ? '10px 10px 0px 0px' : index === 3 ? '0px 0px 10px 10px' : '0px'}>
               <Absolute smallLeft top="0px">
                 <Radio
+                  data-testid={`${index}_card`}
                   checked={subscriptionForm?.paymentFrequency === item.id}
                   onClick={() => item.onChange({ paymentFrequency: item.id })}
                 />
@@ -124,13 +120,7 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription, 
           ))}
           <ButtonContainer>
             <Button noBorder onClick={billingCycleUpdate}>
-              {loading ? (
-                <Span>
-                  <CircularProgress size={18} />
-                </Span>
-              ) : (
-                'CONFIRM BILLING CYCLE'
-              )}
+              CONFIRM BILLING CYCLE
             </Button>
           </ButtonContainer>
         </WhiteCard>
@@ -151,6 +141,7 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription, 
                 alt="success"
                 height="34px"
                 width="34px"
+                id="done_image"
               />
             </Absolute>
           )}

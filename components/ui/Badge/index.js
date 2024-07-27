@@ -94,7 +94,7 @@ const Badge = ({
 }) => {
   const badgeColor = status ? getStatusColor(status) : color
   return (
-    <BadgeContainer color={getColor(badgeColor)} small={small} className={className}>
+    <BadgeContainer color={getColor(badgeColor)} small={small} className={className} data-testid="badge">
       {children}
     </BadgeContainer>
   )
