@@ -17,6 +17,8 @@ import { styled } from '@mui/system';
 import Menu from '@mui/material/Menu';
 import { SpanStyled } from './AssignedToList';
 import DndFilterIcons from '../../../icons/dndFilterIcon';
+import { useDispatch } from 'react-redux';
+import { getDepartmentById, loadAllBusinessAssociatedTickets } from '../../../../redux/actions';
 
 const CustomButton = styled(Button)(({ theme }) => ({
     marginTop: "13px",
@@ -79,26 +81,12 @@ const StyledMenu = styled((props) => (
 }));
 
 
-
-const projects = [
-    {
-        name: 'Unzipped',
-        departments: ['Marketing', 'Administration'],
-    },
-    {
-        name: 'Saas ',
-        departments: ['Bankend Development', 'FrontEnd Development', 'Human Resource Manager', 'Project Management'],
-    },
-    {
-        name: 'VS Code',
-        departments: ['Quality Assurance', 'FrontEnd Development', 'Human Resource Manager', 'Project Management', 'Marketing', 'Administration'],
-    },
-];
-
-const MyProjectsLists = () => {
+const MyProjectsLists = ({ businesses, setBusinessInfo, backendCols, setBackendCols }) => {
 
     const [isExpanded, setIsExpanded] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [isDept, setIsDept] = React.useState(false);
+    const dispatch = useDispatch()
 
     const open = Boolean(anchorEl);
 
@@ -109,6 +97,22 @@ const MyProjectsLists = () => {
 
     const handleClose = () => setAnchorEl(null)
 
+    const handleDepartment = (businessId, departmentId) => {
+        setBusinessInfo(businessId)
+        const result = {};
+
+        for (const [tagId, tagData] of Object.entries(backendCols)) {
+            const filteredTasks = tagData.tasks.filter(task => task.departmentId === departmentId);
+            result[tagId] = {
+                tagName: tagData.tagName,
+                tasks: filteredTasks || []
+            };
+        }
+
+        setBackendCols(result);
+        // dispatch(getDepartmentById(departmentId))
+        // dispatch(loadAllBusinessAssociatedTickets(businessId, departmentId, true))
+    }
     return (
         <>
             <Container>
@@ -141,12 +145,12 @@ const MyProjectsLists = () => {
                     open={open}
                     onClose={handleClose}
                     sx={{
-                        '& .MuiPopover-paper  ':{
+                        '& .MuiPopover-paper  ': {
                             left: "145px !important"
                         }
                     }}
                 >
-                    {projects.map((project, index) => (
+                    {businesses && businesses.map((project, index) => (
                         <MenuItem key={index} value={index} >
 
                             <Accordion key={index} sx={{
@@ -164,12 +168,12 @@ const MyProjectsLists = () => {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <List sx={{ margin: 0, boxShadow: "none", border: 0 }}>
-                                        {project.departments.map((department, idx) => (
-                                            <StyledListItem key={idx}>
+                                        {project.businessDepartments.map((department, dptIndex) => (
+                                            <StyledListItem key={dptIndex} onClick={() => handleDepartment(project._id, department._id)}>
                                                 <ListItemIcon>
                                                     <BlueListIcon />
                                                 </ListItemIcon>
-                                                <ListItemText primary={department} />
+                                                <ListItemText primary={department.name} />
                                             </StyledListItem>
                                         ))}
                                     </List>

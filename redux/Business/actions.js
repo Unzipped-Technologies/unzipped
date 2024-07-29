@@ -25,7 +25,10 @@ import {
   GET_BUSINESS_EMPLOYEES_FAILED,
   RESET_HIRED_EMPLOYEES,
   RESET_HIRED_EMPLOYEES_FAILED,
-  GET_BUSINESS_INFO_TASKLIST_PANEL
+  GET_BUSINESS_INFO_TASKLIST_PANEL,
+  LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,
+  REST_BUSINESS_LIST,
+  LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW_ERROR
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -321,5 +324,37 @@ export const resetHiredEmployees = () => (dispatch, getState) => {
       payload: error.message
     })
   }
+
+}
+
+export const loadAllBusinessAssociatedTickets = (businessId, departmentId, isDepartmentRelatedTasks) => async (dispatch, getState) => {
+  dispatch(startLoading())
+  try {
+    const response = await axios.get(`/api/business/fetch-all-biz-tasks/${businessId}?departmentId=${departmentId}&isDepartmentRelatedTasks=${isDepartmentRelatedTasks}`, tokenConfig(getState()?.Auth.token));
+    if (response?.status === 200) {
+      dispatch({
+        type: LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,
+        payload: response.data
+      })
+    }
+
+  } catch (error) {
+    dispatch({
+      type: LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW_ERROR,
+      payload: error.message
+    })
+  }
+  await dispatch(stopLoading())
+
+}
+
+export const resetBusinessList = () => (dispatch) => {
+  dispatch(startLoading())
+  dispatch({
+    type: REST_BUSINESS_LIST,
+    payload: []
+  })
+
+  dispatch(stopLoading())
 
 }

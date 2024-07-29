@@ -8,7 +8,6 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
 import DndFilterIcon from '../../../icons/dndFilterIcon';
-import { useDispatch, useSelector } from 'react-redux';
 
 export const SpanStyled = styled.span`
     display: inline-flex;
@@ -49,7 +48,7 @@ const StyledMenu = styled((props) => (
 
 
 
-const AssignedToContainer = styled.div`
+const DeptFilterContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,39 +58,45 @@ const AssignedToContainer = styled.div`
   flex-direction: column;
 `;
 
-const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
+const DepartmentFilter = ({ deptFilter, setDepartmentFiltering }) => {
 
     const [itemsIndex, setItemsIndex] = useState([])
-    const { hiredProjectTeam } = useSelector(state => state.Business)
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const [mappedFilter, setMappedFilter] = useState([])
+
     const handleClick = (event) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
 
-    const handleMenuItemUserSelection = (user, index) => {
-        if (user?.userId) {
-            if (itemsIndex.includes(index)) {
-                const filteredIndex = itemsIndex.filter((item) => item !== index);
-                setItemsIndex(filteredIndex)
-            } else {
-                setItemsIndex([...itemsIndex, index])
-            }
+    const handleMenuItemUserSelection = (dept, index) => {
+        if (itemsIndex.includes(index)) {
+            const filteredIndex = itemsIndex.filter((item) => item !== index);
+            setItemsIndex(filteredIndex)
+        } else {
+            setItemsIndex([...itemsIndex, index])
         }
     }
     const handleCloseList = () => setItemsIndex([])
 
     useEffect(() => {
-        if (hiredProjectTeam && hiredProjectTeam.length > 0) {
-            const finalArray = hiredProjectTeam.filter(
+        setMappedFilter(deptFilter);
+        if (deptFilter && deptFilter.length > 0) {
+        }
+    }, [deptFilter])
+
+
+    useEffect(() => {
+        if (deptFilter && deptFilter.length > 0) {
+            const finalArray = deptFilter.filter(
                 (item, index) => itemsIndex.includes(index)
             )
-            setTicketAssignedTo(finalArray)
+            setDepartmentFiltering(finalArray)
         }
     }, [itemsIndex])
 
     return (
         <>
-            <AssignedToContainer>
+            <DeptFilterContainer>
                 <div style={{ width: "100%", height: "100%" }}>
                     <Button
                         id="demo-customized-button"
@@ -110,7 +115,7 @@ const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
                             textTransform: "none"
                         }}
                     >
-                        Assigned To
+                        Department
                     </Button>
                     <StyledMenu
                         id="demo-customized-menu"
@@ -122,11 +127,11 @@ const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
                         onClose={handleClose}
                     >
                         {
-                            hiredProjectTeam && hiredProjectTeam.map((member, index) => (
+                            mappedFilter && mappedFilter.map((dept, index) => (
                                 <MenuItem
                                     key={index}
-                                    value={member}
-                                    onClick={() => handleMenuItemUserSelection(member, index)}
+                                    value={dept}
+                                    onClick={() => handleMenuItemUserSelection(dept, index)}
                                 >
                                     <Checkbox
                                         checked={itemsIndex.length > 0
@@ -134,7 +139,7 @@ const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
                                             : false
                                         }
                                     />
-                                    {(!member?.userId) ? (<>Unassigned</>) : (<ListItemText primary={member?.FirstName + member?.LastName} />)}
+                                    <ListItemText primary={dept?.name} />
                                 </MenuItem>
                             ))
                         }
@@ -159,9 +164,9 @@ const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
                     </StyledMenu>
                 </div>
 
-            </AssignedToContainer>
+            </DeptFilterContainer>
         </>
     )
 }
 
-export default AssignedToList
+export default DepartmentFilter;

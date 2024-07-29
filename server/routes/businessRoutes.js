@@ -233,8 +233,6 @@ router.get("/user-owned-business/:userId",
 router.get("/get-business-employees/:id",
   async (req, res) => {
     try {
-      let i = 0;
-      console.log(`${i++} - incoming__request`)
       const businesses = await businessHelper
         .getBusinessEmployees(
           req.params.id
@@ -246,6 +244,34 @@ router.get("/get-business-employees/:id",
 })
 
 
+
+router.get(
+  '/fetch-all-biz-tasks/:businessId',
+  async (req, res) => {
+    try {
+ 
+      const tasks = await businessHelper.fetchAllBizTasks(req.params?.businessId, req.query?.departmentId, req.query?.isDepartmentRelatedTasks)
+      
+      res.json(tasks)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
+router.delete(
+  '/delete-business-records/:businessId',
+  async (req, res) => {
+    try {
+
+      const tasks = await businessHelper.deleteBusiness(req.params?.businessId)
+      if (!tasks) throw Error('Failed to delete business departments')
+      res.json(tasks)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
 
 
 module.exports = router

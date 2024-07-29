@@ -10,8 +10,11 @@ import {
   LOAD_STATE,
   UPDATE_DEPARTMENT_INFO,
   UPDATE_TASK_STATUS_ON_DRAG,
-  UPDATE_TASK_STATUS_ON_DRAG_ERROR
+  UPDATE_TASK_STATUS_ON_DRAG_ERROR,
+  DEPARTMEMT_INFO_SEARCH,
+  DEPARTMEMT_INFO_SEARCH_ERROR
 } from './constants'
+import { REFETECH_ALL_BUSINESS } from '../Business/constants'
 import axios from 'axios'
 import { startLoading, stopLoading } from '../Loading/actions'
 
@@ -135,7 +138,7 @@ export const resetDepartmentForm = () => async (dispatch, getState) => {
   })
 }
 
-export const updateStatusOnDrag = (taskId, data) => async (dispatch, getState) => {
+export const updateStatusOnDrag = (taskId, data, businessId = '') => async (dispatch, getState) => {
 
   dispatch({ type: LOAD_STATE })
 
@@ -148,10 +151,37 @@ export const updateStatusOnDrag = (taskId, data) => async (dispatch, getState) =
       type: UPDATE_TASK_STATUS_ON_DRAG,
       payload: response.data.data
     })
+    if (businessId) {
+      dispatch({
+        type: REFETECH_ALL_BUSINESS,
+        payload: businessId
+      })
+    }
   }
   else {
     dispatch({
       type: UPDATE_TASK_STATUS_ON_DRAG_ERROR,
+      payload: response.data
+    })
+  }
+}
+
+export const retrieveDepartmentOnSerach = (deptId, data) => async (dispatch, getState) => {
+
+  dispatch({ type: LOAD_STATE })
+  const response = await axios
+    .post(`/api/department/fetch-tasks/${deptId}`,
+      data, tokenConfig(getState()?.Auth.token)
+    )
+  if (response.status === 200) {
+    dispatch({
+      type: DEPARTMEMT_INFO_SEARCH,
+      payload: response.data.data
+    })
+  }
+  else {
+    dispatch({
+      type: DEPARTMEMT_INFO_SEARCH_ERROR,
       payload: response.data
     })
   }

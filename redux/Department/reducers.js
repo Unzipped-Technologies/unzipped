@@ -9,7 +9,9 @@ import {
   RESET_DEPARTMENT_FORM,
   LOAD_STATE,
   SUCCESS,
-  UPDATE_DEPARTMENT_INFO
+  UPDATE_DEPARTMENT_INFO,
+  DEPARTMEMT_INFO_SEARCH,
+  DEPARTMEMT_INFO_SEARCH_ERROR
 } from './constants'
 
 const INITIAL_DEPARTMENT_FORM = {
@@ -25,7 +27,8 @@ const INIT_STATE = {
   totalCount: 0,
   createDepartmentForm: {
     ...INITIAL_DEPARTMENT_FORM
-  }
+  },
+  departmentTickets: []
 }
 
 const Departments = (state = INIT_STATE, action = {}) => {
@@ -91,6 +94,14 @@ const Departments = (state = INIT_STATE, action = {}) => {
         selectedDepartment: {
           ...state.selectedDepartment,
           name: action.payload?.name
+        }
+      }
+    case DEPARTMEMT_INFO_SEARCH:
+      {
+        return {
+          ...state,
+          loading: false,
+          departmentTickets: action.payload
         }
       }
     default:

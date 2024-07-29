@@ -61,7 +61,7 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('updateTa
 })
 router.patch('/update-task-status-on-drag/:id', requireLogin, permissionCheckHelper.hasPermission('updateTask'), async (req, res) => {
   try {
-    
+
     const response = await taskHelper.updateTaskStatusOnDrag(req.params.id, req.body)
     if (!response) throw new Error('Task not found')
 

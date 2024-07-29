@@ -74,7 +74,6 @@ const renderTextContainer = (title = "JM", isInnerList = false, isEmailRequired)
 )
 
 const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, task }) => {
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
@@ -83,7 +82,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
     const [projectTeam, setProjectTeam] = React.useState([]);
 
     const handleClick = (event) => {
-        if(projectTeam?.length > 0){
+        if (projectTeam?.length > 0) {
             setAnchorEl(event.currentTarget);
         }
     };
@@ -98,11 +97,14 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
     }
 
     useEffect(() => {
-        setSelectedAssignee(assignee);
+        if (assignee) setSelectedAssignee(assignee);
     }, [assignee])
 
     useEffect(() => {
-        if (!(hiredProjectTeam && hiredProjectTeam.length > 0 && hiredProjectTeam[0].contractId == null)) {
+        if (!(hiredProjectTeam &&
+            hiredProjectTeam.length > 0 &&
+            hiredProjectTeam[0].contractId == null)
+        ) {
             setProjectTeam(hiredProjectTeam);
         }
     }, [hiredProjectTeam])
@@ -136,18 +138,16 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                             margin: 0
                         }}>
                             <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
-                                {renderTextContainer(selectedAssignee?.FirstName.charAt(0) + selectedAssignee?.LastName.charAt(0), true)}
+                                {renderTextContainer(selectedAssignee?.FirstName?.charAt(0) + selectedAssignee?.LastName?.charAt(0), true)}
                                 <ListItemText
                                     sx={{
                                         '& .MuiTypography-root': {
-                                            ...(!isEmailRequired ? { fontSize: "18px !important" } : {}),
-                                            ...(!isEmailRequired ? { fontWeight: '800 !important' } : {}),
-                                            ...(!isEmailRequired ? { color: "purple !important" } : {}),
+                                            ...(!isEmailRequired ? { fontSize: "16px !important" } : {}),
+                                            ...(!isEmailRequired ? { fontWeight: '700 !important' } : {}),
                                             ...(!isEmailRequired ? { textTransform: "uppercase !important" } : {}),
                                         }
                                     }}
                                     primary={
-
                                         <React.Fragment>
                                             <Typography
                                                 sx={{ display: 'inline' }}
@@ -156,7 +156,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                                                 color="text.primary"
                                             >
                                                 {selectedAssignee && (
-                                                    `${selectedAssignee.FirstName} ${selectedAssignee.LastName}` || "Unassigned"
+                                                    `${selectedAssignee?.FirstName} ${selectedAssignee?.LastName}` || "Unassigned"
                                                 )}
                                             </Typography>
                                         </React.Fragment>
@@ -169,7 +169,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                                                 variant="body2"
                                                 color="text.primary"
                                             >
-                                                {'jasonmaynard@gmail.com'}
+                                                {selectedAssignee?.email || "Unassigned"}
                                             </Typography>)}
                                         </React.Fragment>
                                     }

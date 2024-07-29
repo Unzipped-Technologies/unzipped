@@ -19,7 +19,8 @@ import {
   updateCreateStoryForm,
   resetStoryForm,
   reorderStories,
-  updateStatusOnDrag
+  updateStatusOnDrag,
+  deleteDepartment
 } from '../../../../redux/actions'
 import ProjectUsers from '../Kanban/ProjectusersDropdown'
 
@@ -61,10 +62,10 @@ const TasksPanel = ({
   }
 
   useEffect(() => {
-    if (departmentData) {
-      setEditDeptInfo(departmentData)
+    if (selectedDepartment) {
+      setEditDeptInfo(selectedDepartment)
     }
-  }, [departmentData])
+  }, [selectedDepartment])
 
   const handleOnDragEnd = async result => {
     if (!result.destination) return
@@ -115,7 +116,7 @@ const TasksPanel = ({
       })
 
       await reorderStories(allStories, access)
-      if (selectedDepartment?._id) await getDepartmentById(selectedDepartment._id)
+      if (departmentData?._id) await getDepartmentById(selectedDepartment._id)
     }
   }
 
@@ -150,6 +151,16 @@ const TasksPanel = ({
       skip: 0,
       populate: false
     })
+  }
+
+  const handleDepartmentDel = async () => {
+    dispatch(deleteDepartment(departmentData?._id))
+    await getProjectsList({
+      take: 'all',
+      skip: 0,
+      populate: false
+    })
+    setEditDeptInfo({})
   }
 
   const addNewTask = async (tagId, tagName) => {
@@ -218,7 +229,7 @@ const TasksPanel = ({
                 },
                 {
                   text: 'Delete',
-                  onClick: () => console.log('ITEM 3')
+                  onClick: async () => await handleDepartmentDel()
                 }
               ]}>
               <Icon name="actionIcon" color="#333" />
@@ -294,13 +305,13 @@ const TasksPanel = ({
                                       <DIV
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
-                                          {...provided.dragHandleProps}>
+                                        {...provided.dragHandleProps}>
                                         <WhiteCard
                                           padding="0px 10px"
                                           noMargin
                                           borderRadius="0px"
                                           row
-                                            background="#F7F7F7">
+                                          background="#F7F7F7">
                                           <TEXT
                                             fontWeight="bold"
                                             width="300px"

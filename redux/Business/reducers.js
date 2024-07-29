@@ -25,7 +25,9 @@ import {
   GET_BUSINESS_EMPLOYEES_FAILED,
   RESET_HIRED_EMPLOYEES,
   RESET_HIRED_EMPLOYEES_FAILED,
-  GET_BUSINESS_INFO_TASKLIST_PANEL
+  GET_BUSINESS_INFO_TASKLIST_PANEL,
+  LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,
+  REST_BUSINESS_LIST
 } from './constants'
 
 const INIT_STATE = {
@@ -77,7 +79,8 @@ const INIT_STATE = {
   error: '',
   userOwnedBusiness: [],
   hiredProjectTeam: [],
-  taskListBusiness: []
+  taskListBusiness: [],
+  fullBoardViewTickets: []
 }
 
 const Business = (state = INIT_STATE, action = {}) => {
@@ -187,6 +190,13 @@ const Business = (state = INIT_STATE, action = {}) => {
       {
         return { ...state, loading: false, taskListBusiness: action.payload }
       }
+    case LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW:
+      {
+        return { ...state, loading: false, fullBoardViewTickets: action.payload }
+      }
+    case REST_BUSINESS_LIST: {
+      return { ...state, loading: false, fullBoardViewTickets: [] }
+    }
     default:
       return state
   }
