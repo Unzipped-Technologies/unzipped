@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { DarkText, TitleText, WhiteCard, Absolute, Grid2, Grid3 } from './dashboard/style'
 import styled from 'styled-components'
-import { paymentFrequencyEnum } from '../../server/enum/planEnum'
-import FormField from '../ui/FormField'
-import Button from '../ui/Button'
-import Image from '../ui/Image'
 import { CircularProgress } from '@material-ui/core'
+
+import Image from '../ui/Image'
+import Button from '../ui/Button'
+import FormField from '../ui/FormField'
 import useWindowSize from '../ui/hooks/useWindowSize'
+import { DarkText, TitleText, WhiteCard, Absolute, Grid2, Grid3 } from './dashboard/style'
 
 const Container = styled.div`
   margin: 0px 0px 0px 0px;
@@ -19,17 +19,12 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
 `
 
-const Blue = styled.span`
-  color: #37dec5;
-  font-size: 13px;
-`
-
 const Span = styled.div`
   width: 200px;
 `
 
-const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription, onClick, loading }) => {
-  const isMobile = window.innerWidth >= 680 ? false : true
+const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription, onClick }) => {
+  const isMobile = window.innerWidth > 680 ? false : true
 
   const [isBusinessAddress, setIsBusinessAddress] = useState(false)
   const [isUpdated, setIsUpdated] = useState(false)
@@ -48,7 +43,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
   }
 
   useEffect(() => {
-    if (width <= 600) {
+    if (width <= 680) {
       setIsSmallWindow(true)
     } else {
       setIsSmallWindow(false)
@@ -56,7 +51,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
   }, [width])
 
   return (
-    <Container>
+    <Container data-testid="business_address">
       {isBusinessAddress ? (
         <WhiteCard height="650px" padding="0px">
           <TitleText size="22px" paddingTop={isMobile ? '10px' : '20px'} paddingLeft={isMobile ? '10px' : '0px'}>
@@ -67,6 +62,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
             <FormField
               fieldType="input"
               fontSize="12px"
+              id="country"
               margin="10px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
@@ -79,6 +75,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
             <Grid2 margin="0px 20px 10px 0px" block>
               <FormField
                 fieldType="input"
+                id="firstName"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
@@ -92,6 +89,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
               <FormField
                 fieldType="input"
                 fontSize="12px"
+                id="lastName"
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
@@ -104,6 +102,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
             </Grid2>
             <FormField
               fieldType="input"
+              id="address"
               fontSize="12px"
               margin="0px 0px 0px 0px"
               style={{ height: '29px' }}
@@ -115,6 +114,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
               ADDRESS
             </FormField>
             <FormField
+              id="appartment"
               fieldType="input"
               fontSize="12px"
               margin="10px 0px 0px 0px"
@@ -128,6 +128,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
             </FormField>
             <Grid3 margin="0px 10px 10px 0px" block>
               <FormField
+                id="city"
                 fieldType="input"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
@@ -140,6 +141,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                 CITY
               </FormField>
               <FormField
+                id="state"
                 fieldType="input"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
@@ -152,6 +154,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                 STATE
               </FormField>
               <FormField
+                id="zipCode"
                 fieldType="input"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
@@ -165,6 +168,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
               </FormField>
             </Grid3>
             <FormField
+              id="phone"
               fieldType="input"
               fontSize="12px"
               margin="0px 0px 0px 0px"
@@ -178,13 +182,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
             </FormField>
             <ButtonContainer>
               <Button noBorder onClick={businessAddressUpdate}>
-                {loading ? (
-                  <Span>
-                    <CircularProgress size={18} />
-                  </Span>
-                ) : (
-                  'SAVE ADDRESS'
-                )}
+                SAVE ADDRESS
               </Button>
             </ButtonContainer>
           </form>
@@ -206,6 +204,7 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                 alt="success"
                 height="34px"
                 width="34px"
+                id="done_image"
               />
             )}
             {!isUpdated && (

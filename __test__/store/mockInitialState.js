@@ -1,5 +1,7 @@
 import { BUSINESS, SELECTED_BUSIESS, BUSINESS_FORM, WIZARD_SUBMISSION } from './Business'
 import { INVOICES } from './Invoices'
+import { paymentFrequencyEnum } from '../../server/enum/planEnum'
+import { PaymentMethods } from './Stripe'
 import { TASKS } from './Tasks'
 import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
@@ -9,6 +11,30 @@ import { CALENDAR_SETTINGS } from './CalendarSettings'
 import { PLANS } from './Plans'
 export let defaultInitialState = {
   Auth: {
+    subscriptionForm: {
+      paymentFrequency: paymentFrequencyEnum.MONTHLY,
+      stripeId: '',
+      BusinessAddressLineOne: '',
+      BusinessAddressLineTwo: '',
+      BusinessAddressLineCountry: '',
+      BusinessFirstName: '',
+      BusinessLastName: '',
+      BusinessAddressCity: '',
+      BusinessAddressState: '',
+      BusinessAddressZip: '',
+      BusinessAddressPhone: '',
+      paymentMethod: {
+        BillingAddressLineOne: '',
+        BillingAddressLineTwo: '',
+        BillingAddressLineCountry: '',
+        BillingFirstName: '',
+        BillingLastName: '',
+        BillingAddressCity: '',
+        BillingAddressState: '',
+        BillingAddressZip: '',
+        card: undefined
+      }
+    },
     token: 'testToken',
     isAuthenticated: true,
     loading: false,
@@ -35,6 +61,7 @@ export let defaultInitialState = {
       AddressCity: 'NewYork',
       AddressZip: '40000',
       likeTotal: 10,
+      updatedAt: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), //'2024-03-25T19:00:02.865Z',
       profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       freelancers: {
         _id: '6601c2a6149276195c3f8fc2',
@@ -53,7 +80,7 @@ export let defaultInitialState = {
     }
   },
   Stripe: {
-    methods: ['method1', 'method2'],
+    methods: [...PaymentMethods],
     url: { url: 'testUrl2' },
     balance: {
       available: [

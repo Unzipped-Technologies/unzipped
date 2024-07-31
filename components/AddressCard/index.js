@@ -59,10 +59,14 @@ const ButtonTwo = styled.div`
 
 const FormCard = ({ image, title, children, badge, isSelected, first, onClick }) => {
   return (
-    <Container first={first}>
-      {badge && <Badge color="grey">{badge}</Badge>}
+    <Container first={first} data-testid="address_card">
+      {badge && (
+        <Badge color="grey" data-testid="badge">
+          {badge}
+        </Badge>
+      )}
       <Row>
-        {image && <Image src={image} alt="credit-card" />}
+        {image && <Image src={image} alt="address_card_image" />}
         <Title>{title}</Title>
         <Div>
           {window.innerWidth > 680 ? (
@@ -70,7 +74,7 @@ const FormCard = ({ image, title, children, badge, isSelected, first, onClick })
               Update
             </Button>
           ) : (
-            <div onClick={onClick}>
+            <div onClick={onClick} data-testid="update_icon">
               <Icon name="edit" color="#333" />
             </div>
           )}

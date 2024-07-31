@@ -48,7 +48,7 @@ const BackHeader = ({ sub, title, bold, size, children }) => {
   const router = useRouter()
 
   return (
-    <Container>
+    <Container data-testid="back_header">
       <Content>
         <BackButton onClick={() => router.back()}>
           <Icon name="BackArrowLong" />
