@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+
 import BackHeader from '../components/unzipped/BackHeader'
 import SubscriptionCard from '../components/unzipped/SubscriptionCard'
 import BusinessAddress from '../components/unzipped/businessAddress'
@@ -85,7 +86,10 @@ const Subscribe = ({
   paymentMethods
 }) => {
   const isPrimaryPayment = paymentMethods.find(item => item.isPrimary && parseInt(item.paymentType, 10) === 0)
-  const updatedDate = ValidationUtils.addDaysToDate(new Date(user?.updatedAt) || new Date(), trialLength)
+  const updatedDate = ValidationUtils.addDaysToDate(
+    user?.updatedAt ? new Date(user?.updatedAt) : new Date(),
+    trialLength
+  )
   const [isSelected, setIsSelected] = useState(false)
   const month = ValidationUtils.getMonthInText(updatedDate)
   const access = token?.access_token || user.cookie
@@ -95,9 +99,9 @@ const Subscribe = ({
       ...data
     })
   }
-
   const getCardLogoUrl = cardType => {
     const brand = Object.keys(stripeBrandsEnum).find(key => stripeBrandsEnum[key] === cardType)
+
     return stripeLogoEnum[brand]
   }
 
@@ -121,7 +125,7 @@ const Subscribe = ({
   }, [])
 
   return (
-    <Container>
+    <Container data-testid="subscribe_page">
       <BackHeader title={`Confirm ${getSubscriptionName(selectedPlan)} Plan`} bold size="20px" />
       <Content>
         <Notification type="blue" noButton>
@@ -152,9 +156,9 @@ const Subscribe = ({
           {isPrimaryPayment ? (
             <FormCard
               badge="Primary"
-              image={getCardLogoUrl(isPrimaryPayment.card)}
+              image={getCardLogoUrl(isPrimaryPayment?.card)}
               onClick={() => setIsSelected('payment')}
-              title={`${isPrimaryPayment.card.toUpperCase()} **** **** ${isPrimaryPayment.lastFour}`}
+              title={`${isPrimaryPayment?.card?.toUpperCase()} **** **** ${isPrimaryPayment?.lastFour}`}
               isSelected={isSelected === 'payment'}>
               <PaymentMethod address={isPrimaryPayment?.address} />
             </FormCard>
@@ -194,7 +198,6 @@ Subscribe.getInitialProps = async ({ req, res }) => {
 }
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
     token: state.Auth.token,
     selectedPlan: state.Auth.selectedPlan,

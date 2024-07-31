@@ -214,7 +214,7 @@ const EmployeeCard = ({contracts = [], paymentDate, plan, unpaidInvoices = []}) 
                     {paymentDate ? (
                         <RowItem left>{getNextBillingDate(paymentDate)}</RowItem>
                     ) : (
-                        <RowItem left>N/A</RowItem>
+                        <RowItem left>-</RowItem>
                     )}
                     </RightTwo>
                 </Row>

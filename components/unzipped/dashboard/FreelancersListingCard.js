@@ -24,8 +24,7 @@ const Left = styled.div`
   margin: 0px 10px;
 `
 const Right = styled.div`
-  padding: ${({ includeRate }) => (includeRate ? '5px 30px' : '15px 30px')};
-  min-width: ${({ minWidth }) => (minWidth ? minWidth : '850px')};
+  padding: ${({ includeRate }) => (includeRate ? '5px 20px' : '15px 30px')};
 `
 
 const Flex = styled.div`
@@ -160,7 +159,7 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
               View Profile
             </button>
           </div>
-          <div style={{ marginTop: '35px' }}>
+          <div style={{ marginTop: '15px' }}>
             <span id="freelancer_votes">{`${
               user?.likes?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') ?? 0
             } Upvotes by clients`}</span>

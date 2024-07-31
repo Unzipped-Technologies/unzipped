@@ -39,12 +39,13 @@ const Container = styled.div`
 `
 
 const ViewFullScreenButton = styled.button`
-  margin-right: 100px;
+  margin-right: 40px;
+  margin-top: 8px;
   text-transform: uppercase;
   background: #1976D2;
   color: white;
-  padding: 10px 20px;
-  font-size: 18px;
+  padding: 5px 5px;
+  font-size: 14px;
   font-weight: 400;
   border-radius: 8px;
   border: 0px;
@@ -69,13 +70,19 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     }
   }, [])
 
-  useEffect(async () => {
-    await getProjectsList({
-      take: 'all',
-      skip: 0,
-      populate: false
-    })
-  }, [])
+  useEffect(() => {
+    (async () => {
+      try {
+        await getProjectsList({
+          take: 'all',
+          skip: 0,
+          populate: false
+        });
+      } catch (error) {
+        console.error('Error fetching project list:', error);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (!selectedDepartment?._id) {
@@ -98,7 +105,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     <>
       <Nav
         isSubMenu
-        marginBottom={window.innerWidth > 600 ? '158px' : '78px'}
+        marginBottom={window.innerWidth > 600 ? '125px' : '78px'}
         isLogoHidden={window.innerWidth > 600 ? false : true}
         listName={'Departments'}
         setIsViewable={() => { }}
@@ -114,7 +121,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
         justifyContent: "flex-end",
         alignItems: 'flex-end',
         width: "100%",
-        margin: "20px 0px"
+        margin: "8px 0px"
       }}>
         <ViewFullScreenButton onClick={() => setIsFullScreen(!isFullScreen)}>
           {isFullScreen ? 'Exit Full Screen' : 'View Full Screen'}

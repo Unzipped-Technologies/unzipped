@@ -131,7 +131,7 @@ const Panel = ({ listInfo, setListInfo }) => {
           boxShadow: ' 0px 4px 8px 0px rgba(0, 0, 0, 0.10)'
         }}>
         <div className="d-flex align-items-center">
-          <TitleText width="max-content" noMargin size="24px" paddingRight="20px">
+          <TitleText width="max-content" noMargin size="18px" paddingRight="20px">
             {listInfo.listTitle}
           </TitleText>
         </div>

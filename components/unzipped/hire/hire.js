@@ -85,7 +85,7 @@ const Label = styled.span`
 
 const InputField = styled.input`
   height: 45px !important;
-  width: 470px !important;
+  width: 479px !important;
   margin: 0;
   border-radius: 4px;
   border: 1px solid #000 !important;
@@ -111,13 +111,15 @@ const TextareaField = styled.textarea`
 
 const HireButton = styled.button`
   background: ${COLORS.hireButton};
-  width: 100%;
+  width: max-content;
   height: 40px;
   border-radius: 5px;
   text-transform: uppercase;
   border: none;
+  margin-right: 65px;
   @media screen and (max-width: 600px) {
     width: 100%;
+    margin-right: 0px;
   }
 `
 
@@ -220,7 +222,7 @@ const MiddleContent = styled.div`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   margin-top: 35px;
   width: 100%;
   @media screen and (max-width: 600px) {

@@ -86,7 +86,7 @@ const MobileProjectHires = ({ data = [] }) => {
                   </ProjectName>
                   <div style={{ paddingRight: '15px' }}>$ {row.hourlyRate || 0} / hour</div>
                 </div>
-                <UserCategory>{row?.freelancerId?.category || 'N/A'}</UserCategory>
+                <UserCategory>{row?.freelancerId?.category || '-'}</UserCategory>
                 <Absolute
                   buttonHeight="33px"
                   position="none"
@@ -149,7 +149,7 @@ const MobileProjectHires = ({ data = [] }) => {
               paddingTop: '40px',
               paddingBottom: '40px'
             }}>
-            <p>N/A</p>
+            <p>-</p>
           </div>
         )}
       </ProjectsList>

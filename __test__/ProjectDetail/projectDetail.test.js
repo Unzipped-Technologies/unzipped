@@ -190,7 +190,7 @@ describe('DesktopAccount Component', () => {
     expect(within(clientDetailContainer).getByText(`Payment Verified`)).toBeInTheDocument()
   })
 
-  it('renders Project Detail page and verify N/A display if data not available', async () => {
+  it('renders Project Detail page and verify - display if data not available', async () => {
     initialState.Business.selectedBusiness = {}
     initialState.Business.selectedBusiness.projectBudgetType = 'Hourly Rate'
     await act(async () => {
@@ -422,7 +422,7 @@ describe('DesktopAccount Component', () => {
     expect(within(clientDetailContainer).getByText(`Payment Verified`)).toBeInTheDocument()
   })
 
-  it('renders Project Detail page on mobile view and verify N/A display if data not available', async () => {
+  it('renders Project Detail page on mobile view and verify - display if data not available', async () => {
     initialState.Business.selectedBusiness = {}
     initialState.Business.selectedBusiness.projectBudgetType = 'Hourly Rate'
     await act(async () => {

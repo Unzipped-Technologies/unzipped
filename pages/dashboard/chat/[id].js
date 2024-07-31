@@ -386,7 +386,7 @@ const Chat = ({
                   <span></span>
                 </TypingAnimation>
               )}
-            <Absolute bottom="0px" width="98%" right="1%">
+            <Absolute bottom="19px" width="100%" right="0">
               <Message>
                 <FormField
                   value={form.message}

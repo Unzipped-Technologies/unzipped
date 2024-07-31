@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { DarkText, TitleText, WhiteCard, Absolute, Grid2, Grid3 } from './dashboard/style'
 import styled from 'styled-components'
-import StripeForm from './stripeForm'
 import FormField from '../ui/FormField'
 import Button from '../ui/Button'
 import Image from '../ui/Image'
@@ -13,7 +12,6 @@ import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
-  CardElement,
   useElements,
   useStripe
 } from '@stripe/react-stripe-js'
@@ -81,7 +79,7 @@ const PaymentMethod = ({ changeFocus, planCost, form, user, updateSubscription, 
   )
 }
 
-const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loading }) => {
+const PaymentForm = ({ form, user, updateSubscription, onClick, loading }) => {
   const isMobile = window.innerWidth >= 680 ? false : true
 
   const [isPaymentForm, setIsPaymentForm] = useState(false)
@@ -101,6 +99,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
 
   const handleSubmit = async event => {
     // Block native form submission.
+
     event.preventDefault()
     if (!stripe || !elements) {
       // Stripe.js has not loaded yet. Make sure to disable
@@ -108,14 +107,12 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
       return
     }
     try {
-      const name = `${document.getElementById('inputFirstName').value} ${
-        document.getElementById('inputLastName').value
-      }`
-      const line1 = document.getElementById('inputAddress').value
-      const line2 = document.getElementById('inputAppartment').value
-      const city = document.getElementById('inputCity').value
-      const state = document.getElementById('inputState').value
-      const postal_code = document.getElementById('inputZip').value
+      const name = `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`
+      const line1 = document.getElementById('addressLineOne').value
+      const line2 = document.getElementById('addressLineTwo').value
+      const city = document.getElementById('city').value
+      const state = document.getElementById('state').value
+      const postal_code = document.getElementById('zipCode').value
       // Get a reference to a mounted CardElement. Elements knows how
       // to find your CardElement because there can only ever be one of
       // each type of element.
@@ -157,6 +154,8 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
         }, 1500)
       }
     } catch (e) {
+      console.log(e)
+
       setTimeout(() => {
         setIsLoading(false)
         setIsUpdated(false)
@@ -166,7 +165,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
   }
 
   useEffect(() => {
-    if (width <= 600) {
+    if (width <= 680) {
       setIsSmallWindow(true)
     } else {
       setIsSmallWindow(false)
@@ -174,7 +173,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
   }, [width])
 
   return (
-    <Container>
+    <Container data-testid="payment_method_form">
       {isPaymentForm ? (
         <WhiteCard overflow="hidden" height={!isError ? '725px' : '775px'}>
           <SimpleBar style={{ maxHeight: !isError ? 725 : 775, width: '100%' }}>
@@ -257,6 +256,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                 placeholder={'COUNTRY/REGION'}
                 fontSize="12px"
                 required
+                id="country"
                 width={isSmallWindow ? '100%' : '95%'}
                 border="1px solid #000000"
                 style={{ height: '29px' }}
@@ -278,7 +278,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                   required
                   style={{ height: '29px' }}
                   width={isSmallWindow ? '100%' : '90%'}
-                  id="inputFirstName"
+                  id="firstName"
                   onChange={e =>
                     updateSubscription({
                       paymentMethod: { ...form?.paymentMethod, BillingFirstName: e.target.value }
@@ -294,7 +294,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                   fontSize="12px"
                   required
                   width={isSmallWindow ? '100%' : '90%'}
-                  id="inputLastName"
+                  id="lastName"
                   style={{ height: '29px' }}
                   border="1px solid #000000"
                   onChange={e =>
@@ -311,7 +311,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                 fontSize="12px"
                 required
                 width={isSmallWindow ? '100%' : '95%'}
-                id="inputAddress"
+                id="addressLineOne"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
                 onChange={e =>
@@ -330,7 +330,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                 required
                 style={{ height: '29px' }}
                 width={isSmallWindow ? '100%' : '95%'}
-                id="inputAppartment"
+                id="addressLineTwo"
                 border="1px solid #000000"
                 onChange={e =>
                   updateSubscription({
@@ -350,7 +350,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                   border="1px solid #000000"
                   style={{ height: '29px' }}
                   width={isSmallWindow ? '100%' : '90%'}
-                  id="inputCity"
+                  id="city"
                   onChange={e =>
                     updateSubscription({
                       paymentMethod: { ...form?.paymentMethod, BillingAddressCity: e.target.value }
@@ -366,7 +366,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                   fontSize="12px"
                   width={isSmallWindow ? '100%' : '90%'}
                   required
-                  id="inputState"
+                  id="state"
                   border="1px solid #000000"
                   style={{ height: '29px' }}
                   onChange={e =>
@@ -384,7 +384,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
                   fontSize="12px"
                   required
                   width={isSmallWindow ? '100%' : '70%'}
-                  id="inputZip"
+                  id="zipCode"
                   border="1px solid #000000"
                   style={{ height: '29px' }}
                   onChange={e =>
@@ -399,7 +399,7 @@ const PaymentForm = ({ planCost, form, user, updateSubscription, onClick, loadin
               <ButtonContainer>
                 <Button submit noBorder>
                   {loading ? (
-                    <Span>
+                    <Span data-testid="loading_spinner">
                       <CircularProgress size={18} />
                     </Span>
                   ) : (
