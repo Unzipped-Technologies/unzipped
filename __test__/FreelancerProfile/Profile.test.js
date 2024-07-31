@@ -805,11 +805,6 @@ describe('DesktopAccount Component', () => {
       }
     )
 
-    // const scheduleInterviewElement = screen.getByTestId('profile_schedule_interview')
-    // expect(scheduleInterviewElement).toBeInTheDocument()
-
-    // fireEvent.click(scheduleInterviewElement)
-
     const MobileProfileOptionsContainer = screen.getByTestId('mobile_profile_card_options')
 
     const addUserToListOption = within(MobileProfileOptionsContainer).getByText('Add User To A List')

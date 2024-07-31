@@ -30,7 +30,7 @@ const StepEightWizardFlow = ({ budgetRange, updateForm, goBack, submitForm, stag
           required
           fieldType="select"
           isSearchable={false}
-          name="budget"
+          id="budget"
           options={budgetOptions()}
           placeholder="Select your budget"
           fontSize="20px"

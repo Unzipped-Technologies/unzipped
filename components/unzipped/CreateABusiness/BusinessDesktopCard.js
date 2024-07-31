@@ -35,11 +35,9 @@ const GetCardDesktop = ({
   handleSkip,
   handleCancelIcon,
   handleEnterKey,
-  loading,
   files,
   setFiles,
   handleGithub,
-  userDetails,
   isSubmitted,
   setIsSubmitted,
   projectFiles

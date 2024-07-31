@@ -53,11 +53,12 @@ const StepTenWizardFlow = ({
       <Grid margin={files?.length && '0'}>
         <UploadImage setFiles={setFiles} files={files} projectFiles={projectFiles} id="project_images" />
       </Grid>
-      {!!projectFiles?.length && (
+      {projectFiles?.length > 0 && (
         <ContentContainer padding="20px 5px 20px 10px ">
           {projectFiles?.map((file, index) => (
-            <ContainedSpan>
+            <ContainedSpan key={file?.name + '_' + index}>
               <ClearSharpIcon
+                data-testid={`${file.name}_icon`}
                 style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
                 onClick={() => handleCancelIcon(`files:${index}`)}
               />

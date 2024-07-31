@@ -44,7 +44,7 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
           width="100%"
           placeholder="Enter Project Summary..."
           borderRadius="10px"
-          id="summary"
+          id="challenge"
           onChange={e => handleInputChangeEvent(e)}
           value={challenge}
           onKeyDown={handleKeydownEvent}
@@ -56,7 +56,7 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
     <CreateABusiness
       title="Role Description"
       sub="Envision your ideal hire. What role will they play in your ongoing projects?"
-      disabled={role?.length === 0}
+      disabled={role ? false : true}
       onUpdate={updateForm}
       onBack={goBack}
       onSubmit={submitForm}

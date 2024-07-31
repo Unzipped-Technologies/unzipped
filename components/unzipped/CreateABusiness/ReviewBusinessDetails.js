@@ -60,6 +60,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
   const FILES_ARRAY = useSelector(state => state.Business.files)
   const FONT_SIZE = isMobileViewActive ? '16px' : '20px'
   const [renderFiles, setRenderFiles] = useState([])
+
   const handleBackNavigation = () => {
     let wizradStep = 0
     if (isGithubConnected) {
@@ -79,7 +80,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
   const handleSubmitProject = () => {
     setIsFormSubmitted(true)
     const formData = new FormData()
-    if (files.length > 0) {
+    if (files?.length > 0) {
       files.forEach(file => {
         formData.append('images', file)
       })
@@ -125,7 +126,9 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
               <span>{`Failed to create project ${businessForm?.name}. Please try again later!`}</span>
             </DarkText>
             <Absolute>
-              <Dismiss onClick={handleNotificationDismissal}>Dismiss</Dismiss>
+              <Dismiss id="dismiss_notification" onClick={handleNotificationDismissal}>
+                Dismiss
+              </Dismiss>
             </Absolute>
           </WhiteCard>
         )}
@@ -157,7 +160,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             <div style={{ marginTop: '20px' }}>
               {renderSectionContent(600, isMobileViewActive ? '18px' : '18px', 'Skills', null, '40px')}
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '8px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '8px' }} id="required_skills">
               {businessForm?.requiredSkills?.map((skill, index) => (
                 <TagStyled key={index}>{skill}</TagStyled>
               ))}
@@ -206,7 +209,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             </Items>
           </ReviewSectionStyled>
         )}
-        <ReviewSectionStyled>
+        <ReviewSectionStyled id="additional_details">
           <ReviewHeaderSection
             label={BUSINESS_LABEL.project.additionalDetails}
             isEditIconDisplayed={true}
@@ -219,9 +222,11 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
           </Items>
           <Items id="interview_questions">
             {renderSectionContent(600, '18px', 'Interview Questions')}
-            <ol>
+            <ol id="questions">
               {businessForm?.questionsToAsk?.map((question, index) => (
-                <li key={index}> {renderSectionContent(400, '18px', question, '', '10px', '', '1.3px')}</li>
+                <li key={index} id={question}>
+                  {renderSectionContent(400, '18px', question, '', '10px', '', '1.3px')}
+                </li>
               ))}
             </ol>
           </Items>
@@ -229,11 +234,14 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             FILES_ARRAY.length > 0 &&
             renderSectionContent(600, FONT_SIZE, BUSINESS_LABEL.project.projectImage)}
           {FILES_ARRAY && FILES_ARRAY.length > 0 && (
-            <div style={{ marginTop: 30, display: 'flex', width: '100%', flexDirection: 'column', gap: '10px' }}>
+            <div
+              style={{ marginTop: 30, display: 'flex', width: '100%', flexDirection: 'column', gap: '10px' }}
+              id="project_images">
               {FILES_ARRAY?.map((file, index) => (
                 <span key={index}>
                   {file instanceof File && (
                     <img
+                      data-testid={`${file.name}_${index}`}
                       src={URL.createObjectURL(file)}
                       width={'100%'}
                       height={'200px'}
@@ -248,7 +256,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
         </ReviewSectionStyled>
 
         {isGithubConnected && (
-          <ReviewSectionStyled>
+          <ReviewSectionStyled id="github_info">
             <ReviewHeaderSection
               label={GITHUB_INFO_LABEL}
               isEditIconDisplayed={false}

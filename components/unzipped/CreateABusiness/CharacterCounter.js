@@ -65,7 +65,7 @@ const CharacterCounter = ({ field, index = 0, isQuestionnaire = false, isErrorNo
       <div>
         {!isQuestionnaire && (
           <MinMaxCharSpan>
-            {field ? businessForm[field].length : 0} / {maxCharacterLimit}
+            {field ? businessForm[field]?.length : 0} / {maxCharacterLimit}
           </MinMaxCharSpan>
         )}
         {isQuestionnaire && (

@@ -34,22 +34,6 @@ const StepNineWizardFlow = ({
     }
   }
 
-  const handleOnEnterMethod = e => {
-    const fieldName = 'questionsToAsk'
-    if (inputValue !== '' && questionsToAsk.length < 3) {
-      if (e.keyCode === 13 && e.shiftKey === false) {
-        if (inputValue.length < 10) {
-          setIsErrorNotified(true)
-          return
-        }
-        updateForm({ [fieldName]: [...questionsToAsk, inputValue] })
-        handleInput('')
-        setQuestionLength(0)
-        setIsErrorNotified(false)
-      }
-    }
-  }
-
   const handleOnButtonAdd = () => {
     if (inputValue.length < 10) {
       setIsErrorNotified(true)
@@ -100,7 +84,6 @@ const StepNineWizardFlow = ({
           id="questionsToAsk"
           placeholder="Type a question and hit enter..."
           borderRadius="10px"
-          handleEnterKey={e => handleOnEnterMethod(e)}
           onChange={e => handleQuestionnaireValidation(e.target.value)}
           value={inputValue}
           onKeyDown={e => handleKeydownEvent(e)}
@@ -129,6 +112,7 @@ const StepNineWizardFlow = ({
           <div className="d-flex mb-3" key={question + '_' + index}>
             <div>
               <ClearSharpIcon
+                id={`${question}_icon`}
                 style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
                 onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
               />

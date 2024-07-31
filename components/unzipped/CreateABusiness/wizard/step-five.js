@@ -32,6 +32,7 @@ const StepFiveWizardFlow = ({
           {requiredSkills?.map((skill, index) => (
             <ContainedSpan key={skill + '_' + index}>
               <ClearSharpIcon
+                id={`${skill}_${index}`}
                 style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
                 onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
               />

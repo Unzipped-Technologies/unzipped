@@ -78,8 +78,7 @@ export const ContainedSpan = styled.span`
 `
 
 const convertToBoolean = value => {
-  if (value === 'true') return true
-  if (value === 'false') return false
+  if (value === 'true' || value === true) return true
   return false
 }
 
@@ -97,10 +96,6 @@ const CreateBusiness = ({
   companyBackground,
   budgetRange,
   questionsToAsk,
-  loading,
-  createBusiness,
-  token,
-  accessToken,
   userDetails,
   projectFiles,
   businessForm
@@ -108,17 +103,12 @@ const CreateBusiness = ({
   const router = useRouter()
 
   const dispatch = useDispatch()
+
   const isGithubConnected = convertToBoolean(router?.query?.['github-connect'])
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [data, setData] = useState(null)
   const updateForm = data => {
-    setData(data)
     updateBusinessForm({ ...data })
   }
-
-  useEffect(() => {
-    console.log('businessForm', businessForm)
-  }, [businessForm, stage])
 
   const [inputValue, setInputValue] = useState('')
   const [files, setFiles] = useState([])
@@ -127,7 +117,7 @@ const CreateBusiness = ({
   const { width } = useWindowSize()
 
   useEffect(() => {
-    if (width <= 600) {
+    if (width <= 680) {
       setIsSmallWindow(true)
     } else {
       setIsSmallWindow(false)
@@ -135,58 +125,21 @@ const CreateBusiness = ({
   }, [width])
 
   const submitForm = step => {
-    if (step < 12) {
-      const isInputValNotValid = handleValidation(step)
-      if (isInputValNotValid) return
-      dispatch(businessFieldsValidation(false))
-      setData({
-        stage: step ? step + 1 : businessForm.stage
-      })
-      updateBusinessForm({
-        stage: step ? step + 1 : businessForm.stage
-      })
-    } else {
-      const formData = new FormData()
-      if (projectFiles.length > 0) {
-        projectFiles.forEach(file => {
-          formData.append('images', file)
-        })
-      }
-      formData.append(
-        'projectDetails',
-        JSON.stringify({
-          projectType,
-          name,
-          challenge,
-          role,
-          objectives,
-          teamDynamics,
-          requiredSkills,
-          goals,
-          companyBackground,
-          budget,
-          questionsToAsk
-        })
-      )
-      createBusiness(formData)
-        .then(() => {
-          router.push('/dashboard')
-        })
-        .catch(e => {})
-    }
-  }
+    const isInputValNotValid = handleValidation(step)
+    if (isInputValNotValid) return
+    dispatch(businessFieldsValidation(false))
 
+    updateBusinessForm({
+      stage: step + 1
+    })
+  }
   function handleGithub() {
     router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
   }
   const goBack = step => {
-    if (stage > 1) {
-      updateBusinessForm({
-        stage: (step || stage) - 1
-      })
-    } else {
-      router.push('/dashboard')
-    }
+    updateBusinessForm({
+      stage: (step || stage) - 1
+    })
   }
 
   const handleInput = value => {
@@ -210,11 +163,6 @@ const CreateBusiness = ({
 
   const handleEnterKey = (fieldName, data, e) => {
     if (e.key === 'Enter' && e.shiftKey === false) {
-      if (fieldName === 'questionsToAsk' && data[data.length] <= 10) {
-        dispatch(businessFieldsValidation(true))
-        setIsSubmitted(true)
-        return true
-      }
       updateForm({ [fieldName]: [...data, inputValue] })
       handleInput('')
     }
@@ -230,7 +178,7 @@ const CreateBusiness = ({
     const roleOrDescriptionStep = isSmallWindow ? 4 : 3
     if (
       businessForm?.projectType == 'Long Term Collaboration' &&
-      businessForm?.role.length < 200 &&
+      businessForm?.role?.length < 200 &&
       step === roleOrDescriptionStep
     ) {
       dispatch(businessFieldsValidation(true))
@@ -252,74 +200,77 @@ const CreateBusiness = ({
       return true
     }
   }
-
   return (
     <>
-      {/* {businessForm?.stage > 11 && <Nav isSubMenu marginBottom={'0px'} zIndex={20} />} */}
+      {businessForm?.stage > 11 && <Nav isSubMenu marginBottom={'0px'} zIndex={20} />}
       <Container stage={businessForm?.stage}>
-        <DesktopBox data-testid="desktop_card">
-          <GetCardDesktop
-            stage={businessForm?.stage}
-            submitForm={submitForm}
-            updateForm={updateForm}
-            goBack={goBack}
-            inputValue={inputValue}
-            isGithubConnected={isGithubConnected}
-            handleInput={handleInput}
-            handleSkip={handleSkip}
-            handleCancelIcon={handleCancelIcon}
-            handleEnterKey={handleEnterKey}
-            loading={loading}
-            projectType={businessForm?.projectType}
-            name={businessForm?.name}
-            challenge={businessForm?.challenge}
-            role={businessForm?.role}
-            objectives={objectives}
-            teamDynamics={businessForm?.teamDynamics}
-            requiredSkills={businessForm?.requiredSkills}
-            goals={businessForm?.goals}
-            companyBackground={businessForm?.companyBackground}
-            budgetRange={businessForm?.budgetRange}
-            questionsToAsk={businessForm?.questionsToAsk}
-            files={businessForm?.files}
-            setFiles={setFiles}
-            handleGithub={handleGithub}
-            userDetails={userDetails}
-            isSubmitted={isSubmitted}
-            setIsSubmitted={setIsSubmitted}
-            projectFiles={projectFiles}
-          />
-        </DesktopBox>
+        {window.innerWidth > 680 && (
+          <DesktopBox data-testid="desktop_card">
+            <GetCardDesktop
+              stage={stage}
+              submitForm={submitForm}
+              updateForm={updateForm}
+              goBack={goBack}
+              inputValue={inputValue}
+              isGithubConnected={isGithubConnected}
+              handleInput={handleInput}
+              handleSkip={handleSkip}
+              handleCancelIcon={handleCancelIcon}
+              handleEnterKey={handleEnterKey}
+              projectType={projectType}
+              name={name}
+              challenge={challenge}
+              role={role}
+              objectives={objectives}
+              teamDynamics={teamDynamics}
+              requiredSkills={requiredSkills}
+              goals={goals}
+              companyBackground={companyBackground}
+              budgetRange={budgetRange}
+              questionsToAsk={questionsToAsk}
+              files={files}
+              setFiles={setFiles}
+              handleGithub={handleGithub}
+              userDetails={userDetails}
+              isSubmitted={isSubmitted}
+              setIsSubmitted={setIsSubmitted}
+              projectFiles={projectFiles}
+            />
+          </DesktopBox>
+        )}
 
-        <MobileBox>
-          <Nav isSubMenu marginBottom={'0px'} zIndex={20} />
-          <GetCardMobile
-            stage={stage}
-            submitForm={submitForm}
-            updateForm={updateForm}
-            goBack={goBack}
-            inputValue={inputValue}
-            isGithubConnected={isGithubConnected}
-            handleInput={handleInput}
-            handleSkip={handleSkip}
-            handleCancelIcon={handleCancelIcon}
-            handleEnterKey={handleEnterKey}
-            loading={loading}
-            projectType={businessForm?.projectType}
-            name={name}
-            challenge={challenge}
-            role={role}
-            objectives={objectives}
-            teamDynamics={teamDynamics}
-            requiredSkills={requiredSkills}
-            goals={goals}
-            companyBackground={companyBackground}
-            budgetRange={budgetRange}
-            questionsToAsk={questionsToAsk}
-            handleGithub={handleGithub}
-          />
-          <MobileFreelancerFooter defaultSelected="Create" />
-        </MobileBox>
+        {window.innerWidth <= 680 && (
+          <MobileBox data-testid="mobile_card">
+            <Nav isSubMenu marginBottom={'0px'} zIndex={20} />
+            <GetCardMobile
+              mobile
+              businessForm={businessForm}
+              stage={stage}
+              submitForm={submitForm}
+              updateForm={updateForm}
+              goBack={goBack}
+              inputValue={inputValue}
+              isGithubConnected={isGithubConnected}
+              handleInput={handleInput}
+              handleSkip={handleSkip}
+              handleCancelIcon={handleCancelIcon}
+              handleEnterKey={handleEnterKey}
+              projectType={businessForm?.projectType}
+              name={name}
+              challenge={challenge}
+              role={role}
+              objectives={objectives}
+              teamDynamics={teamDynamics}
+              requiredSkills={requiredSkills}
+              goals={goals}
+              companyBackground={companyBackground}
+              budgetRange={budgetRange}
+              questionsToAsk={questionsToAsk}
+              handleGithub={handleGithub}
+            />
+            <MobileFreelancerFooter defaultSelected="Create" />
+          </MobileBox>
+        )}
       </Container>
     </>
   )
@@ -348,7 +299,6 @@ const mapStateToProps = state => {
     budgetRange: state.Business?.businessForm.budgetRange,
     questionsToAsk: state.Business?.businessForm.questionsToAsk,
     stage: state.Business?.businessForm.stage,
-    loading: state.Business?.loading,
     accessToken: state.Auth.token,
     userDetails: state.Auth.user,
     projectFiles: state.Business?.files

@@ -1,4 +1,4 @@
-import { BUSINESS, SELECTED_BUSIESS } from './Business'
+import { BUSINESS, SELECTED_BUSIESS, BUSINESS_FORM, WIZARD_SUBMISSION } from './Business'
 import { INVOICES } from './Invoices'
 import { TASKS } from './Tasks'
 import { CONTRACTS } from './Contracts'
@@ -45,6 +45,11 @@ export let defaultInitialState = {
         isAcceptEquity: true,
         category: 'Full Stack Developer'
       }
+    },
+    thirdPartyDetails: {
+      githubId: 24108368,
+      userName: 'testUser',
+      avatarUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
     }
   },
   Stripe: {
@@ -71,9 +76,7 @@ export let defaultInitialState = {
   },
   Business: {
     wizardSubmission: {
-      isSuccessfull: false,
-      error: '',
-      projectName: ''
+      ...WIZARD_SUBMISSION
     },
     details: {
       name: 'Unzipped',
@@ -83,20 +86,7 @@ export let defaultInitialState = {
       taxId: '09ijk12C'
     },
     businessForm: {
-      desc: '',
-      projectType: '',
-      name: '',
-      challenge: '',
-      role: '',
-      objectives: [],
-      teamDynamics: '',
-      requiredSkills: [],
-      goals: '',
-      companyBackground: '',
-      budgetRange: '',
-      questionsToAsk: [],
-      stage: 1,
-      isFieldSubmitted: false
+      ...BUSINESS_FORM
     },
     files: [],
     projectList: [...BUSINESS],

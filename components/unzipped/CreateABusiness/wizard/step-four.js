@@ -61,10 +61,11 @@ const StepFourWizardFlow = ({
             </Button>
           </Grid>
           <ContentContainer>
-            {objectives.map(obj => (
-              <div className="d-flex mb-3">
+            {objectives.map((obj, index) => (
+              <div className="d-flex mb-3" key={`${obj}_${index}`}>
                 <div>
                   <ClearSharpIcon
+                    id={`${obj}_${index}`}
                     style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
                     onClick={() => handleCancelIcon('objectives', objectives, obj)}
                   />
