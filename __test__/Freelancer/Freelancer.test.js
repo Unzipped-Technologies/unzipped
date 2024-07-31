@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import '@testing-library/jest-dom' // for the toBeInTheDocument matcher
 import { fireEvent, screen, act, within, render } from '@testing-library/react'
 
-import { LIST_ENTRIES } from '../store/ListEntries'
+import { LIST_ENTRIES, INVITES_LIST } from '../store/ListEntries'
 import { P } from '../../components/unzipped/ListModal'
 import Freelancers from '../../pages/freelancers/index'
 import { FREELCANCERS_LIST } from '../store/Freelancer'
@@ -69,7 +69,7 @@ describe('Freelancers Component', () => {
     initialState.Freelancers.isExpanded = false
     initialState.Auth.token = 'testToken'
     initialState.Freelancers.freelancers = _.cloneDeep(FREELCANCERS_LIST)
-    initialState.Lists.invitesList = _.cloneDeep(LIST_ENTRIES)
+    initialState.Lists.invitesList = _.cloneDeep(INVITES_LIST)
 
     getFreelancerList.mockReturnValue(() => {
       return {
@@ -560,7 +560,7 @@ describe('Freelancers Component', () => {
 
     expect(within(ListModal).getByText('Favorites')).toBeInTheDocument()
 
-    const ListToAddUser = within(ListModal).getByTestId('6633eec5e646211f2eb6af52')
+    const ListToAddUser = within(ListModal).getByTestId(initialState.Lists.invitesList[0]?._id)
     expect(ListToAddUser).toBeInTheDocument()
 
     await act(async () => {
@@ -610,7 +610,7 @@ describe('Freelancers Component', () => {
 
     expect(within(ListModal).getByText('Favorites')).toBeInTheDocument()
 
-    const ListToAddUser = within(ListModal).getByTestId('6633eec5e646211f2eb6af52')
+    const ListToAddUser = within(ListModal).getByTestId(initialState.Lists.invitesList[0]?._id)
     expect(ListToAddUser).toBeInTheDocument()
 
     await act(async () => {
@@ -659,7 +659,7 @@ describe('Freelancers Component', () => {
 
     expect(within(ListModal).getByText('Favorites')).toBeInTheDocument()
 
-    const ListToAddUser = within(ListModal).getByTestId('6633eec5e646211f2eb6af52')
+    const ListToAddUser = within(ListModal).getByTestId(initialState.Lists.invitesList[0]?._id)
     expect(ListToAddUser).toBeInTheDocument()
 
     await act(async () => {
@@ -1396,7 +1396,7 @@ describe('Freelancers Component', () => {
 
     expect(within(ListModal).getByText('Favorites')).toBeInTheDocument()
 
-    const ListToAddUser = within(ListModal).getByTestId('6633eec5e646211f2eb6af52')
+    const ListToAddUser = within(ListModal).getByTestId(initialState.Lists.invitesList[0]?._id)
     expect(ListToAddUser).toBeInTheDocument()
 
     await act(async () => {
@@ -1445,7 +1445,7 @@ describe('Freelancers Component', () => {
 
     expect(within(ListModal).getByText('Favorites')).toBeInTheDocument()
 
-    const ListToAddUser = within(ListModal).getByTestId('6633eec5e646211f2eb6af52')
+    const ListToAddUser = within(ListModal).getByTestId(initialState.Lists.invitesList[0]?._id)
     expect(ListToAddUser).toBeInTheDocument()
 
     await act(async () => {
@@ -1492,7 +1492,7 @@ describe('Freelancers Component', () => {
 
     expect(within(ListModal).getByText('Favorites')).toBeInTheDocument()
 
-    const ListToAddUser = within(ListModal).getByTestId('6633eec5e646211f2eb6af52')
+    const ListToAddUser = within(ListModal).getByTestId(initialState.Lists.invitesList[0]?._id)
     expect(ListToAddUser).toBeInTheDocument()
 
     await act(async () => {
