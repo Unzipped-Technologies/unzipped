@@ -99,6 +99,11 @@ const updateUserByid = async (id, data) => {
   try {
     const userData = await getSingleUser({ _id: id }, '-password')
 
+    if (!userData?.freelancers) {
+      const freelancerData = new freelancer({ userId: userData?._id })
+      await freelancerData.save()
+      userData['freelancers'] = freelancerData._id
+    }
     for (var field in data) {
       userData[field] = data[field]
     }
@@ -657,10 +662,10 @@ const registerUser = async ({ email, password }) => {
   const hash = await AuthService.bcryptAndHashing(password)
   const newuser = await createUser({ email, password }, hash)
   if (newuser) {
-    const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
-    if (result && result.isLoginWithGoogle) {
-      return result
-    }
+    // const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
+    // if (result && result.isLoginWithGoogle) {
+    //   return result
+    // }
     return newuser
   }
 }
