@@ -97,7 +97,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
             </P>
             <Like className="d-flex align-items-baseline">
               <IconComponent name="thumbUp" width="14" height="14" viewBox="0 0 14 14" fill="#0057FF" />
-              <P margin="0" padding="0 0px 0px 5px">
+              <P margin="0" padding="0 0px 0px 5px" id="likes_total">
                 {' '}
                 {user.likeTotal || 0}
               </P>
@@ -145,7 +145,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
                 <Link href="/change-email">Change email</Link>
               </div>
               <div className="d-flex align-items-center justify-content-between mt-3">
-                <P fontSize="16px" margin="5px 0px 0px 20px">
+                <P fontSize="16px" margin="5px 0px 0px 20px" data-testid="phone_number">
                   {user?.phoneNumber ?? '-'}
                 </P>
                 <Link href="/change-phone">Change Phone</Link>

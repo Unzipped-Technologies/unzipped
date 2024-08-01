@@ -267,7 +267,7 @@ const DesktopAccount = ({
   return (
     <Shell>
       <BackHeader title="Account" />
-      <Container>
+      <Container id="profile_data">
         <LeftOne>
           <TitleOne>Membership & Billing</TitleOne>
           <ButtonOne
@@ -283,15 +283,34 @@ const DesktopAccount = ({
         <RightOne>
           <Rows>
             <Item>{userData?.email}</Item>
-            <Link href="/change-email">Change email</Link>
+            <a
+              style={{ color: '#039be5', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/change-email')
+              }}>
+              Change email
+            </a>
           </Rows>
           <Rows>
             <Item>Password: ******</Item>
-            <Link href="/change-password">Change password</Link>
+            <a
+              style={{ color: '#039be5', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/change-password')
+              }}>
+              Change password
+            </a>
           </Rows>
           <Rows>
-            <Item>Phone: {userData?.phoneNumber}</Item>
-            <Link href="/change-phone">Change number</Link>
+            <Item>Phone: {userData?.phoneNumber ?? 'N/A'}</Item>
+
+            <a
+              style={{ color: '#039be5', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/change-phone')
+              }}>
+              Change number
+            </a>
           </Rows>
           <Underline color="#333" />
           <Rows>
@@ -299,11 +318,23 @@ const DesktopAccount = ({
               <img height={20} src={getCardLogoUrl(primaryPM?.card)} />
               <Span>**** **** **** {primaryPM?.lastFour}</Span>
             </Item>
-            <Link href="/manage-payment-method">Manage payment method</Link>
+            <a
+              style={{ color: '#039be5', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/manage-payment-method')
+              }}>
+              Manage payment method
+            </a>
           </Rows>
           <Rows>
             <Item>Your next billing date is </Item>
-            <Link href="/billing-details">Billing details</Link>
+            <a
+              style={{ color: '#039be5', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/billing-details')
+              }}>
+              Billing details
+            </a>
           </Rows>
           <Rows>
             <Item>Balance</Item>
@@ -312,7 +343,13 @@ const DesktopAccount = ({
           <Rows>
             <Item>{stripeAccountId ? '' : 'Withdraw'}</Item>
             {stripeAccountId ? (
-              <Link href="/dashboard/withdrawal/terms">Withdraw Funds</Link>
+              <a
+                style={{ color: '#039be5', cursor: 'pointer' }}
+                onClick={() => {
+                  router.push('/dashboard/withdrawal/terms')
+                }}>
+                Withdraw Funds
+              </a>
             ) : (
               <EditButton onClick={() => fetchAccountOnboardingLink()} data-testid="complete_onboarding_button">
                 Complete Onboarding
@@ -321,18 +358,24 @@ const DesktopAccount = ({
           </Rows>
         </RightOne>
       </Container>
-      <Container border>
+      <Container border id="plan_detail">
         <LeftOne>
           <TitleOne>Plan Details</TitleOne>
         </LeftOne>
         <RightOne>
           <Rows fullHeight>
             <Item>{userData?.email}</Item>
-            <Link href={'/pick-a-plan'}>Change plan</Link>
+            <a
+              style={{ color: '#039be5', cursor: 'pointer' }}
+              onClick={() => {
+                router.push('/pick-a-plan')
+              }}>
+              Change plan
+            </a>
           </Rows>
         </RightOne>
       </Container>
-      <Container border>
+      <Container border id="business_profile">
         <LeftOne>
           <TitleOne>Profile</TitleOne>
         </LeftOne>
