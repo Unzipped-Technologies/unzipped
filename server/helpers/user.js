@@ -99,7 +99,7 @@ const updateUserByid = async (id, data) => {
   try {
     const userData = await getSingleUser({ _id: id }, '-password')
 
-    if (!userData?.freelancers) {
+    if ((data?.role === 1 || data?.role === '1') && !userData?.freelancers) {
       const freelancerData = new freelancer({ userId: userData?._id })
       await freelancerData.save()
       userData['freelancers'] = freelancerData._id
