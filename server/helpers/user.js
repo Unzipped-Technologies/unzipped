@@ -662,10 +662,10 @@ const registerUser = async ({ email, password }) => {
   const hash = await AuthService.bcryptAndHashing(password)
   const newuser = await createUser({ email, password }, hash)
   if (newuser) {
-    // const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
-    // if (result && result.isLoginWithGoogle) {
-    //   return result
-    // }
+    const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
+    if (result && result.isLoginWithGoogle) {
+      return result
+    }
     return newuser
   }
 }
