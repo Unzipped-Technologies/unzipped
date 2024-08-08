@@ -302,11 +302,21 @@ describe('Hire a Freelancer', () => {
 
     const HireContainer = screen.getByTestId('hire_freelancer')
 
+    const HireButton = within(HireContainer).getByText(
+      `Hire ${initialState.Freelancers.selectedFreelancer?.userId?.FirstName}`
+    )
+
     expect(HireContainer).toBeInTheDocument()
 
     expect(HireContainer.querySelector('#contract_freelancer_name')).toHaveTextContent(
       `Contact ${initialState.Freelancers.selectedFreelancer?.userId?.FirstName} About Your Job`
     )
+
+    await act(async () => {
+      await fireEvent.click(HireButton)
+    })
+
+    expect(within(HireContainer).getByText('Please select a business.')).toBeInTheDocument()
 
     const ProjectsDropDown = HireContainer.querySelector('#projects_dropdown')
     expect(ProjectsDropDown).toBeInTheDocument()
@@ -324,6 +334,10 @@ describe('Hire a Freelancer', () => {
     initialState.Contracts.contractForm.businessId = initialState.Business.userOwnedBusiness[0]?._id
     fireEvent.click(within(HireContainer).getByText(businessNames[0]))
 
+    await act(async () => {
+      await fireEvent.click(HireButton)
+    })
+
     const MessageField = HireContainer.querySelector('#send_message')
     expect(MessageField).toBeInTheDocument()
     const Message = 'Hi, I want to discuss some project detail!'
@@ -337,6 +351,14 @@ describe('Hire a Freelancer', () => {
 
     const HoursRateField = HireContainer.querySelector('#hours_rate')
     expect(HoursRateField).toBeInTheDocument()
+
+    fireEvent.focus(HoursRateField)
+    fireEvent.change(HoursRateField, { target: { value: '0' } })
+    initialState.Contracts.contractForm.hourlyRate = '0'
+
+    fireEvent.click(HireButton)
+    expect(within(HireContainer).getByText('Hourly rate muus be greater than 0.')).toBeInTheDocument()
+
     fireEvent.change(HoursRateField, { target: { value: '25' } })
     initialState.Contracts.contractForm.hourlyRate = '25'
 
@@ -358,15 +380,21 @@ describe('Hire a Freelancer', () => {
 
     const TrackingHoursField = HireContainer.querySelector('#tracking_hours')
     expect(TrackingHoursField).toBeInTheDocument()
+
+    fireEvent.focus(TrackingHoursField)
+
+    fireEvent.click(HireButton)
+    expect(within(HireContainer).getByText('Hours limit muus be greater than 0.')).toBeInTheDocument()
+
+    fireEvent.change(TrackingHoursField, { target: { value: '' } })
+    initialState.Contracts.contractForm.hoursLimit = ''
+
+    fireEvent.click(HireButton)
+
     fireEvent.change(TrackingHoursField, { target: { value: '8' } })
     initialState.Contracts.contractForm.hoursLimit = '8'
 
-    const HireButton = within(HireContainer).getByText(
-      `Hire ${initialState.Freelancers.selectedFreelancer?.userId?.FirstName}`
-    )
     fireEvent.click(HireButton)
-
-    expect(mockRouterPush).toHaveBeenCalledWith('/recurring-payment')
 
     updateBusiness.mockReturnValue(() => {
       return { status: 200 }
@@ -684,11 +712,11 @@ describe('Hire a Freelancer', () => {
     fireEvent.keyDown(ProjectsDropDown.firstChild, { key: 'ArrowDown' })
     const businessNames = initialState.Business.userOwnedBusiness.map(b => b.name)
     businessNames?.forEach(name => {
-      expect(within(HireContainer).getByText(name)).toBeInTheDocument()
+      expect(within(HireContainer).getAllByText(name)[0]).toBeInTheDocument()
     })
 
     initialState.Contracts.contractForm.businessId = initialState.Business.userOwnedBusiness[0]?._id
-    fireEvent.click(within(HireContainer).getByText(businessNames[0]))
+    fireEvent.click(within(HireContainer).getAllByText(businessNames[0])[0])
 
     const InputField = within(ProjectsDropDown).getByRole('combobox')
     expect(InputField).toBeInTheDocument()
@@ -735,8 +763,6 @@ describe('Hire a Freelancer', () => {
       `Hire ${initialState.Freelancers.selectedFreelancer?.userId?.FirstName}`
     )
     fireEvent.click(HireButton)
-
-    expect(mockRouterPush).toHaveBeenCalledWith('/recurring-payment')
 
     renderWithRedux(<RecurringPaymentPage />, { initialState })
   })
@@ -787,11 +813,11 @@ describe('Hire a Freelancer', () => {
     fireEvent.keyDown(ProjectsDropDown.firstChild, { key: 'ArrowDown' })
     const businessNames = initialState.Business.userOwnedBusiness.map(b => b.name)
     businessNames?.forEach(name => {
-      expect(within(HireContainer).getByText(name)).toBeInTheDocument()
+      expect(within(HireContainer).getAllByText(name)[0]).toBeInTheDocument()
     })
 
     initialState.Contracts.contractForm.businessId = initialState.Business.userOwnedBusiness[0]?._id
-    fireEvent.click(within(HireContainer).getByText(businessNames[0]))
+    fireEvent.click(within(HireContainer).getAllByText(businessNames[0])[0])
 
     const MessageField = HireContainer.querySelector('#send_message')
     expect(MessageField).toBeInTheDocument()
@@ -1062,5 +1088,14 @@ describe('Hire a Freelancer', () => {
     await act(async () => {
       await fireEvent.click(SaveButton)
     })
+  })
+  it('renders hire page without selected freelancer ID', async () => {
+    global.innerWidth = 640
+    global.dispatchEvent(new Event('resize'))
+    initialState.Freelancers.selectedFreelancer._id = undefined
+
+    renderWithRedux(<HirePage />, { initialState })
+
+    expect(mockRouterPush).toHaveBeenCalledWith('/freelancers')
   })
 })

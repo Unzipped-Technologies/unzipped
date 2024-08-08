@@ -111,7 +111,7 @@ const createContracts = async data => {
     }
     return savedContract
   } catch (e) {
-    throw Error(`Something went wrong: ${e.message}`)
+    throw Error(`${e?.message ?? 'Something went wrong'}`)
   }
 }
 

@@ -44,7 +44,7 @@ export const createContract = data => async (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: CONTRACT_ERROR,
-        payload: err.response
+        payload: err.response?.data?.msg ?? 'Something went wrong!'
       })
     })
   dispatch(stopLoading())

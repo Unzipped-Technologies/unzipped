@@ -37,7 +37,7 @@ import {
   updateBusiness,
   createPaymentMethod
 } from '../../../redux/actions'
-
+import { Error } from '../hire/hire'
 const Content = styled.div`
   width: 953px;
   margin: 30px;
@@ -49,6 +49,7 @@ const RecurringPaymentComponent = ({
   plans,
   plan,
   user,
+  contractError,
   paymentDate,
   getActiveContractsForUser,
   getUnpaidInvoices,
@@ -176,6 +177,7 @@ const RecurringPaymentComponent = ({
             </div>
             <div style={{ marginTop: '10px' }}>
               <UpdatePaymentButton onClick={onSubmit}>update payment terms</UpdatePaymentButton>
+              {contractError && <Error>{contractError}</Error>}
             </div>
             <PaymentDetailNote>
               <ConfirmationText>
@@ -200,6 +202,7 @@ const mapStateToProps = state => {
     token: state.Auth.token,
     user: state.Auth.user,
     error: state.Auth.error,
+    contractError: state.Contracts.error,
     paymentMethods: state.Stripe.methods,
     activeContracts: state.Contracts.activeContracts,
     plan: state.Auth.user.plan,

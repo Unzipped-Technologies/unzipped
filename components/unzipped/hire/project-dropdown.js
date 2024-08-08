@@ -21,13 +21,23 @@ const SelectStyled = styled(Select)`
 
 const ProjectDropdown = ({ getProjectsList, userBusinessList, onChange, value }) => {
   const [projectList, setProjectList] = useState([])
+  const [currentValue, setValue] = useState(null)
   const [isSmallWindow, setIsSmallWindow] = useState(false)
 
   const { width } = useWindowSize()
+
   useEffect(() => {
     const project = userBusinessList?.map(item => ({ value: item._id, label: item.name }))
     setProjectList(project)
   }, [userBusinessList])
+
+  useEffect(() => {
+    if (projectList?.length) {
+      const project = projectList.find(item => item.value === value)
+      project?.value && setValue(project)
+      !project && setValue(null)
+    }
+  }, [value, projectList])
 
   const handleSearchChangeEvent = e => {
     onChange && onChange(e?.value)
@@ -44,13 +54,12 @@ const ProjectDropdown = ({ getProjectsList, userBusinessList, onChange, value })
   useEffect(() => {
     getProjectsList({ filter: { name: '' } })
   }, [])
-
   return (
     <Container>
       <SelectStyled
         id="projects_dropdown"
         classNamePrefix="select"
-        defaultValue={value}
+        value={currentValue}
         isDisabled={false}
         isClearable={true}
         isSearchable={true}

@@ -40,13 +40,14 @@ const Contracts = (state = INIT_STATE, action = {}) => {
       return {
         ...state,
         loading: false,
+        error: '',
         contractForm: { ...CONTRACT_FORM }
       }
     case UPDATE_CONTRACT:
       const RemoveUpdateContract = state.contracts.filter(item => item.id !== action.payload.id)
       return { ...state, loading: false, contracts: [action.payload, ...RemoveUpdateContract] }
     case GET_ACTIVE_CONTRACTS:
-      return { ...state, loading: false, activeContracts: action.payload }
+      return { ...state, loading: false, activeContracts: action.payload, error: '' }
     case DELETE_CONTRACT:
       let newListContracts = state.contracts.filter(item => action.payload.id !== item.id)
       return { ...state, loading: false, contracts: [...newListContracts] }

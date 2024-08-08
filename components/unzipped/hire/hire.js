@@ -227,6 +227,14 @@ const ButtonContainer = styled.div`
   }
 `
 
+export const Error = styled.p`
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding-top: 2px;
+  color: #d13823;
+`
+
 const HireComp = ({
   name,
   token,
@@ -242,20 +250,19 @@ const HireComp = ({
   hoursLimit,
   currency,
   message,
-  jobType
+  jobType,
+  form
 }) => {
   // const dispatch = useDispatch()
   // const projects = useSelector(state => state.Business.projectList)
   const router = useRouter()
-  const [selectCurrency, setSelectCurrency] = useState('USD')
-  const [projectList, setProjectList] = useState([])
   const [isSmallWindow, setIsSmallWindow] = useState(false)
+  const [errors, setError] = useState({
+    businessId: '',
+    hourlyRate: '',
+    hoursLimit: ''
+  })
   const isSmall = useWindowSize(680)
-
-  useEffect(() => {
-    const project = userOwnedBusiness.map(item => ({ value: item.name, label: item.name }))
-    setProjectList(project)
-  }, [userOwnedBusiness])
 
   useEffect(() => {
     if (isSmall) {
@@ -270,12 +277,37 @@ const HireComp = ({
   }, [])
 
   useEffect(() => {
+    if (!freelancerId) {
+      router.push('/freelancers')
+    }
     updateContractForm({ freelancerId: freelancerId })
     updateContractForm({ userId: userId })
   }, [freelancerId])
 
-  const updateForm = data => updateContractForm({ ...data })
+  const updateForm = data => {
+    updateContractForm({ ...data })
+    const key = Object.keys({ ...data })[0]
+    if (data[key] !== null && data[key] !== '') {
+      setError({ ...errors, [key]: '' })
+    }
+  }
 
+  const hireFreelancr = () => {
+    if (form?.businessId == null || form?.businessId === '') {
+      setError({ ...errors, businessId: 'Please select a business.' })
+      return
+    }
+    if (form?.hourlyRate == null || form?.hourlyRate === '' || form?.hourlyRate <= 0) {
+      setError({ ...errors, hourlyRate: 'Hourly rate muus be greater than 0.' })
+      return
+    }
+    if (form?.hoursLimit == null || form?.hoursLimit === '' || form?.hoursLimit <= 0) {
+      setError({ ...errors, hoursLimit: 'Hours limit muus be greater than 0.' })
+      return
+    }
+
+    router.push('/recurring-payment')
+  }
   return (
     <HireWrapper data-testid="hire_freelancer">
       <BackHeader title="Confirm Payment Details" />
@@ -291,6 +323,7 @@ const HireComp = ({
               updateForm({ businessId: value })
             }}
           />
+          {errors.businessId && <Error>{errors.businessId}</Error>}
           <Label>Send a private message</Label>
           <TextareaField
             onChange={e => {
@@ -349,6 +382,8 @@ const HireComp = ({
               </Select>
             </div>
           </HourlyRateStyled>
+          {errors.hourlyRate && <Error>{errors.hourlyRate}</Error>}
+
           <Label>weekly tracking limit (limit 40)</Label>
 
           <MiddleContent>
@@ -362,10 +397,16 @@ const HireComp = ({
             />
             <Span>hours / week</Span>
           </MiddleContent>
+          {errors.hoursLimit && <Error>{errors.hoursLimit}</Error>}
         </ContentContainer>
         <ButtonContainer>
           <HireButton>
-            <ButtonText onClick={() => router.push('/recurring-payment')}>Hire {name ? name : ''}</ButtonText>
+            <ButtonText
+              onClick={() => {
+                hireFreelancr()
+              }}>
+              Hire {name ? name : ''}
+            </ButtonText>
           </HireButton>
         </ButtonContainer>
       </HireInputContainer>
@@ -385,7 +426,8 @@ const mapStateToProps = state => {
     currency: state.Contracts.contractForm.currency,
     hourlyRate: state.Contracts.contractForm.hourlyRate,
     hoursLimit: state.Contracts.contractForm.hoursLimit,
-    jobType: state.Contracts.contractForm.jobType
+    jobType: state.Contracts.contractForm.jobType,
+    form: state.Contracts.contractForm
   }
 }
 

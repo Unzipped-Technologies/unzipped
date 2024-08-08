@@ -341,7 +341,9 @@ const getUnpaidInvoices = async query => {
       filters.departmentId = mongoose.Types.ObjectId(query.departmentId)
     }
     const completedInvoices = await Invoice.find()
-    return completedInvoices.filter(item => item.clientId === filters.clientId)
+    return completedInvoices.filter(
+      item => item.clientId.toString() === filters.clientId.toString() && item.status !== 'paid'
+    )
   } catch (e) {
     throw new Error(`Could not get unpaid invoices, error: ${e.message}`)
   }
