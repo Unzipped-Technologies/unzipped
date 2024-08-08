@@ -452,10 +452,10 @@ const Nav = ({
   margin,
   zIndex,
   isLogoHidden,
-  setIsViewable,
+  setIsViewable = () => {},
   listName,
-  setListName,
-  setIsLogoHidden,
+  setListName = () => {},
+  setIsLogoHidden = () => {},
   isListViewable,
   setIsListViewable,
   onBackArrowClick,
@@ -682,6 +682,7 @@ const Nav = ({
                 setIsViewable(false)
                 setListName('')
                 setIsLogoHidden(false)
+                router.back()
               }}>
               {!isListViewable && <BackArrow />}
             </div>

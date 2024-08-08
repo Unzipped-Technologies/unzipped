@@ -14,7 +14,8 @@ import {
   ADD_ENTRIES_TO_LIST,
   ADD_ENTRIES_TO_LIST_ERROR,
   GET_CURRENT_USER_LIST_ERROR,
-  GET_CURRENT_USER_LIST
+  GET_CURRENT_USER_LIST,
+  ON_SELECTED_LIST
 } from './constant'
 import axios from 'axios'
 import { startLoading, stopLoading } from '../Loading/actions'
@@ -165,4 +166,31 @@ const getCurrentUserList = userId => async (dispatch, getState) => {
   dispatch(stopLoading())
 }
 
-export { createList, updateList, deleteList, setLitItemsAction, addEntriesToList, getInvitesLists, getCurrentUserList }
+const getListByid = listId => async (dispatch, getState) => {
+  dispatch(startLoading())
+  try {
+    const response = await axios.get(`/api/list/${listId}`, tokenConfig(getState()?.Auth.token))
+    dispatch({
+      type: ON_SELECTED_LIST,
+      payload: response.data
+    })
+  } catch (error) {
+    dispatch({
+      type: GET_CURRENT_USER_LIST_ERROR,
+      payload: error.response
+    })
+  }
+
+  dispatch(stopLoading())
+}
+
+export {
+  createList,
+  updateList,
+  deleteList,
+  setLitItemsAction,
+  addEntriesToList,
+  getInvitesLists,
+  getCurrentUserList,
+  getListByid
+}
