@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Image from '../../ui/Image'
-import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
 import { useRouter } from 'next/router'
-import { TitleText, DarkText, Absolute, DarkSpan } from './style'
+import { DarkText, Absolute, TEXT } from './style'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
@@ -12,6 +11,7 @@ import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
 const Container = styled.div`
   display: flex;
   flex-flow: row;
+  width: inherit;
   padding: ${({ includeRate }) => (includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px')};
   border-radius: 5px;
   border: 1px solid #d9d9d9;
@@ -54,13 +54,6 @@ const SpanStyled = styled.span`
   margin-left: 10px;
   display: block;
 `
-
-const DIV = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 70%;
-  max-width: 500px;
-`
 const FreelancerListingCard = ({ user, includeRate, width }) => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -74,55 +67,43 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
     const listObj = userLists?.find(list => list.name === 'Recently Viewed')
 
     dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
-    if (user?.id) {
-      router.push(`/freelancers/${user.id}`)
-    }
+    user?.id && router.push(`/freelancers/${user.id}`)
   }
 
   useEffect(() => {
-    if (user?.cover) {
-      setIsSmallText(user?.cover.length > 240 ? true : false)
-      setIsTextHidden(true)
-    }
+    setIsSmallText(user?.cover.length > 240 ? true : false)
+    setIsTextHidden(true)
   }, [user])
 
   return (
-    <Container includeRate={includeRate}>
+    <Container includeRate={includeRate} data-testid={user?.itemId + '_entry'}>
       <Left>
-        <Image src={user.profilePic} alt={user.name + ' profile'} height="94px" width="94px" radius="50%" />
-        <Button margin="20px 0px" type={!user.isInvited ? '#D9D9D9' : '#37DEC5'} noBorder>
-          {user.isInvited ? 'Invited' : 'Invite'}
-        </Button>
+        <Image src={user?.profilePic} alt={user?.name + ' profile'} height="94px" width="94px" radius="50%" />
       </Left>
-      <Right includeRate={includeRate}>
-        <TitleText width={'max-content'} half color="#0057FF" onClick={redirectToProfile}>
+      <Right minWidth={width} includeRate={includeRate}>
+        <TEXT textColor="#0057FF" onClick={redirectToProfile} id="freelancer_name">
           {user?.name}
-        </TitleText>
-        <TitleText width={'max-content'} half color="#000" onClick={redirectToProfile}>
+        </TEXT>
+        <TEXT textColor="#000" onClick={redirectToProfile} id="freelancer_category">
           {user?.category}
-        </TitleText>
-        <TitleText width={'max-content'} noMargin>
-          {user.type}
-        </TitleText>
-        <DIV>
-          <div>{user?.country ? <span>{user.country}</span> : <span>-</span>}</div>
-          <div
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '2px', width: '200px' }}>
+        </TEXT>
+        <TEXT>{user?.type}</TEXT>
+        <div style={{ display: 'flex', width: '100%' }}>
+          <div>{user?.country && <span id="freelancer_country">{user?.country}</span>}</div>
+          <div style={{ marginLeft: '175px' }} id="freelancer_rate">
             <span>Estimated Rate:</span>
             <RateTextStyled> $ {user?.rate}</RateTextStyled> / hour
           </div>
-        </DIV>
+        </div>
 
-        <div style={{ display: 'flex' }}>
+        <div style={{ width: '82%', display: 'flex' }} id="freelancer_cover">
           {user?.cover && (
-            <DarkText topMargin="10px" width="auto">
-              <b style={{ fontSize: '11px', fontWeight: '800', paddingRight: '5px', lineHeight: '21px' }}>
-                Cover letter:
-              </b>
+            <DarkText topMargin="10px">
+              <strong>cover letter: </strong>
               {isTextHidden ? (
                 <>
                   <div style={{ display: 'flex' }}>
-                    <div>{user.cover.substring(0, 240)}</div>
+                    <div>{user?.cover?.substring(0, 240)}</div>
                   </div>
                   {isSmallText && (
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -159,27 +140,29 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
             </DarkText>
           )}
         </div>
-        {user.skills?.length > 0 && user.skills.map((item, index) => <Badge key={index}>{item}</Badge>)}
+        {user?.skills?.length > 0 && user.skills.map((item, index) => <Badge key={index}>{item}</Badge>)}
       </Right>
 
       <Absolute>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div>
             <button
+              role="button"
               style={{
                 padding: '8px 22px',
                 color: '#000',
                 borderRadius: '25px',
                 border: 0,
-                background: '#8EDE64',
-                marginLeft: '10px'
+                background: '#8EDE64'
               }}
               onClick={redirectToProfile}>
               View Profile
             </button>
           </div>
           <div style={{ marginTop: '15px' }}>
-            <span>{`${user.likes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}  Upvotes by clients `}</span>
+            <span id="freelancer_votes">{`${
+              user?.likes?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') ?? 0
+            } Upvotes by clients`}</span>
           </div>
         </div>
       </Absolute>
