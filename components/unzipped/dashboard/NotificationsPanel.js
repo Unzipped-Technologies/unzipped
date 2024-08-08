@@ -30,6 +30,7 @@ const NotificationsPanel = ({
   passwordChanged,
   calenderSuccess
 }) => {
+
   const dispatch = useDispatch()
   const [initialUrl] = useState(url)
 
@@ -70,7 +71,7 @@ const NotificationsPanel = ({
   }
 
   const verifyIdentity = () => {
-    getVerifyIdentityUrl(token)
+    getVerifyIdentityUrl(user?._id)
   }
 
   return (

@@ -87,6 +87,10 @@ const Reset = ({ token, paymentMethods, getPaymentMethods, deletePaymentMethods 
         getPaymentMethods(token)
     }, [])
 
+    useEffect(() => {
+        if(!token) router.push('/login')
+    }, [])
+
     const getCardLogoUrl = (cardType) => {
         const brand = Object.keys(stripeBrandsEnum).find(key => stripeBrandsEnum[key] === cardType);
         return stripeLogoEnum[brand];

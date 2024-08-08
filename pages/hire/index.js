@@ -1,5 +1,5 @@
 
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import Nav from '../../components/unzipped/header';
 import Head from 'next/head';
 import HireComp from '../../components/unzipped/hire/hire';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { parseCookies } from "../../services/cookieHelper";
+import { useRouter } from 'next/router';
 
 const Container = styled.div`
     display: flex;
@@ -18,8 +19,15 @@ const NavContainer = styled.div`
         display: none;
     }
 `
-const HirePage = ({token}) => {
+const HirePage = ({ token }) => {
     const [marginBottom, setMarginBottom] = useState('0px');
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!token) {
+            router.push('/login')
+        }
+    }, [])
 
     useEffect(()=>{
         const handleResize = () => {
@@ -45,7 +53,7 @@ const HirePage = ({token}) => {
     return (
         <Container>
             <NavContainer>
-                <Nav marginBottom={marginBottom} token={token}/>
+                <Nav marginBottom={marginBottom} token={token} />
             </NavContainer>
             <Head>
                 <title>Hire | Freelancer</title>
@@ -58,11 +66,11 @@ const HirePage = ({token}) => {
 
 HirePage.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
-    
-      return {
+
+    return {
         token: token && token,
-      }
     }
+}
 
 const mapStateToProps = (state) => {
     return {
@@ -72,7 +80,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-    //   changePassword: bindActionCreators(changePassword, dispatch),
+        //   changePassword: bindActionCreators(changePassword, dispatch),
     }
 }
 

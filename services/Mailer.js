@@ -119,7 +119,7 @@ const sendMailWithSG = async params => {
 
     return await sgMail.send(msg)
   } catch (error) {
-    throw new Error(error.message)
+    throw new Error(`SengGrid email processing failed, ${error.message}`)
   }
 }
 

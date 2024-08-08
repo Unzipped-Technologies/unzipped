@@ -156,6 +156,12 @@ const Chat = ({
   // Sockets
 
   useEffect(() => {
+    if(!token) {
+      router.push('/login')
+    }
+  }, [])
+
+  useEffect(() => {
     socket.on('typing', typingData => {
       setTyping(typingData)
     })
