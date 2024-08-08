@@ -217,17 +217,13 @@ router.post(
   }
 )
 
-router.get("/user-owned-business/:userId",
-  async (req, res) => {
-    try {
-      const businesses = await businessHelper
-        .getBusinessCreatedByUser(
-          req.params.userId
-        )
-      res.json(businesses)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
+router.get('/user-owned-business/:userId', async (req, res) => {
+  try {
+    const businesses = await businessHelper.getBusinessCreatedByUser(req.params.userId)
+    res.json(businesses)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
 })
 
 module.exports = router

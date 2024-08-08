@@ -7,8 +7,22 @@ import {
   DELETE_CONTRACT,
   LOAD_STATE,
   SUCCESS,
-  CONTRACT_ERROR
+  CONTRACT_ERROR,
+  UPDATE_CONTRACT_FORM,
+  RESET_CONTRACT_FORM
 } from './constants'
+
+const CONTRACT_FORM = {
+  businessId: '',
+  departmentId: '',
+  freelancerId: '',
+  userId: '',
+  currency: 'USD',
+  hourlyRate: 0,
+  hoursLimit: 0,
+  message: '',
+  jobType: ''
+}
 
 const INIT_STATE = {
   contracts: [],
@@ -16,7 +30,8 @@ const INIT_STATE = {
   activeContracts: [],
   error: '',
   loading: false,
-  totalCount: 0
+  totalCount: 0,
+  contractForm: { ...CONTRACT_FORM }
 }
 
 const Contracts = (state = INIT_STATE, action = {}) => {
@@ -25,7 +40,7 @@ const Contracts = (state = INIT_STATE, action = {}) => {
       return {
         ...state,
         loading: false,
-        contract: [...state.contract]
+        contractForm: { ...CONTRACT_FORM }
       }
     case UPDATE_CONTRACT:
       const RemoveUpdateContract = state.contracts.filter(item => item.id !== action.payload.id)
@@ -62,6 +77,14 @@ const Contracts = (state = INIT_STATE, action = {}) => {
       return { ...state, loading: true }
     case LOAD_STATE:
       return { ...state, loading: true }
+    case UPDATE_CONTRACT_FORM:
+      return {
+        ...state,
+        loading: false,
+        contractForm: { ...state.contractForm, ...action.payload }
+      }
+    case RESET_CONTRACT_FORM:
+      return { ...state, loading: false, contractForm: { ...CONTRACT_FORM } }
     default:
       return state
   }

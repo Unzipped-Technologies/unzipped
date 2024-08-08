@@ -131,9 +131,9 @@ export const updateBusiness = data => async (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: BUSINESS_ERROR,
-        payload: err.response
+        payload: err.response ?? 'Something went wrong!'
       })
-      return err?.response
+      return err?.response ?? 'Something went wrong!'
     })
   dispatch(stopLoading())
   return response
@@ -262,7 +262,10 @@ export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState
   try {
     await dispatch(startLoading())
 
-    const apiResponse = await axios.get(`/api/business/user-owned-business/${userId}`, tokenConfig(getState()?.Auth.token));
+    const apiResponse = await axios.get(
+      `/api/business/user-owned-business/${userId}`,
+      tokenConfig(getState()?.Auth.token)
+    )
     if (apiResponse?.status === 200) {
       dispatch({
         type: GET_BUSINESS_CREATED_BY_USER_SUCCESS,
@@ -277,5 +280,4 @@ export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState
     })
     await dispatch(stopLoading())
   }
-
 }

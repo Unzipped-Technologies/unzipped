@@ -6,7 +6,7 @@ import Image from '../ui/Image'
 import Button from '../ui/Button'
 import FormField from '../ui/FormField'
 import useWindowSize from '../ui/hooks/useWindowSize'
-import { DarkText, TitleText, WhiteCard, Absolute, Grid2, Grid3 } from './dashboard/style'
+import { DarkText, TitleText, WhiteCard, Absolute, Grid2, Grid3, TEXT } from './dashboard/style'
 
 const Container = styled.div`
   margin: 0px 0px 0px 0px;
@@ -23,24 +23,46 @@ const Span = styled.div`
   width: 200px;
 `
 
-const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription, onClick }) => {
+const BusinessAddress = ({ selectedBusiness, onClick }) => {
+  const { width } = useWindowSize()
   const isMobile = window.innerWidth > 680 ? false : true
 
   const [isBusinessAddress, setIsBusinessAddress] = useState(false)
   const [isUpdated, setIsUpdated] = useState(false)
+
   const [isLoading, setIsLoading] = useState(false)
   const [isSmallWindow, setIsSmallWindow] = useState(false)
-  const { width } = useWindowSize()
+  const [error, setError] = useState('')
+  const [address, setBusinessAddress] = useState({
+    businessAddressLineOne: '',
+    businessAddressLineTwo: '',
+    businessCountry: '',
+    businessFirstName: '',
+    businessLastName: '',
+    businessCity: '',
+    businessState: '',
+    businessZip: '',
+    businessPhone: '',
+    listId: ''
+  })
 
-  const businessAddressUpdate = () => {
-    onClick && onClick()
-    setIsBusinessAddress(false)
-    setIsUpdated(true)
-    setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 750)
-  }
+  useEffect(() => {
+    if (selectedBusiness?._id) {
+      setBusinessAddress(prevState => ({
+        ...prevState,
+        listId: selectedBusiness?._id,
+        businessAddressLineOne: selectedBusiness?.businessAddressLineOne ?? '',
+        businessAddressLineTwo: selectedBusiness?.businessAddressLineTwo ?? '',
+        businessCountry: selectedBusiness?.businessCountry ?? '',
+        businessFirstName: selectedBusiness?.businessFirstName ?? '',
+        businessLastName: selectedBusiness?.businessLastName ?? '',
+        businessCity: selectedBusiness?.businessCity ?? '',
+        businessState: selectedBusiness?.businessState ?? '',
+        businessZip: selectedBusiness?.businessZip ?? '',
+        businessPhone: selectedBusiness?.businessPhone ?? ''
+      }))
+    }
+  }, [selectedBusiness])
 
   useEffect(() => {
     if (width <= 680) {
@@ -50,71 +72,95 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
     }
   }, [width])
 
+  const updateField = (field, value) => {
+    setBusinessAddress({ ...address, [field]: value })
+  }
+  const businessAddressUpdate = async () => {
+    setIsLoading(true)
+    const response = onClick && (await onClick(address))
+    if (!response || response?.status !== 200) {
+      setError(response?.data?.msg ?? 'Something went wrong!')
+    } else {
+      setIsBusinessAddress(false)
+      setIsUpdated(true)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 500)
+    }
+  }
+
   return (
-    <Container data-testid="business_address">
+    <Container>
       {isBusinessAddress ? (
-        <WhiteCard height="650px" padding="0px">
+        <WhiteCard height="650px" padding="0px" data-testid="business_address">
           <TitleText size="22px" paddingTop={isMobile ? '10px' : '20px'} paddingLeft={isMobile ? '10px' : '0px'}>
             Business Address
           </TitleText>
           <DarkText>Used on customer order confirmations and your Unzipped bill.</DarkText>
+
           <form style={{ padding: '20px' }}>
+            {error && (
+              <TEXT textColor="red" textAlign="left">
+                {error}
+              </TEXT>
+            )}
             <FormField
               fieldType="input"
+              id="businessCountry"
               fontSize="12px"
-              id="country"
-              margin="10px 0px 0px 0px"
+              margin="0px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
               width={isSmallWindow ? '100%' : '90%'}
               placeholder={'COUNTRY/REGION'}
-              onChange={e => updateSubscription({ BusinessAddressLineCountry: e.target.value })}
-              value={form?.BusinessAddressLineCountry}>
+              onChange={e => updateField('businessCountry', e.target.value)}
+              value={address.businessCountry}>
               COUNTRY/REGION
             </FormField>
+
             <Grid2 margin="0px 20px 10px 0px" block>
               <FormField
                 fieldType="input"
-                id="firstName"
+                id="businessFirstName"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
                 width={isSmallWindow ? '100%' : '80%'}
                 placeholder={'First Name'}
-                onChange={e => updateSubscription({ BusinessFirstName: e.target.value })}
-                value={form?.BusinessFirstName}>
+                onChange={e => updateField('businessFirstName', e.target.value)}
+                value={address.businessFirstName}>
                 FIRST NAME
               </FormField>
               <FormField
                 fieldType="input"
                 fontSize="12px"
-                id="lastName"
+                id="businessLastName"
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
                 width={isSmallWindow ? '100%' : '80%'}
                 placeholder={'Last Name'}
-                onChange={e => updateSubscription({ BusinessLastName: e.target.value })}
-                value={form?.BusinessLastName}>
+                onChange={e => updateField('businessLastName', e.target.value)}
+                value={address.businessLastName}>
                 LAST NAME
               </FormField>
             </Grid2>
             <FormField
               fieldType="input"
-              id="address"
+              id="businessAddressLineOne"
               fontSize="12px"
               margin="0px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
               width={isSmallWindow ? '100%' : '90%'}
               placeholder={'Address'}
-              onChange={e => updateSubscription({ BusinessAddressLineOne: e.target.value })}
-              value={form?.BusinessAddressLineOne}>
+              onChange={e => updateField('businessAddressLineOne', e.target.value)}
+              value={address.businessAddressLineOne}>
               ADDRESS
             </FormField>
             <FormField
-              id="appartment"
+              id="businessAddressLineTwo"
               fieldType="input"
               fontSize="12px"
               margin="10px 0px 0px 0px"
@@ -122,13 +168,13 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
               border="1px solid #000000"
               width={isSmallWindow ? '100%' : '90%'}
               placeholder={'Appartment, suite, etc.'}
-              onChange={e => updateSubscription({ BusinessAddressLineTwo: e.target.value })}
-              value={form?.BusinessAddressLineTwo}>
+              onChange={e => updateField('businessAddressLineTwo', e.target.value)}
+              value={address.businessAddressLineTwo}>
               APPARTMENT, SUITE, ETC.
             </FormField>
             <Grid3 margin="0px 10px 10px 0px" block>
               <FormField
-                id="city"
+                id="businessCity"
                 fieldType="input"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
@@ -136,12 +182,12 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                 border="1px solid #000000"
                 width={isSmallWindow ? '100%' : '70%'}
                 placeholder={'City'}
-                onChange={e => updateSubscription({ BusinessAddressCity: e.target.value })}
-                value={form?.BusinessAddressCity}>
+                onChange={e => updateField('businessCity', e.target.value)}
+                value={address.businessCity}>
                 CITY
               </FormField>
               <FormField
-                id="state"
+                id="businessState"
                 fieldType="input"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
@@ -149,12 +195,12 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                 border="1px solid #000000"
                 width={isSmallWindow ? '100%' : '70%'}
                 placeholder={'State'}
-                onChange={e => updateSubscription({ BusinessAddressState: e.target.value })}
-                value={form?.BusinessAddressState}>
+                onChange={e => updateField('businessState', e.target.value)}
+                value={address.businessState}>
                 STATE
               </FormField>
               <FormField
-                id="zipCode"
+                id="businessZip"
                 fieldType="input"
                 fontSize="12px"
                 margin="10px 0px 0px 0px"
@@ -162,13 +208,13 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
                 border="1px solid #000000"
                 placeholder={'Zip Code'}
                 width={isSmallWindow ? '100%' : '65%'}
-                onChange={e => updateSubscription({ BusinessAddressZip: e.target.value })}
-                value={form?.BusinessAddressZip}>
+                onChange={e => updateField('businessZip', e.target.value)}
+                value={address.businessZip}>
                 ZIP CODE
               </FormField>
             </Grid3>
             <FormField
-              id="phone"
+              id="businessPhone"
               fieldType="input"
               fontSize="12px"
               margin="0px 0px 0px 0px"
@@ -176,8 +222,8 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
               border="1px solid #000000"
               width={isSmallWindow ? '100%' : '90%'}
               placeholder={'Phone'}
-              onChange={e => updateSubscription({ BusinessAddressPhone: e.target.value })}
-              value={form?.BusinessAddressPhone}>
+              onChange={e => updateField('businessPhone', e.target.value)}
+              value={address.businessPhone}>
               PHONE
             </FormField>
             <ButtonContainer>
@@ -190,26 +236,32 @@ const BusinessAddress = ({ form, planCost, subscriptionForm, updateSubscription,
       ) : (
         <WhiteCard
           onClick={() => {
-            setIsUpdated(false)
             setIsBusinessAddress(true)
           }}>
           <TitleText size="22px" paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
             Business address
           </TitleText>
           <Absolute top={!isLoading ? '12px' : '18px'}>
-            {isUpdated && isLoading && <CircularProgress size={24} />}
+            {isLoading && <CircularProgress data-testid="loading_spinner" size={24} />}
+
             {isUpdated && !isLoading && (
               <Image
                 src="https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png"
                 alt="success"
                 height="34px"
                 width="34px"
-                id="done_image"
+                id="adress_done_image"
               />
             )}
-            {!isUpdated && (
-              <Button type="outlineInverse" small onClick={() => setIsBusinessAddress(true)}>
-                Add
+
+            {!isUpdated && !isLoading && (
+              <Button
+                id="address_update_button"
+                disabled={isLoading}
+                type="outlineInverse"
+                small
+                onClick={() => setIsBusinessAddress(true)}>
+                {selectedBusiness?._id ? 'Update' : 'Add'}
               </Button>
             )}
           </Absolute>

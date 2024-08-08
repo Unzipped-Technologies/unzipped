@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const Invoice = require('../models/Invoice')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
@@ -340,7 +341,7 @@ const getUnpaidInvoices = async query => {
       filters.departmentId = mongoose.Types.ObjectId(query.departmentId)
     }
     const completedInvoices = await Invoice.find()
-    return completedInvoices.filter(item => item.clientId === filters.clientId.toString() && !item.isPaid)
+    return completedInvoices.filter(item => item.clientId === filters.clientId)
   } catch (e) {
     throw new Error(`Could not get unpaid invoices, error: ${e.message}`)
   }

@@ -7,12 +7,28 @@ import {
   GET_ACTIVE_CONTRACTS,
   LOAD_STATE,
   SUCCESS,
-  CONTRACT_ERROR
+  CONTRACT_ERROR,
+  UPDATE_CONTRACT_FORM,
+  RESET_CONTRACT_FORM
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
 import { startLoading, stopLoading } from '../Loading/actions'
 import { ConverterUtils } from '../../utils'
+
+export const updateContractForm = data => async dispatch => {
+  dispatch({
+    type: UPDATE_CONTRACT_FORM,
+    payload: data
+  })
+}
+
+export const resetContractForm = () => async dispatch => {
+  dispatch({
+    type: RESET_CONTRACT_FORM,
+    payload: null
+  })
+}
 
 export const createContract = data => async (dispatch, getState) => {
   dispatch(startLoading())
@@ -81,13 +97,13 @@ export const getContractById = contractID => async (dispatch, getState) => {
 
 export const getActiveContractsForUser = () => async (dispatch, getState) => {
   dispatch(startLoading())
-
+  console.log('fetching...')
   await axios
     .get(`/api/contract/current?limit=all&isActive=true`, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: GET_ACTIVE_CONTRACTS,
-        payload: res.data
+        payload: res.data.data
       })
     )
     .catch(err => {

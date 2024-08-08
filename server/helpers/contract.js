@@ -21,11 +21,23 @@ const createContracts = async data => {
     const businessData = await getBusinessWithoutPopulate(businessId, '')
     if (!businessData) throw new Error(`Business not exist.`)
 
+    let departmentData = null
     // Check whether the department against departmentId exist OR not
-    const departmentData = await getDepartmentWithoutPopulate({ _id: departmentId }, '')
-    if (!departmentData) throw new Error(`Department not exist.`)
+    if (departmentId) {
+      departmentData = await getDepartmentWithoutPopulate({ _id: departmentId }, '')
+      if (!departmentData) throw new Error(`Department not exist.`)
+    } else {
+      departmentData = await getDepartmentWithoutPopulate({
+        businessId: businessId,
+        name: 'Management',
+        clientId: userId
+      })
+      if (!departmentData) throw new Error(`Department not exist.`)
+      data['departmentId'] = departmentData?._id
+    }
 
-    if (!businessData.departments?.includes(departmentId)) throw new Error(`Department not exist in this business.`)
+    if (!businessData.departments?.includes(departmentData?._id))
+      throw new Error(`Department not exist in this business.`)
 
     const existingPaymentMethod = await PaymentMethod.findOne({
       userId: userId
@@ -35,7 +47,7 @@ const createContracts = async data => {
     }
     const existingContract = await Contracts.findOne({
       businessId: businessId,
-      departmentId: departmentId,
+      departmentId: departmentData?._id,
       freelancerId: freelancerId
     })
 
