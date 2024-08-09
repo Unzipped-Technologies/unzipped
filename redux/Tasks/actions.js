@@ -21,6 +21,7 @@ import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
 import { startLoading, stopLoading } from '../Loading/actions'
 import { ConverterUtils } from '../../utils'
+import { getProjectsList } from '../Business/actions'
 
 export const createTask = data => async (dispatch, getState) => {
   dispatch(startLoading())
@@ -252,4 +253,16 @@ export const restTagsList = () => (dispatch, getState) => {
   dispatch({
     type: REST_TAGS_LIST,
   })
+}
+
+export const updateTaskAssignee = (taskId, data) => async (dispatch, getState) => {
+
+  dispatch({ type: LOAD_STATE })
+
+  await axios
+    .patch(`/api/tasks/update-task-status-on-drag/${taskId}`,
+      data,
+      tokenConfig(getState()?.Auth.token)
+    )
+
 }
