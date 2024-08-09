@@ -33,7 +33,8 @@ import {
   UPDATE_USER_ERROR,
   HIDE_AUTH_NOTIFICATION,
   USER_MAIL_CONFIRMATION,
-  UPDATE_PHONE_NUMBER
+  UPDATE_PHONE_NUMBER,
+  HANDLE_USER_EMAIL_REG_ERR
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -69,7 +70,8 @@ const INIT_STATE = {
     taxEIN: '',
     socialSecurityNumber: '',
     businessType: '',
-    stage: 1
+    stage: 1,
+    isAccountDetailCompleted: false
   },
   loading: false,
   error: { data: '' },
@@ -342,6 +344,11 @@ const Auth = (state = INIT_STATE, action) => {
       return {
         ...state,
         userMailConfirmation: action.payload,
+        loading: false
+      }
+    case HANDLE_USER_EMAIL_REG_ERR:
+      return {
+        ...state,
         loading: false
       }
     default:

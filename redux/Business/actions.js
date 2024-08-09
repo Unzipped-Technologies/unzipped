@@ -67,7 +67,7 @@ export const getBusinessDetails = userId => async (dispatch, getState) => {
   const id = userId || getState().Auth.user._id
   dispatch({ type: LOAD_STATE })
   await axios
-    .post(`/api/business/details`, { userId: id }, tokenConfig(getState()?.Auth.token))
+    .post(`/api/business/details`, { userId: getState().Auth.user._id }, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: GET_BUSINESS_DETAILS,

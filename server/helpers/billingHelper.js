@@ -527,7 +527,7 @@ const getUserAccountById = async userId => {
   if (user && user.stripeAccountId) {
     return await retreiveAccountInfo(user.stripeAccountId)
   }
-  throw new Error(`Account not exist.`)
+  return null
 }
 
 const getUserByAccountId = async accountId => {
@@ -829,13 +829,13 @@ const confirmVerificationSession = async (userId, status) => {
       const user = await UserModel.findById(userId);
       if (user && user.isIdentityVerified !== "SUCCESS") {
         const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
-        if (updateUser && updateUser?.email) {
+        if (updateUser && user?.email) {
           await Mailer.sendInviteMail({
-            to: updateUser?.email,
+            to: user?.email,
             templateId: 'd-53bdcde93b8e42edbc7d77d10322f3cc',
             dynamicTemplateData: {
-              firstName: updateUser?.FirstName ?? '',
-              lastName: updateUser?.LastName ?? '',
+              firstName: user?.FirstName ?? '',
+              lastName: user?.LastName ?? '',
               supportLink: `${keys.redirectDomain}/wiki/getting-started`
             }
           })
