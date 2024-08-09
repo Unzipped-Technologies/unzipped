@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 
 import Nav from '../../components/unzipped/header'
 import { parseCookies } from '../../services/cookieHelper'
-import { getProjectsList, setDepartment } from '../../redux/actions'
+import { getProjectsList, setDepartment, getBusinessEmployees } from '../../redux/actions'
 import TasksPanel from '../../components/unzipped/dashboard/tasks/TasksPanel'
 import ProjectsPanel from '../../components/unzipped/dashboard/tasks/ProjectsPanel'
 import ProjectKanbanBoard from '../../components/unzipped/dashboard/Kanban/KanbanContainer'
@@ -53,16 +53,20 @@ const ViewFullScreenButton = styled.button`
   &:focus{
     background: #1976D2 !important;
   }
+  @media screen and (max-width: 600px) {
+    display: none;
+    }
 `;
 
 const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const access = token?.access_token || cookie
   const [currentBusiness, setCurrentBusiness] = useState({})
   const [selectedDepartment, setSelectedDepartment] = useState({})
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
+  const [isDeleteMode, setIsDeleteMode] = useState(false)
 
   useEffect(() => {
     if (!access) {
@@ -87,19 +91,23 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   useEffect(() => {
     if (!selectedDepartment?._id) {
       setCurrentBusiness(businesses[0])
-      if (businesses[0]?.businessDepartments?.length) setSelectedDepartment(businesses[0]?.businessDepartments?.[0])
-      else {
-        setSelectedDepartment({})
-      }
     }
   }, [businesses])
 
   useEffect(() => {
-    if (currentBusiness?.businessDepartments?.length) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
-    else {
-      setSelectedDepartment({})
+    if (currentBusiness) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
+  }, [currentBusiness])
+
+
+  useEffect(() => {
+    if (currentBusiness && currentBusiness?._id) {
+      dispatch(getBusinessEmployees(currentBusiness?._id))
     }
   }, [currentBusiness])
+
+  const handleFullScreenView = () => {
+    setIsFullScreen(!isFullScreen)
+  }
 
   return (
     <>
@@ -123,12 +131,12 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
         width: "100%",
         margin: "8px 0px"
       }}>
-        <ViewFullScreenButton onClick={() => setIsFullScreen(!isFullScreen)}>
+        <ViewFullScreenButton onClick={handleFullScreenView}>
           {isFullScreen ? 'Exit Full Screen' : 'View Full Screen'}
         </ViewFullScreenButton>
       </div>
       {isFullScreen ? (
-        <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+        <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} businesses={businesses} isFullScreen={isFullScreen} />
       ) : (
         <>
           {businesses?.length ? (

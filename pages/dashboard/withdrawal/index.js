@@ -119,6 +119,12 @@ const Withdrawal = ({
     }
   }, [url, router])
 
+  useEffect(() => {
+    if (!token) {
+      router.push('/login')
+    }
+  }, [])
+
   return (
     <React.Fragment>
       <Nav token={token} marginBottom={windowSize} />

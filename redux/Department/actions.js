@@ -7,8 +7,14 @@ import {
   UPDATE_DEPARTMENT_FORM,
   RESET_DEPARTMENT_FORM,
   DEPARTMENT_ERROR,
-  LOAD_STATE
+  LOAD_STATE,
+  UPDATE_DEPARTMENT_INFO,
+  UPDATE_TASK_STATUS_ON_DRAG,
+  UPDATE_TASK_STATUS_ON_DRAG_ERROR,
+  DEPARTMEMT_INFO_SEARCH,
+  DEPARTMEMT_INFO_SEARCH_ERROR
 } from './constants'
+import { REFETECH_ALL_BUSINESS } from '../Business/constants'
 import axios from 'axios'
 import { startLoading, stopLoading } from '../Loading/actions'
 
@@ -54,7 +60,7 @@ export const getDepartmentsForBusiness = (data, token) => async (dispatch, getSt
     })
 }
 
-export const getDepartmentById = id => async (dispatch, getState) => {
+export const getDepartmentById = (id, isEditingDepartment = false) => async (dispatch, getState) => {
   //department list Loading
   dispatch({
     type: GET_DEPARTMENT_BY_ID,
@@ -63,7 +69,7 @@ export const getDepartmentById = id => async (dispatch, getState) => {
   dispatch(startLoading())
 
   await axios
-    .get(`/api/department/${id}`, tokenConfig(getState()?.Auth.token))
+    .get(`/api/department/${id}?isEditingDepartment=${isEditingDepartment}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: GET_DEPARTMENT_BY_ID,
@@ -80,26 +86,22 @@ export const getDepartmentById = id => async (dispatch, getState) => {
 }
 
 // TODO update department BE route and action
-export const updateDepartment = data => async (dispatch, getState) => {
+export const updateDepartment = (data, departmentId, isEditingDepartment = false) => async (dispatch, getState) => {
   //department Loading
   dispatch({ type: LOAD_STATE })
 
-  // await axios
-  //     .post(`/api/department/update`, data)
-  //     .then(res => dispatch({
-  //         type: CREATE_DEPARTMENT,
-  //         payload: res.data,
-  //     }))
-  //     .catch(err => {
-  //         dispatch({
-  //             type: DEPARTMENT_ERROR,
-  //             payload: err.response
-  //         })
-  //     })
-  dispatch({
-    type: CREATE_DEPARTMENT,
-    payload: data
-  })
+  await axios
+    .patch(`/api/department/${departmentId}?isEditingDepartment=${isEditingDepartment}`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => dispatch({
+      type: UPDATE_DEPARTMENT_INFO,
+      payload: res.data,
+    }))
+    .catch(err => {
+      dispatch({
+        type: DEPARTMENT_ERROR,
+        payload: err.response
+      })
+    })
 }
 
 export const deleteDepartment = departmentId => async (dispatch, getState) => {
@@ -134,4 +136,53 @@ export const resetDepartmentForm = () => async (dispatch, getState) => {
     type: RESET_DEPARTMENT_FORM,
     payload: {}
   })
+}
+
+export const updateStatusOnDrag = (taskId, data, businessId = '') => async (dispatch, getState) => {
+
+  dispatch({ type: LOAD_STATE })
+
+  const response = await axios
+    .patch(`/api/tasks/update-task-status-on-drag/${taskId}`,
+      data, tokenConfig(getState()?.Auth.token)
+    )
+  if (response.status === 200) {
+    dispatch({
+      type: UPDATE_TASK_STATUS_ON_DRAG,
+      payload: response.data.data
+    })
+    if (businessId) {
+      dispatch({
+        type: REFETECH_ALL_BUSINESS,
+        payload: businessId
+      })
+    }
+  }
+  else {
+    dispatch({
+      type: UPDATE_TASK_STATUS_ON_DRAG_ERROR,
+      payload: response.data
+    })
+  }
+}
+
+export const retrieveDepartmentOnSerach = (deptId, data) => async (dispatch, getState) => {
+
+  dispatch({ type: LOAD_STATE })
+  const response = await axios
+    .post(`/api/department/fetch-tasks/${deptId}`,
+      data, tokenConfig(getState()?.Auth.token)
+    )
+  if (response.status === 200) {
+    dispatch({
+      type: DEPARTMEMT_INFO_SEARCH,
+      payload: response.data.data
+    })
+  }
+  else {
+    dispatch({
+      type: DEPARTMEMT_INFO_SEARCH_ERROR,
+      payload: response.data
+    })
+  }
 }

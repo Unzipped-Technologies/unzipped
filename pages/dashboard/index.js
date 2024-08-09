@@ -10,6 +10,8 @@ import MobileNotification from '../../components/unzipped/dashboard/MobileNotifi
 import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel'
 import { getCurrentUserData } from '../../redux/actions'
+import { useRouter } from 'next/router'
+import { parseCookies } from '../../services/cookieHelper'
 
 const DesktopBox = styled.div`
   @media (max-width: 680px) {
@@ -45,7 +47,22 @@ const notifications = [
   { type: 'explore' }
 ]
 
-const Dashboard = ({ getCurrentUserData, userData }) => {
+const Dashboard = ({ getCurrentUserData, userData, isAuthenticated }) => {
+
+  const router = useRouter();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [])
+  
+  useEffect(() => {
+    if (!userData?.isAccountDetailCompleted) {
+      router.push('/update-account-profile')
+    }
+  }, [userData])
+
+
   useEffect(() => {
     async function fetchData() {
       await getCurrentUserData()
@@ -79,7 +96,8 @@ const Dashboard = ({ getCurrentUserData, userData }) => {
 
 const mapStateToProps = state => {
   return {
-    userData: state.Auth?.user
+    userData: state.Auth?.user,
+    isAuthenticated: state.Auth?.token
   }
 }
 
