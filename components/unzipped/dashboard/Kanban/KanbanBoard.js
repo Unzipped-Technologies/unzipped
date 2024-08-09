@@ -3,13 +3,17 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { v4 as uuid } from 'uuid'
 import KanbanCard from './KanbanCard'
+import {
+  DraggableItem,
+  CardBody,
+} from './KanbanCard'
 import { makeStyles } from '@material-ui/core/styles'
+import { useDispatch } from 'react-redux'
+import {
+  updateStatusOnDrag,
+  loadAllBusinessAssociatedTickets
+} from '../../../../redux/actions'
 
-const datas = [
-  { id: 2, label: 'aaa' },
-  { id: 3, label: 'bbb' },
-  { id: 4, label: 'ccc' }
-]
 
 const useStyles = makeStyles({
   root: {
@@ -157,68 +161,6 @@ const DroppableArea = styled.div`
   border-radius: 8px;
 `
 
-// Data and Functions
-const itemsFromBackend = [
-  {
-    id: uuid(),
-    ticketNumber: 101,
-    title: 'Create full screen mode for task list page',
-    description: 'This is the description for the first task.',
-    dueDate: '2024-05-20'
-  },
-
-  {
-    id: uuid(),
-    ticketNumber: 102,
-    title: 'Make changes to the signup flow',
-    description: 'This is the description for the second task.',
-    dueDate: '2024-05-21'
-  },
-
-  {
-    id: uuid(),
-    ticketNumber: 103,
-    title: 'Verify identity not working in staging',
-    description: 'This is the description for the third task.',
-    dueDate: '2024-05-22'
-  },
-
-  {
-    id: uuid(),
-    ticketNumber: 104,
-    title: 'Create security alert or unusual activity email',
-    description: 'This is the description for the fourth task.',
-    dueDate: '2024-05-23'
-  },
-
-  {
-    id: uuid(),
-    ticketNumber: 105,
-    title: 'Create user successfully Hired email for (client)',
-    description: 'This is the description for the fifth task.',
-    dueDate: '2024-05-24'
-  }
-]
-
-const columnsFromBackend = {
-  [uuid()]: {
-    name: 'New',
-    items: itemsFromBackend
-  },
-  [uuid()]: {
-    name: 'To do',
-    items: []
-  },
-  [uuid()]: {
-    name: 'In Progress',
-    items: []
-  },
-  [uuid()]: {
-    name: 'Done',
-    items: []
-  }
-}
-
 const TaskList = styled.div`
   display: flex;
   flex-direction: column;
@@ -227,6 +169,7 @@ const TaskList = styled.div`
   border-radius: 10px;
   padding: 12px 5px 5px;
   height: 100%;
+  min-height: 50px;
 `
 
 const TaskColumnStyles = styled.div`
@@ -243,59 +186,85 @@ const Title = styled.span`
 `
 
 // Main KanbanBoard Component
-function KanbanBoard() {
+function KanbanBoard({
+  selectedDepartment,
+  currentBusiness,
+  departmentData,
+  backendCols,
+  setBackendCols
+}) {
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState([])
   const [selected, setSelected] = React.useState([])
+  const dispatch = useDispatch()
 
   const handleToggle = (event, nodeIds) => {
     setExpanded(nodeIds)
   }
-  const [columns, setColumns] = useState(columnsFromBackend)
+  const [columnsX, setColumns] = useState({})
   const [maxHeight, setMaxHeight] = useState(0)
   const columnsRef = useRef([])
 
   useEffect(() => {
-    const heights = columnsRef.current.map(ref => ref?.clientHeight || 0)
-    const maxHeight = Math.max(...heights)
-    setMaxHeight(maxHeight)
-  }, [columns])
+    setColumns(backendCols)
+  }, [backendCols])
+
 
   const handleSelect = (event, nodeIds) => {
     setSelected(nodeIds)
   }
 
-  const onDragEnd = (result, columns, setColumns) => {
+  const onDragEnd = (result, columnsX, setBackendCols) => {
     if (!result.destination) return
     const { source, destination } = result
     if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = columns[source.droppableId]
-      const destColumn = columns[destination.droppableId]
-      const sourceItems = [...sourceColumn.items]
-      const destItems = [...destColumn.items]
+      const sourceColumn = columnsX[source.droppableId]
+      const destColumn = columnsX[destination.droppableId]
+      const sourceItems = [...sourceColumn.tasks]
+      const destItems = [...destColumn.tasks]
+
+      const sourcedObj = sourceItems[source.index];
+      sourcedObj.status = destColumn?.tagName;
+      let ticketStatus = sourcedObj.status;
+
+      if (!ticketStatus.includes('In Progress')) {
+        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
+      }
+
+      dispatch(
+        updateStatusOnDrag(
+          sourcedObj._id, {
+          status: ticketStatus,
+          tag: destination.droppableId
+        },
+          sourcedObj.businessId
+        )
+      )
+
       const [removed] = sourceItems.splice(source.index, 1)
       destItems.splice(destination.index, 0, removed)
-      setColumns({
-        ...columns,
+      setBackendCols({
+        ...columnsX,
         [source.droppableId]: {
           ...sourceColumn,
-          items: sourceItems
+          tasks: sourceItems
         },
         [destination.droppableId]: {
           ...destColumn,
-          items: destItems
+          tasks: destItems
         }
       })
+      // dispatch(loadAllBusinessAssociatedTickets(sourcedObj.businessId))
     } else {
-      const column = columns[source.droppableId]
-      const copiedItems = [...column.items]
+      const column = columnsX[source.droppableId]
+      const copiedItems = [...column.tasks]
       const [removed] = copiedItems.splice(source.index, 1)
       copiedItems.splice(destination.index, 0, removed)
-      setColumns({
-        ...columns,
+      setBackendCols({
+        ...columnsX,
         [source.droppableId]: {
           ...column,
-          items: copiedItems
+          tasks: copiedItems
         }
       })
     }
@@ -306,9 +275,9 @@ function KanbanBoard() {
       <GlobalStyle />
       <Container>
         <Board>
-          <DragDropContext onDragEnd={result => onDragEnd(result, columns, setColumns)}>
+          <DragDropContext onDragEnd={result => onDragEnd(result, columnsX, setColumns)}  >
             <TaskColumnStyles>
-              {Object.entries(columns).map(([columnId, column], index) => {
+              {(Object.entries(columnsX).map(([columnId, column], index) => {
                 return (
                   <>
                     <div
@@ -326,17 +295,15 @@ function KanbanBoard() {
                           backgroundColor: 'white',
                           zIndex: 10
                         }}>
-                        <ColumnTitle>{column.name}</ColumnTitle>
+                        <ColumnTitle>{column.tagName}</ColumnTitle>
                       </div>
-                      <div
-                        style={{
-                          height: `100%`
-                        }}>
+
+                      <div style={{ height: `100%` }}>
                         <Droppable key={columnId} droppableId={columnId}>
                           {(provided, snapshot) => (
                             <TaskList ref={provided.innerRef} {...provided.droppableProps}>
-                              {column.items.map((item, index) => (
-                                <KanbanCard key={item} item={item} index={index} />
+                              {column.tasks.map((colItem, index) => (
+                                <KanbanCard key={colItem} item={colItem} index={index} />
                               ))}
                               {provided.placeholder}
                             </TaskList>
@@ -346,7 +313,7 @@ function KanbanBoard() {
                     </div>
                   </>
                 )
-              })}
+              }))}
             </TaskColumnStyles>
           </DragDropContext>
         </Board>

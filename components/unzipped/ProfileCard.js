@@ -72,7 +72,7 @@ const ProfileCard = ({ user }) => {
         )}
         <div>
           <DarkText noMargin padding="0px 0px 5px 0px">
-            SKIILS
+            SKILLS
           </DarkText>
           {user?.freelancerSkills?.length > 0
             ? user?.freelancerSkills.map(item => (

@@ -1,679 +1,412 @@
 export const LIST_ENTRIES = [
   {
-    icon: 'TeamOutlined',
+    isPrivate: true,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '669145fc89777e070ad83721',
+    name: 'Favorites',
+    icon: 'HeartFilled',
+    userId: '6601c288149276195c3f8faf',
+    freelancerId: {
+      rate: 0,
+      category: '',
+      freelancerSkills: [
+        {
+          _id: '6601c30e149276195c3f8fcc',
+          skill: 'React.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fcd',
+          skill: 'Node.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fce',
+          skill: 'Express.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fcf',
+          skill: 'Nest.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fd0',
+          skill: 'Next.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fd1',
+          skill: 'MongoDB'
+        },
+        {
+          _id: '6601c30e149276195c3f8fd2',
+          skill: 'Typescript'
+        }
+      ],
+      cover: `I am writing to express my interest in the Software Engineer position at test company as advertised on Company's Website. With a solid background in software development and a passion for solving complex problems, I am excited about the opportunity to contribute to your team.`,
+      likeTotal: 0,
+      _id: '6611b2c94b82560e014b4a5f',
+      userId: {
+        AddressLineCountry: 'United States',
+        FirstName: 'test',
+        LastName: 'freelancer12',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6611b2c74b82560e014b4a5a'
+      }
+    },
+    listId: '6691457089777e070ad83718',
+    createdAt: '2024-07-12T15:04:28.856Z',
+    updatedAt: '2024-07-12T15:04:28.856Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '669145f089777e070ad8371f',
+    name: 'Favorites',
+    icon: 'HeartFilled',
+    userId: '6601c288149276195c3f8faf',
+    freelancerId: {
+      rate: 0,
+      category: '',
+      freelancerSkills: [],
+      likeTotal: 0,
+      _id: '660467e8cf181113fdd9bf77',
+      userId: {
+        AddressLineCountry: 'United States',
+        FirstName: 'test',
+        LastName: 'zdsrtol',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '660467e8cf181113fdd9bf72'
+      }
+    },
+    listId: '6691457089777e070ad83718',
+    createdAt: '2024-07-12T15:04:16.866Z',
+    updatedAt: '2024-07-12T15:04:16.866Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '6691630f262ae617d0af5b90',
+    name: 'My Team',
+    icon: 'UserOutlined',
+    userId: '6601c288149276195c3f8faf',
+    freelancerId: {
+      rate: 0,
+      category: '',
+      freelancerSkills: [],
+      likeTotal: 0,
+      cover: `I am writing to express my interest in the Software Engineer position at test company as advertised on Company's Website. With a solid background in software development and a passion for solving complex problems, I am excited about the opportunity to contribute to your team.`,
+
+      _id: '660340f679de512379878b4d',
+      userId: {
+        AddressLineCountry: '',
+        FirstName: 'test',
+        LastName: 'freelancer3',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '660340f679de512379878b48'
+      }
+    },
+    listId: '6691459489777e070ad83719',
+    createdAt: '2024-07-12T17:08:31.520Z',
+    updatedAt: '2024-07-12T17:08:31.520Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '669145eb89777e070ad8371e',
+    name: 'My Team',
+    icon: 'UserOutlined',
+    userId: '6601c288149276195c3f8faf',
+    freelancerId: {
+      rate: 0,
+      category: 'Full Stack Developer',
+      freelancerSkills: [
+        {
+          _id: '6601c30e149276195c3f8fcc',
+          skill: 'React.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fcd',
+          skill: 'Node.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fce',
+          skill: 'Express.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fcf',
+          skill: 'Nest.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fd0',
+          skill: 'Next.js'
+        },
+        {
+          _id: '6601c30e149276195c3f8fd1',
+          skill: 'MongoDB'
+        },
+        {
+          _id: '6601c30e149276195c3f8fd2',
+          skill: 'Typescript'
+        }
+      ],
+      likeTotal: 0,
+      _id: '6603326666cb1219aba65dc8',
+      userId: {
+        AddressLineCountry: '',
+        FirstName: 'test',
+        LastName: 'freelancer2',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6603326666cb1219aba65dc3'
+      }
+    },
+    listId: '6691459489777e070ad83719',
+    createdAt: '2024-07-12T15:04:11.682Z',
+    updatedAt: '2024-07-12T15:04:11.682Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '66917ba083fe15236877f412',
+    userId: '660340f679de512379878b48',
+    freelancerId: {
+      rate: 0,
+      category: '',
+      freelancerSkills: [],
+      likeTotal: 0,
+      _id: '660340f679de512379878b4d',
+      userId: {
+        AddressLineCountry: '',
+        FirstName: 'test',
+        LastName: 'freelancer3',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '660340f679de512379878b48'
+      }
+    },
+    listId: '669145a789777e070ad8371a',
+    createdAt: '2024-07-12T18:53:20.775Z',
+    updatedAt: '2024-07-12T18:53:20.775Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '66917b3d83fe15236877f411',
+    userId: '6611b2c74b82560e014b4a5a',
+    freelancerId: {
+      rate: 0,
+      category: '',
+      freelancerSkills: [],
+      likeTotal: 0,
+      _id: '6611b2c94b82560e014b4a5f',
+      userId: {
+        AddressLineCountry: '',
+        FirstName: 'test',
+        LastName: 'freelancer12',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6611b2c74b82560e014b4a5a'
+      }
+    },
+    listId: '669145a789777e070ad8371a',
+    createdAt: '2024-07-12T18:51:41.082Z',
+    updatedAt: '2024-07-12T18:51:41.082Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '6691460189777e070ad83723',
+    name: 'Invites',
+    icon: 'BellTwoTone',
+    userId: '6601c288149276195c3f8faf',
+    freelancerId: {
+      rate: 0,
+      category: '',
+      freelancerSkills: [],
+      likeTotal: 0,
+      cover: `I am writing to express my interest in the Software Engineer position at test company as advertised on Company's Website. With a solid background in software development and a passion for solving complex problems, I am excited about the opportunity to contribute to your team.`,
+
+      _id: '6611b3a7ec00150ef6454ad4',
+      userId: {
+        AddressLineCountry: 'United Kingdom',
+        FirstName: 'test',
+        LastName: 'freelancer14',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6611b3a6ec00150ef6454acf'
+      }
+    },
+    listId: '669145be89777e070ad8371b',
+    createdAt: '2024-07-12T15:04:33.678Z',
+    updatedAt: '2024-07-12T15:04:33.678Z',
+    __v: 0
+  },
+  {
+    isPrivate: false,
+    isDefaultList: false,
+    isDeleted: false,
+    deletedAt: null,
+    _id: '669145f589777e070ad83720',
+    name: 'Invites',
+    icon: 'BellTwoTone',
+    userId: '6601c288149276195c3f8faf',
+    freelancerId: {
+      rate: 0,
+      category: 'Full Stack Developer',
+      freelancerSkills: [],
+      likeTotal: 34,
+      _id: '6611b10fd93d050c972fc37f',
+      userId: {
+        AddressLineCountry: 'USA',
+        FirstName: 'test',
+        LastName: 'freelancer9',
+        profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+        _id: '6611b10fd93d050c972fc37a'
+      }
+    },
+    listId: '669145be89777e070ad8371b',
+    createdAt: '2024-07-12T15:04:21.928Z',
+    updatedAt: '2024-07-12T15:04:21.928Z',
+    __v: 0
+  }
+]
+
+export const INVITES_LIST = [
+  {
+    icon: 'HomeFilled',
     isActive: true,
     listEntries: [
       {
-        _id: '6633eec5e646211f2eb6af53',
-        name: 'Invites',
-        icon: 'TeamOutlined',
+        _id: '669145e489777e070ad8371d',
+        name: 'Favorites',
+        icon: 'HeartFilled',
         freelancerId: {
           rate: 23,
           category: 'Full Stack Developer',
           freelancerSkills: [
             {
+              yearsExperience: 2,
               _id: '6601c30e149276195c3f8fcc',
               skill: 'React.js'
             },
             {
+              yearsExperience: 3,
               _id: '6601c30e149276195c3f8fcd',
               skill: 'Node.js'
             },
             {
+              yearsExperience: 1,
               _id: '6601c30e149276195c3f8fce',
               skill: 'Express.js'
             },
             {
+              yearsExperience: 3,
               _id: '6601c30e149276195c3f8fcf',
               skill: 'Nest.js'
             },
             {
+              yearsExperience: 2,
               _id: '6601c30e149276195c3f8fd0',
               skill: 'Next.js'
             },
             {
+              yearsExperience: 2,
               _id: '6601c30e149276195c3f8fd1',
               skill: 'MongoDB'
             },
             {
+              yearsExperience: 5,
               _id: '6601c30e149276195c3f8fd2',
               skill: 'Typescript'
             }
           ],
-          likeTotal: 5,
-          dislikeTotal: 0,
-          _id: '6611b437e91bbe0fbeb934ad',
+          likeTotal: 23,
+          dislikeTotal: 5,
+          _id: '6601c2a6149276195c3f8fc2',
           userId: {
-            AddressLineCountry: 'United Stats',
+            AddressLineCountry: '',
             FirstName: 'test',
-            LastName: 'freelancer16',
+            LastName: 'freelancer1',
             profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6611b437e91bbe0fbeb934a8',
-            email: 'freelancer16@gmail.com'
+            _id: '6601c2a6149276195c3f8fbd',
+            email: 'freelancer1@gmail.com'
           }
-        },
-        businessId: {
-          description:
-            'I am looking for a freelancer to develop a SAAS platform on the cloud that will help businesses reduce their carbon emissions.',
-          requiredSkills: ['React', 'Node', 'MongoDB', 'Redux', 'Express', 'Nest.js', 'Next.js'],
-          budget: 90000,
+        }
+      },
+      {
+        _id: '669145f089777e070ad8371f',
+        name: 'Favorites',
+        icon: 'HeartFilled',
+        freelancerId: {
+          rate: 0,
+          category: '',
+          freelancerSkills: [],
           likeTotal: 0,
-          projectBudgetType: 'Fixed Price',
-          projectImagesUrl: ['66106dd562048827e88a67b0'],
-          _id: '661e93017277db0ed9b6ff39',
-          name: 'Hospital Management System'
+          dislikeTotal: 0,
+          _id: '660467e8cf181113fdd9bf77',
+          userId: {
+            AddressLineCountry: '',
+            FirstName: 'test',
+            LastName: 'zdsrtol',
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            _id: '660467e8cf181113fdd9bf72',
+            email: 'freelancer4@gmail.com'
+          }
+        }
+      },
+      {
+        _id: '669145fc89777e070ad83721',
+        name: 'Favorites',
+        icon: 'HeartFilled',
+        freelancerId: {
+          rate: 0,
+          category: '',
+          freelancerSkills: [],
+          likeTotal: 0,
+          dislikeTotal: 0,
+          _id: '6611b2c94b82560e014b4a5f',
+          userId: {
+            AddressLineCountry: '',
+            FirstName: 'test',
+            LastName: 'freelancer12',
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            _id: '6611b2c74b82560e014b4a5a',
+            email: 'freelancer12@gmail.com'
+          }
         }
       }
     ],
     isDefault: false,
-    isPrivate: true,
-    _id: '6633eec5e646211f2eb6af52',
-    name: 'Invites',
-    userId: '6601c288149276195c3f8faf',
-    user: '6601c288149276195c3f8faf',
-    createdAt: '2024-05-02T19:51:33.654Z',
-    updatedAt: '2024-05-07T15:08:12.023Z',
-    __v: 7
-  },
-  {
-    icon: 'HeartOutlined',
-    isActive: true,
-    listEntries: [
-      {
-        _id: '6628175999d1b43351ac0925',
-        name: 'Favorites',
-        icon: 'HeartOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      }
-    ],
-    isDefault: true,
     isPrivate: false,
-    _id: '6601c288149276195c3f8fb0',
+    _id: '6691457089777e070ad83718',
     name: 'Favorites',
     userId: '6601c288149276195c3f8faf',
     user: '6601c288149276195c3f8faf',
-    createdAt: '2024-03-25T18:29:28.305Z',
-    updatedAt: '2024-04-23T20:17:29.667Z',
-    __v: 1
+    createdAt: '2024-07-12T15:02:08.858Z',
+    updatedAt: '2024-07-12T15:06:16.543Z',
+    __v: 3
   },
   {
-    icon: 'EyeOutlined',
+    icon: 'UserOutlined',
     isActive: true,
     listEntries: [
       {
-        _id: '663942ccd5b1853760cd765e',
-        name: 'Recently Viewed',
-        icon: 'EyeOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      }
-    ],
-    isDefault: true,
-    isPrivate: false,
-    _id: '6601c288149276195c3f8fb1',
-    name: 'Recently Viewed',
-    userId: '6601c288149276195c3f8faf',
-    user: '6601c288149276195c3f8faf',
-    createdAt: '2024-03-25T18:29:28.342Z',
-    updatedAt: '2024-05-06T20:51:24.760Z',
-    __v: 1
-  },
-  {
-    icon: 'TeamOutlined',
-    isActive: true,
-    listEntries: [
-      {
-        _id: '66280fc999d1b43351ac0918',
+        _id: '669145eb89777e070ad8371e',
         name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6628102f99d1b43351ac091a',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6628106099d1b43351ac091c',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '662810f899d1b43351ac0920',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6628111699d1b43351ac0921',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: null
-      },
-      {
-        _id: '662820ca99d1b43351ac092b',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '6611b6efa65bc0120aa3394f',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'freelancer',
-            LastName: '23',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6611b6efa65bc0120aa3394a',
-            email: 'freelancer23@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '662820f799d1b43351ac092c',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 0,
-          category: '',
-          freelancerSkills: [],
-          likeTotal: 0,
-          dislikeTotal: 0,
-          _id: '6611b6efa65bc0120aa3394f',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'freelancer',
-            LastName: '23',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6611b6efa65bc0120aa3394a',
-            email: 'freelancer23@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6629682c937e5129cd9b2a3e',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '66296833937e5129cd9b2a3f',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6629685b937e5129cd9b2a40',
-        name: 'My Team',
-        icon: 'TeamOutlined',
-        freelancerId: {
-          rate: 23,
-          category: 'Full Stack Developer',
-          freelancerSkills: [
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fcc',
-              skill: 'React.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcd',
-              skill: 'Node.js'
-            },
-            {
-              yearsExperience: 1,
-              _id: '6601c30e149276195c3f8fce',
-              skill: 'Express.js'
-            },
-            {
-              yearsExperience: 3,
-              _id: '6601c30e149276195c3f8fcf',
-              skill: 'Nest.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd0',
-              skill: 'Next.js'
-            },
-            {
-              yearsExperience: 2,
-              _id: '6601c30e149276195c3f8fd1',
-              skill: 'MongoDB'
-            },
-            {
-              yearsExperience: 5,
-              _id: '6601c30e149276195c3f8fd2',
-              skill: 'Typescript'
-            }
-          ],
-          likeTotal: 23,
-          dislikeTotal: 5,
-          _id: '6601c2a6149276195c3f8fc2',
-          userId: {
-            AddressLineCountry: '',
-            FirstName: 'test',
-            LastName: 'freelancer1',
-            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-            _id: '6601c2a6149276195c3f8fbd',
-            email: 'freelancer1@gmail.com'
-          }
-        }
-      },
-      {
-        _id: '6633ef2de646211f2eb6af59',
-        name: 'My Team',
-        icon: 'TeamOutlined',
+        icon: 'UserOutlined',
         freelancerId: {
           rate: 0,
           category: 'Full Stack Developer',
@@ -690,17 +423,169 @@ export const LIST_ENTRIES = [
             email: 'freelancer2@gmail.com'
           }
         }
+      },
+      {
+        _id: '6691630f262ae617d0af5b90',
+        name: 'My Team',
+        icon: 'UserOutlined',
+        freelancerId: {
+          rate: 0,
+          category: '',
+          freelancerSkills: [],
+          likeTotal: 0,
+          dislikeTotal: 0,
+          _id: '660340f679de512379878b4d',
+          userId: {
+            AddressLineCountry: '',
+            FirstName: 'test',
+            LastName: 'freelancer3',
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            _id: '660340f679de512379878b48',
+            email: 'freelancer3@gmail.com'
+          }
+        }
       }
     ],
-    isDefault: true,
+    isDefault: false,
     isPrivate: false,
-    _id: '6601c289149276195c3f8fb2',
+    _id: '6691459489777e070ad83719',
     name: 'My Team',
     userId: '6601c288149276195c3f8faf',
     user: '6601c288149276195c3f8faf',
-    createdAt: '2024-03-25T18:29:29.039Z',
-    updatedAt: '2024-05-02T19:53:17.826Z',
-    __v: 11
+    createdAt: '2024-07-12T15:02:44.861Z',
+    updatedAt: '2024-07-12T17:08:31.536Z',
+    __v: 2
+  },
+  {
+    icon: 'EyeTwoTone',
+    isActive: true,
+    listEntries: [],
+    isDefault: false,
+    isPrivate: false,
+    _id: '669145a789777e070ad8371a',
+    name: 'Recently Viewed',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-07-12T15:03:03.438Z',
+    updatedAt: '2024-07-12T15:03:03.438Z',
+    __v: 0
+  },
+  {
+    icon: 'BellTwoTone',
+    isActive: true,
+    listEntries: [
+      {
+        _id: '669145f589777e070ad83720',
+        name: 'Invites',
+        icon: 'BellTwoTone',
+        freelancerId: {
+          rate: 0,
+          category: 'Full Stack Developer',
+          freelancerSkills: [],
+          likeTotal: 34,
+          dislikeTotal: 0,
+          _id: '6611b10fd93d050c972fc37f',
+          userId: {
+            AddressLineCountry: 'USA',
+            FirstName: 'test',
+            LastName: 'freelancer9',
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            _id: '6611b10fd93d050c972fc37a',
+            email: 'freelancer9@gmail.com'
+          }
+        }
+      },
+      {
+        _id: '6691460189777e070ad83723',
+        name: 'Invites',
+        icon: 'BellTwoTone',
+        freelancerId: {
+          rate: 0,
+          category: '',
+          freelancerSkills: [],
+          likeTotal: 0,
+          dislikeTotal: 0,
+          _id: '6611b3a7ec00150ef6454ad4',
+          userId: {
+            AddressLineCountry: '',
+            FirstName: 'test',
+            LastName: 'freelancer14',
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            _id: '6611b3a6ec00150ef6454acf',
+            email: 'freelancer14@gmail.com'
+          }
+        }
+      }
+    ],
+    isDefault: false,
+    isPrivate: true,
+    _id: '669145be89777e070ad8371b',
+    name: 'Invites',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-07-12T15:03:26.545Z',
+    updatedAt: '2024-07-12T15:07:01.722Z',
+    __v: 2
+  }
+]
+
+// Below entries are using on List Page, Left Side Panel
+export const USER_LIST = [
+  {
+    icon: 'HomeFilled',
+    isActive: true,
+    listEntries: [],
+    isDefault: false,
+    isPrivate: false,
+    _id: '6691457089777e070ad83718',
+    name: 'Favorites',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-07-12T15:02:08.858Z',
+    updatedAt: '2024-07-12T15:06:16.543Z',
+    __v: 3
+  },
+  {
+    icon: 'UserOutlined',
+    isActive: true,
+    listEntries: [],
+    isDefault: false,
+    isPrivate: false,
+    _id: '6691459489777e070ad83719',
+    name: 'My Team',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-07-12T15:02:44.861Z',
+    updatedAt: '2024-07-12T17:08:31.536Z',
+    __v: 2
+  },
+  {
+    icon: 'EyeTwoTone',
+    isActive: true,
+    listEntries: [],
+    isDefault: false,
+    isPrivate: false,
+    _id: '669145a789777e070ad8371a',
+    name: 'Recently Viewed',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-07-12T15:03:03.438Z',
+    updatedAt: '2024-07-12T15:03:03.438Z',
+    __v: 0
+  },
+  {
+    icon: 'BellTwoTone',
+    isActive: true,
+    listEntries: [],
+    isDefault: false,
+    isPrivate: false,
+    _id: '669145be89777e070ad8371b',
+    name: 'Invites',
+    userId: '6601c288149276195c3f8faf',
+    user: '6601c288149276195c3f8faf',
+    createdAt: '2024-07-12T15:03:26.545Z',
+    updatedAt: '2024-07-12T15:07:01.722Z',
+    __v: 2
   }
 ]
 

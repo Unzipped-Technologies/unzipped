@@ -559,6 +559,11 @@ const removeCommentFromTask = async commentId => {
   }
 }
 
+const updateTaskStatusOnDrag = (taskId, data) => {
+  return TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } }, { new: true })
+}
+
+
 module.exports = {
   createTask,
   createManyTask,
@@ -572,5 +577,6 @@ module.exports = {
   removeCommentFromTask,
   addCommentToTask,
   updateTaskStatus,
-  getTaskWithoutPopulate
+  getTaskWithoutPopulate,
+  updateTaskStatusOnDrag,
 }

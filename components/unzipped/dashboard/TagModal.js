@@ -15,7 +15,7 @@ import { updateCreateTagForm, resetTagForm, createTag, getDepartmentById } from 
 const MUIDialog = withStyles(theme => ({
   paper: {
     width: '100%', // Adjust the width as needed
-    height: '250px'
+    // height: '250px'
   },
   root: {
     padding: '0px !important'

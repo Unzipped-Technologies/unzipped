@@ -5,7 +5,7 @@ import { PaymentMethods } from './Stripe'
 import { TASKS } from './Tasks'
 import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
-import { LIST_ENTRIES, USER_LIST_ENTRIES } from './ListEntries'
+import { LIST_ENTRIES, USER_LIST_ENTRIES, INVITES_LIST, USER_LIST } from './ListEntries'
 import { PROJECT_APPLICATIONS } from './ProjectApplications'
 import { CALENDAR_SETTINGS } from './CalendarSettings'
 import { PLANS } from './Plans'
@@ -390,7 +390,9 @@ export let defaultInitialState = {
     error: null
   },
   Lists: {
-    invitesList: [...LIST_ENTRIES],
+    invitesList: [...INVITES_LIST],
+    selectedList: null,
+
     currentUserList: [
       {
         icon: 'HeartOutlined',
@@ -437,7 +439,8 @@ export let defaultInitialState = {
     ]
   },
   ListEntries: {
-    userLists: [...LIST_ENTRIES],
+    userLists: [...USER_LIST],
+    listEntries: [],
     userListEntries: [...USER_LIST_ENTRIES]
   }
 }

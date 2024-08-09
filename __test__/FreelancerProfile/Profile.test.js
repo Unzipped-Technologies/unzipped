@@ -10,6 +10,8 @@ import { fireEvent, screen, act, within, render } from '@testing-library/react'
 import EducationModal from '../../components/unzipped/EducationModal'
 import ProjectModal from '../../components/unzipped/ProjectModal'
 import ProfileTab from '../../components/unzipped/ProfileTab'
+import { FREELANCER_AUTH } from '../store/Users'
+
 import MobileProfileCardOptions, { P as Paragraph, DropDown } from '../../components/unzipped/MobileProfileCardOptions'
 import { getFreelancerById, createShowCaseProject, addEducation } from '../../redux/Freelancers/actions'
 import { getCalenderSetting } from '../../redux/CalenderSetting/CalenderSettingAction'
@@ -18,6 +20,7 @@ import { ValidationUtils, ConverterUtils } from '../../utils'
 import userEvent from '@testing-library/user-event'
 import { OtherInformationCard, P } from '../../components/unzipped/ProjectsCard'
 import { OtherInformationCard as DIV, P as TEXT } from '../../components/unzipped/MobileProfileCard'
+const _ = require('lodash')
 
 jest.mock('axios')
 
@@ -48,10 +51,10 @@ describe('DesktopAccount Component', () => {
   let mockRouterPush, mockRouterBack
 
   beforeEach(() => {
+    initialState.Auth.user = _.cloneDeep(FREELANCER_AUTH)
+
     initialState.Freelancers.selectedFreelancer.projects = JSON.parse(JSON.stringify(FREELANCER_PROJECTS))
     initialState.Freelancers.selectedFreelancer = JSON.parse(JSON.stringify(FREELANCER))
-
-    initialState.Auth.user.freelancers['_id'] = '6601c2a6149276195c3f8fc2'
 
     getFreelancerById.mockReturnValue(() => {
       return {
@@ -794,9 +797,9 @@ describe('DesktopAccount Component', () => {
     renderWithRedux(
       <MobileProfileCardOptions
         handleProfilePage={() => {}}
-        freelancerId={'6601c2a6149276195c3f8fc2'}
+        freelancerId={'initialState.Auth.user.freelancers._id'}
         addEntriesToList={addEntriesToList}
-        userId={'6601c2a6149276195c3f8fc2'}
+        userId={'initialState.Auth.user.freelancers._id'}
         getInvitesLists={getInvitesLists}
         lists={initialState.Lists.currentUserList}
       />,
@@ -842,9 +845,9 @@ describe('DesktopAccount Component', () => {
     renderWithRedux(
       <MobileProfileCardOptions
         handleProfilePage={() => {}}
-        freelancerId={'6601c2a6149276195c3f8fc2'}
+        freelancerId={'initialState.Auth.user.freelancers._id'}
         addEntriesToList={addEntriesToList}
-        userId={'6601c2a6149276195c3f8fc2'}
+        userId={'initialState.Auth.user.freelancers._id'}
         getInvitesLists={getInvitesLists}
         lists={initialState.Lists.currentUserList}
       />,

@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import IconComponent from '../../ui/icons/IconComponent'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
+import { DIV, TEXT, DarkText, DarkSpan } from './style'
 import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUserInvitation } from '../../../redux/actions'
@@ -22,15 +23,18 @@ const UserSkills = styled.div`
     background-color: transparent;
   }
 `
-const SelectInputStyled = styled.select`
-  border-radius: 3px;
-  border: 0.25px solid #000;
-  background: rgba(217, 217, 217, 0.28);
+
+const SpanStyled = styled.span`
+  color: #000;
+  font-family: Roboto;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 21px; /* 161.538% */
+  letter-spacing: 0.4px;
+  text-decoration-line: underline;
+  margin-left: 10px;
   display: block;
-  padding: 5px;
-  width: 100px;
-  height: 35px;
-  font-size: 15px;
 `
 
 const ButtonTwo = styled.div`
@@ -44,7 +48,7 @@ const ButtonTwo = styled.div`
   padding-left: 10px;
 `
 
-function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afterInvitation }) {
+function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afterInvitation, hasBorder = true }) {
   const router = useRouter()
   const { project } = router.query
 
@@ -52,18 +56,23 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
   const userLists = useSelector(state => state.ListEntries.userLists)
   const userId = useSelector(state => state.Auth.user._id)
   const accessToken = useSelector(state => state.Auth.token)
-
   const listObj = userLists?.find(list => list.name === 'Recently Viewed')
 
+  const [isSmallText, setIsSmallText] = useState(false)
+  const [isTextHidden, setIsTextHidden] = useState(false)
+  const [expandedStates, setExpandedStates] = useState(false)
   const [isOpen, setOpen] = useState(false)
+
+  useEffect(() => {
+    setIsSmallText(user?.cover.length > 240 ? true : false)
+    setIsTextHidden(true)
+  }, [user])
 
   const redirectToProfile = () => {
     if (listObj) {
       dispatch(createRecentlyViewdList({ listId: listObj._id, userId, freelancerId: user.id }))
     }
-    if (user?.id) {
-      router.push(`/freelancers/${user.id}`)
-    }
+    user?.id && router.push(`/freelancers/${user.id}`)
   }
 
   const handleUserInvite = async () => {
@@ -88,15 +97,22 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
   }
   return (
     <div
-      className="bg-"
-      style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}
+      style={{ borderBottom: hasBorder ? '2px solid rgba(0, 0, 0, 0.25)' : '', color: 'black' }}
       data-testid={`${user?.id}_mobile`}>
       <div className="px-3 py-2">
         <div className="d-flex">
-          <img src={user?.profilePic} alt="Profile Pic" style={{ width: '55px', height: '55px' }} className="mt-2" />
+          <img
+            src={user?.profilePic}
+            alt={user?.name + ' profile'}
+            style={{ width: '55px', height: '55px' }}
+            className="mt-2"
+          />
           <div style={{ marginLeft: '16px' }}>
             <div className="d-flex">
-              <p className="mb-0 pe-2" style={{ color: '#0057FF', fontWeight: '500', fontSize: '16px' }}>
+              <p
+                className="mb-0 pe-2"
+                style={{ color: '#0057FF', fontWeight: '500', fontSize: '16px' }}
+                id="freelancer_name">
                 {user?.name}
               </p>
               {user?.isPreferedFreelancer && (
@@ -105,10 +121,12 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
                 </span>
               )}
             </div>
-            <p className="mb-0" style={{ fontSize: '15px', fontWeight: '600' }}>
+            <p className="mb-0" style={{ fontSize: '15px', fontWeight: '600' }} id="freelancer_category">
               {user?.type}
             </p>
-            <p className="mb-0">{user?.country}</p>
+            <p className="mb-0" id="freelancer_country">
+              {user?.country}
+            </p>
           </div>
           {userId && (
             <ButtonTwo onClick={handlOpen} data-testid={`open_${user?.id}_mobile`}>
@@ -127,48 +145,98 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
               {user?.invites?.business === project ? 'Invited' : 'Invite'}
             </Button>
           )}
-          <div className="d-flex  gap-4">
+          <div className="d-flex me-2" style={{ gap: '15px', width: '100%' }}>
             <span
               style={{
+                display: 'flex',
+                flexFlow: 'row',
+                justifyItems: 'space-between',
+                alignItems: 'flex-end',
                 fontSize: '20px'
-              }}>
+              }}
+              id="freelancer_rate">
               {user?.rate > 0 ? (
-                <div>
-                  ${user?.rate} <span style={{ fontSize: '15px' }}>/ hour</span>
-                </div>
+                <span className="d-flex">
+                  <span style={{ paddingRight: '5px' }}> ${`${user?.rate}`}</span> /{' '}
+                  <span style={{ fontSize: '15px', padding: '5px 0px 0px 2px ' }}>hour</span>
+                </span>
               ) : (
                 'Negotiable'
               )}
             </span>
-            <div className="d-flex align-items-center">
+            <DIV
+              id="freelancer_votes"
+              width="97%"
+              display="flex"
+              overflow="hidden"
+              alignItems="flex-end"
+              justifyContent="flex-end"
+              margin="-25px 0px 0px 35px">
               <IconComponent name="thumbUp" width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
               <span style={{ fontSize: '16px', paddingLeft: '3px' }}>{user?.likes}</span>
-            </div>
+            </DIV>
           </div>
         </div>
       </div>
-      <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', padding: '13px 0', marginLeft: '8px' }}>
-        {user?.skills?.map((skill, index) => (
-          <span
-            key={index}
-            style={{
-              backgroundColor: '#D9D9D9',
-              borderRadius: '16px',
-              fontSize: '13px',
-              padding: '4px 20px 6px 20px',
-              marginRight: '6.4px',
-              fontWeight: '500',
-              minHeight: '100%'
-            }}>
-            {skill}
-          </span>
-        ))}
-      </UserSkills>
-      <div className="px-4">
-        <p>
-          <b>cover letter: </b>
-          {user?.cover}
-        </p>
+      {user?.skills?.length > 0 && (
+        <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', padding: '13px 0', marginLeft: '8px' }}>
+          {user?.skills?.map((skill, index) => (
+            <span
+              data-testid={`${skill}_${index}`}
+              key={index}
+              style={{
+                backgroundColor: '#D9D9D9',
+                borderRadius: '16px',
+                fontSize: '13px',
+                padding: '4px 20px 6px 20px',
+                marginRight: '6.4px',
+                fontWeight: '500',
+                minHeight: '100%'
+              }}>
+              {skill}
+            </span>
+          ))}
+        </UserSkills>
+      )}
+      <div className="px-4" id="freelancer_cover">
+        <b>cover letter: </b>
+        {isTextHidden ? (
+          <>
+            <div style={{ display: 'flex' }}>
+              <div>{user?.cover?.substring(0, 240)}</div>
+            </div>
+            {isSmallText && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div>
+                  <SpanStyled
+                    onClick={() => {
+                      setExpandedStates(!expandedStates)
+                      setIsTextHidden(!isTextHidden)
+                    }}>
+                    Read More
+                  </SpanStyled>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div style={{ display: 'flex' }}>
+              <div> {user?.cover} </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div>
+                <SpanStyled
+                  onClick={() => {
+                    setExpandedStates(!expandedStates)
+                    setIsTextHidden(!isTextHidden)
+                  }}>
+                  Read Less
+                </SpanStyled>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       <div className="px-4 mb-3" style={{ display: 'grid' }}>
         <button

@@ -21,6 +21,7 @@ const InviteModel = require('../models/Invited')
 const BusinessModel = require('../models/Business')
 const AuthService = require('./authentication')
 const Mailer = require('../../services/Mailer')
+const BusinessDetailsModel = require('../models/BusinessDetails')
 // create user
 const createUser = async (data, hash) => {
   // create User
@@ -97,7 +98,7 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    const userData = await getSingleUser({ _id: id }, '-password')
+    const userData = await getSingleUser({ _id: id }, '-password');
 
     if ((data?.role === 1 || data?.role === '1') && !userData?.freelancers) {
       const freelancerData = new freelancer({ userId: userData?._id })
@@ -107,10 +108,28 @@ const updateUserByid = async (id, data) => {
     for (var field in data) {
       userData[field] = data[field]
     }
+    if (userData?.role === 1 && !userData?.freelancers) {
+      const freelancerEntity = await freelancer.create({ userId: id })
+      if (freelancerEntity) {
+        userData['freelancers'] = freelancerEntity._id;
+      }
+    }
 
-    await userData.save()
+    if (data?.businessPhone && data?.taxId && data?.businessType) {
+      const isExistingRecord = await BusinessDetailsModel.findOne({ userId: id })
+      if (isExistingRecord) {
+        let businessDetailRecord = {};
+        if (isExistingRecord?.name !== data.businessName) businessDetailRecord['name'] = data.businessName;
+        if (isExistingRecord?.businessPhone !== data.businessPhone) businessDetailRecord['businessPhone'] = data.businessPhone;
+        if (isExistingRecord?.taxId !== data.taxId) businessDetailRecord['taxId'] = data.taxId;
+        if (isExistingRecord?.type !== data.businessType) businessDetailRecord['type'] = data.businessType;
+        await BusinessDetailsModel.findOneAndUpdate({ _id: isExistingRecord._id }, { $set: businessDetailRecord });
+      }
+    }
 
-    return userData
+
+    const updatedUserEntity = await userData.save()
+    return updatedUserEntity
   } catch (e) {
     throw new Error(`${e}`)
   }
@@ -243,10 +262,10 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
           $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
           ...(skill?.length > 0
             ? {
-                'user.freelancerSkills.skill': {
-                  $in: skill
-                }
+              'user.freelancerSkills.skill': {
+                $in: skill
               }
+            }
             : {}),
           ...(minRate && {
             rate: { $gte: +minRate }
@@ -258,12 +277,12 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
       },
       ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
         ? [
-            {
-              $sort: {
-                rate: sort === 'lowest hourly rate' ? 1 : -1
-              }
+          {
+            $sort: {
+              rate: sort === 'lowest hourly rate' ? 1 : -1
             }
-          ]
+          }
+        ]
         : []),
       {
         $facet: {
@@ -661,12 +680,19 @@ const getSingleUser = async (filter, fields) => {
 const registerUser = async ({ email, password }) => {
   const hash = await AuthService.bcryptAndHashing(password)
   const newuser = await createUser({ email, password }, hash)
-  if (newuser) {
-    const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
-    if (result && result.isLoginWithGoogle) {
-      return result
+  try {
+    if (newuser) {
+      // create business_details for new user
+      await BusinessDetailsModel.create({ userId: newuser.id })
+      const result = await Mailer.sendMailWithSG({ email, templateName: 'VERIFY_EMAIL_ADDRESS' })
+      if (result && result.isLoginWithGoogle) {
+        return result
+      }
+      return newuser
     }
-    return newuser
+  } catch (error) {
+    await User.findByIdAndDelete(newuser.id);
+    throw new Error(`Something went wrong ${error}`)
   }
 }
 

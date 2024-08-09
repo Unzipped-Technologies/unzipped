@@ -158,6 +158,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                           />
                         ) : (
                           <div
+                            id="user_avatar"
                             style={{
                               display: 'flex',
                               flexFlow: 'column',
@@ -178,7 +179,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                       </ProfileImage>
                       <UserInfo>
                         <div style={{ display: 'flex' }}>
-                          <UserName>
+                          <UserName id="name">
                             {ConverterUtils.capitalize(
                               `${invitation?.freelancerId?.userId?.FirstName} ${invitation?.freelancerId?.userId?.LastName}`
                             )}
@@ -188,9 +189,11 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                           </div>
                         </div>
 
-                        <UserCategory>{invitation?.freelancerId?.category}</UserCategory>
-                        <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || '-'}</UserCountry>
-                        <UserRate>
+                        <UserCategory id="category">{invitation?.freelancerId?.category}</UserCategory>
+                        <UserCountry id="address_country">
+                          {invitation?.freelancerId?.userId?.AddressLineCountry || '-'}
+                        </UserCountry>
+                        <UserRate id="rate">
                           {invitation?.freelancerId?.rate > 0 ? (
                             <div>
                               {`$${invitation?.freelancerId?.rate}`}{' '}
@@ -234,6 +237,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                           </ViewProfileButton>
                         </Grid2>
                         <span
+                          id="total_likes"
                           style={{
                             color: ' #000',
                             fontFamily: 'Roboto',

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const departmentModel = require('../models/Department')
 const business = require('../models/Business')
 const tags = require('../models/tags')
-const tasks = require('../models/Task')
+const TaskModel = require('../models/Task')
 const contracts = require('../models/Contract')
 const user = require('../models/User')
 const taskHelper = require('./task')
@@ -440,10 +440,15 @@ const listDepartments = async query => {
   }
 }
 
-const updateDepartment = async (id, data) => {
+const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => {
   try {
+
     const updatedDepartment = await departmentModel.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
-    return updatedDepartment
+    if (isEditingDepartment) {
+      const updatedResp = await getDepartmentById(id, filters);
+      return updatedResp
+    }
+    return updatedDepartment;
   } catch (err) {
     throw new Error(`Could not update department, error: ${err.message}`)
   }
@@ -452,6 +457,7 @@ const updateDepartment = async (id, data) => {
 const deleteDepartment = async id => {
   try {
     // Here we also have to delete department from business, contract, parentDepartment, invoice, tags, task
+    const updateTickets = await TaskModel.updateMany({ departmentId: id }, { isArchived: true, isActive: false })
     return await departmentModel.softDelete({ _id: id })
   } catch (e) {
     throw new Error(`Could not delete department, error: ${e.message}`)
@@ -505,7 +511,7 @@ const getDepartmentWithoutPopulate = async (filter, selectedFields = '') => {
 }
 
 const addCommentToTask = async data => {
-  const task = await tasks.findById(data.taskId)
+  const task = await TaskModel.findById(data.taskId)
 
   if (!task) return undefined
   if (!task?.comments) task.comments = []
@@ -514,17 +520,17 @@ const addCommentToTask = async data => {
   task?.comments.push({ id: idNumber, ...data })
   await task.save()
   await departmentModel.findByIdAndUpdate(task.departmentId, {
-    tasks: await tasks.find({ departmentId: task.departmentId })
+    tasks: await TaskModel.find({ departmentId: task.departmentId })
   })
   return task
 }
 
 const removeCommentToTask = async data => {
-  const task = await tasks.findById(data.taskId)
+  const task = await TaskModel.findById(data.taskId)
   task.comments.filter(e => e.id !== data.commentId)
   await task.save()
   await departmentModel.findByIdAndUpdate(task.departmentId, {
-    tasks: await tasks.find({ departmentId: task.departmentId })
+    tasks: await TaskModel.find({ departmentId: task.departmentId })
   })
   return task
 }
@@ -563,6 +569,36 @@ const countDepartments = async filters => {
   }
 }
 
+const filteredRecords = async (departmentId, filters) => {
+  try {
+    const tasks = await TaskModel.find({
+      departmentId,
+      $or: [
+        {
+          taskName: {
+            $regex: filters
+              .searchTerm
+              .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
+            $options: 'i'
+          }
+        },
+        {
+          description: {
+            $regex: filters
+              .searchTerm
+              .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
+            $options: 'i'
+          }
+        },
+        { assignee: filters.assignedTo }
+      ]
+    });
+    return tasks;
+  } catch (e) {
+    throw Error(`Could not find department, error: ${e}`);
+  }
+};
+
 module.exports = {
   createDepartment,
   listDepartments,
@@ -575,5 +611,6 @@ module.exports = {
   addBusinessAssociateToBusiness,
   addTaskToDepartment,
   deleteBusinessDepartments,
-  getDepartmentWithoutPopulate
+  getDepartmentWithoutPopulate,
+  filteredRecords
 }
