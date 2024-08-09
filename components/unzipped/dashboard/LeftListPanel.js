@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
+import * as Icons from '@ant-design/icons/lib/icons'
 
 import IconSelector from './IconSelector'
 import { IconColors } from '../../../utils/FontIcons'
@@ -44,7 +45,6 @@ const Panel = ({ business, userListItems, setListInfo, listInfo }) => {
       overflow="hidden"
       data-testid="left_lists_panel">
       <TitleText paddingLeft clickable>
-        {business}
         <Absolute top="20px">
           <Action
             onClick={() => {
@@ -68,12 +68,12 @@ const Panel = ({ business, userListItems, setListInfo, listInfo }) => {
             borderLeft={listInfo?.listTitle == item.name ? '#1976D2' : 'transparent'}
             borderRadius={listInfo?.listTitle == item.name ? '0' : ''}
             key={index}>
-            {item?.icon && (
+            {item?.icon && Icons[item?.icon] && (
               <IconSelector
                 id={item?._id + '_icon'}
                 icon={item.icon}
                 size={24}
-                style={{ color: IconColors[item.icon] || '#1C1C1C' }}
+                style={{ color: IconColors[item.icon] }}
                 twoToneColor={IconColors[item.icon]}
               />
             )}
