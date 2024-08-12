@@ -191,7 +191,7 @@ const RecurringPaymentComponent = ({
       </Container>
       {window.innerWidth <= 680 && (
         <ResponsiveContainer>
-          <RecurringPaymentResponsive onClick={onSubmit} />
+          <RecurringPaymentResponsive onClick={onSubmit} selectedBusiness={selectedBusiness} />
         </ResponsiveContainer>
       )}
     </RecurringWrapper>

@@ -23,7 +23,7 @@ const Span = styled.div`
   width: 200px;
 `
 
-const BusinessAddress = ({ selectedBusiness, onClick }) => {
+const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
   const { width } = useWindowSize()
   const isMobile = window.innerWidth > 680 ? false : true
 
@@ -78,6 +78,7 @@ const BusinessAddress = ({ selectedBusiness, onClick }) => {
   const businessAddressUpdate = async () => {
     setIsLoading(true)
     const response = onClick && (await onClick(address))
+
     if (!response || response?.status !== 200) {
       setError(response?.data?.msg ?? 'Something went wrong!')
     } else {

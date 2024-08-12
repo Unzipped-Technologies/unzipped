@@ -419,15 +419,15 @@ const mapStateToProps = state => {
     token: state.Auth.token,
     name: state.Freelancers?.selectedFreelancer?.userId?.FirstName,
     userId: state.Auth?.user?._id,
-    userOwnedBusiness: state.Business.userOwnedBusiness,
-    freelancerId: state.Freelancers.selectedFreelancer?._id,
-    businessId: state.Contracts.contractForm.businessId,
-    message: state.Contracts.contractForm.message,
-    currency: state.Contracts.contractForm.currency,
-    hourlyRate: state.Contracts.contractForm.hourlyRate,
-    hoursLimit: state.Contracts.contractForm.hoursLimit,
-    jobType: state.Contracts.contractForm.jobType,
-    form: state.Contracts.contractForm
+    userOwnedBusiness: state.Business?.userOwnedBusiness,
+    freelancerId: state?.Freelancers?.selectedFreelancer?._id,
+    businessId: state?.Contracts?.contractForm?.businessId,
+    message: state?.Contracts?.contractForm?.message,
+    currency: state?.Contracts?.contractForm?.currency,
+    hourlyRate: state?.Contracts?.contractForm?.hourlyRate,
+    hoursLimit: state?.Contracts?.contractForm?.hoursLimit,
+    jobType: state?.Contracts?.contractForm?.jobType,
+    form: state?.Contracts?.contractForm
   }
 }
 

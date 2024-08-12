@@ -102,7 +102,7 @@ const RecurringPaymentSmHeader = styled.div`
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
   padding: 10px;
 `
-const RecurringPaymentResponsive = () => {
+const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
   const currentEmployeeData = [
     {
       id: 1,
@@ -201,17 +201,7 @@ const RecurringPaymentResponsive = () => {
       </div>
 
       <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-        <BusinessAddress
-          form={null}
-          loading={false}
-          onClick={e => {
-            console.log(e)
-          }}
-          planCost={'212'}
-          subscriptionForm={{}}
-          updateSubscription={null}
-          key={null}
-        />
+        <BusinessAddress onClick={onClick} selectedBusiness={selectedBusiness} />
         <PaymentMethod form={null} user={null} planCost={'1212'} subscriptionForm={{}} updateSubscription={null} />
       </div>
 

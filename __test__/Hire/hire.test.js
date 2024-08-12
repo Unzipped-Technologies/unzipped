@@ -769,6 +769,7 @@ describe('Hire a Freelancer', () => {
   it('renders hire page without freelancer first name for button', async () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
+
     initialState.Freelancers.selectedFreelancer.userId.FirstName = undefined
 
     const FreelancersList = initialState.Freelancers.freelancers

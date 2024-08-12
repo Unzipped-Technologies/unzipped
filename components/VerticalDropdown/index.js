@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
-import { useDispatch } from 'react-redux';
-import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 
 const Container = styled.div`
   position: relative;
-`;
+`
 
 const ICON_STYLES = {
   '&:focus': {
@@ -22,43 +22,40 @@ const ICON_STYLES = {
   '&:active': {
     background: 'transparent !important'
   }
-};
+}
 
 const DROPDOWN_LIST = ['Hire User', 'View Application', 'Dismiss Application']
 
 const VerticalDropdown = ({ freelancerId }) => {
-
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
 
   const handleOnOptionChange = item => {
     switch (item) {
       case 'Hire User':
         {
-          dispatch(getFreelancerById(freelancerId));
+          dispatch(getFreelancerById(freelancerId))
           router.push(`/hire`)
         }
-        break;
+        break
       case 'View Application':
-        break;
+        break
       case 'Dismiss Application':
-        break;
+        break
       default:
-        break;
+        break
     }
     handleClose()
   }
 
-  const handleOnOptionClick = (event) => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
+  const handleOnOptionClick = event => setAnchorEl(event.currentTarget)
+  const handleClose = () => setAnchorEl(null)
 
   return (
-    <Container >
-      <IconButton
-        onClick={handleOnOptionClick}
-        sx={ICON_STYLES} >
+    <Container>
+      <IconButton data-testid="application_actions" onClick={handleOnOptionClick} sx={ICON_STYLES}>
         <MoreVertIcon />
       </IconButton>
       <Menu
@@ -67,14 +64,12 @@ const VerticalDropdown = ({ freelancerId }) => {
         onClose={handleClose}
         sx={{
           '& .MuiPaper-root': { padding: '5px' }
-        }}
-      >
-        {DROPDOWN_LIST.map((listElement) => (
+        }}>
+        {DROPDOWN_LIST.map(listElement => (
           <MenuItem
             key={listElement}
             onClick={() => handleOnOptionChange(listElement)}
             sx={{
-
               '&:hover': {
                 background: '#e5eaf2',
                 borderRadius: '8px !important'
