@@ -5,14 +5,14 @@ import { Draggable } from 'react-beautiful-dnd';
 import ProjectUsers from './ProjectusersDropdown';
 
 // Styled Components for the Card
-const DraggableItem = styled.div`
+export const DraggableItem = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   user-select: none;
   padding: 6px 10px;
   margin: 0 0 8px 0;
-  min-height: 100px;
+  min-height: ${(minHeight) => minHeight ? minHeight : '100px'};
   background-color: ${(props) => (props.isDragging ? '#263B4A' : '#ffffff')};
   color: #000;
   border: 1px solid #ddd;
@@ -22,16 +22,16 @@ const DraggableItem = styled.div`
   border-left: 4px solid #E25050;
 `;
 
-const CardHeader = styled.div`
+export const CardHeader = styled.div`
   font-weight: 500;
   margin-bottom: 8px;
 `;
 
-const CardBody = styled.div`
+export const CardBody = styled.div`
   color: #555;
 `;
 
-const CardFooter = styled.div`
+export const CardFooter = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: 12px;
@@ -77,29 +77,37 @@ const TaskInformation = styled.div`
 // KanbanCard Component
 const KanbanCard = ({ item, index }) => {
   return (
-    <Draggable key={item.id} draggableId={item.id} index={index}>
-      {(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          <DraggableItem>
-            <CardHeader>
-              <span style={{ fontWeight: 500, fontSize: 18 }}> {item.ticketNumber}</span>
-              {` ${item.title}`}
-            </CardHeader>
-            <CardBody>
-              <span style={{ fontWeight: 500, fontSize: 18, color: "#777777" }}> Effort:</span>
-              <span style={{ fontWeight: 500, fontSize: 18, color: "#000" }}> 3</span>
-            </CardBody>
-            <CardFooter>
-              <ProjectUsers />
-            </CardFooter>
-          </DraggableItem>
-        </div>
-      )}
-    </Draggable>
+    <>
+
+      <Draggable key={item._id} draggableId={item._id} index={index}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <DraggableItem>
+              <CardHeader>
+                <span style={{ fontWeight: 500, fontSize: 18 }}> {item?.ticketCode}</span>
+                {` ${item?.taskName}`}
+              </CardHeader>
+              <CardBody>
+                <span style={{ fontWeight: 500, fontSize: 18, color: "#777777" }}> Effort:</span>
+                <span style={{ fontWeight: 500, fontSize: 18, color: "#000" }}> {item?.storyPoints}</span>
+              </CardBody>
+              <CardFooter>
+                <ProjectUsers
+                  isEmailRequired={true}
+                  selectedDepartment={null}
+                  assignee={item?.assignee}
+                  task={item}
+                />
+              </CardFooter>
+            </DraggableItem>
+          </div>
+        )}
+      </Draggable>
+    </>
   );
 };
 

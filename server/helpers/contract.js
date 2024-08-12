@@ -2,6 +2,9 @@ const Contracts = require('../models/Contract')
 const Business = require('../models/Business')
 const Department = require('../models/Department')
 const PaymentMethod = require('../models/PaymentMethod')
+const ListModel = require('../models/List')
+const ListEntriesModel = require('../models/ListEntries')
+
 const ThirdPartyApplications = require('../models/ThirdPartyApplications')
 const mongoose = require('mongoose')
 const keys = require('../../config/keys')
@@ -53,6 +56,47 @@ const createContracts = async data => {
     }
     await departmentData.save()
     await businessData.save()
+
+    const NewListEntry = {
+      name: 'My Team',
+      userId: data?.userId,
+      user: data?.userId,
+      freelancerId: data?.freelancerId,
+      businessId: data?.businessId,
+      listId: null,
+      isPrivate: false,
+      isDefaultList: false
+    }
+    const userList = await ListModel.findOne({ user: data?.userId, name: 'My Team' })
+    if (userList) {
+      NewListEntry.listId = userList?._id
+      const ListEntry = await ListEntriesModel.create({
+        ...NewListEntry
+      })
+      if (userList?.listEntries?.length) {
+        userList.listEntries = [...userList.listEntries, ListEntry?._id]
+      } else {
+        userList['listEntries'] = [ListEntry?._id]
+      }
+      await userList.save()
+    } else {
+      const newList = await ListModel.create({
+        userId: data?.userId,
+        user: data?.userId,
+        name: 'My Team',
+        isActive: true,
+        freelancer: data?.freelancerId,
+        listEntries: [],
+        isDefault: false,
+        isPrivate: false
+      })
+      NewListEntry.listId = newList?._id
+      const ListEntry = await ListEntriesModel.create({
+        ...NewListEntry
+      })
+      newList.listEntries = [ListEntry?._id]
+      await newList.save()
+    }
     return savedContract
   } catch (e) {
     throw Error(`Something went wrong: ${e.message}`)

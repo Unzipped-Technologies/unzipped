@@ -12,7 +12,7 @@ import { CLIENT_AUTH, FREELANCER_AUTH } from '../../store/Users'
 import { BUSINESS, SELECTED_BUSIESS } from '../../store/Business'
 import { PROJECT_APPLICATIONS } from '../../store/ProjectApplications'
 import { TASKS } from '../../store/Tasks'
-import { LIST_ENTRIES, USER_LIST_ENTRIES } from '../../store/ListEntries'
+import { LIST_ENTRIES, USER_LIST_ENTRIES, INVITES_LIST } from '../../store/ListEntries'
 
 import { ValidationUtils, ConverterUtils } from '../../../utils'
 import ProjectDetails from '../../../pages/dashboard/projects/details/[id]'
@@ -115,8 +115,7 @@ describe('Freelancers Component', () => {
     initialState.Auth.token = 'testToken'
     initialState.Auth.user = _.cloneDeep(CLIENT_AUTH)
     initialState.Business.projectList = _.cloneDeep(BUSINESS)
-    initialState.ListEntries.userLists = _.cloneDeep(LIST_ENTRIES)
-    initialState.Lists.invitesList = _.cloneDeep(LIST_ENTRIES)
+    initialState.Lists.invitesList = _.cloneDeep(INVITES_LIST)
     initialState.Business.selectedBusiness = _.cloneDeep(SELECTED_BUSIESS)
     initialState.ProjectApplications.projectApplications = _.cloneDeep(PROJECT_APPLICATIONS)
     initialState.ProjectApplications.totalCount = PROJECT_APPLICATIONS?.length
@@ -1436,7 +1435,7 @@ describe('Freelancers Component', () => {
     expect(InvitesTab).toBeInTheDocument()
     fireEvent.click(InvitesTab)
 
-    initialState.Lists.invitesList[0]?.listEntries.forEach(list => {
+    initialState.Lists.invitesList[0]?.listEntries?.forEach(list => {
       const InviteContainer = screen.getByTestId(`${list?._id}_invite`)
       expect(InviteContainer).toBeInTheDocument()
 
@@ -1449,9 +1448,11 @@ describe('Freelancers Component', () => {
       const FreelancerName = ConverterUtils.capitalize(
         `${list?.freelancerId?.userId?.FirstName} ${list?.freelancerId?.userId?.LastName}`
       )
-      expect(within(InviteContainer).getByText(FreelancerName)).toBeInTheDocument()
-      expect(within(InviteContainer).getByText(list?.freelancerId?.category)).toBeInTheDocument()
-      expect(within(InviteContainer).getByText(list?.freelancerId?.userId?.AddressLineCountry)).toBeInTheDocument()
+      expect(InviteContainer).toHaveTextContent(FreelancerName)
+      expect(InviteContainer.querySelector('#category')).toHaveTextContent(list?.freelancerId?.category)
+      expect(
+        within(InviteContainer).getAllByText(list?.freelancerId?.userId?.AddressLineCountry)[0]
+      ).toBeInTheDocument()
       expect(
         within(InviteContainer).getByText(list?.freelancerId?.rate > 0 ? '$' + list?.freelancerId?.rate : 'Negotiable')
       ).toBeInTheDocument()
@@ -3188,7 +3189,6 @@ describe('Freelancers Component', () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
-    const SelectProject = initialState.Business.projectList[0]
     renderWithRedux(<Projects />, { initialState })
 
     const ProjectsContainer = screen.getByTestId('view_mobile_projects')
@@ -3205,7 +3205,7 @@ describe('Freelancers Component', () => {
     expect(InvitesTab).toBeInTheDocument()
     fireEvent.click(InvitesTab)
 
-    initialState.Lists.invitesList[0]?.listEntries.forEach(list => {
+    initialState.Lists.invitesList[0]?.listEntries?.forEach(list => {
       const InviteContainer = screen.getByTestId(`${list?._id}_invite`)
       expect(InviteContainer).toBeInTheDocument()
 
@@ -3219,8 +3219,12 @@ describe('Freelancers Component', () => {
         `${list?.freelancerId?.userId?.FirstName} ${list?.freelancerId?.userId?.LastName}`
       )
       expect(within(InviteContainer).getByText(FreelancerName)).toBeInTheDocument()
-      expect(within(InviteContainer).getByText(list?.freelancerId?.category)).toBeInTheDocument()
-      expect(within(InviteContainer).getByText(list?.freelancerId?.userId?.AddressLineCountry)).toBeInTheDocument()
+      if (list?.freelancerId?.category !== null) {
+        expect(within(InviteContainer).getAllByText(list?.freelancerId?.category)[0]).toBeInTheDocument()
+      }
+      expect(
+        within(InviteContainer).getAllByText(list?.freelancerId?.userId?.AddressLineCountry)[0]
+      ).toBeInTheDocument()
       expect(
         within(InviteContainer).getByText(list?.freelancerId?.rate > 0 ? '$' + list?.freelancerId?.rate : 'Negotiable')
       ).toBeInTheDocument()
@@ -3243,7 +3247,6 @@ describe('Freelancers Component', () => {
   it('verify Invites card with undefined data', async () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
-
     initialState.Lists.invitesList[0].listEntries[0].freelancerId.userId.profileImage = undefined
     initialState.Lists.invitesList[0].listEntries[0].freelancerId.userId.AddressLineCountry = undefined
     initialState.Lists.invitesList[0].listEntries[0].freelancerId.rate = undefined

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import router from 'next/router'
+import router, { useRouter } from 'next/router'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
@@ -106,6 +106,7 @@ const CreateBusiness = ({
   const businessForm = useSelector(state => state.Business?.businessForm);
   const isGithubConnected = (convertToBoolean(router?.query?.['github-connect']));
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter()
 
   const updateForm = data => updateBusinessForm({ ...data })
   const [inputValue, setInputValue] = useState('')
@@ -113,6 +114,10 @@ const CreateBusiness = ({
 
   const [isSmallWindow, setIsSmallWindow] = useState(false)
   const { width } = useWindowSize();
+
+  useEffect(()=>{
+    if(!accessToken) router.push('/login')
+  },[])
 
   useEffect(() => {
     if (width <= 600) {

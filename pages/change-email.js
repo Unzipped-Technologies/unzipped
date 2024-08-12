@@ -22,7 +22,7 @@ const FooterContainer = styled.div`
   margin-top: auto;
 `
 
-const ChangeEmail = ({ email, updateUserEmail }) => {
+const ChangeEmail = ({ email, updateUserEmail, accessToken }) => {
   const [emailError, setEmailError] = useState('')
   const router = useRouter()
 
@@ -31,6 +31,12 @@ const ChangeEmail = ({ email, updateUserEmail }) => {
   }
 
   const [marginBottom, setMarginBottom] = useState('0px')
+
+  useEffect(() => {
+    if (!accessToken) {
+      router.push('/login')
+    }
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -92,7 +98,8 @@ const ChangeEmail = ({ email, updateUserEmail }) => {
 
 const mapStateToProps = state => {
   return {
-    email: state.Auth?.user.email
+    email: state.Auth?.user.email,
+    accessToken: state.Auth?.token
   }
 }
 

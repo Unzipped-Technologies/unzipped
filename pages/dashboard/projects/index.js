@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 
 import Nav from '../../../components/unzipped/header'
 import { parseCookies } from '../../../services/cookieHelper'
+import { getUserLists } from '../../../redux/ListEntries/action'
+
 import { getProjectsList } from '../../../redux/Business/actions'
 import { TitleText } from '../../../components/unzipped/dashboard/style'
 import MobileProjects from '../../../components/unzipped/dashboard/MobileProjects'
@@ -37,6 +39,13 @@ const Projects = () => {
   const [filter, setFilter] = useState({
     searchKey: ''
   })
+  const userId = useSelector(state => state.Auth.user?._id)
+
+  const userListItems = useSelector(state => state.ListEntries?.userLists)
+
+  useEffect(() => {
+    dispatch(getUserLists(userId))
+  }, [userId])
 
   const handleSearch = () => dispatch(getProjectsList(filter))
 
@@ -59,7 +68,7 @@ const Projects = () => {
         </Desktop>
       ) : (
         <MobileDisplayBox>
-          <MobileProjects />
+          <MobileProjects userListItems={userListItems} />
           <MobileFreelancerFooter defaultSelected="Projects" />
         </MobileDisplayBox>
       )}

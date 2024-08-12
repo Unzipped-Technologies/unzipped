@@ -270,7 +270,7 @@ const TaskForm = ({
       setValidationErrors('Task Name is required.')
       return false
     } else if (!taskForm?.storyPoints) {
-      setValidationErrors('Sotry points are required.')
+      setValidationErrors('Story points are required.')
       return false
     } else if (!taskForm?.priority) {
       setValidationErrors('Priority are required.')
@@ -814,7 +814,7 @@ const TaskForm = ({
             </TitleText>
             {editMode || userRole === 1 ? (
               <Autocomplete
-                value={selectedTaskId ? STATUS_OPTIONS_ARR.filter(elem => elem == taskDetail?.status) : taskForm?.status}
+                value={selectedTaskId ? STATUS_OPTIONS_ARR.filter(elem => elem?.toLowerCase() == taskDetail?.status?.toLowerCase()) : taskForm?.status}
                 disablePortal
                 id="combo-box-demo"
                 options={STATUS_OPTIONS_ARR}
