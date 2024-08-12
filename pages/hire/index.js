@@ -18,7 +18,23 @@ const NavContainer = styled.div`
   }
 `
 const HirePage = ({ token }) => {
-  const [marginBottom, setMarginBottom] = useState('0px')
+    const [marginBottom, setMarginBottom] = useState('0px');
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!token) {
+            router.push('/login')
+        }
+    }, [])
+
+    useEffect(()=>{
+        const handleResize = () => {
+            if (window.innerWidth < 680) {
+                setMarginBottom('72px');
+            } else {
+                setMarginBottom('97px');
+            }
+        };
 
   useEffect(() => {
     const handleResize = () => {

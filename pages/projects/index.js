@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import Nav from '../../components/unzipped/header'
@@ -47,7 +47,7 @@ const DesktopDisplayBox = styled.div`
     display: none;
   }
 `
-const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId, loading }) => {
+const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId, loading, accessToken }) => {
   const options = {
     root: null,
     rootMargin: '0px',
@@ -70,6 +70,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
+  const { isExpanded } = useSelector(state => state.Freelancers)
 
   useEffect(() => {
     getPublicProjectsList({ take, skip, filter })
@@ -143,9 +144,39 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
     }
   }
 
+  const setSearchKey = value => {
+    setFilter(prevData => ({
+      ...prevData,
+      searchKey: value
+    }))
+  }
+
+  const handleSearch = intersectionObserver => {
+    getPublicProjectsList({
+      intersectionObserver,
+      filter,
+      take,
+      skip
+    })
+  }
+
   return (
     <div data-testid="projects_page">
-      {!filterOpenClose && <Nav searchValue={filter} searchButton margin={'0px'} marginBottom={marginBottom} />}
+      {!filterOpenClose &&
+        (
+          <Nav
+            searchValue={filter}
+            handleSearch={handleSearch}
+            searchButton
+            margin={'0px'}
+            marginBottom={marginBottom}
+            isSubMenu
+            setFilter={setFilter}
+            handleSearchValue={setFilter}
+          />
+        )
+      }
+
       {!filterOpenClose && window?.innerWidth <= 680 && (
         <MobileDisplayBox>
           <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
@@ -166,7 +197,11 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
           </MobileDisplayBox>
         )}
 
-        <Box data-testid="desktop_projects_container">
+        <Box data-testid="desktop_projects_container"
+          style={{
+            marginTop: !isExpanded ? (accessToken ? '190px' : '150px') : accessToken ? '190px' : '150px'
+          }}
+        >
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
           {!loading ? (
             <div className="overflow-auto">
@@ -222,7 +257,8 @@ const mapStateToProps = state => {
     freelancerId: state?.Auth?.user?.freelancers,
     totalCount: state.Business.totalCount,
     projectList: state.Business.projectList,
-    loading: state.Loading.loading
+    loading: state.Loading.loading,
+    accessToken: state.Auth.accessToken
   }
 }
 

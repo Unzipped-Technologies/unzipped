@@ -624,3 +624,48 @@ export const USER_LIST_ENTRIES = [
     __v: 0
   }
 ]
+
+export const CURRENT_USER_LISTS = [
+  {
+    icon: 'HeartOutlined',
+    isActive: true,
+    listEntries: [],
+    isDefault: true,
+    isPrivate: false,
+    _id: '6601c2a6149276195c3f8fbe',
+    name: 'Favorites',
+    userId: '6601c2a6149276195c3f8fbd',
+    user: '6601c2a6149276195c3f8fbd',
+    createdAt: '2024-03-25T18:29:58.642Z',
+    updatedAt: '2024-03-25T18:29:58.642Z',
+    __v: 0
+  },
+  {
+    icon: 'EyeOutlined',
+    isActive: true,
+    listEntries: [],
+    isDefault: true,
+    isPrivate: false,
+    _id: '6601c2a6149276195c3f8fbf',
+    name: 'Recently Viewed',
+    userId: '6601c2a6149276195c3f8fbd',
+    user: '6601c2a6149276195c3f8fbd',
+    createdAt: '2024-03-25T18:29:58.658Z',
+    updatedAt: '2024-03-25T18:29:58.658Z',
+    __v: 0
+  },
+  {
+    icon: 'TeamOutlined',
+    isActive: true,
+    listEntries: [],
+    isDefault: true,
+    isPrivate: true,
+    _id: '6601c2a6149276195c3f8fc0',
+    name: 'My Team',
+    userId: '6601c2a6149276195c3f8fbd',
+    user: '6601c2a6149276195c3f8fbd',
+    createdAt: '2024-03-25T18:29:58.680Z',
+    updatedAt: '2024-03-25T18:29:58.680Z',
+    __v: 0
+  }
+]

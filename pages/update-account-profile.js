@@ -43,6 +43,7 @@ const GetCard = ({
     taxEIN,
     phoneNumber,
     loading,
+    isAccountDetailCompleted
 }) => {
     switch (stage) {
         case 1:
@@ -267,7 +268,7 @@ const GetCard = ({
     }
 }
 
-const Signup = ({
+const UpdateAccountProfile = ({
     stage, 
     updateRegisterForm,
     updateUser,
@@ -290,6 +291,7 @@ const Signup = ({
     businessType,
     taxEIN,
     access,
+    user
 }) => {
     const tokens = token?.access_token || access
     const submitForm = async (step) => {
@@ -315,6 +317,7 @@ const Signup = ({
                 businessType,
                 taxEIN,
                 profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                isAccountDetailCompleted: true,
             }, tokens)
 
             router.push('/dashboard?success=true')
@@ -340,6 +343,7 @@ const Signup = ({
         }
 
     }
+
 
     return (
         <Container>
@@ -370,7 +374,7 @@ const Signup = ({
     )
 }
 
-Signup.getInitialProps = async ({ req, res }) => {
+UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
     const token = parseCookies(req)
     
       return {
@@ -410,4 +414,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateAccountProfile);

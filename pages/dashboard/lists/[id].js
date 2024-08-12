@@ -125,7 +125,7 @@ const MobileListDetail = () => {
       handleOpen()
     }
     if (value == 'DELETE') {
-      dispatch(deleteList(selectedList.listId, () => dispatch(getUserLists(userId))))
+      dispatch(deleteList(selectedList?.listId, () => dispatch(getUserLists(userId))))
     }
   }
 

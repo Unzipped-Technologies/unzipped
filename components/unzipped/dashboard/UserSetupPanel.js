@@ -128,24 +128,21 @@ const Panel = ({ user, verifyIdentity }) => {
 
   useEffect(() => {
     if (user && trackProgress < 100) {
-      let incrementalProgress = 0
 
       if (user?.role !== 0 && user?.FirstName && user?.AddressCity) {
-        incrementalProgress += 25
+        setTrackProgress((prev) => prev + 25)
       }
       if (user?.profileImage) {
-        incrementalProgress += 25
+        setTrackProgress((prev) => prev + 25)
       }
       if (user?.plan > 0) {
-        incrementalProgress += 25
+        setTrackProgress((prev) => prev + 25)
       }
-      if (user?.isIdentityVerified === accountVerificationEnum.SUCCESS) {
-        incrementalProgress += 25
+      if (user?.isIdentityVerified == 'SUCCESS') {
+        setTrackProgress((prev) => prev + 25)
       }
-
-      setTrackProgress(trackProgress + incrementalProgress)
     }
-  }, [user])
+  }, [])
 
   const openDropzone = () => {
     dropzoneRef.current && dropzoneRef.current.open()

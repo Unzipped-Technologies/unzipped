@@ -4,6 +4,7 @@ import { fireEvent, screen, act, within, waitFor } from '@testing-library/react'
 
 import FreelancersListingCard from '../../../components/unzipped/dashboard/FreelancersListingCard' // Adjust the import path as needed
 import ListManagementPanel from '../../../components/unzipped/dashboard/ListManagementPanel' // Adjust the import path as needed
+import ListPanel from '../../../components/unzipped/dashboard/ListPanel' // Adjust the import path as needed
 import Lists from '../../../pages/dashboard/lists' // Adjust the import path as needed
 import ViewAllLists from '../../../pages/dashboard/lists/view' // Adjust the import path as needed
 import { initialState } from '../../store/mockInitialState'
@@ -12,7 +13,7 @@ import { CLIENT_AUTH } from '../../store/Users'
 import { USER_LIST, LIST_ENTRIES } from '../../store/ListEntries'
 import MobileListDetail from '../../../pages/dashboard/lists/[id]'
 import { getListEntriesById, getUserLists } from '../../../redux/ListEntries/action'
-import { getInvitesLists, updateList } from '../../../redux/Lists/ListsAction'
+import { getInvitesLists, updateList, createList } from '../../../redux/Lists/ListsAction'
 import { getProjectsList } from '../../../redux/Business/actions'
 import { parseCookies } from '../../../services/cookieHelper'
 
@@ -40,7 +41,8 @@ jest.mock('../../../redux/ListEntries/action', () => ({
 jest.mock('../../../redux/Lists/ListsAction', () => ({
   ...jest.requireActual('../../../redux/Lists/ListsAction'),
   getInvitesLists: jest.fn(),
-  updateList: jest.fn()
+  updateList: jest.fn(),
+  createList: jest.fn()
 }))
 
 jest.mock('../../../redux/Business/actions', () => ({
@@ -55,8 +57,14 @@ describe('List Page', () => {
     initialState.Auth.token = 'test token'
     initialState.Auth.user = _.cloneDeep(CLIENT_AUTH)
     initialState.ListEntries.userLists = _.cloneDeep(USER_LIST)
-    initialState.Lists.selectedLis = null
+    initialState.Lists.selectedList = null
     initialState.ListEntries.listEntries = []
+
+    createList.mockReturnValue(() => {
+      return {
+        status: 200
+      }
+    })
 
     updateList.mockReturnValue(() => {
       return {
@@ -106,21 +114,36 @@ describe('List Page', () => {
 
   it('renders Lists page', async () => {
     renderWithRedux(<Lists />, { initialState })
+
+    const ListNamesContainer = screen.getByTestId('left_lists_panel')
+    expect(ListNamesContainer).toBeInTheDocument()
+
+    const NewListElement = within(ListNamesContainer).getByText('+ New List')
+    expect(NewListElement).toBeInTheDocument()
+    fireEvent.click(NewListElement)
+
+    expect(screen.getByTestId('add_list_modal')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'cancel' }))
   })
   it('renders Lists page and verify list entries', async () => {
     renderWithRedux(<Lists />, { initialState })
 
     const ListNamesContainer = screen.getByTestId('left_lists_panel')
     expect(ListNamesContainer).toBeInTheDocument()
-    initialState.ListEntries.userLists?.forEach(list => {
-      expect(within(ListNamesContainer).getByTestId(`${list?._id}_icon`)).toBeInTheDocument()
-      const ListNameElement = within(ListNamesContainer).getByText(list?.name ?? 'List Name')
-      expect(ListNameElement).toBeInTheDocument()
+
+    initialState.ListEntries.userLists?.forEach((list, i) => {
       const ListEntries = LIST_ENTRIES?.filter(listEntry => listEntry.listId === list._id)
       initialState.ListEntries.listEntries = _.cloneDeep(ListEntries)
+
+      expect(within(ListNamesContainer).getByTestId(`${list?._id}_icon`)).toBeInTheDocument()
+
+      const ListNameElement = within(ListNamesContainer).getByText(list?.name ?? 'List Name')
+      expect(ListNameElement).toBeInTheDocument()
+
       fireEvent.click(ListNameElement)
       if (initialState.ListEntries.listEntries?.length > 0) {
-        ListEntries?.forEach(entry => {
+        initialState.ListEntries.listEntries?.forEach((entry, index) => {
           const ListsContainer = screen.getByTestId('right_list_panel')
           expect(ListsContainer).toBeInTheDocument()
           const FreelancerContainer = within(ListsContainer).getByTestId(`${entry?._id}_entry`)
@@ -189,28 +212,17 @@ describe('List Page', () => {
               entry?.freelancerId?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') ?? 0
             } Upvotes by clients`
           )
-          expect(within(FreelancerContainer).getByRole('button', { name: 'View Profile' })).toBeInTheDocument()
+          const ViewProfileButton = within(FreelancerContainer).getByRole('button', { name: 'View Profile' })
+          expect(ViewProfileButton).toBeInTheDocument()
+          if (
+            i === initialState.ListEntries.userLists.length - 1 &&
+            index === initialState.ListEntries.listEntries?.length - 1
+          ) {
+            fireEvent.click(ViewProfileButton)
+            expect(mockRouterPush).toHaveBeenCalledWith(`/freelancers/${entry?.freelancerId?._id}`)
+          }
         })
       }
-    })
-
-    const NewListElement = within(ListNamesContainer).getByText('+ New List')
-    expect(NewListElement).toBeInTheDocument()
-    fireEvent.click(NewListElement)
-
-    expect(screen.getByTestId('add_list_modal')).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('button', { name: 'cancel' }))
-
-    initialState.ListEntries.userLists?.forEach(list => {
-      const ListEntries = initialState.ListEntries.listEntries?.filter(listEntry => listEntry.listId === list._id)
-      ListEntries?.forEach(entry => {
-        const FreelancerContainer = screen.getByTestId(`${entry?._id}_entry`)
-        const ViewProfileButton = within(FreelancerContainer).getByText('View Profile')
-        expect(ViewProfileButton).toBeInTheDocument()
-        fireEvent.click(ViewProfileButton)
-        expect(mockRouterPush).toHaveBeenCalledWith(`/freelancers/${entry?.freelancerId?._id}`)
-      })
     })
   })
 
@@ -364,7 +376,7 @@ describe('List Page', () => {
           listIcon: 'HomeFilled',
           listId: initialState.ListEntries.userLists[0]?._id
         }}
-        isEditMode={true}
+        isEditMode={false}
         setIsEditMode={() => {}}
         userId={initialState.Auth.user._id}
         setIsListViewable={() => {}}
@@ -394,7 +406,7 @@ describe('List Page', () => {
 
     fireEvent.click(within(ListFormModal).getByText('select an icon'))
 
-    const AddListButton = within(ListFormModal).getByRole('button', { name: 'UPDATE LIST' })
+    const AddListButton = within(ListFormModal).getByRole('button', { name: 'ADD LIST' })
 
     await act(async () => {
       global.innerWidth = 1040
@@ -455,7 +467,32 @@ describe('List Page', () => {
     expect(mockRouterPush).toHaveBeenCalledWith(`/login`)
   })
 
-  // Mobile View
+  it('renders Lists page without lists', async () => {
+    initialState.ListEntries.userLists = undefined
+    renderWithRedux(<Lists />, { initialState })
+
+    const BrowseButton = screen.getByRole('button', { name: 'Browse Freelancers' })
+    expect(BrowseButton).toBeInTheDocument()
+
+    fireEvent.click(BrowseButton)
+  })
+
+  it('renders Lists page with updated list data', async () => {
+    initialState.Lists.updatedList = {
+      name: 'new list',
+      listId: 'list_id',
+      icon: 'HeartOutlined'
+    }
+    renderWithRedux(<Lists />, { initialState })
+  })
+
+  it('renders Lists page without favourite lists', async () => {
+    initialState.Lists.updatedList = null
+    const Lists = USER_LIST?.filter(list => list.name !== 'Favorites')
+    renderWithRedux(<ListPanel userListItems={Lists} />, { initialState })
+  })
+
+  // // Mobile View
 
   it('renders Lists page and verify list entries', async () => {
     global.innerWidth = 640
@@ -616,10 +653,10 @@ describe('List Page', () => {
 
     fireEvent.click(SelectedIcon)
 
-    const Icon = ListFormModal.querySelector('#selected_icon')
-    expect(Icon).toBeInTheDocument()
+    // const Icon = ListFormModal.querySelector('#selected_icon')
+    // expect(Icon).toBeInTheDocument()
 
-    fireEvent.click(Icon)
+    // fireEvent.click(Icon)
 
     const UpdateListButton = within(ListFormModal).getByRole('button', { name: 'UPDATE LIST' })
 

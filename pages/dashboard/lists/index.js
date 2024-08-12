@@ -72,7 +72,7 @@ const Dashboard = ({ business = 'Lists', token, cookie }) => {
         isViewable={isViewable}
         setIsExpanded={setIsExpanded}
       />
-      <ListPanel business={business} type="list" userListItems={userListItems} />
+      <ListPanel type="list" userListItems={userListItems} />
 
       {/* Default List View for Mobile Device */}
       {!isViewable && (

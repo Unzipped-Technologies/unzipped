@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux'
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { registerUser } from '../redux/actions';
+import { registerUser, handleEmailRegistration } from '../redux/actions';
 import { useRouter } from 'next/router';
 import Notification from '../components/animation/notifications';
 import styled from 'styled-components'
@@ -127,6 +127,7 @@ const Contain = styled.div`
 `;
 
 const Register = ({ loading, PassError, isEmailSent, error, registerUser }) => {
+    const dispatch = useDispatch()
     const [emailAlert, setEmailAlert] = useState('');
     const [passwordAlert, setPasswordAlert] = useState('');
     const [email, setEmail] = useState('');
@@ -190,10 +191,15 @@ const Register = ({ loading, PassError, isEmailSent, error, registerUser }) => {
 
     ///Register
     const RegisterUsers = async () => {
-        if (passwordAlert || emailAlert) {
-            return;
+        try {
+            if (!user || !user.email || !user.password) return;
+            await registerUser(user);
         }
-        await registerUser(user);
+        catch (error) {
+            console.log('error_catch', error)
+            setNotifications('Registration Failed')
+            dispatch(handleEmailRegistration())
+        }
     };
 
     const google = () => {

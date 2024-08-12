@@ -34,7 +34,8 @@ import {
   UPDATE_USER_ERROR,
   USER_MAIL_CONFIRMATION,
   UPDATE_PHONE_NUMBER,
-  UPDATE_PHONE_ERROR
+  UPDATE_PHONE_ERROR,
+  HANDLE_USER_EMAIL_REG_ERR
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -191,22 +192,22 @@ export const updateUser = (data, token) => async (dispatch, getState) => {
 
 export const getVerifyIdentityUrl =
   (accountId = null, token) =>
-  async (dispatch, getState) => {
-    await axios
-      .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(token))
-      .then(res =>
-        dispatch({
-          type: INITIATE_VERIFY_IDENTITY,
-          payload: res.data
+    async (dispatch, getState) => {
+      await axios
+        .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(getState().Auth.token))
+        .then(res =>
+          dispatch({
+            type: INITIATE_VERIFY_IDENTITY,
+            payload: res.data
+          })
+        )
+        .catch(err => {
+          dispatch({
+            type: AUTH_ERROR,
+            payload: err.response.data
+          })
         })
-      )
-      .catch(err => {
-        dispatch({
-          type: AUTH_ERROR,
-          payload: err.response.data
-        })
-      })
-  }
+    }
 
 export const resendVerify = user => async (dispatch, getState) => {
   const data = await axios
@@ -489,4 +490,12 @@ export const emailConfirmation = userId => async dispatch => {
       payload: false
     })
   }
+}
+
+
+export const handleEmailRegistration = () => dispatch => {
+  dispatch({
+    type: HANDLE_USER_EMAIL_REG_ERR,
+    payload: { loading: false }
+  })
 }

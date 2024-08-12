@@ -15,6 +15,7 @@ const questionHelper = require('./questions')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const CloudinaryUploadHelper = require('./file')
 const businessDetail = require('../models/BusinessDetails')
+const TaskModel = require('../models/Task')
 
 const createBusiness = async (data, id, files = []) => {
   // upload file to cloudinary platform
@@ -183,24 +184,24 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           name: { $regex: regexQuery },
           ...(filter?.skill?.length > 0
             ? {
-                requiredSkills: {
-                  $elemMatch: {
-                    $regex: new RegExp(regexPattern, 'i')
-                  }
+              requiredSkills: {
+                $elemMatch: {
+                  $regex: new RegExp(regexPattern, 'i')
                 }
               }
+            }
             : {}),
           ...(filter?.projectBudgetType && {
             projectBudgetType: { $regex: regexType }
           }),
           ...(filter?.minRate &&
             +filter?.minRate > 0 && {
-              budget: { $gte: +filter?.minRate }
-            }),
+            budget: { $gte: +filter?.minRate }
+          }),
           ...(filter?.maxRate &&
             +filter?.maxRate > 0 && {
-              budget: { $lte: +filter?.maxRate }
-            }),
+            budget: { $lte: +filter?.maxRate }
+          }),
           ...filters
         }
       },
@@ -270,7 +271,12 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ['$_id', '$$questionId'] }
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$questionId' }, then: '$$questionId', else: [] } }
+                  ]
+                }
               }
             },
             {
@@ -313,14 +319,19 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ['$_id', '$$departments'] }
+                $expr: {
+                  $and: [
+                    { $eq: ['$isDeleted', false] },
+                    { $in: ['$_id', '$$departments'] }
+                  ]
+                }
               }
             },
             {
               $project: {
                 name: 1,
                 tags: 1,
-                businessId: 1
+                businessId: 1,
               }
             }
           ],
@@ -560,6 +571,128 @@ const updateBusinessDetails = async (data, id) => {
 const getBusinessCreatedByUser = async userId => {
   return await business.find({ userId: userId }).select('name _id')
 }
+
+const getBusinessEmployees = async businessId => {
+  const businessEmployees = await business.find({ _id: businessId })
+    .populate({
+      path: 'employees',
+      model: 'contracts',
+      select: 'freelancerId',
+      populate: {
+        path: 'freelancerId',
+        model: 'freelancers',
+        select: 'userId',
+        populate: {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName email _id profileImage ',
+        }
+      }
+    }).select('employees');
+
+  const empLists = businessEmployees.map(elem => {
+    const hiredEmployees = {
+      businessId: elem._id,
+      contractId: elem.employees.length > 0 ? elem.employees[0]._id : null,
+      FirstName: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.FirstName ?? '' : '',
+      LastName: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.LastName ?? '' : '',
+      userId: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?._id : null,
+      email: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.email : null,
+      profileImage: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.profileImage : ''
+    }
+    return hiredEmployees;
+  })
+
+  return empLists;
+}
+
+const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false) => {
+
+
+  const list = await business.find({ _id: businessId }).populate([
+    {
+      path: 'departments',
+      model: 'departments',
+      select: 'name tags',
+      populate: [
+        {
+          path: 'tags',
+          model: 'tags',
+          select: '_id tagName'
+        },
+        {
+          path: 'tasks',
+          model: 'tasks',
+          populate: [
+            {
+              path: 'assignee',
+              model: 'users',
+              select: '_id FirstName LastName profileImage email'
+            }
+          ],
+          select: '_id taskName storyPoints tag description businessId assignee order status departmentId',
+        }
+      ]
+    },
+  ]).select('_id name');
+
+  return constructBoardObject(list)
+
+}
+
+const normalizeStatus = (status) => {
+  switch (status) {
+    case 'Todo':
+      return 'To Do';
+    case 'Done':
+      return 'Done';
+    case 'In Progress':
+      return 'In Progress';
+    default:
+      return status;
+  }
+};
+
+const constructBoardObject = (arr) => {
+  const tagsArray = arr.flatMap(item =>
+    item.departments.flatMap(department =>
+      department.tags.filter(tag => Object.keys(tag).length > 0)
+    )
+  );
+
+  const tagMap = new Map();
+
+  tagsArray.forEach(tag => {
+    if (!tagMap.has(tag.tagName)) {
+      tagMap.set(tag.tagName, { tagName: tag.tagName, tasks: [] });
+    }
+  });
+
+  const resultObject = {};
+
+  const tasksArray = arr.flatMap(item =>
+    item.departments.flatMap(department => department.tasks)
+  );
+  tagMap.forEach((value, key) => {
+    const tagWithId = tagsArray.find(tag => tag.tagName === key);
+    if (tagWithId) {
+      resultObject[tagWithId._id] = value;
+    }
+  });
+
+
+  tasksArray.forEach(task => {
+    const normalizedStatus = normalizeStatus(task.status);
+    for (const [id, tagObj] of Object.entries(resultObject)) {
+      if (tagObj.tagName === normalizedStatus && tagObj.tagName === normalizeStatus(task.status)) {
+        tagObj.tasks.push(task);
+      }
+    }
+  });
+  return resultObject;
+}
+
+
 module.exports = {
   createBusiness,
   listBusinesses,
@@ -575,5 +708,7 @@ module.exports = {
   createBusinessDetails,
   updateBusinessDetails,
   getBusinessDetailsByUserId,
-  getBusinessCreatedByUser
+  getBusinessCreatedByUser,
+  getBusinessEmployees,
+  fetchAllBizTasks
 }
