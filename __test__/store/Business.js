@@ -387,3 +387,26 @@ export const SELECTED_BUSIESS = {
   goals:
     "Project goals will go here. I am adding this additional text so that we can see how it might look. Only show this window if there is project goals listed on the project. Don't show if it was skipped.If there are any spaces or new lines that are included in the text then it will show."
 }
+
+export const BUSINESS_FORM = {
+  desc: '',
+  projectType: '',
+  name: '',
+  challenge: '',
+  role: '',
+  objectives: [],
+  teamDynamics: '',
+  requiredSkills: [],
+  goals: '',
+  companyBackground: '',
+  budgetRange: '',
+  questionsToAsk: [],
+  stage: 1,
+  isFieldSubmitted: false
+}
+
+export const WIZARD_SUBMISSION = {
+  isSuccessfull: false,
+  error: '',
+  projectName: ''
+}

@@ -174,9 +174,9 @@ const Business = (state = INIT_STATE, action = {}) => {
 
     case GET_BUSINESS_DETAILS:
       return { ...state, loading: false, details: action.payload }
-    
+
     case GET_BUSINESS_CREATED_BY_USER_SUCCESS:
-      return { ...state, loading: false, userOwnedBusiness: action.payload}
+      return { ...state, loading: false, userOwnedBusiness: action.payload }
 
     case GET_BUSINESS_CREATED_BY_USER_FAILED:
       return { ...state, loading: false, userOwnedBusiness: [] }

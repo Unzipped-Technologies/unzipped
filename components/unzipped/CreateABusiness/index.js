@@ -18,20 +18,20 @@ const CardContainer = styled.div`
 
   @media (max-width: 680px) {
     width: 100%;
-    height: ${props => (props.doubleScreenTop || props.doubleScreenBottom ? 'auto' : '100%')};
+    height: 100%;
   }
 `
 
 const CreateBusiness = ({
-  mobile,
+  hasNextButton = true,
+  hasBackButton = true,
+  mobile = false,
   titleFontSize,
   doubleScreenTop,
   doubleScreenBottom,
   title,
-  loading,
   disabled,
   submit,
-  skip,
   sub,
   children,
   stage,
@@ -46,9 +46,8 @@ const CreateBusiness = ({
   const store = useSelector(state => state)
   const dispatch = useDispatch()
   const router = useRouter()
-
   return (
-    <CardContainer>
+    <CardContainer id={`step_${stage}`}>
       <Card
         doubleScreenTop={doubleScreenTop}
         doubleScreenBottom={doubleScreenBottom}
@@ -58,7 +57,7 @@ const CreateBusiness = ({
         {mobile ? (
           <HeadingText doubleScreenBottom={doubleScreenBottom}>Create A Project</HeadingText>
         ) : (
-          <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
+          <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" id="steps_logo" />
         )}
         <ProgressBar
           doubleScreenBottom={doubleScreenBottom}
@@ -89,19 +88,16 @@ const CreateBusiness = ({
           gap="10px">
           {stage > 1 ? (
             <>
-              <Button
-                oval
-                extraWide={porps => (porps.mobile ? false : true)}
-                mobile={mobile}
-                type="outlineInverse2"
-                onClick={onBack}>
-                BACK
-              </Button>
+              {hasBackButton && (
+                <Button oval extraWide={mobile ? false : true} mobile={mobile} type="outlineInverse2" onClick={onBack}>
+                  BACK
+                </Button>
+              )}
             </>
           ) : (
             <Button
               oval
-              extraWide={porps => (porps.mobile ? false : true)}
+              extraWide={mobile ? false : true}
               mobile={mobile}
               type="outlineInverse2"
               onClick={() => {
@@ -111,16 +107,18 @@ const CreateBusiness = ({
               Cancel
             </Button>
           )}
-          <Button
-            disabled={disabled || loading}
-            onClick={() => onSubmit(stage)}
-            width="58.25px"
-            extraWide={porps => (porps.mobile ? false : true)}
-            mobile={mobile}
-            oval
-            type="black">
-            {!loading ? skip ? 'SKIP' : submit ? 'SUBMIT' : 'Next' : <CircularProgress size={18} />}
-          </Button>
+          {hasNextButton && (
+            <Button
+              disabled={disabled}
+              onClick={() => onSubmit(stage)}
+              width="58.25px"
+              extraWide={mobile ? false : true}
+              mobile={mobile}
+              oval
+              type="black">
+              {submit ? 'SUBMIT' : 'Next'}
+            </Button>
+          )}
         </Absolute>
       </Card>
     </CardContainer>

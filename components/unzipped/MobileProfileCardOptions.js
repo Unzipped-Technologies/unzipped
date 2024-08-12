@@ -216,7 +216,7 @@ function MobileProfileCardOptions({
                 </div>
                 <div>
                   <P fontSize="16px" margin="0">
-                    {list?.name || 'Favourites'}
+                    {list?.name || 'Favorites'}
                   </P>
                   <div className="d-flex align-items-center">
                     <IconComponent

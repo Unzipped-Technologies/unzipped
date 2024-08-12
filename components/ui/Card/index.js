@@ -34,15 +34,16 @@ const CardTitle = styled.h2`
  * Base Card Component.
  */
 const Card = ({
+  children = null,
+  inline = false,
+  padding = true,
+  action = null,
+  margin = false,
   doubleScreenTop,
   doubleScreenBottom,
-  children,
-  inline,
-  action,
   className,
   testId,
   title,
-  margin,
   noBorder,
   borderRadius,
   mobile
@@ -76,14 +77,6 @@ Card.propTypes = {
   title: PropTypes.string,
   /** margin of card */
   margin: PropTypes.bool
-}
-
-Card.defaultProps = {
-  children: null,
-  inline: false,
-  padding: true,
-  action: null,
-  margin: false
 }
 
 export default Card

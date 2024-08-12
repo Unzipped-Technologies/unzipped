@@ -40,7 +40,7 @@ const Panel = ({ listInfo, setListInfo }) => {
   const dispatch = useDispatch()
 
   const [isOpen, setIsOpen] = useState(false)
-  const [freelancer, setFreelancerList] = useState([])
+  const [freelancersList, setFreelancerList] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
 
@@ -192,13 +192,13 @@ const Panel = ({ listInfo, setListInfo }) => {
       </div>
 
       {!isLoading ? (
-        ListEntries && freelancer?.length > 0 ? (
+        ListEntries && freelancersList?.length > 0 ? (
           <>
-            {freelancer.map((item, index) => (
+            {freelancersList.map((item, index) => (
               <FreelancerListingCard user={item} width={'450px'} key={index} includeRate={10} />
             ))}
           </>
-        ) : freelancer?.length < 1 ? (
+        ) : (
           <>
             <div
               style={{
@@ -214,7 +214,7 @@ const Panel = ({ listInfo, setListInfo }) => {
               </div>
               <FreelancerNotFound />
               <h3 style={{ fontSize: '22px', fontWeight: 500 }}>This list is empty</h3>
-              <p>Add freelancer to your list to quickly find them later. </p>
+              <p>Add freelancers to your list to quickly find them later. </p>
               <Button
                 onClick={hanleFreelancersBrowsing}
                 style={{
@@ -230,8 +230,6 @@ const Panel = ({ listInfo, setListInfo }) => {
               </Button>
             </div>
           </>
-        ) : (
-          <></>
         )
       ) : (
         <></>

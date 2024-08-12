@@ -1,11 +1,11 @@
-import { BUSINESS, SELECTED_BUSIESS } from './Business'
+import { BUSINESS, SELECTED_BUSIESS, BUSINESS_FORM, WIZARD_SUBMISSION } from './Business'
 import { INVOICES } from './Invoices'
 import { paymentFrequencyEnum } from '../../server/enum/planEnum'
 import { PaymentMethods } from './Stripe'
 import { TASKS } from './Tasks'
 import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
-import { LIST_ENTRIES, USER_LIST_ENTRIES, INVITES_LIST, USER_LIST } from './ListEntries'
+import { LIST_ENTRIES, USER_LIST_ENTRIES, INVITES_LIST, USER_LIST, CURRENT_USER_LISTS } from './ListEntries'
 import { PROJECT_APPLICATIONS } from './ProjectApplications'
 import { CALENDAR_SETTINGS } from './CalendarSettings'
 import { PLANS } from './Plans'
@@ -72,6 +72,11 @@ export let defaultInitialState = {
         isAcceptEquity: true,
         category: 'Full Stack Developer'
       }
+    },
+    thirdPartyDetails: {
+      githubId: 24108368,
+      userName: 'testUser',
+      avatarUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
     }
   },
   Stripe: {
@@ -98,9 +103,7 @@ export let defaultInitialState = {
   },
   Business: {
     wizardSubmission: {
-      isSuccessfull: false,
-      error: '',
-      projectName: ''
+      ...WIZARD_SUBMISSION
     },
     details: {
       name: 'Unzipped',
@@ -109,6 +112,10 @@ export let defaultInitialState = {
       businessPhone: '0111-111-1112',
       taxId: '09ijk12C'
     },
+    businessForm: {
+      ...BUSINESS_FORM
+    },
+    files: [],
     projectList: [...BUSINESS],
     selectedBusiness: { ...SELECTED_BUSIESS },
     totalCount: BUSINESS?.length,
@@ -391,51 +398,8 @@ export let defaultInitialState = {
   Lists: {
     invitesList: [...INVITES_LIST],
     selectedList: null,
-
-    currentUserList: [
-      {
-        icon: 'HeartOutlined',
-        isActive: true,
-        listEntries: [],
-        isDefault: true,
-        isPrivate: false,
-        _id: '6601c2a6149276195c3f8fbe',
-        name: 'Favorites',
-        userId: '6601c2a6149276195c3f8fbd',
-        user: '6601c2a6149276195c3f8fbd',
-        createdAt: '2024-03-25T18:29:58.642Z',
-        updatedAt: '2024-03-25T18:29:58.642Z',
-        __v: 0
-      },
-      {
-        icon: 'EyeOutlined',
-        isActive: true,
-        listEntries: [],
-        isDefault: true,
-        isPrivate: false,
-        _id: '6601c2a6149276195c3f8fbf',
-        name: 'Recently Viewed',
-        userId: '6601c2a6149276195c3f8fbd',
-        user: '6601c2a6149276195c3f8fbd',
-        createdAt: '2024-03-25T18:29:58.658Z',
-        updatedAt: '2024-03-25T18:29:58.658Z',
-        __v: 0
-      },
-      {
-        icon: 'TeamOutlined',
-        isActive: true,
-        listEntries: [],
-        isDefault: true,
-        isPrivate: true,
-        _id: '6601c2a6149276195c3f8fc0',
-        name: 'My Team',
-        userId: '6601c2a6149276195c3f8fbd',
-        user: '6601c2a6149276195c3f8fbd',
-        createdAt: '2024-03-25T18:29:58.680Z',
-        updatedAt: '2024-03-25T18:29:58.680Z',
-        __v: 0
-      }
-    ]
+    updatedList: null,
+    currentUserList: [...CURRENT_USER_LISTS]
   },
   ListEntries: {
     userLists: [...USER_LIST],
