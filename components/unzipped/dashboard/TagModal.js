@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Dialog } from '@material-ui/core'
@@ -30,6 +30,8 @@ const DialogContent = withStyles(theme => ({
 }))(MuiDialogContent)
 
 const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
+  const [isTagOpAllowed, setIsTagOpAllowed] = useState(true)
+
   useEffect(() => {
     updateCreateTagForm({
       departmentId: departmentId,
@@ -39,6 +41,15 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
     })
   }, [departmentId])
 
+  useEffect(() => {
+    if (!tagForm.tagName.trim()) {
+      setIsTagOpAllowed(false);
+    }
+    else {
+      setIsTagOpAllowed(true);
+    }
+  }, [tagForm.tagName])
+
   const updateForm = (field, value) => {
     updateCreateTagForm({
       [`${field}`]: value
@@ -46,6 +57,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
   }
 
   const onSubmit = async () => {
+    if (!tagForm.tagName.trim()) return
     await createTag(tagForm)
     await getDepartmentById(departmentId)
     await onHide()
@@ -103,7 +115,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
             </Button>
 
             <Button
-              disabled={false}
+              disabled={!isTagOpAllowed}
               onClick={async () => {
                 await onSubmit()
               }}

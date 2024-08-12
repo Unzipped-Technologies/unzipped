@@ -183,24 +183,24 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           name: { $regex: regexQuery },
           ...(filter?.skill?.length > 0
             ? {
-                requiredSkills: {
-                  $elemMatch: {
-                    $regex: new RegExp(regexPattern, 'i')
-                  }
+              requiredSkills: {
+                $elemMatch: {
+                  $regex: new RegExp(regexPattern, 'i')
                 }
               }
+            }
             : {}),
           ...(filter?.projectBudgetType && {
             projectBudgetType: { $regex: regexType }
           }),
           ...(filter?.minRate &&
             +filter?.minRate > 0 && {
-              budget: { $gte: +filter?.minRate }
-            }),
+            budget: { $gte: +filter?.minRate }
+          }),
           ...(filter?.maxRate &&
             +filter?.maxRate > 0 && {
-              budget: { $lte: +filter?.maxRate }
-            }),
+            budget: { $lte: +filter?.maxRate }
+          }),
           ...filters
         }
       },
@@ -270,7 +270,12 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ['$_id', '$$questionId'] }
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$questionId' }, then: '$$questionId', else: [] } }
+                  ]
+                }
               }
             },
             {
