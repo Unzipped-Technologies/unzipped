@@ -271,7 +271,12 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ['$_id', '$$questionId'] }
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$questionId' }, then: '$$questionId', else: [] } }
+                  ]
+                }
               }
             },
             {
