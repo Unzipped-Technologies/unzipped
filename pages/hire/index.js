@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+
 import Nav from '../../components/unzipped/header'
 import Head from 'next/head'
 import HireComp from '../../components/unzipped/hire/hire'
@@ -18,23 +20,25 @@ const NavContainer = styled.div`
   }
 `
 const HirePage = ({ token }) => {
-    const [marginBottom, setMarginBottom] = useState('0px');
-    const router = useRouter();
+  const [marginBottom, setMarginBottom] = useState('0px')
+  const router = useRouter()
 
-    useEffect(() => {
-        if (!token) {
-            router.push('/login')
-        }
-    }, [])
+  useEffect(() => {
+    if (!token) {
+      router.push('/login')
+    }
+  }, [])
 
-    useEffect(()=>{
-        const handleResize = () => {
-            if (window.innerWidth < 680) {
-                setMarginBottom('72px');
-            } else {
-                setMarginBottom('97px');
-            }
-        };
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 680) {
+        setMarginBottom('72px')
+      } else {
+        setMarginBottom('97px')
+      }
+    }
+    handleResize()
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
