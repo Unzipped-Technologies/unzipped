@@ -1,7 +1,7 @@
 import { BUSINESS, SELECTED_BUSIESS, BUSINESS_FORM, WIZARD_SUBMISSION } from './Business'
 import { INVOICES } from './Invoices'
 import { paymentFrequencyEnum } from '../../server/enum/planEnum'
-import { PaymentMethods } from './Stripe'
+import { PaymentMethods, BANKS, BALANCE, URL } from './Stripe'
 import { TASKS } from './Tasks'
 import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
@@ -81,13 +81,10 @@ export let defaultInitialState = {
   },
   Stripe: {
     methods: [...PaymentMethods],
-    url: { url: 'testUrl2' },
+    bank: [...BANKS],
+    url: { ...URL },
     balance: {
-      available: [
-        {
-          amount: 100
-        }
-      ]
+      ...BALANCE
     }
   },
   Contracts: {

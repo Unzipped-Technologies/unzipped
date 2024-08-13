@@ -70,10 +70,9 @@ const Withdrawal = ({
   const [selectedMembership, setSelectedMembership] = useState(false)
   const [initialUrl] = useState(url?.url)
   const router = useRouter()
-  const isPrimaryBank = false
 
   const handleResize = () => {
-    let windowSize = window.innerWidth <= 600 ? '85px' : '76px'
+    let windowSize = window.innerWidth <= 680 ? '85px' : '76px'
     setWindowsize(windowSize)
   }
 
@@ -82,13 +81,12 @@ const Withdrawal = ({
   }
 
   const submitWithdraw = amount => {
-    if (amount) {
+    amount &&
       withdrawAccountFundsToExternalBank(token, {
         amount: amount * 100,
         currency: 'USD'
       })
-      router.push('/dashboard/account')
-    }
+    router.push('/dashboard/account')
   }
 
   useEffect(() => {
@@ -117,7 +115,7 @@ const Withdrawal = ({
     if (url && url?.url && url?.url !== initialUrl) {
       router.push(url?.url)
     }
-  }, [url, router])
+  }, [url])
 
   useEffect(() => {
     if (!token) {
@@ -126,7 +124,7 @@ const Withdrawal = ({
   }, [])
 
   return (
-    <React.Fragment>
+    <div data-testid="withdraw_page">
       <Nav token={token} marginBottom={windowSize} />
       <Container>
         <BackHeader title={`Express withdrawal`} bold size="20px" />
@@ -141,7 +139,7 @@ const Withdrawal = ({
           <Left>
             <WithdrawalCard balance={balance} onSubmit={submitWithdraw} isBank={bank.length} />
             <FormCard
-              badge={isPrimaryBank ? 'Primary' : ''}
+              badge={''}
               first={true}
               image={
                 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1708747678/Icon_internet-banking_-online-bank_-bank_-university_sjhicv.png'
@@ -155,7 +153,7 @@ const Withdrawal = ({
           <WithdrawalMethodsTable />
         </Cards>
       </Container>
-    </React.Fragment>
+    </div>
   )
 }
 

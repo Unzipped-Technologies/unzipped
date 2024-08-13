@@ -25,25 +25,25 @@ const Container = styled.div`
 `;
 
 const GetCard = ({
-    stage, 
-    role, 
-    submitForm,
-    updateForm,
-    goBack,
-    FirstName,
-    LastName,
-    socialSecurityNumber,
-    businessType,
-    AddressLineOne,
-    AddressLineTwo,
-    AddressCity,
-    AddressCountry,
-    AddressState,
-    AddressZip,
-    taxEIN,
-    phoneNumber,
-    loading,
-    isAccountDetailCompleted
+  stage,
+  role,
+  submitForm,
+  updateForm,
+  goBack,
+  FirstName,
+  LastName,
+  socialSecurityNumber,
+  businessType,
+  AddressLineOne,
+  AddressLineTwo,
+  AddressCity,
+  AddressCountry,
+  AddressState,
+  AddressZip,
+  taxEIN,
+  phoneNumber,
+  loading,
+  isAccountDetailCompleted
 }) => {
     switch (stage) {
         case 1:
@@ -269,56 +269,59 @@ const GetCard = ({
 }
 
 const UpdateAccountProfile = ({
-    stage, 
-    updateRegisterForm,
-    updateUser,
-    loading,
-    token,
-    role,
-    FirstName,
-    LastName,
-    email,
-    password,
-    phoneNumber,
-    AddressLineOne,
-    AddressLineTwo,
-    AddressLineCountry,
-    AddressState,
-    AddressZip,
-    AddressCity,
-    AddressCountry,
-    socialSecurityNumber,
-    businessType,
-    taxEIN,
-    access,
-    user
+  stage,
+  updateRegisterForm,
+  updateUser,
+  loading,
+  token,
+  role,
+  FirstName,
+  LastName,
+  email,
+  password,
+  phoneNumber,
+  AddressLineOne,
+  AddressLineTwo,
+  AddressLineCountry,
+  AddressState,
+  AddressZip,
+  AddressCity,
+  AddressCountry,
+  socialSecurityNumber,
+  businessType,
+  taxEIN,
+  access,
+  user
 }) => {
-    const tokens = token?.access_token || access
-    const submitForm = async (step) => {
-        if (step < 3) {
-            // submit form
-            // if step is true then go forward 1 step
-            updateRegisterForm({
-                stage: step ? step + 1 : stage
-            })
-        } else {
-            await updateUser({
-                role,
-                FirstName,
-                LastName,
-                phoneNumber,
-                AddressLineOne,
-                AddressLineTwo,
-                AddressLineCountry,
-                AddressZip,
-                AddressCity,
-                AddressCountry,
-                socialSecurityNumber,
-                businessType,
-                taxEIN,
-                profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-                isAccountDetailCompleted: true,
-            }, tokens)
+  const tokens = token?.access_token || access
+  const submitForm = async step => {
+    if (step < 3) {
+      // submit form
+      // if step is true then go forward 1 step
+      updateRegisterForm({
+        stage: step ? step + 1 : stage
+      })
+    } else {
+      await updateUser(
+        {
+          role,
+          FirstName,
+          LastName,
+          phoneNumber,
+          AddressLineOne,
+          AddressLineTwo,
+          AddressLineCountry,
+          AddressZip,
+          AddressCity,
+          AddressCountry,
+          socialSecurityNumber,
+          businessType,
+          taxEIN,
+          profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+          isAccountDetailCompleted: true
+        },
+        tokens
+      )
 
             router.push('/dashboard?success=true')
         }
@@ -344,43 +347,37 @@ const UpdateAccountProfile = ({
 
     }
 
-
-    return (
-        <Container>
-            <GetCard 
-                stage={stage} 
-                submitForm={submitForm}
-                updateForm={updateForm}
-                goBack={goBack}
-                loading={loading}
-                role={role}
-                FirstName={FirstName}
-                LastName={LastName}
-                email={email}
-                password={password}
-                phoneNumber={phoneNumber}
-                AddressLineOne={AddressLineOne}
-                AddressLineTwo={AddressLineTwo}
-                AddressLineCountry={AddressLineCountry}
-                AddressState={AddressState}
-                AddressZip={AddressZip}
-                AddressCity={AddressCity}
-                AddressCountry={AddressCountry}
-                socialSecurityNumber={socialSecurityNumber}
-                businessType={businessType}
-                taxEIN={taxEIN}
-            />
-        </Container>
-    )
+  return (
+    <Container>
+      <GetCard
+        stage={stage}
+        submitForm={submitForm}
+        updateForm={updateForm}
+        goBack={goBack}
+        loading={loading}
+        role={role}
+        FirstName={FirstName}
+        LastName={LastName}
+        email={email}
+        password={password}
+        phoneNumber={phoneNumber}
+        AddressLineOne={AddressLineOne}
+        AddressLineTwo={AddressLineTwo}
+        AddressLineCountry={AddressLineCountry}
+        AddressState={AddressState}
+        AddressZip={AddressZip}
+        AddressCity={AddressCity}
+        AddressCountry={AddressCountry}
+        socialSecurityNumber={socialSecurityNumber}
+        businessType={businessType}
+        taxEIN={taxEIN}
+      />
+    </Container>
+  )
 }
 
 UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
-    const token = parseCookies(req)
-    
-      return {
-        token: token && token,
-      }
-    }
+  const token = parseCookies(req)
 
 const mapStateToProps = (state) => {
     return {
@@ -414,4 +411,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateAccountProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateAccountProfile)
