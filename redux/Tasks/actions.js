@@ -185,6 +185,18 @@ export const removeCommentFromStory = comentId => async (dispatch, getState) => 
     })
 }
 
+export const updateTaskInfo = (taskId, data) => async (dispatch, getState) => {
+
+  dispatch({ type: LOAD_STATE })
+
+  await axios
+    .patch(`/api/tasks/update-task-assignee/${taskId}`,
+      data,
+      tokenConfig(getState()?.Auth.token)
+    )
+
+}
+
 export const updateCreateStoryForm = data => async (dispatch, getState) => {
   dispatch({
     type: UPDATE_CREATE_STORY,
