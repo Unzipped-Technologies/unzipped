@@ -1,16 +1,13 @@
 import React from 'react'
-import Button from '../../ui/Button'
-import Icon from '../../ui/Icon'
 import Link from 'next/link'
-import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
-import ScheduleInterview from './ScheduleInterview'
-
-import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
+
+import Icon from '../../ui/Icon'
+import Button from '../../ui/Button'
+import ScheduleInterview from './ScheduleInterview'
+import { TitleText, DarkText, WhiteCard, Dismiss } from './style'
 import { nextPublicGithubClientId } from '../../../config/keys'
-import ScheduleMeetingModal from './ScheduleMeetingModal'
-import { useDispatch, useSelector } from 'react-redux'
-import { updateWizardSubmission } from '../../../redux/actions'
 
 const help = [
   {
@@ -64,16 +61,6 @@ const InnerCard = styled.div`
   margin-bottom: 2px;
 `
 
-const WizardSuccessMessageDisplay = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 20px;
-  background: #f4fcef;
-  border: 1px solid #8ede64;
-  border-radius: 8px;
-  margin-top: 20px;
-`
 const NotificationContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -98,7 +85,7 @@ const NotificationIconContainer = styled.div`
   align-items: center;
 `
 
-const Notification = ({ type, children, noButton, user }) => {
+const MobileNotification = ({ type, children, noButton, user }) => {
   const router = useRouter()
 
   function handleGithub() {
@@ -109,6 +96,7 @@ const Notification = ({ type, children, noButton, user }) => {
     case 'plan':
       return (
         <InnerCard
+          data-testid="pick_plan_notification"
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -130,10 +118,21 @@ const Notification = ({ type, children, noButton, user }) => {
           </div>
         </InnerCard>
       )
+    case 'paymentMethod':
+      return (
+        !user?.stripeAccountId && (
+          <WhiteCard size="small" data-testid="stripe_connected_notification">
+            <DarkText>You haven’t connected your stripe account!</DarkText>
+            <Button icon="github" noBorder type="dark" normal onClick={() => router.push('manage-payment-method')}>
+              CONNECT YOUR STRIPE ACCOUNT
+            </Button>
+          </WhiteCard>
+        )
+      )
     case 'github':
       return (
         !user?.isGithubConnected && (
-          <WhiteCard size="large" style={{ marginTop: 20 }}>
+          <WhiteCard size="large" style={{ marginTop: 20 }} data-testid="github_connected_notification">
             <DarkText style={{ paddingTop: 20, marginTop: 20 }}>
               You haven’t connected your Github account yet, connect it now so we can begin work building your project!
               <Button
@@ -152,7 +151,7 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'browse':
       return (
-        <NotificationContainer>
+        <NotificationContainer data-testid="browse_projects_notification">
           <div style={{ padding: 5 }}>
             <p> Browse other projects to inspire ideas </p>
           </div>
@@ -188,7 +187,7 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'faq':
       return (
-        <NotificationContainer>
+        <NotificationContainer data-testid="faq_notification">
           <div style={{ padding: 5 }}>
             <p> Investors are asking about your business. Update Frequently asked questions now. </p>
           </div>
@@ -204,6 +203,7 @@ const Notification = ({ type, children, noButton, user }) => {
       return (
         <WhiteCard
           row
+          data-testid={`free_trial_notification`}
           background="#F8FAFF"
           style={{
             borderRadius: '5px 5px 0px 0px',
@@ -221,8 +221,8 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'createBusiness':
       return (
-        user?.totalBusiness < 1 && (
-          <WhiteCard size="large">
+        !user?.totalBusiness && (
+          <WhiteCard size="large" data-testid="create_business_notification">
             <DarkText fontSize={'16'} style={{ paddingTop: 20 }}>
               You haven't created your first Project yet, create one now so you can begin Collaborating! Need Ideas?
               View existing projects here.
@@ -248,7 +248,8 @@ const Notification = ({ type, children, noButton, user }) => {
           marginBottom="70px"
           size="extraLarge"
           background="#FAFAFA"
-          style={{ padding: '5px 10px' }}>
+          style={{ padding: '5px 10px' }}
+          data-testid="explore_notification">
           <TitleText noMargin paddingLeft="8px" marginTop={'5px'} marginLeft="10px">
             Explore more support
           </TitleText>
@@ -258,6 +259,7 @@ const Notification = ({ type, children, noButton, user }) => {
           {help.map((item, index) => (
             <InnerCard
               key={`${item.name}_${index}`}
+              data-testid={`${item.name}_${index}`}
               style={{
                 display: 'flex',
                 width: '100%',
@@ -283,14 +285,14 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'blue':
       return (
-        <NotificationContainer>
+        <NotificationContainer data-testid="blue_type_notification">
           <div style={{ padding: 5 }}>
             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
               <NotificationIconContainer>
                 <Icon name="question" />
               </NotificationIconContainer>
               <div style={{ marginLeft: 5 }}>
-                <p> {children} </p>
+                <div> {children} </div>
               </div>
             </div>
           </div>
@@ -315,4 +317,4 @@ const Notification = ({ type, children, noButton, user }) => {
       return <></>
   }
 }
-export default Notification
+export default MobileNotification

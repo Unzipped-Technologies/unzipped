@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import Nav from '../../../components/unzipped/header'
-import SearchBar from '../../../components/ui/SearchBar'
-import { TitleText } from '../../../components/unzipped/dashboard/style'
-import ProjectsContainer from '../../../components/unzipped/dashboard/ProjectsContainer'
-import { connect, useDispatch } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { getBusinessList } from '../../../redux/actions'
-import { parseCookies } from '../../../services/cookieHelper'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { accountTypeEnum } from '../../../server/enum/accountTypeEnum'
-import MobileFreelancerFooter from '../../../components/unzipped/MobileFreelancerFooter'
-import MobileProjects from '../../../components/unzipped/dashboard/MobileProjects'
+import { connect, useDispatch, useSelector } from 'react-redux'
+
+import Nav from '../../../components/unzipped/header'
+import { parseCookies } from '../../../services/cookieHelper'
+import { getUserLists } from '../../../redux/ListEntries/action'
+
 import { getProjectsList } from '../../../redux/Business/actions'
+import { TitleText } from '../../../components/unzipped/dashboard/style'
+import MobileProjects from '../../../components/unzipped/dashboard/MobileProjects'
+import ProjectsContainer from '../../../components/unzipped/dashboard/ProjectsContainer'
+import MobileFreelancerFooter from '../../../components/unzipped/MobileFreelancerFooter'
 
 const Desktop = styled.div`
   margin-top: 192px;
@@ -34,55 +33,47 @@ const Title = styled.div`
 
 const Projects = () => {
   const [limit, setLimit] = useState(25)
-  const [page, setPage] = useState(1);
-  const dispatch = useDispatch();
+  const [page, setPage] = useState(1)
+  const dispatch = useDispatch()
 
   const [filter, setFilter] = useState({
-    searchKey: '',
-  });
+    searchKey: ''
+  })
+  const userId = useSelector(state => state.Auth.user?._id)
 
-  const setSearchKey = value => {
-    setFilter(prevData => ({
-      ...prevData,
-      searchKey: value
-    }))
-  }
+  const userListItems = useSelector(state => state.ListEntries?.userLists)
 
-  const handleSearch = () => dispatch(getProjectsList(filter));
+  useEffect(() => {
+    dispatch(getUserLists(userId))
+  }, [userId])
 
+  const handleSearch = () => dispatch(getProjectsList(filter))
 
   return (
     <React.Fragment>
       <Nav
         isSubMenu
-        handleSearchValue={setSearchKey}
         handleSearch={handleSearch}
         setFilter={setFilter}
-        marginBottom={window.innerWidth > 600 ? '286px' : '86px'}
+        marginBottom={window.innerWidth > 680 ? '286px' : '86px'}
       />
-      {window.innerWidth > 680 && (
+      {window.innerWidth > 680 ? (
         <Desktop>
           <Title>
-            <TitleText title="true">Projects</TitleText>
+            <TitleText title="true" data-testid="projects_heading">
+              Projects
+            </TitleText>
           </Title>
           <ProjectsContainer limit={limit} page={page} />
         </Desktop>
-      )}
-      {window.innerWidth < 680 && (
+      ) : (
         <MobileDisplayBox>
-          <MobileProjects />
+          <MobileProjects userListItems={userListItems} />
           <MobileFreelancerFooter defaultSelected="Projects" />
         </MobileDisplayBox>
       )}
     </React.Fragment>
   )
-}
-
-Projects.getInitialProps = async ({ req, res }) => {
-  const token = parseCookies(req)
-  return {
-    token: token && token
-  }
 }
 
 export default Projects

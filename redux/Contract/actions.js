@@ -17,9 +17,8 @@ import { ConverterUtils } from '../../utils'
 export const createContract = data => async (dispatch, getState) => {
   dispatch(startLoading())
 
-  const formData = ConverterUtils.toFormData(data)
   await axios
-    .post(`/api/contract/create`, formData, tokenConfig(getState()?.Auth.token))
+    .post(`/api/contract/create`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: CREATE_CONTRACT,

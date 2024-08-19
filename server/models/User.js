@@ -62,6 +62,7 @@ const userSchema = new Schema(
     totalPending: { type: Number, default: 0 },
     thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' },
     accountUpdateMailCount: { type: Number, default: 0 },
+    isAccountDetailCompleted: { type: Boolean, default: false },
   },
   {
     timestamps: true

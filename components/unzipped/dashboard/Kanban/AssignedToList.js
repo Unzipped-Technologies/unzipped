@@ -8,6 +8,7 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
 import DndFilterIcon from '../../../icons/dndFilterIcon';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const SpanStyled = styled.span`
     display: inline-flex;
@@ -47,36 +48,6 @@ const StyledMenu = styled((props) => (
 }));
 
 
-const USERS_ARR = [
-    {
-        userId: 1,
-        firstName: "Aalishan ",
-        lastName: "Jami"
-    },
-    {
-        userId: 2,
-        firstName: "Zubair",
-        lastName: "Altaf"
-    },
-    {
-        userId: 2,
-        firstName: "Jason",
-        lastName: "Maynard"
-    },
-    {
-        userId: 3,
-        firstName: "Haseeb",
-        lastName: "Iqbal"
-    },
-    {
-        userId: 4,
-        firstName: "John",
-        lastName: "Doe"
-    },
-
-]
-
-
 
 const AssignedToContainer = styled.div`
   display: flex;
@@ -88,32 +59,34 @@ const AssignedToContainer = styled.div`
   flex-direction: column;
 `;
 
-const AssignedToList = () => {
+const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
 
     const [itemsIndex, setItemsIndex] = useState([])
-
+    const { hiredProjectTeam } = useSelector(state => state.Business)
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-
     const handleClick = (event) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
 
     const handleMenuItemUserSelection = (user, index) => {
-
-        if (itemsIndex.includes(index)) {
-            const filteredIndex = itemsIndex.filter((item) => item !== index);
-            setItemsIndex(filteredIndex)
-        } else {
-            setItemsIndex([...itemsIndex, index])
+        if (user?.userId) {
+            if (itemsIndex.includes(index)) {
+                const filteredIndex = itemsIndex.filter((item) => item !== index);
+                setItemsIndex(filteredIndex)
+            } else {
+                setItemsIndex([...itemsIndex, index])
+            }
         }
     }
-
     const handleCloseList = () => setItemsIndex([])
 
     useEffect(() => {
-        const finalArray = USERS_ARR.filter(
-            (item, index) => itemsIndex.includes(index)
-        )
+        if (hiredProjectTeam && hiredProjectTeam.length > 0) {
+            const finalArray = hiredProjectTeam.filter(
+                (item, index) => itemsIndex.includes(index)
+            )
+            setTicketAssignedTo(finalArray)
+        }
     }, [itemsIndex])
 
     return (
@@ -129,6 +102,7 @@ const AssignedToList = () => {
                         onClick={handleClick}
                         endIcon={<DndFilterIcon />}
                         sx={{
+                            width: 'max-content',
                             color: "#000",
                             background: "#fff !important",
                             fontSize: "17px",
@@ -148,11 +122,11 @@ const AssignedToList = () => {
                         onClose={handleClose}
                     >
                         {
-                            USERS_ARR.map((user, index) => (
+                            hiredProjectTeam && hiredProjectTeam.map((member, index) => (
                                 <MenuItem
                                     key={index}
-                                    value={user}
-                                    onClick={() => handleMenuItemUserSelection(user, index)}
+                                    value={member}
+                                    onClick={() => handleMenuItemUserSelection(member, index)}
                                 >
                                     <Checkbox
                                         checked={itemsIndex.length > 0
@@ -160,7 +134,7 @@ const AssignedToList = () => {
                                             : false
                                         }
                                     />
-                                    <ListItemText primary={user.firstName} />
+                                    {(!member?.userId) ? (<>Unassigned</>) : (<ListItemText primary={member?.FirstName + member?.LastName} />)}
                                 </MenuItem>
                             ))
                         }

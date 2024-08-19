@@ -9,12 +9,13 @@ import MuiDialogContent from '@material-ui/core/DialogContent'
 import { DIV } from './style'
 import Button from '../../ui/Button'
 import { FormField } from '../../ui'
-import { updateDepartmentForm, resetDepartmentForm, createDepartment } from '../../../redux/actions'
+
+import { updateDepartmentForm, resetDepartmentForm, createDepartment, getProjectsList, updateDepartment } from '../../../redux/actions'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
     width: '100%', // Adjust the width as needed
-    height: '270px'
+    height: 'auto'
   },
   root: {
     padding: '0px !important'
@@ -34,14 +35,20 @@ const DepartmentModel = ({
   onHide,
   createDepartment,
   departmentForm,
-  currentBusinessId
+  currentBusinessId,
+  getProjectsList,
+  selectedDepartment,
+  isDepartmentEditMode,
+  updateDepartment
 }) => {
+
   useEffect(() => {
     updateDepartmentForm({
       businessId: currentBusinessId,
-      name: ' '
+      name: isDepartmentEditMode ? selectedDepartment?.name ?? '' : ''
     })
-  }, [currentBusinessId])
+  }, [currentBusinessId, isDepartmentEditMode])
+
 
   const updateForm = (field, value) => {
     updateDepartmentForm({
@@ -49,8 +56,14 @@ const DepartmentModel = ({
     })
   }
 
+
   const onSubmit = async () => {
-    await createDepartment(departmentForm)
+    if (isDepartmentEditMode) {
+      await updateDepartment({ name: departmentForm?.name }, selectedDepartment?._id, true)
+    } else {
+
+      await createDepartment(departmentForm)
+    }
     await onHide()
   }
 
@@ -61,9 +74,7 @@ const DepartmentModel = ({
       open={open}
       aria-labelledby="story-preview-modal"
       aria-describedby="story-preview-modal-description">
-      <DialogTitle id="department-dialog-title" data-testId="create_department_modal">
-        Create Department
-      </DialogTitle>
+      <DialogTitle data-testId="create_department_modal" id="department-dialog-title">{isDepartmentEditMode ? selectedDepartment?.name : 'Create Department'}</DialogTitle>
 
       <DialogContent dividers>
         <DIV flex="0 0 auto" boxSizing="border-box">
@@ -147,7 +158,9 @@ const mapDispatchToProps = dispatch => {
   return {
     updateDepartmentForm: bindActionCreators(updateDepartmentForm, dispatch),
     resetDepartmentForm: bindActionCreators(resetDepartmentForm, dispatch),
-    createDepartment: bindActionCreators(createDepartment, dispatch)
+    createDepartment: bindActionCreators(createDepartment, dispatch),
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
+    updateDepartment: bindActionCreators(updateDepartment, dispatch)
   }
 }
 

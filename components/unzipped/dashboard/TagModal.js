@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Dialog } from '@material-ui/core'
@@ -15,7 +15,7 @@ import { updateCreateTagForm, resetTagForm, createTag, getDepartmentById } from 
 const MUIDialog = withStyles(theme => ({
   paper: {
     width: '100%', // Adjust the width as needed
-    height: '250px'
+    // height: '250px'
   },
   root: {
     padding: '0px !important'
@@ -30,6 +30,8 @@ const DialogContent = withStyles(theme => ({
 }))(MuiDialogContent)
 
 const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
+  const [isTagOpAllowed, setIsTagOpAllowed] = useState(true)
+
   useEffect(() => {
     updateCreateTagForm({
       departmentId: departmentId,
@@ -39,6 +41,15 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
     })
   }, [departmentId])
 
+  useEffect(() => {
+    if (!tagForm.tagName.trim()) {
+      setIsTagOpAllowed(false);
+    }
+    else {
+      setIsTagOpAllowed(true);
+    }
+  }, [tagForm.tagName])
+
   const updateForm = (field, value) => {
     updateCreateTagForm({
       [`${field}`]: value
@@ -46,6 +57,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
   }
 
   const onSubmit = async () => {
+    if (!tagForm.tagName.trim()) return
     await createTag(tagForm)
     await getDepartmentById(departmentId)
     await onHide()
@@ -104,8 +116,9 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
             </Button>
 
             <Button
-              data-testId="save_tag_form"
-              disabled={false}
+                          data-testId="save_tag_form"
+
+              disabled={!isTagOpAllowed}
               onClick={async () => {
                 await onSubmit()
               }}

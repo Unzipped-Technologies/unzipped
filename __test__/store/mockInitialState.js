@@ -1,12 +1,49 @@
-import { BUSINESS, SELECTED_BUSIESS } from './Business'
+import { BUSINESS, SELECTED_BUSIESS, BUSINESS_FORM, WIZARD_SUBMISSION } from './Business'
+import { INVOICES } from './Invoices'
+import { paymentFrequencyEnum } from '../../server/enum/planEnum'
+import { PaymentMethods } from './Stripe'
+import { TASKS } from './Tasks'
+import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
-import { LIST_ENTRIES } from './ListEntries'
-
+import { LIST_ENTRIES, USER_LIST_ENTRIES, INVITES_LIST, USER_LIST, CURRENT_USER_LISTS } from './ListEntries'
+import { PROJECT_APPLICATIONS } from './ProjectApplications'
+import { CALENDAR_SETTINGS } from './CalendarSettings'
+import { PLANS } from './Plans'
 export let defaultInitialState = {
   Auth: {
+    subscriptionForm: {
+      paymentFrequency: paymentFrequencyEnum.MONTHLY,
+      stripeId: '',
+      BusinessAddressLineOne: '',
+      BusinessAddressLineTwo: '',
+      BusinessAddressLineCountry: '',
+      BusinessFirstName: '',
+      BusinessLastName: '',
+      BusinessAddressCity: '',
+      BusinessAddressState: '',
+      BusinessAddressZip: '',
+      BusinessAddressPhone: '',
+      paymentMethod: {
+        BillingAddressLineOne: '',
+        BillingAddressLineTwo: '',
+        BillingAddressLineCountry: '',
+        BillingFirstName: '',
+        BillingLastName: '',
+        BillingAddressCity: '',
+        BillingAddressState: '',
+        BillingAddressZip: '',
+        card: undefined
+      }
+    },
     token: 'testToken',
     isAuthenticated: true,
     loading: false,
+    passwordChanged: false,
+    verifyUrl: '',
+    trialLength: 7,
+    plans: [...PLANS],
+    selectedPlan: null,
+    planCost: 29,
     user: {
       isEmailVerified: true,
       isPhoneVerified: true,
@@ -24,15 +61,26 @@ export let defaultInitialState = {
       AddressCity: 'NewYork',
       AddressZip: '40000',
       likeTotal: 10,
+      updatedAt: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), //'2024-03-25T19:00:02.865Z',
       profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       freelancers: {
-        category: 'Full Stack Developer',
-        _id: null
+        _id: '6601c2a6149276195c3f8fc2',
+        rate: 23,
+        isActive: true,
+        isArchived: false,
+        isPreferedFreelancer: true,
+        isAcceptEquity: true,
+        category: 'Full Stack Developer'
       }
+    },
+    thirdPartyDetails: {
+      githubId: 24108368,
+      userName: 'testUser',
+      avatarUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
     }
   },
   Stripe: {
-    methods: ['method1', 'method2'],
+    methods: [...PaymentMethods],
     url: { url: 'testUrl2' },
     balance: {
       available: [
@@ -42,7 +90,21 @@ export let defaultInitialState = {
       ]
     }
   },
+  Contracts: {
+    contracts: [...CONTRACTS]
+  },
+  Invoices: {
+    invoices: [...INVOICES],
+    unpaidInvoices: [],
+    selectedInvoice: {},
+    error: '',
+    loading: false,
+    totalCount: INVOICES?.length
+  },
   Business: {
+    wizardSubmission: {
+      ...WIZARD_SUBMISSION
+    },
     details: {
       name: 'Unzipped',
       businessName: 'Unzipped',
@@ -50,14 +112,29 @@ export let defaultInitialState = {
       businessPhone: '0111-111-1112',
       taxId: '09ijk12C'
     },
+    businessForm: {
+      ...BUSINESS_FORM
+    },
+    files: [],
     projectList: [...BUSINESS],
     selectedBusiness: { ...SELECTED_BUSIESS },
-    totalCount: BUSINESS?.length
+    totalCount: BUSINESS?.length,
+    loading: false
   },
   ProjectApplications: {
-    success: false
+    success: false,
+    selectedApplication: {},
+    error: '',
+    loading: false,
+    totalCount: PROJECT_APPLICATIONS?.length,
+    projectApplications: [...PROJECT_APPLICATIONS]
   },
   Tasks: {
+    tasks: [...TASKS],
+    selectedTask: {},
+    error: '',
+    loading: false,
+    totalCount: TASKS?.length,
     currentDepartment: {},
     createStoryForm: {
       taskName: '',
@@ -313,69 +390,21 @@ export let defaultInitialState = {
     selectedFreelancer: { ...FREELANCER }
   },
   CalenderSetting: {
-    calenderSetting: {
-      userId: '6601c2a6149276195c3f8fbd',
-      startTime: '2024-05-16T20:00:00.828Z',
-      endTime: '2024-05-17T16:00:00.828Z',
-      timezone: 'Asia/Karachi',
-      interviewScheduler: 'RECURITERS_OTHERS',
-      createdAt: '2024-05-16T20:11:30.183Z',
-      updatedAt: '2024-05-16T20:12:27.509Z',
-      __v: 0
-    },
+    calenderSetting: { ...CALENDAR_SETTINGS },
     success: null,
     loading: false,
     error: null
   },
   Lists: {
-    invitesList: [...LIST_ENTRIES],
-    currentUserList: [
-      {
-        icon: 'HeartOutlined',
-        isActive: true,
-        listEntries: [],
-        isDefault: true,
-        isPrivate: false,
-        _id: '6601c2a6149276195c3f8fbe',
-        name: 'Favorites',
-        userId: '6601c2a6149276195c3f8fbd',
-        user: '6601c2a6149276195c3f8fbd',
-        createdAt: '2024-03-25T18:29:58.642Z',
-        updatedAt: '2024-03-25T18:29:58.642Z',
-        __v: 0
-      },
-      {
-        icon: 'EyeOutlined',
-        isActive: true,
-        listEntries: [],
-        isDefault: true,
-        isPrivate: false,
-        _id: '6601c2a6149276195c3f8fbf',
-        name: 'Recently Viewed',
-        userId: '6601c2a6149276195c3f8fbd',
-        user: '6601c2a6149276195c3f8fbd',
-        createdAt: '2024-03-25T18:29:58.658Z',
-        updatedAt: '2024-03-25T18:29:58.658Z',
-        __v: 0
-      },
-      {
-        icon: 'TeamOutlined',
-        isActive: true,
-        listEntries: [],
-        isDefault: true,
-        isPrivate: true,
-        _id: '6601c2a6149276195c3f8fc0',
-        name: 'My Team',
-        userId: '6601c2a6149276195c3f8fbd',
-        user: '6601c2a6149276195c3f8fbd',
-        createdAt: '2024-03-25T18:29:58.680Z',
-        updatedAt: '2024-03-25T18:29:58.680Z',
-        __v: 0
-      }
-    ]
+    invitesList: [...INVITES_LIST],
+    selectedList: null,
+    updatedList: null,
+    currentUserList: [...CURRENT_USER_LISTS]
   },
   ListEntries: {
-    userLists: [...LIST_ENTRIES]
+    userLists: [...USER_LIST],
+    listEntries: [],
+    userListEntries: [...USER_LIST_ENTRIES]
   }
 }
 

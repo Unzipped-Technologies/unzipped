@@ -6,18 +6,22 @@ import Profile from '../../pages/freelancers/[id]'
 import { initialState } from '../store/mockInitialState'
 import { renderWithRedux } from '../store/commonTestSetup'
 import { FREELANCER_PROJECTS, FREELANCER } from '../store/Freelancer'
+import { CURRENT_USER_LISTS } from '../store/ListEntries'
 import { fireEvent, screen, act, within, render } from '@testing-library/react'
 import EducationModal from '../../components/unzipped/EducationModal'
 import ProjectModal from '../../components/unzipped/ProjectModal'
 import ProfileTab from '../../components/unzipped/ProfileTab'
+import { FREELANCER_AUTH } from '../store/Users'
+
 import MobileProfileCardOptions, { P as Paragraph, DropDown } from '../../components/unzipped/MobileProfileCardOptions'
 import { getFreelancerById, createShowCaseProject, addEducation } from '../../redux/Freelancers/actions'
 import { getCalenderSetting } from '../../redux/CalenderSetting/CalenderSettingAction'
-import { getInvitesLists, addEntriesToList } from '../../redux/Lists/ListsAction'
+import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/Lists/ListsAction'
 import { ValidationUtils, ConverterUtils } from '../../utils'
 import userEvent from '@testing-library/user-event'
 import { OtherInformationCard, P } from '../../components/unzipped/ProjectsCard'
 import { OtherInformationCard as DIV, P as TEXT } from '../../components/unzipped/MobileProfileCard'
+const _ = require('lodash')
 
 jest.mock('axios')
 
@@ -36,7 +40,8 @@ jest.mock('../../redux/Freelancers/actions', () => ({
 jest.mock('../../redux/Lists/ListsAction', () => ({
   ...jest.requireActual('../../redux/Lists/ListsAction'),
   addEntriesToList: jest.fn(),
-  getInvitesLists: jest.fn()
+  getInvitesLists: jest.fn(),
+  getCurrentUserList: jest.fn()
 }))
 
 jest.mock('../../redux/CalenderSetting/CalenderSettingAction', () => ({
@@ -48,11 +53,16 @@ describe('DesktopAccount Component', () => {
   let mockRouterPush, mockRouterBack
 
   beforeEach(() => {
+    initialState.Auth.user = _.cloneDeep(FREELANCER_AUTH)
+    initialState.Lists.currentUserList = _.cloneDeep(CURRENT_USER_LISTS)
     initialState.Freelancers.selectedFreelancer.projects = JSON.parse(JSON.stringify(FREELANCER_PROJECTS))
     initialState.Freelancers.selectedFreelancer = JSON.parse(JSON.stringify(FREELANCER))
 
-    initialState.Auth.user.freelancers['_id'] = '6601c2a6149276195c3f8fc2'
-
+    getCurrentUserList.mockReturnValue(() => {
+      return {
+        status: 200
+      }
+    })
     getFreelancerById.mockReturnValue(() => {
       return {
         status: 200
@@ -760,11 +770,13 @@ describe('DesktopAccount Component', () => {
     })
 
     const MobileProfileOptionsContainer = screen.getByTestId('mobile_profile_card_options')
+    expect(MobileProfileOptionsContainer).toBeInTheDocument()
 
     const addUserToListOption = within(MobileProfileOptionsContainer).getByText('Add User To A List')
+    expect(addUserToListOption).toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(addUserToListOption)
+    await act(async () => {
+      await fireEvent.click(addUserToListOption)
     })
 
     const ListIconElement = within(MobileProfileOptionsContainer).getByTestId(
@@ -794,9 +806,9 @@ describe('DesktopAccount Component', () => {
     renderWithRedux(
       <MobileProfileCardOptions
         handleProfilePage={() => {}}
-        freelancerId={'6601c2a6149276195c3f8fc2'}
+        freelancerId={'initialState.Auth.user.freelancers._id'}
         addEntriesToList={addEntriesToList}
-        userId={'6601c2a6149276195c3f8fc2'}
+        userId={'initialState.Auth.user.freelancers._id'}
         getInvitesLists={getInvitesLists}
         lists={initialState.Lists.currentUserList}
       />,
@@ -804,11 +816,6 @@ describe('DesktopAccount Component', () => {
         initialState
       }
     )
-
-    // const scheduleInterviewElement = screen.getByTestId('profile_schedule_interview')
-    // expect(scheduleInterviewElement).toBeInTheDocument()
-
-    // fireEvent.click(scheduleInterviewElement)
 
     const MobileProfileOptionsContainer = screen.getByTestId('mobile_profile_card_options')
 
@@ -842,9 +849,9 @@ describe('DesktopAccount Component', () => {
     renderWithRedux(
       <MobileProfileCardOptions
         handleProfilePage={() => {}}
-        freelancerId={'6601c2a6149276195c3f8fc2'}
+        freelancerId={'initialState.Auth.user.freelancers._id'}
         addEntriesToList={addEntriesToList}
-        userId={'6601c2a6149276195c3f8fc2'}
+        userId={'initialState.Auth.user.freelancers._id'}
         getInvitesLists={getInvitesLists}
         lists={initialState.Lists.currentUserList}
       />,

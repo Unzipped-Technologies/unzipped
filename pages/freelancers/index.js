@@ -63,7 +63,8 @@ const Freelancers = ({
   totalCount,
   clearSelectedFreelancer,
   getAllFreelancers,
-  user
+  user,
+  loading = false
 }) => {
   const options = {
     root: null,
@@ -271,21 +272,35 @@ const Freelancers = ({
                   marginTop: !isExpanded ? (access_token ? '190px' : '150px') : access_token ? '190px' : '150px'
                 }}>
                 <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="freelancer" />
-                <div className="overflow-auto">
+                <div
+                  className="overflow-auto"
+                  style={{
+                    width: '-webkit-fill-available'
+                  }}>
                   <div className="d-flex align-items-baseline py-4 bg-white">
                     <h5 className="px-4">
                       <b>Top Results</b>
                     </h5>
                     <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
                   </div>
-                  {freelancerList?.length === 0 && (
+                  {loading ? (
                     <DarkText
                       fontSize="20px"
                       padding="20px 40px"
                       backgroundColor="white"
                       width="-webkit-fill-available">
-                      No freelancers found for this search
+                      Loading...
                     </DarkText>
+                  ) : (
+                    freelancerList?.length === 0 && (
+                      <DarkText
+                        fontSize="20px"
+                        padding="20px 40px"
+                        backgroundColor="white"
+                        width="-webkit-fill-available">
+                        No freelancers found for this search
+                      </DarkText>
+                    )
                   )}
                   {freelancerList?.map((item, index) => {
                     const freelancer = constructFreelancerModel(item)
@@ -334,7 +349,8 @@ const Freelancers = ({
               })}
           </Container>
           <DesktopDisplayBox>
-            <Footer />
+            {' '}
+            <Footer />{' '}
           </DesktopDisplayBox>
           {!filterOpenClose && window?.innerWidth <= 680 && (
             <MobileDisplayBox>

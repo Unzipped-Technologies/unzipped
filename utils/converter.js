@@ -288,13 +288,13 @@ class Converter {
 
   capitalize = words =>
     words
-      .split(' ')
+      ?.split(' ')
       .map(word => {
-        const first = word.charAt(0).toUpperCase()
-        const last = word.slice(1).toLowerCase()
+        const first = word?.charAt(0)?.toUpperCase()
+        const last = word?.slice(1)?.toLowerCase()
         return `${first}${last}`
       })
-      .join(' ')
+      .join(' ') ?? words
 
   truncateString = (str, maxLength) => {
     if (str?.length > maxLength) {

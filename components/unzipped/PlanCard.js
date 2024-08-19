@@ -1,8 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { DarkText, TitleText, Underline } from './dashboard/style'
+
 import { Button } from '../ui'
 import Bullet from '../ui/Bullet'
+import { DarkText, TitleText, Underline } from './dashboard/style'
 
 const Container = styled.div`
   border: 1px #555 solid;
@@ -22,26 +23,33 @@ const Span = styled.span`
   font-size: 14px;
 `
 
-const PlanCard = ({ data, onClick }) => {
+const PlanCard = ({ data, selectPlan }) => {
   return (
-    <Container>
-      <TitleText bold size="24px">
-        {data.name}
+    <Container data-testid={`${data?.id}_plans`}>
+      <TitleText bold size="24px" data-testid="name">
+        {data?.name}
       </TitleText>
-      <DarkText small marginLarge>
-        {data.description}
+      <DarkText small marginLarge data-testid="description">
+        {data?.description}
       </DarkText>
-      <DarkText fontSize="32px">
-        ${data.cost} <Span>USD / month</Span>
+      <DarkText fontSize="32px" data-testid="cost">
+        ${data?.cost} <Span>USD / month</Span>
       </DarkText>
-      <Button margin="10px 0px" noBorder onClick={() => onClick(data.id)}>
+      <Button
+        margin="10px 0px"
+        noBorder
+        onClick={() => {
+          selectPlan(data?.id)
+        }}>
         CHOOSE THIS PLAN
       </Button>
       <Underline color="#333" margin="5px 0px 15px 0px" />
       <TitleText>FEATURES</TitleText>
-      {data.features.map(item => (
-        <Bullet icon={item.icon} text={item.text} key={item.text} />
-      ))}
+      <span data-testid="features">
+        {data?.features.map(item => (
+          <Bullet icon={item?.icon} text={item?.text} key={item?.text} />
+        ))}
+      </span>
     </Container>
   )
 }

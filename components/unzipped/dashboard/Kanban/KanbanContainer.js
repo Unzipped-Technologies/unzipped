@@ -1,11 +1,20 @@
 // ProjectKanbanBoard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import KanbanBoard from './KanbanBoard';
 import FilterIcon from '../../../icons/filterIcon'
 import Button from '@mui/material/Button';
 import AssignedToList from './AssignedToList';
 import MyProjectsLists from './MyProjectsLists';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getBusinessEmployees,
+  loadAllBusinessAssociatedTickets,
+  resetBusinessList
+}
+  from '../../../../redux/Business/actions';
+
+
 
 // Global Style
 const GlobalStyle = createGlobalStyle`
@@ -20,13 +29,14 @@ const GlobalStyle = createGlobalStyle`
 // Styled Components
 const Container = styled.div`
   display: flex;
+  gap: 20px;
   flex-direction: column;
   align-items: center;
   height: auto;
-  overflow: hidden;
   background-color: #f0f2f5;
   width: 100%;
   justify-content: center;
+  padding: 0px 20px;
 `;
 
 const Header = styled.div`
@@ -59,14 +69,43 @@ const ProjectSelector = styled.select`
 
 
 `;
+const DIV = styled.div`
+  width: 40%;
+  display: flex;
+  padding: 10px;
+  gap: 20px;
+  justify-content: center;
+  background: #fff;
+
+  @media only screen and (max-width: 992px) {
+    width: 70%;
+    gap: 10px;
+  }
+`;
+
+const FilterDiv = styled.div`
+  width: 70%;
+  display: flex;
+  padding-left: 55px;
+  gap: 20px;
+  padding-top: 10px;
+  background: #fff;
+
+  @media only screen and (max-width: 992px) {
+    width: 30%;
+    padding-left: 20px;
+    gap: 10px;
+  }
+`;
+
 
 const BoardContainer = styled.div`
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
 `;
 
 const ProjectFilterContainer = styled.div`
@@ -75,7 +114,6 @@ const ProjectFilterContainer = styled.div`
   justify-content: center;
   width: 100%;
   gap: 10px;
-  margin-bottom: 20px;
 `;
 
 
@@ -96,19 +134,151 @@ const SearchTextStyled = styled.input`
 `;
 
 // Main Component
-const ProjectKanbanBoard = () => {
-  const [selectedProject, setSelectedProject] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [currentBusiness, setCurrentBusiness] = useState(null);
+const ProjectKanbanBoard = ({
+  selectedDepartment,
+  currentBusiness,
+  businesses,
+  isFullScreen
+}) => {
+  const departmentData = useSelector(state => state.Departments.selectedDepartment)
+  const [backendCols, setBackendCols] = useState({});
+  const [assigneeFilters, setAssigneeFilters] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const dispatch = useDispatch();
+  const { fullBoardViewTickets } = useSelector(state => state.Business)
+  const [businessInfo, setBusinessInfo] = useState('')
+  const [departmentFiltering, setDepartmentFiltering] = useState('')
 
-  const handleProjectChange = (event) => {
-    const project = event.target.value;
-    setSelectedProject(project);
-    // Update selectedDepartment and currentBusiness based on selected project
-    // For example:
-    // setSelectedDepartment(project.department);
-    // setCurrentBusiness(project.business);
-  };
+
+  useEffect(() => {
+    if (isFullScreen) {
+
+      dispatch(resetBusinessList())
+      if (businessInfo) {
+        dispatch(loadAllBusinessAssociatedTickets(businessInfo))
+        dispatch(getBusinessEmployees(businessInfo))
+      }
+    }
+  }, [isFullScreen, businessInfo])
+
+  useEffect(() => {
+    if (isFullScreen) {
+      setBackendCols(fullBoardViewTickets);
+    }
+  }, [fullBoardViewTickets])
+
+  useEffect(() => {
+    if (isFullScreen) {
+      setBusinessInfo(businesses[0]?._id);
+    }
+  }, [businesses])
+
+  const [deptFilter, setDptFilter] = useState([]);
+
+  useEffect(() => {
+    if (isFullScreen) {
+      if (businessInfo) {
+        let _deptArr = []
+        dispatch(getBusinessEmployees(businessInfo))
+        const _dpt = businesses.map(business => (
+          business.businessDepartments.map(dept => (
+            {
+              departmentId: dept._id,
+              name: dept.name
+            }
+          )
+          ))).flat()
+        if (backendCols) {
+          for (const [key, value] of Object.entries(backendCols)) {
+            _deptArr = [..._deptArr, ...value.tasks.map(task => task.departmentId)]
+          }
+        }
+
+        const uniqueIds = new Set(_deptArr);
+
+        const filteredRecords = _dpt.filter(record => uniqueIds.has(record.departmentId));
+
+
+        setDptFilter(filteredRecords)
+      }
+    }
+  }, [businessInfo, businesses])
+
+  useEffect(() => {
+    if (departmentFiltering.length === 0) {
+
+      setBackendCols(fullBoardViewTickets)
+    } else {
+      const departmentIdsToFilter = new Set(departmentFiltering.map(item => item.departmentId));
+      const newFilteredTickets = { ...backendCols };
+
+      const filteredTasksData = Object.keys(newFilteredTickets).reduce((acc, tagId) => {
+        const tag = newFilteredTickets[tagId];
+        const filteredTasks = tag.tasks.filter(task => departmentIdsToFilter.has(task.departmentId));
+
+        acc[tagId] = {
+          ...tag,
+          tasks: filteredTasks || []
+        };
+
+        return acc;
+      }, {});
+      setBackendCols(filteredTasksData)
+    }
+  }, [departmentFiltering])
+
+
+  useEffect(() => {
+    if (assigneeFilters.length === 0) {
+
+      setBackendCols(fullBoardViewTickets)
+    } else {
+      const newFilteredTickets = { ...backendCols };
+
+      Object.keys(newFilteredTickets).forEach(colKey => {
+        const filteredTasks = newFilteredTickets[colKey].tasks.filter(task =>
+          assigneeFilters.some(record =>
+            task?.assignee?.FirstName.trim() === record?.FirstName.trim() ||
+            task?.assignee?.LastName.trim() === record?.LastName.trim()
+          )
+        );
+        newFilteredTickets[colKey] = {
+          ...newFilteredTickets[colKey],
+          tasks: filteredTasks
+        };
+      });
+
+      setBackendCols(newFilteredTickets)
+    }
+  }, [assigneeFilters])
+
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      const newFilteredTickets = { ...backendCols };
+      Object.keys(newFilteredTickets).forEach(colKey => {
+        const filteredTasks = newFilteredTickets[colKey].tasks.filter(task =>
+        (
+          task?.taskName?.toLowerCase().trim().includes(searchTerm.toLowerCase().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")) ||
+          task?.description?.toLowerCase().trim().includes(searchTerm.toLowerCase().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")) ||
+          task?.ticketCode?.toLowerCase().trim().includes(searchTerm.toLowerCase().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"))
+        )
+        );
+        newFilteredTickets[colKey] = {
+          ...newFilteredTickets[colKey],
+          tasks: filteredTasks
+        };
+      });
+      setBackendCols(newFilteredTickets)
+    }
+    else {
+      setBackendCols(fullBoardViewTickets)
+    }
+
+  }, [searchTerm])
+
+  const handleSearchFilterOnChange = (e) => setSearchTerm(e.target.value);
+
 
   return (
     <>
@@ -123,41 +293,35 @@ const ProjectKanbanBoard = () => {
               alignItems: "center",
               width: "20%"
             }}>
-              <MyProjectsLists />
+              <MyProjectsLists
+                businesses={businesses}
+                setBusinessInfo={setBusinessInfo}
+                backendCols={fullBoardViewTickets}
+                setBackendCols={setBackendCols}
+              />
             </div>
 
             <div style={{
               display: "flex",
-              width: "64%",
+              width: "80%",
               boxShadow: " rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
               borderRadius: "10px"
             }}>
-              <div style={{
-                width: "70%",
-                display: "flex",
-                paddingLeft: "55px",
-                gap: "20px",
-                paddingTop: "10px",
-                background: "#fff"
-              }}>
+              <FilterDiv>
                 <FilterIconContainer>
                   <FilterIcon />
                 </FilterIconContainer>
                 <div style={{ width: "100%" }}>
-                  <SearchTextStyled type="text" placeholder="Filter by keywords" />
+                  <SearchTextStyled type="text" placeholder="Filter by keywords" onChange={handleSearchFilterOnChange} />
                 </div>
-              </div>
+              </FilterDiv>
 
-              <div style={{
-                width: "40%",
-                display: "flex",
-                padding: "10px",
-                gap: "20px",
-                justifyContent: "center",
-                background: "#fff",
-              }}>
+              <DIV>
                 <div>
-                  <AssignedToList />
+                  <AssignedToList
+                    ticketAssignedTo={assigneeFilters}
+                    setTicketAssignedTo={setAssigneeFilters}
+                  />
                 </div>
                 <div>
                   <Button
@@ -165,6 +329,7 @@ const ProjectKanbanBoard = () => {
                     aria-haspopup="true"
                     disableElevation
                     sx={{
+                      width: 'max-content',
                       color: "#000",
                       background: "#fff !important",
                       fontSize: "17px",
@@ -178,13 +343,19 @@ const ProjectKanbanBoard = () => {
                     Return To Default
                   </Button>
                 </div>
-              </div>
+              </DIV>
             </div>
 
           </div>
         </ProjectFilterContainer>
         <BoardContainer>
-          <KanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} />
+          <KanbanBoard
+            selectedDepartment={selectedDepartment}
+            currentBusiness={currentBusiness}
+            departmentData={departmentData}
+            backendCols={backendCols}
+            setBackendCols={setBackendCols}
+          />
         </BoardContainer>
       </Container>
     </>

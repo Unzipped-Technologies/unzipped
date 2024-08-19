@@ -123,10 +123,11 @@ const DesktopAccount = ({
   business,
   paymentMethods = [],
   getCurrentUserData,
-  updateCurrentUser
+  updateCurrentUser,
+  url
 }) => {
   const router = useRouter()
-
+  const [initialUrl] = useState(url?.url)
   const initialState = {
     email: user?.email,
     phoneNumber: user?.phoneNumber,
@@ -134,7 +135,7 @@ const DesktopAccount = ({
     LastName: user?.LastName,
     AddressLineOne: user?.AddressLineOne,
     AddressLineTwo: user?.AddressLineTwo,
-    AddressState: user?.AddressState,
+    AddressState: user?.AddressState ?? '',
     AddressCity: user?.AddressCity,
     AddressZip: user?.AddressZip,
     businessName: business?.name,
@@ -193,6 +194,12 @@ const DesktopAccount = ({
     return () => clearInterval(intervalId)
   }, [])
 
+  useEffect(() => {
+    if (url && url?.url !== initialUrl) {
+      router.push(url?.url)
+    }
+  }, [url])
+
   const enableEditing = (field, value) => {
     setMode({
       ...editMode,
@@ -221,7 +228,11 @@ const DesktopAccount = ({
   }
 
   const fetchAccountOnboardingLink = async () => {
-    await getAccountOnboardingLink({ url: '/dashboard/account' })
+    await getAccountOnboardingLink({
+      userId: user._id,
+      businessType: business?.businessType,
+      url: '/dashboard/account'
+    })
   }
 
   const updateDisabled = () => {

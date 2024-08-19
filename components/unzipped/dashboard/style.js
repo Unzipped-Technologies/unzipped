@@ -164,7 +164,6 @@ const WhiteCard = styled.div`
     border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '5px')};
     max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : 'unset')};
     width: ${({ width }) => (width ? width : '100%')};
-    // width: 100%;
     display: flex;
     cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
     flex-flow: ${({ row }) => (row ? 'row' : 'column')};
@@ -334,7 +333,7 @@ export const Span = styled.span`
   font-style: normal;
   font-weight: ${({ bold }) => (bold ? 600 : 400)};
   font-size: ${({ size }) => (size ? size : '26px')};
-  line-height: 45px;
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '45px')};
   letter-spacing: 0.39998px;
   width: ${({ unset }) => (unset ? 'unset' : '100%')};
   margin: ${({ margin }) => (margin ? margin : 'unset')};
@@ -392,6 +391,7 @@ const TableHeading = styled.th`
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
   letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
   text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
+  padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
 `
 
 const TableData = styled.td`
@@ -408,6 +408,7 @@ const TableData = styled.td`
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
   }
+  padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
 `
 
 const HelpCenterContainer = styled.div`
@@ -436,6 +437,9 @@ const DIV = styled.div`
   position: ${({ position }) => (position ? position : 'static')};
   background: ${({ background }) => (background ? background : 'transparent')};
   border: ${({ border }) => (border ? border : '#d8d8d8')};
+  border-bottom: ${({ borderBottom, border }) => (borderBottom ? borderBottom : border ? borderBottom : '#d8d8d8')};
+  border-left: ${({ borderLeft, border }) => (border ? border : borderLeft ? borderLeft : 'none')};
+
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
   padding: ${({ padding }) => (padding ? padding : '0px')};
 
@@ -457,15 +461,17 @@ const TEXT = styled.p`
   background: ${({ background }) => (background ? background : 'transparent')};
   border: ${({ border }) => (border ? border : 'none')};
   border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '0px')};
-  padding: ${({ padding }) => (padding ? padding : '0px')};
-  margin: ${({ margin }) => (margin ? margin : '0px')};
+  padding: ${({ padding }) => (padding ? padding : '')};
+  margin: ${({ margin }) => (margin ? margin : '')};
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
   font-weight: ${({ fontWeight }) => (fontWeight ? fontWeight : '400')};
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
   word-break: ${({ wordBreak }) => (wordBreak ? wordBreak : 'normal')};
   cursor: ${({ cursor }) => (cursor ? cursor : 'default')};
   letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.15008px')};
   text-overflow: ${({ textOverflow }) => (textOverflow ? textOverflow : 'unset')};
+  text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'none')};
   white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
   overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
@@ -486,6 +492,7 @@ const bounceAnimation = keyframes`
 const TypingAnimation = styled.div`
   width: 100%;
   padding-left: 10px;
+  line-height: 12px;
   span {
     width: 7px;
     height: 7px;

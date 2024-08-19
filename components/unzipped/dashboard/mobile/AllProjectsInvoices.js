@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
+import { useRouter } from 'next/router'
 
-import MobileInvoicesView from './MobileInvoicesView'
+import ProjectsInvoices from './ProjectsInvoices'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 import { getInvoices, updateInvoice } from '../../../../redux/Invoices/actions'
 
@@ -31,7 +32,10 @@ const Select = styled.select`
   margin-bottom: -10px !important;
 `
 
-const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
+const AllProjectsInvoices = ({ getInvoices }) => {
+  const router = useRouter()
+  const { id } = router.query // Filter selected week invoices when selected week OR invoice data changes.
+
   const [selectedWeek, setSelectedWeek] = useState(0)
   const [weekOptions, setWeekOptions] = useState([])
 
@@ -62,6 +66,7 @@ const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
     <InvoiceOverView>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Select
+          data-testid="invoices_week_options"
           onChange={e => {
             setSelectedWeek(e.target.value)
           }}
@@ -73,17 +78,15 @@ const AllProjectsInvoices = ({ role, invoices, getInvoices }) => {
           ))}
         </Select>
       </div>
-      <MobileInvoicesView role={role} weekOptions={weekOptions} selectedWeek={selectedWeek} viewAll />
+      {!id && <ProjectsInvoices />}
+
       <MobileFreelancerFooter />
     </InvoiceOverView>
   )
 }
 
 const mapStateToProps = state => {
-  return {
-    invoices: state.Invoices.invoices,
-    role: state.Auth.user.role
-  }
+  return {}
 }
 
 const mapDispatchToProps = dispatch => {

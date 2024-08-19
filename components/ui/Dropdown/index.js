@@ -120,7 +120,17 @@ DropdownItems.displayName = 'DropdownItems'
 /**
  * Dropdown Component.
  */
-const Dropdown = ({ visible, links, dashboard, sidebar, btnDropdown, width, className, dropDownRight, minWidth }) => {
+const Dropdown = ({
+  visible = false,
+  links = [],
+  sidebar = false,
+  dashboard = false,
+  btnDropdown = false,
+  width = '200px',
+  className,
+  dropDownRight,
+  minWidth
+}) => {
   const first10Ref = useRef()
   const [first10Height, setFirst10Height] = useState(0)
   const first10Items = links.filter((_, index) => index < 10)
@@ -170,15 +180,6 @@ Dropdown.propTypes = {
   className: PropTypes.string,
   /** Width of popout, with a minimum of 200px */
   width: PropTypes.string
-}
-
-Dropdown.defaultProps = {
-  visible: false,
-  links: [],
-  sidebar: false,
-  dashboard: false,
-  btnDropdown: false,
-  width: '200px'
 }
 
 export default Dropdown

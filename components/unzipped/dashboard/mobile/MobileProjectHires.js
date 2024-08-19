@@ -69,14 +69,14 @@ const MobileProjectHires = ({ data = [] }) => {
 
   return (
     <MobileDisplayBox>
-      <ProjectsList>
+      <ProjectsList data-testid="mobile_hires_container">
         {data?.length ? (
           data?.map(row => {
             return (
-              <ProjectCard key={row._id}>
+              <ProjectCard key={row._id} data-testid={`${row?._id}_contracts`}>
                 <ProjectDate>
                   {(row?.createdAt && ValidationUtils.formatDate(row?.createdAt)) ||
-                    ValidationUtils.formatDate(row?.updatedAt || row?.updatedAt)}
+                    ValidationUtils.formatDate(row?.updatedAt)}
                 </ProjectDate>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <ProjectName>
@@ -86,7 +86,7 @@ const MobileProjectHires = ({ data = [] }) => {
                   </ProjectName>
                   <div style={{ paddingRight: '15px' }}>$ {row.hourlyRate || 0} / hour</div>
                 </div>
-                <UserCategory>{row?.freelancerId?.category || 'N/A'}</UserCategory>
+                <UserCategory>{row?.freelancerId?.category || '-'}</UserCategory>
                 <Absolute
                   buttonHeight="33px"
                   position="none"
@@ -149,7 +149,7 @@ const MobileProjectHires = ({ data = [] }) => {
               paddingTop: '40px',
               paddingBottom: '40px'
             }}>
-            <p>N/A</p>
+            <p>-</p>
           </div>
         )}
       </ProjectsList>

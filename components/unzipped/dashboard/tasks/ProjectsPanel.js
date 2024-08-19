@@ -5,7 +5,8 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 import MenuIcon from '../../../ui/icons/menu'
 import { TitleText, DarkText, WhiteCard, Underline, DIV } from '../style'
 
-const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness }) => {
+const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness, setIsEditable }) => {
+
   return (
     <>
       <DIV

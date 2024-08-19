@@ -22,11 +22,17 @@ const FooterContainer = styled.div`
   margin-top: auto;
 `
 
-const Reset = ({ changePassword }) => {
+const Reset = ({ changePassword, accessToken }) => {
   const router = useRouter()
 
   const [passwordError, setPasswordError] = useState('')
   const [marginBottom, setMarginBottom] = useState('0px')
+
+  useEffect(() => {
+    if (!accessToken) {
+      router.push('/login')
+    }
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -55,9 +61,8 @@ const Reset = ({ changePassword }) => {
 
   const resetPassword = async userData => {
     const response = await changePassword(userData)
-
     if (response?.status === 200) {
-      await router.push('/dashboard')
+      router.push('/dashboard')
     } else {
       setPasswordError(response?.data?.message ?? 'Something went wrong')
     }
@@ -92,7 +97,9 @@ const Reset = ({ changePassword }) => {
 }
 
 const mapStateToProps = state => {
-  return {}
+  return {
+    accessToken: state.Auth?.token
+  }
 }
 
 const mapDispatchToProps = dispatch => {

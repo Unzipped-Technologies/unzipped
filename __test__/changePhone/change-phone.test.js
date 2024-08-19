@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 
 import ChangePhone from '../../pages/change-phone'
 import { initialState } from '../store/mockInitialState'
@@ -223,7 +223,9 @@ describe('ChangePhone Component', () => {
       target: { value: '(123) 456-7893' }
     })
 
-    fireEvent.submit(screen.getByTestId('change_phone_form'))
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_phone_form'))
+    })
   })
 
   it('renders ChangePhone and send default error message', async () => {
@@ -260,6 +262,8 @@ describe('ChangePhone Component', () => {
       target: { value: '(123) 456-7893' }
     })
 
-    fireEvent.submit(screen.getByTestId('change_phone_form'))
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_phone_form'))
+    })
   })
 })

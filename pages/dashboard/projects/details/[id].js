@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import styled, { css } from 'styled-components'
 
+import { DIV, TEXT } from '../../../../components/unzipped/dashboard/style'
 import Nav from '../../../../components/unzipped/header'
 import { getBusinessById } from '../../../../redux/actions'
 import ApplicationCard from '../../../../components/unzipped/dashboard/ApplicationCard'
@@ -13,16 +14,13 @@ import DesktopProjectDetail from '../../../../components/unzipped/dashboard/Desk
 import Invoices from '../../../../components/unzipped/dashboard/Invoices'
 import FreelancerInvites from '../../../../components/unzipped/dashboard/FreelancerInvites'
 
-const Navbar = styled.div`
-  margin-bottom: 160px;
+const Navbar = styled(DIV)`
   @media (max-width: 680px) {
     margin-bottom: 100px;
   }
 `
 
-const Desktop = styled.div`
-  width: 82%;
-  margin: auto;
+const Desktop = styled(DIV)`
   @media (max-width: 680px) {
     width: 100%;
     margin: 0px;
@@ -74,13 +72,7 @@ const ProjectName = styled.div`
   }
 `
 
-const ProjectSubHeading = styled.p`
-  color: #444;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 24.5px; /* 102.083% */
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+const ProjectSubHeading = styled(TEXT)`
   @media (max-width: 680px) {
     display: none;
   }
@@ -139,11 +131,6 @@ const TabButton = styled.button`
   @media (max-width: 680px) {
     font-weight: 600;
   }
-`
-
-const TabContent = styled.div`
-  display: block;
-  padding-bottom: 50px;
 `
 
 const Select = styled.select`
@@ -223,27 +210,27 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
   }, [])
 
   useEffect(() => {
-    getBusinessById(id)
+    async function fetchData() {
+      await getBusinessById(id)
+    }
+    fetchData()
   }, [id])
-
-  const handleWeekChange = value => {
-    setSelectedWeek(value)
-  }
 
   return (
     <>
-      <Navbar>
+      <Navbar margin="0px 0px 160px 0px">
         <Nav isSubMenu marginBottom={'100px'} />
       </Navbar>
-      <Desktop>
-        <HeaderDetail>
+      <Desktop width="82%" margin="auto">
+        <HeaderDetail data-testid="desktop_project_detail_header">
           <Header>
             <ProjectName>
               {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name ?? ''}` : 'PROJECT') : ''}
               {selectedTab === 3 && window.innerWidth > 680 ? (role === 1 ? 'TIMESHEET' : 'Invoice History') : ''}
             </ProjectName>
-            {(selectedTab === 3) & (window.innerWidth < 680) ? (
+            {(selectedTab === 3) & (window.innerWidth <= 680) ? (
               <Select
+                data-testid="timesheet_week_options"
                 onChange={e => {
                   setSelectedWeek(e.target.value)
                 }}
@@ -258,10 +245,20 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
               ''
             )}
           </Header>
-          {selectedTab !== 3 && <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>}
+          {selectedTab !== 3 && (
+            <ProjectSubHeading
+              color="#444"
+              fontSize="24px"
+              fontWeight="400"
+              lineHeight="24.5px" /* 102.083% */
+              letterSpacing="0.4px"
+              textTransform="uppercase">
+              {projectDetails?.name}
+            </ProjectSubHeading>
+          )}
         </HeaderDetail>
 
-        <Tabs>
+        <Tabs data-testid="desktop_project_detail_tabs">
           {projectTabs.map((tab, index) => {
             return (
               <TabButton
@@ -275,9 +272,9 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         </Tabs>
       </Desktop>
 
-      <TabContent>
+      <DIV display="block" padding="0px 0px 50px 0px">
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />}
-        {selectedTab === 1 && <ApplicationCard includeRate clearSelectedFreelancer={() => {}} />}
+        {selectedTab === 1 && <ApplicationCard includeRate />}
         {selectedTab === 2 && <HiringTable />}
         {selectedTab === 3 && (
           <Invoices selectedWeek={selectedWeek} weekOptions={weekOptions} role={role} businessId={id} />
@@ -288,7 +285,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
           ) : (
             <FreelancerInvites businessId={id} projectDetails={projectDetails} />
           ))}
-      </TabContent>
+      </DIV>
     </>
   )
 }

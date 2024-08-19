@@ -156,6 +156,12 @@ const Chat = ({
   // Sockets
 
   useEffect(() => {
+    if(!token) {
+      router.push('/login')
+    }
+  }, [])
+
+  useEffect(() => {
     socket.on('typing', typingData => {
       setTyping(typingData)
     })
@@ -336,7 +342,7 @@ const Chat = ({
                     <Container key={`message_${index}`} display="flex" justifyContent="flex-end" padding="10px">
                       <Container width="auto" minWidth="auto" padding="5px 10px 10px 10px">
                         <Container background="#007FED" borderRadius="8px 8px 0px 8px" padding="20px 20px 10px 20px">
-                          <DarkText small noMargin fontSize="16px" lineHeight="23px">
+                          <DarkText small noMargin fontSize="16px" lineHeight="23px" color={'#fff'}>
                             {e?.message}
                           </DarkText>
                         </Container>
@@ -386,7 +392,7 @@ const Chat = ({
                   <span></span>
                 </TypingAnimation>
               )}
-            <Absolute bottom="0px" width="98%" right="1%">
+            <Absolute bottom="19px" width="100%" right="0">
               <Message>
                 <FormField
                   value={form.message}

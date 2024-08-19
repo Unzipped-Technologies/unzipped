@@ -3,56 +3,23 @@ import { connect } from 'react-redux'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import styled, { css } from 'styled-components'
+import Swal from 'sweetalert2'
 
 import { ValidationUtils } from '../../../../utils'
 import Button from '../../../../components/ui/Button'
 import Nav from '../../../../components/unzipped/header'
-import { getProjectsList } from '../../../../redux/actions'
 import MobileSearchBar from '../../../../components/ui/MobileSearchBar'
-import { Absolute } from '../../../../components/unzipped/dashboard/style'
-import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
+import { updateBusiness, getProjectsList } from '../../../../redux/actions'
 import MobileSearchFilter from '../../../../components/unzipped/MobileSearchFilter'
+import { Absolute, TEXT, DIV } from '../../../../components/unzipped/dashboard/style'
+import MobileFreelancerFooter from '../../../../components/unzipped/MobileFreelancerFooter'
 import AllProjectHires from '../../../../components/unzipped/dashboard/mobile/AllProjectHires'
 import AllProjectsInvoices from '../../../../components/unzipped/dashboard/mobile/AllProjectsInvoices'
 
-const Container = styled.div`
-  display: flex;
-  flex-flow: column;
-  width: 100%;
-  justify-content: center;
-  background: #f7f8f9;
-  padding-top: 21px;
-  @media (max-width: 680px) {
-    padding-top: 0px;
-    background-color: #f6f7f9;
-    margin-bottom: 48px;
-  }
-`
-
-const MobileDisplayBox = styled.div`
-  background: #f4f4f4;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.25);
-  margin-bottom: 50px;
-  position: relative;
-
+const MobileDisplayBox = styled(DIV)`
   @media (min-width: 680px) {
     display: none;
   }
-`
-
-const Projects = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-`
-const Tabs = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  gap: 20px;
-  border-bottom: 1px solid #bcc5d3;
-  margin-bottom: 1px;
-  margin-left: 10px;
 `
 
 const TabButton = styled.button`
@@ -81,57 +48,8 @@ const TabButton = styled.button`
       color: #1772eb;
     `};
 `
-const TabContent = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 50px;
-`
 
-const SearchField = styled.div`
-  height: 50px;
-  width: 96%;
-  margin-left: 2.5%;
-  margin-top: 5px;
-  margin-bottom: 5px;
-`
-
-const ProjectsList = styled.div`
-  display: flex;
-  flex-direction: column;
-`
-
-const ProjectCard = styled.div`
-  border-radius: 4px;
-  background: #fff;
-  margin-bottom: 5px;
-`
-
-const ProjectName = styled.div`
-  color: #000;
-  font-family: Roboto;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 800;
-  line-height: 23px; /* 143.75% */
-  letter-spacing: 0.15px;
-  padding-top: 20px;
-  padding-left: 18px;
-`
-
-const ProjectDate = styled.div`
-  color: #000;
-  font-family: Roboto;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 23px; /* 176.923% */
-  letter-spacing: 0.15px;
-  padding-left: 18px;
-`
-
-const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) => {
+const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, updateBusiness }) => {
   const router = useRouter()
 
   const [filter, setFilter] = useState({
@@ -139,7 +57,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
     budget: '',
     minRate: 0,
     maxRate: 0,
-    requiredSkills: [],
+    skill: [],
     projectBudgetType: ''
   })
   const [selectedTab, setSelectedTab] = useState(0)
@@ -172,6 +90,35 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
 
   const handleFilterOpenClose = value => {
     setFilterOpenClose(value)
+  }
+
+  const archivedProject = async projectID => {
+    await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, close it!'
+    }).then(async result => {
+      if (result.isConfirmed) {
+        const response = await updateBusiness({ listId: projectID, isArchived: true })
+        if (response?.status === 200) {
+          Swal.fire({
+            title: 'Closed!',
+            text: `${response?.data?.msg ?? 'Project closed successfully'}`,
+            icon: 'success'
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: `${response?.data?.msg ?? 'Error archive the project.'}!`
+          })
+        }
+      }
+    })
   }
 
   const generatePopout = business => {
@@ -223,28 +170,19 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
     setFilter(prevFilter => {
       const updatedFilter = { ...prevFilter }
 
-      if (Array.isArray(updatedFilter[field])) {
-        if (!Array.isArray(value) && !updatedFilter[field].includes(value)) {
-          updatedFilter[field].push(value)
-        } else {
-          updatedFilter[field] = value
-        }
-      } else {
-        updatedFilter[field] = value
-      }
+      updatedFilter[field] = value
 
       return updatedFilter
     })
   }
 
   return (
-    <MobileDisplayBox>
+    <MobileDisplayBox width="100%" background="#f4f4f4" boxShadow="0px 1px 2px 0px rgba(0, 0, 0, 0.25)">
       {!filterOpenClose && (
         <Nav
           isSubMenu
           searchValue={filter}
           handleSearchValue={setFilter}
-          handleSearch={() => {}}
           searchButton
           margin={'0px'}
           marginBottom={'78px'}
@@ -254,11 +192,18 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
         <MobileSearchFilter handleFilterOpenClose={handleFilterOpenClose} filter={filter} setFilters={setFilters} />
       ) : (
         <>
-          <Projects>
-            <Tabs>
+          <DIV display="flex" flexWrap="wrap" flexDirection="row" flexFlow="column">
+            <DIV
+              width="100%"
+              display="flex"
+              justifyContent="space-around"
+              gap="20px"
+              borderBottom="1px solid #bcc5d3"
+              margin="0px 0px 1px 10px">
               {projectTabs.map((tab, index) => {
                 return (
                   <TabButton
+                    data-testid={`${tab.name}_${index}`}
                     onClick={() => setSelectedTab(tab.index)}
                     active={selectedTab === index}
                     key={`${tab.name}_${index}`}>
@@ -266,24 +211,51 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
                   </TabButton>
                 )
               })}
-            </Tabs>
-            <TabContent>
+            </DIV>
+            <DIV
+              display="flex"
+              flexWrap="wrap"
+              flexDirection="column"
+              width="100%"
+              margin="0px 0px 50px 0px"
+              flexFlow="column">
               {selectedTab === 0 && (
                 <div>
                   {!filterOpenClose && (
-                    <SearchField>
+                    <DIV height="50px" width="96%" margin="5px 0px 5px 2.5%">
                       <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
-                    </SearchField>
+                    </DIV>
                   )}
-                  <ProjectsList>
+                  <DIV display="flex" flexDirection="column" flexFlow="column" data-testid="all_projects">
                     {businesses?.map((business, index) => {
                       return (
-                        <ProjectCard key={business._id}>
-                          <ProjectName>{business?.name}</ProjectName>
-                          <ProjectDate>
+                        <DIV
+                          key={business._id}
+                          borderRadius="4px"
+                          background="#fff"
+                          margin="0px 0px 5px 0px"
+                          data-testid={business?._id}>
+                          <TEXT
+                            textColor="#000"
+                            fontSize="16px"
+                            fontWeight="600"
+                            lineHeight="23px"
+                            letterSpacing="0.15px"
+                            padding="20px 0px 0px 18px">
+                            {business?.name}
+                          </TEXT>
+                          <TEXT
+                            textColor="#000"
+                            fontFamily="Roboto"
+                            fontSize="13px"
+                            fontStyle="normal"
+                            fontWeight="400"
+                            lineHeight="23px"
+                            letterSpacing="0.15px"
+                            padding="0px 0px 0px 18px">
                             {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
                               ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
-                          </ProjectDate>
+                          </TEXT>
                           <Absolute
                             buttonHeight="33px"
                             position="none"
@@ -312,16 +284,16 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId }) =
                               Details
                             </Button>
                           </Absolute>
-                        </ProjectCard>
+                        </DIV>
                       )
                     })}
-                  </ProjectsList>
+                  </DIV>
                 </div>
               )}
               {selectedTab === 1 && <AllProjectsInvoices />}
               {selectedTab === 2 && <AllProjectHires />}
-            </TabContent>
-          </Projects>
+            </DIV>
+          </DIV>
           <MobileFreelancerFooter defaultSelected="Projects" />
         </>
       )}
@@ -333,13 +305,14 @@ const mapStateToProps = state => {
   return {
     businesses: state.Business?.projectList,
     role: state.Auth.user.role,
-    freelancerId: state.Auth.user?.freelancers
+    freelancerId: state.Auth.user?.freelancers?._id
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectsList: bindActionCreators(getProjectsList, dispatch)
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
+    updateBusiness: bindActionCreators(updateBusiness, dispatch)
   }
 }
 

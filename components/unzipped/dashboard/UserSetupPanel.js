@@ -39,7 +39,7 @@ const ProgressBarFiller = styled.div`
   width: ${props => props.percentage}%;
   display: flex;
   background-color: #ff4081;
-  padding: ${({ padding }) => (padding ? padding : '10px')};
+  padding: 0px;
   border-radius: 20px;
   text-align: center;
   justify-content: center;
@@ -70,7 +70,7 @@ const Text = styled.p`
   font-weight: 400;
   cursor: pointer;
   color: ${({ color }) => (color ? color : '#000')};
-  margin: ${({ margin }) => (margin ? margin : '0')};
+  margin: 0px;
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '40px')};
 `
 
@@ -87,71 +87,65 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
-const Panel = ({ userProps, verifyIdentity }) => {
-  const { user } = useSelector(state => state.Auth)
-
+const Panel = ({ user, verifyIdentity }) => {
   const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
   const [trackProgress, setTrackProgress] = useState(0)
   const [hasUserInfo, setHasUserInfo] = useState(false)
   const dropzoneRef = useRef(null)
 
   const completeSetup = () => {
-    const firstActionItem = document.querySelector('.verify-identity');
-    if (firstActionItem) {
-      firstActionItem.click();
-      return;
-    }
-    const secondActionItem = document.querySelector('.update-account-details');
-    if (secondActionItem) {
-      secondActionItem.click();
-      return;
-    }
-    const thirdActionItem = document.querySelector('.upload-profile-pic');
+    const thirdActionItem = document.querySelector('.upload-profile-image')
     if (thirdActionItem) {
-      thirdActionItem.click();
-      return;
+      thirdActionItem.click()
+      return
     }
-    const fourthActionItem = document.querySelector('.select-a-plan');
+    const firstActionItem = document.querySelector('.verify-identity')
+    if (firstActionItem) {
+      firstActionItem.click()
+      return
+    }
+
+    const fourthActionItem = document.querySelector('.select-a-plan')
     if (fourthActionItem) {
-      fourthActionItem.click();
-      return;
+      fourthActionItem.click()
+      return
     }
-  };
+
+    const secondActionItem = document.querySelector('.update-account-details')
+    if (secondActionItem) {
+      secondActionItem.click()
+      return
+    }
+  }
 
   useEffect(() => {
-    if (user.role != '0' && user.FirstName && user.AddressCity) {
+    if (user?.role !== 0 && user?.FirstName && user?.AddressCity) {
       setHasUserInfo(true)
     } else {
       setHasUserInfo(false)
     }
-  }),
-    [user]
+  }, [user])
 
   useEffect(() => {
     if (user && trackProgress < 100) {
-      let incrementalProgress = 0
 
-      if (user.role != 0 && user.FirstName && user.AddressCity) {
-        incrementalProgress += 25
+      if (user?.role !== 0 && user?.FirstName && user?.AddressCity) {
+        setTrackProgress((prev) => prev + 25)
       }
-      if (user.profileImage) {
-        incrementalProgress += 25
+      if (user?.profileImage) {
+        setTrackProgress((prev) => prev + 25)
       }
-      if (user.plan > 0) {
-        incrementalProgress += 25
+      if (user?.plan > 0) {
+        setTrackProgress((prev) => prev + 25)
       }
-      if (user.isIdentityVerified === accountVerificationEnum.SUCCESS) {
-        incrementalProgress += 25
+      if (user?.isIdentityVerified == 'SUCCESS') {
+        setTrackProgress((prev) => prev + 25)
       }
-
-      setTrackProgress(trackProgress + incrementalProgress)
     }
-  }, [user])
+  }, [])
 
   const openDropzone = () => {
-    if (dropzoneRef.current) {
-      dropzoneRef.current.open()
-    }
+    dropzoneRef.current && dropzoneRef.current.open()
   }
 
   const closeDropzone = () => {
@@ -159,28 +153,25 @@ const Panel = ({ userProps, verifyIdentity }) => {
   }
 
   const handleDrop = acceptedFiles => {
-    console.log(acceptedFiles)
     closeDropzone()
   }
 
   const router = useRouter()
   return (
-    <Container>
+    <Container data-testid="user_profile_panel">
       <TitleText size={18}>Set up your account</TitleText>
       <ProgressBarContainer>
-        <ProgressBarFiller percentage={trackProgress} padding={'0px'}>
+        <ProgressBarFiller percentage={trackProgress}>
           <Text size={18} color="#FFF" lineHeight={'30px'}>
             {trackProgress}%
           </Text>
         </ProgressBarFiller>
       </ProgressBarContainer>
-      {user.isIdentityVerified !== accountVerificationEnum.SUCCESS && (
+      {user?.isIdentityVerified !== accountVerificationEnum.SUCCESS && (
         <AccountSetupContainer>
           <VerifyUserIcon />
           <AccountSetup>
-            <Text
-              className="verify-identity"
-              onClick={() => verifyIdentity()}>
+            <Text className="verify-identity" onClick={verifyIdentity}>
               Verify identity
             </Text>
           </AccountSetup>
@@ -200,7 +191,6 @@ const Panel = ({ userProps, verifyIdentity }) => {
           </AccountSetup>
         </AccountSetupContainer>
       )}
-
       {!user?.profileImage && (
         <AccountSetupContainer>
           <img
@@ -212,11 +202,13 @@ const Panel = ({ userProps, verifyIdentity }) => {
           />
 
           <AccountSetup>
-            <Text className="upload-profile-pic" onClick={openDropzone}>Upload a profile picture</Text>
+            <Text className="upload-profile-image" onClick={openDropzone}>
+              Upload a profile picture
+            </Text>
           </AccountSetup>
           <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true}>
             {({ getRootProps, getInputProps }) => (
-              <div className="dropzone" {...getRootProps()}>
+              <div className="dropzone" {...getRootProps()} data-testid="dropzone">
                 <input {...getInputProps()} />
               </div>
             )}
@@ -224,7 +216,7 @@ const Panel = ({ userProps, verifyIdentity }) => {
         </AccountSetupContainer>
       )}
 
-      {user?.plan == 0 && (
+      {user?.plan === 0 && (
         <AccountSetupContainer>
           <img width="30" height="30" src="/img/InstallmentPlan.png" alt="installment plan" />
           <AccountSetup>
@@ -244,7 +236,6 @@ const Panel = ({ userProps, verifyIdentity }) => {
           <CompleteSetupButton onClick={completeSetup}>Complete Setup</CompleteSetupButton>
         </AccountSetup>
       </AccountSetupContainer>
-
     </Container>
   )
 }

@@ -15,7 +15,7 @@ const Container = styled.div`
   position: relative;
   display: flex;
   border: 1px solid #d9d9d9;
-  background: ${({ background }) => (background ? background : '#D9D9D9')};
+  background: #fdfdfd;
   width: 77%;
   margin: auto;
   border-radius: 10px;
@@ -33,12 +33,16 @@ const DashboardTable = ({
 }) => {
   const router = useRouter()
 
-  useEffect(async () => {
+  useEffect(() => {
     // Below we are only sending pagination data, Other data we are using from redux store.
-    await getProjectsList({
-      limit: limit,
-      skip: (page - 1) * 25
-    })
+    const fetchData = async () => {
+      await getProjectsList({
+        limit: limit,
+        skip: (page - 1) * 25
+      })
+    }
+
+    fetchData()
   }, [limit, page])
 
   const archivedProject = async projectID => {
@@ -56,14 +60,14 @@ const DashboardTable = ({
         if (response?.status === 200) {
           Swal.fire({
             title: 'Closed!',
-            text: `${response?.data?.msg || 'Project closed successfully'}`,
+            text: `${response?.data?.msg ?? 'Project closed successfully'}`,
             icon: 'success'
           })
         } else {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: `${response?.data?.msg || 'Error archive the project.'}!`
+            text: `${response?.data?.msg ?? 'Error archive the project.'}!`
           })
         }
       }
@@ -115,29 +119,29 @@ const DashboardTable = ({
   }
 
   return (
-    <Container background={'#FDFDFD'}>
-      <table>
-        <thead>
-          <tr>
-            <TableHeading textAlign="left">Project Name</TableHeading>
-            <TableHeading>Budget</TableHeading>
-            <TableHeading>Points</TableHeading>
-            <TableHeading>Value Estimate</TableHeading>
-            <TableHeading>Deadline</TableHeading>
-            <TableHeading>ACTIONS</TableHeading>
-          </tr>
-        </thead>
-        {!loading ? (
-          businesses?.length > 0 && (
-            <tbody>
+    <Container>
+      {!loading ? (
+        <table>
+          <thead data-testid="dashboard_projects_table_header">
+            <tr>
+              <TableHeading textAlign="left" paddingLeft='25px'>Project Name</TableHeading>
+              <TableHeading>Budget</TableHeading>
+              <TableHeading>Points</TableHeading>
+              <TableHeading>Value Estimate</TableHeading>
+              <TableHeading>Deadline</TableHeading>
+              <TableHeading>ACTIONS</TableHeading>
+            </tr>
+          </thead>
+          {businesses?.length > 0 && (
+            <tbody data-testid="dashboard_projects_table_body">
               {businesses?.map(row => (
-                <tr key={row._id}>
-                  <TableData $default onClick={() => router.push(`projects/details/${row._id}`)} textAlign="left">
+                <tr key={row._id} data-testid={row?._id}>
+                  <TableData paddingLeft='25px' $default onClick={() => router.push(`projects/details/${row._id}`)} textAlign="left">
                     {ValidationUtils.truncate(row.name, 40)}
                   </TableData>
                   <TableData>{row.budget || 0}</TableData>
                   <TableData>27</TableData>
-                  <TableData>{row.valueEstimate || 'N/A'}</TableData>
+                  <TableData>{row.valueEstimate || '-'}</TableData>
                   <TableData>
                     {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
                       ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
@@ -175,13 +179,11 @@ const DashboardTable = ({
                 </tr>
               ))}
             </tbody>
-          )
-        ) : (
-          <>
-            <Loading />
-          </>
-        )}
-      </table>
+          )}
+        </table>
+      ) : (
+        <Loading />
+      )}
     </Container>
   )
 }
