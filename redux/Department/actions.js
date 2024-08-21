@@ -12,7 +12,9 @@ import {
   UPDATE_TASK_STATUS_ON_DRAG,
   UPDATE_TASK_STATUS_ON_DRAG_ERROR,
   DEPARTMEMT_INFO_SEARCH,
-  DEPARTMEMT_INFO_SEARCH_ERROR
+  DEPARTMEMT_INFO_SEARCH_ERROR,
+  IS_DEPARTMENT_EXISTS,
+  IS_DEPARTMENT_EXISTS_ERROR
 } from './constants'
 import { REFETECH_ALL_BUSINESS } from '../Business/constants'
 import axios from 'axios'
@@ -183,6 +185,27 @@ export const retrieveDepartmentOnSerach = (deptId, data) => async (dispatch, get
     dispatch({
       type: DEPARTMEMT_INFO_SEARCH_ERROR,
       payload: response.data
+    })
+  }
+}
+
+export const verifyTasksListing = (taskId, ticketStatus) => async (dispatch, getState) => {
+
+  dispatch({ type: LOAD_STATE })
+  const response = await axios
+    .get(`/api/tasks/verify-task-details/${taskId}/${ticketStatus}`,
+      tokenConfig(getState()?.Auth.token)
+    )
+  if (response.status === 200) {
+    dispatch({
+      type: IS_DEPARTMENT_EXISTS,
+      payload: response.data.data
+    })
+  }
+  else {
+    dispatch({
+      type: IS_DEPARTMENT_EXISTS_ERROR,
+      payload: false
     })
   }
 }
