@@ -98,7 +98,8 @@ const CreateBusiness = ({
   questionsToAsk,
   userDetails,
   projectFiles,
-  businessForm
+  businessForm,
+  accessToken
 }) => {
   const router = useRouter()
 
