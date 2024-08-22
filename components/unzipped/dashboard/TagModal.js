@@ -88,9 +88,10 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 noMargin
                 width="100%"
                 height="36px !important"
-                onChange={e => updateForm('tagName', e?.target?.value)}
-                value={tagForm?.tagName}
-                clickType="tagName">
+                onChange={e => updateForm('tagName', e?.target?.value.trim())}
+                value={tagForm?.tagName.trim()}
+                clickType="tagName"
+                onUpdate={() => {}}>
                 Tag Name
               </FormField>
             </DIV>

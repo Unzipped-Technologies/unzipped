@@ -128,13 +128,13 @@ const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
                                     value={member}
                                     onClick={() => handleMenuItemUserSelection(member, index)}
                                 >
-                                    <Checkbox
+                                    {member?.userId && (<Checkbox
                                         checked={itemsIndex.length > 0
                                             ? itemsIndex.includes(index)
                                             : false
                                         }
-                                    />
-                                    {(!member?.userId) ? (<>Unassigned</>) : (<ListItemText primary={member?.FirstName + member?.LastName} />)}
+                                    />)}
+                                    {(member?.userId && (<ListItemText primary={member?.FirstName + ' ' +  member?.LastName} />))}
                                 </MenuItem>
                             ))
                         }

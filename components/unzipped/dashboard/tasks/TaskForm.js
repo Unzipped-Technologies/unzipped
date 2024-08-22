@@ -34,7 +34,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 
 const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest'];
-const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing'];
+const STATUS_OPTIONS_ARR = ['Todo', 'In Progress', 'Done', 'Doing'];
 
 
 const TaskForm = ({
@@ -113,7 +113,6 @@ const TaskForm = ({
       })
     }
   }, [taskDetail])
-
   const assigneeOptions = useMemo(() => {
     let assignee = []
     assignee = departmentData?.contracts?.map(contract => ({
@@ -143,7 +142,7 @@ const TaskForm = ({
                 letterSpacing: '0.4px',
                 textTransform: 'capitalize'
               }}>
-              {contract?.freelancer?.user?.FullName ?? 'Name'}
+              {contract?.freelancer?.user?.FirstName + ' ' + contract?.freelancer?.user?.LastName ?? 'Name'}
             </div>
             <div
               style={{

@@ -4,9 +4,12 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 
 import MenuIcon from '../../../ui/icons/menu'
 import { TitleText, DarkText, WhiteCard, Underline, DIV } from '../style'
+import { FaRegCheckCircle } from 'react-icons/fa'
+import {getBusinessEmployees} from '../../../../redux/Business/actions'
+import { useDispatch } from 'react-redux'
 
 const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness, setIsEditable }) => {
-
+  const dispatch = useDispatch()
   return (
     <>
       <DIV
@@ -45,8 +48,8 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                   />
                 </DIV>
                 {business._id !== currentBusiness?._id && <Underline />}
-                {business?.businessDepartments?.length && currentBusiness?._id === business?._id ? (
-                  business?.businessDepartments?.map(department => {
+                {business?.businessDepartments?.length && currentBusiness?._id === business?._id
+                  ? business?.businessDepartments?.map(department => {
                     return (
                       <DIV key={department._id}>
                         <WhiteCard
@@ -64,6 +67,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                             fontSize="20px"
                             onClick={() => {
                               onSelectDepartment(department)
+                              dispatch(getBusinessEmployees(selectedDepartment?.businessId, true))
                             }}>
                             <span style={{ paddingRight: '25px' }}>
                               {selectedDepartment?._id === department._id ? (
@@ -100,13 +104,12 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                       </DIV>
                     )
                   })
-                ) : (
-                  <span data-testid={business._id + '_empty_departments'}>{''}</span>
-                )}
+                  : ''}
                 {business._id === currentBusiness?._id && <Underline />}
               </div>
             )
-          })}
+          })
+          : ''}
       </DIV>
     </>
   )

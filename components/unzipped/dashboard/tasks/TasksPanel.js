@@ -80,7 +80,7 @@ const TasksPanel = ({
       const sourcedObj = sourceItems[source.index];
       sourcedObj.status = destColumn?.tagName;
       let ticketStatus = sourcedObj.status;
-      if (!ticketStatus.includes('In Progress')) {
+      if (!ticketStatus.includes('In Progress') || !ticketStatus.includes('In progress')) {
         ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
       }
 
@@ -343,6 +343,7 @@ const TasksPanel = ({
                                                   selectedDepartment={selectedDepartment}
                                                   assignee={task?.assignee?.user}
                                                   task={task}
+                                                  isListingPanel={true}
                                                 />
 
                                               ) : (
