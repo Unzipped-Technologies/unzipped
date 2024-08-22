@@ -1,5 +1,5 @@
 const TODO_STATUS = 'Todo'
-const IN_PROGRESS = 'In progress'
+const IN_PROGRESS = 'In Progress'
 const DONE = 'Done'
 const DOING = 'Doing'
 

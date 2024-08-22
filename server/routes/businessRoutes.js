@@ -217,27 +217,33 @@ router.post(
   }
 )
 
-router.get('/user-owned-business/:userId', async (req, res) => {
-  try {
-    const businesses = await businessHelper.getBusinessCreatedByUser(req.params.userId)
-    res.json(businesses)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
-
-router.get("/get-business-employees/:id",
+router.get("/user-owned-business/:userId",
   async (req, res) => {
     try {
       const businesses = await businessHelper
-        .getBusinessEmployees(
-          req.params.id
+        .getBusinessCreatedByUser(
+          req.params.userId
         )
       res.json(businesses)
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-})
+  })
+
+router.get("/get-business-employees/:id",
+  async (req, res) => {
+    try {
+      const isSelectedBusiness = req.query?.isSelectedBusiness === 'true' ? true : false;
+      const businesses = await businessHelper
+        .getBusinessEmployees(
+          req.params.id,
+          isSelectedBusiness
+        )
+      res.json(businesses)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  })
 
 
 
@@ -245,9 +251,9 @@ router.get(
   '/fetch-all-biz-tasks/:businessId',
   async (req, res) => {
     try {
- 
-      const tasks = await businessHelper.fetchAllBizTasks(req.params?.businessId, req.query?.departmentId, req.query?.isDepartmentRelatedTasks)
-      
+      const params = (req.params.businessId == 'null') ? null : req.params.businessId
+      const tasks = await businessHelper.fetchAllBizTasks(params, req.query?.departmentId, req.query?.isDepartmentRelatedTasks)
+
       res.json(tasks)
     } catch (e) {
       res.status(400).json({ msg: e.message })

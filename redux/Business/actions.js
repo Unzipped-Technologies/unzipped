@@ -290,11 +290,11 @@ export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState
   }
 }
 
-export const getBusinessEmployees = (businessId) => async (dispatch, getState) => {
+export const getBusinessEmployees = (businessId, isSelectedBusiness = false) => async (dispatch, getState) => {
   try {
     await dispatch(startLoading())
 
-    const response = await axios.get(`/api/business/get-business-employees/${businessId}`, tokenConfig(getState()?.Auth.token));
+    const response = await axios.get(`/api/business/get-business-employees/${businessId}?&isSelectedBusiness=${isSelectedBusiness}`, tokenConfig(getState()?.Auth.token));
     if (response?.status === 200) {
       dispatch({
         type: GET_BUSINESS_EMPLOYEES,
