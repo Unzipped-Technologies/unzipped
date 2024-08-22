@@ -148,7 +148,7 @@ const ProjectKanbanBoard = ({
   const { fullBoardViewTickets } = useSelector(state => state.Business)
   const [businessInfo, setBusinessInfo] = useState('')
   const [departmentFiltering, setDepartmentFiltering] = useState('')
-
+  const { user: { _id } } = useSelector(state => state?.Auth)
 
   useEffect(() => {
     if (isFullScreen) {
@@ -156,7 +156,7 @@ const ProjectKanbanBoard = ({
       dispatch(resetBusinessList())
       if (businessInfo) {
         dispatch(loadAllBusinessAssociatedTickets(businessInfo))
-        dispatch(getBusinessEmployees(businessInfo))
+        dispatch(getBusinessEmployees(_id))
       }
     }
   }, [isFullScreen, businessInfo])
@@ -169,7 +169,8 @@ const ProjectKanbanBoard = ({
 
   useEffect(() => {
     if (isFullScreen) {
-      setBusinessInfo(businesses[0]?._id);
+      dispatch(loadAllBusinessAssociatedTickets(null))
+      dispatch(getBusinessEmployees(_id))
     }
   }, [businesses])
 
@@ -279,6 +280,7 @@ const ProjectKanbanBoard = ({
 
   const handleSearchFilterOnChange = (e) => setSearchTerm(e.target.value);
 
+  const handleGridDefaultStatus = () => dispatch(loadAllBusinessAssociatedTickets(null))
 
   return (
     <>
@@ -339,6 +341,7 @@ const ProjectKanbanBoard = ({
                       '&:focus': { backgroundColor: "transparent !important" },
                       '&:hover': { backgroundColor: "transparent !important" }
                     }}
+                    onClick={() => handleGridDefaultStatus()}
                   >
                     Return To Default
                   </Button>

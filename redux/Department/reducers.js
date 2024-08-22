@@ -11,7 +11,9 @@ import {
   SUCCESS,
   UPDATE_DEPARTMENT_INFO,
   DEPARTMEMT_INFO_SEARCH,
-  DEPARTMEMT_INFO_SEARCH_ERROR
+  DEPARTMEMT_INFO_SEARCH_ERROR,
+  IS_DEPARTMENT_EXISTS,
+  IS_DEPARTMENT_EXISTS_ERROR
 } from './constants'
 
 const INITIAL_DEPARTMENT_FORM = {
@@ -24,11 +26,12 @@ const INIT_STATE = {
   selectedDepartment: {},
   error: '',
   loading: false,
+  isDepartmentExist: false,
   totalCount: 0,
   createDepartmentForm: {
     ...INITIAL_DEPARTMENT_FORM
   },
-  departmentTickets: []
+  departmentTickets: [],
 }
 
 const Departments = (state = INIT_STATE, action = {}) => {
@@ -104,6 +107,22 @@ const Departments = (state = INIT_STATE, action = {}) => {
           departmentTickets: action.payload
         }
       }
+    case IS_DEPARTMENT_EXISTS:
+
+      return {
+        ...state,
+        loading: false,
+        isDepartmentExist: action.payload
+      }
+
+    case IS_DEPARTMENT_EXISTS_ERROR:
+
+      return {
+        ...state,
+        loading: false,
+        isDepartmentExist: action.payload
+      }
+
     default:
       return state
   }

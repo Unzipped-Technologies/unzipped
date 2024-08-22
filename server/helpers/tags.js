@@ -1,6 +1,7 @@
 const departmentHelper = require('./department')
 const tagHelper = require('./task')
 const TagModel = require('../models/tags')
+const DepartmentModel = require('../models/Department')
 
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
@@ -11,7 +12,8 @@ const createTag = async data => {
     if (!departmentData) throw new Error(`Department not exist.`)
 
     // Create new tag
-    await TagModel.create(data)
+    const tagEntity = await TagModel.create(data)
+    await DepartmentModel.findByIdAndUpdate({_id: data.departmentId}, {$push: { tags: tagEntity._id }})
     return { message: 'Tag created successfully.' }
   } catch (err) {
     throw Error(`Could not create tag, error: ${err}`)

@@ -58,7 +58,7 @@ const ViewFullScreenButton = styled.button`
     }
 `;
 
-const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
+const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment, userId }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const access = token?.access_token || cookie
@@ -98,12 +98,11 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     if (currentBusiness) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
   }, [currentBusiness])
 
-
   useEffect(() => {
     if (currentBusiness && currentBusiness?._id) {
-      dispatch(getBusinessEmployees(currentBusiness?._id))
+      dispatch(getBusinessEmployees(userId))
     }
-  }, [currentBusiness])
+  }, [])
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
@@ -183,7 +182,8 @@ const mapStateToProps = state => {
     businesses: state?.Business?.projectList,
     cookie: state.Auth.token,
     currentDepartment: state.Tasks.currentDepartment,
-    loading: state.Loading?.loading
+    loading: state.Loading?.loading,
+    userId: state?.Auth?.user?._id
   }
 }
 

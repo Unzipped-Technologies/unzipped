@@ -3,15 +3,12 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { v4 as uuid } from 'uuid'
 import KanbanCard from './KanbanCard'
-import {
-  DraggableItem,
-  CardBody,
-} from './KanbanCard'
 import { makeStyles } from '@material-ui/core/styles'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   updateStatusOnDrag,
-  loadAllBusinessAssociatedTickets
+  loadAllBusinessAssociatedTickets,
+  verifyTasksListing
 } from '../../../../redux/actions'
 
 

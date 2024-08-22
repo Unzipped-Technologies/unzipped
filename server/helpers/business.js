@@ -572,8 +572,9 @@ const getBusinessCreatedByUser = async userId => {
   return await business.find({ userId: userId }).select('name _id')
 }
 
-const getBusinessEmployees = async businessId => {
-  const businessEmployees = await business.find({ _id: businessId })
+const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
+  const query = isSelectedBusiness ? { _id: id } : { userId: id }
+  const businessEmployees = await business.find(query)
     .populate({
       path: 'employees',
       model: 'contracts',
@@ -608,8 +609,8 @@ const getBusinessEmployees = async businessId => {
 
 const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false) => {
 
-
-  const list = await business.find({ _id: businessId }).populate([
+  const query = businessId ? { _id: businessId } : {};
+  const list = await business.find(query).populate([
     {
       path: 'departments',
       model: 'departments',
