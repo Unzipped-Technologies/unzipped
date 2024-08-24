@@ -10,7 +10,13 @@ import { DIV } from './style'
 import Button from '../../ui/Button'
 import { FormField } from '../../ui'
 
-import { updateDepartmentForm, resetDepartmentForm, createDepartment, getProjectsList, updateDepartment } from '../../../redux/actions'
+import {
+  updateDepartmentForm,
+  resetDepartmentForm,
+  createDepartment,
+  getProjectsList,
+  updateDepartment
+} from '../../../redux/actions'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -41,14 +47,12 @@ const DepartmentModel = ({
   isDepartmentEditMode,
   updateDepartment
 }) => {
-
   useEffect(() => {
     updateDepartmentForm({
       businessId: currentBusinessId,
-      name: isDepartmentEditMode ? selectedDepartment?.name ?? '' : ''
+      name: isDepartmentEditMode ? selectedDepartment?.name : ''
     })
   }, [currentBusinessId, isDepartmentEditMode])
-
 
   const updateForm = (field, value) => {
     updateDepartmentForm({
@@ -56,12 +60,10 @@ const DepartmentModel = ({
     })
   }
 
-
   const onSubmit = async () => {
     if (isDepartmentEditMode) {
       await updateDepartment({ name: departmentForm?.name }, selectedDepartment?._id, true)
     } else {
-
       await createDepartment(departmentForm)
     }
     await onHide()
@@ -72,9 +74,12 @@ const DepartmentModel = ({
       onClose={onHide}
       disableEscapeKeyDown
       open={open}
+      data-testid="create_department_modal"
       aria-labelledby="story-preview-modal"
       aria-describedby="story-preview-modal-description">
-      <DialogTitle data-testId="create_department_modal" id="department-dialog-title">{isDepartmentEditMode ? selectedDepartment?.name : 'Create Department'}</DialogTitle>
+      <DialogTitle id="department-dialog-title">
+        {isDepartmentEditMode ? selectedDepartment?.name : 'Create Department'}
+      </DialogTitle>
 
       <DialogContent dividers>
         <DIV flex="0 0 auto" boxSizing="border-box">
@@ -101,7 +106,6 @@ const DepartmentModel = ({
           <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
             <DIV>
               <Button
-                data-testId="cancel_department_form"
                 extraWid
                 type="outlineInverse"
                 buttonHeight="25px"
@@ -120,7 +124,7 @@ const DepartmentModel = ({
               </Button>
 
               <Button
-                data-testId="submit_department_form"
+                data-testid="submit_department_form"
                 disabled={false}
                 onClick={async () => {
                   await onSubmit()

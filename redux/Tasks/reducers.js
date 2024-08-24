@@ -81,13 +81,12 @@ const Tasks = (state = INIT_STATE, action = {}) => {
       return { ...state, loading: false, currentDepartment: action.payload }
     case SET_CURRENT_TICKET:
       return { ...state, loading: false, selectedTask: action.payload }
-    case REST_TAGS_LIST:
-      {
-        state.createStoryForm.tags = []
-        return {
-          ...state,
-        }
+    case REST_TAGS_LIST: {
+      state.createStoryForm.tags = []
+      return {
+        ...state
       }
+    }
 
     default:
       return state

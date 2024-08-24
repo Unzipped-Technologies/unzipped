@@ -42,7 +42,7 @@ const ViewFullScreenButton = styled.button`
   margin-right: 40px;
   margin-top: 8px;
   text-transform: uppercase;
-  background: #1976D2;
+  background: #1976d2;
   color: white;
   padding: 5px 5px;
   font-size: 14px;
@@ -50,13 +50,13 @@ const ViewFullScreenButton = styled.button`
   border-radius: 8px;
   border: 0px;
   font-family: Roboto;
-  &:focus{
-    background: #1976D2 !important;
+  &:focus {
+    background: #1976d2 !important;
   }
   @media screen and (max-width: 600px) {
     display: none;
-    }
-`;
+  }
+`
 
 const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment, userId }) => {
   const router = useRouter()
@@ -66,7 +66,6 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   const [selectedDepartment, setSelectedDepartment] = useState({})
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
-  const [isDeleteMode, setIsDeleteMode] = useState(false)
 
   useEffect(() => {
     if (!access) {
@@ -75,18 +74,16 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, [])
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         await getProjectsList({
           take: 'all',
           skip: 0,
           populate: false
-        });
-      } catch (error) {
-        console.error('Error fetching project list:', error);
-      }
-    })();
-  }, []);
+        })
+      } catch (error) {}
+    })()
+  }, [])
 
   useEffect(() => {
     if (!selectedDepartment?._id && businesses?.length) {
@@ -95,7 +92,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, [businesses])
 
   useEffect(() => {
-    if (currentBusiness) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
+    currentBusiness && setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
   }, [currentBusiness])
 
   useEffect(() => {
@@ -109,33 +106,32 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }
 
   return (
-    <>
+    <div data-testid="task_list_page">
       <Nav
         isSubMenu
-        marginBottom={window.innerWidth > 600 ? '125px' : '78px'}
-        isLogoHidden={window.innerWidth > 600 ? false : true}
+        marginBottom={window.innerWidth > 680 ? '125px' : '78px'}
+        isLogoHidden={window.innerWidth > 680 ? false : true}
         listName={'Departments'}
-        setIsViewable={() => { }}
-        setListName={() => { }}
-        setIsLogoHidden={() => { }}
-        onBackArrowClick={() => {
-          setDepartment(null)
-          router.back()
-        }}
       />
-      <div style={{
-        display: "flex",
-        justifyContent: "flex-end",
-        alignItems: 'flex-end',
-        width: "100%",
-        margin: "8px 0px"
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'flex-end',
+          width: '100%',
+          margin: '8px 0px'
+        }}>
         <ViewFullScreenButton onClick={handleFullScreenView}>
           {isFullScreen ? 'Exit Full Screen' : 'View Full Screen'}
         </ViewFullScreenButton>
       </div>
       {isFullScreen ? (
-        <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} businesses={businesses} isFullScreen={isFullScreen} />
+        <ProjectKanbanBoard
+          selectedDepartment={selectedDepartment}
+          currentBusiness={currentBusiness}
+          businesses={businesses}
+          isFullScreen={isFullScreen}
+        />
       ) : (
         <>
           {businesses?.length ? (
@@ -148,7 +144,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 onSelectDepartment={value => {
                   setSelectedDepartment(value)
                   setDepartment(value)
-                  if (window.innerWidth <= 600) {
+                  if (window.innerWidth <= 680) {
                     router.push(`department/${value._id}`)
                   }
                 }}
@@ -156,8 +152,12 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                   setCurrentBusiness(value)
                 }}
               />
-              {window.innerWidth > 600 && (
-                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} />
+              {window.innerWidth > 680 && (
+                <TasksPanel
+                  selectedDepartment={selectedDepartment}
+                  currentBusiness={currentBusiness}
+                  isEditable={isEditable}
+                />
               )}
             </Container>
           ) : (
@@ -165,7 +165,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
           )}
         </>
       )}
-    </>
+    </div>
   )
 }
 

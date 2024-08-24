@@ -677,7 +677,7 @@ const Nav = ({
         {isLogoHidden && (
           <>
             <div
-              data-testId="header_back_arrow"
+              data-testid="header_back_arrow"
               style={{ marginLeft: 15 }}
               onClick={() => {
                 setIsViewable(false)

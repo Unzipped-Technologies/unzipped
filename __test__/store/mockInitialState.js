@@ -131,7 +131,7 @@ export let defaultInitialState = {
   },
   Tasks: {
     tasks: [...TASKS],
-    selectedTask: {},
+    selectedTask: { ...TASKS[0] },
     error: '',
     loading: false,
     totalCount: TASKS?.length,
@@ -374,7 +374,7 @@ export let defaultInitialState = {
   },
   Tags: {
     createTagForm: {
-      tagName: ' ',
+      tagName: '',
       isActive: true,
       isArchived: false,
       departmentId: ''

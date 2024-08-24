@@ -3,6 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { v4 as uuid } from 'uuid'
 import KanbanCard from './KanbanCard'
+import { DraggableItem, CardBody } from './KanbanCard'
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -183,13 +184,7 @@ const Title = styled.span`
 `
 
 // Main KanbanBoard Component
-function KanbanBoard({
-  selectedDepartment,
-  currentBusiness,
-  departmentData,
-  backendCols,
-  setBackendCols
-}) {
+function KanbanBoard({ selectedDepartment, currentBusiness, departmentData, backendCols, setBackendCols }) {
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState([])
   const [selected, setSelected] = React.useState([])
@@ -206,7 +201,6 @@ function KanbanBoard({
     setColumns(backendCols)
   }, [backendCols])
 
-
   const handleSelect = (event, nodeIds) => {
     setSelected(nodeIds)
   }
@@ -220,20 +214,21 @@ function KanbanBoard({
       const sourceItems = [...sourceColumn.tasks]
       const destItems = [...destColumn.tasks]
 
-      const sourcedObj = sourceItems[source.index];
-      sourcedObj.status = destColumn?.tagName;
-      let ticketStatus = sourcedObj.status;
+      const sourcedObj = sourceItems[source.index]
+      sourcedObj.status = destColumn?.tagName
+      let ticketStatus = sourcedObj.status
 
       if (!ticketStatus.includes('In Progress')) {
-        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
+        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase())
       }
 
       dispatch(
         updateStatusOnDrag(
-          sourcedObj._id, {
-          status: ticketStatus,
-          tag: destination.droppableId
-        },
+          sourcedObj._id,
+          {
+            status: ticketStatus,
+            tag: destination.droppableId
+          },
           sourcedObj.businessId
         )
       )
@@ -272,45 +267,46 @@ function KanbanBoard({
       <GlobalStyle />
       <Container>
         <Board>
-          <DragDropContext onDragEnd={result => onDragEnd(result, columnsX, setColumns)}  >
+          <DragDropContext onDragEnd={result => onDragEnd(result, columnsX, setColumns)}>
             <TaskColumnStyles>
-              {(Object.entries(columnsX).map(([columnId, column], index) => {
-                return (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '100%'
-                      }}>
+              {columnsX &&
+                Object.entries(columnsX)?.map(([columnId, column], index) => {
+                  return (
+                    <>
                       <div
                         style={{
-                          position: '-webkit-sticky',
-                          position: 'sticky',
-                          top: '0px',
-                          paddingTop: '8px',
-                          backgroundColor: 'white',
-                          zIndex: 10
+                          display: 'flex',
+                          flexDirection: 'column',
+                          width: '100%'
                         }}>
-                        <ColumnTitle>{column.tagName}</ColumnTitle>
-                      </div>
+                        <div
+                          style={{
+                            position: '-webkit-sticky',
+                            position: 'sticky',
+                            top: '0px',
+                            paddingTop: '8px',
+                            backgroundColor: 'white',
+                            zIndex: 10
+                          }}>
+                          <ColumnTitle>{column.tagName}</ColumnTitle>
+                        </div>
 
-                      <div style={{ height: `100%` }}>
-                        <Droppable key={columnId} droppableId={columnId}>
-                          {(provided, snapshot) => (
-                            <TaskList ref={provided.innerRef} {...provided.droppableProps}>
-                              {column.tasks.map((colItem, index) => (
-                                <KanbanCard key={colItem} item={colItem} index={index} />
-                              ))}
-                              {provided.placeholder}
-                            </TaskList>
-                          )}
-                        </Droppable>
+                        <div style={{ height: `100%` }}>
+                          <Droppable key={columnId} droppableId={columnId}>
+                            {(provided, snapshot) => (
+                              <TaskList ref={provided.innerRef} {...provided.droppableProps}>
+                                {column.tasks.map((colItem, index) => (
+                                  <KanbanCard key={colItem} item={colItem} index={index} />
+                                ))}
+                                {provided.placeholder}
+                              </TaskList>
+                            )}
+                          </Droppable>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )
-              }))}
+                    </>
+                  )
+                })}
             </TaskColumnStyles>
           </DragDropContext>
         </Board>

@@ -14,7 +14,7 @@ import { updateCreateTagForm, resetTagForm, createTag, getDepartmentById } from 
 
 const MUIDialog = withStyles(theme => ({
   paper: {
-    width: '100%', // Adjust the width as needed
+    width: '100%' // Adjust the width as needed
     // height: '250px'
   },
   root: {
@@ -29,7 +29,16 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent)
 
-const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
+const TagModal = ({
+  open,
+  updateCreateTagForm,
+  onHide,
+  createTag,
+  departmentId,
+  tagForm,
+  getDepartmentById,
+  tagName
+}) => {
   const [isTagOpAllowed, setIsTagOpAllowed] = useState(true)
 
   useEffect(() => {
@@ -42,11 +51,10 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
   }, [departmentId])
 
   useEffect(() => {
-    if (!tagForm.tagName.trim()) {
-      setIsTagOpAllowed(false);
-    }
-    else {
-      setIsTagOpAllowed(true);
+    if (!tagForm?.tagName?.trim()) {
+      setIsTagOpAllowed(false)
+    } else {
+      setIsTagOpAllowed(true)
     }
   }, [tagForm.tagName])
 
@@ -57,7 +65,6 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
   }
 
   const onSubmit = async () => {
-    if (!tagForm.tagName.trim()) return
     await createTag(tagForm)
     await getDepartmentById(departmentId)
     await onHide()
@@ -65,7 +72,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
 
   return (
     <MUIDialog
-      data-testId="create_tag_modal"
+      data-testid="create_tag_modal"
       onClose={onHide}
       disableEscapeKeyDown
       open={open}
@@ -83,6 +90,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 fieldType="input"
                 margin="5px 0px 0px 0px"
                 name="tagName"
+                id="tagName"
                 fontSize="14px"
                 borderColor="red"
                 noMargin
@@ -98,7 +106,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
           </form>
           <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
             <Button
-              data-testId="cancel_tag_form"
+              data-testid="cancel_tag_form"
               extraWid
               type="outlineInverse"
               buttonHeight="25px"
@@ -115,14 +123,9 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               }}>
               CANCEL
             </Button>
-
             <Button
-                          data-testId="save_tag_form"
-
               disabled={!isTagOpAllowed}
-              onClick={async () => {
-                await onSubmit()
-              }}
+              onClick={onSubmit}
               width="58.25px"
               extraWide
               margin="0px 0px 0px 20px"

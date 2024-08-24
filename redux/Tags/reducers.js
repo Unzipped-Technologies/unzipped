@@ -11,7 +11,7 @@ import {
 } from './constants'
 
 const INITIAL_TAG_FORM = {
-  tagName: ' ',
+  tagName: '',
   isActive: true,
   isArchived: false,
   departmentId: ''

@@ -44,7 +44,7 @@ const TasksPanel = ({
   const [storyModal, setStoryModal] = React.useState(false)
   const [taskId, setTaskId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
-  const [editDeptInfo, setEditDeptInfo] = useState({});
+  const [editDeptInfo, setEditDeptInfo] = useState({})
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -77,11 +77,11 @@ const TasksPanel = ({
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
       const destItems = destColumn?.tasks || []
-      const sourcedObj = sourceItems[source.index];
-      sourcedObj.status = destColumn?.tagName;
-      let ticketStatus = sourcedObj.status;
+      const sourcedObj = sourceItems[source.index]
+      sourcedObj.status = destColumn?.tagName
+      let ticketStatus = sourcedObj.status
       if (!ticketStatus.includes('In Progress') || !ticketStatus.includes('In progress')) {
-        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
+        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase())
       }
 
       dispatch(updateStatusOnDrag(sourcedObj._id, { status: ticketStatus }))
@@ -172,10 +172,10 @@ const TasksPanel = ({
       status: tagName?.toLowerCase().includes('to')
         ? TODO_STATUS
         : tagName?.toLowerCase().includes('in')
-          ? IN_PROGRESS
-          : tagName?.toLowerCase().includes('done')
-            ? DONE
-            : TODO_STATUS
+        ? IN_PROGRESS
+        : tagName?.toLowerCase().includes('done')
+        ? DONE
+        : TODO_STATUS
     })
     setIsEditing(false)
     setStoryModal(true)
@@ -183,6 +183,7 @@ const TasksPanel = ({
 
   return (
     <DIV
+      id="tasks_panel"
       position="relative"
       display="flex"
       flexDirection="column"
@@ -239,7 +240,7 @@ const TasksPanel = ({
         {selectedDepartment?._id && userRole === 0 && (
           <DIV width="72px" margin="0px 20px 0px 80px" display="flex" justifyContent="flex-end">
             <Button
-              data-testId="add_department_tag"
+              data-testid="add_department_tag"
               small
               block
               buttonHeight="27px"
@@ -263,13 +264,13 @@ const TasksPanel = ({
         background="rgba(217, 217, 217, 0.25)"
         paddingBottom="10px"
         zIndex="auto">
-        <DragDropContext onDragEnd={handleOnDragEnd} >
+        <DragDropContext onDragEnd={handleOnDragEnd}>
           <DIV>
             {selectedDepartment?._id && departmentData?.departmentTags?.length ? (
               departmentData?.departmentTags.map(tag => {
                 return (
                   <DIV key={tag._id}>
-                    <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable" >
+                    <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
                       {(provided, snapshot) => (
                         <DIV
                           {...provided.droppableProps}
@@ -297,75 +298,72 @@ const TasksPanel = ({
                             </TEXT>
                           </DIV>
 
-                          {tag?.tasks?.length
+                          {tag?.tasks?.length > 0
                             ? tag?.tasks.map((task, index) => {
-                              return (
-                                <DIV key={task._id}>
-                                  <Draggable key={task._id} draggableId={task._id} index={index}>
-                                    {(provided, snapshot) => (
-                                      <DIV
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}>
-                                        <WhiteCard
-                                          padding="0px 10px"
-                                          noMargin
-                                          borderRadius="0px"
-                                          row
-                                          background="#F7F7F7">
-                                          <TEXT
-                                            fontWeight="bold"
-                                            width="300px"
-                                            onClick={async () => {
-                                              setTaskId(task._id)
-                                              openStoryModal()
-                                            }}>
-                                            <DIV display="flex" flexDirection="row" alignItems="center">
+                                return (
+                                  <DIV key={task._id} id={`task_${task._id}`}>
+                                    <Draggable key={task._id} draggableId={task._id} index={index}>
+                                      {(provided, snapshot) => (
+                                        <DIV
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}>
+                                          <WhiteCard
+                                            padding="0px 10px"
+                                            noMargin
+                                            borderRadius="0px"
+                                            row
+                                            background="#F7F7F7">
+                                            <DIV
+                                              display="flex"
+                                              flexDirection="row"
+                                              alignItems="center"
+                                              onClick={async () => {
+                                                setTaskId(task._id)
+                                                openStoryModal()
+                                              }}>
                                               <DIV padding="0px 10px 0px 0px">
                                                 <FaRegCheckCircle color={getStatusColor(task)} />
                                               </DIV>
-                                              {task.taskName}
+                                              <TEXT fontWeight="bold" width="300px">
+                                                {task.taskName}
+                                              </TEXT>
                                             </DIV>
-                                          </TEXT>
-                                          <TEXT
-                                            textAlign="center"
-                                            fontWeight="bold"
-                                            width="200px"
-                                            margin="0px 0px 0px 30px">
-                                            {task.storyPoints}
-                                          </TEXT>
-                                          <DIV width="auto" display="flex" justifyContent="center">
-                                            <>
-
-                                              {task?.assignee?.user ? (
-                                                <ProjectUsers
-                                                  isEmailRequired={false}
-                                                  selectedDepartment={selectedDepartment}
-                                                  assignee={task?.assignee?.user}
-                                                  task={task}
-                                                  isListingPanel={true}
-                                                />
-
-                                              ) : (
-                                                <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
-                                                  Unassigned
-                                                </TEXT>
-                                              )}
-                                            </>
-                                          </DIV>
-
-
-                                        </WhiteCard>
-                                      </DIV>
-                                    )}
-                                  </Draggable>
-                                </DIV>
-                              )
-                            })
+                                            <TEXT
+                                              textAlign="center"
+                                              fontWeight="bold"
+                                              width="200px"
+                                              margin="0px 0px 0px 30px">
+                                              {task.storyPoints}
+                                            </TEXT>
+                                            <DIV width="auto" display="flex" justifyContent="center">
+                                              <>
+                                                {task?.assignee?.user ? (
+                                                  <ProjectUsers
+                                                    isEmailRequired={false}
+                                                    selectedDepartment={selectedDepartment}
+                                                    assignee={task?.assignee?.user}
+                                                    task={task}
+                                                    isListingPanel={true}
+                                                  />
+                                                ) : (
+                                                  <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
+                                                    Unassigned
+                                                  </TEXT>
+                                                )}
+                                              </>
+                                            </DIV>
+                                          </WhiteCard>
+                                        </DIV>
+                                      )}
+                                    </Draggable>
+                                  </DIV>
+                                )
+                              })
                             : ''}
                           {userRole === 0 && (
                             <WhiteCard
-                              data-testId={`${tag?.tagName}_task`}
+                              data-testid={`${tag?.tagName}_task`}
                               onClick={() => {
                                 addNewTask(tag._id, tag?.tagName)
                               }}

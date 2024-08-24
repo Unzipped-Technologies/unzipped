@@ -128,7 +128,6 @@ const SearchField = ({
       placeholder={placeholder}
       className="custom-react-select"
       classNamePrefix="custom-react-select newClass"
-      data-testid={id ?? name}
       {...rest}
     />
   )
