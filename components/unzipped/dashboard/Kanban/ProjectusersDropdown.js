@@ -148,8 +148,8 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                                 <ListItemText
                                     sx={{
                                         '& .MuiTypography-root': {
-                                            ...(!isEmailRequired ? { fontSize: "16px !important" } : {}),
-                                            ...(!isEmailRequired ? { fontWeight: '700 !important' } : {}),
+                                            ...(!isEmailRequired ? { fontSize: "13px !important" } : {}),
+                                            ...(!isEmailRequired ? { fontWeight: '600 !important' } : {}),
                                             ...(!isEmailRequired ? { textTransform: "uppercase !important" } : {}),
                                         }
                                     }}

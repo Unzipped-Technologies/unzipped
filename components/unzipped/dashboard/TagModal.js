@@ -11,26 +11,41 @@ import { FormField } from '../../ui'
 import { DIV } from './style'
 
 import { updateCreateTagForm, resetTagForm, createTag, getDepartmentById } from '../../../redux/actions'
+import { styled } from '@mui/material/styles'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
-    width: '100%', // Adjust the width as needed
-    // height: '250px'
+    width: '100%',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
+    color: 'blue',
+    border: '2px solid  #ffff',
+    borderRadius: '12px',
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.4)'
   },
   root: {
     padding: '0px !important'
   }
 }))(Dialog)
 
+const StyledDiagTitle = styled(DialogTitle)(({ theme }) => ({
+  '& h2': {
+    fontSize: '1.2rem',
+    color: 'blue'
+  }
+}))
+
 const DialogContent = withStyles(theme => ({
   root: {
     margin: '0px !important',
-    paddingBottom: '60px'
+    paddingBottom: '30px',
+    fontFamily: 'Roboto',
+    fontWeight: '400'
   }
 }))(MuiDialogContent)
 
 const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
-  const [isTagOpAllowed, setIsTagOpAllowed] = useState(true)
+  const [isButtonEnabled, setIsButtonEnabled] = useState(true)
 
   useEffect(() => {
     updateCreateTagForm({
@@ -41,20 +56,21 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
     })
   }, [departmentId])
 
-  useEffect(() => {
-    if (!tagForm.tagName.trim()) {
-      setIsTagOpAllowed(false);
-    }
-    else {
-      setIsTagOpAllowed(true);
-    }
-  }, [tagForm.tagName])
-
   const updateForm = (field, value) => {
     updateCreateTagForm({
       [`${field}`]: value
     })
   }
+
+  useEffect(()=>{
+    if(!tagForm.tagName.trim()){
+      setIsButtonEnabled(false);
+    }
+   else{
+    setIsButtonEnabled(true);
+   }
+
+  },[tagForm.tagName])
 
   const onSubmit = async () => {
     if (!tagForm.tagName.trim()) return
@@ -70,17 +86,31 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
       open={open}
       aria-labelledby="story-preview-modal"
       aria-describedby="story-preview-modal-description">
-      <DialogTitle id="tag-dialog-title">Create Tag</DialogTitle>
+      <StyledDiagTitle
+        id="tag-dialog-title"
+        sx={{
+          '& .MuiDialogTitle-root > .MuiTypography-h6': {
+            color: ' blue !important',
+            fontWeight: 700
+          },
+          '& .MuiTypography-h6': {
+            color: ' blue !important',
+            fontWeight: 700
+          }
+        }}>
+        CREATE TAG
+      </StyledDiagTitle>
 
-      <DialogContent dividers>
+      <DialogContent>
         <DIV flex="0 0 auto" boxSizing="border-box">
           <form>
-            <DIV display="flex" margin="5px 0px 0px 0px" alignItems="center">
+            <DIV display="flex" margin="5px 0px 15px 0px" alignItems="center">
               <FormField
                 zIndexUnset
                 placeholder="Tag Name"
+                fontFamily="Roboto"
                 fieldType="input"
-                margin="5px 0px 0px 0px"
+                margin="5px 0px 6px 0px"
                 name="tagName"
                 fontSize="14px"
                 borderColor="red"
@@ -90,23 +120,29 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 onChange={e => updateForm('tagName', e?.target?.value.trim())}
                 value={tagForm?.tagName.trim()}
                 clickType="tagName"
+                fontWeight="12px"
                 onUpdate={() => {}}>
                 Tag Name
               </FormField>
             </DIV>
           </form>
-          <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
+          <DIV width="100%" margin="48px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
             <Button
-              extraWid
+              width="125px"
               type="outlineInverse"
-              buttonHeight="25px"
               fontSize="15px"
               contentMargin="0px !important"
+              boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)'
+              borderRadius
               colors={{
                 text: '#1976D2',
                 background: 'white',
                 border: '1px',
                 wideBorder: '#1976D2'
+              }}
+              style={{
+                borderRadius: '5px',
+                padding:'8px'
               }}
               onClick={() => {
                 onHide()
@@ -115,17 +151,20 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
             </Button>
 
             <Button
-              disabled={!isTagOpAllowed}
+              disabled={!isButtonEnabled}
               onClick={async () => {
                 await onSubmit()
               }}
-              width="58.25px"
-              extraWide
               margin="0px 0px 0px 20px"
+              width="125px"
               contentMargin="0px !important"
               type="black"
-              buttonHeight="25px"
               fontSize="15px"
+              boxShadow= '0px 4px 6px rgba(0, 0, 0, 0.1)'
+              style={{
+                borderRadius: '5px',
+                padding:'8px'
+              }}
               colors={{
                 text: '#FFF',
                 background: '#1976D2',

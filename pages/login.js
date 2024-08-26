@@ -241,9 +241,7 @@ const Login = ({ loading, loadUser, isAuthenticated, error, clearErrors, resetMe
         <meta name="Unzipped | Login" content="Unzipped" />
       </Head>
       <Container>
-        <BackButton onClick={back}>
-          <Icon name="backArrow" />
-        </BackButton>
+        {/* <BackButton onClick={back}> <Icon name="backArrow" /> </BackButton> */}
         <Box showLoginForm={showLoginForm}>
           <Image src="/img/unzipped-logo-mini.png" alt="logo" width="40%" />
           <Sign textAlign="center" level={2} fontWeight={500}>
