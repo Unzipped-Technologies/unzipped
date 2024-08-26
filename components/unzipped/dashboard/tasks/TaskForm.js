@@ -284,6 +284,11 @@ const TaskForm = ({
   }
   const onSubmit = async () => {
     if (validateForm()) {
+
+      if (taskForm?.assignee === 'unassigned') {
+        taskForm.assignee = userId;
+      }
+
       if (newComment?.comment) {
         const comments = [
           {
