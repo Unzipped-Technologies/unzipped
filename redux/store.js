@@ -96,6 +96,7 @@ const makeStore = ({ isServer }) => {
     return store
   }
 }
+export { makeStore }
 
 // Export the wrapper & wrap the pages/_app.js with this wrapper only
 export const wrapper = createWrapper(makeStore)

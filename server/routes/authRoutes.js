@@ -138,9 +138,9 @@ router.post('/change-password', requireLogin, async (req, res, next) => {
 
     const result = await userHelper.updateUser(existingUser?._id, { password: hash })
 
-    if (result) {
-      await Mailer.sendMailWithSG({ email: result?.email, templateName: 'RESET_PASSWORD' })
-    }
+    // if (result) {
+    //   await Mailer.sendMailWithSG({ email: result?.email, templateName: 'RESET_PASSWORD' })
+    // }
 
     const existingUsers = await AuthService.isExistingUser(req.user.sub, true)
     res.cookie('access_token', token.signToken(req.user.sub), { httpOnly: true })
@@ -240,6 +240,7 @@ router.post('/login', async (req, res, next) => {
 
   try {
     const existingUser = await AuthService.isExistingUser(email, false)
+
     if (!existingUser) throw Error('User does not exist')
 
     const isMatch = await AuthService.passwordComparing(email, password)
@@ -247,9 +248,9 @@ router.post('/login', async (req, res, next) => {
     if (!isMatch) throw Error('Invalid credentials')
     if (!token.signToken(existingUser._id)) throw Error('Invalid Credentials')
 
-    res.cookie('access_token', token.signToken(existingUser._id), { httpOnly: true }),
-      res.json({ ...existingUser._doc, msg: 'success', cookie: token.signToken(existingUser._id) }),
-      next()
+    res.cookie('access_token', token.signToken(existingUser._id), { httpOnly: true })
+    res.json({ ...existingUser._doc, msg: 'success', cookie: token.signToken(existingUser._id) })
+    // next()
   } catch (e) {
     res.status(400).send('Email and Password do not match')
   }

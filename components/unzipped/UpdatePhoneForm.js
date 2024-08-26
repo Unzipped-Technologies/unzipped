@@ -75,7 +75,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
 
   const [PhoneError, setPhoneError] = useState('')
   const [userData, setUserData] = useState({
-    currentPhone: phone,
+    currentPhone: '',
     phoneNumber: ''
   })
 
@@ -86,7 +86,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
   useEffect(() => {
     setUserData({
       ...userData,
-      currentPhone: phone
+      currentPhone: phone ?? ''
     })
   }, [phone])
 
@@ -150,7 +150,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
             width="100%"
             zIndexUnset
             error={''}
-            value={ValidationUtils._formatPhoneNumber(userData.currentPhone)}
+            value={ValidationUtils._formatPhoneNumber(userData.currentPhone) ?? ''}
             disabled={true}>
             Current Phone
           </FormField>

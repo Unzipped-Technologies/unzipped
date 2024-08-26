@@ -1,27 +1,41 @@
 import React from 'react'
+import axios from 'axios'
 import { useRouter } from 'next/router'
-import { fireEvent, screen, waitFor, act } from '@testing-library/react'
+
+import { fireEvent, screen, waitFor, act, render } from '@testing-library/react'
+
+import { makeStore } from '../../redux/store'
+import { Provider } from 'react-redux'
+import { loadUser } from '../../redux/Auth/actions'
 
 import ChangePhone from '../../pages/change-phone'
-import { initialState } from '../store/mockInitialState'
-import { renderWithRedux } from '../store/commonTestSetup'
-import { updatePhoneNumber } from '../../redux/Auth/actions'
-import UpdatePhoneForm from '../../components/unzipped/UpdatePhoneForm'
-
-jest.mock('axios')
+import keys from '../../config/keys'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }))
 
-jest.mock('../../redux/Auth/actions', () => ({
-  ...jest.requireActual('../../redux/Auth/actions'),
-  updatePhoneNumber: jest.fn()
-}))
+let store, state
+
+let newPhone = '(123) 456-7892'
 
 describe('ChangePhone Component', () => {
   let mockRouterPush, mockRouterBack
 
+  beforeAll(async () => {
+    axios.defaults.baseURL = 'http://localhost:3000'
+
+    // Initialize the store
+    store = makeStore({ isServer: false })
+    // Dispatch the loadUser action
+    await store.dispatch(
+      loadUser({
+        email: keys?.testClientEmail,
+        password: keys?.testClientPassword
+      })
+    )
+    state = store.getState()
+  })
   beforeEach(() => {
     jest.clearAllMocks()
 
@@ -43,15 +57,21 @@ describe('ChangePhone Component', () => {
   })
 
   it('renders ChangePhone and verify sub header text', async () => {
-    renderWithRedux(<ChangePhone />, { initialState })
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
 
     expect(screen.getByText('Change Phone')).toBeInTheDocument()
   })
 
   it('renders UpdatePhoneForm and verfiy input fields render correctly', async () => {
-    renderWithRedux(<UpdatePhoneForm phone={initialState.Auth.user.phoneNumber} onSubmit={data => {}} />, {
-      initialState
-    })
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
 
     const cancelPhoneButton = screen.getByTestId('cancel_phone_changes')
     expect(cancelPhoneButton).toBeEnabled()
@@ -62,7 +82,7 @@ describe('ChangePhone Component', () => {
     expect(savePhoneButton).toBeInTheDocument()
 
     const currentPhoneElement = screen.getByTestId('currentPhone')
-    expect(currentPhoneElement.value).toBe(initialState.Auth.user.phoneNumber)
+    expect(currentPhoneElement.value).toBe(state.Auth.user.phoneNumber)
     expect(currentPhoneElement).toBeDisabled()
 
     const phoneElement = screen.getByTestId('phone')
@@ -70,16 +90,23 @@ describe('ChangePhone Component', () => {
     expect(phoneElement).toBeEnabled()
 
     fireEvent.click(phoneElement)
-
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7891' }
+      target: { value: '1111111' }
+    })
+    fireEvent.blur(phoneElement)
+
+    expect(screen.getByText('Enter a valid Phone Number!')).toBeInTheDocument()
+
+    fireEvent.click(phoneElement)
+    fireEvent.change(phoneElement, {
+      target: { value: state.Auth.user.phoneNumber }
     })
 
     fireEvent.blur(phoneElement)
+    expect(phoneElement.value).toBe(state.Auth.user.phoneNumber)
 
-    expect(phoneElement.value).toBe('(123) 456-7891')
-
-    fireEvent.click(savePhoneButton)
+    fireEvent.blur(phoneElement)
+    expect(screen.getByText('Must not be that same as current Phone!')).toBeInTheDocument()
 
     fireEvent.click(phoneElement)
 
@@ -91,33 +118,29 @@ describe('ChangePhone Component', () => {
 
     fireEvent.click(phoneElement)
 
-    fireEvent.change(phoneElement, {
-      target: { value: '1111111' }
-    })
-
-    expect(screen.getByText('Enter a valid Phone Number!')).toBeInTheDocument()
-
     fireEvent.click(phoneElement)
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7890' }
+      target: { value: newPhone }
     })
 
     fireEvent.blur(phoneElement)
-    expect(screen.getByText('Must not be that same as current Phone!')).toBeInTheDocument()
   })
   it('renders ChangePhone and MobileFreelancerFooter components when window width is < 680px', () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
-    renderWithRedux(<ChangePhone />, { initialState })
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
   })
 
   it('renders ChangePhone Account and click on cancel button', async () => {
-    renderWithRedux(
-      <>
+    render(
+      <Provider store={store}>
         <ChangePhone />
-      </>,
-      { initialState }
+      </Provider>
     )
     const cancelPhoneButton = screen.getByTestId('cancel_phone_changes')
 
@@ -125,40 +148,16 @@ describe('ChangePhone Component', () => {
 
     expect(mockRouterPush).toHaveBeenCalledWith('/dashboard/account')
   })
-  it('renders ChangePhone Account with empty current phone number', async () => {
-    initialState.Auth.user.phoneNumber = ''
-
-    renderWithRedux(
-      <>
-        <ChangePhone />
-      </>,
-      { initialState }
-    )
-
-    const phoneElement = screen.getByTestId('phone')
-
-    fireEvent.click(phoneElement)
-
-    fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7890' }
-    })
-
-    fireEvent.blur(phoneElement)
-  })
 
   it('renders ChangePhone and update phone number successfully', async () => {
-    updatePhoneNumber.mockReturnValue(() => {
-      return {
-        status: 200
-      }
-    })
-
-    renderWithRedux(<ChangePhone phone={initialState.Auth.user.phoneNumber} onSubmit={UpdatePhoneForm} />, {
-      initialState
-    })
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
 
     const currentPhoneElement = screen.getByTestId('currentPhone')
-    expect(currentPhoneElement.value).toBe(initialState.Auth.user.phoneNumber)
+    expect(currentPhoneElement.value).toBe(state.Auth.user.phoneNumber)
     expect(currentPhoneElement).toBeDisabled()
 
     const phoneElement = screen.getByTestId('phone')
@@ -166,19 +165,14 @@ describe('ChangePhone Component', () => {
     fireEvent.click(phoneElement)
 
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7891' }
+      target: { value: newPhone }
     })
 
     fireEvent.blur(phoneElement)
 
-    expect(phoneElement.value).toBe('(123) 456-7891')
+    expect(phoneElement.value).toBe(newPhone)
 
     fireEvent.blur(phoneElement)
-
-    fireEvent.click(phoneElement)
-    fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7893' }
-    })
 
     fireEvent.submit(screen.getByTestId('change_phone_form'))
     await waitFor(() => {
@@ -187,83 +181,92 @@ describe('ChangePhone Component', () => {
   })
 
   it('renders ChangePhone and send error message', async () => {
-    updatePhoneNumber.mockReturnValue(() => {
-      return {
-        status: 400,
-        data: {
-          message: 'Phone number not updated'
-        }
-      }
-    })
-
-    renderWithRedux(<ChangePhone phone={initialState.Auth.user.phoneNumber} onSubmit={UpdatePhoneForm} />, {
-      initialState
-    })
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
 
     const currentPhoneElement = screen.getByTestId('currentPhone')
-    expect(currentPhoneElement.value).toBe(initialState.Auth.user.phoneNumber)
+    expect(currentPhoneElement).toBeInTheDocument()
+    expect(currentPhoneElement.value).toBe(newPhone)
     expect(currentPhoneElement).toBeDisabled()
 
     const phoneElement = screen.getByTestId('phone')
-
-    fireEvent.click(phoneElement)
-
-    fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7891' }
-    })
-
-    fireEvent.blur(phoneElement)
-
-    expect(phoneElement.value).toBe('(123) 456-7891')
-
-    fireEvent.blur(phoneElement)
+    expect(phoneElement).toBeInTheDocument()
 
     fireEvent.click(phoneElement)
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7893' }
+      target: { value: '(123) 123-431121111111111' }
     })
+    expect(phoneElement.value).toBe('(123) 123-431121111111111')
 
-    await act(async () => {
-      await fireEvent.submit(screen.getByTestId('change_phone_form'))
+    fireEvent.submit(screen.getByTestId('change_phone_form'))
+    await waitFor(() => {
+      expect(screen.getByText('Invalid phone number.')).toBeInTheDocument()
     })
   })
+  it('renders ChangePhone without phone number', async () => {
+    const userAuth = state.Auth
+    const user = {
+      ...state.Auth.user,
+      phoneNumber: ''
+    }
+    const Auth = {
+      ...state.Auth,
+      user
+    }
+    await store.dispatch({
+      type: 'USER_LOADED',
+      payload: { Auth }
+    })
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
 
-  it('renders ChangePhone and send default error message', async () => {
-    updatePhoneNumber.mockReturnValue(() => {
-      return {
-        status: 400
-      }
+    const phoneElement = screen.getByTestId('phone')
+    expect(phoneElement).toBeInTheDocument()
+
+    fireEvent.click(phoneElement)
+    fireEvent.change(phoneElement, {
+      target: { value: undefined }
+    })
+    expect(phoneElement.value).toBe('')
+
+    fireEvent.click(phoneElement)
+    fireEvent.change(phoneElement, {
+      target: { value: '(123) 123-431121111111111' }
+    })
+    expect(phoneElement.value).toBe('(123) 123-431121111111111')
+
+    await act(async () => {
+      await store.dispatch({
+        type: 'USER_LOADED',
+        payload: { ...userAuth }
+      })
     })
 
-    renderWithRedux(<ChangePhone phone={initialState.Auth.user.phoneNumber} onSubmit={UpdatePhoneForm} />, {
-      initialState
-    })
+    fireEvent.submit(screen.getByTestId('change_phone_form'))
+  })
+  it('renders ChangePhone Account with empty current phone number', async () => {
+    state.Auth.user.phoneNumber = ''
 
-    const currentPhoneElement = screen.getByTestId('currentPhone')
-    expect(currentPhoneElement.value).toBe(initialState.Auth.user.phoneNumber)
-    expect(currentPhoneElement).toBeDisabled()
+    render(
+      <Provider store={store}>
+        <ChangePhone />
+      </Provider>
+    )
 
     const phoneElement = screen.getByTestId('phone')
 
     fireEvent.click(phoneElement)
 
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7891' }
+      target: { value: newPhone }
     })
 
     fireEvent.blur(phoneElement)
-
-    expect(phoneElement.value).toBe('(123) 456-7891')
-
-    fireEvent.blur(phoneElement)
-
-    fireEvent.click(phoneElement)
-    fireEvent.change(phoneElement, {
-      target: { value: '(123) 456-7893' }
-    })
-
-    await act(async () => {
-      await fireEvent.submit(screen.getByTestId('change_phone_form'))
-    })
   })
 })

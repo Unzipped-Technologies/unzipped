@@ -62,7 +62,7 @@ const ChangeEmail = ({ email, updateUserEmail, accessToken }) => {
   const resetPassword = async data => {
     const response = await updateUserEmail(data)
     if (response?.status === 400) {
-      setEmailError(response?.data?.msg ?? 'Something went wrong!')
+      setEmailError(response?.data?.msg)
     } else {
       await router.push('/dashboard/account')
     }

@@ -202,7 +202,12 @@ const INIT_STATE = {
 const Auth = (state = INIT_STATE, action) => {
   switch (action.type) {
     case USER_LOADING:
-      return { ...INIT_STATE, loading: true }
+      return {
+        ...INIT_STATE,
+        loading: true,
+        isAuthenticated: false,
+        token: ''
+      }
     case SET_LOADING:
       return { ...state, loading: true }
     case USER_CREDENTIALS:
@@ -220,11 +225,11 @@ const Auth = (state = INIT_STATE, action) => {
     case USER_LOADED:
       return {
         ...state,
-        email: action.payload.email,
+        email: action.payload?.email,
         isAuthenticated: true,
         loading: false,
         user: action.payload,
-        token: action.payload.cookie,
+        token: action.payload?.cookie,
         error: { data: '' }
       }
     case LOGIN_USER_SUCCESS:

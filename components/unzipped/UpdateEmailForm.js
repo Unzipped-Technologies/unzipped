@@ -78,10 +78,16 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
     currentEmail: email,
     email: ''
   })
-
   useEffect(() => {
     setEmailError(error)
   }, [error])
+
+  useEffect(() => {
+    setUserData({
+      ...userData,
+      currentEmail: email
+    })
+  }, [email])
 
   const updateForm = (type, data) => {
     setUserData({

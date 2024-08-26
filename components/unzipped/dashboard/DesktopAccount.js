@@ -126,13 +126,11 @@ const DesktopAccount = ({
   updateCurrentUser,
   url
 }) => {
-  const router = useRouter()
-  const [initialUrl] = useState(url?.url)
   const initialState = {
     email: user?.email,
     phoneNumber: user?.phoneNumber,
-    FirstName: user?.FirstName,
-    LastName: user?.LastName,
+    FirstName: user?.FirstName ?? '',
+    LastName: user?.LastName ?? '',
     AddressLineOne: user?.AddressLineOne,
     AddressLineTwo: user?.AddressLineTwo,
     AddressState: user?.AddressState ?? '',
@@ -143,6 +141,9 @@ const DesktopAccount = ({
     businessPhone: business?.businessPhone,
     taxId: business?.taxId
   }
+
+  const router = useRouter()
+  const [initialUrl] = useState(url?.url)
 
   const primaryPM = paymentMethods?.find(e => e.isPrimary)
 
@@ -174,17 +175,33 @@ const DesktopAccount = ({
       await getCurrentUserData()
       await getPaymentMethods()
       await getBusinessDetails(undefined)
+      await getAccountBalance()
     }
 
     fetchData()
   }, [])
 
   useEffect(() => {
-    const fetchBalanceData = async () => {
-      getAccountBalance()
+    const initialState = {
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+      FirstName: user?.FirstName ?? '',
+      LastName: user?.LastName ?? '',
+      AddressLineOne: user?.AddressLineOne,
+      AddressLineTwo: user?.AddressLineTwo,
+      AddressState: user?.AddressState ?? '',
+      AddressCity: user?.AddressCity,
+      AddressZip: user?.AddressZip,
+      businessName: business?.name,
+      businessType: business?.type,
+      businessPhone: business?.businessPhone,
+      taxId: business?.taxId
     }
+    setUserData({ ...initialState })
+    return () => {}
+  }, [user, business])
 
-    fetchBalanceData()
+  useEffect(() => {
     // Call getAccountBalance on component load
     // Set up an interval to call getAccountBalance every 5 minutes
     const intervalId = setInterval(() => {
@@ -262,6 +279,7 @@ const DesktopAccount = ({
 
   const onSubmit = async () => {
     const response = await updateCurrentUser(userData)
+
     if (response?.status === 200) {
       setMode({
         ...editMode,
@@ -717,7 +735,7 @@ const DesktopAccount = ({
                 }}
                 borderRadius="10px"
                 onChange={e => updateForm('businessName', e.target.value)}
-                value={userData?.businessName}>
+                value={userData?.businessName ?? ''}>
                 Business Name
               </FormField>
             </Rows>

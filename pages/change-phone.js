@@ -58,7 +58,7 @@ const Reset = ({ updatePhoneNumber, phone }) => {
     if (response?.status === 200) {
       await router.push('/dashboard/account')
     } else {
-      setPhoneError(response?.data?.message ?? 'Something went wrong')
+      setPhoneError(response?.data?.message)
     }
   }
 

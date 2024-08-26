@@ -8,7 +8,7 @@ export const tokenConfig = (token, formType) => {
     headers: {
       'Content-type': 'application/json'
     },
-    method: 'GET',
+    // method: 'GET',
     credentials: 'include'
   }
   if (formType === 'multipart') {

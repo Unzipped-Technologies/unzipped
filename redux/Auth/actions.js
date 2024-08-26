@@ -192,22 +192,22 @@ export const updateUser = (data, token) => async (dispatch, getState) => {
 
 export const getVerifyIdentityUrl =
   (accountId = null, token) =>
-    async (dispatch, getState) => {
-      await axios
-        .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(getState().Auth.token))
-        .then(res =>
-          dispatch({
-            type: INITIATE_VERIFY_IDENTITY,
-            payload: res.data
-          })
-        )
-        .catch(err => {
-          dispatch({
-            type: AUTH_ERROR,
-            payload: err.response.data
-          })
+  async (dispatch, getState) => {
+    await axios
+      .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(getState().Auth.token))
+      .then(res =>
+        dispatch({
+          type: INITIATE_VERIFY_IDENTITY,
+          payload: res.data
         })
-    }
+      )
+      .catch(err => {
+        dispatch({
+          type: AUTH_ERROR,
+          payload: err.response.data
+        })
+      })
+  }
 
 export const resendVerify = user => async (dispatch, getState) => {
   const data = await axios
@@ -251,19 +251,21 @@ export const loadUser = user => async (dispatch, getState) => {
   //User Loading
   dispatch(resetCalenderSetting())
   dispatch({ type: USER_LOADING })
-  await axios
+  return await axios
     .post(`/api/auth/login`, user)
-    .then(res =>
+    .then(res => {
       dispatch({
         type: USER_LOADED,
         payload: res.data
       })
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: AUTH_ERROR,
         payload: err.response
       })
+      return err
     })
 }
 
@@ -491,7 +493,6 @@ export const emailConfirmation = userId => async dispatch => {
     })
   }
 }
-
 
 export const handleEmailRegistration = () => dispatch => {
   dispatch({

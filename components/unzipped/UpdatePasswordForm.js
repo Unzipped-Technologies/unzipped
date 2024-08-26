@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
 import BackHeader from './BackHeader'
@@ -77,6 +77,7 @@ const ButtonContainer = styled.div`
 const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
   const isMobile = window.innerWidth >= 680 ? false : true
 
+  const [passwordError, setPasswordError] = useState('')
   const [currentPasswordError, setcurrentPasswordError] = useState('')
   const [newPasswordError, setNewPasswordError] = useState('')
   const [confirmPasswordError, setconfirmPasswordError] = useState('')
@@ -85,6 +86,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
     newPassword: '',
     confirmNewPassword: ''
   })
+
+  useEffect(() => {
+    setPasswordError(error)
+  }, [error])
 
   const updateForm = (type, data) => {
     setUserData({
@@ -203,8 +208,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             value={userData.confirmNewPassword}>
             Confirm Password
           </FormField>
-          {error && <p className="red-text"> {error}</p>}
-
+          {passwordError && <p className="red-text"> {passwordError}</p>}
           <ButtonContainer mobile={isMobile}>
             <ButtonBack type="button" onClick={onBack} data-testid="cancel_password_changes">
               Cancel

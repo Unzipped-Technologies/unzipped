@@ -98,35 +98,30 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    const userData = await getSingleUser({ _id: id }, '-password');
+    const userData = await getSingleUser({ _id: id }, '-password')
 
-    if ((data?.role === 1 || data?.role === '1') && !userData?.freelancers) {
-      const freelancerData = new freelancer({ userId: userData?._id })
-      await freelancerData.save()
-      userData['freelancers'] = freelancerData._id
-    }
     for (var field in data) {
       userData[field] = data[field]
     }
     if (userData?.role === 1 && !userData?.freelancers) {
       const freelancerEntity = await freelancer.create({ userId: id })
       if (freelancerEntity) {
-        userData['freelancers'] = freelancerEntity._id;
+        userData['freelancers'] = freelancerEntity._id
       }
     }
 
     if (data?.businessPhone && data?.taxId && data?.businessType) {
       const isExistingRecord = await BusinessDetailsModel.findOne({ userId: id })
       if (isExistingRecord) {
-        let businessDetailRecord = {};
-        if (isExistingRecord?.name !== data.businessName) businessDetailRecord['name'] = data.businessName;
-        if (isExistingRecord?.businessPhone !== data.businessPhone) businessDetailRecord['businessPhone'] = data.businessPhone;
-        if (isExistingRecord?.taxId !== data.taxId) businessDetailRecord['taxId'] = data.taxId;
-        if (isExistingRecord?.type !== data.businessType) businessDetailRecord['type'] = data.businessType;
-        await BusinessDetailsModel.findOneAndUpdate({ _id: isExistingRecord._id }, { $set: businessDetailRecord });
+        let businessDetailRecord = {}
+        if (isExistingRecord?.name !== data.businessName) businessDetailRecord['name'] = data.businessName
+        if (isExistingRecord?.businessPhone !== data.businessPhone)
+          businessDetailRecord['businessPhone'] = data.businessPhone
+        if (isExistingRecord?.taxId !== data.taxId) businessDetailRecord['taxId'] = data.taxId
+        if (isExistingRecord?.type !== data.businessType) businessDetailRecord['type'] = data.businessType
+        await BusinessDetailsModel.findOneAndUpdate({ _id: isExistingRecord._id }, { $set: businessDetailRecord })
       }
     }
-
 
     const updatedUserEntity = await userData.save()
     return updatedUserEntity
@@ -262,10 +257,10 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
           $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
           ...(skill?.length > 0
             ? {
-              'user.freelancerSkills.skill': {
-                $in: skill
+                'user.freelancerSkills.skill': {
+                  $in: skill
+                }
               }
-            }
             : {}),
           ...(minRate && {
             rate: { $gte: +minRate }
@@ -277,12 +272,12 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
       },
       ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
         ? [
-          {
-            $sort: {
-              rate: sort === 'lowest hourly rate' ? 1 : -1
+            {
+              $sort: {
+                rate: sort === 'lowest hourly rate' ? 1 : -1
+              }
             }
-          }
-        ]
+          ]
         : []),
       {
         $facet: {
@@ -691,7 +686,7 @@ const registerUser = async ({ email, password }) => {
       return newuser
     }
   } catch (error) {
-    await User.findByIdAndDelete(newuser.id);
+    await User.findByIdAndDelete(newuser.id)
     throw new Error(`Something went wrong ${error}`)
   }
 }
