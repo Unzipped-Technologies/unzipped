@@ -329,10 +329,10 @@ export const resetHiredEmployees = () => (dispatch, getState) => {
 
 }
 
-export const loadAllBusinessAssociatedTickets = (businessId, departmentId, isDepartmentRelatedTasks) => async (dispatch, getState) => {
+export const loadAllBusinessAssociatedTickets = (businessId, departmentId, isDepartmentRelatedTasks, userId) => async (dispatch, getState) => {
   dispatch(startLoading())
   try {
-    const response = await axios.get(`/api/business/fetch-all-biz-tasks/${businessId}?departmentId=${departmentId}&isDepartmentRelatedTasks=${isDepartmentRelatedTasks}`, tokenConfig(getState()?.Auth.token));
+    const response = await axios.get(`/api/business/fetch-all-biz-tasks/${businessId}?departmentId=${departmentId}&isDepartmentRelatedTasks=${isDepartmentRelatedTasks}&userId=${userId}`, tokenConfig(getState()?.Auth.token));
     if (response?.status === 200) {
       dispatch({
         type: LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,
