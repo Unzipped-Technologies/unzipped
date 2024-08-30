@@ -899,7 +899,9 @@ describe('Freelancers Component', () => {
       ).toBeInTheDocument()
 
       expect(
-        within(ApplicationContainer).getByText(ConverterUtils.truncateString(application?.coverLetter, 150))
+        within(ApplicationContainer).getByText(
+          ConverterUtils.truncateString(application?.coverLetter.toLowerCase(), 150)
+        )
       ).toBeInTheDocument()
 
       expect(within(ApplicationContainer).getByRole('button', { name: 'View Profile' })).toBeInTheDocument()
@@ -908,7 +910,7 @@ describe('Freelancers Component', () => {
       ).toBeInTheDocument()
 
       application?.freelancerId.freelancerSkills.forEach(skill => {
-        const SkillsContainer = within(ApplicationContainer).getByTestId(`${application?._id}_application_skills`)
+        const SkillsContainer = within(ApplicationContainer).getAllByTestId(`${application?._id}_application_skills`)[0]
         expect(SkillsContainer).toBeInTheDocument()
 
         expect(within(SkillsContainer).getByText(skill?.skill)).toBeInTheDocument()
