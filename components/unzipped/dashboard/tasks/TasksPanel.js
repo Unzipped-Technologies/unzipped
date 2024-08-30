@@ -201,7 +201,7 @@ const TasksPanel = ({
         background="rgba(255, 255, 255, 0.64)"
         boxShadow="0px 4px 8px 0px rgba(0, 0, 0, 0.10)">
         <DIV display="fle" alignItems="center">
-          <TEXT width="max-content" fontSize="24px" padding="0px 20px 0px 0px">
+          <TEXT width="max-content" fontSize="20px" padding="0px 10px 0px 0px" margin="2px">
             {editDeptInfo?.name ?? 'Create Department'}
           </TEXT>
           {userRole === 0 && (
@@ -213,6 +213,7 @@ const TasksPanel = ({
               noBorder
               block
               fontSize="13px"
+              noPadding={true}
               popout={[
                 {
                   text: 'Create',
@@ -237,16 +238,17 @@ const TasksPanel = ({
           )}
         </DIV>
         {selectedDepartment?._id && userRole === 0 && (
-          <DIV width="72px" margin="0px 20px 0px 80px" display="flex" justifyContent="flex-end">
+          <DIV width="72px" margin="0px 20px 0px 80px" display="flex" justifyContent="center">
             <Button
-              small
               block
               buttonHeight="27px"
+              extraTall
               colors={{
-                background: '#1976d2',
-                text: '#fff'
+                background: 'transparent',
+                text: '#000'
               }}
               noBorder
+              boxShadow='0px 4px 6px rgba(0, 0, 0, 0.1)'
               onClick={() => {
                 openTagModal()
               }}>
@@ -261,7 +263,8 @@ const TasksPanel = ({
         borderRadius="0px 0px 15px 15px"
         background="rgba(217, 217, 217, 0.25)"
         paddingBottom="10px"
-        zIndex="auto">
+        zIndex="auto"
+        width="100%">
         <DragDropContext onDragEnd={handleOnDragEnd} >
           <DIV>
             {selectedDepartment?._id && departmentData?.departmentTags?.length ? (
@@ -276,22 +279,28 @@ const TasksPanel = ({
                           droppableRef={provided.innerRef}
                           background={snapshot.isDraggingOver ? 'lightblue' : 'white'}
                           padding="1px 0px 0px 0px"
-                          borderRadius="4px">
+                          borderRadius="4px"
+                          width="100%">
                           <DIV
                             width="100%"
-                            padding="10px 40px"
+                            padding="10px "
                             borderRadius="0px"
                             display="flex"
                             flexFlow="row"
                             border="1px solid rgba(217, 217, 217, 0.25)"
                             background="#F7F7F7">
-                            <TEXT fontWeight="bold" width="300px">
-                              {tag.tagName} ({tag?.tasks?.length})
+                            <TEXT
+                              fontWeight="bold"
+                              width="300px"
+                              fontSize="14px"
+                              paddingLeft="4px"
+                              margin="0px 0px 0px 10px">
+                              {tag.tagName.toUpperCase()} ({tag?.tasks?.length})
                             </TEXT>
-                            <TEXT textAlign="center" fontWeight="bold" width="200px">
+                            <TEXT textAlign="left" fontWeight="bold" width="200px">
                               STORY POINTS
                             </TEXT>
-                            <TEXT textAlign="right" fontWeight="bold" width="100px">
+                            <TEXT textAlign="center" fontWeight="bold" width="200px">
                               ASSIGNEE
                             </TEXT>
                           </DIV>
@@ -313,13 +322,16 @@ const TasksPanel = ({
                                           row
                                           background="#F7F7F7">
                                           <TEXT
-                                            fontWeight="bold"
                                             width="300px"
+                                            fontSize="14px"
+                                            textAlign="center"
+                                            marginTop="4px"
+                                            margin="0px 0px 0px 10px"
                                             onClick={async () => {
                                               setTaskId(task._id)
                                               openStoryModal()
                                             }}>
-                                            <DIV display="flex" flexDirection="row" alignItems="center">
+                                            <DIV display="flex" flexDirection="row">
                                               <DIV padding="0px 10px 0px 0px">
                                                 <FaRegCheckCircle color={getStatusColor(task)} />
                                               </DIV>
@@ -327,13 +339,13 @@ const TasksPanel = ({
                                             </DIV>
                                           </TEXT>
                                           <TEXT
-                                            textAlign="center"
-                                            fontWeight="bold"
+                                            textAlign="left"
+                                            fontSize="14px"
                                             width="200px"
                                             margin="0px 0px 0px 30px">
                                             {task.storyPoints}
                                           </TEXT>
-                                          <DIV width="auto" display="flex" justifyContent="center">
+                                          <DIV width="auto" display="flex" justifyContent="center" textAlign="left">
                                             <>
 
                                               {task?.assignee?.user ? (
@@ -346,7 +358,7 @@ const TasksPanel = ({
                                                 />
 
                                               ) : (
-                                                <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
+                                                <TEXT fontSize="14px" width="100px" padding="0px 0px 0px 20px">
                                                   Unassigned
                                                 </TEXT>
                                               )}
@@ -372,15 +384,16 @@ const TasksPanel = ({
                               padding="0px 10px"
                               row
                               background="#FFF">
-                              <DIV display="flex" alignItems="center" cursor="pointer">
+                              <DIV display="flex" alignItems="center" cursor="pointer" margin="0px 0px 0px 10px">
                                 <AiOutlinePlusCircle
                                   style={{
-                                    fontSize: '18px',
-                                    marginRight: '20px',
-                                    color: '#2F76FF'
+                                    fontSize: '14px',
+                                    marginRight: '8px',
+                                    color: '#2F76FF',
+                                    fontWeight: '400'
                                   }}
                                 />
-                                <TEXT fontWeight="bold" textColor="#2F76FF">
+                                <TEXT fontWeight="bold" fontSize="12px" textColor="#2F76FF" padding="14px 0px 0px 2px">
                                   ADD TASK
                                 </TEXT>
                               </DIV>

@@ -252,7 +252,7 @@ router.get(
   async (req, res) => {
     try {
       const params = (req.params.businessId == 'null') ? null : req.params.businessId
-      const tasks = await businessHelper.fetchAllBizTasks(params, req.query?.departmentId, req.query?.isDepartmentRelatedTasks)
+      const tasks = await businessHelper.fetchAllBizTasks(params, req.query?.departmentId, req.query?.isDepartmentRelatedTasks, req.query?.userId)
 
       res.json(tasks)
     } catch (e) {
