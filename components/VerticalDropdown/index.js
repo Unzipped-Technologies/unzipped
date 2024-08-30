@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 
-
 const Container = styled.div`
   position: relative;
 `
@@ -56,10 +55,8 @@ const VerticalDropdown = ({ freelancerId }) => {
   const handleClose = () => setAnchorEl(null)
 
   return (
-    <Container >
-      <IconButton
-        onClick={handleOnOptionClick}
-        sx={ICON_STYLES} >
+    <Container>
+      <IconButton data-testid="application_actions" onClick={handleOnOptionClick} sx={ICON_STYLES}>
         <MoreHorizSharpIcon />
       </IconButton>
       <Menu
