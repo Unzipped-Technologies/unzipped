@@ -98,8 +98,7 @@ const TagModal = ({
                 height="36px !important"
                 onChange={e => updateForm('tagName', e?.target?.value.trim())}
                 value={tagForm?.tagName.trim()}
-                clickType="tagName"
-                onUpdate={() => {}}>
+                clickType="tagName">
                 Tag Name
               </FormField>
             </DIV>

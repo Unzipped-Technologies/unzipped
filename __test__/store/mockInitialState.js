@@ -201,100 +201,176 @@ export let defaultInitialState = {
             {
               _id: '6601c3eb149276195c3f8fdd',
               storyPoints: 10,
-              assignee: {
-                user: {}
-              },
-              status: 'todo',
-              priority: 'lowest',
+              assignee: '6601c2a6149276195c3f8fbd',
               taskName: 'Task 2',
-              description: 'Task 2 description',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-1',
-              comments: []
+              departmentId: '6601c35b149276195c3f8fd5',
+              department: {
+                _id: '6601c35b149276195c3f8fd5',
+                name: 'Management',
+                businessId: '6601c35b149276195c3f8fd3',
+                client: {
+                  _id: '6601c288149276195c3f8faf',
+                  FirstName: 'Test',
+                  LastName: 'Client',
+                  FullName: 'Test Client',
+                  profileImage:
+                    'https://allthings.how/content/images/wordpress/2020/10/allthings.how-how-to-change-your-profile-picture-on-google-meet-profile-photo.png'
+                }
+              },
+              assignee: {
+                user: {
+                  _id: '6601c2a6149276195c3f8fbd',
+                  FirstName: 'test',
+                  LastName: 'freelancer1',
+                  FullName: 'test freelancer1',
+                  profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+                }
+              },
+              business: {
+                _id: '6601c35b149276195c3f8fd3',
+                name: 'POS'
+              },
+              taskHours: [],
+              tags: ['tag1'],
+              status: 'Todo',
+              ticketCode: 'pos-4',
+              comments: [
+                {
+                  comment: 'commet 1',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fba',
+                  _id: '6601c6dffa3d861ad822e002',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 2',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8faf',
+                  _id: '6601c6dffa3d861ad822e003',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 3',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8faf',
+                  _id: '6601c6dffa3d861ad822e004',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 4',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fbd',
+                  _id: '6601c6dffa3d861ad822e005',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 5',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8faf',
+                  _id: '6601c6dffa3d861ad822e006',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 6',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fbd',
+                  _id: '6601c6dffa3d861ad822e007',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 7',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8faf',
+                  _id: '6601c6dffa3d861ad822e008',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 8',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fbd',
+                  _id: '6601c6dffa3d861ad822e009',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 9',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8faf',
+                  _id: '6601c6dffa3d861ad822e0010',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 10',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fbd',
+                  _id: '6601c6dffa3d861ad822e0011',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 11',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8faf',
+                  _id: '6601c6dffa3d861ad822e0012',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                }
+              ]
             },
             {
-              _id: '6601c401149276195c3f8fde',
+              _id: '6601c3eb149276195c3f8fdx',
               storyPoints: 10,
-              assignee: {
-                user: {}
+              assignee: '6601c2a6149276195c3f8fbd',
+              taskName: 'Task 20',
+              departmentId: '6601c35b149276195c3f8fd5',
+              department: {
+                _id: '6601c35b149276195c3f8fd5',
+                name: 'Management',
+                businessId: '6601c35b149276195c3f8fd3',
+                client: {
+                  _id: '6601c288149276195c3f8faf',
+                  FirstName: 'Test',
+                  LastName: 'Client',
+                  FullName: 'Test Client',
+                  profileImage:
+                    'https://allthings.how/content/images/wordpress/2020/10/allthings.how-how-to-change-your-profile-picture-on-google-meet-profile-photo.png'
+                }
               },
-              status: 'todo',
-              priority: 'lowest',
-              taskName: 'Task 2',
-              description: 'Task 2 description',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-2',
-              comments: []
-            },
-            {
-              _id: '6601c423149276195c3f8fdf',
-              storyPoints: 10,
               assignee: {
-                user: {}
+                user: {
+                  _id: '6601c2a6149276195c3f8fbd',
+                  FirstName: 'test',
+                  LastName: 'freelancer1',
+                  FullName: 'test freelancer1',
+                  profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+                }
               },
-              status: 'todo',
-              priority: 'lowest',
-              taskName: 'Task 2',
-              description: 'Task 2 description',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-3',
-              comments: []
-            },
-            {
-              _id: '6601cae9e6f2811e7be73306',
-              storyPoints: 6,
-              assignee: {
-                user: {}
+              business: {
+                _id: '6601c35b149276195c3f8fd3',
+                name: 'POS'
               },
-              status: 'todo',
-              priority: 'low',
-              taskName: 'nmnmnm',
-              description: '',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-5',
-              comments: []
-            },
-            {
-              _id: '6601cbd59411991f47005801',
-              storyPoints: 9,
-              assignee: {
-                user: {}
-              },
-              status: 'todo',
-              priority: 'low',
-              taskName: 'nmnmnmjkj',
-              description: '',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-6',
-              comments: []
-            },
-            {
-              _id: '6601dd4036e96924aedf6a2c',
-              storyPoints: 2,
-              assignee: {
-                user: {}
-              },
-              status: 'todo',
-              priority: 'low',
-              taskName: 'cdcdcd',
-              description: '',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-7',
-              comments: []
-            },
-            {
-              _id: '6601e5f10676f6299e5cc945',
-              storyPoints: 22,
-              assignee: {
-                user: {}
-              },
-              status: 'todo',
-              priority: 'low',
-              taskName: 'asssssssss',
-              description: '',
-              tag: '6601c35b149276195c3f8fd6',
-              ticketCode: 'pos-8',
-              comments: []
+              taskHours: [],
+              tags: ['tag1'],
+              status: 'Todo',
+              ticketCode: 'pos-4',
+              comments: [
+                {
+                  comment: 'commet 1',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fba',
+                  _id: '6601c6dffa3d861ad822e002',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                }
+              ]
             }
           ]
         },
@@ -303,52 +379,173 @@ export let defaultInitialState = {
           tagName: 'In Progress',
           tasks: [
             {
-              _id: '6601c61dfa3d861ad822e000',
+              _id: '6601dd4036e96924aedf6a2c',
               storyPoints: 2,
-              assignee: {
-                user: {}
+              assignee: '6601c2a6149276195c3f8fbd',
+              taskName: 'cdcdcd',
+              departmentId: '6601c35b149276195c3f8fd5',
+              status: 'In Progress',
+
+              department: {
+                _id: '6601c35b149276195c3f8fd5',
+                name: 'Management',
+                businessId: '6601c35b149276195c3f8fd3'
               },
-              status: 'todo',
-              priority: 'lowest',
-              taskName: 'task 1 update',
-              description: 'ddd',
-              tag: '6601c35b149276195c3f8fd7',
-              comments: [
-                {
-                  img: '',
-                  _id: '6601c6dffa3d861ad822e002',
-                  comment: 'aaa',
-                  userId: '6601c288149276195c3f8faf',
-                  createdAt: '2024-03-25T18:47:59.798Z',
-                  updatedAt: '2024-03-25T18:47:59.798Z'
+              assignee: {
+                user: {
+                  _id: '6601c2a6149276195c3f8fbd',
+                  FullName: 'test freelancer1',
+                  FirstName: 'test',
+                  LastName: 'freelancer1',
+                  FullName: 'test freelancer1',
+                  profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
                 }
-              ],
-              ticketCode: 'pos-4'
+              },
+              business: {
+                _id: '6601c35b149276195c3f8fd3',
+                name: 'POS'
+              },
+              taskHours: [
+                {
+                  _id: '6601dd4036e96924aedf6a2d',
+                  hours: 3,
+                  taskId: '6601dd4036e96924aedf6a2c'
+                }
+              ]
             }
           ]
         },
         {
           _id: '6601c35b149276195c3f8fd8',
           tagName: 'Done',
-          tasks: []
+          tasks: [
+            {
+              _id: '6601c61dfa3d861ad822e000',
+              storyPoints: 2,
+              assignee: '6601c288149276195c3f8fac',
+              taskName: 'task 1 update',
+              status: 'Done',
+              departmentId: '6601c35b149276195c3f8fd5',
+
+              department: {
+                _id: '6601c35b149276195c3f8fd5',
+                name: 'Management',
+                businessId: '6601c35b149276195c3f8fd3'
+              },
+              assignee: {
+                user: {
+                  _id: '6601c288149276195c3f8faf',
+                  FirstName: 'Test',
+                  LastName: 'Client',
+                  FullName: 'Test Client',
+                  profileImage:
+                    'https://allthings.how/content/images/wordpress/2020/10/allthings.how-how-to-change-your-profile-picture-on-google-meet-profile-photo.png'
+                }
+              },
+              business: {
+                _id: '6601c35b149276195c3f8fd3',
+                name: 'POS'
+              },
+              taskHours: [
+                {
+                  _id: '6601c9b35657f51de61d2626',
+                  hours: 4,
+                  taskId: '6601c61dfa3d861ad822e000'
+                }
+              ],
+              comments: [
+                {
+                  comment: 'commet 1',
+                  img: '',
+                  userId: '6601c2a6149276195c3f8fba',
+                  _id: '6601c6dffa3d861ad822e002',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                },
+                {
+                  comment: 'commet 2',
+                  img: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+                  userId: '6601c288149276195c3f8fac',
+                  _id: '6601c6dffa3d861ad822e003',
+                  createdAt: '2024-03-25T18:47:59.798+00:00',
+                  updatedAt: '2024-03-25T18:47:59.798+00:00'
+                }
+              ]
+            }
+          ]
         },
         {
           _id: '6601cc4e9411991f47005803',
-          tagName: 'sssss ',
-          tasks: []
+          tagName: 'Doing',
+          tasks: [
+            {
+              _id: '6601e5f10676f6299e5cc945',
+              storyPoints: 22,
+              assignee: '6601c2a6149276195c3f8fbd',
+              taskName: 'asssssssss',
+              departmentId: '6601c35b149276195c3f8fd5',
+              status: 'Doing',
+
+              department: {
+                _id: '6601c35b149276195c3f8fd5',
+                name: 'Management',
+                businessId: '6601c35b149276195c3f8fd3'
+              },
+              assignee: {
+                user: {
+                  _id: '6601c2a6149276195c3f8fbd',
+
+                  FullName: 'test freelancer1',
+                  profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+                }
+              },
+              business: {
+                _id: '6601c35b149276195c3f8fd3',
+                name: 'POS'
+              },
+              taskHours: [
+                {
+                  _id: '6601e5f10676f6299e5cc946',
+                  hours: 20,
+                  taskId: '6601e5f10676f6299e5cc945'
+                }
+              ]
+            }
+          ]
         },
         {
-          _id: '6601ccd69411991f47005804',
-          tagName: ' new tag',
-          tasks: []
-        },
-        {
-          _id: '6601cd159411991f47005805',
-          tagName: ' ccccc',
-          tasks: []
+          _id: '6601cc4e9411991f47005823',
+          tagName: 'tag2',
+          tasks: [
+            {
+              _id: '6601e5f10676f6299e5cc925',
+              storyPoints: 22,
+              assignee: '6601c2a6149276195c3f8fbd',
+              taskName: 'asssssssss',
+              departmentId: '6601c35b149276195c3f8fd5',
+              status: 'new tag',
+
+              department: {
+                _id: '6601c35b149276195c3f8fd5',
+                name: 'Management',
+                businessId: '6601c35b149276195c3f8fd3'
+              },
+              business: {
+                _id: '6601c35b149276195c3f8fd3',
+                name: 'POS'
+              },
+              taskHours: [
+                {
+                  _id: '6601e5f10676f6299e5cc946',
+                  hours: 20,
+                  taskId: '6601e5f10676f6299e5cc945'
+                }
+              ]
+            }
+          ]
         }
       ],
-      employees: ['6601c3a3149276195c3f8fdb'],
+      employees: ['6601c288149276195c3f8faf'],
       isActive: true,
       isArchived: false,
       isDeleted: false,
@@ -357,13 +554,15 @@ export let defaultInitialState = {
       isSubDepartment: false,
       name: 'Management',
       order: 0,
-      tags: ['6601c35b149276195c3f8fd6', '6601c35b149276195c3f8fd7', '6601c35b149276195c3f8fd8'],
+      tags: [
+        '6601c35b149276195c3f8fd6',
+        '6601c35b149276195c3f8fd7',
+        '6601c35b149276195c3f8fd8',
+        '6601cc4e9411991f47005823'
+      ],
       tasks: [
         '6601c3eb149276195c3f8fdd',
-        '6601c401149276195c3f8fde',
-        '6601c423149276195c3f8fdf',
         '6601c61dfa3d861ad822e000',
-        '6601cbd59411991f47005801',
         '6601dd4036e96924aedf6a2c',
         '6601e5f10676f6299e5cc945'
       ],

@@ -58,7 +58,16 @@ const ViewFullScreenButton = styled.button`
   }
 `
 
-const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment, userId }) => {
+const Tasklist = ({
+  loading,
+  token,
+  cookie,
+  businesses = [],
+  getProjectsList,
+  setDepartment,
+  currentDepartment,
+  userId
+}) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const access = token?.access_token || cookie
@@ -94,12 +103,6 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   useEffect(() => {
     currentBusiness && setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
   }, [currentBusiness])
-
-  useEffect(() => {
-    if (currentBusiness && currentBusiness?._id) {
-      dispatch(getBusinessEmployees(userId))
-    }
-  }, [])
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
@@ -144,7 +147,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 onSelectDepartment={value => {
                   setSelectedDepartment(value)
                   setDepartment(value)
-                  if (window.innerWidth <= 680) {
+                  if (window.innerWidth < 680) {
                     router.push(`department/${value._id}`)
                   }
                 }}

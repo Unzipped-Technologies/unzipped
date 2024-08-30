@@ -23,18 +23,7 @@ const MobileTaskDetail = ({ getTaskById, detail, resetStoryForm }) => {
 
   return (
     <>
-      <Nav
-        isSubMenu
-        marginBottom={'85px'}
-        isLogoHidden
-        listName={'Ai team'}
-        setIsViewable={() => {}}
-        setListName={() => {}}
-        setIsLogoHidden={() => {}}
-        onBackArrowClick={() => {
-          router.back()
-        }}
-      />
+      <Nav isSubMenu marginBottom={'85px'} isLogoHidden listName={'Ai team'} />
       <MobileTaskForm taskDetail={detail} departmentData={detail?.department} onCancel={onCancel} />
     </>
   )

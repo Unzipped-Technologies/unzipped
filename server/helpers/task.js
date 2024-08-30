@@ -22,8 +22,8 @@ const createTask = async data => {
     const tagData = await getTagsWithoutPopulate({ departmentId: data.departmentId, tagName: 'To Do' }, '')
     if (!tagData) throw new Error(`Invalid tag Id.`)
 
-    if(data?.status.toLowerCase() == 'in progress') {
-      data['status'] = 'In Progress';
+    if (data?.status.toLowerCase() == 'in progress') {
+      data['status'] = 'In Progress'
     }
     if (!data?.tag) {
       data['tag'] = tagData?._id
@@ -177,11 +177,11 @@ const getAllTasks = async query => {
               }
             }
           ],
-          as: 'assigneeData.user'
+          as: 'assignee.user'
         }
       },
       {
-        $unwind: '$assigneeData.user'
+        $unwind: '$assignee.user'
       },
       {
         $lookup: {
@@ -564,24 +564,20 @@ const removeCommentFromTask = async commentId => {
 }
 
 const updateTaskStatusOnDrag = async (taskId, data) => {
-  const ticketEntity = await TaskModel.findById(taskId);
+  const ticketEntity = await TaskModel.findById(taskId)
   if (ticketEntity) {
-    const tagEntities = await TagModel.find(
-      {
-        departmentId: ticketEntity.departmentId,
-      }
-    );
+    const tagEntities = await TagModel.find({
+      departmentId: ticketEntity.departmentId
+    })
     if (tagEntities.length > 0) {
-      const filteredTag = tagEntities.filter(tag => tag.tagName.trim().replace(' ', '')
-        .toLowerCase()
-        .includes(data.status.trim().replace(' ', '')
-          .toLowerCase())
-      );
+      const filteredTag = tagEntities.filter(tag =>
+        tag.tagName.trim().replace(' ', '').toLowerCase().includes(data.status.trim().replace(' ', '').toLowerCase())
+      )
       if (filteredTag.length === 0) {
-        return false;
+        return false
       }
-      data.tag = filteredTag[0]._id;
-      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...resp } }, { new: true });
+      data.tag = filteredTag[0]._id
+      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...resp } }, { new: true })
       return result
     }
   }
@@ -589,30 +585,24 @@ const updateTaskStatusOnDrag = async (taskId, data) => {
 
 const verifyTasks = async (taskId, data) => {
   try {
-    const ticketEntity = await TaskModel.findById(taskId);
+    const ticketEntity = await TaskModel.findById(taskId)
     if (ticketEntity) {
-      const tagEntities = await TagModel.find(
-        {
-          departmentId: ticketEntity.departmentId,
-        }
-      );
+      const tagEntities = await TagModel.find({
+        departmentId: ticketEntity.departmentId
+      })
       if (tagEntities.length > 0) {
-        const filteredTag = tagEntities.filter(tag => tag.tagName.trim().replace(' ', '')
-          .toLowerCase()
-          .includes(data.trim().replace(' ', '')
-            .toLowerCase())
-        );
+        const filteredTag = tagEntities.filter(tag =>
+          tag.tagName.trim().replace(' ', '').toLowerCase().includes(data.trim().replace(' ', '').toLowerCase())
+        )
         if (filteredTag.length === 0) {
-          return false;
+          return false
         }
-        return true;
+        return true
       }
     }
   } catch (error) {
     console.log('error on ticket', error?.message)
-
   }
-
 }
 
 const handleTaskAssignees = async (task, data) => {

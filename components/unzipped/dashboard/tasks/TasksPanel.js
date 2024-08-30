@@ -52,9 +52,9 @@ const TasksPanel = ({
   }, [selectedDepartment, currentBusiness])
 
   const getStatusColor = task => {
-    if (task?.status.includes('inprogress')) {
+    if (task?.status === 'In Progress') {
       return '#FFA500'
-    } else if (task?.status.includes('done')) {
+    } else if (task?.status === 'Done') {
       return '#198754'
     } else {
       return '#D8D8D8'
@@ -136,7 +136,7 @@ const TasksPanel = ({
 
   const closeTagModal = () => {
     setTagModal(false)
-    if (selectedDepartment?._id) getDepartmentById(selectedDepartment._id)
+    selectedDepartment?._id && getDepartmentById(selectedDepartment._id)
   }
 
   const openDepartmentModal = () => {
@@ -275,6 +275,7 @@ const TasksPanel = ({
                         <DIV
                           {...provided.droppableProps}
                           ref={provided.innerRef}
+                          data-testid={`drop_${tag._id}`}
                           droppableRef={provided.innerRef}
                           background={snapshot.isDraggingOver ? 'lightblue' : 'white'}
                           padding="1px 0px 0px 0px"
@@ -298,69 +299,69 @@ const TasksPanel = ({
                             </TEXT>
                           </DIV>
 
-                          {tag?.tasks?.length > 0
-                            ? tag?.tasks.map((task, index) => {
-                                return (
-                                  <DIV key={task._id} id={`task_${task._id}`}>
-                                    <Draggable key={task._id} draggableId={task._id} index={index}>
-                                      {(provided, snapshot) => (
-                                        <DIV
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
-                                          {...provided.dragHandleProps}>
-                                          <WhiteCard
-                                            padding="0px 10px"
-                                            noMargin
-                                            borderRadius="0px"
-                                            row
-                                            background="#F7F7F7">
-                                            <DIV
-                                              display="flex"
-                                              flexDirection="row"
-                                              alignItems="center"
-                                              onClick={async () => {
-                                                setTaskId(task._id)
-                                                openStoryModal()
-                                              }}>
-                                              <DIV padding="0px 10px 0px 0px">
-                                                <FaRegCheckCircle color={getStatusColor(task)} />
-                                              </DIV>
-                                              <TEXT fontWeight="bold" width="300px">
-                                                {task.taskName}
-                                              </TEXT>
+                          {tag?.tasks?.length > 0 &&
+                            tag?.tasks.map((task, index) => {
+                              return (
+                                <DIV key={task._id} id={`task_${task._id}`}>
+                                  <Draggable key={task._id} draggableId={task._id} index={index}>
+                                    {(provided, snapshot) => (
+                                      <DIV
+                                        data-testid={`task_${task._id}`}
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}>
+                                        <WhiteCard
+                                          padding="0px 10px"
+                                          noMargin
+                                          borderRadius="0px"
+                                          row
+                                          background="#F7F7F7">
+                                          <DIV
+                                            display="flex"
+                                            flexDirection="row"
+                                            alignItems="center"
+                                            onClick={async () => {
+                                              setTaskId(task._id)
+                                              openStoryModal()
+                                            }}>
+                                            <DIV padding="0px 10px 0px 0px">
+                                              <FaRegCheckCircle color={getStatusColor(task)} />
                                             </DIV>
-                                            <TEXT
-                                              textAlign="center"
-                                              fontWeight="bold"
-                                              width="200px"
-                                              margin="0px 0px 0px 30px">
-                                              {task.storyPoints}
+                                            <TEXT fontWeight="bold" width="300px">
+                                              {task.taskName}
                                             </TEXT>
-                                            <DIV width="auto" display="flex" justifyContent="center">
-                                              <>
-                                                {task?.assignee?.user ? (
-                                                  <ProjectUsers
-                                                    isEmailRequired={false}
-                                                    selectedDepartment={selectedDepartment}
-                                                    assignee={task?.assignee?.user}
-                                                    task={task}
-                                                    isListingPanel={true}
-                                                  />
-                                                ) : (
-                                                  <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
-                                                    Unassigned
-                                                  </TEXT>
-                                                )}
-                                              </>
-                                            </DIV>
-                                          </WhiteCard>
-                                        </DIV>
-                                      )}
-                                    </Draggable>
-                                  </DIV>
-                                )
-                              })
-                            : ''}
+                                          </DIV>
+                                          <TEXT
+                                            textAlign="center"
+                                            fontWeight="bold"
+                                            width="200px"
+                                            margin="0px 0px 0px 30px">
+                                            {task.storyPoints}
+                                          </TEXT>
+                                          <DIV width="auto" display="flex" justifyContent="center">
+                                            <>
+                                              {task?.assignee?.user ? (
+                                                <ProjectUsers
+                                                  isEmailRequired={false}
+                                                  selectedDepartment={selectedDepartment}
+                                                  assignee={task?.assignee?.user}
+                                                  task={task}
+                                                  isListingPanel={true}
+                                                />
+                                              ) : (
+                                                <TEXT fontWeight="bold" width="100px" padding="0px 0px 0px 20px">
+                                                  Unassigned
+                                                </TEXT>
+                                              )}
+                                            </>
+                                          </DIV>
+                                        </WhiteCard>
+                                      </DIV>
+                                    )}
+                                  </Draggable>
+                                </DIV>
+                              )
+                            })}
                           {userRole === 0 && (
                             <WhiteCard
                               data-testid={`${tag?.tagName}_task`}

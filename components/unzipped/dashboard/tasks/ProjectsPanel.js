@@ -2,10 +2,11 @@ import React from 'react'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
 import MenuIcon from '../../../ui/icons/menu'
-import { TitleText, DarkText, WhiteCard, Underline, DIV } from '../style'
+import { TitleText, DarkText, WhiteCard, Underline, DIV, TEXT } from '../style'
 import { FaRegCheckCircle } from 'react-icons/fa'
 import { getBusinessEmployees } from '../../../../redux/Business/actions'
 import { useDispatch } from 'react-redux'
+import { ConverterUtils } from '../../../../utils/index'
 
 const ProjectsPanel = ({
   businesses,
@@ -33,7 +34,7 @@ const ProjectsPanel = ({
                 display="flex"
                 flexDirection="row"
                 justifyContent="space-between"
-                padding="20px 0px 0px 0px"
+                padding="20px 20px 0px 20px"
                 onClick={() => {
                   if (business._id === currentBusiness?._id) {
                     onSelectBusiness('')
@@ -41,9 +42,7 @@ const ProjectsPanel = ({
                     onSelectBusiness(business)
                   }
                 }}>
-                <TitleText paddingLeft clickable>
-                  {business.name}
-                </TitleText>
+                <TEXT>{ConverterUtils.truncateString(business.name, 30)}</TEXT>
                 <MdKeyboardArrowDown
                   style={{
                     fontSize: '48px',

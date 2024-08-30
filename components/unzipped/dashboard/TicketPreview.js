@@ -40,7 +40,7 @@ const TicketPreview = ({
 }) => {
   return (
     <MUIDialog
-      onClose={() => onHide()}
+      onClose={onHide}
       disableEscapeKeyDown
       open={open}
       maxWidth="md"

@@ -339,17 +339,6 @@ const TaskForm = ({
     }
   }
 
-  const handleEditInputTags = () => {
-    if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
-      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
-      setEditInputValue('')
-    }
-  }
-
-  const handleEditInputChange = (event, newInputValue) => {
-    setEditInputValue(newInputValue)
-  }
-
   useEffect(() => {
     restTagsList()
     updateForm('tags', [...taskForm?.tags, ...selectedTags])
@@ -546,150 +535,77 @@ const TaskForm = ({
                 Tags:
               </TitleText>
 
-              {!editMode?.tag && userRole !== 1 && (
-                <Autocomplete
-                  data-testid="tags_autocomplete"
-                  multiple
-                  id="tags"
-                  value={editSelectedTags}
-                  onChange={(event, newValue) => setEditSelectedTags(newValue)}
-                  inputValue={editInputValue}
-                  onInputChange={handleEditInputChange}
-                  options={editSelectedTags}
-                  getOptionLabel={option => option}
-                  sx={{
-                    width: 300,
-                    '& .Mui-focused': {
-                      border: '0px !important'
+              <Autocomplete
+                multiple
+                data-testid="tags_autocomplete"
+                id="tags-standard"
+                value={selectedTags}
+                onChange={(event, newValue) => {
+                  setSelectedTags(newValue)
+                }}
+                inputValue={inputValue}
+                onInputChange={handleInputChange}
+                options={selectedTags}
+                getOptionLabel={option => option}
+                sx={{
+                  width: 300,
+                  '& .Mui-focused': {
+                    border: '0px !important'
+                  },
+                  '& .Mui-focused:after': {
+                    border: '0px !important'
+                  },
+                  '& .MuiInputBase-root': {
+                    maxHeight: 200,
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
+                    '::-webkit-scrollbar': {
+                      width: 5,
+                      height: 0
                     },
-                    '& .Mui-focused:after': {
-                      border: '0px !important'
-                    },
-                    '& .MuiInputBase-root': {
-                      maxHeight: 200,
-                      overflowY: 'scroll',
-                      overflowX: 'hidden',
-                      '::-webkit-scrollbar': {
-                        width: 5,
-                        height: 0
-                      },
 
-                      '::-webkit-scrollbar-track': {
-                        background: 'transparent'
-                      },
+                    '::-webkit-scrollbar-track': {
+                      background: 'transparent'
+                    },
 
-                      '::-webkit-scrollbar-thumb': {
-                        background: 'transparent'
-                      }
-                    },
-                    '& input': {
-                      border: '0px !important',
-                      boxShadow: 'none !important'
-                    },
-                    '& input:focus': {
-                      border: '0px !important',
-                      boxShadow: 'none !important'
-                    },
-                    '& .MuiAutocomplete-root': {
-                      borderRadius: '8px !important',
-                      padding: '10px !important',
-                      border: '1px solid purple !important'
-                    },
-                    '& .MuiInputBase-root-MuiInput-root:after': {
-                      border: '0px !important',
-                      width: '100%'
+                    '::-webkit-scrollbar-thumb': {
+                      background: 'transparent'
                     }
-                  }}
-                  renderInput={params => (
-                    <TextField
-                      {...params}
-                      data-testid="tags"
-                      variant="standard"
-                      placeholder="Tags"
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleEditInputTags()
-                        }
-                      }}
-                    />
-                  )}
-                  noOptionsText="Add Tag"
-                />
-              )}
-              {editMode?.tag && (
-                <Autocomplete
-                  multiple
-                  data-testid="tags_autocomplete"
-                  id="tags-standard"
-                  value={selectedTags}
-                  onChange={(event, newValue) => {
-                    setSelectedTags(newValue)
-                  }}
-                  inputValue={inputValue}
-                  onInputChange={handleInputChange}
-                  options={selectedTags}
-                  getOptionLabel={option => option}
-                  sx={{
-                    width: 300,
-                    '& .Mui-focused': {
-                      border: '0px !important'
-                    },
-                    '& .Mui-focused:after': {
-                      border: '0px !important'
-                    },
-                    '& .MuiInputBase-root': {
-                      maxHeight: 200,
-                      overflowY: 'scroll',
-                      overflowX: 'hidden',
-                      '::-webkit-scrollbar': {
-                        width: 5,
-                        height: 0
-                      },
-
-                      '::-webkit-scrollbar-track': {
-                        background: 'transparent'
-                      },
-
-                      '::-webkit-scrollbar-thumb': {
-                        background: 'transparent'
+                  },
+                  '& input': {
+                    border: '0px !important',
+                    boxShadow: 'none !important'
+                  },
+                  '& input:focus': {
+                    border: '0px !important',
+                    boxShadow: 'none !important'
+                  },
+                  '& .MuiAutocomplete-root': {
+                    borderRadius: '8px !important',
+                    padding: '10px !important',
+                    border: '1px solid purple !important'
+                  },
+                  '& .MuiInputBase-root-MuiInput-root:after': {
+                    border: '0px !important',
+                    width: '100%'
+                  }
+                }}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    data-testid="tags"
+                    variant="standard"
+                    placeholder="Tags"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleAddTag()
                       }
-                    },
-                    '& input': {
-                      border: '0px !important',
-                      boxShadow: 'none !important'
-                    },
-                    '& input:focus': {
-                      border: '0px !important',
-                      boxShadow: 'none !important'
-                    },
-                    '& .MuiAutocomplete-root': {
-                      borderRadius: '8px !important',
-                      padding: '10px !important',
-                      border: '1px solid purple !important'
-                    },
-                    '& .MuiInputBase-root-MuiInput-root:after': {
-                      border: '0px !important',
-                      width: '100%'
-                    }
-                  }}
-                  renderInput={params => (
-                    <TextField
-                      {...params}
-                      data-testid="tags"
-                      variant="standard"
-                      placeholder="Tags"
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddTag()
-                        }
-                      }}
-                    />
-                  )}
-                  noOptionsText="Add Tag"
-                />
-              )}
+                    }}
+                  />
+                )}
+                noOptionsText="Add Tag"
+              />
             </DIV>
           </DIV>
         </DIV>

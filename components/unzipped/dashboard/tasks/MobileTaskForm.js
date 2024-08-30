@@ -1,18 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { AiOutlineClose } from 'react-icons/ai'
 import styled, { css } from 'styled-components'
 
 import Icon from '../../../ui/Icon'
 import Image from '../../../ui/Image'
-import Badge from '../../../ui/Badge'
 import Chat from '../../../icons/chat'
-import Plus from '../../../icons/plus'
 import { FormField } from '../../../ui'
 import ManIcon from '../../../icons/man'
 import EditIcon from '../../../icons/edit'
-import { ValidationUtils, ConverterUtils } from '../../../../utils'
+import { ValidationUtils } from '../../../../utils'
 import { DarkText, WhiteCard, Span, Grid2, TEXT, DIV } from '../style'
 import { TASK_PRIORITY, TASK_STATUS } from '../../../../utils/constants'
 import {
@@ -23,12 +20,12 @@ import {
   addCommentToStory,
   restTagsList
 } from '../../../../redux/actions'
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { useRouter } from 'next/router';
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
+import { useRouter } from 'next/router'
 
-const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest'];
-const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing'];
+const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
+const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing']
 
 const Button = styled.button`
   text-align: center;
@@ -42,17 +39,11 @@ const Button = styled.button`
   border-radius: 5px;
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '15px')};
   width: ${({ width }) => (width ? width : '100px')};
-  height: ${({ height }) => (height ? height : '34px')};
+  height: 34px;
   color: ${({ color }) => (color ? color : '#fff !important')};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '#1976d2 !important')};
   outline: ${({ outline }) => (outline ? outline : 'none !important')};
   border: ${({ border }) => (border ? border : 'none !important')};
-  ${({ active }) =>
-    active &&
-    css`
-      outline: none !important;
-      border: none !important;
-    `};
 `
 
 const TaskFormContainer = styled.div`
@@ -94,9 +85,8 @@ const MobileTaskForm = ({
     tag: false
   })
   const [disableBtn, setButtonDisable] = useState(true)
-  const router = useRouter();
+  const router = useRouter()
   const [commentId, setCommentId] = useState('')
-  const [tag, setTag] = useState('')
   const [error, setError] = useState('')
 
   const [comments, setComments] = useState([])
@@ -105,62 +95,61 @@ const MobileTaskForm = ({
     img: '',
     taskId: taskDetail?._id
   })
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [selectedTags, setSelectedTags] = useState([])
+  const [inputValue, setInputValue] = useState('')
 
-  const [editSelectedTags, setEditSelectedTags] = useState([]);
-  const [editInputValue, setEditInputValue] = useState('');
-  const [inputStatus, setInputStatus] = useState('');
-  const [taskPriority, setTaskPriority] = useState('');
+  const [editSelectedTags, setEditSelectedTags] = useState([])
+  const [editInputValue, setEditInputValue] = useState('')
+  const [inputStatus, setInputStatus] = useState('')
+  const [taskPriority, setTaskPriority] = useState('')
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
-    assignee =
-      departmentData?.contracts?.map(contract => ({
-        value: contract?.freelancer?.userId,
-        label: (
-          <div className="d-flex justify-content-start" style={{ overflow: 'scroll' }}>
-            <div>
-              <Image
-                src={contract?.freelancer?.user?.profileImage}
-                alt="Assignee Image"
-                width={'25px'}
-                height={'25px'}
-                radius={'50%'}
-                margin={'5px 5px  0px 0px'}
-              />
+    assignee = departmentData?.contracts?.map(contract => ({
+      value: contract?.freelancer?.userId,
+      label: (
+        <div className="d-flex justify-content-start" style={{ overflow: 'scroll' }}>
+          <div>
+            <Image
+              src={contract?.freelancer?.user?.profileImage}
+              alt="Assignee Image"
+              width={'25px'}
+              height={'25px'}
+              radius={'50%'}
+              margin={'5px 5px  0px 0px'}
+            />
+          </div>
+          <div>
+            <div
+              style={{
+                color: '#000',
+                textAlign: 'center',
+                fontFamily: 'Roboto',
+                fontSize: '14px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px',
+                textTransform: 'capitalize'
+              }}>
+              {contract?.freelancer?.user?.FirstName + ' ' + contract?.freelancer?.user?.LastName}
             </div>
-            <div>
-              <div
-                style={{
-                  color: '#000',
-                  textAlign: 'center',
-                  fontFamily: 'Roboto',
-                  fontSize: '14px',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  lineHeight: 'normal',
-                  letterSpacing: '0.4px',
-                  textTransform: 'capitalize'
-                }}>
-                {contract?.freelancer?.user?.FullName ?? 'Name'}
-              </div>
-              <div
-                style={{
-                  color: '#787878',
-                  textAlign: 'center',
-                  fontSize: '10px',
-                  fontStyle: 'normal',
-                  fontWeight: 500,
-                  lineHeight: 'normal',
-                  letterSpacing: '0.4px'
-                }}>
-                {contract?.freelancer?.user?.email}
-              </div>
+            <div
+              style={{
+                color: '#787878',
+                textAlign: 'center',
+                fontSize: '10px',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                lineHeight: 'normal',
+                letterSpacing: '0.4px'
+              }}>
+              {contract?.freelancer?.user?.email}
             </div>
           </div>
-        )
-      })) || []
+        </div>
+      )
+    }))
     assignee.push({
       value: departmentData?.client?._id,
       label: (
@@ -188,7 +177,7 @@ const MobileTaskForm = ({
                 letterSpacing: '0.4px',
                 textTransform: 'capitalize'
               }}>
-              {departmentData?.client?.FullName || 'Client'}
+              {departmentData?.client?.FullName}
             </div>
             <div
               style={{
@@ -234,24 +223,6 @@ const MobileTaskForm = ({
     }
     return assignee
   }, [departmentData])
-
-  const taskPriorityOptions = useMemo(() => {
-    return (
-      TASK_PRIORITY?.map(priority => ({
-        value: priority,
-        label: priority
-      })) || []
-    )
-  }, [])
-
-  const taskStatusOptions = useMemo(() => {
-    return (
-      TASK_STATUS?.map(status => ({
-        value: status,
-        label: status
-      })) || []
-    )
-  }, [])
 
   useEffect(() => {
     if (isCreating) {
@@ -299,16 +270,12 @@ const MobileTaskForm = ({
     }
     if (taskDetail?.department?.client?._id === comment?.userId) {
       userData.profilePic = taskDetail?.department?.client?.profileImage
-      userData.name =
-        taskDetail?.department?.client?.FullName ||
-        `${taskDetail?.department?.client?.FirstName} ${taskDetail?.department?.client?.LastName}`
-    } else if (departmentData) {
+      userData.name = `${taskDetail?.department?.client?.FirstName} ${taskDetail?.department?.client?.LastName}`
+    } else {
       for (var contract of departmentData?.contracts) {
         if (contract?.freelancer?.user?._id === comment?.userId) {
           userData.profilePic = contract?.freelancer?.user?.profileImage
-          userData.name =
-            contract?.freelancer?.user?.FullName ||
-            `${contract?.freelancer?.user?.FirstName} ${contract?.freelancer?.user?.LastName}`
+          userData.name = `${contract?.freelancer?.user?.FirstName} ${contract?.freelancer?.user?.LastName}`
         }
         break
       }
@@ -331,40 +298,36 @@ const MobileTaskForm = ({
   }
 
   const handleSubmit = async () => {
-    if (validateForm()) {
-      if (newComment?.comment) {
-        const comments = [
-          {
-            comment: newComment.comment,
-            userId: userId
-          }
-        ]
-
-        await updateCreateStoryForm({
-          comments: comments
-        })
-      }
-
-      if (isCreating) {
-        const response = await createTask(taskForm)
-        if (response?.status === 200) {
-          resetState()
-          onCancel && onCancel()
-        } else {
-          setValidationErrors(response?.data?.message ?? 'Something went wrong')
+    if (newComment?.comment) {
+      const comments = [
+        {
+          comment: newComment.comment,
+          userId: userId
         }
+      ]
+
+      await updateCreateStoryForm({
+        comments: comments
+      })
+    }
+
+    if (isCreating) {
+      const response = await createTask(taskForm)
+      if (response?.status === 200) {
+        resetState()
+        onCancel && onCancel()
       } else {
-        const response = await updateTask(taskDetail?._id, taskForm)
-
-        if (response?.status === 200) {
-          resetState()
-          onCancel && onCancel()
-        } else {
-          setValidationErrors(response?.data?.message ?? 'Something went wrong')
-        }
+        setValidationErrors(response?.data?.message)
       }
     } else {
-      setButtonDisable(true)
+      const response = await updateTask(taskDetail?._id, taskForm)
+
+      if (response?.status === 200) {
+        resetState()
+        onCancel && onCancel()
+      } else {
+        setValidationErrors(response?.data?.message)
+      }
     }
   }
 
@@ -376,13 +339,6 @@ const MobileTaskForm = ({
     })
   }
 
-  const removeTag = async tagName => {
-    let filteredTags = taskForm?.tags.filter(tag => tag !== tagName)
-    updateForm('tags', filteredTags)
-    taskDetail.tags = filteredTags
-    if (taskDetail?._id && taskDetail.tags?.includes(tagName)) await updateTask(taskDetail?._id, taskDetail)
-  }
-
   const validateForm = () => {
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
@@ -391,10 +347,10 @@ const MobileTaskForm = ({
       setValidationErrors('Story points are required.')
       return false
     } else if (!taskForm?.priority) {
-      setValidationErrors('Priority are required.')
+      setValidationErrors('Priority is required.')
       return false
     } else if (!taskForm?.status) {
-      setValidationErrors('Status are required.')
+      setValidationErrors('Status is required.')
       return false
     }
     setValidationErrors('')
@@ -407,56 +363,54 @@ const MobileTaskForm = ({
   }
 
   const handleInputChange = (event, newInputValue) => {
-    setInputValue(newInputValue);
-  };
+    setInputValue(newInputValue)
+  }
 
   const handleAddTag = () => {
     if (inputValue.trim() !== '' && !selectedTags.includes(inputValue)) {
-      setSelectedTags([...selectedTags, inputValue.trim()]);
-      setInputValue('');
-
+      setSelectedTags([...selectedTags, inputValue.trim()])
+      setInputValue('')
     }
-  };
+  }
 
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
       updateForm('tags', [])
-      setEditSelectedTags([...editSelectedTags, editInputValue.trim()]);
-      setEditInputValue('');
-
+      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
+      setEditInputValue('')
     }
-  };
+  }
 
   const handleEditInputChange = (event, newInputValue) => {
-    setEditInputValue(newInputValue);
-  };
+    setEditInputValue(newInputValue)
+  }
 
   useEffect(() => {
     restTagsList()
-    if (router.pathname.includes("department")) {
+    if (router.pathname.includes('department')) {
       updateForm('tags', [...taskForm?.tags, ...selectedTags])
     }
   }, [selectedTags])
 
   useEffect(() => {
-    if (router.pathname.includes("ticket")) {
+    if (router.pathname.includes('ticket')) {
       restTagsList()
       updateForm('tags', [...taskForm?.tags, ...editSelectedTags])
     }
   }, [editSelectedTags])
 
   useEffect(() => {
-    if (router.pathname.includes("ticket") && taskDetail?.tags?.length > 0) {
+    if (router.pathname.includes('ticket') && taskDetail?.tags?.length > 0) {
       setEditSelectedTags([])
       setEditSelectedTags([...editSelectedTags, ...taskDetail?.tags])
     }
   }, [])
 
   return (
-    <TaskFormContainer>
+    <TaskFormContainer data-testid="mobile_task_form">
       <div>
         {taskForm?.ticketCode && (
-          <TEXT fontSize="18px" textColor="#0057FF" lineHeight="normal">
+          <TEXT fontSize="18px" textColor="#0057FF" lineHeight="normal" id="ticket_code">
             ISSUE {taskForm?.ticketCode?.toLowerCase()}
           </TEXT>
         )}
@@ -475,11 +429,11 @@ const MobileTaskForm = ({
               disabled={userRole === 1}
               noMargin
               width="100%"
+              id="taskName"
               height="36px !important"
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
-              onUpdate={() => { }}
               onBlur={() => {
                 validateForm()
                 enableEditMode('')
@@ -487,6 +441,7 @@ const MobileTaskForm = ({
             />
           ) : (
             <TEXT
+              id="task_name"
               textColor="#000000"
               fontSize="18px"
               lineHeight="21.09px"
@@ -527,7 +482,8 @@ const MobileTaskForm = ({
             disabled={userRole === 1}
             fieldType="searchField"
             isSearchable={true}
-            name="select"
+            name="assignee"
+            id="assignee"
             options={assigneeOptions}
             fontSize="14px"
             width="100%"
@@ -537,7 +493,6 @@ const MobileTaskForm = ({
             }}
             value={assigneeOptions.find(assignee => assignee.value === taskForm?.assignee)}
             clickType="assignee"
-            onUpdate={() => { }}
             onMenuOpen={() => {
               enableEditMode('assignee')
             }}
@@ -552,13 +507,18 @@ const MobileTaskForm = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justifyContent: 'flex-end'
             }}>
             <div>
               <Chat width="18" height="18" />
             </div>
             <div>
-              <TEXT fontSize="16px" textColor="#0057FF" lineHeight="normal" padding="0px 0px 0px 0px" margin="0px 0px 0px 5px">
+              <TEXT
+                fontSize="16px"
+                textColor="#0057FF"
+                lineHeight="normal"
+                padding="0px 0px 0px 0px"
+                margin="0px 0px 0px 5px">
                 {comments?.length > 10 ? '10+' : comments?.length} {comments?.length > 10 ? 'Comments' : 'Comment'}
               </TEXT>
             </div>
@@ -581,6 +541,7 @@ const MobileTaskForm = ({
       <div>
         <Autocomplete
           value={taskPriority}
+          data-testid="priority_autocomplete"
           disablePortal
           id="combo-box-demo"
           options={PRIORITY_OPTIONS_ARR}
@@ -604,25 +565,17 @@ const MobileTaskForm = ({
               color: theme => theme.palette.getContrastText(theme.palette.background.paper)
             },
             '& input:focus': {
-              border: '0px !important',
+              border: '0px !important'
             },
             '& svg': { display: 'none' }
           }}
-
-          renderInput={(params) => <TextField {...params} />}
+          renderInput={params => <TextField {...params} data-testid="priority" placeholder="Priority" />}
         />
-
       </div>
 
       <div>
         <div>
-          <TEXT
-            textColor="#000000"
-            fontSize="16px"
-            lineHeight="21.09px"
-            fontWeight="500"
-            width="80px"
-            padding="0px">
+          <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="80px" padding="0px">
             Status:
           </TEXT>
         </div>
@@ -632,6 +585,7 @@ const MobileTaskForm = ({
         <Autocomplete
           value={inputStatus}
           disablePortal
+          data-testid="status_autocomplete"
           id="combo-box-demo"
           options={STATUS_OPTIONS_ARR}
           onChange={(event, value) => {
@@ -654,17 +608,24 @@ const MobileTaskForm = ({
               color: theme => theme.palette.getContrastText(theme.palette.background.paper)
             },
             '& input:focus': {
-              border: '0px !important',
+              border: '0px !important'
             },
             '& svg': { display: 'none' }
           }}
-
-          renderInput={(params) => <TextField {...params} />}
+          renderInput={params => (
+            <TextField
+              {...params}
+              data-testid="status"
+              placeholder="Status"
+              onBlur={() => {
+                validateForm()
+                enableEditMode('')
+              }}
+            />
+          )}
         />
-
       </div>
       <div>
-
         <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="120px !important">
           Story Points:
         </TEXT>
@@ -676,14 +637,14 @@ const MobileTaskForm = ({
           alignItems: 'center',
           justifyContent: 'flex-start'
         }}>
-
-        {editMode ? (
+        {editMode?.storyPoints ? (
           <FormField
             zIndexUnset
             fieldType="input"
             disableBorder={!editMode.storyPoints}
             borderRadius="0px"
             border="1px solid #ccc"
+            name="storyPoints"
             margin="0px 0px 0px 0px !important"
             fontSize="14px"
             disabled={userRole === 1}
@@ -692,7 +653,6 @@ const MobileTaskForm = ({
             onChange={e => updateForm('storyPoints', e?.target?.value)}
             value={taskForm?.storyPoints}
             clickType="storyPoints"
-            onUpdate={() => { }}
             onClick={() => {
               enableEditMode('storyPoints')
             }}
@@ -703,7 +663,16 @@ const MobileTaskForm = ({
             style={{ color: '#000000' }}
           />
         ) : (
-          <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px">
+          <DarkText
+            id="task_story_points"
+            fontSize="18px"
+            color="#000"
+            lineHeight="normal"
+            topMargin="10px"
+            width="100px"
+            onClick={() => {
+              enableEditMode('storyPoints')
+            }}>
             {taskForm?.storyPoints}
           </DarkText>
         )}
@@ -716,34 +685,34 @@ const MobileTaskForm = ({
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'center'
         }}>
-
         {!editMode?.tag && userRole !== 1 && (
           <Autocomplete
             multiple
             id="tags-standard"
+            data-testid="tags_autocomplete"
             value={editSelectedTags}
             onChange={(event, newValue) => setEditSelectedTags(newValue)}
             inputValue={editInputValue}
             onInputChange={handleEditInputChange}
             options={editSelectedTags}
-            getOptionLabel={(option) => option}
+            getOptionLabel={option => option}
             sx={{
               width: 300,
               '& .Mui-focused': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .Mui-focused:after': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .MuiInputBase-root': {
                 maxHeight: 200,
-                overflowY: "scroll",
-                overflowX: "hidden",
+                overflowY: 'scroll',
+                overflowX: 'hidden',
                 '::-webkit-scrollbar': {
                   width: 5,
-                  height: 0,
+                  height: 0
                 },
 
                 '::-webkit-scrollbar-track': {
@@ -755,65 +724,66 @@ const MobileTaskForm = ({
                 }
               },
               '& input': {
-                border: "0px !important",
-                boxShadow: 'none !important',
+                border: '0px !important',
+                boxShadow: 'none !important'
               },
               '& input:focus': {
                 border: '0px !important',
-                boxShadow: 'none !important',
+                boxShadow: 'none !important'
               },
               '& .MuiAutocomplete-root': {
                 borderRadius: '8px !important',
                 padding: '10px !important',
-                border: '1px solid purple !important',
+                border: '1px solid purple !important'
               },
               '& .MuiInputBase-root-MuiInput-root:after': {
                 border: '0px !important',
-                width: "100%"
+                width: '100%'
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
                 variant="standard"
                 placeholder="Tags"
-                onKeyDown={(e) => {
+                data-testid="tags"
+                onKeyDown={e => {
                   if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleEditInputTags();
+                    e.preventDefault()
+                    handleEditInputTags()
                   }
                 }}
               />
             )}
             noOptionsText="Add Tag"
           />
-
         )}
         {editMode?.tag && (
           <Autocomplete
             multiple
+            data-testid="tags_autocomplete"
             id="tags-standard"
             value={selectedTags}
             onChange={(event, newValue) => setSelectedTags(newValue)}
             inputValue={inputValue}
             onInputChange={handleInputChange}
             options={selectedTags}
-            getOptionLabel={(option) => option}
+            getOptionLabel={option => option}
             sx={{
               width: 300,
               '& .Mui-focused': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .Mui-focused:after': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .MuiInputBase-root': {
                 maxHeight: 200,
-                overflowY: "scroll",
-                overflowX: "hidden",
+                overflowY: 'scroll',
+                overflowX: 'hidden',
                 '::-webkit-scrollbar': {
                   width: 5,
-                  height: 0,
+                  height: 0
                 },
 
                 '::-webkit-scrollbar-track': {
@@ -825,32 +795,33 @@ const MobileTaskForm = ({
                 }
               },
               '& input': {
-                border: "0px !important",
-                boxShadow: 'none !important',
+                border: '0px !important',
+                boxShadow: 'none !important'
               },
               '& input:focus': {
                 border: '0px !important',
-                boxShadow: 'none !important',
+                boxShadow: 'none !important'
               },
               '& .MuiAutocomplete-root': {
                 borderRadius: '8px !important',
                 padding: '10px !important',
-                border: '1px solid purple !important',
+                border: '1px solid purple !important'
               },
               '& .MuiInputBase-root-MuiInput-root:after': {
                 border: '0px !important',
-                width: "100%"
+                width: '100%'
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
                 variant="standard"
                 placeholder="Tags"
-                onKeyDown={(e) => {
+                data-testid="tags"
+                onKeyDown={e => {
                   if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTag();
+                    e.preventDefault()
+                    handleAddTag()
                   }
                 }}
               />
@@ -859,7 +830,6 @@ const MobileTaskForm = ({
           />
         )}
       </div>
-
 
       <div>
         <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="100px !important">
@@ -870,9 +840,8 @@ const MobileTaskForm = ({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column'
         }}>
-
         {editMode.description ? (
           <FormField
             zIndexUnset
@@ -884,10 +853,10 @@ const MobileTaskForm = ({
             disableBorder={!editMode.description}
             disabled={userRole === 1}
             width="100%"
+            name="description"
             onChange={e => updateForm('description', e?.target?.value)}
             value={taskForm?.description}
             clickType="description"
-            onUpdate={() => { }}
             onClick={() => {
               enableEditMode('description')
             }}
@@ -898,6 +867,7 @@ const MobileTaskForm = ({
         ) : (
           <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
             <div
+              data-testid="description"
               style={{ paddingLeft: '10px' }}
               onClick={() => {
                 enableEditMode('description')
@@ -927,7 +897,7 @@ const MobileTaskForm = ({
           }}
           onClick={e => {
             e?.preventDefault()
-            if (onCancel) onCancel()
+            onCancel && onCancel()
           }}>
           CANCEL
         </Button>
@@ -972,13 +942,15 @@ const MobileTaskForm = ({
               fontSize="14px"
               height="auto"
               textarea
+              id="comment"
+              placeholder="Leave a comment..."
+              name="comment"
               width="100%"
               display="inline !important"
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}></FormField>
           </div>
         )}
-
       </div>
       <div>
         {!isCreating &&
@@ -988,6 +960,7 @@ const MobileTaskForm = ({
             const userData = getCommentUserData(comment)
             return (
               <WhiteCard
+                data-testid={`comment_${comment?._id}`}
                 borderColor="1px solid #CED4DA"
                 borderRadius="4px"
                 unset
@@ -1017,6 +990,7 @@ const MobileTaskForm = ({
                     </Span>
                     {comment?.userId === userId && (
                       <DIV
+                        data-testid={`edit_${comment?._id}_comment`}
                         display="flex"
                         justifyContent="flex-end"
                         onClick={() => {
@@ -1034,6 +1008,7 @@ const MobileTaskForm = ({
                     placeholder="Leave a comment..."
                     noMargin
                     height="auto"
+                    id="added_comment"
                     textarea
                     width="100%"
                     display="inline !important"
@@ -1078,6 +1053,7 @@ const MobileTaskForm = ({
                       justifyContent: 'flex-end'
                     }}>
                     <Button
+                      data-testid="send_comment"
                       disabled={false}
                       onClick={async e => {
                         e?.preventDefault()

@@ -10,7 +10,7 @@ const MobileBox = styled.div`
 
 const TicketDetail = () => {
   return (
-    <MobileBox>
+    <MobileBox data-testid="ticket_detail">
       <MobileTicketDetail />
     </MobileBox>
   )

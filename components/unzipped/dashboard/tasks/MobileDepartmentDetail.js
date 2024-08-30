@@ -123,7 +123,7 @@ const MobileTaskDetail = ({
   const [expandedAccordian, setExpanded] = useState({})
 
   useEffect(() => {
-    if (id) getDepartmentById(id)
+    id && getDepartmentById(id)
   }, [id])
 
   const handleOpen = () => {
@@ -195,18 +195,7 @@ const MobileTaskDetail = ({
 
   return (
     <>
-      <Nav
-        isSubMenu
-        marginBottom={'85px'}
-        isLogoHidden
-        listName={departmentData?.name}
-        setIsViewable={() => {}}
-        setListName={() => {}}
-        setIsLogoHidden={() => {}}
-        onBackArrowClick={() => {
-          router.back()
-        }}
-      />
+      <Nav isSubMenu marginBottom={'85px'} isLogoHidden listName={departmentData?.name} />
       {userRole === 0 && (
         <div
           style={{
@@ -246,92 +235,88 @@ const MobileTaskDetail = ({
                   padding: '1px 0px 0px 0px',
                   borderRadius: '4px'
                 }}>
-                {departmentData?.departmentTags?.length
-                  ? departmentData?.departmentTags.map(tag => {
-                      return (
-                        <Accordion key={tag?._id} expanded={expandedAccordian[`${tag?.id}`]}>
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header">
-                            <Typography className={classes.heading}>
-                              {tag?.tagName} ({tag?.tasks?.length})
-                            </Typography>
-                          </AccordionSummary>
-                          <CustomAccordionDetails>
-                            <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
-                              {(provided, snapshot) => (
-                                <div
-                                  {...provided.droppableProps}
-                                  ref={provided.innerRef}
-                                  style={{
-                                    background: snapshot.isDraggingOver ? 'lightblue' : 'white',
-                                    padding: '1px 0px 0px 0px',
-                                    borderRadius: '4px'
-                                  }}>
-                                  {tag?.tasks?.length
-                                    ? tag?.tasks.map((task, index) => {
-                                        return (
-                                          <Task
-                                            key={task?._id}
-                                            onClick={() => {
-                                              router.push(`/dashboard/ticket/${task._id}`)
-                                            }}>
-                                            <Draggable key={task._id} draggableId={task._id} index={index}>
-                                              {(provided, snapshot) => (
-                                                <div
-                                                  ref={provided.innerRef}
-                                                  {...provided.draggableProps}
-                                                  {...provided.dragHandleProps}>
-                                                  <DarkText>{task?.ticketCode}</DarkText>
-                                                  <DarkText topMargin="5px">{task?.description}</DarkText>
-                                                  <DarkText margin bold topMargin="10px">
-                                                    <img
-                                                      src={
-                                                        task?.assignee?.user?.profileImage ||
-                                                        'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-                                                      }
-                                                      style={{
-                                                        width: '24px',
-                                                        height: '24px',
-                                                        borderRadius: '50%',
-                                                        marginRight: '6px'
-                                                      }}
-                                                    />
-                                                    {ConverterUtils.capitalize(
-                                                      `${
-                                                        task?.assignee?.user?.FullName
-                                                          ? task?.assignee?.user?.FullName
-                                                          : task?.assignee?.user?.FirstName ||
-                                                            task?.assignee?.user?.LastName
-                                                          ? `${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`
-                                                          : 'Unassigned'
-                                                      }`
-                                                    )}
-                                                  </DarkText>
-                                                  <DarkText bold topMargin="10px">
-                                                    Story Points : {task?.storyPoints}
-                                                  </DarkText>
-                                                  <DarkText bold topMargin="10px">
-                                                    Priority :
-                                                    <span style={{ paddingLeft: '40px' }}>{task?.priority}</span>
-                                                  </DarkText>
-                                                </div>
-                                              )}
-                                            </Draggable>
-                                          </Task>
-                                        )
-                                      })
-                                    : ''}
-                                  {provided.placeholder}
-                                </div>
-                              )}
-                            </Droppable>
-                          </CustomAccordionDetails>
-                        </Accordion>
-                      )
-                    })
-                  : ''}
+                {departmentData?.departmentTags?.length &&
+                  departmentData?.departmentTags.map(tag => {
+                    return (
+                      <Accordion
+                        key={tag?._id}
+                        data-testid={`tag_${tag?._id}`}
+                        expanded={expandedAccordian[`${tag?.id}`]}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header">
+                          <Typography className={classes.heading}>
+                            {tag?.tagName} ({tag?.tasks?.length})
+                          </Typography>
+                        </AccordionSummary>
+                        <CustomAccordionDetails>
+                          <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
+                            {(provided, snapshot) => (
+                              <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                style={{
+                                  background: snapshot.isDraggingOver ? 'lightblue' : 'white',
+                                  padding: '1px 0px 0px 0px',
+                                  borderRadius: '4px'
+                                }}>
+                                {tag?.tasks?.length > 0 &&
+                                  tag?.tasks.map((task, index) => {
+                                    return (
+                                      <Task
+                                        id={`task_${task?._id}`}
+                                        key={task?._id}
+                                        onClick={() => {
+                                          router.push(`/dashboard/ticket/${task._id}`)
+                                        }}>
+                                        <Draggable key={task._id} draggableId={task._id} index={index}>
+                                          {(provided, snapshot) => (
+                                            <div
+                                              ref={provided.innerRef}
+                                              {...provided.draggableProps}
+                                              {...provided.dragHandleProps}>
+                                              <DarkText>{task?.ticketCode}</DarkText>
+                                              <DarkText topMargin="5px">{task?.description}</DarkText>
+                                              <DarkText margin bold topMargin="10px">
+                                                <img
+                                                  src={
+                                                    task?.assignee?.user?.profileImage ||
+                                                    'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+                                                  }
+                                                  style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '50%',
+                                                    marginRight: '6px'
+                                                  }}
+                                                />
+                                                {ConverterUtils.capitalize(
+                                                  task?.assignee?.user?.FirstName || task?.assignee?.user?.LastName
+                                                    ? `${`${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`}`
+                                                    : 'Unassigned'
+                                                )}
+                                              </DarkText>
+                                              <DarkText bold topMargin="10px">
+                                                Story Points : {task?.storyPoints}
+                                              </DarkText>
+                                              <DarkText bold topMargin="10px">
+                                                Priority :<span style={{ paddingLeft: '40px' }}>{task?.priority}</span>
+                                              </DarkText>
+                                            </div>
+                                          )}
+                                        </Draggable>
+                                      </Task>
+                                    )
+                                  })}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </CustomAccordionDetails>
+                      </Accordion>
+                    )
+                  })}
                 {provided.placeholder}
               </div>
             )}

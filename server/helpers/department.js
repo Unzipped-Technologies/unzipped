@@ -148,7 +148,7 @@ const getDepartmentById = async (id, filters) => {
                       pipeline: [
                         {
                           $match: {
-                            $expr: { $eq: [{ $toString: '$_id' }, '$$assignee'] }
+                            $expr: { $eq: ['$_id', '$$assignee'] }
                           }
                         },
                         {
@@ -442,13 +442,12 @@ const listDepartments = async query => {
 
 const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => {
   try {
-
     const updatedDepartment = await departmentModel.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
     if (isEditingDepartment) {
-      const updatedResp = await getDepartmentById(id, filters);
+      const updatedResp = await getDepartmentById(id, filters)
       return updatedResp
     }
-    return updatedDepartment;
+    return updatedDepartment
   } catch (err) {
     throw new Error(`Could not update department, error: ${err.message}`)
   }
@@ -576,28 +575,24 @@ const filteredRecords = async (departmentId, filters) => {
       $or: [
         {
           taskName: {
-            $regex: filters
-              .searchTerm
-              .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
+            $regex: filters.searchTerm.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
             $options: 'i'
           }
         },
         {
           description: {
-            $regex: filters
-              .searchTerm
-              .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"),
+            $regex: filters.searchTerm.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
             $options: 'i'
           }
         },
         { assignee: filters.assignedTo }
       ]
-    });
-    return tasks;
+    })
+    return tasks
   } catch (e) {
-    throw Error(`Could not find department, error: ${e}`);
+    throw Error(`Could not find department, error: ${e}`)
   }
-};
+}
 
 module.exports = {
   createDepartment,
