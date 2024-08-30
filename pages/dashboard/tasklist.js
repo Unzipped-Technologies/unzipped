@@ -116,12 +116,12 @@ const Tasklist = ({
 
   return (
     <div data-testid="task_list_page">
-      {/* <Nav
+      <Nav
         isSubMenu
         marginBottom={window.innerWidth > 680 ? '125px' : '78px'}
         isLogoHidden={window.innerWidth > 680 ? false : true}
         listName={'Departments'}
-      /> */}
+      />
       <div
         style={{
           display: 'flex',
