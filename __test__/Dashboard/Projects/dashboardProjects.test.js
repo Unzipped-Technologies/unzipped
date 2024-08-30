@@ -297,7 +297,7 @@ describe('Freelancers Component', () => {
 
       expect(within(rowElement).getByText(ValidationUtils.truncate(business.name, 40))).toBeInTheDocument()
       expect(within(rowElement).getByText(business?.budget || 0)).toBeInTheDocument()
-      expect(within(rowElement).getByText(business?.valueEstimate || '-')).toBeInTheDocument()
+      expect(within(rowElement).getByText(business?.valueEstimate || 'N/A')).toBeInTheDocument()
       const expectedDate = business.deadline
         ? ValidationUtils.formatDate(business.deadline)
         : ValidationUtils.formatDate(business.updatedAt || business.createdAt)
@@ -330,7 +330,7 @@ describe('Freelancers Component', () => {
 
       expect(within(rowElement).getByText(ValidationUtils.truncate(business.name, 40))).toBeInTheDocument()
       expect(within(rowElement).getByText(business?.budget || 0)).toBeInTheDocument()
-      expect(within(rowElement).getByText(business?.valueEstimate || '-')).toBeInTheDocument()
+      expect(within(rowElement).getByText(business?.valueEstimate || 'N/A')).toBeInTheDocument()
       const expectedDate = business.deadline
         ? ValidationUtils.formatDate(business.deadline)
         : ValidationUtils.formatDate(business.updatedAt || business.createdAt)
@@ -824,15 +824,6 @@ describe('Freelancers Component', () => {
 
     expect(mockRouterPush).toHaveBeenCalledWith(`projects/details/${SelectProject._id}`)
 
-    // useRouter.mockReturnValue({
-    //   query: { id: '1234' },
-    //   pathname: '/dashboard/projects/details/90909090',
-    //   push: mockRouterPush,
-    //   replace: jest.fn(),
-    //   prefetch: jest.fn(),
-    //   back: jest.fn()
-    // })
-
     verifyUserStripeAccount.mockReturnValue(() => {
       return {
         status: 400
@@ -892,8 +883,8 @@ describe('Freelancers Component', () => {
       const projectImage = within(ApplicationContainer).getByRole('img')
       expect(projectImage).toBeInTheDocument()
       expect(projectImage).toHaveAttribute('src', application?.freelancerId?.userId?.profileImage)
-      expect(projectImage).toHaveAttribute('width', '102px')
-      expect(projectImage).toHaveAttribute('height', '102px')
+      expect(projectImage).toHaveAttribute('width', 'auto')
+      expect(projectImage).toHaveAttribute('height', '80px')
 
       const FreelancerName = ConverterUtils.capitalize(
         `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
@@ -908,7 +899,9 @@ describe('Freelancers Component', () => {
       ).toBeInTheDocument()
 
       expect(
-        within(ApplicationContainer).getByText(ConverterUtils.truncateString(application?.coverLetter, 150))
+        within(ApplicationContainer).getByText(
+          ConverterUtils.truncateString(application?.coverLetter.toLowerCase(), 150)
+        )
       ).toBeInTheDocument()
 
       expect(within(ApplicationContainer).getByRole('button', { name: 'View Profile' })).toBeInTheDocument()
@@ -917,7 +910,7 @@ describe('Freelancers Component', () => {
       ).toBeInTheDocument()
 
       application?.freelancerId.freelancerSkills.forEach(skill => {
-        const SkillsContainer = within(ApplicationContainer).getByTestId(`${application?._id}_application_skills`)
+        const SkillsContainer = within(ApplicationContainer).getAllByTestId(`${application?._id}_application_skills`)[0]
         expect(SkillsContainer).toBeInTheDocument()
 
         expect(within(SkillsContainer).getByText(skill?.skill)).toBeInTheDocument()
@@ -1442,8 +1435,8 @@ describe('Freelancers Component', () => {
       const projectImage = within(InviteContainer).getByRole('img')
       expect(projectImage).toBeInTheDocument()
       expect(projectImage).toHaveAttribute('src', list?.freelancerId?.userId?.profileImage)
-      expect(projectImage).toHaveAttribute('width', '102px')
-      expect(projectImage).toHaveAttribute('height', '102px')
+      expect(projectImage).toHaveAttribute('width', 'auto')
+      expect(projectImage).toHaveAttribute('height', '80px')
 
       const FreelancerName = ConverterUtils.capitalize(
         `${list?.freelancerId?.userId?.FirstName} ${list?.freelancerId?.userId?.LastName}`

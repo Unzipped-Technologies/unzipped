@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 
-
 const Container = styled.div`
   position: relative;
 `
