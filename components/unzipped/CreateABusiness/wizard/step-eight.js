@@ -14,43 +14,34 @@ const budgetOptions = () => {
   ]
 }
 
-const StepEightWizardFlow = (
-    {
-        budgetRange,
-        updateForm,
-        goBack,
-        submitForm,
-        stage,
-        isGithubConnected,
-    }
-) => {
-    return (
-        <CreateABusiness
-            title="Budget"
-            sub="What size budget are you comfortable with for this hire?"
-            disabled={budgetRange?.length === 0}
-            onUpdate={updateForm}
-            onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
-            onSubmit={submitForm}
-            progress={stage}
-            stage={stage}>
-            <Grid>
-                <FormField
-                    required
-                    fieldType="select"
-                    isSearchable={false}
-                    name="select"
-                    options={budgetOptions()}
-                    placeholder="Select your budget"
-                    fontSize="20px"
-                    width="100%"
-                    borderRadius="12px"
-                    onChange={e => updateForm({ budgetRange: e?.value })}
-                    value={{ label: budgetRange }}
-                />
-            </Grid>
-        </CreateABusiness>
-    )
+const StepEightWizardFlow = ({ budgetRange, updateForm, goBack, submitForm, stage, isGithubConnected }) => {
+  return (
+    <CreateABusiness
+      title="Budget"
+      sub="What size budget are you comfortable with for this hire?"
+      disabled={budgetRange?.length === 0}
+      onUpdate={updateForm}
+      onBack={() => goBack(isGithubConnected ? stage - 1 : stage)}
+      onSubmit={submitForm}
+      progress={stage}
+      stage={stage}>
+      <Grid>
+        <FormField
+          required
+          fieldType="select"
+          isSearchable={false}
+          id="budget"
+          options={budgetOptions()}
+          placeholder="Select your budget"
+          fontSize="20px"
+          width="100%"
+          borderRadius="12px"
+          onChange={e => updateForm({ budgetRange: e?.value })}
+          value={{ label: budgetRange }}
+        />
+      </Grid>
+    </CreateABusiness>
+  )
 }
 
 export default StepEightWizardFlow

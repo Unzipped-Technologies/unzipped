@@ -34,7 +34,7 @@ import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
 import { startLoading, stopLoading } from '../Loading/actions'
 
-export const updateBusinessForm = (data, token) => async (dispatch, getState) => {
+export const updateBusinessForm = data => async (dispatch, getState) => {
   dispatch({
     type: UPDATE_BUSINESS_FORM,
     payload: data
@@ -139,9 +139,9 @@ export const updateBusiness = data => async (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: BUSINESS_ERROR,
-        payload: err.response
+        payload: err.response ?? 'Something went wrong!'
       })
-      return err?.response
+      return err?.response ?? 'Something went wrong!'
     })
   dispatch(stopLoading())
   return response
@@ -270,7 +270,10 @@ export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState
   try {
     await dispatch(startLoading())
 
-    const apiResponse = await axios.get(`/api/business/user-owned-business/${userId}`, tokenConfig(getState()?.Auth.token));
+    const apiResponse = await axios.get(
+      `/api/business/user-owned-business/${userId}`,
+      tokenConfig(getState()?.Auth.token)
+    )
     if (apiResponse?.status === 200) {
       dispatch({
         type: GET_BUSINESS_CREATED_BY_USER_SUCCESS,
@@ -285,14 +288,13 @@ export const getUserOwnedBusiness = (userId, token) => async (dispatch, getState
     })
     await dispatch(stopLoading())
   }
-
 }
 
-export const getBusinessEmployees = (businessId) => async (dispatch, getState) => {
+export const getBusinessEmployees = (businessId, isSelectedBusiness = false) => async (dispatch, getState) => {
   try {
     await dispatch(startLoading())
 
-    const response = await axios.get(`/api/business/get-business-employees/${businessId}`, tokenConfig(getState()?.Auth.token));
+    const response = await axios.get(`/api/business/get-business-employees/${businessId}?&isSelectedBusiness=${isSelectedBusiness}`, tokenConfig(getState()?.Auth.token));
     if (response?.status === 200) {
       dispatch({
         type: GET_BUSINESS_EMPLOYEES,
@@ -327,10 +329,10 @@ export const resetHiredEmployees = () => (dispatch, getState) => {
 
 }
 
-export const loadAllBusinessAssociatedTickets = (businessId, departmentId, isDepartmentRelatedTasks) => async (dispatch, getState) => {
+export const loadAllBusinessAssociatedTickets = (businessId, departmentId, isDepartmentRelatedTasks, userId) => async (dispatch, getState) => {
   dispatch(startLoading())
   try {
-    const response = await axios.get(`/api/business/fetch-all-biz-tasks/${businessId}?departmentId=${departmentId}&isDepartmentRelatedTasks=${isDepartmentRelatedTasks}`, tokenConfig(getState()?.Auth.token));
+    const response = await axios.get(`/api/business/fetch-all-biz-tasks/${businessId}?departmentId=${departmentId}&isDepartmentRelatedTasks=${isDepartmentRelatedTasks}&userId=${userId}`, tokenConfig(getState()?.Auth.token));
     if (response?.status === 200) {
       dispatch({
         type: LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,

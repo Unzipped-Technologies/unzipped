@@ -76,6 +76,10 @@ const colors = {
   grey: {
     text: '#333',
     background: '#E5E5E5'
+  },
+  blue: {
+    text: '#00796B',
+    background: '#E0F7FA'
   }
 }
 

@@ -37,7 +37,7 @@ const Container = styled.div`
   }
 `
 
-const ListPanel = ({ business, userListItems = [] }) => {
+const ListPanel = ({ userListItems = [] }) => {
   const dispatch = useDispatch()
 
   const [listInfo, setListInfo] = useState({ listId: null, listTitle: null, listIcon: null })
@@ -49,17 +49,17 @@ const ListPanel = ({ business, userListItems = [] }) => {
       setListInfo({ listId: updatedList._id, listTitle: updatedList.name, listIcon: updatedList.icon })
       return
     }
+
     if (userListItems && userListItems.length > 0) {
-      const selectedListObj = userListItems?.find(list => list.name == 'Favorites')
-      if (selectedListObj) {
+      const selectedListObj = userListItems?.find(list => list.name === 'Favorites')
+      if (selectedListObj?._id) {
         setListInfo({ listId: selectedListObj._id, listTitle: selectedListObj.name, listIcon: selectedListObj.icon })
       } else {
-        userListItems?.length &&
-          setListInfo({
-            listId: userListItems[0]._id,
-            listTitle: userListItems[0].name,
-            listIcon: userListItems[0].icon
-          })
+        setListInfo({
+          listId: userListItems[0]._id,
+          listTitle: userListItems[0].name,
+          listIcon: userListItems[0].icon
+        })
       }
     }
   }, [userListItems, updatedList])
@@ -72,7 +72,7 @@ const ListPanel = ({ business, userListItems = [] }) => {
 
   return (
     <Container>
-      <LeftListPanel business={business} userListItems={userListItems} setListInfo={setListInfo} listInfo={listInfo} />
+      <LeftListPanel userListItems={userListItems} setListInfo={setListInfo} listInfo={listInfo} />
       <RightListPanel listInfo={listInfo} setListInfo={setListInfo} />
     </Container>
   )

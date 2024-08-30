@@ -58,7 +58,7 @@ const ViewFullScreenButton = styled.button`
     }
 `;
 
-const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment }) => {
+const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment, userId }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const access = token?.access_token || cookie
@@ -67,6 +67,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
   const [isDeleteMode, setIsDeleteMode] = useState(false)
+  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '');
 
   useEffect(() => {
     if (!access) {
@@ -89,24 +90,27 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, []);
 
   useEffect(() => {
-    if (!selectedDepartment?._id) {
-      setCurrentBusiness(businesses[0])
+    if (!selectedDepartment?._id && businesses.length > 0) {
+        setCurrentBusiness(businesses[0]);
     }
-  }, [businesses])
+}, [businesses, selectedDepartment]);
 
   useEffect(() => {
     if (currentBusiness) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
   }, [currentBusiness])
 
-
   useEffect(() => {
     if (currentBusiness && currentBusiness?._id) {
-      dispatch(getBusinessEmployees(currentBusiness?._id))
+      dispatch(getBusinessEmployees(userId))
     }
-  }, [currentBusiness])
+  }, [])
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
+    setCurrentBusiness(businesses[0]._id);
+    setShowBusinessMenu('');
+    setSelectedDepartment(businesses.businessDepartments?.[0])
+    dispatch(getBusinessEmployees(businesses.businessDepartments?.[0].businessId, true))
   }
 
   return (
@@ -156,6 +160,8 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 onSelectBusiness={value => {
                   setCurrentBusiness(value)
                 }}
+                showBusinessMenu={showBusinessMenu}
+                setShowBusinessMenu={setShowBusinessMenu}
               />
               {window.innerWidth > 600 && (
                 <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} />
@@ -183,7 +189,8 @@ const mapStateToProps = state => {
     businesses: state?.Business?.projectList,
     cookie: state.Auth.token,
     currentDepartment: state.Tasks.currentDepartment,
-    loading: state.Loading?.loading
+    loading: state.Loading?.loading,
+    userId: state?.Auth?.user?._id
   }
 }
 

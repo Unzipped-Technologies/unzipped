@@ -17,6 +17,7 @@ import {
   getAllFreelancers,
   addEntriesToList,
   getFreelancerById,
+  resetContractForm,
   setUserIdForChat,
   checkUserConversation
 } from '../../redux/actions'
@@ -77,6 +78,7 @@ const ListModal = ({
   addEntriesToList,
   freelancerId,
   getFreelancerById,
+  resetContractForm,
   setUserIdForChat,
   user,
   checkUserConversation
@@ -172,6 +174,7 @@ const ListModal = ({
               fontWeight="600"
               cursor="pointer"
               onClick={async () => {
+                await resetContractForm()
                 await getFreelancerById(freelancerId)
                 await router.push('/hire')
               }}>
@@ -290,6 +293,7 @@ const mapDispatchToProps = dispatch => {
     getAllFreelancers: bindActionCreators(getAllFreelancers, dispatch),
     addEntriesToList: bindActionCreators(addEntriesToList, dispatch),
     getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
+    resetContractForm: bindActionCreators(resetContractForm, dispatch),
     setUserIdForChat: bindActionCreators(setUserIdForChat, dispatch),
     checkUserConversation: bindActionCreators(checkUserConversation, dispatch)
   }

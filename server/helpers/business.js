@@ -271,7 +271,12 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           pipeline: [
             {
               $match: {
-                $expr: { $in: ['$_id', '$$questionId'] }
+                $expr: {
+                  $in: [
+                    '$_id',
+                    { $cond: { if: { $isArray: '$$questionId' }, then: '$$questionId', else: [] } }
+                  ]
+                }
               }
             },
             {
@@ -567,8 +572,9 @@ const getBusinessCreatedByUser = async userId => {
   return await business.find({ userId: userId }).select('name _id')
 }
 
-const getBusinessEmployees = async businessId => {
-  const businessEmployees = await business.find({ _id: businessId })
+const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
+  const query = isSelectedBusiness ? { _id: id } : { userId: id }
+  const businessEmployees = await business.find(query)
     .populate({
       path: 'employees',
       model: 'contracts',
@@ -601,10 +607,10 @@ const getBusinessEmployees = async businessId => {
   return empLists;
 }
 
-const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false) => {
+const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false, userId) => {
 
-
-  const list = await business.find({ _id: businessId }).populate([
+  const query = businessId ? { _id: businessId } : { userId };
+  const list = await business.find(query).populate([
     {
       path: 'departments',
       model: 'departments',

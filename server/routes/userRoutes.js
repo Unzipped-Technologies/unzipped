@@ -135,7 +135,7 @@ router.post('/create-freelancer-invite', async (req, res) => {
 router.get('/thirdPartyCredentials/:id', async (req, res) => {
   try {
     const { thirdPartyCredentials } = await userHelper.getUserById(req.params.id)
-    res.json(thirdPartyCredentials.github)
+    res.json(thirdPartyCredentials?.github)
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }

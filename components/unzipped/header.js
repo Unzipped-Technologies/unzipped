@@ -796,11 +796,11 @@ const Nav = ({
                   <SpanWhite
                     count={key}
                     underline={
-                      router.pathname.includes('projects') && item.link.includes('projects')
+                      router?.pathname.includes('projects') && item.link.includes('projects')
                         ? true
-                        : router.pathname.includes('account') && item.name.toLowerCase() === 'dashboard'
+                        : router?.pathname.includes('account') && item.name.toLowerCase() === 'dashboard'
                         ? true
-                        : router.pathname === item.link
+                        : router?.pathname === item.link
                     }>
                     <Sub>{item.name}</Sub>
                   </SpanWhite>

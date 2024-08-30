@@ -9,7 +9,9 @@ import Menu from '@mui/material/Menu';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    updateTaskAssignee
+    updateTaskAssignee,
+    updateTask,
+    updateTaskInfo
 } from '../../../../redux/actions';
 
 const StyledMenu = styled((props) => (
@@ -73,7 +75,7 @@ const renderTextContainer = (title = "JM", isInnerList = false, isEmailRequired)
     </div>
 )
 
-const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, task }) => {
+const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, task, isListingPanel }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const dispatch = useDispatch();
@@ -93,6 +95,10 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
     const handleOnTeammemberSelect = (assignee) => {
         setSelectedAssignee(assignee);
         handleClose();
+        if(isListingPanel) {
+            dispatch(updateTaskInfo(task._id, { assignee: assignee.userId }));
+            return;
+        }
         dispatch(updateTaskAssignee(task._id, { assignee: assignee.userId }));
     }
 
@@ -142,8 +148,8 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                                 <ListItemText
                                     sx={{
                                         '& .MuiTypography-root': {
-                                            ...(!isEmailRequired ? { fontSize: "16px !important" } : {}),
-                                            ...(!isEmailRequired ? { fontWeight: '700 !important' } : {}),
+                                            ...(!isEmailRequired ? { fontSize: "13px !important" } : {}),
+                                            ...(!isEmailRequired ? { fontWeight: '600 !important' } : {}),
                                             ...(!isEmailRequired ? { textTransform: "uppercase !important" } : {}),
                                         }
                                     }}
@@ -209,15 +215,15 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                                 }}>
                                     <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
                                         <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                            <div style={{
+                                           {member?.FirstName && ( <div style={{
                                                 display: "flex",
                                                 justifyContent: "center",
                                                 alignItems: "center",
                                                 flexDirection: "column"
                                             }}>
                                                 {renderTextContainer(`${member?.FirstName?.charAt(0)}${member?.LastName?.charAt(0)}`, true)}
-                                            </div>
-                                            <div style={{ width: "270px" }}>
+                                            </div>)}
+                                            {member?.FirstName && (<div style={{ width: "270px" }}>
                                                 <ListItemText
                                                     sx={{
                                                         '& .MuiTypography-root': {
@@ -239,7 +245,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                                                         </React.Fragment>
                                                     }
                                                 />
-                                            </div>
+                                            </div>)}
                                             {isEmailRequired && (<div style={{
                                                 display: "flex",
                                                 flexDirection: "column",

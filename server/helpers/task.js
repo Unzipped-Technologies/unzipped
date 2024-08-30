@@ -4,6 +4,7 @@ const file = require('../helpers/file')
 const TaskModel = require('../models/Task')
 const DepartmentModel = require('../models/Department')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
+const TagModel = require('../models/tags')
 
 const createTask = async data => {
   try {
@@ -21,6 +22,9 @@ const createTask = async data => {
     const tagData = await getTagsWithoutPopulate({ departmentId: data.departmentId, tagName: 'To Do' }, '')
     if (!tagData) throw new Error(`Invalid tag Id.`)
 
+    if(data?.status.toLowerCase() == 'in progress') {
+      data['status'] = 'In Progress';
+    }
     if (!data?.tag) {
       data['tag'] = tagData?._id
     }
@@ -559,11 +563,61 @@ const removeCommentFromTask = async commentId => {
   }
 }
 
-const updateTaskStatusOnDrag = (taskId, data) => {
-  return TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } }, { new: true })
+const updateTaskStatusOnDrag = async (taskId, data) => {
+  const ticketEntity = await TaskModel.findById(taskId);
+  if (ticketEntity) {
+    const tagEntities = await TagModel.find(
+      {
+        departmentId: ticketEntity.departmentId,
+      }
+    );
+    if (tagEntities.length > 0) {
+      const filteredTag = tagEntities.filter(tag => tag.tagName.trim().replace(' ', '')
+        .toLowerCase()
+        .includes(data.status.trim().replace(' ', '')
+          .toLowerCase())
+      );
+      if (filteredTag.length === 0) {
+        return false;
+      }
+      data.tag = filteredTag[0]._id;
+      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } }, { new: true });
+      return result
+    }
+  }
 }
 
+const verifyTasks = async (taskId, data) => {
+  try {
+    const ticketEntity = await TaskModel.findById(taskId);
+    if (ticketEntity) {
+      const tagEntities = await TagModel.find(
+        {
+          departmentId: ticketEntity.departmentId,
+        }
+      );
+      if (tagEntities.length > 0) {
+        const filteredTag = tagEntities.filter(tag => tag.tagName.trim().replace(' ', '')
+          .toLowerCase()
+          .includes(data.trim().replace(' ', '')
+            .toLowerCase())
+        );
+        if (filteredTag.length === 0) {
+          return false;
+        }
+        return true;
+      }
+    }
+  } catch (error) {
+    console.log('error on ticket', error?.message)
 
+  }
+
+}
+
+const handleTaskAssignees = async (task, data) => {
+  return await TaskModel.findByIdAndUpdate(task, { $set: { data } }, { new: true })
+}
 module.exports = {
   createTask,
   createManyTask,
@@ -579,4 +633,6 @@ module.exports = {
   updateTaskStatus,
   getTaskWithoutPopulate,
   updateTaskStatusOnDrag,
+  verifyTasks,
+  handleTaskAssignees
 }

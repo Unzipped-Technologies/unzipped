@@ -63,8 +63,16 @@ router.patch('/update-task-status-on-drag/:id', requireLogin, permissionCheckHel
   try {
 
     const response = await taskHelper.updateTaskStatusOnDrag(req.params.id, req.body)
-    if (!response) throw new Error('Task not found')
 
+    res.json(response)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+router.get('/verify-task-details/:id/:ticketStatus', requireLogin, async (req, res) => {
+  try {
+
+    const response = await taskHelper.verifyTasks(req.params.id, req.params.ticketStatus)
     res.json(response)
   } catch (e) {
     res.status(400).json({ msg: e.message })
@@ -151,6 +159,18 @@ router.post('/order', requireLogin, permissionCheckHelper.hasPermission('orderTa
     const orderTasks = await taskHelper.reorderTasks(req.body)
     if (!orderTasks) throw Error('failed to reorder tasks')
     res.json(orderTasks)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.patch('/update-task-assignee/:id', requireLogin, permissionCheckHelper.hasPermission('updateTask'), async (req, res) => {
+  try {
+    if (!req.body.assignee) throw Error('Assignee is required')
+    const response = await taskHelper.handleTaskAssignees(req.params.id, req.body)
+    if (!response) throw new Error('Task not found')
+
+    res.json(response)
   } catch (e) {
     res.status(400).json({ msg: e.message })
   }

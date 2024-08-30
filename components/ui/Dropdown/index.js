@@ -60,7 +60,7 @@ const LinkWrapper = styled.li`
   &:hover {
     color: white;
     background: transparent !important;
-    text-decoration: underline;
+    text-decoration: none;
   }
 `
 
@@ -68,16 +68,23 @@ const LinkContainer = styled(Link)`
   color: ${props => props.theme.primary};
   text-decoration: none;
   font-size: ${props => props.theme.fontSizeXS};
-  color: #000;
+  color: gray;
   text-align: left;
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: 24.5px; /* 153.125% */
   letter-spacing: 0.4px;
   text-transform: uppercase;
   letter-spacing: 0.031rem;
+  padding: 10px;
+  &:hover {
+    background-color: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '#E5EAF2')};
+    border-radius: ${({ borderRadius }) => (borderRadius ? borderRadius : '8px')};
+    color: ${({ color }) => (color ? color : 'grey')};
+    text-decoration: none;
+  }
 `
 
 const DivContainer = styled(LinkContainer).attrs({ as: 'div' })`
