@@ -32,7 +32,7 @@ const FormFieldContainer = styled.div`
   font-weight: 400;
   font-size: ${props => (props.fontSize ? props.fontSize : props.theme.baseFontSize)};
   line-height: ${props => props.theme.baseLineHeight};
-  font-family: arial;
+  font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : 'arial')};
   display: ${({ display }) => (display ? display : 'block')};
   max-width: ${props => props.maxWidth};
   margin: ${({ margin }) => (margin ? margin : 'unset')};
@@ -45,12 +45,9 @@ const FormFieldContainer = styled.div`
   }
 
   & > label:first-of-type {
-    // Override menlo styling here, line 659
-    // src/pages/Dashboard/index.scss
-    // label { margin-bottom: 0 !important; }
     margin-bottom: ${({ noMargin }) => (noMargin ? '0px' : '5px !important')};
     color: #333;
-    font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px%')};
+    font-size: ${({ fontSize }) => (fontSize ? fontSize : '12px')};
   }
   & > label {
     width: 100%;

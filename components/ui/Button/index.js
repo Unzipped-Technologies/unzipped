@@ -38,7 +38,7 @@ const ButtonContainer = styled.button`
     ${props => (props.mobile ? '22px' : props.noPadding ? ` 0px ` : props.extraWide ? '40px' : '15px')};
   font-family: roboto;
   text-transform: ${props => (props.noUppercase ? 'capitalize' : 'uppercase')};
-  width: ${props => (props.block ? '100%' : props.webKit ? '-webkit-fill-available' : 'auto')};
+  width: ${props => props.block ? '100%' : props.webKit ? '-webkit-fill-available' : props.width ? props.width : 'auto'};
   height: ${props => (props.buttonHeight ? props.buttonHeight : 'auto')};
   min-width: ${({ popout }) => (popout ? 'auto' : 'auto')};
   display: ${props => (props.block ? 'flex' : 'inline-flex')};
@@ -50,6 +50,7 @@ const ButtonContainer = styled.button`
   letter-spacing: 0.031rem;
   justify-content: center;
   white-space: nowrap;
+  box-shadow:${props => (props.boxShadow ? props.boxShadow : '0px 0px 0px rgba(0, 0, 0, 0)')};
   margin: ${props => (props.margin ? props.margin : '0px')};
   ${props =>
     props.popout &&
@@ -272,6 +273,7 @@ const Button = ({
   top,
   zIndex,
   mobile,
+  boxShadow,
   ...rest
 }) => {
   const colors = typeColors[type] ? typeColors[type] : typeColors.default
@@ -315,6 +317,7 @@ const Button = ({
       right={right}
       top={top}
       zIndex={zIndex}
+      boxShadow={boxShadow}
       {...rest}>
       {icon && (
         <ButtonIconContainer colors={colors} popout={popout}>
