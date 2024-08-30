@@ -75,6 +75,8 @@ const Tasklist = ({
   const [selectedDepartment, setSelectedDepartment] = useState({})
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
+  const [isDeleteMode, setIsDeleteMode] = useState(false)
+  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '');
 
   useEffect(() => {
     if (!access) {
@@ -95,10 +97,10 @@ const Tasklist = ({
   }, [])
 
   useEffect(() => {
-    if (!selectedDepartment?._id && businesses?.length) {
-      setCurrentBusiness(businesses[0])
+    if (!selectedDepartment?._id && businesses.length > 0) {
+        setCurrentBusiness(businesses[0]);
     }
-  }, [businesses])
+}, [businesses, selectedDepartment]);
 
   useEffect(() => {
     currentBusiness && setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
@@ -106,6 +108,10 @@ const Tasklist = ({
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
+    setCurrentBusiness(businesses[0]._id);
+    setShowBusinessMenu('');
+    setSelectedDepartment(businesses.businessDepartments?.[0])
+    dispatch(getBusinessEmployees(businesses.businessDepartments?.[0].businessId, true))
   }
 
   return (
@@ -154,6 +160,8 @@ const Tasklist = ({
                 onSelectBusiness={value => {
                   setCurrentBusiness(value)
                 }}
+                showBusinessMenu={showBusinessMenu}
+                setShowBusinessMenu={setShowBusinessMenu}
               />
               {window.innerWidth > 680 && (
                 <TasksPanel

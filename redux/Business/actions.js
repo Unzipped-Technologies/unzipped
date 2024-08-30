@@ -139,9 +139,9 @@ export const updateBusiness = data => async (dispatch, getState) => {
     .catch(err => {
       dispatch({
         type: BUSINESS_ERROR,
-        payload: err.response
+        payload: err.response ?? 'Something went wrong!'
       })
-      return err?.response
+      return err?.response ?? 'Something went wrong!'
     })
   dispatch(stopLoading())
   return response

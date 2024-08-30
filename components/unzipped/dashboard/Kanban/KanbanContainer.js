@@ -130,7 +130,7 @@ const ProjectKanbanBoard = ({ selectedDepartment, currentBusiness, businesses, i
 
   useEffect(() => {
     if (isFullScreen) {
-      dispatch(loadAllBusinessAssociatedTickets(null))
+      dispatch(loadAllBusinessAssociatedTickets(null, null, false, _id))
       dispatch(getBusinessEmployees(_id))
     }
   }, [businesses])
@@ -243,7 +243,7 @@ const ProjectKanbanBoard = ({ selectedDepartment, currentBusiness, businesses, i
 
   const handleSearchFilterOnChange = e => setSearchTerm(e.target.value)
 
-  const handleGridDefaultStatus = () => dispatch(loadAllBusinessAssociatedTickets(null))
+  const handleGridDefaultStatus = () => dispatch(loadAllBusinessAssociatedTickets(null, null, false, _id))
 
   return (
     <>

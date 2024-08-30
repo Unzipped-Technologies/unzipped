@@ -607,9 +607,9 @@ const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
   return empLists;
 }
 
-const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false) => {
+const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false, userId) => {
 
-  const query = businessId ? { _id: businessId } : {};
+  const query = businessId ? { _id: businessId } : { userId };
   const list = await business.find(query).populate([
     {
       path: 'departments',

@@ -23,10 +23,20 @@ const contractsSchema = new mongoose.Schema(
       required: true
     },
     hourlyRate: {
-      type: Number
+      type: Number,
+      default: 0
+    },
+    currency: {
+      type: String,
+      default: 'USD'
+    },
+    jobType: {
+      type: String,
+      default: ''
     },
     hoursLimit: {
-      type: Number
+      type: Number,
+      default: 0
     },
     isOfferAccepted: {
       type: Boolean

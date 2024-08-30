@@ -121,8 +121,8 @@ const TaskForm = ({
             <Image
               src={contract?.freelancer?.user?.profileImage}
               alt="Assignee Image"
-              width={'25px'}
-              height={'25px'}
+              width={'30px'}
+              height={'30px'}
               radius={'50%'}
               margin={'0px 5px  0px 0px'}
             />
@@ -130,12 +130,12 @@ const TaskForm = ({
           <div>
             <div
               style={{
-                color: '#000',
+                color: 'grey',
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '14px',
                 fontStyle: 'normal',
-                fontWeight: 500,
+                fontWeight: 600,
                 lineHeight: 'normal',
                 letterSpacing: '0.4px',
                 textTransform: 'capitalize'
@@ -146,11 +146,12 @@ const TaskForm = ({
               style={{
                 color: '#787878',
                 textAlign: 'center',
-                fontSize: '10px',
+                fontSize: '11px',
                 fontStyle: 'normal',
                 fontWeight: 500,
                 lineHeight: 'normal',
-                letterSpacing: '0.4px'
+                letterSpacing: '0.4px',
+                paddingLeft: '12px'
               }}>
               {contract?.freelancer?.user?.email}
             </div>
@@ -166,8 +167,8 @@ const TaskForm = ({
             <Image
               src={departmentData?.client?.profileImage}
               alt="Assignee Image"
-              width={'25px'}
-              height={'25px'}
+              width={'30px'}
+              height={'30px'}
               radius={'50%'}
               margin={'0px 5px  0px 0px'}
             />
@@ -175,7 +176,7 @@ const TaskForm = ({
           <div>
             <div
               style={{
-                color: '#000',
+                color: 'grey',
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '14px',
@@ -191,11 +192,12 @@ const TaskForm = ({
               style={{
                 color: '#787878',
                 textAlign: 'center',
-                fontSize: '10px',
+                fontSize: '11px',
                 fontStyle: 'normal',
                 fontWeight: 500,
                 lineHeight: 'normal',
-                letterSpacing: '0.4px'
+                letterSpacing: '0.4px',
+                paddingLeft: '12px'
               }}>
               {departmentData?.client?.email}
             </div>
@@ -382,8 +384,9 @@ const TaskForm = ({
             colors={{
               text: '#1976D2',
               background: 'white',
-              border: '1px',
-              wideBorder: '#1976D2'
+              border: '1px ',
+              wideBorder: '#1976D2',
+              borderRadius: '8px'
             }}
             onClick={() => {
               onHide()
@@ -406,7 +409,8 @@ const TaskForm = ({
               text: '#FFF',
               background: '#1976D2',
               border: '1px',
-              wideBorder: '#1976D2'
+              wideBorder: '#1976D2',
+              borderRadius: '8px'
             }}>
             Save
           </Button>
@@ -416,7 +420,7 @@ const TaskForm = ({
             {error}
           </TitleText>
         )}
-        <DIV display="flex" margin="5px 0px 0px 0px" alignItems="center">
+        <DIV display="flex" margin="5px 0px 0px 80px" alignItems="center">
           {taskDetail?.ticketCode && (
             <TitleText color="#000" titleFontSize="18px" lineHeight="normal" light width="85px" marginTop="20px">
               {taskDetail?.ticketCode?.toLowerCase()}
@@ -431,9 +435,9 @@ const TaskForm = ({
               fontSize="14px"
               disableBorder={!editMode.taskName}
               disabled={userRole === 1}
-              noMargin
-              width="500px"
+              width="300px"
               height="36px !important"
+              borderRadius="4px"
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
@@ -448,7 +452,7 @@ const TaskForm = ({
           </div>
         </DIV>
         <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
-          <DIV display="flex" width="40%">
+          <DIV display="flex" width="40%" overflow={'none'} margin="15px  0px 0px 0px">
             <DIV
               paddingRight="10px"
               padding={editMode?.assignee ? '10px 0px 0px 0px' : '20px  0px 0px 0px'}
@@ -463,6 +467,7 @@ const TaskForm = ({
                   tabIndex={1}
                   mobile
                   zIndex="10000"
+                  display="flex"
                   disableBorder={!editMode.assignee}
                   fieldType="searchField"
                   isSearchable={true}
@@ -471,11 +476,12 @@ const TaskForm = ({
                   disabled={userRole === 1}
                   options={assigneeOptions}
                   placeholder="assignee"
-                  fontSize="14px"
-                  margin="0px 0px 0px 30px"
-                  width="225px"
+                  fontSize="12px"
+                  margin="0px 0px 0px 28px"
+                  width="300px"
                   height={taskForm?.assignee ? '15px' : '36px'}
                   dropdownList={assigneeOptions}
+                  borderRadius="5px"
                   onChange={value => {
                     updateForm('assignee', value?.value)
                   }}
@@ -523,9 +529,9 @@ const TaskForm = ({
             )}
           </DIV>
           <DIV display="flex" alignItems="center" padding="0px 0px 0px 0px" width="40%" overflow={'none'}>
-            <DIV display="flex" alignItems="center">
+            <DIV display="flex" alignItems="center" gap='19px' >
               <TitleText
-                color="#000"
+                color="grey"
                 titleFontSize="16px"
                 width="50px"
                 lineHeight="normal"
@@ -612,7 +618,7 @@ const TaskForm = ({
         <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
           <DIV width="50%" display="flex" margin="0px 50px 0px 0px">
             <TitleText
-              color="#000"
+              color="grey"
               titleFontSize="16px"
               lineHeight="normal"
               light
@@ -656,7 +662,7 @@ const TaskForm = ({
             />
           </DIV>
           <DIV width="50%" display="flex" alignItems="center" padding="0px 0px 0px 90px">
-            <TitleText color="#000" titleFontSize="16px" lineHeight="normal" light width="100px" paddingTop="15px">
+            <TitleText color="grey" titleFontSize="16px" lineHeight="normal" light width="100px" paddingTop="15px">
               Story Points:
             </TitleText>
             <FormField
@@ -669,8 +675,9 @@ const TaskForm = ({
               noMargin
               disableBorder={!editMode.storyPoints}
               disabled={userRole === 1}
-              width="160px"
-              height="30px  !important"
+              width="245px"
+              height="35px  !important"
+              borderRadius="5px"
               onChange={e => updateForm('storyPoints', e?.target?.value)}
               value={taskForm?.storyPoints}
               onClick={() => {
@@ -680,14 +687,13 @@ const TaskForm = ({
                 validateForm()
                 enableEditMode('')
               }}
-              style={{ color: '#000000' }}
             />
           </DIV>
         </DIV>
         <DIV display="flex" alignItems="center" margin="10px 0px 0px 0px">
           <DIV width="50%" display="flex">
             <TitleText
-              color="#000"
+              color="grey"
               titleFontSize="16px"
               lineHeight="normal"
               light
@@ -711,7 +717,7 @@ const TaskForm = ({
                   updateForm('status', value)
                 }}
                 sx={{
-                  width: 225,
+                  width: 300,
                   '& input': {
                     bgcolor: 'background.paper',
                     border: '0px !important',
@@ -758,19 +764,20 @@ const TaskForm = ({
           </DIV>
         </DIV>
         <DIV display="flex" flexDirection="column" flexFlow="column" margin="20px 0px 0px 0px">
-          <TEXT color="#000" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="100px">
+          <TEXT textColor="grey" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="100px">
             Description:
           </TEXT>
           {editMode?.description || !taskForm?.description ? (
             <FormField
               disableBorder={!editMode.description && !taskForm?.description}
               fieldType="input"
-              margin="10px 0px 0px 0px"
+              margin="5px 0px 0px 0px"
               fontSize="14px"
-              width="100%"
+              width="95%"
               name="description"
               placeholder="Description"
               display="inline !important"
+              borderRadius="5px"
               textarea
               onChange={e => {
                 updateForm('description', e?.target?.value)
@@ -796,7 +803,7 @@ const TaskForm = ({
           )}
         </DIV>
         {selectedTaskId && (
-          <DIV margin="20px 0px 20px 0px" alignItems="flex-end" justifyContent="flex-end" width="100%">
+          <DIV margin="20px 0px 20px 5px" alignItems="flex-end" justifyContent="flex-end" width="95%">
             <FormField
               fieldType="input"
               fontSize="14px"
@@ -810,7 +817,9 @@ const TaskForm = ({
               display="inline !important"
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}>
-              Discussion
+              <TEXT textColor="grey" titleFontSize="16px" lineHeight="normal" light marginTop="10px" width="100px">
+                Discussion:
+              </TEXT>
             </FormField>
           </DIV>
         )}

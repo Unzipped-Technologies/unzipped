@@ -1,19 +1,14 @@
 import styled from 'styled-components'
-import HireDivider from './hire-divider/hireDivider'
 import { COLORS, getFontStyled, FONT_SIZE, LETTER_SPACING } from '../../ui/TextMaskInput/core/utilities'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import { useEffect, useState } from 'react'
-import Input from '@material-ui/core/Input'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import { useRouter } from 'next/router'
-// import Select from 'react-select';
 import { useDispatch, useSelector, connect } from 'react-redux'
-import { getFreelancerById, getUserOwnedBusiness } from '../../../redux/actions'
+import { getFreelancerById, getUserOwnedBusiness, updateContractForm, resetContractForm } from '../../../redux/actions'
 import ProjectDropdown from './project-dropdown'
 import BackHeader from '../BackHeader'
 import useWindowSize from '../../../hooks/windowWidth'
-import BackIcon from '../../ui/icons/back'
 import { bindActionCreators } from 'redux'
 
 const HireWrapper = styled.div`
@@ -47,38 +42,38 @@ const HeadingText = styled.h1`
   padding: 10px 0px;
   margin-top: 0;
   ${getFontStyled({
-  color: COLORS.black,
-  fontSize: FONT_SIZE.PX_20,
-  fontWeight: 500,
-  fontStyle: 'normal',
-  lineHeight: FONT_SIZE.PX_24,
-  letterSpacing: LETTER_SPACING
-})}
+    color: COLORS.black,
+    fontSize: FONT_SIZE.PX_20,
+    fontWeight: 500,
+    fontStyle: 'normal',
+    lineHeight: FONT_SIZE.PX_24,
+    letterSpacing: LETTER_SPACING
+  })}
 `
 
 const Text = styled.span`
   margin: 0;
   ${getFontStyled({
-  color: COLORS.black,
-  fontSize: FONT_SIZE.PX_16,
-  fontWeight: 300,
-  fontStyle: 'normal',
-  lineHeight: FONT_SIZE.PX_19,
-  letterSpacing: LETTER_SPACING
-})}
+    color: COLORS.black,
+    fontSize: FONT_SIZE.PX_16,
+    fontWeight: 300,
+    fontStyle: 'normal',
+    lineHeight: FONT_SIZE.PX_19,
+    letterSpacing: LETTER_SPACING
+  })}
 `
 
 const Label = styled.span`
   text-transform: uppercase;
   display: block;
   ${getFontStyled({
-  color: COLORS.black,
-  fontSize: FONT_SIZE.PX_14,
-  fontWeight: 500,
-  fontStyle: 'normal',
-  lineHeight: FONT_SIZE.PX_24,
-  letterSpacing: LETTER_SPACING
-})};
+    color: COLORS.black,
+    fontSize: FONT_SIZE.PX_14,
+    fontWeight: 500,
+    fontStyle: 'normal',
+    lineHeight: FONT_SIZE.PX_24,
+    letterSpacing: LETTER_SPACING
+  })};
   margin-top: 12px;
   margin-bottom: 6px;
 `
@@ -157,13 +152,13 @@ const Span = styled.span`
   margin-right: 15px;
   margin-left: 15px;
   ${getFontStyled({
-  color: COLORS.black,
-  fontSize: FONT_SIZE.PX_14,
-  fontWeight: 500,
-  fontStyle: 'normal',
-  lineHeight: FONT_SIZE.PX_24,
-  letterSpacing: LETTER_SPACING
-})}
+    color: COLORS.black,
+    fontSize: FONT_SIZE.PX_14,
+    fontWeight: 500,
+    fontStyle: 'normal',
+    lineHeight: FONT_SIZE.PX_24,
+    letterSpacing: LETTER_SPACING
+  })}
 `
 const ButtonText = styled.span`
   text-transform: uppercase;
@@ -171,13 +166,13 @@ const ButtonText = styled.span`
   margin-right: 20px;
   margin-left: 20px;
   ${getFontStyled({
-  color: COLORS.white,
-  fontSize: FONT_SIZE.PX_14,
-  fontWeight: 500,
-  fontStyle: 'normal',
-  lineHeight: FONT_SIZE.PX_24,
-  letterSpacing: LETTER_SPACING
-})}
+    color: COLORS.white,
+    fontSize: FONT_SIZE.PX_14,
+    fontWeight: 500,
+    fontStyle: 'normal',
+    lineHeight: FONT_SIZE.PX_24,
+    letterSpacing: LETTER_SPACING
+  })}
 `
 
 const ContentContainer = styled.div`
@@ -232,69 +227,146 @@ const ButtonContainer = styled.div`
   }
 `
 
-const HireComp = ({ name, token, userId, userOwnedBusiness }) => {
-  const dispatch = useDispatch()
-  const projects = useSelector(state => state.Business.projectList)
+export const Error = styled.p`
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding-top: 2px;
+  color: #d13823;
+`
+
+const HireComp = ({
+  name,
+  token,
+  userId,
+  userOwnedBusiness,
+  getUserOwnedBusiness,
+  updateContractForm,
+  resetContractForm,
+  projects,
+  freelancerId,
+  businessId,
+  hourlyRate,
+  hoursLimit,
+  currency,
+  message,
+  jobType,
+  form
+}) => {
+  // const dispatch = useDispatch()
+  // const projects = useSelector(state => state.Business.projectList)
   const router = useRouter()
-  const [weeklyTrackingLimit, setWeeklyTrackingLimit] = useState('40')
-  const [hourlyRate, setHourlyRate] = useState('40')
-  const [selectedVal, setSelectedVal] = useState('')
-  const [selectCurrency, setSelectCurrency] = useState('USD')
-  const [projectList, setProjectList] = useState([])
   const [isSmallWindow, setIsSmallWindow] = useState(false)
-  const { width } = useWindowSize()
+  const [errors, setError] = useState({
+    businessId: '',
+    hourlyRate: '',
+    hoursLimit: ''
+  })
+  const isSmall = useWindowSize(680)
 
   useEffect(() => {
-    const project = projects.map(item => ({ value: item.name, label: item.name }))
-    setProjectList(project)
-  }, [projects])
-
-  const handleSearchChangeEvent = e => {
-    setSelectedVal(e)
-  }
-
-  useEffect(() => {
-    if (width <= 600) {
+    if (isSmall) {
       setIsSmallWindow(true)
     } else {
       setIsSmallWindow(false)
     }
-  }, [width])
+  }, [isSmall])
 
   useEffect(() => {
-    dispatch(getUserOwnedBusiness(userId, token))
+    getUserOwnedBusiness(userId, token)
   }, [])
 
-  const handleSearch = e => {
-    if (e.target.value.length >= 3) {
-      dispatch(getUserOwnedBusiness(userId, token))
+  useEffect(() => {
+    if (!freelancerId) {
+      router.push('/freelancers')
+    }
+    updateContractForm({ freelancerId: freelancerId })
+    updateContractForm({ userId: userId })
+  }, [freelancerId])
+
+  const updateForm = data => {
+    updateContractForm({ ...data })
+    const key = Object.keys({ ...data })[0]
+    if (data[key] !== null && data[key] !== '') {
+      setError({ ...errors, [key]: '' })
     }
   }
 
+  const hireFreelancr = () => {
+    if (form?.businessId == null || form?.businessId === '') {
+      setError({ ...errors, businessId: 'Please select a business.' })
+      return
+    }
+    if (form?.hourlyRate == null || form?.hourlyRate === '' || form?.hourlyRate <= 0) {
+      setError({ ...errors, hourlyRate: 'Hourly rate muus be greater than 0.' })
+      return
+    }
+    if (form?.hoursLimit == null || form?.hoursLimit === '' || form?.hoursLimit <= 0) {
+      setError({ ...errors, hoursLimit: 'Hours limit muus be greater than 0.' })
+      return
+    }
+
+    router.push('/recurring-payment')
+  }
   return (
-    <HireWrapper>
+    <HireWrapper data-testid="hire_freelancer">
       <BackHeader title="Confirm Payment Details" />
       <HireInputContainer>
         <ContentContainer>
-          <HeadingText>Contact {name} About Your Job</HeadingText>
+          <HeadingText id="contract_freelancer_name">Contact {name} About Your Job</HeadingText>
           <Text>Send a contract request to {name}. More details on the next screen.</Text>
           <Label>Project Name</Label>
-          <ProjectDropdown userBusinessList={userOwnedBusiness}/>
+          <ProjectDropdown
+            userBusinessList={userOwnedBusiness}
+            value={businessId}
+            onChange={value => {
+              updateForm({ businessId: value })
+            }}
+          />
+          {errors.businessId && <Error>{errors.businessId}</Error>}
           <Label>Send a private message</Label>
-          <TextareaField rows={50} cols={100} />
+          <TextareaField
+            onChange={e => {
+              updateForm({ message: e.target.value })
+            }}
+            value={message}
+            rows={50}
+            cols={100}
+            id="send_message"
+            name="send_message"
+          />
           <Label>job type</Label>
-          <InputField type="text" />
+          <InputField
+            value={jobType}
+            onChange={e => {
+              updateForm({ jobType: e.target.value })
+            }}
+            type="text"
+            id="job_type"
+            name="job_type"
+          />
           <Label>hourly rate (show budget if selected)</Label>
           <HourlyRateStyled>
             <HourlyInputContainer>
               <Span>$</Span>
-              <InputHourlyField value={hourlyRate} onChange={e => setHourlyRate(e.target.value)} />
+              <InputHourlyField
+                value={hourlyRate}
+                onChange={e => {
+                  updateForm({ hourlyRate: e.target.value })
+                }}
+                id="hours_rate"
+                name="hours_rate"
+              />
               <Span>per hours</Span>
             </HourlyInputContainer>
             <div>
               <Select
-                value={selectCurrency}
-                onChange={e => setSelectCurrency(e.target.value)}
+                id="currency"
+                name="currency"
+                value={currency}
+                onChange={e => {
+                  updateForm({ currency: e.target.value })
+                }}
                 style={{
                   width: `${isSmallWindow ? '100%' : '77px'}`,
                   border: '1px solid black',
@@ -310,16 +382,31 @@ const HireComp = ({ name, token, userId, userOwnedBusiness }) => {
               </Select>
             </div>
           </HourlyRateStyled>
+          {errors.hourlyRate && <Error>{errors.hourlyRate}</Error>}
+
           <Label>weekly tracking limit (limit 40)</Label>
 
           <MiddleContent>
-            <TrackingField value={weeklyTrackingLimit} onChange={e => setWeeklyTrackingLimit(e.target.value)} />
+            <TrackingField
+              onChange={e => {
+                updateForm({ hoursLimit: e.target.value })
+              }}
+              value={hoursLimit}
+              id="tracking_hours"
+              name="tracking_hours"
+            />
             <Span>hours / week</Span>
           </MiddleContent>
+          {errors.hoursLimit && <Error>{errors.hoursLimit}</Error>}
         </ContentContainer>
         <ButtonContainer>
           <HireButton>
-            <ButtonText onClick={() => router.push('/recurring-payment')}>Hire {name ? name : ''}</ButtonText>
+            <ButtonText
+              onClick={() => {
+                hireFreelancr()
+              }}>
+              Hire {name ? name : ''}
+            </ButtonText>
           </HireButton>
         </ButtonContainer>
       </HireInputContainer>
@@ -332,14 +419,25 @@ const mapStateToProps = state => {
     token: state.Auth.token,
     name: state.Freelancers?.selectedFreelancer?.userId?.FirstName,
     userId: state.Auth?.user?._id,
-    userOwnedBusiness: state.Business.userOwnedBusiness
+    userOwnedBusiness: state.Business?.userOwnedBusiness,
+    freelancerId: state?.Freelancers?.selectedFreelancer?._id,
+    businessId: state?.Contracts?.contractForm?.businessId,
+    message: state?.Contracts?.contractForm?.message,
+    currency: state?.Contracts?.contractForm?.currency,
+    hourlyRate: state?.Contracts?.contractForm?.hourlyRate,
+    hoursLimit: state?.Contracts?.contractForm?.hoursLimit,
+    jobType: state?.Contracts?.contractForm?.jobType,
+    form: state?.Contracts?.contractForm
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
-    getUserOwnedBusiness: bindActionCreators(getUserOwnedBusiness, dispatch)
+    getUserOwnedBusiness: bindActionCreators(getUserOwnedBusiness, dispatch),
+    getUserOwnedBusiness: bindActionCreators(getUserOwnedBusiness, dispatch),
+    updateContractForm: bindActionCreators(updateContractForm, dispatch),
+    resetContractForm: bindActionCreators(resetContractForm, dispatch)
   }
 }
 

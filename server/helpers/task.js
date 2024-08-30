@@ -576,8 +576,8 @@ const updateTaskStatusOnDrag = async (taskId, data) => {
       if (filteredTag.length === 0) {
         return false
       }
-      data.tag = filteredTag[0]._id
-      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...resp } }, { new: true })
+      data.tag = filteredTag[0]._id;
+      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } }, { new: true });
       return result
     }
   }

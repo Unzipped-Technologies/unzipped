@@ -98,7 +98,8 @@ const CreateBusiness = ({
   questionsToAsk,
   userDetails,
   projectFiles,
-  businessForm
+  businessForm,
+  accessToken
 }) => {
   const router = useRouter()
 
@@ -116,9 +117,9 @@ const CreateBusiness = ({
   const [isSmallWindow, setIsSmallWindow] = useState(false)
   const { width } = useWindowSize()
 
-  useEffect(()=>{
-    if(!accessToken) router.push('/login')
-  },[])
+  useEffect(() => {
+    if (!accessToken) router.push('/login')
+  }, [])
 
   useEffect(() => {
     if (width <= 680) {

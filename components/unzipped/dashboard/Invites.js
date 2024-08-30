@@ -19,12 +19,8 @@ const ProjectApplications = styled.div`
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  height: auto;
-  width: 984px;
-  margin-left: 150px;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
-  margin-top: 10px;
+  border-radius:5px;
+  box-shadow:0px 4px 6px rgba(0, 0, 0, 0.4);
   @media (max-width: 680px) {
     display: none;
   }
@@ -48,6 +44,7 @@ const UserInfo = styled.div`
   width: 600px;
   margin-top: 20px;
   margin-left: 10px;
+  margin-bottom: 10px;
 `
 
 const UserName = styled.span`
@@ -55,12 +52,12 @@ const UserName = styled.span`
   font-family: Roboto;
   font-size: 16px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 24.5px; /* 153.125% */
   letter-spacing: 0.4px;
 `
 const UserCategory = styled.span`
-  color: #000;
+  color: gray;
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
@@ -69,21 +66,22 @@ const UserCategory = styled.span`
 `
 
 const UserCountry = styled.span`
-  color: #000;
+  color: gray;
   font-size: 14px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 24.5px; /* 175% */
   letter-spacing: 0.4px;
 `
 
 const UserRate = styled.span`
-  color: #000;
+  color: #0057ff;
   font-size: 24px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 24.5px; /* 102.083% */
   letter-spacing: 0.4px;
-  padding-top: 5px;
+  padding-top: 8px;
+  margin: 4px 0px 4px 0px;
 `
 const Skills = styled.div`
   margin-top: 10px;
@@ -94,23 +92,28 @@ const ViewProfile = styled.div`
   display: flex;
   flex-flow: column;
   margin-top: 20px;
+  margin-bottom: 10px;
   align-items: flex-end; /* Align items at the end of the column */
   margin-right: 10px;
+  justify-content: space-between;
+  width: 200px;
 `
 const ViewProfileButton = styled.button`
-  width: 131px;
-  height: 35px;
+  width: 100px;
+  height: 30px;
   flex-shrink: 0;
-  border-radius: 16px;
+  border-radius: 5px;
   border: 1px solid rgba(196, 196, 196, 0);
-  background: #8ede64;
+  background: #5cb85c;
+  color: #fff;
+  font-size:14px;
 `
 
 const DefaultDisplay = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 160px;
+  justify-content: end;
+  align-items: end;
+  padding-top: 15px;
 `
 
 const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, role }) => {
@@ -136,7 +139,9 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
   return (
     <>
       {window?.innerWidth > 680 ? (
-        <div data-testid="desktop_invites">
+        <div data-testid="desktop_invites" 
+        style={{ width: '60%',margin:"8px 0px 0px 0px",boxShadow:"0px 4px 6px rgba(0, 0, 0, 0.4)"}}
+        >
           {invitesList?.length && invitesList[0]?.listEntries?.length ? (
             invitesList[0]?.listEntries.map(invitation => {
               return (
@@ -152,8 +157,8 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                               ' ' +
                               invitation?.freelancerId?.userId?.LastName
                             }`}
-                            height="102px"
-                            width="102px"
+                            height="80px"
+                            width="auto"
                             radius="50%"
                           />
                         ) : (
@@ -191,8 +196,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
 
                         <UserCategory id="category">{invitation?.freelancerId?.category}</UserCategory>
                         <UserCountry id="address_country">
-                          {invitation?.freelancerId?.userId?.AddressLineCountry || '-'}
-                        </UserCountry>
+                          {invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
                         <UserRate id="rate">
                           {invitation?.freelancerId?.rate > 0 ? (
                             <div>
@@ -201,8 +205,8 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                                 style={{
                                   fontWeight: '100',
                                   color: '#000',
-                                  fontSize: '15px',
-                                  fontWeight: '300',
+                                  fontSize: '12px',
+                                  fontWeight: '400',
                                   letterSpacing: '0.4px',
                                   marginTop: '-100px'
                                 }}>
@@ -222,7 +226,11 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                         <Skills data-testid={`${invitation._id}_skills`}>
                           {invitation?.freelancerId?.freelancerSkills?.length
                             ? invitation?.freelancerId?.freelancerSkills.map(skill => {
-                                return <Badge key={skill._id}>{skill?.skill}</Badge>
+                                return (
+                                  <Badge color="blue" key={skill._id}>
+                                    {skill?.skill}
+                                  </Badge>
+                                )
                               })
                             : ''}
                         </Skills>
@@ -239,11 +247,11 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                         <span
                           id="total_likes"
                           style={{
-                            color: ' #000',
+                            color: 'gray',
                             fontFamily: 'Roboto',
-                            fontSize: '15px',
+                            fontSize: '12px',
                             fontStyle: 'normal',
-                            fontWeight: '400',
+                            fontWeight: 'normal',
                             lineHeight: '24.5px' /* 163.333% */,
                             letterSpacing: '0.4px',
                             marginTop: '50px'
