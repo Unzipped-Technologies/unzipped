@@ -4,6 +4,8 @@ const Department = require('../models/Department')
 const PaymentMethod = require('../models/PaymentMethod')
 const ListModel = require('../models/List')
 const ListEntriesModel = require('../models/ListEntries')
+const UserModel = require('../models/User');
+const FreelancerModel = require('../models/Freelancer');
 
 const ThirdPartyApplications = require('../models/ThirdPartyApplications')
 const mongoose = require('mongoose')
@@ -11,6 +13,7 @@ const keys = require('../../config/keys')
 const stripe = require('stripe')(`${keys.stripeSecretKey}`)
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
+const Mailer = require('../../services/Mailer')
 
 const createContracts = async data => {
   const { businessId, freelancerId, departmentId, userId } = data
@@ -109,6 +112,7 @@ const createContracts = async data => {
       newList.listEntries = [ListEntry?._id]
       await newList.save()
     }
+    await handleHiringMailNotification(data, newContract?._id)
     return savedContract
   } catch (e) {
     throw Error(`${e?.message ?? 'Something went wrong'}`)
@@ -454,6 +458,132 @@ const deleteContract = async id => {
   }
 }
 
+const handleHiringMailNotification = async ({ userId, businessId, freelancerId }, contractId) => {
+
+  const businessEntity = await Business
+    .findById({ _id: businessId })
+    .select('name');
+
+  const freelancerEntity = await FreelancerModel
+    .findById({ _id: freelancerId })
+    .populate(
+      {
+        model: 'users',
+        path: 'userId'
+      }
+    );
+
+  const userEntity = await UserModel.findById({ _id: userId });
+  const contractEntity = await Contracts.findById({ _id: contractId });
+  const currentBusinessContracts = await Contracts.find({ businessId, userId })
+    .populate([
+      {
+        model: 'users',
+        path: 'userId',
+      },
+      {
+        model: 'freelancers',
+        path: 'freelancerId',
+        populate: {
+          model: 'users',
+          path: 'userId',
+        }
+      }
+    ])
+
+  if (freelancerEntity && userEntity && contractEntity && currentBusinessContracts && businessEntity) {
+    const freelancerMailOpts = getNotificationMailOpts(freelancerEntity, userEntity, contractEntity, currentBusinessContracts, businessEntity, false)
+    const clientMailOpts = getNotificationMailOpts(freelancerEntity, userEntity, contractEntity, currentBusinessContracts, businessEntity, true)
+    await Mailer.sendInviteMail(freelancerMailOpts);
+    await Mailer.sendInviteMail(clientMailOpts);
+  }
+}
+
+const getNotificationMailOpts = (freelancerEntity, userEntity, contractEntity, currentBusinessContracts, businessEntity, isClient) => {
+  const dynamicTemplateData = {
+    firstName: '',
+    lastName: '',
+    projectName: '',
+    rate: 0,
+    clientName: '',
+    supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+    currentYear: new Date().getFullYear(),
+    currentTeam: [],
+    freelancerName: ''
+  };
+
+
+  if (isClient) {
+    dynamicTemplateData['firstName'] = userEntity?.FirstName ?? '';
+    dynamicTemplateData['lastName'] = userEntity?.LastName ?? '';
+    dynamicTemplateData['freelancerName'] = freelancerEntity?.userId?.FirstName ?? '' + ' ' + freelancerEntity?.userId?.LastName ?? '';
+  } else {
+    dynamicTemplateData['firstName'] = freelancerEntity?.userId?.FirstName ?? '';
+    dynamicTemplateData['lastName'] = freelancerEntity?.userId?.LastName ?? '';
+    dynamicTemplateData['clientName'] = userEntity?.FirstName ?? '' + ' ' + userEntity?.LastName ?? '';
+  }
+
+  if (currentBusinessContracts) {
+    const projectTeams = currentBusinessContracts.map(({ freelancerId }) => {
+      return {
+        name: freelancerId?.userId?.FirstName ?? '' + ' ' + freelancerId?.userId?.LastName ?? '',
+        role: freelancerId?.category ?? ''
+      }
+    });
+
+
+    dynamicTemplateData['rate'] = contractEntity?.hourlyRate ?? 0;
+    dynamicTemplateData['currentTeam'] = projectTeams ?? [];
+    dynamicTemplateData['projectName'] = businessEntity?.name ?? '';
+
+    const to = isClient ? userEntity?.email : freelancerEntity?.userId?.email;
+    const subject = isClient ? ' Update: New Team Member Added to ' + businessEntity?.name : "You're Hired! Welcome to " + businessEntity?.name;
+    const templateId = isClient ? 'd-1093fd560e874140afa6400e250f58ea' : 'd-2c0cc93195e149109d032d0c65cab3ba';
+
+    const mailOpts = {
+      to,
+      subject,
+      templateId,
+      dynamicTemplateData
+    }
+    return mailOpts;
+  }
+}
+
+const revokeAccess = async (contractId) => {
+  const contract = await Contracts.findById(contractId).populate(
+    [
+      {
+        path: 'userId',
+        model: 'users',
+        select: 'email FirstName LastName'
+      },
+      {
+        path: 'businessId',
+        model: 'businesses',
+        select: 'name'
+      }
+    ]
+  );
+
+  if (!contract) throw new Error('Contract not found');
+  await Contracts.findByIdAndDelete(contractId);
+
+  await Mailer.sendInviteMail({
+    to: contract?.userId?.email,
+    subject: 'Confirmation: Removal of Team Member from ' + contract?.businessId?.name,
+    templateId: 'd-1093fd560e874140afa6400e250f58ea',
+    dynamicTemplateData: {
+      firstName: contract?.userId?.FirstName,
+      lastName: contract?.userId?.LastName,
+      supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+      loginLink: `${keys.redirectDomain}/login`,
+      prjectName: contract?.businessId?.name
+    }
+  });
+  return 'Access revoked successfully';
+}
+
 module.exports = {
   getContracts,
   createContracts,
@@ -468,5 +598,6 @@ module.exports = {
   createPaymentMethod,
   endContract,
   countUserContracts,
-  getContractWithoutPopulate
+  getContractWithoutPopulate,
+  revokeAccess
 }

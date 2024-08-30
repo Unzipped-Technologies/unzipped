@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import IconButton from '@mui/material/IconButton'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -56,10 +56,8 @@ const VerticalDropdown = ({ freelancerId }) => {
   const handleClose = () => setAnchorEl(null)
 
   return (
-    <Container >
-      <IconButton
-        onClick={handleOnOptionClick}
-        sx={ICON_STYLES} >
+    <Container>
+      <IconButton data-testid="application_actions" onClick={handleOnOptionClick} sx={ICON_STYLES}>
         <MoreHorizSharpIcon />
       </IconButton>
       <Menu
