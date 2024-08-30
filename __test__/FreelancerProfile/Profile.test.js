@@ -137,7 +137,7 @@ describe('DesktopAccount Component', () => {
     )
     expect(freelancerProfileImage).toHaveAttribute('width', '218px')
 
-    expect(within(DesktopProfileContainer).getByText('SKIILS')).toBeInTheDocument()
+    expect(within(DesktopProfileContainer).getByText('SKILLS')).toBeInTheDocument()
     expect(within(DesktopProfileContainer).getByTestId('react.js')).toBeInTheDocument()
     expect(within(DesktopProfileContainer).getByTestId('node.js')).toBeInTheDocument()
     expect(within(DesktopProfileContainer).getByTestId('react_native')).toBeInTheDocument()

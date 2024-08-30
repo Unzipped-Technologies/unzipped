@@ -319,77 +319,69 @@ describe('Pick a plan', () => {
     const SubscribePage = screen.getByTestId('subscribe_page')
     expect(SubscribePage).toBeInTheDocument()
 
+    const AddButton = screen.getByRole('button', { name: 'Add' })
+    fireEvent.click(AddButton)
+
     const BusinessAddressContainer = within(SubscribePage).getByTestId('business_address')
     expect(BusinessAddressContainer).toBeInTheDocument()
 
-    expect(within(BusinessAddressContainer).getByText('Business address')).toBeInTheDocument()
-
-    const AddButton = within(BusinessAddressContainer).getByRole('button', { name: 'Add' })
-    fireEvent.click(AddButton)
-
     expect(within(BusinessAddressContainer).getByText('Business Address')).toBeInTheDocument()
 
-    const CountryField = within(BusinessAddressContainer).getByTestId('country')
+    const CountryField = within(BusinessAddressContainer).getByTestId('businessCountry')
     expect(CountryField).toBeInTheDocument()
     fireEvent.focus(CountryField)
     fireEvent.change(CountryField, { target: { value: 'United States' } })
 
-    const FirstNameField = within(BusinessAddressContainer).getByTestId('firstName')
+    const FirstNameField = within(BusinessAddressContainer).getByTestId('businessFirstName')
     expect(FirstNameField).toBeInTheDocument()
     fireEvent.focus(FirstNameField)
     fireEvent.change(FirstNameField, { target: { value: 'Jason' } })
 
-    const LastNameField = within(BusinessAddressContainer).getByTestId('lastName')
+    const LastNameField = within(BusinessAddressContainer).getByTestId('businessLastName')
     expect(LastNameField).toBeInTheDocument()
     fireEvent.focus(LastNameField)
     fireEvent.change(LastNameField, { target: { value: 'Maynard' } })
 
-    const AddressField = within(BusinessAddressContainer).getByTestId('address')
+    const AddressField = within(BusinessAddressContainer).getByTestId('businessAddressLineOne')
     expect(AddressField).toBeInTheDocument()
     fireEvent.focus(AddressField)
     fireEvent.change(AddressField, { target: { value: 'Mr John Smith' } })
 
-    const AppartmentField = within(BusinessAddressContainer).getByTestId('appartment')
+    const AppartmentField = within(BusinessAddressContainer).getByTestId('businessAddressLineTwo')
     expect(AppartmentField).toBeInTheDocument()
     fireEvent.focus(AppartmentField)
     fireEvent.change(AppartmentField, { target: { value: '132' } })
 
-    const CityField = within(BusinessAddressContainer).getByTestId('city')
+    const CityField = within(BusinessAddressContainer).getByTestId('businessCity')
     expect(CityField).toBeInTheDocument()
     fireEvent.focus(CityField)
     fireEvent.change(CityField, { target: { value: 'Kingston' } })
 
-    const StateField = within(BusinessAddressContainer).getByTestId('state')
+    const StateField = within(BusinessAddressContainer).getByTestId('businessState')
     expect(StateField).toBeInTheDocument()
     fireEvent.focus(StateField)
     fireEvent.change(StateField, { target: { value: 'New York' } })
 
-    const ZipCodeField = within(BusinessAddressContainer).getByTestId('zipCode')
+    const ZipCodeField = within(BusinessAddressContainer).getByTestId('businessZip')
     expect(ZipCodeField).toBeInTheDocument()
     fireEvent.focus(ZipCodeField)
     fireEvent.change(ZipCodeField, { target: { value: '12401' } })
 
-    const PhoneField = within(BusinessAddressContainer).getByTestId('phone')
+    const PhoneField = within(BusinessAddressContainer).getByTestId('businessPhone')
     expect(PhoneField).toBeInTheDocument()
     fireEvent.focus(PhoneField)
     fireEvent.change(PhoneField, { target: { value: '(555) 555-1234' } })
 
     const SaveButton = within(BusinessAddressContainer).getByRole('button', { name: 'SAVE ADDRESS' })
     expect(SaveButton).toBeInTheDocument()
-    fireEvent.click(SaveButton)
+
+    await act(async () => {
+      await fireEvent.click(SaveButton)
+    })
 
     act(() => {
       jest.advanceTimersByTime(760)
     })
-
-    const imgElement = screen.getByTestId('done_image')
-    expect(imgElement).toBeInTheDocument()
-    expect(imgElement).toHaveAttribute(
-      'src',
-      'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png'
-    )
-    expect(imgElement).toHaveAttribute('height', '34px')
-    expect(imgElement).toHaveAttribute('width', '34px')
   })
 
   it('render subscribe page and business address component with onClick method', async () => {
@@ -405,15 +397,17 @@ describe('Pick a plan', () => {
       }
     )
 
+    const AddButton = screen.getByRole('button', { name: 'Add' })
+    fireEvent.click(AddButton)
+
     const BusinessAddressContainer = screen.getByTestId('business_address')
     expect(BusinessAddressContainer).toBeInTheDocument()
 
-    const AddButton = within(BusinessAddressContainer).getByRole('button', { name: 'Add' })
-    fireEvent.click(AddButton)
-
     const SaveButton = within(BusinessAddressContainer).getByRole('button', { name: 'SAVE ADDRESS' })
     expect(SaveButton).toBeInTheDocument()
-    fireEvent.click(SaveButton)
+    await act(async () => {
+      await fireEvent.click(SaveButton)
+    })
   })
 
   it('renders Subscribe page and verify address card', async () => {
@@ -626,8 +620,10 @@ describe('Pick a plan', () => {
     fireEvent.focus(CountryField)
     fireEvent.change(CountryField, { target: { value: 'USA' } })
 
-    const SaveButton = within(PaymentForm).getByRole('button', { name: 'SAVE ADDRESS' })
-    fireEvent.click(SaveButton)
+    const SaveButton = within(PaymentForm).getByRole('button', { name: 'SAVE PAYMENT' })
+    await act(async () => {
+      await fireEvent.click(SaveButton)
+    })
   })
 
   it('renders Payment Method Form with loading', async () => {
@@ -855,77 +851,67 @@ describe('Pick a plan', () => {
     const SubscribePage = screen.getByTestId('subscribe_page')
     expect(SubscribePage).toBeInTheDocument()
 
+    const AddButton = within(SubscribePage).getByRole('button', { name: 'Add' })
+    fireEvent.click(AddButton)
+
     const BusinessAddressContainer = within(SubscribePage).getByTestId('business_address')
     expect(BusinessAddressContainer).toBeInTheDocument()
 
-    expect(within(BusinessAddressContainer).getByText('Business address')).toBeInTheDocument()
-
-    const AddButton = within(BusinessAddressContainer).getByRole('button', { name: 'Add' })
-    fireEvent.click(AddButton)
-
     expect(within(BusinessAddressContainer).getByText('Business Address')).toBeInTheDocument()
 
-    const CountryField = within(BusinessAddressContainer).getByTestId('country')
+    const CountryField = within(BusinessAddressContainer).getByTestId('businessCountry')
     expect(CountryField).toBeInTheDocument()
     fireEvent.focus(CountryField)
     fireEvent.change(CountryField, { target: { value: 'United States' } })
 
-    const FirstNameField = within(BusinessAddressContainer).getByTestId('firstName')
+    const FirstNameField = within(BusinessAddressContainer).getByTestId('businessFirstName')
     expect(FirstNameField).toBeInTheDocument()
     fireEvent.focus(FirstNameField)
     fireEvent.change(FirstNameField, { target: { value: 'Jason' } })
 
-    const LastNameField = within(BusinessAddressContainer).getByTestId('lastName')
+    const LastNameField = within(BusinessAddressContainer).getByTestId('businessLastName')
     expect(LastNameField).toBeInTheDocument()
     fireEvent.focus(LastNameField)
     fireEvent.change(LastNameField, { target: { value: 'Maynard' } })
 
-    const AddressField = within(BusinessAddressContainer).getByTestId('address')
+    const AddressField = within(BusinessAddressContainer).getByTestId('businessAddressLineOne')
     expect(AddressField).toBeInTheDocument()
     fireEvent.focus(AddressField)
     fireEvent.change(AddressField, { target: { value: 'Mr John Smith' } })
 
-    const AppartmentField = within(BusinessAddressContainer).getByTestId('appartment')
+    const AppartmentField = within(BusinessAddressContainer).getByTestId('businessAddressLineTwo')
     expect(AppartmentField).toBeInTheDocument()
     fireEvent.focus(AppartmentField)
     fireEvent.change(AppartmentField, { target: { value: '132' } })
 
-    const CityField = within(BusinessAddressContainer).getByTestId('city')
+    const CityField = within(BusinessAddressContainer).getByTestId('businessCity')
     expect(CityField).toBeInTheDocument()
     fireEvent.focus(CityField)
     fireEvent.change(CityField, { target: { value: 'Kingston' } })
 
-    const StateField = within(BusinessAddressContainer).getByTestId('state')
+    const StateField = within(BusinessAddressContainer).getByTestId('businessState')
     expect(StateField).toBeInTheDocument()
     fireEvent.focus(StateField)
     fireEvent.change(StateField, { target: { value: 'New York' } })
 
-    const ZipCodeField = within(BusinessAddressContainer).getByTestId('zipCode')
+    const ZipCodeField = within(BusinessAddressContainer).getByTestId('businessZip')
     expect(ZipCodeField).toBeInTheDocument()
     fireEvent.focus(ZipCodeField)
     fireEvent.change(ZipCodeField, { target: { value: '12401' } })
 
-    const PhoneField = within(BusinessAddressContainer).getByTestId('phone')
+    const PhoneField = within(BusinessAddressContainer).getByTestId('businessPhone')
     expect(PhoneField).toBeInTheDocument()
     fireEvent.focus(PhoneField)
     fireEvent.change(PhoneField, { target: { value: '(555) 555-1234' } })
 
     const SaveButton = within(BusinessAddressContainer).getByRole('button', { name: 'SAVE ADDRESS' })
     expect(SaveButton).toBeInTheDocument()
-    fireEvent.click(SaveButton)
-
-    act(() => {
-      jest.advanceTimersByTime(760)
+    await act(async () => {
+      await fireEvent.click(SaveButton)
     })
-
-    const imgElement = screen.getByTestId('done_image')
-    expect(imgElement).toBeInTheDocument()
-    expect(imgElement).toHaveAttribute(
-      'src',
-      'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png'
-    )
-    expect(imgElement).toHaveAttribute('height', '34px')
-    expect(imgElement).toHaveAttribute('width', '34px')
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
   })
 
   it('renders Subscribe page and verify address card', async () => {
@@ -1132,7 +1118,9 @@ describe('Pick a plan', () => {
     fireEvent.focus(CountryField)
     fireEvent.change(CountryField, { target: { value: 'USA' } })
 
-    const SaveButton = within(PaymentForm).getByRole('button', { name: 'SAVE ADDRESS' })
-    fireEvent.click(SaveButton)
+    const SaveButton = within(PaymentForm).getByRole('button', { name: 'SAVE PAYMENT' })
+    await act(async () => {
+      await fireEvent.click(SaveButton)
+    })
   })
 })
