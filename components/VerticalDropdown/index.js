@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
-import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 
 const Container = styled.div`
   position: relative;

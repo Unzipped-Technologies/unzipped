@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { BUSINESS } from '../../store/Business'
+import { BUSINESS, ProjectHireTeam } from '../../store/Business'
 import { parseCookies } from '../../../services/cookieHelper'
 import { ConverterUtils } from '../../../utils/index'
 
@@ -1650,7 +1650,7 @@ describe('DesktopAccount Component', () => {
   // })
 
   it('renders Tasklist for view screen view', async () => {
-    renderWithRedux(<Tasklist />, { initialState })
+    const { unmount } = renderWithRedux(<Tasklist />, { initialState })
 
     const PageContainer = screen.getByTestId('task_list_page')
     expect(PageContainer).toBeInTheDocument()
@@ -1668,24 +1668,77 @@ describe('DesktopAccount Component', () => {
     expect(ProjectDropDown).toBeInTheDocument()
     expect(ProjectDropDown).toHaveTextContent('My Projects')
 
-    await act(async () => {})
-    await fireEvent.click(within(KanbanContainer).getByText('My Projects'))
+    fireEvent.click(ProjectDropDown)
 
-    expect(screen.getAllByText('Hello World')[0]).toBeInTheDocument()
+    const MenuContainer = screen.getByTestId('projects_dropdown_menus')
+    expect(MenuContainer).toBeInTheDocument()
 
-    // const MenuContainer = within(KanbanContainer).getByTestId('projects_dropdown_menus')
-    // expect(MenuContainer).toBeInTheDocument()
+    initialState.Business.projectList?.forEach((project, index) => {
+      const NameContainer = MenuContainer.querySelector(`#panel${index}-header`)
+      expect(within(NameContainer).getByText(ConverterUtils.truncateString(project?.name, 30))).toBeInTheDocument()
+      fireEvent.click(NameContainer)
+      const BusinessDepartments = initialState.Business.projectList?.map(project => project.businessDepartments)
 
-    const BusinessesNames = initialState.Business.projectList.map(project => project.name)
-    // console.log('BusinessesNames', BusinessesNames)
-    const NameContainer = within(KanbanContainer).getByTestId(`panel_0_header`)
-    // console.log('NameContainer', prettyDOM(NameContainer))
-    expect(within(NameContainer).getByText(ConverterUtils.truncateString(BusinessesNames[0], 30))).toBeInTheDocument()
-    // BusinessesNames?.forEach((name, index) => {
-    //   const NameContainer = KanbanContainer.querySelector(`panel_${index}_header`)
-    //   console.log('NameContainer', prettyDOM(NameContainer))
-    //   expect(within(NameContainer).getByText(ConverterUtils.truncateString(name, 30))).toBeInTheDocument()
-    // })
+      BusinessDepartments?.forEach((department, deptIndex) => {
+        if (department?.name) {
+          const DeptNameContainer = MenuContainer.querySelector(`#department_${deptIndex}`)
+          expect(
+            within(DeptNameContainer).getByText(ConverterUtils.truncateString(department?.name, 30))
+          ).toBeInTheDocument()
+          fireEvent.click(DeptNameContainer)
+        }
+      })
+    })
+    const NameContainer = MenuContainer.querySelector(`#panel0-header`)
+    fireEvent.click(NameContainer)
+    const DeptNameContainer = MenuContainer.querySelector(`#department_0`)
+    fireEvent.click(DeptNameContainer)
+
+    const backdrop = document.querySelector('.MuiBackdrop-root')
+    fireEvent.click(backdrop)
+
+    setTimeout(() => {
+      expect(MenuContainer).not.toBeInTheDocument()
+    }, 0)
+
+    const AssigeeButton = within(KanbanContainer).getByRole('button', { name: 'Assigned To' })
+    expect(AssigeeButton).toBeInTheDocument()
+
+    fireEvent.click(AssigeeButton)
+
+    const AssigneeContainer = screen.getByTestId('assignee_options')
+    expect(AssigneeContainer).toBeInTheDocument()
+
+    initialState.Business.hiredProjectTeam?.forEach((user, index) => {
+      const NameContainer = AssigneeContainer.querySelector(`#user_${index}`)
+      if (user?.userId)
+        expect(within(NameContainer).getByText(`${user?.FirstName} ${user?.LastName}`)).toBeInTheDocument()
+      fireEvent.click(NameContainer)
+      fireEvent.click(NameContainer)
+    })
+    const ClearMenu = within(AssigneeContainer).getByText('Clear')
+    expect(ClearMenu).toBeInTheDocument()
+    fireEvent.click(ClearMenu)
+
+    await act(async () => {
+      await fireEvent.keyDown(AssigneeContainer, { key: 'Escape' })
+    })
+
+    unmount()
+    initialState.Business.hiredProjectTeam = []
+
+    renderWithRedux(<Tasklist />, { initialState })
+
+    fireEvent.click(screen.getAllByText('View Full Screen')[0])
+
+    const ResetButton = screen.getByRole('button', { name: 'Return To Default' })
+    expect(ResetButton).toBeInTheDocument()
+    fireEvent.click(ResetButton)
+
+    const SearchField = screen.getByPlaceholderText('Filter by keywords')
+    expect(SearchField).toBeInTheDocument()
+    fireEvent.focus(SearchField)
+    fireEvent.change(SearchField, { target: { value: 'ticket' } })
   })
 
   // //    Mobile View Test Cases

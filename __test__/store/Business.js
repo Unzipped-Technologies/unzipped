@@ -205,7 +205,7 @@ export const BUSINESS = [
         _id: '6601cf1a9411991f47005812',
         tags: ['6601cf1a9411991f47005813', '6601cf1a9411991f47005814', '6601cf1a9411991f47005815'],
         businessId: '6601c98c5657f51de61d261f',
-        name: ' dddd'
+        name: 'dddd'
       }
     ]
   }
@@ -411,3 +411,91 @@ export const WIZARD_SUBMISSION = {
   error: '',
   projectName: ''
 }
+
+export const FullBoardTickets = {
+  // {
+  '6601c35b149276195c3f8fd6': {
+    tagName: 'To Do',
+    tasks: [
+      {
+        order: 1,
+        storyPoints: 2,
+        assignee: {
+          FirstName: 'test',
+          LastName: 'freelancer1',
+          profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+          _id: '6601c2a6149276195c3f8fbd',
+          email: 'freelancer1@gmail.com'
+        },
+        status: 'Todo',
+        _id: '667af120860e1e03f3d16b29',
+        taskName: 'wwww',
+        description: '',
+        businessId: '6601c35b149276195c3f8fd3',
+        departmentId: '6601c35b149276195c3f8fd5',
+        tag: '6601c35b149276195c3f8fd7'
+      }
+    ]
+  },
+  '6601c35b149276195c3f8fd7': {
+    tagName: 'In Progress',
+    tasks: []
+  },
+  '6601c35b149276195c3f8fd8': {
+    tagName: 'Done',
+    tasks: []
+  },
+
+  '66a8c2060cefdf0ecfdb5a8c': {
+    tagName: 'To Do',
+    tasks: []
+  },
+  '66a8c2060cefdf0ecfdb5a8d': {
+    tagName: 'In Progress',
+    tasks: []
+  },
+  '66a8c2060cefdf0ecfdb5a8e': {
+    tagName: 'Done',
+    tasks: []
+  }
+  // }
+}
+
+export const ProjectHireTeam = [
+  {
+    businessId: '6601c35b149276195c3f8fd3',
+    contractId: '6601c3a3149276195c3f8fdb',
+    FirstName: 'test',
+    LastName: 'freelancer1',
+    userId: '6601c2a6149276195c3f8fbd',
+    email: 'freelancer1@gmail.com',
+    profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+  },
+  {
+    businessId: '66106dd562048827e88a67b1',
+    contractId: '66146d1a62c9cd2f34d32c0d',
+    // FirstName: 'test',
+    LastName: 'freelancer2',
+    userId: '6601c2a6149276195c3f8fbf',
+    email: 'freelancer2@gmail.com',
+    profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+  },
+  {
+    businessId: '661e93017277db0ed9b6ff39',
+    contractId: '663d0a7f518771127e11897f',
+    FirstName: 'test',
+    LastName: 'freelancer1',
+    userId: '6601c2a6149276195c3f8fbe',
+    email: 'freelancer1@gmail.com',
+    profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+  },
+  {
+    businessId: '661e93017277db0ed9b6ff39',
+    contractId: '663d0a7f518771127e11897f',
+    FirstName: 'test',
+    LastName: 'freelancer1',
+    userId: '',
+    email: 'freelancer3@gmail.com',
+    profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+  }
+]

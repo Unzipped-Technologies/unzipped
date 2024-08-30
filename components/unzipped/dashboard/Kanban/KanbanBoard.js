@@ -1,45 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
-import { v4 as uuid } from 'uuid'
 import KanbanCard from './KanbanCard'
-import { DraggableItem, CardBody } from './KanbanCard'
-import { makeStyles } from '@material-ui/core/styles'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  updateStatusOnDrag,
-  loadAllBusinessAssociatedTickets,
-  verifyTasksListing
-} from '../../../../redux/actions'
-
-
-const useStyles = makeStyles({
-  root: {
-    height: 216,
-    flexGrow: 1,
-    maxWidth: 400
-  }
-})
-
-const grid = 8
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
-
-  // styles we need to apply on draggables
-  ...draggableStyle
-})
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: grid,
-  width: 250
-})
+import { useDispatch } from 'react-redux'
+import { updateStatusOnDrag } from '../../../../redux/actions'
 
 // Global Style
 const GlobalStyle = createGlobalStyle`
@@ -136,27 +100,12 @@ const Board = styled.div`
   }
 `
 
-const ColumnContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 0 10px;
-  width: 100%;
-`
-
 const ColumnTitle = styled.h2`
   font-size: 24px;
   color: #000000;
   margin: 15px 0px;
   padding: 0px;
   text-align: center;
-`
-
-const DroppableArea = styled.div`
-  background-color: ${props => (props.isDraggingOver ? '#34D9B3' : '#e0e4e7')};
-  padding: 8px;
-  width: 100%;
-  min-height: ${props => props.minHeight}px; /* Dynamic height */
-  border-radius: 8px;
 `
 
 const TaskList = styled.div`
@@ -175,35 +124,16 @@ const TaskColumnStyles = styled.div`
   gap: 12px;
   width: 100%;
 `
-const Title = styled.span`
-  color: #10957d;
-  background: rgba(16, 149, 125, 0.15);
-  padding: 2px 10px;
-  border-radius: 5px;
-  align-self: flex-start;
-`
 
 // Main KanbanBoard Component
-function KanbanBoard({ selectedDepartment, currentBusiness, departmentData, backendCols, setBackendCols }) {
-  const classes = useStyles()
-  const [expanded, setExpanded] = React.useState([])
-  const [selected, setSelected] = React.useState([])
+function KanbanBoard({ backendCols }) {
   const dispatch = useDispatch()
 
-  const handleToggle = (event, nodeIds) => {
-    setExpanded(nodeIds)
-  }
   const [columnsX, setColumns] = useState({})
-  const [maxHeight, setMaxHeight] = useState(0)
-  const columnsRef = useRef([])
 
   useEffect(() => {
     setColumns(backendCols)
   }, [backendCols])
-
-  const handleSelect = (event, nodeIds) => {
-    setSelected(nodeIds)
-  }
 
   const onDragEnd = (result, columnsX, setBackendCols) => {
     if (!result.destination) return
@@ -246,7 +176,6 @@ function KanbanBoard({ selectedDepartment, currentBusiness, departmentData, back
           tasks: destItems
         }
       })
-      // dispatch(loadAllBusinessAssociatedTickets(sourcedObj.businessId))
     } else {
       const column = columnsX[source.droppableId]
       const copiedItems = [...column.tasks]
@@ -272,39 +201,38 @@ function KanbanBoard({ selectedDepartment, currentBusiness, departmentData, back
               {columnsX &&
                 Object.entries(columnsX)?.map(([columnId, column], index) => {
                   return (
-                    <>
+                    <div
+                      key={`${columnId}_${index}`}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '100%'
+                      }}>
                       <div
                         style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          width: '100%'
+                          position: '-webkit-sticky',
+                          position: 'sticky',
+                          top: '0px',
+                          paddingTop: '8px',
+                          backgroundColor: 'white',
+                          zIndex: 10
                         }}>
-                        <div
-                          style={{
-                            position: '-webkit-sticky',
-                            position: 'sticky',
-                            top: '0px',
-                            paddingTop: '8px',
-                            backgroundColor: 'white',
-                            zIndex: 10
-                          }}>
-                          <ColumnTitle>{column.tagName}</ColumnTitle>
-                        </div>
-
-                        <div style={{ height: `100%` }}>
-                          <Droppable key={columnId} droppableId={columnId}>
-                            {(provided, snapshot) => (
-                              <TaskList ref={provided.innerRef} {...provided.droppableProps}>
-                                {column.tasks.map((colItem, index) => (
-                                  <KanbanCard key={colItem} item={colItem} index={index} />
-                                ))}
-                                {provided.placeholder}
-                              </TaskList>
-                            )}
-                          </Droppable>
-                        </div>
+                        <ColumnTitle>{column.tagName}</ColumnTitle>
                       </div>
-                    </>
+
+                      <div style={{ height: `100%` }}>
+                        <Droppable key={columnId} droppableId={columnId}>
+                          {(provided, snapshot) => (
+                            <TaskList ref={provided.innerRef} {...provided.droppableProps}>
+                              {column?.tasks?.map((colItem, index) => (
+                                <KanbanCard key={colItem} item={colItem} index={index} />
+                              ))}
+                              {provided.placeholder}
+                            </TaskList>
+                          )}
+                        </Droppable>
+                      </div>
+                    </div>
                   )
                 })}
             </TaskColumnStyles>

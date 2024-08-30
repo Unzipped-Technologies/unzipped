@@ -113,62 +113,56 @@ const ProjectKanbanBoard = ({ selectedDepartment, currentBusiness, businesses, i
   } = useSelector(state => state?.Auth)
 
   useEffect(() => {
-    if (isFullScreen) {
-      dispatch(resetBusinessList())
-      if (businessInfo) {
-        dispatch(loadAllBusinessAssociatedTickets(businessInfo))
-        dispatch(getBusinessEmployees(_id))
-      }
+    dispatch(resetBusinessList())
+    if (businessInfo) {
+      dispatch(loadAllBusinessAssociatedTickets(businessInfo))
+      dispatch(getBusinessEmployees(_id))
     }
   }, [isFullScreen, businessInfo])
 
   useEffect(() => {
-    if (isFullScreen) {
-      setBackendCols(fullBoardViewTickets)
-    }
+    setBackendCols(fullBoardViewTickets)
   }, [fullBoardViewTickets])
 
   useEffect(() => {
-    if (isFullScreen) {
-      dispatch(loadAllBusinessAssociatedTickets(null, null, false, _id))
-      dispatch(getBusinessEmployees(_id))
-    }
+    dispatch(loadAllBusinessAssociatedTickets(null, null, false, _id))
+    dispatch(getBusinessEmployees(_id))
   }, [businesses])
 
   const [deptFilter, setDptFilter] = useState([])
 
   useEffect(() => {
-    if (isFullScreen) {
-      if (businessInfo) {
-        let _deptArr = []
-        dispatch(getBusinessEmployees(businessInfo))
-        const _dpt = businesses
-          .map(business =>
-            business.businessDepartments.map(dept => ({
-              departmentId: dept._id,
-              name: dept.name
-            }))
-          )
-          .flat()
-        if (backendCols) {
-          for (const [key, value] of Object.entries(backendCols)) {
-            _deptArr = [..._deptArr, ...value.tasks.map(task => task.departmentId)]
-          }
+    if (businessInfo) {
+      let _deptArr = []
+      dispatch(getBusinessEmployees(businessInfo))
+      const _dpt = businesses
+        .map(business =>
+          business.businessDepartments.map(dept => ({
+            departmentId: dept._id,
+            name: dept.name
+          }))
+        )
+        .flat()
+      if (backendCols) {
+        for (const [key, value] of Object.entries(backendCols)) {
+          _deptArr = [..._deptArr, ...value?.tasks?.map(task => task.departmentId)]
         }
-
-        const uniqueIds = new Set(_deptArr)
-
-        const filteredRecords = _dpt.filter(record => uniqueIds.has(record.departmentId))
-
-        setDptFilter(filteredRecords)
       }
+
+      const uniqueIds = new Set(_deptArr)
+
+      const filteredRecords = _dpt.filter(record => uniqueIds.has(record.departmentId))
+
+      setDptFilter(filteredRecords)
     }
   }, [businessInfo, businesses])
 
   useEffect(() => {
+    console.log('departmentFiltering', departmentFiltering)
     if (departmentFiltering.length === 0) {
       setBackendCols(fullBoardViewTickets)
     } else {
+      console.log('elseeee')
       const departmentIdsToFilter = new Set(departmentFiltering.map(item => item.departmentId))
       const newFilteredTickets = { ...backendCols }
 
@@ -197,8 +191,8 @@ const ProjectKanbanBoard = ({ selectedDepartment, currentBusiness, businesses, i
         const filteredTasks = newFilteredTickets[colKey].tasks.filter(task =>
           assigneeFilters.some(
             record =>
-              task?.assignee?.FirstName.trim() === record?.FirstName.trim() ||
-              task?.assignee?.LastName.trim() === record?.LastName.trim()
+              task?.assignee?.FirstName?.trim() === record?.FirstName?.trim() ||
+              task?.assignee?.LastName?.trim() === record?.LastName?.trim()
           )
         )
         newFilteredTickets[colKey] = {
@@ -307,7 +301,7 @@ const ProjectKanbanBoard = ({ selectedDepartment, currentBusiness, businesses, i
                       '&:focus': { backgroundColor: 'transparent !important' },
                       '&:hover': { backgroundColor: 'transparent !important' }
                     }}
-                    onClick={() => handleGridDefaultStatus()}>
+                    onClick={handleGridDefaultStatus}>
                     Return To Default
                   </Button>
                 </div>

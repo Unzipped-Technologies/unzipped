@@ -1,4 +1,11 @@
-import { BUSINESS, SELECTED_BUSIESS, BUSINESS_FORM, WIZARD_SUBMISSION } from './Business'
+import {
+  BUSINESS,
+  SELECTED_BUSIESS,
+  BUSINESS_FORM,
+  WIZARD_SUBMISSION,
+  FullBoardTickets,
+  ProjectHireTeam
+} from './Business'
 import { INVOICES } from './Invoices'
 import { paymentFrequencyEnum } from '../../server/enum/planEnum'
 import { PaymentMethods } from './Stripe'
@@ -132,7 +139,9 @@ export let defaultInitialState = {
     selectedBusiness: { ...SELECTED_BUSIESS },
     totalCount: BUSINESS?.length,
     loading: false,
-    userOwnedBusiness: [...BUSINESS]
+    userOwnedBusiness: [...BUSINESS],
+    fullBoardViewTickets: { ...FullBoardTickets },
+    hiredProjectTeam: [...ProjectHireTeam]
   },
   ProjectApplications: {
     success: false,

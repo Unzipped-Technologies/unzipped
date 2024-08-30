@@ -103,7 +103,7 @@ const MyProjectsLists = ({ businesses, setBusinessInfo, backendCols, setBackendC
       const filteredTasks = tagData.tasks.filter(task => task.departmentId === departmentId)
       result[tagId] = {
         tagName: tagData.tagName,
-        tasks: filteredTasks || []
+        tasks: filteredTasks
       }
     }
 
@@ -148,28 +148,27 @@ const MyProjectsLists = ({ businesses, setBusinessInfo, backendCols, setBackendC
           {businesses &&
             businesses.map((project, index) => (
               <MenuItem key={index} value={index}>
-                <h4>Hello World</h4>
                 <Accordion
                   key={index}
+                  id={`panel${index}-header`}
                   sx={{
                     background: 'transparent',
                     margin: 0,
                     border: 0,
                     boxShadow: 'none'
-                  }}
-                  data-testid={`panel_${index}_header`}>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls={`panel${index}-content`}
-                    id={`panel${index}-header`}>
-                    {console.log('name', `panel_${index}_header`, ConverterUtils.truncateString(project.name, 30))}
-
+                  }}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`panel${index}-content`}>
                     <Typography>{ConverterUtils.truncateString(project.name, 30)}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <List sx={{ margin: 0, boxShadow: 'none', border: 0 }}>
                       {project.businessDepartments.map((department, dptIndex) => (
-                        <StyledListItem key={dptIndex} onClick={() => handleDepartment(project._id, department._id)}>
+                        <StyledListItem
+                          id={`department_${dptIndex}`}
+                          key={dptIndex}
+                          onClick={() => {
+                            handleDepartment(project._id, department._id)
+                          }}>
                           <ListItemIcon>
                             <BlueListIcon />
                           </ListItemIcon>

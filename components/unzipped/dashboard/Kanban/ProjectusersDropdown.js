@@ -49,7 +49,7 @@ const generateRandomColor = () => {
 
   return colorCode
 }
-const renderTextContainer = (title = 'JM', isInnerList = false, isEmailRequired) => (
+const renderTextContainer = (title = 'JM', isInnerList = false, isEmailRequired = false) => (
   <div
     style={{
       background: generateRandomColor(),
@@ -117,7 +117,6 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
             aria-controls={open ? 'demo-customized-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            disableElevation
             sx={{
               width: isEmailRequired ? 'auto' : '230px',
               '&:hover': {
@@ -136,7 +135,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
               }}>
               <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
                 {renderTextContainer(
-                  selectedAssignee?.FirstName?.charAt(0) + selectedAssignee?.LastName?.charAt(0),
+                  `${selectedAssignee?.FirstName?.charAt(0)}${selectedAssignee?.LastName?.charAt(0)}`,
                   true
                 )}
                 <ListItemText

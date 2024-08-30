@@ -76,7 +76,7 @@ const Tasklist = ({
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
   const [isDeleteMode, setIsDeleteMode] = useState(false)
-  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '');
+  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '')
 
   useEffect(() => {
     if (!access) {
@@ -98,9 +98,9 @@ const Tasklist = ({
 
   useEffect(() => {
     if (!selectedDepartment?._id && businesses.length > 0) {
-        setCurrentBusiness(businesses[0]);
+      setCurrentBusiness(businesses[0])
     }
-}, [businesses, selectedDepartment]);
+  }, [businesses, selectedDepartment])
 
   useEffect(() => {
     currentBusiness && setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
@@ -108,20 +108,20 @@ const Tasklist = ({
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
-    setCurrentBusiness(businesses[0]._id);
-    setShowBusinessMenu('');
+    setCurrentBusiness(businesses[0]._id)
+    setShowBusinessMenu('')
     setSelectedDepartment(businesses.businessDepartments?.[0])
     dispatch(getBusinessEmployees(businesses.businessDepartments?.[0].businessId, true))
   }
 
   return (
     <div data-testid="task_list_page">
-      <Nav
+      {/* <Nav
         isSubMenu
         marginBottom={window.innerWidth > 680 ? '125px' : '78px'}
         isLogoHidden={window.innerWidth > 680 ? false : true}
         listName={'Departments'}
-      />
+      /> */}
       <div
         style={{
           display: 'flex',
