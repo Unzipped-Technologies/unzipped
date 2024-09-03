@@ -158,11 +158,9 @@ const ProjectKanbanBoard = ({ selectedDepartment, currentBusiness, businesses, i
   }, [businessInfo, businesses])
 
   useEffect(() => {
-    console.log('departmentFiltering', departmentFiltering)
     if (departmentFiltering.length === 0) {
       setBackendCols(fullBoardViewTickets)
     } else {
-      console.log('elseeee')
       const departmentIdsToFilter = new Set(departmentFiltering.map(item => item.departmentId))
       const newFilteredTickets = { ...backendCols }
 

@@ -434,6 +434,22 @@ export const FullBoardTickets = {
         businessId: '6601c35b149276195c3f8fd3',
         departmentId: '6601c35b149276195c3f8fd5',
         tag: '6601c35b149276195c3f8fd7'
+      },
+      {
+        order: 1,
+        storyPoints: 2,
+        assignee: {
+          profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+          _id: '6601c2a6149276195c3f8fbd',
+          email: 'freelancer1@gmail.com'
+        },
+        status: 'Todo',
+        _id: '667af120860e1e03f3d16b21',
+        taskName: 'wwww',
+        description: '',
+        businessId: '6601c35b149276195c3f8fd3',
+        departmentId: '6601c35b149276195c3f8fd5',
+        tag: '6601c35b149276195c3f8fd7'
       }
     ]
   },

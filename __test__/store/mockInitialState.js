@@ -164,7 +164,7 @@ export let defaultInitialState = {
       priority: '',
       order: 1,
       description: '',
-      status: '',
+      status: 'Todo',
       businessId: '',
       departmentId: '',
       assignee: '',

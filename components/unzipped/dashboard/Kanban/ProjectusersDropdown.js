@@ -49,7 +49,7 @@ const generateRandomColor = () => {
 
   return colorCode
 }
-const renderTextContainer = (title = 'JM', isInnerList = false, isEmailRequired = false) => (
+export const renderTextContainer = (title = 'JM', isInnerList = false, isEmailRequired = false) => (
   <div
     style={{
       background: generateRandomColor(),
@@ -78,9 +78,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
   const [projectTeam, setProjectTeam] = React.useState([])
 
   const handleClick = event => {
-    if (projectTeam?.length > 0) {
-      setAnchorEl(event.currentTarget)
-    }
+    projectTeam?.length > 0 && setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
@@ -97,23 +95,22 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
   }
 
   useEffect(() => {
-    if (assignee) setSelectedAssignee(assignee)
+    assignee && setSelectedAssignee(assignee)
   }, [assignee])
 
   useEffect(() => {
-    if (!(hiredProjectTeam && hiredProjectTeam.length > 0 && hiredProjectTeam[0].contractId == null)) {
+    !(hiredProjectTeam && hiredProjectTeam.length > 0 && hiredProjectTeam[0].contractId == null) &&
       setProjectTeam(hiredProjectTeam)
-    }
   }, [hiredProjectTeam])
 
   return (
     <>
-      <div style={{ width: '100%', height: '100%' }}>
+      <div style={{ width: '100%', height: '100%' }} id="assignee">
         <div onClick={handleClick}>
           <MenuItem
             key={'index'}
             value={'item'}
-            id="demo-customized-button"
+            id="users_dropdown"
             aria-controls={open ? 'demo-customized-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
@@ -148,9 +145,10 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                   }}
                   primary={
                     <React.Fragment>
+                      {console.log('selectedAssignee', selectedAssignee)}
                       <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
                         {selectedAssignee &&
-                          (`${selectedAssignee?.FirstName} ${selectedAssignee?.LastName}` || 'Unassigned')}
+                          (`${selectedAssignee?.FirstName} ${selectedAssignee?.LastName}` ?? 'Unassigned')}
                       </Typography>
                     </React.Fragment>
                   }
@@ -170,9 +168,10 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
         </div>
 
         <StyledMenu
+          data-testid="users_dropdown_menus"
           id="demo-customized-menu"
           MenuListProps={{
-            'aria-labelledby': 'demo-customized-button'
+            'aria-labelledby': 'users_dropdown'
           }}
           anchorEl={anchorEl}
           open={open}
@@ -188,6 +187,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
               <MenuItem
                 key={index}
                 value={member}
+                id={`assignee_${index}`}
                 onClick={() => handleOnTeammemberSelect(member)}
                 sx={{
                   '&:hover': {

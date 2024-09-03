@@ -5,6 +5,7 @@ import { parseCookies } from '../../../services/cookieHelper'
 import { ConverterUtils } from '../../../utils/index'
 
 import { SELECTED_TASK } from '../../store/Tasks'
+import ProjectUsers, { renderTextContainer } from '../../../components/unzipped/dashboard/Kanban/ProjectusersDropdown'
 import Tasklist from '../../../pages/dashboard/tasklist'
 import DepartmentDetail from '../../../pages/dashboard/department/[id]'
 import TicketDetail from '../../../pages/dashboard/ticket/[id]'
@@ -1521,6 +1522,60 @@ describe('DesktopAccount Component', () => {
   //   })
   // })
 
+  // it('renders Tasklist, click on project users dropdown', async () => {
+  //   initialState.Tasks.createStoryForm = {
+  //     taskName: '',
+  //     storyPoints: '',
+  //     priority: '',
+  //     order: 1,
+  //     description: '',
+  //     status: '',
+  //     businessId: '',
+  //     departmentId: '',
+  //     assignee: '',
+  //     tags: [],
+  //     tag: '',
+  //     comments: []
+  //   }
+  //   initialState.Tasks.createStoryForm.businessId = initialState.Tasks.selectedTask.businessId
+  //   initialState.Tasks.createStoryForm.departmentId = initialState.Tasks.selectedTask.departmentId
+
+  //   updateTask.mockReturnValue(() => {
+  //     return {
+  //       status: 500,
+  //       data: {
+  //         message: 'Something went wrong'
+  //       }
+  //     }
+  //   })
+
+  //   renderWithRedux(<Tasklist />, {
+  //     initialState
+  //   })
+
+  //   const PageContainer = screen.getByTestId('task_list_page')
+  //   expect(PageContainer).toBeInTheDocument()
+
+  //   const PanelContainer = PageContainer.querySelector('#tasks_panel')
+  //   expect(PanelContainer).toBeInTheDocument()
+
+  //   const SelectedTask = PanelContainer.querySelector(`#task_${initialState.Tasks.selectedTask._id}`)
+
+  //   const AssigneeDropDown = SelectedTask.querySelector('#users_dropdown')
+  //   expect(AssigneeDropDown).toBeInTheDocument()
+
+  //   fireEvent.click(AssigneeDropDown)
+
+  //   const AssigneeMenus = screen.getByTestId('users_dropdown_menus')
+  //   expect(AssigneeMenus).toBeInTheDocument()
+
+  //   const Option = AssigneeMenus.querySelector('#assignee_0')
+  //   expect(Option).toBeInTheDocument()
+  //   await act(async () => {
+  //     await fireEvent.click(Option)
+  //   })
+  // })
+
   // it('renders Tasklist and open task without some data', async () => {
   //   initialState.Tasks.createStoryForm.businessId = initialState.Tasks.selectedTask.businessId
   //   initialState.Tasks.createStoryForm.departmentId = initialState.Tasks.selectedTask.departmentId
@@ -1724,6 +1779,27 @@ describe('DesktopAccount Component', () => {
       await fireEvent.keyDown(AssigneeContainer, { key: 'Escape' })
     })
 
+    for (var department in initialState.Business.fullBoardViewTickets) {
+      const CurrentDepartmentTasks = initialState.Business.fullBoardViewTickets[department]
+      CurrentDepartmentTasks?.tasks?.forEach((task, index) => {
+        console.log('task', task)
+        const SelectedTask = KanbanContainer.querySelector(`#task_${task?._id}`)
+        expect(SelectedTask).toBeInTheDocument()
+
+        const AssigneeDropDown = SelectedTask.querySelector('#users_dropdown')
+        expect(AssigneeDropDown).toBeInTheDocument()
+
+        fireEvent.click(AssigneeDropDown)
+
+        const AssigneeMenus = screen.getAllByTestId('users_dropdown_menus')[0]
+        expect(AssigneeMenus).toBeInTheDocument()
+
+        const Option = AssigneeMenus.querySelector('#assignee_0')
+        expect(Option).toBeInTheDocument()
+        fireEvent.click(Option)
+      })
+    }
+
     unmount()
     initialState.Business.hiredProjectTeam = []
 
@@ -1735,13 +1811,37 @@ describe('DesktopAccount Component', () => {
     expect(ResetButton).toBeInTheDocument()
     fireEvent.click(ResetButton)
 
+    // const SelectedTask = KanbanContainer.querySelector(`#task_${initialState.Business.fullBoardViewTickets[0].}`)
+
+    //  const AssigneeDropDown = SelectedTask.querySelector('#users_dropdown')
+    //  expect(AssigneeDropDown).toBeInTheDocument()
+
+    //  fireEvent.click(AssigneeDropDown)
+
+    //  const AssigneeMenus = screen.getByTestId('users_dropdown_menus')
+    //  expect(AssigneeMenus).toBeInTheDocument()
+
+    //  const Option = AssigneeMenus.querySelector('#assignee_0')
+    //  expect(Option).toBeInTheDocument()
+    //  await act(async () => {
+    //    await fireEvent.click(Option)
+    //  })
+
     const SearchField = screen.getByPlaceholderText('Filter by keywords')
     expect(SearchField).toBeInTheDocument()
     fireEvent.focus(SearchField)
     fireEvent.change(SearchField, { target: { value: 'ticket' } })
   })
 
-  // //    Mobile View Test Cases
+  it('test project users dropdown method', async () => {
+    renderTextContainer(undefined, undefined, true)
+  })
+
+  it('test project users with default parameters values', async () => {
+    renderWithRedux(<ProjectUsers />, { initialState })
+  })
+
+  //    Mobile View Test Cases
   // it('renders Tasklist on mobile view and click on other department to edit the task', async () => {
   //   initialState.Tasks.createStoryForm = {
   //     taskName: '',

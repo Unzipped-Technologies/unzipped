@@ -56,29 +56,19 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
     })
   }, [departmentId])
 
-  useEffect(() => {
-    if (!tagForm?.tagName?.trim()) {
-      setIsTagOpAllowed(false)
-    } else {
-      setIsTagOpAllowed(true)
-    }
-  }, [tagForm.tagName])
-
   const updateForm = (field, value) => {
     updateCreateTagForm({
       [`${field}`]: value
     })
   }
 
-  useEffect(()=>{
-    if(!tagForm.tagName.trim()){
-      setIsButtonEnabled(false);
+  useEffect(() => {
+    if (!tagForm.tagName.trim()) {
+      setIsButtonEnabled(false)
+    } else {
+      setIsButtonEnabled(true)
     }
-   else{
-    setIsButtonEnabled(true);
-   }
-
-  },[tagForm.tagName])
+  }, [tagForm.tagName])
 
   const onSubmit = async () => {
     await createTag(tagForm)
@@ -139,7 +129,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               type="outlineInverse"
               fontSize="15px"
               contentMargin="0px !important"
-              boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)'
+              boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
               borderRadius
               colors={{
                 text: '#1976D2',
@@ -149,7 +139,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               }}
               style={{
                 borderRadius: '5px',
-                padding:'8px'
+                padding: '8px'
               }}
               onClick={() => {
                 onHide()
@@ -166,10 +156,10 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               contentMargin="0px !important"
               type="black"
               fontSize="15px"
-              boxShadow= '0px 4px 6px rgba(0, 0, 0, 0.1)'
+              boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
               style={{
                 borderRadius: '5px',
-                padding:'8px'
+                padding: '8px'
               }}
               colors={{
                 text: '#FFF',

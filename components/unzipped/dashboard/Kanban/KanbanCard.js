@@ -44,7 +44,11 @@ const KanbanCard = ({ item, index }) => {
     <>
       <Draggable key={item._id} draggableId={item._id} index={index}>
         {provided => (
-          <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            id={`task_${item._id}`}>
             <DraggableItem>
               <CardHeader>
                 <span style={{ fontWeight: 500, fontSize: 18 }}> {item?.ticketCode}</span>

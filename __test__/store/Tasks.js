@@ -230,8 +230,8 @@ export const TASKS = [
     assignee: {
       user: {
         _id: '6601c2a6149276195c3f8fbd',
-        FirstName: 'test',
-        LastName: 'freelancer1',
+        FirstName: '',
+        LastName: '',
         FullName: 'test freelancer1',
         profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
       }

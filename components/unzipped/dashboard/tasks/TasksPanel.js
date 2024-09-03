@@ -168,7 +168,7 @@ const TasksPanel = ({
       businessId: selectedDepartment.businessId,
       departmentId: selectedDepartment?._id,
       tag: tagId,
-      priority: '',
+      priority: 'lowest',
       status: tagName?.toLowerCase().includes('to')
         ? TODO_STATUS
         : tagName?.toLowerCase().includes('in')
@@ -251,7 +251,7 @@ const TasksPanel = ({
                 text: '#000'
               }}
               noBorder
-              boxShadow='0px 4px 6px rgba(0, 0, 0, 0.1)'
+              boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
               onClick={() => {
                 openTagModal()
               }}>

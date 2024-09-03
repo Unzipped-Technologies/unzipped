@@ -529,7 +529,7 @@ const TaskForm = ({
             )}
           </DIV>
           <DIV display="flex" alignItems="center" padding="0px 0px 0px 0px" width="40%" overflow={'none'}>
-            <DIV display="flex" alignItems="center" gap='19px' >
+            <DIV display="flex" alignItems="center" gap="19px">
               <TitleText
                 color="grey"
                 titleFontSize="16px"
@@ -540,7 +540,6 @@ const TaskForm = ({
                 paddingRight="5px">
                 Tags:
               </TitleText>
-
               <Autocomplete
                 multiple
                 data-testid="tags_autocomplete"
