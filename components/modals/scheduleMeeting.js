@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs'
+import { Dialog } from '@material-ui/core'
+import MuiDialogContent from '@material-ui/core/DialogContent'
+import { withStyles } from '@material-ui/core/styles'
 
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { DateCalendar } from '@mui/x-date-pickers'
@@ -18,28 +20,31 @@ import socket from '../../components/sockets/index'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: '8px',
-  padding: '32px',
-  '@media (max-width: 680px)': {
-    height: '95%',
-    width: '95%',
-    overflow: 'scroll'
+const MUIDialog = withStyles(theme => ({
+  paper: {
+    width: '100%',
+    height: window?.innerWidth > 680 ? '472px' : '100% !important',
+    margin: '0px !important'
+  },
+  root: {}
+}))(Dialog)
+
+const DialogContent = withStyles(theme => ({
+  root: {
+    maxWidth: 'unset !important', // Remove default max-width
+    width: '100% !important', // Fill remaining dialog space
+    padding: theme.spacing(2),
+    height: window?.innerWidth > 680 ? '472px' : '100% !important',
+    maxHeight: '100% !important'
   }
-}
+}))(MuiDialogContent)
+
 export default function ScheduleMeetingModal({
   scheduleInterviewModal,
   handleScheduleInterviewModal,
   receiver,
   setScheduleInterviewModal,
-  setScheduleInterview,
-  isMobileViewPanel = false
+  setScheduleInterview
 }) {
   const { Auth } = useSelector(state => state)
 
@@ -95,40 +100,30 @@ export default function ScheduleMeetingModal({
     }
     socket.emit('createMeeting', scheduleMeetingObj)
     setScheduleInterviewModal(false)
-
-    if (isMobileViewPanel) {
-      setScheduleInterview(false)
-    }
   }
 
   const getDate = val => {
-    if (val) {
-      const [datePart] = val.split(' ')
-      const slpitDateString = datePart.replace(/:/g, '-') // + 'T' + timePart + 'Z';
-      return slpitDateString //formattedDate
-    }
+    const [datePart] = val.split(' ')
+    const slpitDateString = datePart.replace(/:/g, '-') // + 'T' + timePart + 'Z';
+    return slpitDateString //formattedDate
   }
 
   const getTime = time => {
-    if (time) {
-      const [timePart, hoursPart] = time.split(' ')
-      const timeFormat = timePart + ' ' + hoursPart
-      return timeFormat
-    }
+    const [timePart, hoursPart] = time.split(' ')
+    const timeFormat = timePart + ' ' + hoursPart
+    return timeFormat
   }
   return (
-    <div data-testid="schedule_meeting_modal">
-      <Modal
-        open={scheduleInterviewModal}
+    <div>
+      <MUIDialog
+        data-testid="schedule_meeting_modal"
         onClose={handleScheduleInterviewModal}
-        aria-labelledby="meeting_modal_title"
-        aria-describedby="meeting_modal_description">
-        <Box
-          sx={style}
-          style={{
-            overflowY: 'auto', // Enable vertical scrolling
-            maxHeight: '80vh' // Limit the maximum height
-          }}>
+        disableEscapeKeyDown
+        open={scheduleInterviewModal}
+        maxWidth="md"
+        aria-labelledby="story-preview-modal"
+        aria-describedby="story-preview-modal-description">
+        <DialogContent dividers>
           <Grid container paddingLeft={2} spacing={2}>
             <Grid item sm={12} md={12}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -139,7 +134,7 @@ export default function ScheduleMeetingModal({
                 to accept the request. Select up to 5 times for maximum flexibility.
               </Typography>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} id="date_calendar">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateCalendar
                   value={selectedDate}
@@ -150,22 +145,25 @@ export default function ScheduleMeetingModal({
               </LocalizationProvider>
             </Grid>
             <Grid container item xs={12} md={6} gap={2} justifyContent={{ xs: 'center', md: 'space-between' }}>
-              {dayTime.map((time, index) => (
-                <Button
-                  key={index}
-                  variant={updatedSelectedTime.has(time) ? 'contained' : 'outlined'}
-                  disabled={updatedSelectedTime.size > 4 && !updatedSelectedTime.has(time)}
-                  onClick={() => handleSelectedTime(time)}>
-                  {dayjs(time, 'YYYY:MM:DD hh:mm A').format('hh:mm A')}
-                </Button>
-              ))}
-              <>
+              <div id="day_times">
+                {dayTime.map((time, index) => (
+                  <Button
+                    key={index}
+                    variant={updatedSelectedTime.has(time) ? 'contained' : 'outlined'}
+                    disabled={updatedSelectedTime.size > 4 && !updatedSelectedTime.has(time)}
+                    onClick={() => handleSelectedTime(time)}>
+                    {dayjs(time, 'YYYY:MM:DD hh:mm A').format('hh:mm A')}
+                  </Button>
+                ))}
+              </div>
+
+              <div id="selected_times">
                 {Array.from(updatedSelectedTime).map((time, index) => (
                   <Button key={index} variant="contained" style={{ marginRight: '10px' }}>
                     {dayjs(time, 'YYYY:MM:DD hh:mm A').format('hh:mm A')}
                   </Button>
                 ))}
-              </>
+              </div>
 
               <Box display={'flex'} justifyContent={{ md: 'end', xs: 'center' }} gap={2} width={'100%'}>
                 <Button variant="outlined" onClick={handleScheduleInterviewModal}>
@@ -177,8 +175,8 @@ export default function ScheduleMeetingModal({
               </Box>
             </Grid>
           </Grid>
-        </Box>
-      </Modal>
+        </DialogContent>
+      </MUIDialog>
     </div>
   )
 }
