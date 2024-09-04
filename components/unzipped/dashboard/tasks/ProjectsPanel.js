@@ -3,10 +3,10 @@ import { TitleText, DarkText, WhiteCard, Underline, DIV } from '../style'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import MenuIcon from '../../../ui/icons/menu'
 import { FaRegCheckCircle } from 'react-icons/fa'
-import {getBusinessEmployees} from '../../../../redux/Business/actions'
+import { getBusinessEmployees } from '../../../../redux/Business/actions'
 import { useDispatch } from 'react-redux'
 
-const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness, setIsEditable }) => {
+const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, currentBusiness, onSelectBusiness, setIsEditable, showBusinessMenu, setShowBusinessMenu }) => {
   const dispatch = useDispatch()
   return (
     <>
@@ -27,12 +27,18 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                   justifyContent="space-between"
                   padding="20px 0px 0px 0px"
                   onClick={() => {
-                    if (business._id === currentBusiness?._id) {
-                      onSelectBusiness('')
+                    if (business._id === showBusinessMenu || business._id === currentBusiness?._id) {
+                      setShowBusinessMenu('');
+                      onSelectBusiness('');
+                      onSelectDepartment(null);
                     } else {
-                      onSelectBusiness(business)
+                      setShowBusinessMenu(business._id);
+                      onSelectBusiness(business);
+                      onSelectDepartment(business.businessDepartments?.[0])
+                      dispatch(getBusinessEmployees(business.businessDepartments?.[0].businessId, true))
                     }
-                  }}>
+                  }}
+                >
                   <TitleText paddingLeft clickable>
                     {business.name}
                   </TitleText>
@@ -46,7 +52,8 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                   />
                 </DIV>
                 {business._id !== currentBusiness?._id && <Underline />}
-                {business?.businessDepartments?.length && currentBusiness?._id === business?._id
+                {business?.businessDepartments?.length && (business._id === currentBusiness?._id || business._id === showBusinessMenu)
+                  // {business?.businessDepartments?.length && currentBusiness?._id === business?._id
                   ? business?.businessDepartments?.map(department => {
                     return (
                       <DIV key={department._id}>
@@ -103,7 +110,7 @@ const ProjectsPanel = ({ businesses, selectedDepartment, onSelectDepartment, cur
                     )
                   })
                   : ''}
-                {business._id === currentBusiness?._id && <Underline />}
+                {(business._id === currentBusiness?._id || business._id === showBusinessMenu) && <Underline />}
               </div>
             )
           })

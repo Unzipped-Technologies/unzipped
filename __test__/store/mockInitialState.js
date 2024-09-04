@@ -92,11 +92,23 @@ export let defaultInitialState = {
     }
   },
   Contracts: {
-    contracts: [...CONTRACTS]
+    contracts: [...CONTRACTS],
+    activeContracts: [...CONTRACTS],
+    contractForm: {
+      businessId: '',
+      departmentId: '',
+      freelancerId: '',
+      userId: '',
+      currency: 'USD',
+      hourlyRate: 0,
+      hoursLimit: 0,
+      message: '',
+      jobType: ''
+    }
   },
   Invoices: {
     invoices: [...INVOICES],
-    unpaidInvoices: [],
+    unpaidInvoices: [...INVOICES],
     selectedInvoice: {},
     error: '',
     loading: false,
@@ -120,7 +132,8 @@ export let defaultInitialState = {
     projectList: [...BUSINESS],
     selectedBusiness: { ...SELECTED_BUSIESS },
     totalCount: BUSINESS?.length,
-    loading: false
+    loading: false,
+    userOwnedBusiness: [...BUSINESS]
   },
   ProjectApplications: {
     success: false,

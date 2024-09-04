@@ -21,6 +21,7 @@ const businessSchema = new Schema(
     businessCity: { type: String, default: '' },
     businessState: { type: String, default: '' },
     businessZip: { type: String, default: '' },
+    businessPhone: { type: String, default: '' },
 
     totalSpent: { type: Number, default: 0 },
     equity: Number,

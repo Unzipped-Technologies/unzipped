@@ -145,4 +145,13 @@ router.post('/payment-method/delete', requireLogin, async (req, res) => {
   }
 })
 
+router.get('/revoke-access/:contractId', requireLogin, async (req, res) => {
+  try {
+    await contractHelper.revokeAccess(req.params.contractId)
+    res.json({ msg: 'Access revoked successfully' })
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
 module.exports = router

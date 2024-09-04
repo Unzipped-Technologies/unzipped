@@ -57,7 +57,7 @@ const ProjectRequirements = styled.ul`
 const AboutClient = styled.div`
   position: relative;
   top: 10px;
-  width: 28%;
+  width: 26%;
   height: fit-content;
   flex-shrink: 0;
   left: 20px;

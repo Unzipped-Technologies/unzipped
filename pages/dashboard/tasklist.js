@@ -67,6 +67,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
   const [isDeleteMode, setIsDeleteMode] = useState(false)
+  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '');
 
   useEffect(() => {
     if (!access) {
@@ -89,10 +90,10 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, []);
 
   useEffect(() => {
-    if (!selectedDepartment?._id) {
-      setCurrentBusiness(businesses[0])
+    if (!selectedDepartment?._id && businesses.length > 0) {
+        setCurrentBusiness(businesses[0]);
     }
-  }, [businesses])
+}, [businesses, selectedDepartment]);
 
   useEffect(() => {
     if (currentBusiness) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
@@ -106,6 +107,10 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
+    setCurrentBusiness(businesses[0]._id);
+    setShowBusinessMenu('');
+    setSelectedDepartment(businesses.businessDepartments?.[0])
+    dispatch(getBusinessEmployees(businesses.businessDepartments?.[0].businessId, true))
   }
 
   return (
@@ -155,6 +160,8 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 onSelectBusiness={value => {
                   setCurrentBusiness(value)
                 }}
+                showBusinessMenu={showBusinessMenu}
+                setShowBusinessMenu={setShowBusinessMenu}
               />
               {window.innerWidth > 600 && (
                 <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} />

@@ -117,9 +117,9 @@ const CreateBusiness = ({
   const [isSmallWindow, setIsSmallWindow] = useState(false)
   const { width } = useWindowSize()
 
-  useEffect(()=>{
-    if(!accessToken) router.push('/login')
-  },[])
+  useEffect(() => {
+    if (!accessToken) router.push('/login')
+  }, [])
 
   useEffect(() => {
     if (width <= 680) {

@@ -70,7 +70,7 @@ const HeadingText = styled.div`
 
 const DarkText = styled.div`
   font-family: 'Roboto';
-  font-style: normal;
+  font-style: ${({ fontStyle }) => (fontStyle ? fontStyle : 'normal')};
   position: relative;
   word-break: break-word;
   font-weight: ${({ bold, lighter }) => (bold ? '600' : lighter ? '300' : '400')};
@@ -409,6 +409,7 @@ const TableData = styled.td`
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
   }
   padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
+  margin: ${({ margin }) => (margin ? margin : '0px')};
 `
 
 const HelpCenterContainer = styled.div`
@@ -452,6 +453,9 @@ const DIV = styled.div`
   overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
   box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
+  gap: ${({ gap }) => (gap ? gap : '0px')};
+  border-bottom-left-radius: ${({ borderBottomLeftRadius }) => (borderBottomLeftRadius ? borderBottomLeftRadius : '0px')};
+  border-bottom-right-radius: ${({ borderBottomRightRadius }) => (borderBottomRightRadius ? borderBottomRightRadius : '0px')};
 `
 
 const TEXT = styled.p`
@@ -476,6 +480,7 @@ const TEXT = styled.p`
   overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
   color: ${({ textColor }) => (textColor ? textColor : '#000000')};
+  font-family: 'Roboto';
 `
 const bounceAnimation = keyframes`
   0% {

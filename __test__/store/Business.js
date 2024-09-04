@@ -225,6 +225,7 @@ export const SELECTED_BUSIESS = {
   businessCity: 'Washington',
   businessState: 'Washington',
   businessZip: '300000',
+  businessPhone: '',
   totalSpent: 0,
   objectives: [
     'Requirement one will go here',
