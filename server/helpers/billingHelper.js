@@ -14,6 +14,7 @@ const receiptTemplate = require('../../services/emailTemplates/receipt')
 const { paymentStatusEnum, paymentTypeEnum } = require('../enum/paymentEnum')
 const ThirdPartyApplicationModel = require('../models/ThirdPartyApplications')
 const { ObjectId } = require('mongoose').Types
+const { planEnum } = require('../enum/planEnum')
 
 const stripePayment = async (obj, user) => {
   let amount = obj.total * 100
@@ -220,7 +221,7 @@ const createSubscription = async (req, obj, user) => {
       paymentAmount: subscriptionType.price
     })
   ])
-  await Promise.all([
+  const [updateUserModel, updateSubscriptionModel] = await Promise.all([
     UserModel.findByIdAndUpdate(user, {
       $set: {
         trialEndDate: new Date(trialEnd),
@@ -239,8 +240,45 @@ const createSubscription = async (req, obj, user) => {
           payments: await PaymentHistoryModel.find({ userId: user })
         }
       }
-    )
+    ).select('userId product payments plan').populate([
+      {
+        path: 'userId',
+        model: 'users',
+        select: 'FirstName LastName email isUserSubscribed '
+      },
+      {
+        path: 'payments',
+        model: 'PaymentHistories',
+        select: 'paymentAmount paymentDate '
+      }
+    ])
   ])
+
+  
+  if (updateSubscriptionModel.isUserSubscribed) {
+    const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan)
+    const benefits = getBenefits(updateSubscriptionModel.plan)
+    const userMailOpts = {
+      to: updateSubscriptionModel.userId.email,
+      subject: `🎉 Subscription Payment Confirmation -  ${subscriptionName}`,
+      templateId: "d-4592da9ad3494cdca58fe07dd28b9f42",
+      dynamicTemplateData: {
+        firstName: updateSubscriptionModel?.userId?.FirstName ?? '',
+        lastName: updateSubscriptionModel?.userId?.LastName ?? '',
+        subscriptionName: subscriptionName,
+        amount: updateSubscriptionModel?.payments?.paymentAmount || 'N/A',
+        subscriptionLink: `${keys.redirectDomain}/subscribe`,
+        viewSubscription: `${keys.redirectDomain}/subscribe`,
+        paymentDate: updateSubscriptionModel?.payments?.paymentDate || new Date(),
+        benefits: benefits || 'N/A',
+        viewSubscriptionLink: `${keys.redirectDomain}/subscribe`,
+        manageSubscriptionLink: `${keys.redirectDomain}/subscribe`,
+        price: updateSubscriptionModel?.payments?.paymentAmount || 'N/A',
+        currentYear: new Date().getFullYear()
+      }
+    }
+    await Mailer.sendInviteMail(userMailOpts)
+  }
   return 'success'
 }
 
@@ -868,6 +906,51 @@ const failedPaymentNotification = async (user) => {
       }
     }
     await Mailer.sendInviteMail(mailOptions);
+  }
+}
+
+const getSubscriptionName = plan => {
+  switch (plan) {
+    case planEnum.BASIC:
+      return 'Basic Unzipped'
+    case planEnum.STANDARD:
+      return 'Standard Unzipped'
+    case planEnum.ADVANCED:
+      return 'Advanced Unzipped'
+    default:
+      return 'UNSUBSCRIBED'
+  }
+}
+
+const getBenefits = plan => {
+  switch (plan) {
+    case planEnum.BASIC:
+      return [
+        'Create up to 1 business',
+        'Hire Unlimited professionals to work on your project',
+        'Create and manage your unzipped repo',
+        'Plan and monitor effort remaining'
+      ]
+    case planEnum.STANDARD:
+      return [
+        'Create up to 3 businesses',
+        'Hire Unlimited professionals to work on your project',
+        'Offer ownership and profit sharing',
+        'Create and manage your unzipped repo',
+        'Plan and monitor effort remaining'
+      ]
+    case planEnum.ADVANCED:
+      return [
+        'Create unlimited businesses',
+        'Hire Unlimited professionals to work on your project',
+        'Offer ownership and profit sharing',
+        'Create and manage your unzipped repo',
+        'Plan and monitor effort remaining',
+        'Dedicated support staff member',
+        'Advanced promotion options'
+      ]
+    default:
+      return []
   }
 }
 
