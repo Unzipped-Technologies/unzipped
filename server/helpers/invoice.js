@@ -374,11 +374,11 @@ const notifyUpdateInvoices = async (updatedInvoice) => {
 
 const notifyEmails = async (invoiceRecord, paymentDetails, activeTeamMembers, paymentSummary) => {
   const freelancerHourlyRate = await ContractModel.find({ businessId: invoiceRecord.businessId, freelancerId: invoiceRecord.freelancerId }).select('hourlyRate')
-  const paymentAmount = invoiceRecord.hoursWorked * freelancerHourlyRate[0].hourlyRate;
+  const paymentAmount = (invoiceRecord?.hoursWorked ?? 0) * (freelancerHourlyRate[0]?.hourlyRate ?? 0);
 
   const clientMailOpts = {
     to: invoiceRecord?.clientId?.email,
-    subject: `: ✔️ Weekly Invoice Payment Summary for ${invoiceRecord?.businessId?.name}`,
+    subject: `✔️ Weekly Invoice Payment Summary for ${invoiceRecord?.businessId?.name}`,
     templateId: "d-84b47273c99842ee8f43f85db0c48dc0",
     dynamicTemplateData: {
       dashboardLink: `${keys.redirectDomain}/dashboard`,
