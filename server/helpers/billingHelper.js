@@ -255,7 +255,7 @@ const createSubscription = async (req, obj, user) => {
   ])
 
   
-  if (updateSubscriptionModel.isUserSubscribed) {
+  if (updateSubscriptionModel?.isUserSubscribed) {
     const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan)
     const benefits = getBenefits(updateSubscriptionModel.plan)
     const userMailOpts = {
