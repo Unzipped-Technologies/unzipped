@@ -48,12 +48,12 @@ const Account = () => {
     <React.Fragment>
       <Nav isSubMenu marginBottom={marginBottom} />
       {window.innerWidth >= 680 ? (
-        <DesktopDisplayBox>
+        <DesktopDisplayBox id="desktop_account">
           <DesktopAccount />
           <Footer />
         </DesktopDisplayBox>
       ) : (
-        <MobileDisplayBox>
+        <MobileDisplayBox id="mobile_account">
           <MobileAccount />
           <MobileFreelancerFooter defaultSelected="Account" />
         </MobileDisplayBox>

@@ -59,6 +59,7 @@ export let defaultInitialState = {
       AddressLineOne: 'Address 1',
       AddressLineTwo: 'Address 2',
       AddressCity: 'NewYork',
+      AddressState: 'New York',
       AddressZip: '40000',
       likeTotal: 10,
       updatedAt: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), //'2024-03-25T19:00:02.865Z',
