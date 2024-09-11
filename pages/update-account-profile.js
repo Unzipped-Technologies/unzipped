@@ -126,7 +126,7 @@ const GetCard = ({
               <FormField
                 fieldType="input"
                 fontSize="14px"
-                width="80%"
+                width="78%"
                 placeholder="Business Type"
                 options={[
                   {
@@ -145,7 +145,7 @@ const GetCard = ({
                 noMargin
                 onChange={e => updateForm({ businessType: e.target.value })}
                 value={businessType}>
-                Business Type (Individual, LLC, C-corp)
+                Business Type (Individual, LLC)
               </FormField>
             </Grid2>
             <FormField
@@ -213,7 +213,7 @@ const GetCard = ({
                 fieldType="input"
                 fontSize="14px"
                 noMargin
-                width="80%"
+                width="78%"
                 onChange={e => updateForm({ AddressZip: e.target.value })}
                 value={AddressZip}>
                 Zip Code
