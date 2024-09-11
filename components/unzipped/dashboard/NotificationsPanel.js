@@ -30,15 +30,14 @@ const NotificationsPanel = ({
   passwordChanged,
   calenderSuccess
 }) => {
-
   const dispatch = useDispatch()
   const [initialUrl] = useState(url)
 
-  useEffect(() => {
-    if (url && url !== initialUrl) {
-      window.open(url, '_blank')
-    }
-  }, [url, router])
+  // useEffect(() => {
+  //   if (url && url !== initialUrl) {
+  //     window.open(url, '_blank')
+  //   }
+  // }, [url, router])
 
   setTimeout(() => {
     success && hideSuccessAlert()

@@ -192,6 +192,7 @@ const ListManagementPanel = ({
     <div>
       <Modal
         data-testid="add_list_modal"
+        id="add_list_modal"
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         className={classes.modal}

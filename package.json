@@ -165,6 +165,8 @@
     "babel-jest": "^29.7.0",
     "babel-loader": "^8.3.0",
     "concurrently": "^8.2.2",
+    "cypress": "^13.14.2",
+    "cypress-file-upload": "^5.0.8",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^29.7.0",
     "kill-port": "^2.0.1",

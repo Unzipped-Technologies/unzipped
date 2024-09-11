@@ -142,6 +142,7 @@ const ListModal = ({
     <>
       <MUIDialog
         data-testid={`${userId}_list_modal`}
+        id={`${user?.userId}_list_modal`}
         onClose={handleClose}
         disableEscapeKeyDown
         open={open}

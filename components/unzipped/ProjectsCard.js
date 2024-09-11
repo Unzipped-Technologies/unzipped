@@ -75,7 +75,7 @@ function ProjectsCard({ user, freelancerId }) {
     return filteredArray
   }, [user])
   return (
-    <Container data-testid="freelancer_profile_projects">
+    <Container data-testid="freelancer_profile_projects" id="freelancer_info">
       <div style={{ width: '70%' }}>
         {user?.projects?.length ? (
           user?.projects?.map(project => (

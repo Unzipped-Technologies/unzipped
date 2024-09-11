@@ -34,7 +34,7 @@ const Flex = styled.div`
 const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
   const router = useRouter()
   return (
-    <Container includeRate={includeRate} data-testid={project?._id}>
+    <Container includeRate={includeRate} data-testid={project?._id} id={project?._id}>
       <Left>
         <Image
           src={project?.projectImagesUrl?.[0]?.url}

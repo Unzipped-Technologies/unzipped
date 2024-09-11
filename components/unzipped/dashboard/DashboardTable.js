@@ -148,7 +148,7 @@ const DashboardTable = ({
           {businesses?.length > 0 && (
             <tbody data-testid="dashboard_projects_table_body">
               {businesses?.map(row => (
-                <tr key={row._id} data-testid={row?._id} >
+                <tr key={row._id} data-testid={row?._id} id={row?._id}>
                   <TableData
                     fontSize="14px"
                     fontWeight="500"
@@ -160,9 +160,18 @@ const DashboardTable = ({
                     textAlign="left">
                     {ValidationUtils.truncate(row.name, 40)}
                   </TableData>
-                  <TableData fontSize="14px" color="grey"> {row.budget || 0} </TableData>
-                  <TableData fontSize="14px" color="grey"> 27 </TableData>
-                  <TableData fontSize="14px" color="grey"> {row.valueEstimate || 'N/A'} </TableData>
+                  <TableData fontSize="14px" color="grey">
+                    {' '}
+                    {row.budget || 0}{' '}
+                  </TableData>
+                  <TableData fontSize="14px" color="grey">
+                    {' '}
+                    27{' '}
+                  </TableData>
+                  <TableData fontSize="14px" color="grey">
+                    {' '}
+                    {row.valueEstimate || 'N/A'}{' '}
+                  </TableData>
                   <TableData fontSize="14px" color="grey">
                     {(row?.deadline && ValidationUtils.formatDate(row?.deadline)) ||
                       ValidationUtils.formatDate(row?.updatedAt || row?.createdAt)}
@@ -171,8 +180,8 @@ const DashboardTable = ({
                   <TableData
                     textTransform="lowercase"
                     style={{
-                      display: "flex",
-                      justifyContent: "center"
+                      display: 'flex',
+                      justifyContent: 'center'
                     }}>
                     <Button
                       icon="largeExpand"
@@ -183,17 +192,17 @@ const DashboardTable = ({
                       fontSize="16px"
                       dropDownRight="-104px"
                       popout={generatePopout(role, row)}
-                      boxShadow='0px 4px 8px rgba(0, 0, 0, 0.2)'
+                      boxShadow="0px 4px 8px rgba(0, 0, 0, 0.2)"
                       colors={{
                         text: '#d3d3d3',
                         background: '#fff',
                         border: '1px',
-                        wideBorder: '#d3d3d3',
+                        wideBorder: '#d3d3d3'
                       }}
-                      zIndex='auto'
+                      zIndex="auto"
                       style={{
                         color: 'grey',
-                        borderRadius: '8px',
+                        borderRadius: '8px'
                       }}
                       iconRight>
                       Details

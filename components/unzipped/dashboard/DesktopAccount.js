@@ -179,7 +179,7 @@ const DesktopAccount = ({
     }
 
     fetchData()
-  }, [])
+  }, [router])
 
   useEffect(() => {
     const initialState = {
@@ -265,7 +265,7 @@ const DesktopAccount = ({
   }
 
   const validateEin = ({ item, message }, setErrorMessage) => {
-    if (item === '') {
+    if (userData?.taxId === '') {
       setErrorMessage('This field is required!')
       return
     }
@@ -289,7 +289,7 @@ const DesktopAccount = ({
       })
       await router.push('/dashboard/account')
     } else {
-      setError(response?.data?.message ?? 'Something went wrong')
+      setError(response?.data?.msg)
     }
   }
 
@@ -775,7 +775,7 @@ const DesktopAccount = ({
                   )
                 }}
                 onChange={e => updateForm('businessType', e.target.value)}
-                value={userData?.businessType}>
+                value={userData?.businessType ?? ''}>
                 Business Type
               </FormField>
             </Rows>
@@ -831,7 +831,6 @@ const DesktopAccount = ({
                   error={taxIdError}
                   onBlur={() => {
                     updateDisabled()
-                    updateForm('taxId', ValidationUtils._formatToEIN(userData?.taxId))
                     validateEin(
                       {
                         item: ValidationUtils._formatToEIN(userData?.taxId),

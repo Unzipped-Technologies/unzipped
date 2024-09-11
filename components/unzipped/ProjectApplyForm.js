@@ -201,7 +201,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
   }
 
   return (
-    <Container data-testid="project_apply_form">
+    <Container data-testid="project_apply_form" id="project_apply_form">
       <HeadingContainer>
         <ApplyHeading>Apply to this project</ApplyHeading>
       </HeadingContainer>
@@ -220,6 +220,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
             <span>$</span>
             <StyledInput
               type="number"
+              id="desired_rate"
               data-testid="desired_rate"
               onChange={e => {
                 setData(prevData => ({
@@ -235,6 +236,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
           <FieldHeading>Cover Letter</FieldHeading>
           <TextArea
             data-testid="cover_letter"
+            id="cover_letter"
             value={data.coverLetter}
             onChange={e => {
               setData(prevData => ({
@@ -245,11 +247,12 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
           />
         </FieldContainer>
         {data?.questions?.length
-          ? data.questions?.map(question => {
+          ? data.questions?.map((question, index) => {
               return (
                 <FieldContainer key={question.question}>
                   <FieldHeading>{question?.questionText}</FieldHeading>
                   <TextArea
+                    id={`question_${index}`}
                     data-testid={question.question}
                     value={question.answer}
                     onChange={e => updateAnswer(e.target.value, question.question)}

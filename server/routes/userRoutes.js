@@ -33,7 +33,7 @@ router.post(
 
       res.json({ ...updatedUser })
     } catch (e) {
-      res.status(400).json({ message: e?.message ?? 'Something went wrong' })
+      res.status(400).json({ msg: e?.message ?? 'Something went wrong' })
     }
   }
 )

@@ -43,7 +43,8 @@ const Panel = ({ business, userListItems, setListInfo, listInfo }) => {
       margin-left="0px 0px 0px 10px"
       border-radius="10px"
       overflow="hidden"
-      data-testid="left_lists_panel">
+      data-testid="left_lists_panel"
+      id="left_lists_panel">
       <TitleText paddingLeft clickable>
         <Absolute top="20px">
           <Action

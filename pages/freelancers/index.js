@@ -305,7 +305,7 @@ const Freelancers = ({
                   {freelancerList?.map((item, index) => {
                     const freelancer = constructFreelancerModel(item)
                     return (
-                      <div key={item?._id}>
+                      <div key={item?._id} id={`freelancer_${item?._id}`}>
                         <WhiteCard noMargin overlayDesktop cardHeightDesktop>
                           <FreelancerCard
                             user={freelancer}
