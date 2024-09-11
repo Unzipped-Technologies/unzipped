@@ -20,15 +20,25 @@ function MyApp({ Component, pageProps }) {
   const isLoading = useSelector(state => state.Loading.loading)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-
   useEffect(() => {
-    if (!userData?.isAccountDetailCompleted) {
+    if (
+      !userData?.isAccountDetailCompleted &&
+      (router?.pathname.includes('dashboard') ||
+        router?.pathname.includes('hire') ||
+        router?.pathname.includes('recurring-payment'))
+    ) {
       router.push('/update-account-profile')
     }
   }, [userData])
 
   useEffect(() => {
-    !isEmailVerified && router.push('/verify-email')
+    if (
+      !isEmailVerified &&
+      (router?.pathname.includes('dashboard') ||
+        router?.pathname.includes('hire') ||
+        router?.pathname.includes('recurring-payment'))
+    )
+      router.push('/verify-email')
   }, [isEmailVerified])
 
   useEffect(() => {
