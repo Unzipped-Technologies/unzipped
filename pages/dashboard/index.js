@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { connect } from 'react-redux'
+import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 
 import Nav from '../../components/unzipped/header'
 import Footer from '../../components/unzipped/Footer'
-import UserSetupPanelMobile from '../../components/unzipped/dashboard/UserSetupPanelMobile'
-import MobileNotification from '../../components/unzipped/dashboard/MobileNotification'
-import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
-import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel'
 import { getCurrentUserData } from '../../redux/actions'
-import { useRouter } from 'next/router'
-import { parseCookies } from '../../services/cookieHelper'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
+import MobileNotification from '../../components/unzipped/dashboard/MobileNotification'
+import NotificationsPanel from '../../components/unzipped/dashboard/NotificationsPanel'
+import UserSetupPanelMobile from '../../components/unzipped/dashboard/UserSetupPanelMobile'
 
 const DesktopBox = styled.div`
   @media (max-width: 680px) {

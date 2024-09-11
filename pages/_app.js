@@ -1,19 +1,15 @@
-// import '../styles/fonts.css';
 import 'bootstrap/dist/css/bootstrap.css'
 import React, { useEffect, useState } from 'react'
-import keys from '../config/keys'
 import { useRouter } from 'next/router'
 import { useSelector, useStore } from 'react-redux'
 import { wrapper } from '../redux/store'
 import { CookiesProvider } from 'react-cookie'
 import { PersistGate } from 'redux-persist/integration/react'
 import * as gtag from '../lib/gtag'
-import { isProtected } from '../utils/protectedRoutes'
 
 ///styles
 import '../styles/App.scss'
 import 'materialize-css/dist/css/materialize.min.css'
-// import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import 'animate.css/animate.min.css'
 import Loading from '../components/loading'
 
