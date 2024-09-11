@@ -19,10 +19,22 @@ import Loading from '../components/loading'
 
 function MyApp({ Component, pageProps }) {
   const store = useStore(state => state)
-  const token = useSelector(state => state.Auth.token)
+  const isEmailVerified = useSelector(state => state.Auth.isEmailVerified)
+  const userData = useSelector(state => state.Auth.user)
   const isLoading = useSelector(state => state.Loading.loading)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    if (!userData?.isAccountDetailCompleted) {
+      router.push('/update-account-profile')
+    }
+  }, [userData])
+
+  useEffect(() => {
+    !isEmailVerified && router.push('/verify-email')
+  }, [isEmailVerified])
+
   useEffect(() => {
     const start = () => setLoading(true)
     const end = () =>
@@ -41,6 +53,7 @@ function MyApp({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events])
+
   useEffect(() => {
     if (isLoading) {
       setLoading(true)
@@ -48,24 +61,6 @@ function MyApp({ Component, pageProps }) {
       setLoading(false)
     }
   }, [isLoading])
-  // useEffect(() => {
-  //   if (isProtected(router.route) && !token) {
-  //     router.push('/login')
-  //   }
-  // }, [router])
-
-  // useEffect(() => {
-  //   import('react-facebook-pixel')
-  //     .then((x) => x.default)
-  //     .then((ReactPixel) => {
-  //       ReactPixel.init(keys.facebookID) // facebookPixelId
-  //       ReactPixel.pageView()
-
-  //       router.events.on('routeChangeComplete', () => {
-  //         ReactPixel.pageView()
-  //       })
-  //     })
-  // }, [router.events])
 
   return (
     <PersistGate persistor={store.__persistor} loading={''}>

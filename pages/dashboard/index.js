@@ -48,20 +48,12 @@ const notifications = [
 ]
 
 const Dashboard = ({ getCurrentUserData, userData, isAuthenticated }) => {
-
-  const router = useRouter();
+  const router = useRouter()
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login')
     }
   }, [])
-  
-  useEffect(() => {
-    if (!userData?.isAccountDetailCompleted) {
-      router.push('/update-account-profile')
-    }
-  }, [userData])
-
 
   useEffect(() => {
     async function fetchData() {
