@@ -768,7 +768,7 @@ const Nav = ({
           </Mobile>
         </Right>
       </Container>
-      {isSubMenu && (
+      {isAuthenticated && isSubMenu && (
         <SubMenTop
           padding={token ? '0px 0px 0px 15%;' : '0px 0px 25px 15%;'}
           style={{
