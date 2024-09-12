@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import router from 'next/router'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
@@ -266,9 +266,17 @@ const UpdateAccountProfile = ({
   socialSecurityNumber,
   businessType,
   taxEIN,
-  access
+  access,
+  user
 }) => {
   const tokens = token?.access_token || access
+
+  useEffect(() => {
+    if (user?._id && user?.isAccountDetailCompleted) {
+      router.push('/dashboard')
+    }
+  }, [user])
+
   const submitForm = async step => {
     if (step < 3) {
       // submit form
@@ -358,6 +366,7 @@ UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
 
 const mapStateToProps = state => {
   return {
+    user: state.Auth?.user,
     stage: state.Auth?.userForm?.stage,
     role: state.Auth.userForm?.role,
     FirstName: state.Auth.userForm?.FirstName,

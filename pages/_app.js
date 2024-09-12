@@ -15,13 +15,13 @@ import Loading from '../components/loading'
 
 function MyApp({ Component, pageProps }) {
   const store = useStore(state => state)
-  const isEmailVerified = useSelector(state => state.Auth.isEmailVerified)
   const userData = useSelector(state => state.Auth.user)
   const isLoading = useSelector(state => state.Loading.loading)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
     if (
+      userData?._id &&
       !userData?.isAccountDetailCompleted &&
       (router?.pathname.includes('dashboard') ||
         router?.pathname.includes('hire') ||
@@ -29,17 +29,16 @@ function MyApp({ Component, pageProps }) {
     ) {
       router.push('/update-account-profile')
     }
-  }, [userData])
-
-  useEffect(() => {
     if (
-      !isEmailVerified &&
+      userData?._id &&
+      !userData?.isEmailVerified &&
       (router?.pathname.includes('dashboard') ||
         router?.pathname.includes('hire') ||
         router?.pathname.includes('recurring-payment'))
-    )
+    ) {
       router.push('/verify-email')
-  }, [isEmailVerified])
+    }
+  }, [userData])
 
   useEffect(() => {
     const start = () => setLoading(true)

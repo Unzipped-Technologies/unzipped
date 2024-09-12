@@ -95,23 +95,25 @@ const Notification = ({ type, children, noButton, user }) => {
               </Absolute>
             </WhiteCard>
           )}
-          <NotificationContainer
-            background={'#000'}
-            color="#fff"
-            borderColor="0px"
-            data-testid="pick_plan_notification">
-            <div style={{ padding: 5 }}>
-              <p>
-                Build your dream business, grow your following, and collaborate with other professionals to make your
-                vision a reality. Start your free trial now.
-              </p>
-            </div>
-            <div>
-              <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
-                PICK A PLAN
-              </Button>
-            </div>
-          </NotificationContainer>
+          {user?.role !== 1 && (
+            <NotificationContainer
+              background={'#000'}
+              color="#fff"
+              borderColor="0px"
+              data-testid="pick_plan_notification">
+              <div style={{ padding: 5 }}>
+                <p>
+                  Build your dream business, grow your following, and collaborate with other professionals to make your
+                  vision a reality. Start your free trial now.
+                </p>
+              </div>
+              <div>
+                <Button noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
+                  PICK A PLAN
+                </Button>
+              </div>
+            </NotificationContainer>
+          )}
         </>
       )
     case 'github':
@@ -186,20 +188,22 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'faq':
       return (
-        <NotificationContainer data-testid="faq_notification">
-          <div style={{ padding: 5 }}>
-            <p> Investors are asking about your businss. Update Frequently asked questions now. </p>
-          </div>
-          <NotificationDismissalContainer>
-            <DIV display="flex" flexDirection="column" flexFlow="column" alignItems="center" justifyContent="center">
-              <Dismiss>Dismiss</Dismiss>
-            </DIV>
-            <Button noBorder type="default" normal small>
-              {' '}
-              UPDATE{' '}
-            </Button>
-          </NotificationDismissalContainer>
-        </NotificationContainer>
+        user?.role !== 1 && (
+          <NotificationContainer data-testid="faq_notification">
+            <div style={{ padding: 5 }}>
+              <p> Investors are asking about your businss. Update Frequently asked questions now. </p>
+            </div>
+            <NotificationDismissalContainer>
+              <DIV display="flex" flexDirection="column" flexFlow="column" alignItems="center" justifyContent="center">
+                <Dismiss>Dismiss</Dismiss>
+              </DIV>
+              <Button noBorder type="default" normal small>
+                {' '}
+                UPDATE{' '}
+              </Button>
+            </NotificationDismissalContainer>
+          </NotificationContainer>
+        )
       )
     case 'blue':
       return (
@@ -229,7 +233,8 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'createBusiness':
       return (
-        !user?.totalBusiness && (
+        !user?.totalBusiness &&
+        user?.role !== 1 && (
           <WhiteCard size="large" data-testid="create_business_notification">
             <DarkText>
               You haven't created your first Project yet, create one now so you can begin Collaborating! Need Ideas?
@@ -249,15 +254,17 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'updateBusiness':
       return (
-        <WhiteCard size="large" data-testid="business_page_notification">
-          <DarkText>
-            You created your first business. Hooray! Now you need to customize your business homepage to attract better
-            talent.
-          </DarkText>
-          <Button noBorder type="dark" normal>
-            CUSTOMIZE YOUR BUSINESS PAGE
-          </Button>
-        </WhiteCard>
+        user?.role !== 1 && (
+          <WhiteCard size="large" data-testid="business_page_notification">
+            <DarkText>
+              You created your first business. Hooray! Now you need to customize your business homepage to attract
+              better talent.
+            </DarkText>
+            <Button noBorder type="dark" normal>
+              CUSTOMIZE YOUR BUSINESS PAGE
+            </Button>
+          </WhiteCard>
+        )
       )
     case 'explore':
       return (

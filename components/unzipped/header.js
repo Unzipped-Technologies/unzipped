@@ -461,7 +461,8 @@ const Nav = ({
   onBackArrowClick,
   isViewable,
   isExpanded,
-  setIsExpanded
+  setIsExpanded,
+  role
 }) => {
   const seenNames = new Set()
   const otherNames = new Set()
@@ -503,11 +504,13 @@ const Nav = ({
     if (isAuthenticated) {
       return (
         <ButtonHolder>
-          <Shift>
-            <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>
-              Start A Project
-            </Buttons>
-          </Shift>
+          {role !== 1 && (
+            <Shift>
+              <Buttons noBorder oval type={'green'} fontSize="14px" onClick={startAProject}>
+                Start A Project
+              </Buttons>
+            </Shift>
+          )}
           <Image
             src={profilePic}
             alt="profile pic"
@@ -535,6 +538,7 @@ const Nav = ({
                   startAProject={startAProject}
                   isAuth={isAuthenticated}
                   logoutUser={signOut}
+                  role={role}
                   onClose={() => setMenuOpen(false)}
                 />
               </Absolute>
@@ -762,6 +766,7 @@ const Nav = ({
                   isAuth={isAuthenticated}
                   logoutUser={signOut}
                   onClose={() => setMenuOpen(false)}
+                  role={role}
                 />
               </Absolute>
             )}
@@ -817,6 +822,7 @@ const Nav = ({
 const mapStateToProps = state => {
   return {
     isAuthenticated: state.Auth.isAuthenticated,
+    role: state.Auth.user?.role,
     token: state.Auth.token,
     loading: state.Auth.loading,
     profilePic: state.Auth?.user?.profileImage
