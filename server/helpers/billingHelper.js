@@ -240,28 +240,29 @@ const createSubscription = async (req, obj, user) => {
           payments: await PaymentHistoryModel.find({ userId: user })
         }
       }
-    ).select('userId product payments plan').populate([
-      {
-        path: 'userId',
-        model: 'users',
-        select: 'FirstName LastName email isUserSubscribed '
-      },
-      {
-        path: 'payments',
-        model: 'PaymentHistories',
-        select: 'paymentAmount paymentDate '
-      }
-    ])
+    )
+      .select('userId product payments plan')
+      .populate([
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName email isUserSubscribed '
+        },
+        {
+          path: 'payments',
+          model: 'PaymentHistories',
+          select: 'paymentAmount paymentDate '
+        }
+      ])
   ])
 
-  
   if (updateSubscriptionModel?.isUserSubscribed) {
     const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan)
     const benefits = getBenefits(updateSubscriptionModel.plan)
     const userMailOpts = {
       to: updateSubscriptionModel.userId.email,
       subject: `🎉 Subscription Payment Confirmation -  ${subscriptionName}`,
-      templateId: "d-4592da9ad3494cdca58fe07dd28b9f42",
+      templateId: 'd-4592da9ad3494cdca58fe07dd28b9f42',
       dynamicTemplateData: {
         firstName: updateSubscriptionModel?.userId?.FirstName ?? '',
         lastName: updateSubscriptionModel?.userId?.LastName ?? '',
@@ -359,7 +360,7 @@ async function handleSuccessfulPayment(paymentIntent) {
 async function handleFailedPayment(paymentIntent) {
   const invoiceRecord = await InvoiceRecordModel.findOne({ _id: paymentIntent.metadata.invoiceRecord }).populate({
     path: 'userId',
-    model: 'users',
+    model: 'users'
   })
 
   await PaymentHistoryModel.updateMany(
@@ -373,14 +374,15 @@ async function handleFailedPayment(paymentIntent) {
       templateId: 'd-9bd86c7f068b4f69bfda9ebb92d3687b',
       dynamicTemplateData: {
         subject: 'Action Required: Failed Payment Attempt for Your Account',
-        firstName: invoiceRecord.userId?.FirstName ? invoiceRecord.userId?.FirstName
+        firstName: invoiceRecord.userId?.FirstName
+          ? invoiceRecord.userId?.FirstName
           : invoiceRecord.userId?.email.split('@')[0],
         lastName: invoiceRecord.userId?.LastName ?? '',
         loginLink: `${keys.redirectDomain}/login`,
-        supportLink: `${keys.redirectDomain}/wiki/getting-started`,
+        supportLink: `${keys.redirectDomain}/wiki/getting-started`
       }
     }
-    await Mailer.sendInviteMail(mailOptions);
+    await Mailer.sendInviteMail(mailOptions)
   }
 }
 
@@ -562,7 +564,7 @@ const removeExternalBankAccount = async (customerId, bankAccountId) => {
 const getUserAccountById = async userId => {
   const user = await UserModel.findById(userId)
 
-  if (user && user.stripeAccountId) {
+  if (user && user?.stripeAccountId) {
     return await retreiveAccountInfo(user.stripeAccountId)
   }
   return null
@@ -742,7 +744,6 @@ const getFreelancerBalance = async stripeAccountId => {
 
     // The balance object contains amounts in different categories
     // For example, balance.available and balance.pending
-    console.log(balance)
 
     return balance
   } catch (error) {
@@ -781,24 +782,21 @@ const retrieveStripeBalance = async () => {
 const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', userId) => {
   try {
     // Create a payout to the connected account's external bank account
-    const accountInfo = await retrieveExternalBankAccounts(account.id);
-    const payout = await stripe.payouts.create({
-      amount: amount,
-      currency: currency,
-    }, {
-      stripeAccount: accountId, // Specify the connected account ID
-    });
-    const user = await UserModel.findById(userId);
-    if (payout
-      &&
-      accountInfo &&
-      accountInfo?.data &&
-      accountInfo?.data?.length > 0 &&
-      user
-    ) {
+    const accountInfo = await retrieveExternalBankAccounts(account.id)
+    const payout = await stripe.payouts.create(
+      {
+        amount: amount,
+        currency: currency
+      },
+      {
+        stripeAccount: accountId // Specify the connected account ID
+      }
+    )
+    const user = await UserModel.findById(userId)
+    if (payout && accountInfo && accountInfo?.data && accountInfo?.data?.length > 0 && user) {
       const fundsWithdrawMailObj = {
         to: user?.email,
-        templateId: "d-ecd4393f48de4496a511c74220631ac3",
+        templateId: 'd-ecd4393f48de4496a511c74220631ac3',
         dynamicTemplateData: {
           firstName: user?.FirstName ?? '',
           lastName: user?.LastName ?? '',
@@ -807,15 +805,15 @@ const withdrawFundsToBankAccount = async (account, amount, currency = 'usd', use
           partialPaymentDetails: `**** **** ${accountInfo?.data[0]?.last4}`,
           supportLink: `${keys.redirectDomain}/wiki/getting-started`,
           withdrawLink: `${keys.redirectDomain}/dashboard/withdrawal`,
-          transactionHstoryLink: `${keys.redirectDomain}/transaction-history`,
+          transactionHstoryLink: `${keys.redirectDomain}/transaction-history`
         }
       }
-      await Mailer.sendInviteMail(fundsWithdrawMailObj);
+      await Mailer.sendInviteMail(fundsWithdrawMailObj)
     }
     if (!payout) {
-      await failedPaymentNotification(user);
+      await failedPaymentNotification(user)
     }
-    return payout;
+    return payout
   } catch (error) {
     console.error('Payout failed:', error)
     throw error
@@ -864,9 +862,13 @@ const createVerificationSession = async customerId => {
 const confirmVerificationSession = async (userId, status) => {
   try {
     if (userId && status && status === 'verified') {
-      const user = await UserModel.findById(userId);
-      if (user && user.isIdentityVerified !== "SUCCESS") {
-        const updateUser = await UserModel.updateOne({ _id: userId }, { $set: { isIdentityVerified: "SUCCESS" } }, { new: true });
+      const user = await UserModel.findById(userId)
+      if (user && user.isIdentityVerified !== 'SUCCESS') {
+        const updateUser = await UserModel.updateOne(
+          { _id: userId },
+          { $set: { isIdentityVerified: 'SUCCESS' } },
+          { new: true }
+        )
         if (updateUser && user?.email) {
           await Mailer.sendInviteMail({
             to: user?.email,
@@ -877,7 +879,7 @@ const confirmVerificationSession = async (userId, status) => {
               supportLink: `${keys.redirectDomain}/wiki/getting-started`
             }
           })
-          return true;
+          return true
         } else {
           const updateUser = await UserModel.updateOne(
             { _id: userId },
@@ -894,7 +896,7 @@ const confirmVerificationSession = async (userId, status) => {
   }
 }
 
-const failedPaymentNotification = async (user) => {
+const failedPaymentNotification = async user => {
   if (user) {
     const mailOptions = {
       to: user?.email,
@@ -905,7 +907,7 @@ const failedPaymentNotification = async (user) => {
         supportLink: `${keys.redirectDomain}/wiki/getting-started`
       }
     }
-    await Mailer.sendInviteMail(mailOptions);
+    await Mailer.sendInviteMail(mailOptions)
   }
 }
 
