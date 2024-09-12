@@ -427,5 +427,165 @@ describe('template spec', () => {
           expect(interception.response.statusCode).to.be.oneOf([200, 304])
         })
       })
+
+    cy.get(`#employee_card`)
+      .within(() => {})
+      .should('be.visible')
+    cy.window()
+      .its('store')
+      .then(store => {
+        const State = store.getState()
+        cy.log('State.Contracts', State.Contracts)
+        cy.log('State.Invoices', State.Invoices)
+        const activeContracts = State.Contracts.activeContracts
+        if (activeContracts?.length) {
+          const calcAmtOwed = data => {
+            let amount = 0
+            State?.Invoices?.unpaidInvoices?.forEach(item => {
+              if (item.freelancerId === data.freelancerId._id) {
+                amount += item.hourlyRate * item.hoursWorked
+              }
+            })
+            return amount
+          }
+          activeContracts?.forEach(contract => {
+            cy.get(`#contract_${contract?._id}`)
+              .within(() => {
+                cy.get('#name').should('contain', ValidationUtils._toUpper(contract?.freelancerId?.userId?.FullName))
+                cy.get('#rate').should('contain', `$ ${contract?.hourlyRate}.00`)
+                cy.get('#hours_limit').should('contain', contract?.hoursLimit)
+                cy.get('#total_amount').should('contain', `$ ${calcAmtOwed(contract)}.00`)
+              })
+              .should('be.visible')
+          })
+        }
+        if (State.Auth.user.plan !== null && State.Auth.user.plan !== undefined && State.Auth.user.plan !== '') {
+          const planData = State.Auth.plans[State.Auth.user.plan]
+
+          cy.get('#plan_name').should('contain', planData.name.toUpperCase())
+          cy.get('#plan_cost').should('contain', `$${planData.cost}.00/month`)
+        }
+
+        if (State.Auth.user.subscriptionDate) {
+          const getNextBillingDate = dateStartedSubscription => {
+            // Parse the date the subscription started
+            const startDate = new Date(dateStartedSubscription)
+            const billingDay = startDate.getDate()
+
+            // Get the current date
+            const currentDate = new Date()
+
+            // Determine if the billing day for the current month has passed or is today
+            let nextBillingDate
+            if (currentDate.getDate() >= billingDay) {
+              // If today is past the billing day, or is the billing day, move to next month
+              if (currentDate.getMonth() === 11) {
+                // December
+                nextBillingDate = new Date(currentDate.getFullYear() + 1, 0, billingDay)
+              } else {
+                nextBillingDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, billingDay)
+              }
+            } else {
+              // If today is before the billing day, keep the current month
+              nextBillingDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), billingDay)
+            }
+
+            // Format the date as "MonthName Day, Year"
+            const options = { year: 'numeric', month: 'long', day: 'numeric' }
+            return nextBillingDate.toLocaleDateString('en-US', options)
+          }
+          cy.get('#next_billing_date').should('contain', `${getNextBillingDate(State.Auth.user.subscriptionDate)}`)
+        }
+
+        const calcTotalPotentialCost = () => {
+          let total = 0
+          State.Contracts.activeContracts?.forEach(item => {
+            if (item.hourlyRate && item.hoursLimit) {
+              total += item.hourlyRate * item.hoursLimit
+            }
+          })
+          return total
+        }
+
+        cy.get('#charged_amount', { timeout: 6000 }).should(
+          'contain',
+          `$ ${calcTotalPotentialCost().toLocaleString()}.00 USD`
+        )
+
+        cy.get('#address_update_button')
+          .should('contain', `${State.Business.selectedBusiness?._id ? 'Update' : 'Add'}`)
+          .click()
+
+        cy.get(`#business_address`, { timeout: 6000 })
+          .within(() => {
+            const BusinessCountry = faker.location.country()
+            const BusinessFirstName = faker.string.alpha(5)
+            const BusinessLastName = faker.string.alpha(5)
+            const BusinessAddressLineOne = faker.location.streetAddress()
+            const BusinessAddressLineTwo = faker.location.secondaryAddress()
+            const BusinessCity = faker.location.city()
+            const BusinessState = faker.location.state()
+            const BusinessZip = faker.location.zipCode()
+            const BusinessPhone = faker.phone.number()
+            cy.get('#businessCountry').clear().type(BusinessCountry)
+            cy.get('#businessFirstName').clear().type(BusinessFirstName)
+            cy.get('#businessLastName').clear().type(BusinessLastName)
+            cy.get('#businessAddressLineOne').clear().type(BusinessAddressLineOne)
+            cy.get('#businessAddressLineTwo').clear().type(BusinessAddressLineTwo)
+            cy.get('#businessCity').clear().type(BusinessCity)
+            cy.get('#businessState').clear().type(BusinessState)
+            cy.get('#businessZip').clear().type(BusinessZip)
+            cy.get('#businessPhone').clear().type(BusinessPhone)
+            cy.intercept({
+              method: 'POST',
+              url: `/api/business/update`
+            }).as('updateBusinessRequest')
+            cy.contains('button', 'SAVE ADDRESS').should('be.visible').click()
+
+            cy.wait('@updateBusinessRequest', { timeout: 100000 }).then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
+          })
+          .should('be.visible')
+        cy.get('#loading_spinner', { timeout: 6000 }).should('be.visible')
+        cy.get('#adress_done_image')
+          .should('have.attr', 'src')
+          .and('include', 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1671323871/verifiedCheck_w902qa.png')
+
+        cy.get(`#payment_method_form`, { timeout: 6000 }).within(() => {
+          cy.contains('button', 'Add', { timeout: 6000 }).should('be.visible').click()
+
+          const Country = faker.location.country()
+          const FirstName = faker.person.firstName()
+          const LastName = faker.person.lastName()
+          const AddressLineOne = faker.location.streetAddress()
+          const AddressLineTwo = faker.location.secondaryAddress()
+          const City = faker.location.city()
+          const State = faker.location.state()
+          const Zip = faker.location.zipCode()
+          cy.get('#country').clear().type(Country)
+          cy.get('#firstName').clear().type(FirstName)
+          cy.get('#lastName').clear().type(LastName)
+          cy.get('#addressLineOne').clear().type(AddressLineOne)
+          cy.get('#addressLineTwo').clear().type(AddressLineTwo)
+          cy.get('#city').clear().type(City)
+          cy.get('#state').clear().type(State)
+          cy.get('#zipCode').clear().type(Zip)
+        })
+        cy.intercept({
+          method: 'POST',
+          url: `/api/contract/create`
+        }).as('createContractRequest')
+        cy.contains('button', 'update payment terms').should('be.visible').click()
+
+        cy.wait('@createContractRequest', { timeout: 100000 }).then(interception => {
+          console.log('interception.response', interception.response)
+          if (interception.response.statusCode === 400 && interception.response?.body?.msg) {
+            cy.contains(interception.response?.body?.msg).should('be.visible')
+          } else {
+            expect(interception.response.statusCode).to.be.oneOf([200, 304])
+          }
+        })
+      })
   })
 })

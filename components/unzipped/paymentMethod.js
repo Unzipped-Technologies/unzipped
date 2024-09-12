@@ -170,7 +170,7 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
   }, [width])
 
   return (
-    <Container data-testid="payment_method_form">
+    <Container data-testid="payment_method_form" id="payment_method_form">
       {isPaymentForm ? (
         <WhiteCard overflow="hidden" height={!isError ? '725px' : '775px'}>
           <SimpleBar style={{ maxHeight: !isError ? 725 : 775, width: '100%' }}>
@@ -369,7 +369,7 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
               <ButtonContainer>
                 <Button submit noBorder>
                   {loading ? (
-                    <Span data-testid="loading_spinner">
+                    <Span data-testid="loading_spinner" id="loading_spinner">
                       <CircularProgress size={18} />
                     </Span>
                   ) : (

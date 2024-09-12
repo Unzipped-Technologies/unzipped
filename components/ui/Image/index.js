@@ -30,7 +30,7 @@ const Image = ({ src, alt = 'img', name, radius, height, width, onMouseEnter, on
       name={name}
       onClick={onClick}
       onMouseEnter={onMouseEnter}>
-      <Img radius={radius} src={src} alt={alt} height={height} width={width} data-testid={id} />
+      <Img radius={radius} src={src} alt={alt} height={height} width={width} data-testid={id} id={id} />
     </Container>
   )
 }

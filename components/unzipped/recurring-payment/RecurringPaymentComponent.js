@@ -73,8 +73,8 @@ const RecurringPaymentComponent = ({
     fetchData()
   }, [])
 
-  const onSubmit = () => {
-    createContract(contractForm)
+  const onSubmit = async () => {
+    await createContract(contractForm)
   }
 
   const onSubmitPaymentMethod = async payload => {
