@@ -718,7 +718,7 @@ const Nav = ({
                     setHighlightedIndex(index)
                   }}
                   onClick={() => setDropdowns(item.name)}
-                  key={index}
+                  key={`${index}_${item.name}`}
                   style={{ color: isHighlightIndex ? highlightColor : '#333333' }}
                   onMouseLeave={() => setHighlightColor('#333333')}>
                   <Span>{item.name} </Span>
@@ -797,7 +797,7 @@ const Nav = ({
           {token && (
             <SubMenu>
               {subMenuItems.map((item, key) => (
-                <Link href={item.link} key={key}>
+                <Link href={item.link} key={`${key}_${item.name}`}>
                   <SpanWhite
                     count={key}
                     underline={
