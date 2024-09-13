@@ -149,7 +149,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           onClick={redirectToProfile}>
           View Profile
         </Button>
-        {userId && (
+        {userId && userId !== user.userId && (
           <ButtonTwo onClick={handlOpen} data-testid={`open_${userId}_list_modal`}>
             <Icon name="actionIcon" color="#333" />
           </ButtonTwo>
