@@ -171,7 +171,7 @@ const FormField = ({
     const value = fieldType === 'select' ? e.value : e.target.value
     onChange && onChange(e)
 
-    if (!required || (value && validate(value))) {
+    if (!required || (value && (!validate || validate(value)))) {
       setCurrentError(null)
     }
   }
