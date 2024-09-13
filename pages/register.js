@@ -60,7 +60,7 @@ const Google = styled.button`
 const Abs = styled.div`
   position: absolute;
   left: -2px;
-  bottom: -4px;
+  bottom: 0px;
 `
 
 const Span = styled.span`
@@ -111,7 +111,6 @@ const TextBox = styled.div`
   display: flex;
   flex-flow: row;
   align-items: center;
-  padding: 00px 0px;
 `
 
 const Contain = styled.div`
@@ -119,6 +118,7 @@ const Contain = styled.div`
   bottom: 25px;
   width: 80%;
   align-items: left;
+  padding-top: ${({ passwordAlert }) => (passwordAlert ? '30px' : '0px')};
 `
 
 const Register = ({ loading, isEmailSent, error, registerUser }) => {
@@ -127,8 +127,6 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
 
   const [emailAlert, setEmailAlert] = useState('')
   const [passwordAlert, setPasswordAlert] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [notifications, setNotifications] = useState('')
   const [user, setUser] = useState({
@@ -152,10 +150,10 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
     }
   }, [isEmailSent, error])
 
-  const updateUser = () => {
+  const updateUser = (field, value) => {
     setUser({
-      email: email.toLowerCase(),
-      password: password
+      ...user,
+      [field]: value
     })
   }
 
@@ -166,28 +164,19 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
     }
   }
 
-  const updateEmail = e => {
-    setEmail(e.target.value)
-    updateUser()
-  }
-
-  const updatePassword = e => {
-    setPassword(e.target.value)
-    updateUser()
-  }
-
   const updateRememberMe = () => {
     setRememberMe(!rememberMe)
   }
 
   const validateEmail = () => {
-    const error = !ValidationUtils._emailValidation(email)
+    const error = !ValidationUtils._emailValidation(user.email)
     if (!error) {
       setEmailAlert('Please enter a valid email address')
+      return false
     } else {
       setEmailAlert('')
+      return true
     }
-    return error
   }
 
   const validatePassword = () => {
@@ -195,16 +184,17 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
 
     if (!error && user.password) {
       setPasswordAlert('Password must be 8+ characters, 1 capital letter and 1 special character.')
+      return false
     } else {
       setPasswordAlert('')
+      return true
     }
-    return error
   }
 
   ///Register
   const RegisterUsers = async () => {
     try {
-      if (!user || !user.email || !user.password || !ValidationUtils._strongPasswordValidation(user.password)) return
+      if (!user || !user.email || !user.password || !validatePassword() || !validateEmail()) return
       await registerUser(user)
     } catch (error) {
       setNotifications('Registration Failed')
@@ -251,8 +241,11 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
               type="email"
               fieldType="input"
               fontSize={'18px'}
-              bottom="0px"
-              onChange={updateEmail}></FormField>
+              // margin={'0px 0px 10px 0px'}
+              onChange={e => {
+                updateUser('email', e?.target?.value?.toLowerCase())
+              }}></FormField>
+
             <FormField
               validate={validatePassword}
               onKeyDown={handleKeyDown}
@@ -268,11 +261,14 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
               }
               placeholder="Password"
               name="password"
+              margin={'10px 0px 0px 0px'}
               type="password"
               fieldType="input"
               fontSize={'18px'}
               bottom="0px"
-              onChange={updatePassword}></FormField>
+              onChange={e => {
+                updateUser('password', e?.target?.value)
+              }}></FormField>
             <TextBox>
               <Checkbox color="primary" checked={rememberMe} onClick={updateRememberMe} name="Remember Me"></Checkbox>
               <Text>Remember Me</Text>
@@ -281,7 +277,7 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
               {loading ? <CircularProgress size={18} /> : 'Sign up'}
             </Button>
           </Form>
-          <Contain>
+          <Contain passwordAlert={passwordAlert}>
             <Text>
               {' '}
               Or <Link href="/login">log in now!</Link>

@@ -22,6 +22,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (
       userData?._id &&
+      userData?.isEmailVerified &&
       !userData?.isAccountDetailCompleted &&
       (router?.pathname.includes('dashboard') ||
         router?.pathname.includes('hire') ||
@@ -34,7 +35,8 @@ function MyApp({ Component, pageProps }) {
       !userData?.isEmailVerified &&
       (router?.pathname.includes('dashboard') ||
         router?.pathname.includes('hire') ||
-        router?.pathname.includes('recurring-payment'))
+        router?.pathname.includes('recurring-payment') ||
+        router?.pathname.includes('update-account-profile'))
     ) {
       router.push('/verify-email')
     }

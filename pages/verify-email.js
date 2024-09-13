@@ -9,7 +9,7 @@ import { Button } from '../components/ui'
 import SvgComponent from '../components/ui/icons/SvgComponent'
 import IconComponent from '../components/ui/icons/IconComponent'
 import Notification from '../components/animation/notifications'
-import { updateRegistrationCredentials, verifyUser } from '../redux/actions'
+import { updateRegistrationCredentials, verifyUser, getCurrentUserData } from '../redux/actions'
 
 const Container = styled.div`
   * {
@@ -75,12 +75,20 @@ const VerifyEmail = ({
   isEmailSent,
   updateRegistrationCredentials,
   verifyUser,
-  isEmailVerified
+  isEmailVerified,
+  getCurrentUserData
 }) => {
   const mounted = useRef(false)
   const [showEmailChange, setSowEmailChange] = useState(false)
   const [email, setEmail] = useState(userForm.email)
   const [notifications, setNotifications] = useState('')
+
+  useEffect(() => {
+    async function fetchData() {
+      await getCurrentUserData()
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     if (isEmailVerified) {
@@ -89,7 +97,7 @@ const VerifyEmail = ({
   }, [isEmailVerified])
 
   useEffect(() => {
-    if (mounted.current) {
+    if (mounted.current && !isEmailVerified) {
       if (isEmailSent) {
         setNotifications('Email sent successfully.')
       } else {
@@ -192,6 +200,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     verifyUser: bindActionCreators(verifyUser, dispatch),
+    getCurrentUserData: bindActionCreators(getCurrentUserData, dispatch),
     updateRegistrationCredentials: bindActionCreators(updateRegistrationCredentials, dispatch)
   }
 }
