@@ -139,7 +139,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
           aria-describedby="story-preview-modal-description">
           <DialogContent>
             <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
-            <ProgressBar value={progress} width={100} showValue bar="#37DEC5" />
+            <ProgressBar value={12} width={100} showValue bar="#37DEC5" />
             <div className="mt-3 ">
               <TitleText fontWeight="500" lineHeight="25.78px" fontSize="22px">
                 Education Detail
