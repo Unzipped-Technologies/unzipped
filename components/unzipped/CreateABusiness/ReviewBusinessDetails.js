@@ -284,7 +284,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
           </Button>
         </div>
         <div>
-          <Button onClick={handleSubmitProject} width="58.25px" extraWide={true} oval type="black">
+          <Button onClick={handleSubmitProject} width="150px" extraWide={true} oval type="black">
             CREATE PROJECT
           </Button>
         </div>
