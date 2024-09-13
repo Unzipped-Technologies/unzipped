@@ -161,203 +161,207 @@ const getBusinessById = async (id, user) => {
 // list lists
 const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
   try {
-    const existingNameIndex = await business.collection.indexes()
-    const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
+    const db = mongoose.connection.db
+    const collections = await db.listCollections({ name: 'businesses' }).toArray()
+    if (collections.length > 0) {
+      const existingNameIndex = await business?.collection?.indexes()
+      const nameIndexExists = existingNameIndex.some(index => index.name === 'name_1')
 
-    if (!nameIndexExists) {
-      await business.collection.createIndex({ name: 1 }, { name: 'name_1' })
-      await business.collection.createIndex({ projectType: 1 }, { name: 'projectType_1' })
-      await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
-      await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
-    }
-    const filters = pick(filter, ['userId', 'isActive', 'applicants'])
-    const regexQuery = new RegExp(filter?.searchKey, 'i')
-    const regexType = new RegExp(filter?.projectBudgetType, 'i')
-
-    const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
-    const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
-    const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
-    const regexPattern = regexPatterns?.join('|')
-    const aggregationPipeline = [
-      {
-        $match: {
-          name: { $regex: regexQuery },
-          ...(filter?.skill?.length > 0
-            ? {
-              requiredSkills: {
-                $elemMatch: {
-                  $regex: new RegExp(regexPattern, 'i')
-                }
-              }
-            }
-            : {}),
-          ...(filter?.projectBudgetType && {
-            projectBudgetType: { $regex: regexType }
-          }),
-          ...(filter?.minRate &&
-            +filter?.minRate > 0 && {
-            budget: { $gte: +filter?.minRate }
-          }),
-          ...(filter?.maxRate &&
-            +filter?.maxRate > 0 && {
-            budget: { $lte: +filter?.maxRate }
-          }),
-          ...filters
-        }
-      },
-      {
-        $project: {
-          name: 1,
-          budget: 1,
-          equity: 1,
-          description: 1,
-          likeTotal: 1,
-          businessAddressLineOne: 1,
-          businessCountry: 1,
-          businessCity: 1,
-          businessState: 1,
-          businessZip: 1,
-          projectType: 1,
-          applicants: 1,
-          deadline: 1,
-          createdAt: 1,
-          updatedAt: 1,
-          isActive: 1,
-          valueEstimate: 1,
-          userId: 1,
-          departments: 1,
-          projectImagesUrl: 1,
-          questionsToAsk: 1,
-          objectives: 1,
-          goals: 1,
-          requiredSkills: 1,
-          projectBudgetType: 1
-        }
-      },
-      {
-        $sort: {
-          createdAt: -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'files',
-          let: { projectImagesUrl: '$projectImagesUrl' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: [
-                    '$_id',
-                    { $cond: { if: { $isArray: '$$projectImagesUrl' }, then: '$$projectImagesUrl', else: [] } }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                name: 1,
-                url: 1
-              }
-            }
-          ],
-          as: 'projectImages'
-        }
-      },
-      {
-        $lookup: {
-          from: 'questions',
-          let: { questionId: '$questionsToAsk' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: [
-                    '$_id',
-                    { $cond: { if: { $isArray: '$$questionId' }, then: '$$questionId', else: [] } }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                question: 1
-              }
-            }
-          ],
-          as: 'questions'
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$userId' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$_id', '$$userId'] }
-              }
-            },
-            {
-              $project: {
-                FirstName: 1,
-                LastName: 1,
-                FullName: 1
-              }
-            }
-          ],
-          as: 'user'
-        }
-      },
-      {
-        $unwind: '$user'
-      },
-      {
-        $lookup: {
-          from: 'departments',
-          let: { departments: '$departments' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$isDeleted', false] },
-                    { $in: ['$_id', '$$departments'] }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                name: 1,
-                tags: 1,
-                businessId: 1,
-              }
-            }
-          ],
-          as: 'businessDepartments'
-        }
-      },
-
-      {
-        $facet: {
-          limitedRecords: [
-            {
-              $skip: +skip
-            },
-            limitStage
-          ],
-          totalCount: [
-            {
-              $count: 'count'
-            }
-          ]
-        }
+      if (!nameIndexExists) {
+        await business.collection.createIndex({ name: 1 }, { name: 'name_1' })
+        await business.collection.createIndex({ projectType: 1 }, { name: 'projectType_1' })
+        await business.collection.createIndex({ budget: 1 }, { name: 'budget_1' })
+        await business.collection.createIndex({ requiredSkills: 1 }, { name: 'requiredSkills_1' })
       }
-    ]
+      const filters = pick(filter, ['userId', 'isActive', 'applicants'])
+      const regexQuery = new RegExp(filter?.searchKey, 'i')
+      const regexType = new RegExp(filter?.projectBudgetType, 'i')
 
-    const list = await business.aggregate(aggregationPipeline).exec()
-    return list[0]
+      const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
+      const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
+      const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
+      const regexPattern = regexPatterns?.join('|')
+      const aggregationPipeline = [
+        {
+          $match: {
+            name: { $regex: regexQuery },
+            ...(filter?.skill?.length > 0
+              ? {
+                  requiredSkills: {
+                    $elemMatch: {
+                      $regex: new RegExp(regexPattern, 'i')
+                    }
+                  }
+                }
+              : {}),
+            ...(filter?.projectBudgetType && {
+              projectBudgetType: { $regex: regexType }
+            }),
+            ...(filter?.minRate &&
+              +filter?.minRate > 0 && {
+                budget: { $gte: +filter?.minRate }
+              }),
+            ...(filter?.maxRate &&
+              +filter?.maxRate > 0 && {
+                budget: { $lte: +filter?.maxRate }
+              }),
+            ...filters
+          }
+        },
+        {
+          $project: {
+            name: 1,
+            budget: 1,
+            equity: 1,
+            description: 1,
+            likeTotal: 1,
+            businessAddressLineOne: 1,
+            businessCountry: 1,
+            businessCity: 1,
+            businessState: 1,
+            businessZip: 1,
+            projectType: 1,
+            applicants: 1,
+            deadline: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            isActive: 1,
+            valueEstimate: 1,
+            userId: 1,
+            departments: 1,
+            projectImagesUrl: 1,
+            questionsToAsk: 1,
+            objectives: 1,
+            goals: 1,
+            requiredSkills: 1,
+            projectBudgetType: 1
+          }
+        },
+        {
+          $sort: {
+            createdAt: -1
+          }
+        },
+        {
+          $lookup: {
+            from: 'files',
+            let: { projectImagesUrl: '$projectImagesUrl' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: [
+                      '$_id',
+                      { $cond: { if: { $isArray: '$$projectImagesUrl' }, then: '$$projectImagesUrl', else: [] } }
+                    ]
+                  }
+                }
+              },
+              {
+                $project: {
+                  name: 1,
+                  url: 1
+                }
+              }
+            ],
+            as: 'projectImages'
+          }
+        },
+        {
+          $lookup: {
+            from: 'questions',
+            let: { questionId: '$questionsToAsk' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ['$_id', { $cond: { if: { $isArray: '$$questionId' }, then: '$$questionId', else: [] } }]
+                  }
+                }
+              },
+              {
+                $project: {
+                  question: 1
+                }
+              }
+            ],
+            as: 'questions'
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            let: { userId: '$userId' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$_id', '$$userId'] }
+                }
+              },
+              {
+                $project: {
+                  FirstName: 1,
+                  LastName: 1,
+                  FullName: 1
+                }
+              }
+            ],
+            as: 'user'
+          }
+        },
+        {
+          $unwind: '$user'
+        },
+        {
+          $lookup: {
+            from: 'departments',
+            let: { departments: '$departments' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $eq: ['$isDeleted', false] }, { $in: ['$_id', '$$departments'] }]
+                  }
+                }
+              },
+              {
+                $project: {
+                  name: 1,
+                  tags: 1,
+                  businessId: 1
+                }
+              }
+            ],
+            as: 'businessDepartments'
+          }
+        },
+
+        {
+          $facet: {
+            limitedRecords: [
+              {
+                $skip: +skip
+              },
+              limitStage
+            ],
+            totalCount: [
+              {
+                $count: 'count'
+              }
+            ]
+          }
+        }
+      ]
+
+      const list = await business.aggregate(aggregationPipeline).exec()
+      return list[0]
+    } else {
+      return {
+        limitedRecords: [],
+        totalCount: [{ count: 0 }]
+      }
+      throw Error(`Collection "businesses" does not exist.`)
+    }
   } catch (e) {
     throw Error(`Could not find list, error: ${e}`)
   }
@@ -574,7 +578,8 @@ const getBusinessCreatedByUser = async userId => {
 
 const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
   const query = isSelectedBusiness ? { _id: id } : { userId: id }
-  const businessEmployees = await business.find(query)
+  const businessEmployees = await business
+    .find(query)
     .populate({
       path: 'employees',
       model: 'contracts',
@@ -586,10 +591,11 @@ const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
         populate: {
           path: 'userId',
           model: 'users',
-          select: 'FirstName LastName email _id profileImage ',
+          select: 'FirstName LastName email _id profileImage '
         }
       }
-    }).select('employees');
+    })
+    .select('employees')
 
   const empLists = businessEmployees.map(elem => {
     const hiredEmployees = {
@@ -601,98 +607,93 @@ const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
       email: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.email : null,
       profileImage: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.profileImage : ''
     }
-    return hiredEmployees;
+    return hiredEmployees
   })
 
-  return empLists;
+  return empLists
 }
 
 const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false, userId) => {
-
-  const query = businessId ? { _id: businessId } : { userId };
-  const list = await business.find(query).populate([
-    {
-      path: 'departments',
-      model: 'departments',
-      select: 'name tags',
-      populate: [
-        {
-          path: 'tags',
-          model: 'tags',
-          select: '_id tagName'
-        },
-        {
-          path: 'tasks',
-          model: 'tasks',
-          populate: [
-            {
-              path: 'assignee',
-              model: 'users',
-              select: '_id FirstName LastName profileImage email'
-            }
-          ],
-          select: '_id taskName storyPoints tag description businessId assignee order status departmentId',
-        }
-      ]
-    },
-  ]).select('_id name');
+  const query = businessId ? { _id: businessId } : { userId }
+  const list = await business
+    .find(query)
+    .populate([
+      {
+        path: 'departments',
+        model: 'departments',
+        select: 'name tags',
+        populate: [
+          {
+            path: 'tags',
+            model: 'tags',
+            select: '_id tagName'
+          },
+          {
+            path: 'tasks',
+            model: 'tasks',
+            populate: [
+              {
+                path: 'assignee',
+                model: 'users',
+                select: '_id FirstName LastName profileImage email'
+              }
+            ],
+            select: '_id taskName storyPoints tag description businessId assignee order status departmentId'
+          }
+        ]
+      }
+    ])
+    .select('_id name')
 
   return constructBoardObject(list)
-
 }
 
-const normalizeStatus = (status) => {
+const normalizeStatus = status => {
   switch (status) {
     case 'Todo':
-      return 'To Do';
+      return 'To Do'
     case 'Done':
-      return 'Done';
+      return 'Done'
     case 'In Progress':
-      return 'In Progress';
+      return 'In Progress'
     default:
-      return status;
+      return status
   }
-};
+}
 
-const constructBoardObject = (arr) => {
+const constructBoardObject = arr => {
   const tagsArray = arr.flatMap(item =>
-    item.departments.flatMap(department =>
-      department.tags.filter(tag => Object.keys(tag).length > 0)
-    )
-  );
+    item.departments.flatMap(department => department.tags.filter(tag => Object.keys(tag).length > 0))
+  )
 
-  const tagMap = new Map();
+  const tagMap = new Map()
 
   tagsArray.forEach(tag => {
     if (!tagMap.has(tag.tagName)) {
-      tagMap.set(tag.tagName, { tagName: tag.tagName, tasks: [] });
+      tagMap.set(tag.tagName, { tagName: tag.tagName, tasks: [] })
     }
-  });
+  })
 
-  const resultObject = {};
+  const resultObject = {}
 
-  const tasksArray = arr.flatMap(item =>
-    item.departments.flatMap(department => department.tasks)
-  );
+  const tasksArray = arr.flatMap(item => item.departments.flatMap(department => department.tasks))
   tagMap.forEach((value, key) => {
-    const tagWithId = tagsArray.find(tag => tag.tagName === key);
+    const tagWithId = tagsArray.find(tag => tag.tagName === key)
     if (tagWithId) {
-      resultObject[tagWithId._id] = value;
+      resultObject[tagWithId._id] = value
     }
-  });
-
+  })
 
   tasksArray.forEach(task => {
-    const normalizedStatus = normalizeStatus(task.status);
+    const normalizedStatus = normalizeStatus(task.status)
     for (const [id, tagObj] of Object.entries(resultObject)) {
       if (tagObj.tagName === normalizedStatus && tagObj.tagName === normalizeStatus(task.status)) {
-        tagObj.tasks.push(task);
+        tagObj.tasks.push(task)
       }
     }
-  });
-  return resultObject;
+  })
+  return resultObject
 }
-
 
 module.exports = {
   createBusiness,
