@@ -15,7 +15,8 @@ const Container = styled.div`
   overflow: overlay;
   display: grid;
   grid-template-columns: 1fr 3fr;
-  margin: 40px 10%;
+  margin: 10px 5% 40px 5%;
+  width: 90%;
   border-radius: 10px;
   /* Hide the scrollbar but keep it functional */
   ::-webkit-scrollbar {
@@ -40,9 +41,9 @@ const Container = styled.div`
 
 const ViewFullScreenButton = styled.button`
   margin-right: 40px;
-  margin-top: 8px;
+  margin-top: 30px;
   text-transform: uppercase;
-  background: #1976D2;
+  background: #1976d2;
   color: white;
   padding: 5px 5px;
   font-size: 14px;
@@ -50,15 +51,24 @@ const ViewFullScreenButton = styled.button`
   border-radius: 8px;
   border: 0px;
   font-family: Roboto;
-  &:focus{
-    background: #1976D2 !important;
+  &:focus {
+    background: #1976d2 !important;
   }
   @media screen and (max-width: 600px) {
     display: none;
-    }
-`;
+  }
+`
 
-const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, setDepartment, currentDepartment, userId }) => {
+const Tasklist = ({
+  loading,
+  token,
+  cookie,
+  businesses = [],
+  getProjectsList,
+  setDepartment,
+  currentDepartment,
+  userId
+}) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const access = token?.access_token || cookie
@@ -67,7 +77,7 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isEditable, setIsEditable] = useState(false)
   const [isDeleteMode, setIsDeleteMode] = useState(false)
-  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '');
+  const [showBusinessMenu, setShowBusinessMenu] = useState(businesses.length ? businesses[0]._id : '')
 
   useEffect(() => {
     if (!access) {
@@ -76,24 +86,24 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
   }, [])
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         await getProjectsList({
           take: 'all',
           skip: 0,
           populate: false
-        });
+        })
       } catch (error) {
-        console.error('Error fetching project list:', error);
+        console.error('Error fetching project list:', error)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   useEffect(() => {
     if (!selectedDepartment?._id && businesses.length > 0) {
-        setCurrentBusiness(businesses[0]);
+      setCurrentBusiness(businesses[0])
     }
-}, [businesses, selectedDepartment]);
+  }, [businesses, selectedDepartment])
 
   useEffect(() => {
     if (currentBusiness) setSelectedDepartment(currentBusiness?.businessDepartments?.[0])
@@ -103,12 +113,12 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
     if (currentBusiness && currentBusiness?._id) {
       dispatch(getBusinessEmployees(userId))
     }
-  }, [])
+  }, [currentBusiness])
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
-    setCurrentBusiness(businesses[0]._id);
-    setShowBusinessMenu('');
+    setCurrentBusiness(businesses[0]._id)
+    setShowBusinessMenu('')
     setSelectedDepartment(businesses.businessDepartments?.[0])
     dispatch(getBusinessEmployees(businesses.businessDepartments?.[0].businessId, true))
   }
@@ -120,27 +130,33 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
         marginBottom={window.innerWidth > 600 ? '125px' : '78px'}
         isLogoHidden={window.innerWidth > 600 ? false : true}
         listName={'Departments'}
-        setIsViewable={() => { }}
-        setListName={() => { }}
-        setIsLogoHidden={() => { }}
+        setIsViewable={() => {}}
+        setListName={() => {}}
+        setIsLogoHidden={() => {}}
         onBackArrowClick={() => {
           setDepartment(null)
           router.back()
         }}
       />
-      <div style={{
-        display: "flex",
-        justifyContent: "flex-end",
-        alignItems: 'flex-end',
-        width: "100%",
-        margin: "8px 0px"
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'flex-end',
+          width: '100%',
+          margin: '8px 0px'
+        }}>
         <ViewFullScreenButton onClick={handleFullScreenView}>
           {isFullScreen ? 'Exit Full Screen' : 'View Full Screen'}
         </ViewFullScreenButton>
       </div>
       {isFullScreen ? (
-        <ProjectKanbanBoard selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} businesses={businesses} isFullScreen={isFullScreen} />
+        <ProjectKanbanBoard
+          selectedDepartment={selectedDepartment}
+          currentBusiness={currentBusiness}
+          businesses={businesses}
+          isFullScreen={isFullScreen}
+        />
       ) : (
         <>
           {businesses?.length ? (
@@ -164,7 +180,11 @@ const Tasklist = ({ loading, token, cookie, businesses = [], getProjectsList, se
                 setShowBusinessMenu={setShowBusinessMenu}
               />
               {window.innerWidth > 600 && (
-                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} />
+                <TasksPanel
+                  selectedDepartment={selectedDepartment}
+                  currentBusiness={currentBusiness}
+                  isEditable={isEditable}
+                />
               )}
             </Container>
           ) : (
