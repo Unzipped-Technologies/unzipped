@@ -18,7 +18,6 @@ const Box = styled.div`
   width: 984px;
   margin-left: 150px;
   border-radius: 5px;
-  border: 1px solid #d9d9d9;
   margin-top: 10px;
   @media (max-width: 680px) {
     display: none;
