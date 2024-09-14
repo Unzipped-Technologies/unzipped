@@ -60,7 +60,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
   return (
     <>
       {window?.innerWidth > 680 ? (
-        <div style={{ width: '60%',margin:"8px 0px 0px 0px" }}>
+        <div style={{ width: '80%', margin: 'auto', marginTop: '8px' }}>
           {projectApplications?.length
             ? projectApplications.map(application => {
                 return (
@@ -80,7 +80,8 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                         {application?.freelancerId?.userId?.profileImage ? (
                           <Image
                             src={application?.freelancerId?.userId?.profileImage}
-                            alt={`${application?.freelancerId?.userId?.FirstName +
+                            alt={`${
+                              application?.freelancerId?.userId?.FirstName +
                               ' ' +
                               application?.freelancerId?.userId?.LastName
                             }`}
@@ -133,7 +134,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                             letterSpacing=" 0.4px"
                             margin="0px">
                             {ConverterUtils.capitalize(
-                          `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
+                              `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
                             )}
                           </TEXT>
                           <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
@@ -194,7 +195,12 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           )}
                         </TEXT>
                       </DIV>
-                      <DIV display="flex" flexFlow="column" margin="20px 10px 0px 0px" alignItems="flex-end" data-testid={`${application._id}_application_skills`}>
+                      <DIV
+                        display="flex"
+                        flexFlow="column"
+                        margin="20px 10px 0px 0px"
+                        alignItems="flex-end"
+                        data-testid={`${application._id}_application_skills`}>
                         <DIV display="flex" alignItems="center" flexDirection="row" gap={4}>
                           <ViewProfileButton
                             onClick={() => {
@@ -211,10 +217,9 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           textColor="#000"
                           fontSize="13px"
                           fontWeight="100"
-                          lineHeight="21px" 
+                          lineHeight="21px"
                           letterSpacing="0.4px"
-                          padding="0px 0px 0px 3px"
-                          >
+                          padding="0px 0px 0px 3px">
                           <b style={{ fontSize: '14px', fontWeight: '800', paddingRight: '5px', fontFamily: 'Roboto' }}>
                             Cover letter:
                           </b>
@@ -251,7 +256,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                 )
               })
             : ''}
-          <DIV display="flex" justifyContent="end" alignItems="end" padding="15px 0px 0px 0px" >
+          <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
             <Button
               extraWid
               type="outlineInverse"

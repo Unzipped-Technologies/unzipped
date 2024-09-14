@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import Button from '../../ui/Button'
 import { useRouter } from 'next/router'
 
+import { DIV } from './style'
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
@@ -19,8 +20,8 @@ const ProjectApplications = styled.div`
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
-  border-radius:5px;
-  box-shadow:0px 4px 6px rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4);
   @media (max-width: 680px) {
     display: none;
   }
@@ -106,7 +107,7 @@ const ViewProfileButton = styled.button`
   border: 1px solid rgba(196, 196, 196, 0);
   background: #5cb85c;
   color: #fff;
-  font-size:14px;
+  font-size: 14px;
 `
 
 const DefaultDisplay = styled.div`
@@ -139,9 +140,9 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
   return (
     <>
       {window?.innerWidth > 680 ? (
-        <div data-testid="desktop_invites" 
-        style={{ width: '60%',margin:"8px 0px 0px 0px",boxShadow:"0px 4px 6px rgba(0, 0, 0, 0.4)"}}
-        >
+        <div
+          data-testid="desktop_invites"
+          style={{ width: '80%', margin: 'auto', marginTop: '8px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.4)' }}>
           {invitesList?.length && invitesList[0]?.listEntries?.length ? (
             invitesList[0]?.listEntries.map(invitation => {
               return (
@@ -196,7 +197,8 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
 
                         <UserCategory id="category">{invitation?.freelancerId?.category}</UserCategory>
                         <UserCountry id="address_country">
-                          {invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
+                          {invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}
+                        </UserCountry>
                         <UserRate id="rate">
                           {invitation?.freelancerId?.rate > 0 ? (
                             <div>
@@ -271,7 +273,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
               )
             })
           ) : (
-            <DefaultDisplay>
+            <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
               <Button
                 extraWid
                 type="outlineInverse"
@@ -289,7 +291,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                 }}>
                 Invite Freelancer
               </Button>
-            </DefaultDisplay>
+            </DIV>
           )}
         </div>
       ) : (

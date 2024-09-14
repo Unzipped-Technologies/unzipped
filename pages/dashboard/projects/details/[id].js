@@ -262,11 +262,11 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
           )}
         </HeaderDetail>
 
-        <Tabs data-testid="desktop_project_detail_tabs"
+        <Tabs
+          data-testid="desktop_project_detail_tabs"
           style={{
-            width: selectedTab === 1
-              ? '60%' : selectedTab === 4
-                ? '60%' : '100%', height: '55px'
+            width: '100%',
+            height: '55px'
           }}>
           {projectTabs.map((tab, index) => {
             return (
@@ -281,16 +281,14 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         </Tabs>
       </Desktop>
 
-      <DIV display="block" padding="0px 0px 50px 0px" style={{
-        width: selectedTab === 1
-          ? '82%' : selectedTab === 4
-            ? '82%' : '100%',
-        margin: selectedTab === 1
-          ? 'auto' : selectedTab === 4
-            ? 'auto' : '0px',
-        borderRadius: selectedTab === 4
-          ? '5px' : '0px'
-      }}>
+      <DIV
+        display="block"
+        padding="0px 0px 50px 0px"
+        style={{
+          width: '100%',
+          margin: 'auto',
+          borderRadius: selectedTab === 4 ? '5px' : '0px'
+        }}>
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />}
         {selectedTab === 1 && <ApplicationCard includeRate />}
         {selectedTab === 2 && <HiringTable />}
