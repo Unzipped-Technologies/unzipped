@@ -77,6 +77,21 @@ const Notification = ({ type, children, noButton, user }) => {
     dispatch(updateWizardSubmission({ isSuccessfull: false, projectName: '', error: '' }))
   }
 
+  setTimeout(() => {
+    wizardSubmission?.isSuccessfull && hideSuccessAlert()
+  }, 5000)
+
+  const hideSuccessAlert = () => {
+    dispatch({
+      type: 'UPDATE_WIZARD_SUBMISSION',
+      payload: {
+        isSuccessfull: false,
+        error: '',
+        projectName: ''
+      }
+    })
+  }
+
   function handleGithub() {
     router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
   }
