@@ -22,6 +22,7 @@ import {
 import Button from '../../ui/Button'
 import { createBusiness, updateBusinessForm, updateWizardSubmission } from '../../../redux/actions'
 import { DarkText, Absolute, WhiteCard, Dismiss } from './../../../components/unzipped/dashboard/style'
+
 import { useRouter } from 'next/router'
 
 const renderSectionContent = (
@@ -162,7 +163,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '8px' }} id="required_skills">
               {businessForm?.requiredSkills?.map((skill, index) => (
-                <TagStyled key={index}>{skill}</TagStyled>
+                <TagStyled key={index}>{ValidationUtils.truncate(skill, 10)}</TagStyled>
               ))}
             </div>
           </div>

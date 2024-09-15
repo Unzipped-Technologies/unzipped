@@ -18,7 +18,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import Nav from '../../header'
 import { DarkText } from '../style'
 import MobileTaskForm from './MobileTaskForm'
-import { ConverterUtils } from '../../../../utils'
+import { ConverterUtils, ValidationUtils } from '../../../../utils'
 import {
   getDepartmentById,
   updateCreateStoryForm,
@@ -255,7 +255,7 @@ const MobileTaskDetail = ({
                             aria-controls="panel1a-content"
                             id="panel1a-header">
                             <Typography className={classes.heading}>
-                              {tag?.tagName} ({tag?.tasks?.length})
+                              {ValidationUtils.truncate(tag?.tagName, 20)} ({tag?.tasks?.length})
                             </Typography>
                           </AccordionSummary>
                           <CustomAccordionDetails>

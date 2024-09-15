@@ -13,7 +13,7 @@ import { WhiteCard, DIV, TEXT } from '../style'
 import DepartmentModel from '../DepartmentModel'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { TODO_STATUS, DONE, IN_PROGRESS } from '../../../../utils/constants'
-import { ConverterUtils } from '../../../../utils'
+import { ConverterUtils, ValidationUtils } from '../../../../utils'
 import {
   getProjectsList,
   getDepartmentById,
@@ -296,7 +296,7 @@ const TasksPanel = ({
                               fontSize="14px"
                               paddingLeft="4px"
                               margin="0px 0px 0px 10px">
-                              {tag.tagName.toUpperCase()} ({tag?.tasks?.length})
+                              {ValidationUtils.truncate(tag.tagName.toUpperCase(), 20)} ({tag?.tasks?.length})
                             </TEXT>
                             <TEXT textAlign="left" fontWeight="bold" width="180px">
                               STORY POINTS
@@ -334,7 +334,7 @@ const TasksPanel = ({
                                                 <FaRegCheckCircle color={getStatusColor(task)} />
                                               </DIV>
                                               <TEXT fontWeight="bold" width="300px" padding="15px 0px 0px 0px">
-                                                {task.taskName}
+                                                {ValidationUtils.truncate(task.taskName, 250)}
                                               </TEXT>
                                             </DIV>
                                             <TEXT

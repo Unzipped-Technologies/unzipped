@@ -242,7 +242,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
                             lineHeight="23px"
                             letterSpacing="0.15px"
                             padding="20px 0px 0px 18px">
-                            {business?.name}
+                            {ValidationUtils.truncate(business?.name, 40)}
                           </TEXT>
                           <TEXT
                             textColor="#000"

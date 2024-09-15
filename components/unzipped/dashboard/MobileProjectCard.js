@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useRouter } from 'next/router'
 
 import IconComponent from '../../ui/icons/IconComponent'
+import { ValidationUtils } from '../../../utils'
 
 const UserSkills = styled.div`
   display: flex;
@@ -37,7 +38,7 @@ function MobileProjectCard({ project }) {
                   router.push(`/projects/${project._id}`)
                 }}
                 data-testid={`${project?._id}_name`}>
-                {project?.name}
+                {ValidationUtils.truncate(project?.name, 40)}
               </p>
             </div>
           </div>

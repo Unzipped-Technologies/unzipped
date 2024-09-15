@@ -13,6 +13,7 @@ import HiringTable from '../../../../components/unzipped/dashboard/HiresTable'
 import DesktopProjectDetail from '../../../../components/unzipped/dashboard/DesktopProjectDetail'
 import Invoices from '../../../../components/unzipped/dashboard/Invoices'
 import FreelancerInvites from '../../../../components/unzipped/dashboard/FreelancerInvites'
+import { ValidationUtils } from '../../../../utils'
 
 const Navbar = styled(DIV)`
   @media (max-width: 680px) {
@@ -66,9 +67,10 @@ const ProjectName = styled.div`
   @media (max-width: 680px) {
     font-weight: 300;
     font-size: 18px;
-    line-height: 12.5px; /* 68.056% */
+    line-height: 20.5px; /* 68.056% */
     width: 100%;
     justify-content: center;
+    padding: 0px 0px 0px 15px;
   }
 `
 
@@ -229,7 +231,11 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
         <HeaderDetail data-testid="desktop_project_detail_header">
           <Header>
             <ProjectName>
-              {selectedTab !== 3 ? (window.innerWidth <= 680 ? `${projectDetails?.name ?? ''}` : 'PROJECT') : ''}
+              {selectedTab !== 3
+                ? window.innerWidth <= 680
+                  ? `${ValidationUtils.truncate(projectDetails?.name, 60) ?? ''}`
+                  : 'PROJECT'
+                : ''}
               {selectedTab === 3 && window.innerWidth > 680 ? (role === 1 ? 'TIMESHEET' : 'Invoice History') : ''}
             </ProjectName>
             {(selectedTab === 3) & (window.innerWidth <= 680) ? (
@@ -257,7 +263,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
               lineHeight="24.5px" /* 102.083% */
               letterSpacing="0.4px"
               textTransform="uppercase">
-              {projectDetails?.name}
+              {ValidationUtils.truncate(projectDetails?.name, 150)}
             </ProjectSubHeading>
           )}
         </HeaderDetail>

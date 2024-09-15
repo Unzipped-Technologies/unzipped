@@ -4,6 +4,7 @@ import { Grid } from '../../dashboard/style'
 import { FormField } from '../../../ui'
 import Button from '../../../ui/Button'
 import { ContentContainer } from '../../../../pages/create-your-business'
+import { ValidationUtils } from '../../../../utils'
 import ClearSharpIcon from '@material-ui/icons/ClearSharp'
 import CharacterCounter from '../CharacterCounter'
 
@@ -117,7 +118,7 @@ const StepNineWizardFlow = ({
                 onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
               />
             </div>
-            <span>{question}</span>
+            <span>{ValidationUtils.truncate(question, 40)}</span>
           </div>
         ))}
       </ContentContainer>

@@ -460,11 +460,6 @@ const TaskForm = ({
           </TitleText>
         )}
         <DIV display="flex" margin="5px 0px 0px 80px" alignItems="center">
-          {/* {taskDetail?.ticketCode && (
-            <TitleText color="#000" titleFontSize="18px" lineHeight="normal" light width="85px" marginTop="20px">
-              {taskDetail?.ticketCode?.toLowerCase()}
-            </TitleText>
-          )} */}
           <div>
             <FormField
               zIndexUnset
@@ -480,6 +475,7 @@ const TaskForm = ({
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
+              maxLength={'250'}
               onClick={() => {
                 enableEditMode('taskName')
               }}
@@ -702,6 +698,10 @@ const TaskForm = ({
                       {...params}
                       variant="standard"
                       placeholder="Tags"
+                      inputProps={{
+                        ...params.inputProps,
+                        maxLength: 10
+                      }}
                       onKeyDown={e => {
                         if (e.key === 'Enter') {
                           e.preventDefault()
@@ -787,6 +787,8 @@ const TaskForm = ({
               width="245px"
               height="35px  !important"
               borderRadius="5px"
+              type="number"
+              maxLength={'3'}
               onChange={e => updateForm('storyPoints', e?.target?.value)}
               value={taskForm?.storyPoints}
               onUpdate={() => {}}
@@ -869,6 +871,7 @@ const TaskForm = ({
               placeholder="Description"
               display="inline !important"
               borderRadius="5px"
+              maxLength={'1000'}
               textarea
               onChange={e => updateForm('description', e?.target?.value)}
               value={taskForm?.description}
@@ -901,6 +904,7 @@ const TaskForm = ({
               name="comment"
               textarea
               width="100%"
+              maxLength={'1000'}
               display="inline !important"
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}>
@@ -972,6 +976,7 @@ const TaskForm = ({
                       noMargin
                       height="auto"
                       textarea
+                      maxLength={'1000'}
                       width="100%"
                       display="inline !important"
                       onChange={e => {
