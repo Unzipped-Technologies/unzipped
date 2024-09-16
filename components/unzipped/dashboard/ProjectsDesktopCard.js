@@ -66,7 +66,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
           </DarkText>
           <DarkText half data-testid={`${project?._id}_budget`}>
             Estimated Rate: $
-            {project?.projectBudgetType === 'Hourly Rate' ? project?.budget + ' / hour' : project?.budget ?? 0}
+            {project?.projectBudgetType === 'Hourly Rate' ? project?.budgetRange + ' / hour' : project?.budgetRange ?? 0}
           </DarkText>
         </Flex>
         <div className="d-flex justify-content-between">

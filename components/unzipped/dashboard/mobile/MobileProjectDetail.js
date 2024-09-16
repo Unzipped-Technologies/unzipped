@@ -42,7 +42,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
         color="#12151B
           
 ">
-        Budget: ${projectDetails?.budget || 0}
+        Budget: ${projectDetails?.budgetRange || 0}
       </TEXT>
       <div className="d-flex justify-content-start mt-3">
         <TEXT width="40%" fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">

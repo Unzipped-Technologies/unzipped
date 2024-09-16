@@ -220,6 +220,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             businessCity: 1,
             businessState: 1,
             businessZip: 1,
+            budgetRange:1,
             projectType: 1,
             applicants: 1,
             deadline: 1,

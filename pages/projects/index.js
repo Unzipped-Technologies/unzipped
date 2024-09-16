@@ -204,7 +204,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
         >
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
           {!loading ? (
-            <div className="overflow-auto">
+            <div className="overflow-auto" style={{width:"100%"}}>
               <div className="d-flex align-items-baseline py-4 bg-white">
                 <h5 className="px-4">
                   <b>Top Results</b>

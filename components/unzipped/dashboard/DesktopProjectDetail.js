@@ -135,7 +135,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           textColor="#12151B
 "
                           style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                          Budget: ${projectDetails?.budget || 0}
+                          Budget: ${projectDetails?.budgetRange || 0}
                         </TEXT>
                       </DIV>
                       <TEXT fontSize="20px" fontWeight="500" lineHeight="23px" textColor=" #12151B">
@@ -237,7 +237,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         Budget
                       </TEXT>
                       <TEXT fontSize="20px" lineHeight="24.5px" fontWeight="300" textColor="#444444">
-                        ${projectDetails?.budget || 0}{' '}
+                        ${projectDetails?.budgetRange || 0}{' '}
                         {projectDetails?.projectBudgetType === 'Hourly Rate' ? 'per Hour' : 'Fixed'}
                       </TEXT>
 
