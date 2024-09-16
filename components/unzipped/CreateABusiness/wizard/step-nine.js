@@ -118,7 +118,7 @@ const StepNineWizardFlow = ({
                 onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
               />
             </div>
-            <span>{ValidationUtils.truncate(question, 40)}</span>
+            <span>{question}</span>
           </div>
         ))}
       </ContentContainer>
