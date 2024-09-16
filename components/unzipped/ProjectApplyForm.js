@@ -248,7 +248,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
           ? data.questions?.map(question => {
               return (
                 <FieldContainer key={question.question}>
-                  <FieldHeading>{question?.questionText}</FieldHeading>
+                  <FieldHeading>{`${question?.questionText} ${question?.questionText?.slice(-1) !== "?" ? '?':''}`}</FieldHeading>
                   <TextArea
                     data-testid={question.question}
                     value={question.answer}

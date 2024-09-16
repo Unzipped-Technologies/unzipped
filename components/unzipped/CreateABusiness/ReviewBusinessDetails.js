@@ -227,7 +227,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             <ol id="questions">
               {businessForm?.questionsToAsk?.map((question, index) => (
                 <li key={index} id={question}>
-                  {renderSectionContent(400, '18px', question, '', '10px', '', '1.3px')}
+                  {renderSectionContent(400, '18px', `${question} ${question?.slice(-1) !== "?" ? '?':''}`, '', '10px', '', '1.3px')}
                 </li>
               ))}
             </ol>
