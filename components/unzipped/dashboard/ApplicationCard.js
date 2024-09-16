@@ -121,7 +121,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                                   </Badge>
                                 )
                               })
-                            : '-'}
+                            : 'N/A'}
                         </DIV>
                       </DIV>
                       <DIV display="flex" flexFlow="column" width="600px" margin="20px 0px 0px 0px">
