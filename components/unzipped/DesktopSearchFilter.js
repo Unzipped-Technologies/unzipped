@@ -347,7 +347,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
                     }}
                   />
                 }
-                label={skill.text}
+                label={skill.label}
               />
 
               <p className="mx-3">{skill?.skill}</p>
