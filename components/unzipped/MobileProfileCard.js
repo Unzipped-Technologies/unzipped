@@ -8,6 +8,7 @@ import { Badge, Icon, Image } from '../ui'
 import { ConverterUtils } from '../../utils'
 import EducationModal from './EducationModal'
 import IconComponent from '../ui/icons/IconComponent'
+import SkillsModal from './SkillsModal'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -40,10 +41,11 @@ const ProjectCard = styled.div`
   padding: 19px 13px;
 `
 
-function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
+function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReFetch }) {
   const router = useRouter()
   const [selected, setSelected] = useState(0)
   const [open, setOpen] = useState(false)
+  const [openSkill, setSkillOpen] = useState(false)
 
   const handleOpen = () => {
     setOpen(true)
@@ -331,9 +333,62 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId }) {
                 ))
               : ''}
           </OtherInformationCard>
+          <OtherInformationCard>
+            <div
+              className="d-flex justify-content-between align-items-center"
+              style={{
+                borderBottom: '1px solid #D9D9D9'
+              }}>
+              <P fontWeight="700" padding="12px 10px 5px 10px">
+                Skills
+              </P>
+              {user?.role === 1 && freelancerId === user?._id && (
+                <P
+                  color="#2F76FF"
+                  onClick={() => {
+                    setSkillOpen(!openSkill)
+                  }}
+                  data-testid="add_education">
+                  <AiOutlinePlusCircle
+                    style={{
+                      fontSize: '18px',
+                      marginRight: '20px',
+                      color: '#2F76FF'
+                    }}
+                  />
+                </P>
+              )}
+            </div>
+            {user?.freelancerSkills?.length
+              ? user.freelancerSkills.map((skill, index) => (
+                  <div
+                    key={`${index}_${skill}`}
+                    style={{ display: 'flex', justifyContent: 'space-between', alignSelf: 'flex-end' }}>
+                    <P padding="0 10px" fontWeight="500">
+                      {ConverterUtils.capitalize(skill?.skill)}
+                    </P>
+                    <P padding="0 10px" fontWeight="500">
+                      {!skill?.yearsExperience ? 0 : skill?.yearsExperience}
+                      {skill.yearsExperience > 1 ? ' Years' : ' Year'}
+                    </P>
+                  </div>
+                ))
+              : ''}
+          </OtherInformationCard>
         </OtherInformationBox>
         {open && <EducationModal open={open} onHide={handleClose} />}
       </div>
+      {openSkill && (
+        <SkillsModal
+          skills={user?.freelancerSkills}
+          open={openSkill}
+          setReFetch={setReFetch}
+          onHide={() => {
+            setReFetch(true)
+            setSkillOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }

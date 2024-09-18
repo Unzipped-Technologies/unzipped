@@ -29,15 +29,22 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
   const router = useRouter()
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
+  const [refetch, setReFetch] = useState(false)
   const [selected, setSelected] = useState(0)
   const [userData, setUserData] = useState({})
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getFreelancerById(id)
-    }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    refetch && fetchData()
+  }, [refetch])
+
+  const fetchData = async () => {
+    await getFreelancerById(id)
+    setReFetch(false)
+  }
 
   useEffect(() => {
     setUserData({
@@ -87,7 +94,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
                 userId={userData?._id}
               />
             </div>
-            <ProjectsCard user={userData} freelancerId={freelancerId} />
+            <ProjectsCard user={userData} freelancerId={freelancerId} setReFetch={setReFetch} />
           </Container>
         )}
 
@@ -96,6 +103,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
             {interViewView ? (
               <MobileProfileCard
                 user={userData}
+                setReFetch={setReFetch}
                 handleProfilePage={handleValueFromChild}
                 role={role}
                 freelancerId={freelancerId}
