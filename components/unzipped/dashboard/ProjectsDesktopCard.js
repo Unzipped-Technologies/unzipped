@@ -11,7 +11,7 @@ import { TEXT, DarkText } from './style'
 export const Container = styled.div`
   display: flex;
   flex-flow: row;
-  width: inherit;
+  width: 100%;
   padding: ${({ includeRate }) => (includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px')};
 `
 const Left = styled.div`
@@ -66,7 +66,9 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
           </DarkText>
           <DarkText half data-testid={`${project?._id}_budget`}>
             Estimated Rate: $
-            {project?.projectBudgetType === 'Hourly Rate' ? project?.budgetRange + ' / hour' : project?.budgetRange ?? 0}
+            {project?.projectBudgetType === 'Hourly Rate'
+              ? project?.budgetRange + ' / hour'
+              : project?.budgetRange ?? 0}
           </DarkText>
         </Flex>
         <div className="d-flex justify-content-between">

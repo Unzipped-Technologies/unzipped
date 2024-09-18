@@ -15,8 +15,8 @@ const Box = styled.div`
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
   height: auto;
-  width: 984px;
-  margin-left: 150px;
+  width: 80%;
+  margin: auto;
   border-radius: 5px;
   margin-top: 10px;
   @media (max-width: 680px) {
@@ -50,26 +50,24 @@ const InvitesList = ({ businessId, invitesList, getUserListEntries, freelancerId
     <>
       {window.innerWidth > 680 ? (
         <Box>
-          <div className="overflow-auto">
-            {invitesList?.length
-              ? invitesList.map(invitation => {
-                  return (
-                    <WhiteCard
-                      noMargin
-                      overlayDesktop
-                      cardHeightDesktop
-                      key={`${invitation._id}_listing`}
-                      data-testid={`${invitation._id}_desktop_freelancer_invite`}>
-                      <ProjectDesktopCard
-                        project={invitation?.businessId}
-                        includeRate
-                        freelancerId={invitation?.freelancerId}
-                      />
-                    </WhiteCard>
-                  )
-                })
-              : ''}
-          </div>
+          {invitesList?.length
+            ? invitesList.map(invitation => {
+                return (
+                  <WhiteCard
+                    overflow="visible"
+                    noMargin
+                    overlayDesktop
+                    key={`${invitation._id}_listing`}
+                    data-testid={`${invitation._id}_desktop_freelancer_invite`}>
+                    <ProjectDesktopCard
+                      project={invitation?.businessId}
+                      includeRate
+                      freelancerId={invitation?.freelancerId}
+                    />
+                  </WhiteCard>
+                )
+              })
+            : ''}
         </Box>
       ) : invitesList?.length ? (
         invitesList.map(invitation => {

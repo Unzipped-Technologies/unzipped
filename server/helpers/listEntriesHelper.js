@@ -186,7 +186,7 @@ const getUserListEntries = async ({ filter }) => {
         {
           path: 'businessId',
           model: 'businesses',
-          select: 'name description projectImagesUrl budget likeTotal projectBudgetType requiredSkills',
+          select: 'name description projectImagesUrl budgetRange likeTotal projectBudgetType requiredSkills',
           populate: {
             path: 'projectImagesUrl',
             model: 'file',
