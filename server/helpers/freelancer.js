@@ -24,10 +24,6 @@ const getFreelancerById = async id => {
         path: 'userId',
         select:
           'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry role isIdentityVerified isEmailVerified isPhoneVerified'
-      },
-      {
-        path: 'freelancerSkills',
-        select: 'skill isActive yearsExperience'
       }
     ])
   } catch (e) {
@@ -101,30 +97,6 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
       {
         $match: {
           contracts: { $eq: [] } // Filter freelancers with no contracts
-        }
-      },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: [
-                    '$_id',
-                    { $cond: { if: { $isArray: '$$freelancerSkills' }, then: '$$freelancerSkills', else: [] } }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                skill: 1
-              }
-            }
-          ],
-          as: 'freelancerSkills'
         }
       },
       {
@@ -281,19 +253,16 @@ const countFreelancers = async filters => {
 }
 
 // add skills to freelancer
-const addSkillsToFreelancer = async (data, freelancerId) => {
+const updateFreelancerSkills = async (skills, freelancerId) => {
   try {
     const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
-    if (data?.skills?.length) {
-      const newSkillIds = []
-      for (const item of data.skills) {
-        item['freelancerId'] = freelancerId
-        const id = await FreelancerSkillsModel.create({
-          ...item
-        })
-        newSkillIds.push(id.id)
+
+    if (skills?.length) {
+      if (freelancerData?.freelancerSkills?.length) {
+        freelancerData.freelancerSkills = [...freelancerData.freelancerSkills, ...skills]
+      } else {
+        freelancerData['freelancerSkills'] = [...skills]
       }
-      freelancerData.freelancerSkills = [...freelancerData.freelancerSkills, ...newSkillIds]
     }
     await freelancerData.save()
     return freelancerData
@@ -306,14 +275,16 @@ const addSkillsToFreelancer = async (data, freelancerId) => {
 const deleteSkillFromFreelancer = async (skillId, freelancerId) => {
   try {
     const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
-    const skillData = await FreelancerSkillsModel.findById(skillId)
-    if (!skillData || !freelancerData?.skills?.include(skillId)) throw Error(`Skill not exist`)
+    if (!freelancerData) throw Error(`Freelancer not found.`)
 
-    if (freelancerData?.skills?.length) {
-      freelancerData.skills = freelancerData?.skills.filter(skill => skill !== skillId)
-      await FreelancerSkillsModel.softDelete({ _id: skillId })
+    if (freelancerData?.freelancerSkills?.length) {
+      freelancerData.freelancerSkills = freelancerData?.freelancerSkills.filter(
+        skill => skill?._id?.toString() !== skillId
+      )
+
       await freelancerData.save()
     }
+
     return freelancerData
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -480,52 +451,47 @@ const createFreelancerInvite = async params => {
   return updateFreelancer
 }
 
-const sendProjectInvitationEmail = async (inviteId) => {
-
-  const inviteInfo = await InviteModel.findById(inviteId)
-    .populate(
-      [
-        {
-          path: 'business',
-          model: 'businesses',
-          select: 'name requiredSkills',
-        },
-        {
-          path: 'userInvited',
-          model: 'users',
-          select: 'FirstName LastName email',
-        },
-        {
-          path: 'freelancer',
-          model: 'freelancers',
-          populate: {
-            path: 'userId',
-            model: 'users',
-            select: 'FirstName LastName email',
-          },
-          select: 'userId'
-        }
-      ]
-    );
+const sendProjectInvitationEmail = async inviteId => {
+  const inviteInfo = await InviteModel.findById(inviteId).populate([
+    {
+      path: 'business',
+      model: 'businesses',
+      select: 'name requiredSkills'
+    },
+    {
+      path: 'userInvited',
+      model: 'users',
+      select: 'FirstName LastName email'
+    },
+    {
+      path: 'freelancer',
+      model: 'freelancers',
+      populate: {
+        path: 'userId',
+        model: 'users',
+        select: 'FirstName LastName email'
+      },
+      select: 'userId'
+    }
+  ])
 
   const inviteEmailObj = {
     to: inviteInfo?.freelancer?.userId?.email,
-    templateId: "d-ab58179c407a4e17be18ffbe81ef0fce",
+    templateId: 'd-ab58179c407a4e17be18ffbe81ef0fce',
     dynamicTemplateData: {
       firstName: inviteInfo?.freelancer?.userId?.FirstName ?? '',
       lastName: inviteInfo?.freelancer?.userId?.LastName ?? '',
       loginLink: `${keys.redirectDomain}/login`,
       supportLink: `${keys.redirectDomain}/wiki/getting-started`,
       projectName: inviteInfo?.business?.name,
-      clientName: inviteInfo?.userInvited?.FirstName + " " + inviteInfo?.userInvited?.LastName,
+      clientName: inviteInfo?.userInvited?.FirstName + ' ' + inviteInfo?.userInvited?.LastName,
       duration: inviteInfo?.duration ?? '-',
-      skills: inviteInfo?.business?.requiredSkills,
+      skills: inviteInfo?.business?.requiredSkills
     }
   }
 
   await Mailer.sendInviteMail(inviteEmailObj)
-  return inviteEmailObj;
-
+  return inviteEmailObj
 }
 
 module.exports = {
@@ -539,7 +505,7 @@ module.exports = {
   deleteShowCaseProject,
   deleteProjectImage,
   deleteEducation,
-  addSkillsToFreelancer,
+  updateFreelancerSkills,
   createFreelancerInvite,
   deleteSkillFromFreelancer,
   getFreelancerWithoutPopulate,

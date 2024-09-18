@@ -28,6 +28,21 @@ const projectsSchema = new Schema(
   }
 )
 
+const skillsSchema = new Schema(
+  {
+    skill: {
+      type: String,
+      maxlength: 40
+
+    },
+    yearsExperience: { type: Number, default: 0 },
+
+  },
+  {
+    timestamps: true
+  }
+)
+
 const freelancerSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'users' },
@@ -37,7 +52,10 @@ const freelancerSchema = new Schema(
     isPreferedFreelancer: { type: Boolean, default: false },
     isAcceptEquity: { type: Boolean, default: false },
     category: { type: String, default: '' },
-    freelancerSkills: { type: [Schema.Types.ObjectId], ref: 'freelancerskills' },
+    freelancerSkills: {
+      type: [skillsSchema],
+      default: []
+    },
     lists: { type: Schema.Types.ObjectId, ref: 'lists' },
     invites: { type: Schema.Types.ObjectId, ref: 'invites' },
     cover: { type: String, default: null },

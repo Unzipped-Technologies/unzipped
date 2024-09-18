@@ -215,3 +215,53 @@ export const deleteProjectImage = (projectID, imageId) => async (dispatch, getSt
     })
   await dispatch(stopLoading())
 }
+
+export const updateFreelancerSkills = (data) => async (dispatch, getState) => {
+  await dispatch(startLoading())
+
+  const response = await axios
+    .post(`/api/freelancer/update-skills`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: DELETE_SHOWCASE_PROJECT,
+        payload: res.data
+      })
+      return res;
+    }
+    )
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+      return err;
+    })
+  await dispatch(stopLoading())
+  return response;
+}
+
+
+export const deleteFreelancerSkill = (skillId) => async (dispatch, getState) => {
+  await dispatch(startLoading())
+
+  const response = await axios
+    .delete(`/api/freelancer/delete-skill/${skillId}`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
+      dispatch({
+        type: DELETE_SHOWCASE_PROJECT,
+        payload: res.data
+      })
+      return res;
+    }
+    )
+    .catch(err => {
+      dispatch({
+        type: FREELANCER_ERROR,
+        payload: err.response
+      })
+      return err;
+    })
+  await dispatch(stopLoading())
+  return response;
+}
+
