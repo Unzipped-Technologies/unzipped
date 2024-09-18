@@ -183,7 +183,7 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
     const error = ValidationUtils._strongPasswordValidation(user.password)
 
     if (!error && user.password) {
-      setPasswordAlert('Password must be 8+ characters, 1 capital letter and 1 special character.')
+      setPasswordAlert('Password must be 8+ characters including numbers, 1 capital letter and 1 special character.')
       return false
     } else {
       setPasswordAlert('')
