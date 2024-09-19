@@ -63,6 +63,18 @@ const userSchema = new Schema(
     thirdPartyCredentials: { type: Schema.Types.ObjectId, ref: 'thirdPartyApplications' },
     accountUpdateMailCount: { type: Number, default: 0 },
     isAccountDetailCompleted: { type: Boolean, default: false },
+    calendarSettings: {
+      type: {
+        fromDate: { type: Date },
+        toDate: { type: Date },
+        startTime: { type: String },
+        endTime: { type: String },
+        timezone: { type: String },
+        calendlyLink: { type: String },
+        interviewScheduler: { type: String }
+      },
+      default: {}
+    }
   },
   {
     timestamps: true

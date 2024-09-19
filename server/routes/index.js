@@ -3,7 +3,6 @@ const router = express.Router()
 
 router.use('/auth', require('./authRoutes'))
 router.use('/user', require('./userRoutes'))
-router.use('/freelancerSkills', require('./freelancerSkillsRoutes'))
 router.use('/product', require('./productRoutes'))
 router.use('/payment', require('./billingRoutes'))
 router.use('/contract', require('./contractRoutes'))
@@ -31,6 +30,5 @@ router.use('/questions', require('./questionRoutes'))
 router.use('/projectApplication', require('./projectApplicationsRoutes'))
 
 router.use('/meeting', require('./meetingRoutes'))
-router.use('/calender', require('./CalenderSettingRoutes'))
 
 module.exports = router
