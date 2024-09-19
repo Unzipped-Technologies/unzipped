@@ -21,11 +21,7 @@ const getAllListEntries = async (id, filters) => {
   const listEntries = await ListEntriesModel.find({ userId: id })
     .populate({
       path: 'freelancerId',
-      model: 'freelancers',
-      populate: {
-        path: 'freelancerSkills',
-        model: 'freelancerskills'
-      }
+      model: 'freelancers'
     })
     .populate({
       path: 'userId',
@@ -110,14 +106,9 @@ const findListEntriesById = async id => {
       select: 'category rate likeTotal freelancerSkills',
       populate: [
         {
-          path: 'freelancerSkills',
-          model: 'freelancerskills',
-          select: 'yearsExperience skill '
-        },
-        {
           path: 'userId',
           model: 'users',
-          select: 'FirstName LastName profileImage AddressLineCountry',
+          select: 'FirstName freelancerSkills LastName profileImage AddressLineCountry',
           match: {
             $or: [{ FirstName: { $ne: null, $ne: '' } }, { LastName: { $ne: null, $ne: '' } }]
           }
@@ -141,12 +132,7 @@ const getAllteamMembers = async id => {
       {
         path: 'user',
         model: 'users',
-        select: 'FirstName LastName profileImage AddressLineCountry _id'
-      },
-      {
-        path: 'freelancerSkills',
-        model: 'freelancerskills',
-        select: 'yearsExperience skill '
+        select: 'FirstName freelancerSkills LastName profileImage AddressLineCountry _id'
       }
     ]
   })

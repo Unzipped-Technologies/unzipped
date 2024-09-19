@@ -94,10 +94,7 @@ const MobileListDetail = () => {
           id: item?.freelancerId?._id,
           itemId: item?._id,
           name: `${item?.freelancerId?.userId?.FirstName} ${item?.freelancerId?.userId?.LastName}`,
-          skills:
-            item?.freelancerId?.freelancerSkills.length > 0
-              ? item?.freelancerId?.freelancerSkills?.map(skill => skill.skill)
-              : [],
+          skills: item?.freelancerId?.freelancerSkills ?? [],
           cover:
             item?.freelancerId?.cover ||
             `I have been a ${item?.freelancerId?.category || 'developer'} for over ${

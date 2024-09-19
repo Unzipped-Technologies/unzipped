@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
 import Image from '../ui/Image'
 import Icon from '../ui/Icon'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
+import Popper from '@mui/material/Popper'
 import { ValidationUtils, ConverterUtils } from '../../utils'
 import { TitleText, DarkText, Underline, WhiteCard } from './dashboard/style'
+import { Card, CardContent, Typography, Grid, Box as MUIBox } from '@mui/material'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
 const Container = styled.div`
   display: flex;
@@ -59,8 +62,34 @@ const Likes = styled.span`
   justify-content: space-between;
 `
 const ProfileCard = ({ user }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null)
+
+  const handleClick = event => {
+    setAnchorEl(anchorEl ? null : event.currentTarget)
+  }
+
+  const open = Boolean(anchorEl)
+  let id = open ? 'simple-popper' : undefined
+
   const month = ValidationUtils.getMonthInText(user?.updatedAt)
   const dateCode = `${month} ${new Date(user?.updatedAt).getDate()}, ${new Date(user?.updatedAt).getFullYear()}`
+
+  const handlePageClick = event => {
+    if (user?.calendarSettings?.startTime && anchorEl && !anchorEl.contains(event.target)) {
+      setAnchorEl(null) // Close the Popper
+    }
+  }
+
+  useEffect(() => {
+    // Attach the event listener when the component mounts
+    document.addEventListener('click', handlePageClick)
+
+    // Cleanup: remove the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('click', handlePageClick)
+    }
+  }, [anchorEl])
+
   return (
     <Container data-testid="desktop_profile_container">
       <ImageContainer>
@@ -141,10 +170,51 @@ const ProfileCard = ({ user }) => {
           </Badges>
         </Box>
       </Content>
+
       <LikeBox>
-        <Button block width="36px" type="button" buttonHeight="36px" fontSize="15px" noBorder>
+        <Button
+          block
+          width="36px"
+          type="button"
+          buttonHeight="36px"
+          fontSize="15px"
+          noBorder
+          onClick={e => {
+            handleClick(e)
+          }}>
           CHECK AVAILABILITY
         </Button>
+        <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}>
+          <Card
+            sx={{
+              minWidth: 275,
+              borderRadius: 3,
+              boxShadow: '0px 10px 30px rgba(0,0,0,0.1)',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)'
+              }
+            }}>
+            <CardContent
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+                backgroundColor: '#ffffff'
+              }}>
+              <AccessTimeIcon sx={{ fontSize: 40, color: '#1976d2', marginBottom: '10px' }} />
+              <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#333', marginBottom: '5px' }}>
+                {`${ConverterUtils.formatTimeFromDate(
+                  user?.calendarSettings?.startTime
+                )} - ${ConverterUtils.formatTimeFromDate(user?.calendarSettings?.endTime)}`}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '14px' }}>
+                Available Time Slot
+              </Typography>
+            </CardContent>
+          </Card>
+        </Popper>
         <Likes>
           <div className="inline-flex flex-direction-column">
             <Icon name="thumbsUp" />

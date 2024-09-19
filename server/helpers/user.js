@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const user = require('../models/User')
 const taxDataTables = require('../models/TaxDataTable')
 const thirdPartyApplications = require('../models/ThirdPartyApplications')
-const freelancerSkills = require('../models/FreelancerSkills')
 const list = require('../models/List')
 const freelancer = require('../models/Freelancer')
 const notifications = require('../models/Notifications')
@@ -15,7 +14,6 @@ const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
 const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
 const BusinessModel = require('../models/Business')
@@ -71,17 +69,9 @@ const createUser = async (data, hash) => {
       userId: newUser.id
     })
     if (data?.skills?.length) {
-      for (const skill of data.skills) {
-        await freelancerSkills.create({
-          ...skill,
-          profileId: newUser.id,
-          user: await user.findById(newUser.id)
-        })
-      }
-      const ids = await freelancerSkills.find({ profileId: newUser.id })
       // update users to have skills
       await user.findByIdAndUpdate(newUser.id, {
-        freelancerSkills: ids.map(item => mongoose.Types.ObjectId(item.id)),
+        freelancerSkills: data.skills,
         freelancers: response.id
       })
       newUser.freelancers = response.id
@@ -98,7 +88,7 @@ const createUser = async (data, hash) => {
 // update User
 const updateUserByid = async (id, data) => {
   try {
-    const userData = await getSingleUser({ _id: id }, '-password');
+    const userData = await getSingleUser({ _id: id }, '-password')
 
     if ((data?.role === 1 || data?.role === '1') && !userData?.freelancers) {
       const freelancerData = new freelancer({ userId: userData?._id })
@@ -111,22 +101,22 @@ const updateUserByid = async (id, data) => {
     if (userData?.role === 1 && !userData?.freelancers) {
       const freelancerEntity = await freelancer.create({ userId: id })
       if (freelancerEntity) {
-        userData['freelancers'] = freelancerEntity._id;
+        userData['freelancers'] = freelancerEntity._id
       }
     }
 
     if (data?.businessPhone && data?.taxId && data?.businessType) {
       const isExistingRecord = await BusinessDetailsModel.findOne({ userId: id })
       if (isExistingRecord) {
-        let businessDetailRecord = {};
-        if (isExistingRecord?.name !== data.businessName) businessDetailRecord['name'] = data.businessName;
-        if (isExistingRecord?.businessPhone !== data.businessPhone) businessDetailRecord['businessPhone'] = data.businessPhone;
-        if (isExistingRecord?.taxId !== data.taxId) businessDetailRecord['taxId'] = data.taxId;
-        if (isExistingRecord?.type !== data.businessType) businessDetailRecord['type'] = data.businessType;
-        await BusinessDetailsModel.findOneAndUpdate({ _id: isExistingRecord._id }, { $set: businessDetailRecord });
+        let businessDetailRecord = {}
+        if (isExistingRecord?.name !== data.businessName) businessDetailRecord['name'] = data.businessName
+        if (isExistingRecord?.businessPhone !== data.businessPhone)
+          businessDetailRecord['businessPhone'] = data.businessPhone
+        if (isExistingRecord?.taxId !== data.taxId) businessDetailRecord['taxId'] = data.taxId
+        if (isExistingRecord?.type !== data.businessType) businessDetailRecord['type'] = data.businessType
+        await BusinessDetailsModel.findOneAndUpdate({ _id: isExistingRecord._id }, { $set: businessDetailRecord })
       }
     }
-
 
     const updatedUserEntity = await userData.save()
     return updatedUserEntity
@@ -191,18 +181,14 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
   try {
     const regexQuery = new RegExp(filter, 'i')
     const existingIndexes = await freelancer.collection.getIndexes()
-    const existingFreelancerSkillsIndexes = await FreelancerSkills.collection.getIndexes()
     const existingUserIndexes = await User.collection.getIndexes()
     const indexExists = existingIndexes && 'user_1_rate_1' in existingIndexes
-    const indexExistsFreelancerSkillsIndexes =
-      existingFreelancerSkillsIndexes && 'skill_1' in existingFreelancerSkillsIndexes
+
     const indexExistsUserIndexes = existingUserIndexes && 'FullName_1' in existingUserIndexes
     if (!indexExists) {
       await freelancer.createIndex({ user: 1, rate: 1 })
     }
-    if (!indexExistsFreelancerSkillsIndexes) {
-      await FreelancerSkills.createIndex({ skill: 1 })
-    }
+
     if (!indexExistsUserIndexes) {
       await User.createIndex({ FullName: 1 })
       await User.createIndex({ freelancerSkills: 1 })
@@ -237,35 +223,14 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
         $unwind: '$user'
       },
       {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$user.freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ['$_id', '$$freelancerSkills']
-                }
-              }
-            },
-            {
-              $project: {
-                skill: 1
-              }
-            }
-          ],
-          as: 'user.freelancerSkills'
-        }
-      },
-      {
         $match: {
           $or: [{ 'user.FullName': { $regex: regexQuery } }, { 'user.freelancerSkills.skill': { $regex: regexQuery } }],
           ...(skill?.length > 0
             ? {
-              'user.freelancerSkills.skill': {
-                $in: skill
+                'user.freelancerSkills.skill': {
+                  $in: skill
+                }
               }
-            }
             : {}),
           ...(minRate && {
             rate: { $gte: +minRate }
@@ -277,12 +242,12 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
       },
       ...(sort === 'lowest hourly rate' || sort === 'highest hourly rate'
         ? [
-          {
-            $sort: {
-              rate: sort === 'lowest hourly rate' ? 1 : -1
+            {
+              $sort: {
+                rate: sort === 'lowest hourly rate' ? 1 : -1
+              }
             }
-          }
-        ]
+          ]
         : []),
       {
         $facet: {
@@ -318,11 +283,6 @@ const getFreelancerById = async id => {
         {
           path: 'userId',
           model: 'users'
-        },
-        {
-          path: 'freelancerSkills',
-          model: 'freelancerskills',
-          select: 'yearsExperience skill isActive'
         }
       ])
       .exec()
@@ -536,14 +496,6 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
           as: 'invites'
         }
       },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          localField: 'freelancerSkills',
-          foreignField: '_id',
-          as: 'freelancerSkills'
-        }
-      },
 
       { $unwind: '$userId' },
       {
@@ -691,7 +643,7 @@ const registerUser = async ({ email, password }) => {
       return newuser
     }
   } catch (error) {
-    await User.findByIdAndDelete(newuser.id);
+    await User.findByIdAndDelete(newuser.id)
     throw new Error(`Something went wrong ${error}`)
   }
 }
@@ -702,6 +654,15 @@ const updateUser = async (id, data) => {
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
   }
+}
+
+const createCalendar = async (params, userId) => {
+  const userData = await User.findOne({ _id: userId })
+  if (!userData) throw new Error(`User Not Found`)
+
+  userData['calendarSettings'] = params
+  await userData.save()
+  return userData['calendarSettings']
 }
 
 module.exports = {
@@ -727,5 +688,6 @@ module.exports = {
   getSingleUser,
   retrievePaymentMethods,
   registerUser,
-  updateUser
+  updateUser,
+  createCalendar
 }

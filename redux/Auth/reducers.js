@@ -34,7 +34,10 @@ import {
   HIDE_AUTH_NOTIFICATION,
   USER_MAIL_CONFIRMATION,
   UPDATE_PHONE_NUMBER,
-  HANDLE_USER_EMAIL_REG_ERR
+  HANDLE_USER_EMAIL_REG_ERR,
+  HIDE_CALENDER_SUCCESS_NOTIFICATION,
+  CREATE_CALENDER_SETTING_SUCCESS,
+  CREATE_CALENDER_SETTING_ERROR
 } from './constants'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
 import { ValidationUtils } from '../../utils'
@@ -196,7 +199,9 @@ const INIT_STATE = {
     }
   ],
   thirdPartyDetails: {},
-  userMailConfirmation: false
+  userMailConfirmation: false,
+  calendarError: null,
+  calendarSuccess: false
 }
 
 const Auth = (state = INIT_STATE, action) => {
@@ -350,6 +355,24 @@ const Auth = (state = INIT_STATE, action) => {
       return {
         ...state,
         loading: false
+      }
+    case CREATE_CALENDER_SETTING_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        user: {
+          ...state.user,
+          calendarSetting: action.payload
+        },
+        calendarSuccess: action.payload ? true : null
+      }
+    case CREATE_CALENDER_SETTING_ERROR:
+      return { ...state, loading: false, calendarError: action.payload, calendarSuccess: false }
+    case HIDE_CALENDER_SUCCESS_NOTIFICATION:
+      return {
+        ...state,
+        calendarSuccess: null
       }
     default:
       return state

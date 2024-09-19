@@ -10,12 +10,7 @@ const getAllProfiles = async () => {
         populate: {
           path: 'user',
           model: 'users',
-          select: 'FirstName LastName email',
-          populate: {
-            path: 'freelancerSkills',
-            model: 'freelancerSkills',
-            select: '_id skill isActive yearsExperience'
-          }
+          select: 'FirstName LastName email freelancerSkills'
         }
       })
       .populate({ path: 'projects', model: 'projects', select: '-createdAt -updatedAt -__v' })

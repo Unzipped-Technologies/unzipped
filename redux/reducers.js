@@ -17,7 +17,6 @@ import TaskHours from './TaskHours/reducers'
 import Tasks from './Tasks/reducers'
 import Meetings from './Meeting/reducers'
 import Lists from './Lists/ListReducer'
-import CalenderSetting from './CalenderSetting/CalenderSettingReducer'
 
 const rootReducer = combineReducers({
   // counter: counterReducer

@@ -49,6 +49,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
   useEffect(() => {
     setUserData({
       ...selected,
+      calendarSettings: selectedFreelancer?.userId?.calendarSettings ?? null,
       FirstName: selectedFreelancer?.userId?.FirstName ?? '',
       profileImage: selectedFreelancer?.userId?.profileImage,
       LastName: selectedFreelancer?.userId?.LastName ?? '',

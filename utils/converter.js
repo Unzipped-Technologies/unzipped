@@ -98,6 +98,10 @@ class Converter {
     return moment(date).format('MM-DD-YYYY HH:mm:ss ')
   }
 
+  formatTimeFromDate(date) {
+    return moment(date).format('hh:mm A')
+  }
+
   utcDateToLocalTimezoneWithoutFormat(date) {
     let offset = new Date().getTimezoneOffset()
     return moment(date).utcOffset(offset).format()

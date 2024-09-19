@@ -1,6 +1,5 @@
 const FreelancerModel = require('../models/Freelancer')
 const InviteModel = require('../models/Invited')
-const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
@@ -23,7 +22,7 @@ const getFreelancerById = async id => {
       {
         path: 'userId',
         select:
-          'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry role isIdentityVerified isEmailVerified isPhoneVerified'
+          'FirstName LastName FullName calendarSettings email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry role isIdentityVerified isEmailVerified isPhoneVerified'
       }
     ])
   } catch (e) {
