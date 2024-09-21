@@ -33,10 +33,8 @@ const skillsSchema = new Schema(
     skill: {
       type: String,
       maxlength: 40
-
     },
-    yearsExperience: { type: Number, default: 0 },
-
+    yearsExperience: { type: Number, default: 0 }
   },
   {
     timestamps: true
@@ -56,13 +54,10 @@ const freelancerSchema = new Schema(
       type: [skillsSchema],
       default: []
     },
-    lists: { type: Schema.Types.ObjectId, ref: 'lists' },
     invites: { type: Schema.Types.ObjectId, ref: 'invites' },
     cover: { type: String, default: null },
-    likeTotal: { type: Number, default: 0 },
-    dislikeTotal: { type: Number, default: 0 },
-    likes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
-    dislikes: { type: Schema.Types.Mixed, ref: 'likeHistory' },
+    likes: { type: [Schema.Types.ObjectId], ref: 'likeHistory' },
+    dislikes: { type: [Schema.Types.ObjectId], ref: 'likeHistory' },
     education: { type: [educationSchema], default: [] },
     projects: { type: [projectsSchema], default: [] }
   },

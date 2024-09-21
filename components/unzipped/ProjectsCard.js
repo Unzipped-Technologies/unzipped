@@ -255,8 +255,13 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
               </P>
             )}
           </div>
-          {user?.freelancerSkills?.length
-            ? user.freelancerSkills.map((skill, index) => (
+          {user?.freelancerSkills?.length > 0 ? (
+            <div
+              style={{
+                height: '200px',
+                overflow: 'scroll'
+              }}>
+              {user.freelancerSkills.map((skill, index) => (
                 <div
                   key={`${index}_${skill}`}
                   style={{ display: 'flex', justifyContent: 'space-between', alignSelf: 'flex-end' }}>
@@ -268,8 +273,13 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                     {skill.yearsExperience > 1 ? ' Years' : ' Year'}
                   </P>
                 </div>
-              ))
-            : ''}
+              ))}
+            </div>
+          ) : (
+            <P padding="10px 0px 0px 0px" fontWeight="500" align="center">
+              N/A
+            </P>
+          )}
         </OtherInformationCard>
       </div>
       {open && <EducationModal open={open} onHide={handleClose} />}

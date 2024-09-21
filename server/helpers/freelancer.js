@@ -493,6 +493,55 @@ const sendProjectInvitationEmail = async inviteId => {
   return inviteEmailObj
 }
 
+const handleLike = async payload => {
+  const UserID = mongoose.Types.ObjectId(payload.userId)
+
+  const UserData = await UserModel.findById(payload.userId)
+  if (!UserData && UserData?.role !== 1) throw new Error(`Unauthorized!`)
+
+  const FreelancerData = await FreelancerModel.findById(payload.freelancerId)
+  if (!FreelancerData) throw new Error(`Freelancer not found!`)
+
+  if (FreelancerData?.dislikes?.includes(UserID)) {
+    FreelancerData.dislikes = FreelancerData?.dislikes?.filter(like => like?.toString() !== payload.userId) ?? []
+  }
+
+  if (!FreelancerData?.likes?.includes(UserID)) {
+    if (Array.isArray(FreelancerData?.likes) && FreelancerData?.likes?.length) {
+      FreelancerData.likes = [...FreelancerData?.likes, payload.userId]
+    } else {
+      FreelancerData['likes'] = [payload.userId]
+    }
+  }
+
+  await FreelancerData.save()
+  return { likes: FreelancerData.likes, dislikes: FreelancerData.dislikes }
+}
+
+const handleDisLike = async payload => {
+  const UserID = mongoose.Types.ObjectId(payload.userId)
+
+  const UserData = await UserModel.findById(payload.userId)
+  if (!UserData && UserData?.role !== 1) throw new Error(`Unauthorized!`)
+
+  const FreelancerData = await FreelancerModel.findById(payload.freelancerId)
+  if (!FreelancerData) throw new Error(`Freelancer not found!`)
+
+  if (FreelancerData?.likes?.includes(UserID)) {
+    FreelancerData.likes = FreelancerData?.likes?.filter(like => like?.toString() !== payload.userId) ?? []
+  }
+  if (!FreelancerData?.dislikes?.includes(UserID)) {
+    if (Array.isArray(FreelancerData?.dislikes) && FreelancerData?.dislikes?.length) {
+      FreelancerData.dislikes = [...FreelancerData?.dislikes, payload.userId]
+    } else {
+      FreelancerData['dislikes'] = [payload.userId]
+    }
+  }
+
+  await FreelancerData.save()
+  return { likes: FreelancerData.likes, dislikes: FreelancerData.dislikes }
+}
+
 module.exports = {
   getFreelancerById,
   getAllFreelancers,
@@ -508,5 +557,7 @@ module.exports = {
   createFreelancerInvite,
   deleteSkillFromFreelancer,
   getFreelancerWithoutPopulate,
-  sendProjectInvitationEmail
+  sendProjectInvitationEmail,
+  handleLike,
+  handleDisLike
 }

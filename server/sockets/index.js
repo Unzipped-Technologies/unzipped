@@ -4,6 +4,7 @@ const axios = require('axios')
 const conversations = require('../models/Conversation')
 const MeetingHelper = require('./../helpers/meeting')
 const MessageHelper = require('./../helpers/message')
+const FreelancerHelper = require('./../helpers/freelancer')
 const UserModel = require('./../models/User')
 const ZoomHelper = require('./../helpers/ZoomHelper')
 
@@ -262,6 +263,21 @@ module.exports = createSocket = server => {
         delete onlineUsers[socket?.userId]
         io.emit('updateOnlineUsers', Object.keys(onlineUsers))
       }
+    })
+
+    socket.on('like', async payload => {
+      const response = await FreelancerHelper.handleLike(payload)
+      // socket.broadcast.to(onlineUsers[payload?.userId]).emit('like', response)
+
+      io.emit('like', response)
+    })
+
+    socket.on('dislike', async payload => {
+      const response = await FreelancerHelper.handleDisLike(payload)
+      console.log('onlineUsers', onlineUsers)
+      // socket.broadcast.to(onlineUsers[payload?.userId]).emit('dislike', response)
+
+      io.emit('dislike', response)
     })
   })
 

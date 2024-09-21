@@ -6,7 +6,7 @@ const hasPermission = permissions => async (req, _, next) => {
   try {
     const existingUser = await userHelper.getSingleUser({ _id: req.user.sub })
 
-    if (!existingUser) throw Error('user does not existsssss')
+    if (!existingUser) throw Error('user does not exist.')
     req['user']['userInfo'] = existingUser
     const role = existingUser.role || 0
     const userPermissions = accountTypePermissions[role]

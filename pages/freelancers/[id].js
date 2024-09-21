@@ -57,8 +57,8 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
       projects: selectedFreelancer?.projects,
       freelancerSkills: selectedFreelancer?.freelancerSkills,
       category: selectedFreelancer?.category,
-      likeTotal: selectedFreelancer?.likeTotal,
-      dislikeTotal: selectedFreelancer?.dislikeTotal,
+      likeTotal: selectedFreelancer?.likes?.length ?? 0,
+      dislikeTotal: selectedFreelancer?.dislikes?.length ?? 0,
       rate: selectedFreelancer?.rate,
       updatedAt: selectedFreelancer?.updatedAt,
       education: selectedFreelancer?.education,
@@ -83,7 +83,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
           <Container>
             <Nav marginBottom={'0px'} />
             <div>
-              <ProfileCard user={userData} />
+              <ProfileCard user={userData} userId={userId} selectedFreelancer={selectedFreelancer} role={role} />
             </div>
             <div style={{ width: '100%' }}>
               <ProfileTab
@@ -106,8 +106,10 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
                 user={userData}
                 setReFetch={setReFetch}
                 handleProfilePage={handleValueFromChild}
-                role={role}
                 freelancerId={freelancerId}
+                userId={userId}
+                selectedFreelancer={selectedFreelancer}
+                role={role}
               />
             ) : (
               <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />

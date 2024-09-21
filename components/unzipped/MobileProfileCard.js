@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
@@ -9,6 +9,9 @@ import { ConverterUtils } from '../../utils'
 import EducationModal from './EducationModal'
 import IconComponent from '../ui/icons/IconComponent'
 import SkillsModal from './SkillsModal'
+
+import socket from '../../components/sockets/index'
+import { useDispatch } from 'react-redux'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -41,11 +44,66 @@ const ProjectCard = styled.div`
   padding: 19px 13px;
 `
 
-function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReFetch }) {
+function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReFetch, userId, selectedFreelancer }) {
   const router = useRouter()
+  const dispatch = useDispatch()
+
   const [selected, setSelected] = useState(0)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
+
+  useEffect(() => {
+    socket.emit('userConnected', userId)
+  }, [])
+
+  useEffect(() => {
+    socket.on('like', response => {
+      dispatch({
+        type: 'GET_FREELANCER_BY_ID',
+        payload: {
+          ...selectedFreelancer,
+          likes: response?.likes,
+          dislikes: response?.dislikes
+        }
+      })
+    })
+
+    socket.on('dislike', response => {
+      dispatch({
+        type: 'GET_FREELANCER_BY_ID',
+        payload: {
+          ...selectedFreelancer,
+          likes: response?.likes,
+          dislikes: response?.dislikes
+        }
+      })
+    })
+
+    return () => {
+      socket.off('like')
+      socket.off('dislike')
+    }
+  })
+
+  const handleLike = () => {
+    if (role !== 1) {
+      const payload = {
+        userId: userId,
+        freelancerId: user?._id
+      }
+      socket.emit('like', payload)
+    }
+  }
+
+  const handleDisLike = () => {
+    if (role !== 1) {
+      const payload = {
+        userId: userId,
+        freelancerId: user?._id
+      }
+      socket.emit('dislike', payload)
+    }
+  }
 
   const handleOpen = () => {
     setOpen(true)
@@ -109,18 +167,26 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
               {user?.category}
             </P>
           )}
-          <div style={{ position: 'relative' }}>
-            {user?.likeTotal !== 0 && (
-              <div style={{ position: 'absolute', right: '30px', display: 'flex', alignItems: 'center' }}>
-                <IconComponent name="thumbUp" width="15" height="15" viewBox="0 0 15 15" fill="#0057FF" />
-                <P margin="0px 3px">{user?.likeTotal}</P>
-              </div>
-            )}
+          <div>
             {user?.AddressLineCountry && (
               <P fontSize="14px" fontWeight="300" data-testid="address_country">
                 {user?.AddressLineCountry}
               </P>
             )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+              <span onClick={handleLike}>
+                <IconComponent name="thumbUp" width="18" height="18" viewBox="0 0 15 15" fill="#0057FF" />
+              </span>
+              <P margin="0px 3px">{user?.likeTotal}</P>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span onClick={handleDisLike}>
+                <IconComponent name="thumbUp" width="18" height="18" viewBox="0 0 15 15" fill="#0057FF" />
+              </span>
+              <P margin="0px 3px">{user?.dislikeTotal}</P>
+            </div>
           </div>
           <P fontSize="20px" fontWeight="600">
             {user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}

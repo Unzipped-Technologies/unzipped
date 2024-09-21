@@ -12,7 +12,6 @@ const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
-const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
@@ -334,83 +333,6 @@ const addListsToFreelancer = async (data, id) => {
   }
 }
 
-// add like to freelancer
-
-const addLikeToFreelancer = async (data, id) => {
-  try {
-    if (data.likeType === likeEnum.PROFILE_LIKES || data.likeType === likeEnum.PROFILE_DISLIKES) {
-      await likeHistory.findOneAndUpdate(
-        { profileId: data.profileId, userId: id },
-        {
-          $set: {
-            ...data,
-            freelancers: await freelancer.findById(data.profileId),
-            user: await user.findById(id)
-          }
-        },
-        { upsert: true }
-      )
-      const ids = await likeHistory.find({ profileId: data.profileId })
-      const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
-      const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
-      // update users to have skills
-      await freelancer.findByIdAndUpdate(data.profileId, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      await user.findByIdAndUpdate(id, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length ?? 0,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      return { likes: ids?.length, msg: 'success' }
-    }
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
-
-// remove like from freelancer
-
-const removeLikeToFreelancer = async (data, id) => {
-  try {
-    if (data.likeType === likeEnum.PROFILE_LIKES || data.likeType === likeEnum.PROFILE_DISLIKES) {
-      await likeHistory.findOneAndDelete({ profileId: data.profileId, userId: id })
-      const ids = await likeHistory.find({ profileId: data.profileId })
-      const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
-      const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
-      // update users to have skills
-      await freelancer.findByIdAndUpdate(data.profileId, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length ?? 0,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      await user.findByIdAndUpdate(id, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length ?? 0,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      return { likes: ids?.length, msg: 'success' }
-    }
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
-
-// list likes for user
-const listLikes = async id => {
-  return user.findById(id).populate({
-    path: 'likes',
-    model: 'likeHistorys',
-    populate: { path: 'freelancers', model: 'freelancers' }
-  })
-}
-
 // list likes for user
 const addToNewsletter = async data => {
   return await emailList.findOneAndUpdate({ email: data }, { $set: { email: data, isActive: true } }, { upsert: true })
@@ -680,9 +602,6 @@ module.exports = {
   addListsToFreelancer,
   setUpNotificationsForUser,
   updateTaxDataByid,
-  addLikeToFreelancer,
-  removeLikeToFreelancer,
-  listLikes,
   addToNewsletter,
   getAllFreelancers,
   getSingleUser,

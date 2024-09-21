@@ -1,7 +1,6 @@
 const business = require('../models/Business')
 const businessAudience = require('../models/BusinessAudience')
 const listItems = require('../models/ListItems')
-const likeHistory = require('../models/LikeHistory')
 const department = require('../models/Department')
 const departmentHelper = require('./department')
 const tags = require('../models/tags')
@@ -220,7 +219,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             businessCity: 1,
             businessState: 1,
             businessZip: 1,
-            budgetRange:1,
+            budgetRange: 1,
             projectType: 1,
             applicants: 1,
             deadline: 1,
@@ -514,44 +513,6 @@ const countBusiness = async filter => {
   return Number(totalDocuments)
 }
 
-// add like to business
-const addLikeToBusiness = async (data, id) => {
-  try {
-    if (data.likeType === likeEnum.BUSINESS_LIKES || data.likeType === likeEnum.BUSINESS_DISLIKES) {
-      await likeHistory.findOneAndUpdate(
-        { businessId: data.profileId, userId: id },
-        {
-          $set: {
-            ...data,
-            freelancer: await freelancer.findById(data.profileId),
-            user: await user.findById(id)
-          }
-        },
-        { upsert: true }
-      )
-      const ids = await likeHistory.find({ profileId: data.profileId })
-      const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
-      const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
-      // update users to have skills
-      await business.findByIdAndUpdate(data.profileId, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
-      })
-      await user.findByIdAndUpdate(id, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes.length,
-        dislikeTotal: dislikes.length
-      })
-      return { likes: ids.length, msg: 'success' }
-    }
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
-
 const createBusinessDetails = async (data, id) => {
   return await businessDetail.create({
     ...data,
@@ -702,7 +663,6 @@ module.exports = {
   getBusinessById,
   updateBusiness,
   deleteBusiness,
-  addLikeToBusiness,
   countBusiness,
   getAllBusinessByInvestor,
   getBusinessByInvestor,
