@@ -371,11 +371,6 @@ UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
       }
     }
 
-  return {
-    token: token && token
-  }
-}
-
 const mapStateToProps = state => {
   return {
     stage: state.Auth?.userForm?.stage,
