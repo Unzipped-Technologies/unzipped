@@ -93,20 +93,23 @@ export const deleteEducation = educationId => async (dispatch, getState) => {
   dispatch({
     type: FREELANCER_LOADING
   })
-  await axios
-    .delete(`/api/freelancer/delete-education/${educationId}`, tokenConfig(token))
-    .then(res =>
+  const response = await axios
+    .delete(`/api/freelancer/delete-education/${educationId}`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
       dispatch({
         type: DELETE_EDUCATION,
         payload: res.data
       })
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: FREELANCER_ERROR,
         payload: err.response
       })
+      return err
     })
+  return response
 }
 
 export const getAllFreelancers = queryParams => async dispatch => {
@@ -179,21 +182,24 @@ export const createShowCaseProject = data => async (dispatch, getState) => {
 export const deleteShowCaseProject = projectID => async (dispatch, getState) => {
   await dispatch(startLoading())
 
-  await axios
-    .patch(`/api/freelancer/delete-project/${projectID}`, tokenConfig(getState()?.Auth.token))
-    .then(res =>
+  const response = await axios
+    .delete(`/api/freelancer/delete-project/${projectID}`, tokenConfig(getState()?.Auth.token))
+    .then(res => {
       dispatch({
         type: DELETE_SHOWCASE_PROJECT,
         payload: res.data
       })
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: FREELANCER_ERROR,
         payload: err.response
       })
+      return err
     })
   await dispatch(stopLoading())
+  return response
 }
 
 export const deleteProjectImage = (projectID, imageId) => async (dispatch, getState) => {
@@ -216,7 +222,7 @@ export const deleteProjectImage = (projectID, imageId) => async (dispatch, getSt
   await dispatch(stopLoading())
 }
 
-export const updateFreelancerSkills = (data) => async (dispatch, getState) => {
+export const updateFreelancerSkills = data => async (dispatch, getState) => {
   await dispatch(startLoading())
 
   const response = await axios
@@ -226,22 +232,20 @@ export const updateFreelancerSkills = (data) => async (dispatch, getState) => {
         type: DELETE_SHOWCASE_PROJECT,
         payload: res.data
       })
-      return res;
-    }
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: FREELANCER_ERROR,
         payload: err.response
       })
-      return err;
+      return err
     })
   await dispatch(stopLoading())
-  return response;
+  return response
 }
 
-
-export const deleteFreelancerSkill = (skillId) => async (dispatch, getState) => {
+export const deleteFreelancerSkill = skillId => async (dispatch, getState) => {
   await dispatch(startLoading())
 
   const response = await axios
@@ -251,17 +255,15 @@ export const deleteFreelancerSkill = (skillId) => async (dispatch, getState) => 
         type: DELETE_SHOWCASE_PROJECT,
         payload: res.data
       })
-      return res;
-    }
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: FREELANCER_ERROR,
         payload: err.response
       })
-      return err;
+      return err
     })
   await dispatch(stopLoading())
-  return response;
+  return response
 }
-

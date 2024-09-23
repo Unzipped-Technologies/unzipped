@@ -99,7 +99,7 @@ router.post('/add-education', requireLogin, permissionCheckHelper.hasPermission(
   }
 })
 router.delete(
-  'delete-education/:educationId',
+  '/delete-education/:educationId',
   requireLogin,
   permissionCheckHelper.hasPermission('addSkill'),
   async (req, res) => {
@@ -144,7 +144,7 @@ router.delete(
   permissionCheckHelper.hasPermission('deleteShowCaseProject'),
   async (req, res) => {
     try {
-      const response = await showCaseProjects.deleteShowCaseProject(req.user?.userInfo?.freelancers, req.params.id)
+      const response = await freelancerHelper.deleteShowCaseProject(req.user?.userInfo?.freelancers, req.params.id)
       if (response) res.json({ msg: 'Project deleted successfully.' })
     } catch (e) {
       res.status(400).json({ msg: e.message })

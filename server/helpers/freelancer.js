@@ -297,9 +297,23 @@ const addEducation = async (data, freelancerId) => {
     if (freelancerData?.education?.length >= 3) throw new Error('You can only create three degrees.')
 
     if (freelancerData?.education?.length) {
-      freelancerData.education = [...freelancerData.education, data]
+      if (data?.educationId) {
+        const EduIndex = freelancerData?.education.findIndex(
+          education => education?._id?.toString() === data.educationId
+        )
+        if (EduIndex !== -1 && freelancerData.education[EduIndex]) {
+          delete data['educationId']
+          freelancerData.education[EduIndex] = { ...data }
+        } else {
+          throw new Error('No education record found.')
+        }
+      } else {
+        freelancerData.education = [...freelancerData.education, data]
+      }
     } else {
-      freelancerData['education'] = [data]
+      if (!data?.educationId) {
+        freelancerData['education'] = [data]
+      }
     }
     await freelancerData.save()
     return freelancerData
@@ -314,7 +328,9 @@ const deleteEducation = async (educationId, freelancerId) => {
     if (!freelancerData) throw Error(`Freelancer not found.`)
 
     if (freelancerData?.education?.length) {
-      freelancerData.education = freelancerData?.education.filter(education => education !== educationId)
+      freelancerData.education = freelancerData?.education.filter(
+        education => education?._id?.toString() !== educationId
+      )
       await freelancerData.save()
     }
     return freelancerData
@@ -341,9 +357,21 @@ const createShowCaseProject = async (data, freelancerId, userId, files) => {
     }
 
     if (freelancerData?.projects?.length) {
-      freelancerData.projects = [...freelancerData.projects, data]
+      if (data?.projectId) {
+        const ProIndex = freelancerData?.projects.findIndex(project => project?._id?.toString() === data.projectId)
+        if (ProIndex !== -1 && freelancerData.projects[ProIndex]) {
+          delete data['projectId']
+          freelancerData.projects[ProIndex] = { ...data }
+        } else {
+          throw new Error('No Project found.')
+        }
+      } else {
+        freelancerData.projects = [...freelancerData.projects, data]
+      }
     } else {
-      freelancerData['projects'] = [data]
+      if (!data?.projectId) {
+        freelancerData['projects'] = [data]
+      }
     }
     await freelancerData.save()
 
@@ -359,7 +387,7 @@ const deleteShowCaseProject = async (freelancerId, projectId) => {
     if (!freelancerData) throw Error(`Freelancer not found.`)
 
     if (freelancerData?.projects?.length) {
-      freelancerData.projects = freelancerData?.projects.filter(project => project !== projectId)
+      freelancerData.projects = freelancerData?.projects.filter(project => project?._id?.toString() !== projectId)
       await freelancerData.save()
     }
     return freelancerData

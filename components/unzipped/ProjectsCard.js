@@ -1,15 +1,19 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { AiOutlinePlusCircle, AiOutlineCloseCircle } from 'react-icons/ai'
+import { FaPen, FaTrashAlt } from 'react-icons/fa'
+import { useDispatch } from 'react-redux'
 
 import Button from '../ui/Button'
 import { FormField } from '../ui'
 
+import { deleteEducation, deleteShowCaseProject } from '../../redux/Freelancers/actions'
 import { Badge } from '../ui'
 import { Image } from '../ui'
 import { ConverterUtils } from '../../utils'
 import EducationModal from './EducationModal'
 import SkillsModal from './SkillsModal'
+import ProjectModal from './ProjectModal'
 
 const Container = styled.div`
   margin-top: 28px;
@@ -58,14 +62,25 @@ export const OtherInformationCard = styled.div`
 `
 
 function ProjectsCard({ user, freelancerId, setReFetch }) {
+  const dispatch = useDispatch()
+  const [openProjectModel, setProjectModal] = useState(false)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
+  const [selectedEducation, setEducation] = useState({})
+  const [selectedProject, setProject] = useState({})
 
   const handleOpen = () => {
     setOpen(true)
   }
   const handleClose = () => {
     setOpen(false)
+  }
+
+  const handleProjectOpen = () => {
+    setProjectModal(true)
+  }
+  const handleProjectClose = () => {
+    setProjectModal(false)
   }
 
   const uniqueSkills = useMemo(() => {
@@ -80,6 +95,20 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
     return filteredArray
   }, [user])
 
+  const handleEducationDelete = async educationID => {
+    const response = await dispatch(deleteEducation(educationID))
+    if (response?.status === 200) {
+      setReFetch(true)
+    }
+  }
+
+  const handleProjectDelete = async projectID => {
+    const response = await dispatch(deleteShowCaseProject(projectID))
+    if (response?.status === 200) {
+      setReFetch(true)
+    }
+  }
+
   return (
     <Container data-testid="freelancer_profile_projects">
       <div style={{ width: '70%' }}>
@@ -87,9 +116,37 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
           user?.projects?.map(project => (
             <ProjectCard key={project?._id}>
               <ProjectInnerCard>
-                <P margin="0" color="#0057FF" fontSize="16px" fontWeight="500">
-                  {project?.projectName ?? 'Project Name'}
-                </P>
+                <div className="d-flex justify-content-between">
+                  <P margin="0" color="#0057FF" fontSize="16px" fontWeight="500">
+                    {project?.projectName ?? 'Project Name'}
+                  </P>
+                  {user?.role === 1 && freelancerId === user?._id && (
+                    <div className="d-flex justify-content-between mt-2">
+                      <FaPen
+                        style={{
+                          fontSize: '14px',
+                          marginRight: '20px',
+                          color: '#2F76FF'
+                        }}
+                        onClick={() => {
+                          setProject(project)
+                          handleProjectOpen()
+                        }}
+                      />
+
+                      <FaTrashAlt
+                        style={{
+                          fontSize: '14px',
+                          marginRight: '20px',
+                          color: '#2F76FF'
+                        }}
+                        onClick={() => {
+                          handleProjectDelete(project?._id)
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
                 <P margin="0" fontSize="15px">
                   {project?.role}
                 </P>
@@ -216,9 +273,37 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
           {user?.education?.length
             ? user.education.map(education => (
                 <div key={education?._id}>
-                  <P padding="0 10px" fontWeight="500">
-                    {education?.title}
-                  </P>
+                  <div className="d-flex justify-content-between">
+                    <P padding="0 10px" fontWeight="500">
+                      {education?.title}
+                    </P>
+                    {user?.role === 1 && freelancerId === user?._id && (
+                      <div className="d-flex justify-content-between mt-2">
+                        <FaPen
+                          style={{
+                            fontSize: '14px',
+                            marginRight: '20px',
+                            color: '#2F76FF'
+                          }}
+                          onClick={() => {
+                            setEducation(education)
+                            handleOpen()
+                          }}
+                        />
+
+                        <FaTrashAlt
+                          style={{
+                            fontSize: '14px',
+                            marginRight: '20px',
+                            color: '#2F76FF'
+                          }}
+                          onClick={() => {
+                            handleEducationDelete(education?._id)
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <P padding="0 10px" margin="0">
                     {education?.institute}
                   </P>
@@ -282,7 +367,10 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
           )}
         </OtherInformationCard>
       </div>
-      {open && <EducationModal open={open} onHide={handleClose} />}
+      {open && <EducationModal open={open} onHide={handleClose} selectedEducation={selectedEducation} />}
+      {openProjectModel && (
+        <ProjectModal open={openProjectModel} onHide={handleProjectClose} selectedProject={selectedProject} />
+      )}
       {openSkill && (
         <SkillsModal
           skills={user?.freelancerSkills}
