@@ -77,26 +77,9 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
   const [selectedAssignee, setSelectedAssignee] = React.useState(null)
   const [projectTeam, setProjectTeam] = React.useState([])
 
-    const handleClick = (event) => {
-        if (projectTeam?.length > 0) {
-            setAnchorEl(event.currentTarget);
-        }
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleOnTeammemberSelect = (assignee) => {
-        if (assignee) {
-
-            setSelectedAssignee(assignee);
-            handleClose();
-            if (isListingPanel) {
-                dispatch(updateTaskInfo(task._id, { assignee: assignee.userId }));
-                return;
-            }
-            dispatch(updateTaskAssignee(task._id, { assignee: assignee.userId }));
-        }
+  const handleClick = event => {
+    if (projectTeam?.length > 0) {
+      setAnchorEl(event.currentTarget)
     }
   }
   const handleClose = () => {
@@ -104,13 +87,15 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
   }
 
   const handleOnTeammemberSelect = assignee => {
-    setSelectedAssignee(assignee)
-    handleClose()
-    if (isListingPanel) {
-      dispatch(updateTaskInfo(task._id, { assignee: assignee.userId }))
-      return
+    if (assignee) {
+      setSelectedAssignee(assignee)
+      handleClose()
+      if (isListingPanel) {
+        dispatch(updateTaskInfo(task._id, { assignee: assignee.userId }))
+        return
+      }
+      dispatch(updateTaskAssignee(task._id, { assignee: assignee.userId }))
     }
-    dispatch(updateTaskAssignee(task._id, { assignee: assignee.userId }))
   }
 
   useEffect(() => {
@@ -134,6 +119,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
             aria-controls={open ? 'demo-customized-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
+            disableElevation
             sx={{
               width: isEmailRequired ? 'auto' : '230px',
               '&:hover': {
@@ -202,193 +188,92 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
           }}>
           {projectTeam &&
             projectTeam.map((member, index) => (
-              <MenuItem
-                key={index}
-                value={member}
-                onClick={() => handleOnTeammemberSelect(member)}
-                sx={{
-                  '&:hover': {
-                    backgroundColor: '#eeeeee',
-                    borderLeft: '3px solid #1e90ff'
-                  }
-                }}>
-                <List
-                  sx={{
-                    width: '100%',
-                    maxWidth: 360,
-                    bgcolor: 'transparent'
-                  }}>
-                  <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      {member?.FirstName && (
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            flexDirection: 'column'
-                          }}>
-                          {renderTextContainer(`${member?.FirstName?.charAt(0)}${member?.LastName?.charAt(0)}`, true)}
-                        </div>
-                      )}
-                      {member?.FirstName && (
-                        <div style={{ width: '270px' }}>
-                          <ListItemText
-                            sx={{
-                              '& .MuiTypography-root': {
-                                fontSize: '16px',
-                                lineHeight: '1.2'
-                              }
-                            }}
-                            primary={`${member?.FirstName} ${member?.LastName}`}
-                            secondary={
-                              <React.Fragment>
-                                {isEmailRequired && (
-                                  <Typography
-                                    sx={{ display: 'inline', fontSize: '15px !important' }}
-                                    component="span"
-                                    variant="body2"
-                                    color="text.primary">
-                                    {member?.email}
-                                  </Typography>
-                                )}
-                              </React.Fragment>
-                            }
-                        }}
-                    >
-                        <List sx={{
-                            width: '100%',
-                            maxWidth: 360,
-                            bgcolor: 'background.paper',
-                            margin: 0
-                        }}>
-                            <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
-                                {renderTextContainer(selectedAssignee?.FirstName?.charAt(0) + selectedAssignee?.LastName?.charAt(0), true)}
-                                <ListItemText
-                                    sx={{
-                                        '& .MuiTypography-root': {
-                                            ...(!isEmailRequired ? { fontSize: "13px !important" } : {}),
-                                            ...(!isEmailRequired ? { fontWeight: '600 !important' } : {}),
-                                            ...(!isEmailRequired ? { textTransform: "uppercase !important" } : {}),
-                                        }
-                                    }}
-                                    primary={
-                                        <React.Fragment>
-                                            <Typography
-                                                sx={{ display: 'inline' }}
-                                                component="span"
-                                                variant="body2"
-                                                color="text.primary"
-                                            >
-                                                {selectedAssignee && (
-                                                    `${selectedAssignee?.FirstName} ${selectedAssignee?.LastName}` || "Unassigned"
-                                                )}
-                                            </Typography>
-                                        </React.Fragment>
-                                    }
-                                    secondary={
-                                        <React.Fragment>
-                                            {isEmailRequired && (<Typography
-                                                sx={{ display: 'inline' }}
-                                                component="span"
-                                                variant="body2"
-                                                color="text.primary"
-                                            >
-                                                {selectedAssignee?.email || "Unassigned"}
-                                            </Typography>)}
-                                        </React.Fragment>
-                                    }
-                                />
-                            </ListItem>
-                        </List>
-                    </MenuItem>
-                </div>
-
-                <StyledMenu
-                    id="demo-customized-menu"
-                    MenuListProps={{
-                        'aria-labelledby': 'demo-customized-button',
-                    }}
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
+              <>
+                {member?.userId && (
+                  <MenuItem
+                    key={index}
+                    value={member}
+                    onClick={() => handleOnTeammemberSelect(member)}
                     sx={{
-                        '& .MuiPaper-root': {
-                            background: "#fff",
-                            width: !isEmailRequired ? "100px" : "auto"
-                        }
-                    }}
-                >
-                    {
-                        projectTeam && projectTeam.map((member, index) => (
-                            <>
-                                {member?.userId && (
-                                    <MenuItem key={index} value={member} onClick={() => handleOnTeammemberSelect(member)} sx={{
-                                        '&:hover': {
-                                            backgroundColor: "#eeeeee",
-                                            borderLeft: "3px solid #1e90ff",
-                                        }
-                                    }}>
-                                        <List sx={{
-                                            width: '100%',
-                                            maxWidth: 360,
-                                            bgcolor: 'transparent',
-                                        }}>
-                                            <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
-                                                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                                    {member?.FirstName && (<div style={{
-                                                        display: "flex",
-                                                        justifyContent: "center",
-                                                        alignItems: "center",
-                                                        flexDirection: "column"
-                                                    }}>
-                                                        {renderTextContainer(`${member?.FirstName?.charAt(0)}${member?.LastName?.charAt(0)}`, true)}
-                                                    </div>)}
-                                                    {member?.FirstName && (<div style={{ width: "270px" }}>
-                                                        <ListItemText
-                                                            sx={{
-                                                                '& .MuiTypography-root': {
-                                                                    fontSize: "16px",
-                                                                    lineHeight: "1.2",
-                                                                }
-                                                            }}
-                                                            primary={`${member?.FirstName} ${member?.LastName}`}
-                                                            secondary={
-                                                                <React.Fragment>
-                                                                    {isEmailRequired && (<Typography
-                                                                        sx={{ display: 'inline', fontSize: "15px !important" }}
-                                                                        component="span"
-                                                                        variant="body2"
-                                                                        color="text.primary"
-                                                                    >
-                                                                        {member?.email}
-                                                                    </Typography>)}
-                                                                </React.Fragment>
-                                                            }
-                                                        />
-                                                    </div>)}
-                                                    {isEmailRequired && (<div style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        justifyContent: "center",
-                                                        alignItems: "center",
-                                                        marginLeft: 10,
-                                                    }}>
-                                                        <div> <BadgeOutlinedIcon /></div>
-                                                    </div>)}
-                                                </div>
-
-                                            </ListItem>
-                                        </List>
-                                    </MenuItem>
-                                )}
-                            </>
-                        ))
-                    }
-                </StyledMenu>
-            </div >
-        </>
-    );
+                      '&:hover': {
+                        backgroundColor: '#eeeeee',
+                        borderLeft: '3px solid #1e90ff'
+                      }
+                    }}>
+                    <List
+                      sx={{
+                        width: '100%',
+                        maxWidth: 360,
+                        bgcolor: 'transparent'
+                      }}>
+                      <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          {member?.FirstName && (
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                flexDirection: 'column'
+                              }}>
+                              {renderTextContainer(
+                                `${member?.FirstName?.charAt(0)}${member?.LastName?.charAt(0)}`,
+                                true
+                              )}
+                            </div>
+                          )}
+                          {member?.FirstName && (
+                            <div style={{ width: '270px' }}>
+                              <ListItemText
+                                sx={{
+                                  '& .MuiTypography-root': {
+                                    fontSize: '16px',
+                                    lineHeight: '1.2'
+                                  }
+                                }}
+                                primary={`${member?.FirstName} ${member?.LastName}`}
+                                secondary={
+                                  <React.Fragment>
+                                    {isEmailRequired && (
+                                      <Typography
+                                        sx={{ display: 'inline', fontSize: '15px !important' }}
+                                        component="span"
+                                        variant="body2"
+                                        color="text.primary">
+                                        {member?.email}
+                                      </Typography>
+                                    )}
+                                  </React.Fragment>
+                                }
+                              />
+                            </div>
+                          )}
+                          {isEmailRequired && (
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginLeft: 10
+                              }}>
+                              <div>
+                                {' '}
+                                <BadgeOutlinedIcon />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </ListItem>
+                    </List>
+                  </MenuItem>
+                )}
+              </>
+            ))}
+        </StyledMenu>
+      </div>
+    </>
+  )
 }
 
 export default ProjectUsers
