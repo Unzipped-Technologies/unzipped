@@ -125,7 +125,7 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                       <FaPen
                         style={{
                           fontSize: '14px',
-                          marginRight: '20px',
+                          marginRight: '10px',
                           color: '#2F76FF'
                         }}
                         onClick={() => {
@@ -137,7 +137,6 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                       <FaTrashAlt
                         style={{
                           fontSize: '14px',
-                          marginRight: '20px',
                           color: '#2F76FF'
                         }}
                         onClick={() => {
