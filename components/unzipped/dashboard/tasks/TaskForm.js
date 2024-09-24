@@ -28,12 +28,9 @@ import {
   restTagsList
 } from '../../../../redux/actions'
 
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import SaveIcon from '@mui/icons-material/Save';
-
-const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest'];
-const STATUS_OPTIONS_ARR = ['Todo', 'In Progress', 'Done', 'Doing'];
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
+import SaveIcon from '@mui/icons-material/Save'
 
 const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
 const STATUS_OPTIONS_ARR = ['Todo', 'In Progress', 'Done', 'Doing']
@@ -79,10 +76,10 @@ const TaskForm = ({
   const [selectedTags, setSelectedTags] = useState([])
   const [inputValue, setInputValue] = useState('')
 
-  const [editSelectedTags, setEditSelectedTags] = useState([]);
-  const [editInputValue, setEditInputValue] = useState('');
-  const statusList = departmentData?.departmentTags?.map(tag => tag.tagName) 
-  const [isCommentEditable, setIsCommentEditable] = useState(false);
+  const [editSelectedTags, setEditSelectedTags] = useState([])
+  const [editInputValue, setEditInputValue] = useState('')
+  const statusList = departmentData?.departmentTags?.map(tag => tag.tagName)
+  const [isCommentEditable, setIsCommentEditable] = useState(false)
   useEffect(() => {
     setComments(taskDetail?.comments)
   }, [taskDetail])
@@ -401,17 +398,16 @@ const TaskForm = ({
 
   const handleRestForm = () => resetStoryForm()
 
-  const handleUserCommments = (comment) => {
-    if (!isCommentEditable) { 
+  const handleUserCommments = comment => {
+    if (!isCommentEditable) {
       if (commentId === comment?._id) {
-        onHide();
+        onHide()
       } else {
         setCommentId(comment?._id)
-        setIsCommentEditable(true);
+        setIsCommentEditable(true)
       }
     }
   }
-
 
   return (
     <>
@@ -833,14 +829,18 @@ const TaskForm = ({
             </TitleText>
             {editMode || userRole === 1 ? (
               <Autocomplete
-                value={selectedTaskId ? statusList.filter(elem => elem?.toLowerCase() == taskForm?.status?.toLowerCase()) : taskForm?.status}
+                value={
+                  selectedTaskId
+                    ? statusList.filter(elem => elem?.toLowerCase() == taskForm?.status?.toLowerCase())
+                    : taskForm?.status
+                }
                 disablePortal
                 id="combo-box-demo"
                 options={statusList}
                 onChange={(event, value) => {
                   const tag = departmentData?.departmentTags.find(item => item.tagName === value)
-                  updateForm('status', tag.tagName);
-                  updateForm('tag', tag._id);
+                  updateForm('status', tag.tagName)
+                  updateForm('tag', tag._id)
                 }}
                 sx={{
                   width: 300,
@@ -919,8 +919,7 @@ const TaskForm = ({
               name="comment"
               textarea
               width="95%"
-                            maxLength={'1000'}
-
+              maxLength={'1000'}
               display="inline !important"
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}>
@@ -942,7 +941,7 @@ const TaskForm = ({
                 unset
                 key={comment?._id}
                 half
-                padding='10px'
+                padding="10px"
                 width="95%"
                 margin="20px 0px 20px 8px"
                 background="#fbfbfb"
@@ -986,16 +985,15 @@ const TaskForm = ({
                       {isCommentEditable && commentId === comment?._id && (
                         <SaveIcon
                           sx={{
-                            width: "16px",
-                            height: "16px",
-                            color: "#585858"
-
+                            width: '16px',
+                            height: '16px',
+                            color: '#585858'
                           }}
                           onClick={async e => {
-                            e.preventDefault();
-                            await updateComment(taskDetail?._id, comment._id, comment);
-                            setCommentId('');
-                            setIsCommentEditable(false);
+                            e.preventDefault()
+                            await updateComment(taskDetail?._id, comment._id, comment)
+                            setCommentId('')
+                            setIsCommentEditable(false)
                           }}
                         />
                       )}
@@ -1003,7 +1001,12 @@ const TaskForm = ({
                   )}
                 </Grid2>
                 {commentId === comment?._id ? (
-                  <DIV width="100%" display="flex" flexDirection="column" alignItems="flex-end" justifyContent="space-around">
+                  <DIV
+                    width="100%"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="flex-end"
+                    justifyContent="space-around">
                     <FormField
                       fieldType="input"
                       fontSize="14px"
@@ -1020,8 +1023,7 @@ const TaskForm = ({
                             item._id === comment?._id ? { ...item, comment: e?.target.value } : item
                           )
                         )
-                      }
-                      }
+                      }}
                       value={comment?.comment}></FormField>
                   </DIV>
                 ) : (
