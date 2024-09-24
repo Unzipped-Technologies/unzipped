@@ -117,10 +117,11 @@ const Tasklist = ({
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
-    setCurrentBusiness(businesses[0]._id)
-    setShowBusinessMenu('')
-    setSelectedDepartment(businesses.businessDepartments?.[0])
-    dispatch(getBusinessEmployees(businesses.businessDepartments?.[0].businessId, true))
+    if(businesses){
+      setCurrentBusiness(businesses?.[0]?._id );
+      setSelectedDepartment(businesses?.businessDepartments?.[0])
+    }
+    setShowBusinessMenu('');
   }
 
   return (
@@ -180,11 +181,7 @@ const Tasklist = ({
                 setShowBusinessMenu={setShowBusinessMenu}
               />
               {window.innerWidth > 600 && (
-                <TasksPanel
-                  selectedDepartment={selectedDepartment}
-                  currentBusiness={currentBusiness}
-                  isEditable={isEditable}
-                />
+                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} setSelectedDepartment={setSelectedDepartment} />
               )}
             </Container>
           ) : (

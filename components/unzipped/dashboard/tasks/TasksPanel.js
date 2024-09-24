@@ -37,7 +37,8 @@ const TasksPanel = ({
   resetStoryForm,
   currentBusiness,
   isEditable,
-  taskForm
+  taskForm,
+  setSelectedDepartment
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [isDepartmentEditMode, setIsDepartmentEditMode] = React.useState(false)
@@ -63,10 +64,10 @@ const TasksPanel = ({
   }
 
   useEffect(() => {
-    if (selectedDepartment) {
-      setEditDeptInfo(selectedDepartment)
+    if (departmentData) {
+      setEditDeptInfo(departmentData)
     }
-  }, [selectedDepartment])
+  }, [departmentData])
 
   const handleOnDragEnd = async result => {
     if (!result.destination) return
@@ -78,12 +79,9 @@ const TasksPanel = ({
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
       const destItems = destColumn?.tasks || []
-      const sourcedObj = sourceItems[source.index]
-      sourcedObj.status = destColumn?.tagName
-      let ticketStatus = sourcedObj.status
-      if (!ticketStatus.includes('In Progress') || !ticketStatus.includes('In progress')) {
-        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase())
-      }
+      const sourcedObj = sourceItems[source.index];
+      sourcedObj.status = destColumn?.tagName;
+      let ticketStatus = sourcedObj.status;
 
       dispatch(updateStatusOnDrag(sourcedObj._id, { status: ticketStatus }))
       const [removed] = sourceItems.splice(source.index, 1)
@@ -155,13 +153,14 @@ const TasksPanel = ({
   }
 
   const handleDepartmentDel = async () => {
+    const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {};
     dispatch(deleteDepartment(departmentData?._id))
+    setSelectedDepartment(departmentObj)
     await getProjectsList({
       take: 'all',
       skip: 0,
       populate: false
     })
-    setEditDeptInfo({})
   }
 
   const addNewTask = async (tagId, tagName) => {
@@ -170,13 +169,7 @@ const TasksPanel = ({
       departmentId: selectedDepartment?._id,
       tag: tagId,
       priority: '',
-      status: tagName?.toLowerCase().includes('to')
-        ? TODO_STATUS
-        : tagName?.toLowerCase().includes('in')
-        ? IN_PROGRESS
-        : tagName?.toLowerCase().includes('done')
-        ? DONE
-        : TODO_STATUS
+      status: tagName
     })
     setIsEditing(false)
     setStoryModal(true)

@@ -112,51 +112,55 @@ const AssignedToList = ({ ticketAssignedTo, setTicketAssignedTo }) => {
                     >
                         Assigned To
                     </Button>
-                    <StyledMenu
-                        id="demo-customized-menu"
-                        MenuListProps={{
-                            'aria-labelledby': 'demo-customized-button',
-                        }}
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                    >
-                        {
-                            hiredProjectTeam && hiredProjectTeam.map((member, index) => (
-                                <MenuItem
-                                    key={index}
-                                    value={member}
-                                    onClick={() => handleMenuItemUserSelection(member, index)}
-                                >
-                                    {member?.userId && (<Checkbox
-                                        checked={itemsIndex.length > 0
-                                            ? itemsIndex.includes(index)
-                                            : false
-                                        }
-                                    />)}
-                                    {(member?.userId && (<ListItemText primary={member?.FirstName + ' ' +  member?.LastName} />))}
-                                </MenuItem>
-                            ))
-                        }
-                        <Divider sx={{ my: 0.5, border: "1px solid  #737373" }} />
-                        <MenuItem disableRipple
-                            sx={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                paddingTop: "15px",
-                                paddingBottom: "15px",
-                            }}
-                            onClick={handleCloseList} >
-                            <CloseIcon />
-                            <span style={{
-                                fontWeight: 'bold',
-                                fontFamily: "Roboto"
+                    {
+                        hiredProjectTeam.length > 0 && (
+                            <StyledMenu
+                                id="demo-customized-menu"
+                                MenuListProps={{
+                                    'aria-labelledby': 'demo-customized-button',
+                                }}
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                {
+                                    hiredProjectTeam && hiredProjectTeam.map((member, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            value={member}
+                                            onClick={() => handleMenuItemUserSelection(member, index)}
+                                        >
+                                            {member?.userId && (<Checkbox
+                                                checked={itemsIndex.length > 0
+                                                    ? itemsIndex.includes(index)
+                                                    : false
+                                                }
+                                            />)}
+                                            {(member?.userId && (<ListItemText primary={member?.FirstName + ' ' + member?.LastName} />))}
+                                        </MenuItem>
+                                    ))
+                                }
+                                <Divider sx={{ my: 0.5, border: "1px solid  #737373" }} />
+                                <MenuItem disableRipple
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "flex-end",
+                                        paddingTop: "15px",
+                                        paddingBottom: "15px",
+                                    }}
+                                    onClick={handleCloseList} >
+                                    <CloseIcon />
+                                    <span style={{
+                                        fontWeight: 'bold',
+                                        fontFamily: "Roboto"
 
-                            }}>
-                                Clear
-                            </span>
-                        </MenuItem>
-                    </StyledMenu>
+                                    }}>
+                                        Clear
+                                    </span>
+                                </MenuItem>
+                            </StyledMenu>
+                        )
+                    }
                 </div>
 
             </AssignedToContainer>

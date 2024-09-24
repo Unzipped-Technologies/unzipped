@@ -21,7 +21,7 @@ const taskSchema = new Schema(
     assignee: { type: Schema.Types.Mixed, ref: 'users', default: null },
     businessId: { type: Schema.Types.ObjectId, ref: 'businesses' },
     departmentId: { type: Schema.Types.ObjectId, ref: 'departments' },
-    status: { type: String, default: TODO_STATUS, enum: [...TASK_STATUS] },
+    status: { type: String, default: TODO_STATUS},
     priority: { type: String, default: LOW_PRIORITY, enum: [...TASK_PRIORITY] },
     comments: [
       {
