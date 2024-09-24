@@ -10,7 +10,13 @@ import { DIV } from './style'
 import Button from '../../ui/Button'
 import { FormField } from '../../ui'
 
-import { updateDepartmentForm, resetDepartmentForm, createDepartment, getProjectsList, updateDepartment } from '../../../redux/actions'
+import {
+  updateDepartmentForm,
+  resetDepartmentForm,
+  createDepartment,
+  getProjectsList,
+  updateDepartment
+} from '../../../redux/actions'
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -41,7 +47,6 @@ const DepartmentModel = ({
   isDepartmentEditMode,
   updateDepartment
 }) => {
-
   useEffect(() => {
     updateDepartmentForm({
       businessId: currentBusinessId,
@@ -49,19 +54,16 @@ const DepartmentModel = ({
     })
   }, [currentBusinessId, isDepartmentEditMode])
 
-
   const updateForm = (field, value) => {
     updateDepartmentForm({
       [`${field}`]: value
     })
   }
 
-
   const onSubmit = async () => {
     if (isDepartmentEditMode) {
       await updateDepartment({ name: departmentForm?.name }, selectedDepartment?._id, true)
     } else {
-
       await createDepartment(departmentForm)
     }
     await onHide()
@@ -74,7 +76,9 @@ const DepartmentModel = ({
       open={open}
       aria-labelledby="story-preview-modal"
       aria-describedby="story-preview-modal-description">
-      <DialogTitle id="department-dialog-title">{isDepartmentEditMode ? selectedDepartment?.name : 'Create Department'}</DialogTitle>
+      <DialogTitle id="department-dialog-title">
+        {isDepartmentEditMode ? selectedDepartment?.name : 'Create Department'}
+      </DialogTitle>
 
       <DialogContent dividers>
         <DIV flex="0 0 auto" boxSizing="border-box">
@@ -89,6 +93,7 @@ const DepartmentModel = ({
                 fontSize="14px"
                 borderColor="red"
                 noMargin
+                maxLength={'50'}
                 width="100%"
                 height="36px !important"
                 onChange={e => updateForm('name', e?.target?.value)}

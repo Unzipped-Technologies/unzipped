@@ -106,7 +106,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
   const validatePassword = () => {
     const isValid = ValidationUtils._strongPasswordValidation(userData.newPassword)
     if (!isValid && userData.newPassword) {
-      setNewPasswordError('Password must contain 1 capital letter and 1 special character!')
+      setNewPasswordError('Password must contain numbers, 1 capital letter and 1 special character!')
     } else {
       setNewPasswordError('')
     }

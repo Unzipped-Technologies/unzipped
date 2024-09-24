@@ -8,10 +8,9 @@ const FreelancerModel = require('../models/Freelancer')
 
 const createApplication = async params => {
   try {
-
-    const FREELANCER_ID = await FreelancerModel.find( { userId: params.userId});
-    let {userId, ...data} = params;
-    data.freelancerId = FREELANCER_ID[0]._id;
+    const FREELANCER_ID = await FreelancerModel.find({ userId: params.userId })
+    let { userId, ...data } = params
+    data.freelancerId = FREELANCER_ID[0]._id
     if (!FREELANCER_ID) throw new Error('Freelancer not found!')
     const isAlreadyApplied = await countApplications({
       projectId: data.projectId,
@@ -44,19 +43,21 @@ const createApplication = async params => {
       listId: data.projectId,
       applicants: projectData.applicants
     })
-    if(!updatedBusiness) throw new Error('Could not update business');
+    if (!updatedBusiness) throw new Error('Could not update business')
     const mailOptions = {
       to: updatedBusiness.userId.email,
-      templateId: "d-7a6cfc5885764014a2ef24371af0ef55",
-      dynamicTemplateData:{
-        firstName: updatedBusiness?.userId?.FirstName ? updatedBusiness.userId.FirstName: updatedBusiness.userId.email.split('@')[0],
-        lastName: updatedBusiness?.userId?.LastName ? updatedBusiness.userId.LastName: '',
+      templateId: 'd-7a6cfc5885764014a2ef24371af0ef55',
+      dynamicTemplateData: {
+        firstName: updatedBusiness?.userId?.FirstName
+          ? updatedBusiness.userId.FirstName
+          : updatedBusiness.userId.email.split('@')[0],
+        lastName: updatedBusiness?.userId?.LastName ? updatedBusiness.userId.LastName : '',
         reviewApplicationLink: `${keys.redirectDomain}/projects/${updatedBusiness._id}`,
         supportLink: `${keys.redirectDomain}/wiki/getting-started`,
-        projectName: updatedBusiness?.name,
+        projectName: updatedBusiness?.name
       }
     }
-    await Mailer.sendInviteMail(mailOptions);
+    await Mailer.sendInviteMail(mailOptions)
     return response
   } catch (e) {
     throw new Error(`Something went wrong: ${e.message}`)
@@ -80,12 +81,7 @@ const getApplicationById = async id => {
             {
               path: 'user',
               model: 'users',
-              select: 'email FirstName LastName FullName profileImage AddressLineCountry'
-            },
-            {
-              path: 'freelancerSkills',
-              model: 'freelancerskills',
-              select: 'skill isActive yearsExperience'
+              select: 'email freelancerSkills FirstName LastName FullName profileImage AddressLineCountry'
             }
           ]
         }
@@ -125,12 +121,7 @@ const getAllApplications = async query => {
               path: 'userId',
               model: 'users',
               select:
-                'email FirstName LastName FullName profileImage AddressLineOne AddressLineTwo AddressLineCountry AddressCity AddressState AddressZip'
-            },
-            {
-              path: 'freelancerSkills',
-              model: 'freelancerskills',
-              select: 'skill isActive yearsExperience'
+                'email freelancerSkills FirstName LastName FullName profileImage AddressLineOne AddressLineTwo AddressLineCountry AddressCity AddressState AddressZip'
             }
           ]
         }

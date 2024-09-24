@@ -12,6 +12,7 @@ import IconComponent from '../../ui/icons/IconComponent'
 import { getProjectsList } from '../../../redux/Business/actions'
 
 import { getInvitesLists } from '../../../redux/Lists/ListsAction'
+import { ValidationUtils } from '../../../utils'
 
 const Heading = styled.div`
   gap: 20px;
@@ -71,7 +72,7 @@ function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, use
                   router.push(`projects/details/${project._id}`)
                 }}>
                 <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#000000" />
-                <TEXT>{project?.name}</TEXT>
+                <TEXT>{ValidationUtils.truncate(project?.name, 40)}</TEXT>
               </Heading>
             )
           })

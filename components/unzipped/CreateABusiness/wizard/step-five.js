@@ -2,6 +2,7 @@ import React from 'react'
 import CreateABusiness from '../../CreateABusiness'
 import { Grid } from '../../../../components/unzipped/dashboard/style'
 import Button from '../../../../components/ui/Button'
+import { ValidationUtils } from '../../../../utils'
 import { FormField } from '../../../ui'
 import { ContentContainer, ContainedSpan } from '../../../../pages/create-your-business'
 import ClearSharpIcon from '@material-ui/icons/ClearSharp'
@@ -36,7 +37,7 @@ const StepFiveWizardFlow = ({
                 style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
                 onClick={() => handleCancelIcon('requiredSkills', requiredSkills, skill)}
               />
-              {skill}
+              {ValidationUtils.truncate(skill, 10)}
             </ContainedSpan>
           ))}
         </ContentContainer>

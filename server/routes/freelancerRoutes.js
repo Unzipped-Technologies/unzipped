@@ -43,9 +43,9 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('updateAp
   }
 })
 
-router.post('/add/skill', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
+router.post('/update-skills', requireLogin, permissionCheckHelper.hasPermission('addSkill'), async (req, res) => {
   try {
-    const addedSkill = await freelancerHelper.addSkillsToFreelancer(req.body, req.user?.userInfo?.freelancers)
+    const addedSkill = await freelancerHelper.updateFreelancerSkills(req.body?.skills, req.user?.userInfo?.freelancers)
     if (!addedSkill) throw Error('freelancer does not exist')
     res.json(addedSkill)
   } catch (e) {
@@ -53,14 +53,14 @@ router.post('/add/skill', requireLogin, permissionCheckHelper.hasPermission('add
   }
 })
 
-router.post(
-  '/delete/skill/:skillId',
+router.delete(
+  '/delete-skill/:skillId',
   requireLogin,
   permissionCheckHelper.hasPermission('addSkill'),
   async (req, res) => {
     try {
       const addedSkill = await freelancerHelper.deleteSkillFromFreelancer(
-        req.params.skillId.skillId,
+        req.params.skillId,
         req.user?.userInfo?.freelancers
       )
       if (!addedSkill) throw Error('freelancer does not exist')
@@ -82,7 +82,7 @@ router.delete('/:id', requireLogin, permissionCheckHelper.hasPermission('deleteA
 
 router.post('/public/list', async (req, res) => {
   try {
-    const { take, skip } = req.body;
+    const { take, skip } = req.body
     const freelancers = await freelancerHelper.getAllFreelancers(req.body, take, skip)
     res.json(freelancers)
   } catch (e) {
@@ -99,7 +99,7 @@ router.post('/add-education', requireLogin, permissionCheckHelper.hasPermission(
   }
 })
 router.delete(
-  'delete-education/:educationId',
+  '/delete-education/:educationId',
   requireLogin,
   permissionCheckHelper.hasPermission('addSkill'),
   async (req, res) => {
@@ -144,7 +144,7 @@ router.delete(
   permissionCheckHelper.hasPermission('deleteShowCaseProject'),
   async (req, res) => {
     try {
-      const response = await showCaseProjects.deleteShowCaseProject(req.user?.userInfo?.freelancers, req.params.id)
+      const response = await freelancerHelper.deleteShowCaseProject(req.user?.userInfo?.freelancers, req.params.id)
       if (response) res.json({ msg: 'Project deleted successfully.' })
     } catch (e) {
       res.status(400).json({ msg: e.message })

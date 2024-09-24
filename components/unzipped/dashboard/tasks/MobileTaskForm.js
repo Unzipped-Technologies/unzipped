@@ -23,12 +23,12 @@ import {
   addCommentToStory,
   restTagsList
 } from '../../../../redux/actions'
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { useRouter } from 'next/router';
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
+import { useRouter } from 'next/router'
 
-const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest'];
-const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing'];
+const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
+const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing']
 
 const Button = styled.button`
   text-align: center;
@@ -94,7 +94,7 @@ const MobileTaskForm = ({
     tag: false
   })
   const [disableBtn, setButtonDisable] = useState(true)
-  const router = useRouter();
+  const router = useRouter()
   const [commentId, setCommentId] = useState('')
   const [tag, setTag] = useState('')
   const [error, setError] = useState('')
@@ -105,13 +105,13 @@ const MobileTaskForm = ({
     img: '',
     taskId: taskDetail?._id
   })
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [selectedTags, setSelectedTags] = useState([])
+  const [inputValue, setInputValue] = useState('')
 
-  const [editSelectedTags, setEditSelectedTags] = useState([]);
-  const [editInputValue, setEditInputValue] = useState('');
-  const [inputStatus, setInputStatus] = useState('');
-  const [taskPriority, setTaskPriority] = useState('');
+  const [editSelectedTags, setEditSelectedTags] = useState([])
+  const [editInputValue, setEditInputValue] = useState('')
+  const [inputStatus, setInputStatus] = useState('')
+  const [taskPriority, setTaskPriority] = useState('')
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
@@ -407,46 +407,44 @@ const MobileTaskForm = ({
   }
 
   const handleInputChange = (event, newInputValue) => {
-    setInputValue(newInputValue);
-  };
+    setInputValue(newInputValue)
+  }
 
   const handleAddTag = () => {
     if (inputValue.trim() !== '' && !selectedTags.includes(inputValue)) {
-      setSelectedTags([...selectedTags, inputValue.trim()]);
-      setInputValue('');
-
+      setSelectedTags([...selectedTags, inputValue.trim()])
+      setInputValue('')
     }
-  };
+  }
 
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
       updateForm('tags', [])
-      setEditSelectedTags([...editSelectedTags, editInputValue.trim()]);
-      setEditInputValue('');
-
+      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
+      setEditInputValue('')
     }
-  };
+  }
 
   const handleEditInputChange = (event, newInputValue) => {
-    setEditInputValue(newInputValue);
-  };
+    setEditInputValue(newInputValue)
+  }
 
   useEffect(() => {
     restTagsList()
-    if (router.pathname.includes("department")) {
+    if (router.pathname.includes('department')) {
       updateForm('tags', [...taskForm?.tags, ...selectedTags])
     }
   }, [selectedTags])
 
   useEffect(() => {
-    if (router.pathname.includes("ticket")) {
+    if (router.pathname.includes('ticket')) {
       restTagsList()
       updateForm('tags', [...taskForm?.tags, ...editSelectedTags])
     }
   }, [editSelectedTags])
 
   useEffect(() => {
-    if (router.pathname.includes("ticket") && taskDetail?.tags?.length > 0) {
+    if (router.pathname.includes('ticket') && taskDetail?.tags?.length > 0) {
       setEditSelectedTags([])
       setEditSelectedTags([...editSelectedTags, ...taskDetail?.tags])
     }
@@ -471,6 +469,7 @@ const MobileTaskForm = ({
               fontSize="14px"
               borderColor="red"
               placeholder={'Task Name'}
+              maxLength={'250'}
               disableBorder={!editMode.taskName}
               disabled={userRole === 1}
               noMargin
@@ -479,7 +478,7 @@ const MobileTaskForm = ({
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
-              onUpdate={() => { }}
+              onUpdate={() => {}}
               onBlur={() => {
                 validateForm()
                 enableEditMode('')
@@ -537,7 +536,7 @@ const MobileTaskForm = ({
             }}
             value={assigneeOptions.find(assignee => assignee.value === taskForm?.assignee)}
             clickType="assignee"
-            onUpdate={() => { }}
+            onUpdate={() => {}}
             onMenuOpen={() => {
               enableEditMode('assignee')
             }}
@@ -552,13 +551,18 @@ const MobileTaskForm = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justifyContent: 'flex-end'
             }}>
             <div>
               <Chat width="18" height="18" />
             </div>
             <div>
-              <TEXT fontSize="16px" textColor="#0057FF" lineHeight="normal" padding="0px 0px 0px 0px" margin="0px 0px 0px 5px">
+              <TEXT
+                fontSize="16px"
+                textColor="#0057FF"
+                lineHeight="normal"
+                padding="0px 0px 0px 0px"
+                margin="0px 0px 0px 5px">
                 {comments?.length > 10 ? '10+' : comments?.length} {comments?.length > 10 ? 'Comments' : 'Comment'}
               </TEXT>
             </div>
@@ -604,25 +608,17 @@ const MobileTaskForm = ({
               color: theme => theme.palette.getContrastText(theme.palette.background.paper)
             },
             '& input:focus': {
-              border: '0px !important',
+              border: '0px !important'
             },
             '& svg': { display: 'none' }
           }}
-
-          renderInput={(params) => <TextField {...params} />}
+          renderInput={params => <TextField {...params} />}
         />
-
       </div>
 
       <div>
         <div>
-          <TEXT
-            textColor="#000000"
-            fontSize="16px"
-            lineHeight="21.09px"
-            fontWeight="500"
-            width="80px"
-            padding="0px">
+          <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="80px" padding="0px">
             Status:
           </TEXT>
         </div>
@@ -654,17 +650,14 @@ const MobileTaskForm = ({
               color: theme => theme.palette.getContrastText(theme.palette.background.paper)
             },
             '& input:focus': {
-              border: '0px !important',
+              border: '0px !important'
             },
             '& svg': { display: 'none' }
           }}
-
-          renderInput={(params) => <TextField {...params} />}
+          renderInput={params => <TextField {...params} />}
         />
-
       </div>
       <div>
-
         <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="120px !important">
           Story Points:
         </TEXT>
@@ -676,7 +669,6 @@ const MobileTaskForm = ({
           alignItems: 'center',
           justifyContent: 'flex-start'
         }}>
-
         {editMode ? (
           <FormField
             zIndexUnset
@@ -692,7 +684,7 @@ const MobileTaskForm = ({
             onChange={e => updateForm('storyPoints', e?.target?.value)}
             value={taskForm?.storyPoints}
             clickType="storyPoints"
-            onUpdate={() => { }}
+            onUpdate={() => {}}
             onClick={() => {
               enableEditMode('storyPoints')
             }}
@@ -716,9 +708,8 @@ const MobileTaskForm = ({
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'center'
         }}>
-
         {!editMode?.tag && userRole !== 1 && (
           <Autocomplete
             multiple
@@ -728,22 +719,22 @@ const MobileTaskForm = ({
             inputValue={editInputValue}
             onInputChange={handleEditInputChange}
             options={editSelectedTags}
-            getOptionLabel={(option) => option}
+            getOptionLabel={option => option}
             sx={{
               width: 300,
               '& .Mui-focused': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .Mui-focused:after': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .MuiInputBase-root': {
                 maxHeight: 200,
-                overflowY: "scroll",
-                overflowX: "hidden",
+                overflowY: 'scroll',
+                overflowX: 'hidden',
                 '::-webkit-scrollbar': {
                   width: 5,
-                  height: 0,
+                  height: 0
                 },
 
                 '::-webkit-scrollbar-track': {
@@ -755,39 +746,38 @@ const MobileTaskForm = ({
                 }
               },
               '& input': {
-                border: "0px !important",
-                boxShadow: 'none !important',
+                border: '0px !important',
+                boxShadow: 'none !important'
               },
               '& input:focus': {
                 border: '0px !important',
-                boxShadow: 'none !important',
+                boxShadow: 'none !important'
               },
               '& .MuiAutocomplete-root': {
                 borderRadius: '8px !important',
                 padding: '10px !important',
-                border: '1px solid purple !important',
+                border: '1px solid purple !important'
               },
               '& .MuiInputBase-root-MuiInput-root:after': {
                 border: '0px !important',
-                width: "100%"
+                width: '100%'
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
                 variant="standard"
                 placeholder="Tags"
-                onKeyDown={(e) => {
+                onKeyDown={e => {
                   if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleEditInputTags();
+                    e.preventDefault()
+                    handleEditInputTags()
                   }
                 }}
               />
             )}
             noOptionsText="Add Tag"
           />
-
         )}
         {editMode?.tag && (
           <Autocomplete
@@ -798,22 +788,22 @@ const MobileTaskForm = ({
             inputValue={inputValue}
             onInputChange={handleInputChange}
             options={selectedTags}
-            getOptionLabel={(option) => option}
+            getOptionLabel={option => option}
             sx={{
               width: 300,
               '& .Mui-focused': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .Mui-focused:after': {
-                border: '0px !important',
+                border: '0px !important'
               },
               '& .MuiInputBase-root': {
                 maxHeight: 200,
-                overflowY: "scroll",
-                overflowX: "hidden",
+                overflowY: 'scroll',
+                overflowX: 'hidden',
                 '::-webkit-scrollbar': {
                   width: 5,
-                  height: 0,
+                  height: 0
                 },
 
                 '::-webkit-scrollbar-track': {
@@ -825,32 +815,36 @@ const MobileTaskForm = ({
                 }
               },
               '& input': {
-                border: "0px !important",
-                boxShadow: 'none !important',
+                border: '0px !important',
+                boxShadow: 'none !important'
               },
               '& input:focus': {
                 border: '0px !important',
-                boxShadow: 'none !important',
+                boxShadow: 'none !important'
               },
               '& .MuiAutocomplete-root': {
                 borderRadius: '8px !important',
                 padding: '10px !important',
-                border: '1px solid purple !important',
+                border: '1px solid purple !important'
               },
               '& .MuiInputBase-root-MuiInput-root:after': {
                 border: '0px !important',
-                width: "100%"
+                width: '100%'
               }
             }}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
                 variant="standard"
+                inputProps={{
+                  ...params.inputProps,
+                  maxLength: 10
+                }}
                 placeholder="Tags"
-                onKeyDown={(e) => {
+                onKeyDown={e => {
                   if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTag();
+                    e.preventDefault()
+                    handleAddTag()
                   }
                 }}
               />
@@ -859,7 +853,6 @@ const MobileTaskForm = ({
           />
         )}
       </div>
-
 
       <div>
         <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="100px !important">
@@ -870,9 +863,8 @@ const MobileTaskForm = ({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column'
         }}>
-
         {editMode.description ? (
           <FormField
             zIndexUnset
@@ -887,7 +879,8 @@ const MobileTaskForm = ({
             onChange={e => updateForm('description', e?.target?.value)}
             value={taskForm?.description}
             clickType="description"
-            onUpdate={() => { }}
+            maxLength={'1000'}
+            onUpdate={() => {}}
             onClick={() => {
               enableEditMode('description')
             }}
@@ -973,12 +966,12 @@ const MobileTaskForm = ({
               height="auto"
               textarea
               width="100%"
+              maxLength={'1000'}
               display="inline !important"
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}></FormField>
           </div>
         )}
-
       </div>
       <div>
         {!isCreating &&
@@ -1036,6 +1029,7 @@ const MobileTaskForm = ({
                     height="auto"
                     textarea
                     width="100%"
+                    maxLength={'1000'}
                     display="inline !important"
                     onChange={e => {
                       setComments(prevArray =>

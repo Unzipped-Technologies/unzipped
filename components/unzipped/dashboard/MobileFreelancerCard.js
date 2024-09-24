@@ -7,7 +7,7 @@ import { createRecentlyViewdList } from '../../../redux/ListEntries/action'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUserInvitation } from '../../../redux/actions'
 import Button from '../../ui/Button'
-import { Icon } from '../../ui'
+import { Icon, Badge } from '../../ui'
 import ListModal from '../ListModal'
 
 const UserSkills = styled.div`
@@ -179,22 +179,9 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
         </div>
       </div>
       {user?.skills?.length > 0 && (
-        <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', padding: '13px 0', marginLeft: '8px' }}>
+        <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', padding: '10px', marginLeft: '8px' }}>
           {user?.skills?.map((skill, index) => (
-            <span
-              data-testid={`${skill}_${index}`}
-              key={index}
-              style={{
-                backgroundColor: '#D9D9D9',
-                borderRadius: '16px',
-                fontSize: '13px',
-                padding: '4px 20px 6px 20px',
-                marginRight: '6.4px',
-                fontWeight: '500',
-                minHeight: '100%'
-              }}>
-              {skill}
-            </span>
+            <Badge key={index}>{skill?.skill}</Badge>
           ))}
         </UserSkills>
       )}

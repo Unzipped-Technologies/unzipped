@@ -81,7 +81,8 @@ const ListModal = ({
   resetContractForm,
   setUserIdForChat,
   user,
-  checkUserConversation
+  checkUserConversation,
+  role
 }) => {
   const router = useRouter()
 
@@ -167,28 +168,32 @@ const ListModal = ({
                 {error}
               </P>
             )}
-            <P
-              padding="25px 0 18px 0"
-              margin="7px 0 0 0"
-              borderBottom="3px solid #EFF1F4"
-              fontWeight="600"
-              cursor="pointer"
-              onClick={async () => {
-                await resetContractForm()
-                await getFreelancerById(freelancerId)
-                await router.push('/hire')
-              }}>
-              Make An Offer
-            </P>
-            <P
-              padding="12px 0 18px 0"
-              cursor="pointer"
-              borderBottom="3px solid #EFF1F4"
-              margin="0"
-              fontWeight="600"
-              onClick={handleScheduleInterviewModal}>
-              Schedule an Interview
-            </P>
+            {role !== 1 && (
+              <P
+                padding="25px 0 18px 0"
+                margin="7px 0 0 0"
+                borderBottom="3px solid #EFF1F4"
+                fontWeight="600"
+                cursor="pointer"
+                onClick={async () => {
+                  await resetContractForm()
+                  await getFreelancerById(freelancerId)
+                  await router.push('/hire')
+                }}>
+                Make An Offer
+              </P>
+            )}
+            {role !== 1 && (
+              <P
+                padding="12px 0 18px 0"
+                cursor="pointer"
+                borderBottom="3px solid #EFF1F4"
+                margin="0"
+                fontWeight="600"
+                onClick={handleScheduleInterviewModal}>
+                Schedule an Interview
+              </P>
+            )}
             <P
               padding="12px 0 18px 0"
               cursor="pointer"
@@ -283,6 +288,7 @@ const ListModal = ({
 
 const mapStateToProps = state => {
   return {
+    role: state?.Auth?.user?.role,
     lists: state.Lists?.invitesList
   }
 }

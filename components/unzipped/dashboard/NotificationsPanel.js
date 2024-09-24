@@ -30,7 +30,6 @@ const NotificationsPanel = ({
   passwordChanged,
   calenderSuccess
 }) => {
-
   const dispatch = useDispatch()
   const [initialUrl] = useState(url)
 
@@ -142,7 +141,7 @@ const NotificationsPanel = ({
 const mapStateToProps = state => {
   return {
     success: state?.ProjectApplications?.success,
-    calenderSuccess: state?.CalenderSetting?.success,
+    calenderSuccess: state?.Auth?.calendarSuccess,
     passwordChanged: state?.Auth?.passwordChanged,
     token: state.Auth.token,
     user: state.Auth?.user,

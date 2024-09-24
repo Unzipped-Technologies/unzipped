@@ -1,16 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import router from 'next/router'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
-import { updateRegisterForm, updateUser } from '../redux/actions'
+
+import { ValidationUtils } from '../utils'
+import { countriesList } from '../utils/constants'
+import FormField from '../components/ui/FormField'
 import { parseCookies } from '../services/cookieHelper'
 import OptionTileGroup from '../components/ui/OptionTileGroup'
-import FormField from '../components/ui/FormField'
-import styled from 'styled-components'
-import router from 'next/router'
-import { countriesList } from '../utils/constants'
-import CreateABusiness from '../components/unzipped/CreateABusiness'
-import { Grid, Grid2 } from '../components/unzipped/dashboard/style'
 import { accountTypeEnum } from '../server/enum/accountTypeEnum'
+import { updateRegisterForm, updateUser } from '../redux/actions'
+import { Grid, Grid2 } from '../components/unzipped/dashboard/style'
+import CreateABusiness from '../components/unzipped/CreateABusiness'
 
 const Container = styled.div`
   display: flex;
@@ -22,25 +24,23 @@ const Container = styled.div`
 `
 
 const GetCard = ({
-    stage, 
-    role, 
-    submitForm,
-    updateForm,
-    goBack,
-    FirstName,
-    LastName,
-    socialSecurityNumber,
-    businessType,
-    AddressLineOne,
-    AddressLineTwo,
-    AddressCity,
-    AddressCountry,
-    AddressState,
-    AddressZip,
-    taxEIN,
-    phoneNumber,
-    loading,
-    isAccountDetailCompleted
+  stage,
+  role,
+  submitForm,
+  updateForm,
+  goBack,
+  FirstName,
+  LastName,
+  socialSecurityNumber,
+  businessType,
+  AddressLineOne,
+  AddressLineTwo,
+  AddressCity,
+  AddressCountry,
+  AddressZip,
+  taxEIN,
+  phoneNumber,
+  errors
 }) => {
   switch (stage) {
     case 1:
@@ -100,19 +100,19 @@ const GetCard = ({
               fieldType="input"
               width="80%"
               noMargin
+              error={errors?.FirstName}
               fontSize="14px"
               onChange={e => updateForm({ FirstName: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
               value={FirstName}>
               First Name
             </FormField>
             <FormField
               fieldType="input"
               fontSize="14px"
+              error={errors?.LastName}
               width="80%"
               noMargin
               onChange={e => updateForm({ LastName: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
               value={LastName}>
               Last Name
             </FormField>
@@ -121,9 +121,10 @@ const GetCard = ({
                 fieldType="input"
                 fontSize="14px"
                 noMargin
+                error={errors?.phoneNumber}
+                placeholder="(555) 123-4567"
                 width="80%"
                 onChange={e => updateForm({ phoneNumber: e.target.value })}
-                // onBlur={() => updateForm({ name: businessName })}
                 value={phoneNumber}>
                 Phone Number
               </FormField>
@@ -131,8 +132,9 @@ const GetCard = ({
               <FormField
                 fieldType="input"
                 fontSize="14px"
-                width="80%"
+                width="78%"
                 placeholder="Business Type"
+                error={errors.businessType}
                 options={[
                   {
                     value: 'LLC',
@@ -149,9 +151,8 @@ const GetCard = ({
                 ]}
                 noMargin
                 onChange={e => updateForm({ businessType: e.target.value })}
-                // onBlur={() => updateForm({ name: businessName })}
                 value={businessType}>
-                Business Type (Individual, LLC, C-corp)
+                {errors.businessType}Business Type (Individual, LLC)
               </FormField>
             </Grid2>
             <FormField
@@ -159,8 +160,8 @@ const GetCard = ({
               fontSize="14px"
               noMargin
               width="80%"
+              error={errors?.taxEIN}
               onChange={e => updateForm({ socialSecurityNumber: e.target.value, taxEIN: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
               value={socialSecurityNumber || taxEIN}>
               {role === accountTypeEnum.INVESTOR ? 'Social Security Number' : 'Tax EIN or Social security Number'}
             </FormField>
@@ -193,8 +194,8 @@ const GetCard = ({
               width="80%"
               noMargin
               fontSize="14px"
+              error={errors?.AddressLineOne}
               onChange={e => updateForm({ AddressLineOne: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
               value={AddressLineOne}>
               Address line 1
             </FormField>
@@ -203,8 +204,8 @@ const GetCard = ({
               fontSize="14px"
               width="80%"
               noMargin
+              error={errors?.AddressLineTwo}
               onChange={e => updateForm({ AddressLineTwo: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
               value={AddressLineTwo}>
               Address line 2
             </FormField>
@@ -212,20 +213,20 @@ const GetCard = ({
               <FormField
                 fieldType="input"
                 fontSize="14px"
+                error={errors?.AddressCity}
                 noMargin
                 width="80%"
                 onChange={e => updateForm({ AddressCity: e.target.value })}
-                // onBlur={() => updateForm({ name: businessName })}
                 value={AddressCity}>
                 City
               </FormField>
               <FormField
                 fieldType="input"
                 fontSize="14px"
+                error={errors?.AddressZip}
                 noMargin
-                width="80%"
+                width="78%"
                 onChange={e => updateForm({ AddressZip: e.target.value })}
-                // onBlur={() => updateForm({ name: businessName })}
                 value={AddressZip}>
                 Zip Code
               </FormField>
@@ -233,6 +234,7 @@ const GetCard = ({
             <FormField
               fieldType="input"
               fontSize="14px"
+              error={errors?.AddressCountry}
               width="80%"
               placeholder="Select Country"
               options={countriesList.map(country => {
@@ -246,7 +248,6 @@ const GetCard = ({
               })}
               noMargin
               onChange={e => updateForm({ AddressCountry: e.target.value })}
-              // onBlur={() => updateForm({ name: businessName })}
               value={AddressCountry}>
               Country/Region
             </FormField>
@@ -259,58 +260,269 @@ const GetCard = ({
 }
 
 const UpdateAccountProfile = ({
-    stage, 
-    updateRegisterForm,
-    updateUser,
-    loading,
-    token,
-    role,
-    FirstName,
-    LastName,
-    email,
-    password,
-    phoneNumber,
-    AddressLineOne,
-    AddressLineTwo,
-    AddressLineCountry,
-    AddressState,
-    AddressZip,
-    AddressCity,
-    AddressCountry,
-    socialSecurityNumber,
-    businessType,
-    taxEIN,
-    access,
-    user
+  stage,
+  updateRegisterForm,
+  updateUser,
+  token,
+  role,
+  FirstName,
+  LastName,
+  email,
+  password,
+  phoneNumber,
+  AddressLineOne,
+  AddressLineTwo,
+  AddressLineCountry,
+  AddressZip,
+  AddressCity,
+  AddressCountry,
+  socialSecurityNumber,
+  businessType,
+  taxEIN,
+  access,
+  user
 }) => {
-    const tokens = token?.access_token || access
-    const submitForm = async (step) => {
-        if (step < 3) {
-            // submit form
-            // if step is true then go forward 1 step
-            updateRegisterForm({
-                stage: step ? step + 1 : stage
-            })
-        } else {
-            await updateUser({
-                role,
-                FirstName,
-                LastName,
-                phoneNumber,
-                AddressLineOne,
-                AddressLineTwo,
-                AddressLineCountry,
-                AddressZip,
-                AddressCity,
-                AddressCountry,
-                socialSecurityNumber,
-                businessType,
-                taxEIN,
-                profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
-                isAccountDetailCompleted: true,
-            }, tokens)
+  const tokens = token?.access_token || access
+  const [errors, setErrors] = useState({
+    role: '',
+    FirstName: '',
+    LastName: '',
+    phoneNumber: '',
+    businessType: '',
+    taxEIN: '',
+    AddressLineOne: '',
+    AddressLineTwo: '',
+    AddressCountry: '',
+    AddressCity: '',
+    AddressZip: ''
+  })
 
-      router.push('/dashboard?success=true')
+  useEffect(() => {
+    if (user?._id && user?.isAccountDetailCompleted) {
+      router.push('/dashboard')
+    }
+  }, [user])
+
+  const validateForm = () => {
+    if (stage === 1) {
+      if (role === -1) {
+        setErrors({
+          ...errors,
+          role: 'Please select role.'
+        })
+        return false
+      } else {
+        setErrors({
+          ...errors,
+          role: ''
+        })
+      }
+    } else if (stage === 2) {
+      if (!FirstName) {
+        setErrors({
+          ...errors,
+          FirstName: 'First Name is required!'
+        })
+        return false
+      } else if (!/^[A-Za-z\s]+$/.test(FirstName)) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          FirstName: 'First Name contains only alphabets and space!'
+        }))
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          FirstName: ''
+        }))
+      }
+      if (!LastName) {
+        setErrors({
+          ...errors,
+          LastName: 'Last Name is required!'
+        })
+        return false
+      } else if (!/^[A-Za-z\s]+$/.test(LastName)) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          LastName: 'Last Name contains only alphabets and space!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          LastName: ''
+        }))
+      }
+      if (!phoneNumber) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          phoneNumber: 'Phone Number is required!'
+        }))
+        return false
+      } else if (!/^(?:\+1\s?)?(\(\d{3}\)|\d{3})([\s.-]?)\d{3}[\s.-]?\d{4}$/.test(phoneNumber)) {
+        // '(555) 123-4567', '555-123-4567', '555.123.4567', '+1 555-123-4567', '5551234567',
+        // '555-1234' // Invalid
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          phoneNumber: 'Enter a valid Phone Number!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+
+          phoneNumber: ''
+        }))
+      }
+      if (!businessType) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          businessType: 'Business Type is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          businessType: ''
+        }))
+      }
+      if (!taxEIN) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          taxEIN: 'Tax EIN is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          taxEIN: ''
+        }))
+      }
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        FirstName: '',
+        LastName: '',
+        phoneNumber: '',
+        businessType: '',
+        taxEIN: ''
+      }))
+    } else if (stage === 3) {
+      if (!AddressLineOne) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressLineOne: 'Address Line One is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressLineOne: ''
+        }))
+      }
+      if (!AddressLineTwo) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressLineTwo: 'Address Line Two is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressLineTwo: ''
+        }))
+      }
+
+      if (!AddressCity) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressCity: 'City is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressCity: ''
+        }))
+      }
+      if (!AddressZip) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressZip: 'Zip code is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressZip: ''
+        }))
+      }
+      if (!AddressCountry) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressCountry: 'Country is required!'
+        }))
+
+        return false
+      } else {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          AddressCountry: ''
+        }))
+      }
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        AddressLineOne: '',
+        AddressLineTwo: '',
+        AddressCity: '',
+        AddressZip: '',
+        AddressCountry: ''
+      }))
+    }
+
+    return true
+  }
+
+  const submitForm = async step => {
+    if (validateForm()) {
+      if (step < 3) {
+        // submit form
+        // if step is true then go forward 1 step
+        updateRegisterForm({
+          stage: step ? step + 1 : stage
+        })
+      } else {
+        await updateUser(
+          {
+            role,
+            FirstName,
+            LastName,
+            phoneNumber,
+            AddressLineOne,
+            AddressLineTwo,
+            AddressLineCountry,
+            AddressZip,
+            AddressCity,
+            AddressCountry,
+            socialSecurityNumber,
+            businessType,
+            taxEIN,
+            profileImage: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
+            isAccountDetailCompleted: true
+          },
+          tokens
+        )
+
+        router.push('/dashboard?success=true')
+      }
     }
   }
 
@@ -333,48 +545,41 @@ const UpdateAccountProfile = ({
     }
   }
 
-
-    return (
-        <Container>
-            <GetCard 
-                stage={stage} 
-                submitForm={submitForm}
-                updateForm={updateForm}
-                goBack={goBack}
-                loading={loading}
-                role={role}
-                FirstName={FirstName}
-                LastName={LastName}
-                email={email}
-                password={password}
-                phoneNumber={phoneNumber}
-                AddressLineOne={AddressLineOne}
-                AddressLineTwo={AddressLineTwo}
-                AddressLineCountry={AddressLineCountry}
-                AddressState={AddressState}
-                AddressZip={AddressZip}
-                AddressCity={AddressCity}
-                AddressCountry={AddressCountry}
-                socialSecurityNumber={socialSecurityNumber}
-                businessType={businessType}
-                taxEIN={taxEIN}
-            />
-        </Container>
-    )
+  return (
+    <Container>
+      <GetCard
+        stage={stage}
+        submitForm={submitForm}
+        updateForm={updateForm}
+        goBack={goBack}
+        role={role}
+        FirstName={FirstName}
+        LastName={LastName}
+        email={email}
+        password={password}
+        phoneNumber={phoneNumber}
+        AddressLineOne={AddressLineOne}
+        AddressLineTwo={AddressLineTwo}
+        AddressLineCountry={AddressLineCountry}
+        AddressZip={AddressZip}
+        AddressCity={AddressCity}
+        AddressCountry={AddressCountry}
+        socialSecurityNumber={socialSecurityNumber}
+        businessType={businessType}
+        taxEIN={taxEIN}
+        errors={errors}
+      />
+    </Container>
+  )
 }
 
 UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
-    const token = parseCookies(req)
-    
-      return {
-        token: token && token,
-      }
-    }
+  const token = parseCookies(req)
 
 const mapStateToProps = state => {
   return {
+    user: state.Auth?.user,
     stage: state.Auth?.userForm?.stage,
-    loading: state.Auth?.loading,
     role: state.Auth.userForm?.role,
     FirstName: state.Auth.userForm?.FirstName,
     LastName: state.Auth.userForm?.LastName,
@@ -384,14 +589,12 @@ const mapStateToProps = state => {
     AddressLineOne: state.Auth.userForm?.AddressLineOne,
     AddressLineTwo: state.Auth.userForm?.AddressLineTwo,
     AddressLineCountry: state.Auth.userForm?.AddressLineCountry,
-    AddressState: state.Auth.userForm?.AddressState,
     AddressZip: state.Auth.userForm?.AddressZip,
     AddressCity: state.Auth.userForm?.AddressCity,
     AddressCountry: state.Auth.userForm?.AddressCountry,
     socialSecurityNumber: state.Auth?.userForm?.socialSecurityNumber,
     businessType: state.Auth?.userForm?.businessType,
     taxEIN: state.Auth?.userForm?.taxEIN,
-    user: state.Auth?.user,
     access: state.Auth?.token
   }
 }
@@ -403,4 +606,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateAccountProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateAccountProfile)

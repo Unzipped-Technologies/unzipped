@@ -103,7 +103,7 @@ const FormField = ({
   required = false,
   inline = false,
   children = null,
-  error = null,
+  error = '',
   requiredError = 'This field is required.',
   name = null,
   help = null,
@@ -133,7 +133,7 @@ const FormField = ({
   ...rest
 }) => {
   const Control = types[fieldType]
-  const [currentError, setCurrentError] = useState(error)
+  const [currentError, setCurrentError] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isClicked, setIsClicked] = useState(!!rest.value)
 
@@ -171,7 +171,7 @@ const FormField = ({
     const value = fieldType === 'select' ? e.value : e.target.value
     onChange && onChange(e)
 
-    if (!required || (value && validate(value))) {
+    if (!required || (value && (!validate || validate(value)))) {
       setCurrentError(null)
     }
   }
@@ -303,7 +303,7 @@ FormField.propTypes = {
   /** Children the component contains */
   children: PropTypes.node,
   /** If there is an error */
-  error: PropTypes.string,
+  error: PropTypes.element | PropTypes.string,
   /** The message to show for a required error */
   requiredError: PropTypes.string,
   /** Unique name for this field */

@@ -1,6 +1,5 @@
 const FreelancerModel = require('../models/Freelancer')
 const InviteModel = require('../models/Invited')
-const FreelancerSkillsModel = require('../models/FreelancerSkills')
 const CloudinaryUploadHelper = require('./file')
 const FileModel = require('../models/file')
 const UserModel = require('../models/User')
@@ -23,11 +22,7 @@ const getFreelancerById = async id => {
       {
         path: 'userId',
         select:
-          'FirstName LastName FullName email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry role isIdentityVerified isEmailVerified isPhoneVerified'
-      },
-      {
-        path: 'freelancerSkills',
-        select: 'skill isActive yearsExperience'
+          'FirstName LastName FullName calendarSettings email updatedAt createdAt profileImage likeTotal dislikeTotal AddressLineCountry role isIdentityVerified isEmailVerified isPhoneVerified'
       }
     ])
   } catch (e) {
@@ -101,30 +96,6 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
       {
         $match: {
           contracts: { $eq: [] } // Filter freelancers with no contracts
-        }
-      },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: [
-                    '$_id',
-                    { $cond: { if: { $isArray: '$$freelancerSkills' }, then: '$$freelancerSkills', else: [] } }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                skill: 1
-              }
-            }
-          ],
-          as: 'freelancerSkills'
         }
       },
       {
@@ -281,19 +252,16 @@ const countFreelancers = async filters => {
 }
 
 // add skills to freelancer
-const addSkillsToFreelancer = async (data, freelancerId) => {
+const updateFreelancerSkills = async (skills, freelancerId) => {
   try {
     const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
-    if (data?.skills?.length) {
-      const newSkillIds = []
-      for (const item of data.skills) {
-        item['freelancerId'] = freelancerId
-        const id = await FreelancerSkillsModel.create({
-          ...item
-        })
-        newSkillIds.push(id.id)
+
+    if (skills?.length) {
+      if (freelancerData?.freelancerSkills?.length) {
+        freelancerData.freelancerSkills = [...freelancerData.freelancerSkills, ...skills]
+      } else {
+        freelancerData['freelancerSkills'] = [...skills]
       }
-      freelancerData.freelancerSkills = [...freelancerData.freelancerSkills, ...newSkillIds]
     }
     await freelancerData.save()
     return freelancerData
@@ -306,14 +274,16 @@ const addSkillsToFreelancer = async (data, freelancerId) => {
 const deleteSkillFromFreelancer = async (skillId, freelancerId) => {
   try {
     const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
-    const skillData = await FreelancerSkillsModel.findById(skillId)
-    if (!skillData || !freelancerData?.skills?.include(skillId)) throw Error(`Skill not exist`)
+    if (!freelancerData) throw Error(`Freelancer not found.`)
 
-    if (freelancerData?.skills?.length) {
-      freelancerData.skills = freelancerData?.skills.filter(skill => skill !== skillId)
-      await FreelancerSkillsModel.softDelete({ _id: skillId })
+    if (freelancerData?.freelancerSkills?.length) {
+      freelancerData.freelancerSkills = freelancerData?.freelancerSkills.filter(
+        skill => skill?._id?.toString() !== skillId
+      )
+
       await freelancerData.save()
     }
+
     return freelancerData
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
@@ -327,9 +297,23 @@ const addEducation = async (data, freelancerId) => {
     if (freelancerData?.education?.length >= 3) throw new Error('You can only create three degrees.')
 
     if (freelancerData?.education?.length) {
-      freelancerData.education = [...freelancerData.education, data]
+      if (data?.educationId) {
+        const EduIndex = freelancerData?.education.findIndex(
+          education => education?._id?.toString() === data.educationId
+        )
+        if (EduIndex !== -1 && freelancerData.education[EduIndex]) {
+          delete data['educationId']
+          freelancerData.education[EduIndex] = { ...data }
+        } else {
+          throw new Error('No education record found.')
+        }
+      } else {
+        freelancerData.education = [...freelancerData.education, data]
+      }
     } else {
-      freelancerData['education'] = [data]
+      if (!data?.educationId) {
+        freelancerData['education'] = [data]
+      }
     }
     await freelancerData.save()
     return freelancerData
@@ -344,7 +328,9 @@ const deleteEducation = async (educationId, freelancerId) => {
     if (!freelancerData) throw Error(`Freelancer not found.`)
 
     if (freelancerData?.education?.length) {
-      freelancerData.education = freelancerData?.education.filter(education => education !== educationId)
+      freelancerData.education = freelancerData?.education.filter(
+        education => education?._id?.toString() !== educationId
+      )
       await freelancerData.save()
     }
     return freelancerData
@@ -371,9 +357,21 @@ const createShowCaseProject = async (data, freelancerId, userId, files) => {
     }
 
     if (freelancerData?.projects?.length) {
-      freelancerData.projects = [...freelancerData.projects, data]
+      if (data?.projectId) {
+        const ProIndex = freelancerData?.projects.findIndex(project => project?._id?.toString() === data.projectId)
+        if (ProIndex !== -1 && freelancerData.projects[ProIndex]) {
+          delete data['projectId']
+          freelancerData.projects[ProIndex] = { ...data }
+        } else {
+          throw new Error('No Project found.')
+        }
+      } else {
+        freelancerData.projects = [...freelancerData.projects, data]
+      }
     } else {
-      freelancerData['projects'] = [data]
+      if (!data?.projectId) {
+        freelancerData['projects'] = [data]
+      }
     }
     await freelancerData.save()
 
@@ -389,7 +387,7 @@ const deleteShowCaseProject = async (freelancerId, projectId) => {
     if (!freelancerData) throw Error(`Freelancer not found.`)
 
     if (freelancerData?.projects?.length) {
-      freelancerData.projects = freelancerData?.projects.filter(project => project !== projectId)
+      freelancerData.projects = freelancerData?.projects.filter(project => project?._id?.toString() !== projectId)
       await freelancerData.save()
     }
     return freelancerData
@@ -480,52 +478,96 @@ const createFreelancerInvite = async params => {
   return updateFreelancer
 }
 
-const sendProjectInvitationEmail = async (inviteId) => {
-
-  const inviteInfo = await InviteModel.findById(inviteId)
-    .populate(
-      [
-        {
-          path: 'business',
-          model: 'businesses',
-          select: 'name requiredSkills',
-        },
-        {
-          path: 'userInvited',
-          model: 'users',
-          select: 'FirstName LastName email',
-        },
-        {
-          path: 'freelancer',
-          model: 'freelancers',
-          populate: {
-            path: 'userId',
-            model: 'users',
-            select: 'FirstName LastName email',
-          },
-          select: 'userId'
-        }
-      ]
-    );
+const sendProjectInvitationEmail = async inviteId => {
+  const inviteInfo = await InviteModel.findById(inviteId).populate([
+    {
+      path: 'business',
+      model: 'businesses',
+      select: 'name requiredSkills'
+    },
+    {
+      path: 'userInvited',
+      model: 'users',
+      select: 'FirstName LastName email'
+    },
+    {
+      path: 'freelancer',
+      model: 'freelancers',
+      populate: {
+        path: 'userId',
+        model: 'users',
+        select: 'FirstName LastName email'
+      },
+      select: 'userId'
+    }
+  ])
 
   const inviteEmailObj = {
     to: inviteInfo?.freelancer?.userId?.email,
-    templateId: "d-ab58179c407a4e17be18ffbe81ef0fce",
+    templateId: 'd-ab58179c407a4e17be18ffbe81ef0fce',
     dynamicTemplateData: {
       firstName: inviteInfo?.freelancer?.userId?.FirstName ?? '',
       lastName: inviteInfo?.freelancer?.userId?.LastName ?? '',
       loginLink: `${keys.redirectDomain}/login`,
       supportLink: `${keys.redirectDomain}/wiki/getting-started`,
       projectName: inviteInfo?.business?.name,
-      clientName: inviteInfo?.userInvited?.FirstName + " " + inviteInfo?.userInvited?.LastName,
+      clientName: inviteInfo?.userInvited?.FirstName + ' ' + inviteInfo?.userInvited?.LastName,
       duration: inviteInfo?.duration ?? '-',
-      skills: inviteInfo?.business?.requiredSkills,
+      skills: inviteInfo?.business?.requiredSkills
     }
   }
 
   await Mailer.sendInviteMail(inviteEmailObj)
-  return inviteEmailObj;
+  return inviteEmailObj
+}
 
+const handleLike = async payload => {
+  const UserID = mongoose.Types.ObjectId(payload.userId)
+
+  const UserData = await UserModel.findById(payload.userId)
+  if (!UserData && UserData?.role !== 1) throw new Error(`Unauthorized!`)
+
+  const FreelancerData = await FreelancerModel.findById(payload.freelancerId)
+  if (!FreelancerData) throw new Error(`Freelancer not found!`)
+
+  if (FreelancerData?.dislikes?.includes(UserID)) {
+    FreelancerData.dislikes = FreelancerData?.dislikes?.filter(like => like?.toString() !== payload.userId) ?? []
+  }
+
+  if (!FreelancerData?.likes?.includes(UserID)) {
+    if (Array.isArray(FreelancerData?.likes) && FreelancerData?.likes?.length) {
+      FreelancerData.likes = [...FreelancerData?.likes, payload.userId]
+    } else {
+      FreelancerData['likes'] = [payload.userId]
+    }
+  }
+
+  await FreelancerData.save()
+  return { likes: FreelancerData.likes, dislikes: FreelancerData.dislikes }
+}
+
+const handleDisLike = async payload => {
+  const UserID = mongoose.Types.ObjectId(payload.userId)
+
+  const UserData = await UserModel.findById(payload.userId)
+  if (!UserData && UserData?.role !== 1) throw new Error(`Unauthorized!`)
+
+  const FreelancerData = await FreelancerModel.findById(payload.freelancerId)
+  if (!FreelancerData) throw new Error(`Freelancer not found!`)
+
+  if (FreelancerData?.likes?.includes(UserID)) {
+    FreelancerData.likes = FreelancerData?.likes?.filter(like => like?.toString() !== payload.userId) ?? []
+  }
+  if (!FreelancerData?.dislikes?.includes(UserID)) {
+    if (Array.isArray(FreelancerData?.dislikes) && FreelancerData?.dislikes?.length) {
+      FreelancerData.dislikes = [...FreelancerData?.dislikes, payload.userId]
+    } else {
+      FreelancerData['dislikes'] = [payload.userId]
+    }
+  }
+
+  await FreelancerData.save()
+  return { likes: FreelancerData.likes, dislikes: FreelancerData.dislikes }
 }
 
 module.exports = {
@@ -539,9 +581,11 @@ module.exports = {
   deleteShowCaseProject,
   deleteProjectImage,
   deleteEducation,
-  addSkillsToFreelancer,
+  updateFreelancerSkills,
   createFreelancerInvite,
   deleteSkillFromFreelancer,
   getFreelancerWithoutPopulate,
-  sendProjectInvitationEmail
+  sendProjectInvitationEmail,
+  handleLike,
+  handleDisLike
 }

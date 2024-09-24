@@ -293,10 +293,9 @@ const Panel = ({ success, passwordChanged, calenderSuccess }) => {
 
 const mapStateToProps = state => {
   return {
-    calenderSuccess: state?.CalenderSetting?.success,
+    calenderSuccess: state?.Auth?.calendarSuccess,
     success: state?.ProjectApplications?.success,
-    passwordChanged: state?.Auth?.passwordChanged,
-    calenderSuccess: state?.CalenderSetting?.success
+    passwordChanged: state?.Auth?.passwordChanged
   }
 }
 

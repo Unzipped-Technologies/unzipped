@@ -52,7 +52,14 @@ const MUIDialogActions = withStyles(theme => ({
   }
 }))(DialogActions)
 
-const ProjectModal = ({ open = false, onHide, loading = false, createShowCaseProject, getFreelancerById }) => {
+const ProjectModal = ({
+  open = false,
+  onHide,
+  loading = false,
+  createShowCaseProject,
+  getFreelancerById,
+  selectedProject
+}) => {
   const router = useRouter()
   const { id } = router.query
 
@@ -68,14 +75,25 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
     skills: []
   })
 
+  useEffect(() => {
+    if (selectedProject?._id) {
+      setData(prevState => ({
+        ...prevState,
+        projectName: selectedProject?.projectName ?? '',
+        role: selectedProject?.role ?? '',
+        skills: selectedProject?.skills ?? [],
+        projectId: selectedProject?._id
+      }))
+    }
+  }, [selectedProject])
+
   const checkValidationn = () => {
     if (stage === 1) {
       return data.projectName && data.role
     } else if (stage === 2) {
       return data.skills?.length > 0
-    } else {
-      return files?.length > 0
     }
+    return true
   }
 
   const nextStep = () => {
@@ -337,7 +355,6 @@ const ProjectModal = ({ open = false, onHide, loading = false, createShowCasePro
   return (
     <>
       <>
-        {loading && <Loading />}
         <MUIDialog
           data-testid="freelancer_showCase_projects_modal"
           onClose={onHide}

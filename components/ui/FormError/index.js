@@ -7,7 +7,6 @@ const ErrorContainer = styled.div`
   font-weight: 400;
   font-size: ${props => props.theme.fontSizeS || '12px'};
   font-family: arial;
-  margin-top: 4px;
 `
 
 /**

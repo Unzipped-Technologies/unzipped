@@ -122,6 +122,10 @@ const CreateBusiness = ({
   }, [])
 
   useEffect(() => {
+    userDetails?.role === 1 && router.push('/dashboard')
+  }, [])
+
+  useEffect(() => {
     if (width <= 680) {
       setIsSmallWindow(true)
     } else {

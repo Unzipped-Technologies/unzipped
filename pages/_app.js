@@ -1,28 +1,47 @@
-// import '../styles/fonts.css';
 import 'bootstrap/dist/css/bootstrap.css'
 import React, { useEffect, useState } from 'react'
-import keys from '../config/keys'
 import { useRouter } from 'next/router'
 import { useSelector, useStore } from 'react-redux'
 import { wrapper } from '../redux/store'
 import { CookiesProvider } from 'react-cookie'
 import { PersistGate } from 'redux-persist/integration/react'
 import * as gtag from '../lib/gtag'
-import { isProtected } from '../utils/protectedRoutes'
 
 ///styles
 import '../styles/App.scss'
 import 'materialize-css/dist/css/materialize.min.css'
-// import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import 'animate.css/animate.min.css'
 import Loading from '../components/loading'
 
 function MyApp({ Component, pageProps }) {
   const store = useStore(state => state)
-  const token = useSelector(state => state.Auth.token)
+  const userData = useSelector(state => state.Auth.user)
   const isLoading = useSelector(state => state.Loading.loading)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  useEffect(() => {
+    if (
+      userData?._id &&
+      userData?.isEmailVerified &&
+      !userData?.isAccountDetailCompleted &&
+      (router?.pathname.includes('dashboard') ||
+        router?.pathname.includes('hire') ||
+        router?.pathname.includes('recurring-payment'))
+    ) {
+      router.push('/update-account-profile')
+    }
+    if (
+      userData?._id &&
+      !userData?.isEmailVerified &&
+      (router?.pathname.includes('dashboard') ||
+        router?.pathname.includes('hire') ||
+        router?.pathname.includes('recurring-payment') ||
+        router?.pathname.includes('update-account-profile'))
+    ) {
+      router.push('/verify-email')
+    }
+  }, [userData])
+
   useEffect(() => {
     const start = () => setLoading(true)
     const end = () =>
@@ -41,6 +60,7 @@ function MyApp({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events])
+
   useEffect(() => {
     if (isLoading) {
       setLoading(true)
@@ -48,24 +68,6 @@ function MyApp({ Component, pageProps }) {
       setLoading(false)
     }
   }, [isLoading])
-  // useEffect(() => {
-  //   if (isProtected(router.route) && !token) {
-  //     router.push('/login')
-  //   }
-  // }, [router])
-
-  // useEffect(() => {
-  //   import('react-facebook-pixel')
-  //     .then((x) => x.default)
-  //     .then((ReactPixel) => {
-  //       ReactPixel.init(keys.facebookID) // facebookPixelId
-  //       ReactPixel.pageView()
-
-  //       router.events.on('routeChangeComplete', () => {
-  //         ReactPixel.pageView()
-  //       })
-  //     })
-  // }, [router.events])
 
   return (
     <PersistGate persistor={store.__persistor} loading={''}>

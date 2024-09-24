@@ -24,6 +24,8 @@ const BadgeContainer = styled.div`
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
+  overflow: scroll;
+  white-space: normal;
 `
 
 const statusColor = {
