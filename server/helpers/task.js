@@ -565,6 +565,15 @@ const removeCommentFromTask = async commentId => {
 
 const updateTaskStatusOnDrag = async (taskId, data) => {
   const ticketEntity = await TaskModel.findById(taskId);
+
+  if (Object.keys(data).length === 1 &&
+    data?.hasOwnProperty("assignee")) {
+
+    const taskResult = await  handleTaskAssignees(taskId, data);
+    return taskResult
+
+  }
+  
   if (ticketEntity) {
     const tagEntities = await TagModel.find(
       {
@@ -616,7 +625,7 @@ const verifyTasks = async (taskId, data) => {
 }
 
 const handleTaskAssignees = async (task, data) => {
-  return await TaskModel.findByIdAndUpdate(task, { $set: { data } }, { new: true })
+  return await TaskModel.findByIdAndUpdate(task, { $set: { ...data } }, { new: true })
 }
 module.exports = {
   createTask,

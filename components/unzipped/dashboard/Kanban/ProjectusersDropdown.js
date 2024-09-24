@@ -93,13 +93,16 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
     };
 
     const handleOnTeammemberSelect = (assignee) => {
-        setSelectedAssignee(assignee);
-        handleClose();
-        if(isListingPanel) {
-            dispatch(updateTaskInfo(task._id, { assignee: assignee.userId }));
-            return;
+        if (assignee) {
+
+            setSelectedAssignee(assignee);
+            handleClose();
+            if (isListingPanel) {
+                dispatch(updateTaskInfo(task._id, { assignee: assignee.userId }));
+                return;
+            }
+            dispatch(updateTaskAssignee(task._id, { assignee: assignee.userId }));
         }
-        dispatch(updateTaskAssignee(task._id, { assignee: assignee.userId }));
     }
 
     useEffect(() => {
@@ -202,64 +205,68 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
                 >
                     {
                         projectTeam && projectTeam.map((member, index) => (
-                            <MenuItem key={index} value={member} onClick={() => handleOnTeammemberSelect(member)} sx={{
-                                '&:hover': {
-                                    backgroundColor: "#eeeeee",
-                                    borderLeft: "3px solid #1e90ff",
-                                }
-                            }}>
-                                <List sx={{
-                                    width: '100%',
-                                    maxWidth: 360,
-                                    bgcolor: 'transparent',
-                                }}>
-                                    <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
-                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                           {member?.FirstName && ( <div style={{
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                flexDirection: "column"
-                                            }}>
-                                                {renderTextContainer(`${member?.FirstName?.charAt(0)}${member?.LastName?.charAt(0)}`, true)}
-                                            </div>)}
-                                            {member?.FirstName && (<div style={{ width: "270px" }}>
-                                                <ListItemText
-                                                    sx={{
-                                                        '& .MuiTypography-root': {
-                                                            fontSize: "16px",
-                                                            lineHeight: "1.2",
-                                                        }
-                                                    }}
-                                                    primary={`${member?.FirstName} ${member?.LastName}`}
-                                                    secondary={
-                                                        <React.Fragment>
-                                                            {isEmailRequired && (<Typography
-                                                                sx={{ display: 'inline', fontSize: "15px !important" }}
-                                                                component="span"
-                                                                variant="body2"
-                                                                color="text.primary"
-                                                            >
-                                                                {member?.email}
-                                                            </Typography>)}
-                                                        </React.Fragment>
-                                                    }
-                                                />
-                                            </div>)}
-                                            {isEmailRequired && (<div style={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                marginLeft: 10,
-                                            }}>
-                                                <div> <BadgeOutlinedIcon /></div>
-                                            </div>)}
-                                        </div>
+                            <>
+                                {member?.userId && (
+                                    <MenuItem key={index} value={member} onClick={() => handleOnTeammemberSelect(member)} sx={{
+                                        '&:hover': {
+                                            backgroundColor: "#eeeeee",
+                                            borderLeft: "3px solid #1e90ff",
+                                        }
+                                    }}>
+                                        <List sx={{
+                                            width: '100%',
+                                            maxWidth: 360,
+                                            bgcolor: 'transparent',
+                                        }}>
+                                            <ListItem alignItems="flex-start" sx={{ padding: '0 !important' }}>
+                                                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                    {member?.FirstName && (<div style={{
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        flexDirection: "column"
+                                                    }}>
+                                                        {renderTextContainer(`${member?.FirstName?.charAt(0)}${member?.LastName?.charAt(0)}`, true)}
+                                                    </div>)}
+                                                    {member?.FirstName && (<div style={{ width: "270px" }}>
+                                                        <ListItemText
+                                                            sx={{
+                                                                '& .MuiTypography-root': {
+                                                                    fontSize: "16px",
+                                                                    lineHeight: "1.2",
+                                                                }
+                                                            }}
+                                                            primary={`${member?.FirstName} ${member?.LastName}`}
+                                                            secondary={
+                                                                <React.Fragment>
+                                                                    {isEmailRequired && (<Typography
+                                                                        sx={{ display: 'inline', fontSize: "15px !important" }}
+                                                                        component="span"
+                                                                        variant="body2"
+                                                                        color="text.primary"
+                                                                    >
+                                                                        {member?.email}
+                                                                    </Typography>)}
+                                                                </React.Fragment>
+                                                            }
+                                                        />
+                                                    </div>)}
+                                                    {isEmailRequired && (<div style={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        marginLeft: 10,
+                                                    }}>
+                                                        <div> <BadgeOutlinedIcon /></div>
+                                                    </div>)}
+                                                </div>
 
-                                    </ListItem>
-                                </List>
-                            </MenuItem>
+                                            </ListItem>
+                                        </List>
+                                    </MenuItem>
+                                )}
+                            </>
                         ))
                     }
                 </StyledMenu>
