@@ -113,12 +113,7 @@ const listLists = async ({ filter, take, skip }) => {
                 {
                   path: 'userId',
                   model: 'users',
-                  select: 'FirstName LastName email profileImage AddressLineCountry'
-                },
-                {
-                  path: 'freelancerSkills',
-                  model: 'freelancerskills',
-                  select: 'skill yearsExperience'
+                  select: 'FirstName freelancerSkills LastName email profileImage AddressLineCountry'
                 }
               ]
             },

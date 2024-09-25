@@ -19,7 +19,6 @@ import Tags from './Tags/reducers'
 import TaskHours from './TaskHours/reducers'
 import Tasks from './Tasks/reducers'
 import Lists from './Lists/ListReducer'
-import CalenderSetting from './CalenderSetting/CalenderSettingReducer'
 
 //COMBINING ALL REDUCERS
 const combinedReducer = combineReducers({
@@ -40,8 +39,7 @@ const combinedReducer = combineReducers({
   Tags,
   TaskHours,
   Tasks,
-  Lists,
-  CalenderSetting
+  Lists
   // OTHER REDUCERS WILL BE ADDED HERE
 })
 
@@ -81,8 +79,7 @@ const makeStore = ({ isServer }) => {
         'Departments',
         'Tags',
         'TaskHours',
-        'Tasks',
-        'CalenderSetting'
+        'Tasks'
       ],
       storage // if needed, use a safer storage
     }

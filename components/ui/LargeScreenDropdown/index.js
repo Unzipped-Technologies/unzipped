@@ -172,7 +172,7 @@ const FooterScroll = styled.div`
   height: 130px;
 `
 
-const LargeScreenDropdown = ({ menuItems, onClose, isAuth = false, logoutUser, startAProject }) => {
+const LargeScreenDropdown = ({ menuItems, onClose, isAuth = false, logoutUser, startAProject, role }) => {
   const router = useRouter()
   const [selected, setSelected] = useState(false)
 
@@ -247,9 +247,11 @@ const LargeScreenDropdown = ({ menuItems, onClose, isAuth = false, logoutUser, s
                 Log In
               </TopButton>
             )}
-            <BottomButton onClick={startAProject} extraWide={true}>
-              Start A Project
-            </BottomButton>
+            {role !== 1 && (
+              <BottomButton onClick={startAProject} extraWide={true}>
+                Start A Project
+              </BottomButton>
+            )}
           </Footer>
         </>
       </ItemContainer>

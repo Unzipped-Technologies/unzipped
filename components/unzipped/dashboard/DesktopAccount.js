@@ -306,7 +306,7 @@ const DesktopAccount = ({
                 router.push(`/freelancers/${user.freelancers?._id}`)
               }
             }}>
-            View profile
+            View Profile
           </ButtonOne>
         </LeftOne>
         <RightOne>
@@ -355,16 +355,18 @@ const DesktopAccount = ({
               Manage payment method
             </a>
           </Rows>
-          <Rows>
-            <Item>Your next billing date is </Item>
-            <a
-              style={{ color: '#039be5', cursor: 'pointer' }}
-              onClick={() => {
-                router.push('/billing-details')
-              }}>
-              Billing details
-            </a>
-          </Rows>
+          {user?.role !== 1 && (
+            <Rows>
+              <Item>Your next billing date is </Item>
+              <a
+                style={{ color: '#039be5', cursor: 'pointer' }}
+                onClick={() => {
+                  router.push('/billing-details')
+                }}>
+                Billing details
+              </a>
+            </Rows>
+          )}
           <Rows>
             <Item>Balance</Item>
             <Item>$ {(balance?.available[0]?.amount / 100).toFixed(2).toLocaleString()}</Item>
@@ -387,23 +389,25 @@ const DesktopAccount = ({
           </Rows>
         </RightOne>
       </Container>
-      <Container border id="plan_detail">
-        <LeftOne>
-          <TitleOne>Plan Details</TitleOne>
-        </LeftOne>
-        <RightOne>
-          <Rows fullHeight>
-            <Item>{userData?.email}</Item>
-            <a
-              style={{ color: '#039be5', cursor: 'pointer' }}
-              onClick={() => {
-                router.push('/pick-a-plan')
-              }}>
-              Change plan
-            </a>
-          </Rows>
-        </RightOne>
-      </Container>
+      {user?.role !== 1 && (
+        <Container border id="plan_detail">
+          <LeftOne>
+            <TitleOne>Plan Details</TitleOne>
+          </LeftOne>
+          <RightOne>
+            <Rows fullHeight>
+              <Item>{userData?.email}</Item>
+              <a
+                style={{ color: '#039be5', cursor: 'pointer' }}
+                onClick={() => {
+                  router.push('/pick-a-plan')
+                }}>
+                Change plan
+              </a>
+            </Rows>
+          </RightOne>
+        </Container>
+      )}
       <Container border id="business_profile">
         <LeftOne>
           <TitleOne>Profile</TitleOne>
@@ -693,168 +697,174 @@ const DesktopAccount = ({
               </FormField>
             </Align2>
           </Rows>
-          <Underline color="#333" margin="15px 0px 5px 0px" />
-          <Rows>
-            <SubTitle>Company</SubTitle>
-            <EditButton data-testid="edit_company_button" onClick={() => enableEditing('editCompany', true)}>
-              {!business ? 'verify business details' : 'Edit'}
-            </EditButton>
-          </Rows>
-          {business && (
-            <Rows>
-              <FormField
-                fieldType="input"
-                width="100%"
-                placeholder="Unzipped"
-                zIndexUnset
-                id="businessName"
-                disabled={!editMode?.editCompany}
-                error={businessNameError}
-                onBlur={() => {
-                  updateDisabled()
-                  validateString(
-                    {
-                      item: userData?.businessName,
-                      min: 1,
-                      max: 45,
-                      message: 'Please enter a valid name!'
-                    },
-                    setBusinessNameError
-                  )
-                }}
-                validate={() => {
-                  validateString(
-                    {
-                      item: userData?.businessName,
-                      min: 1,
-                      max: 45,
-                      message: 'Please enter a valid name!'
-                    },
-                    setBusinessNameError
-                  )
-                }}
-                borderRadius="10px"
-                onChange={e => updateForm('businessName', e.target.value)}
-                value={userData?.businessName ?? ''}>
-                Business Name
-              </FormField>
-            </Rows>
-          )}
-          {business && (
-            <Rows>
-              <FormField
-                fieldType="input"
-                width="100%"
-                placeholder="LLC"
-                borderRadius="10px"
-                id="businessType"
-                disabled={!editMode?.editCompany}
-                zIndexUnset
-                error={businessTypeError}
-                onBlur={() => {
-                  updateDisabled()
-                  validateString(
-                    {
-                      item: userData?.businessName,
-                      min: 1,
-                      max: 45,
-                      message: 'Please enter business type (LLC, C-corp, etc.)!'
-                    },
-                    setBusinessTypeError
-                  )
-                }}
-                validate={() => {
-                  validateString(
-                    {
-                      item: userData?.businessName,
-                      min: 1,
-                      max: 45,
-                      message: 'Please enter business type (LLC, C-corp, etc.)!'
-                    },
-                    setBusinessTypeError
-                  )
-                }}
-                onChange={e => updateForm('businessType', e.target.value)}
-                value={userData?.businessType ?? ''}>
-                Business Type
-              </FormField>
-            </Rows>
-          )}
-          {business && (
-            <Rows>
-              <Align>
-                <FormField
-                  fieldType="input"
-                  disabled={!editMode?.editCompany}
-                  width="100%"
-                  id="businessPhone"
-                  placeholder="1 (833) 366-4285"
-                  borderRadius="10px"
-                  zIndexUnset
-                  error={businessPhoneError}
-                  onBlur={() => {
-                    updateDisabled()
-                    validateString(
-                      {
-                        item: userData?.businessPhone,
-                        min: 1,
-                        max: 24,
-                        message: 'Please enter a valid phone number!'
-                      },
-                      setBusinessPhoneError
-                    )
-                  }}
-                  validate={() => {
-                    validateString(
-                      {
-                        item: userData?.businessPhone,
-                        min: 1,
-                        max: 24,
-                        message: 'Please enter a valid phone number!'
-                      },
-                      setBusinessPhoneError
-                    )
-                  }}
-                  onChange={e => updateForm('businessPhone', e.target.value)}
-                  value={userData?.businessPhone}>
-                  Phone Number
-                </FormField>
-              </Align>
-              <Align>
-                <FormField
-                  fieldType="input"
-                  disabled={!editMode?.editCompany}
-                  width="100%"
-                  placeholder="**-*****42"
-                  id="taxId"
-                  borderRadius="10px"
-                  error={taxIdError}
-                  onBlur={() => {
-                    updateDisabled()
-                    validateEin(
-                      {
-                        item: ValidationUtils._formatToEIN(userData?.taxId),
-                        message: 'Please enter a valid EIN!'
-                      },
-                      setTaxIdError
-                    )
-                  }}
-                  validate={() => {
-                    validateEin(
-                      {
-                        item: userData?.taxId,
-                        message: 'Please enter a valid EIN!'
-                      },
-                      setTaxIdError
-                    )
-                  }}
-                  onChange={e => updateForm('taxId', e.target.value)}
-                  value={userData?.taxId}
-                  zIndexUnset>
-                  Tax EIN or Social security Number
-                </FormField>
-              </Align>
-            </Rows>
+          {user?.role !== 1 && (
+            <>
+              <Underline color="#333" margin="15px 0px 5px 0px" />
+
+              <Rows>
+                <SubTitle>Company</SubTitle>
+                <EditButton data-testid="edit_company_button" onClick={() => enableEditing('editCompany', true)}>
+                  {!business ? 'verify business details' : 'Edit'}
+                </EditButton>
+              </Rows>
+              {business && (
+                <Rows>
+                  <FormField
+                    fieldType="input"
+                    width="100%"
+                    placeholder="Unzipped"
+                    zIndexUnset
+                    id="businessName"
+                    disabled={!editMode?.editCompany}
+                    error={businessNameError}
+                    onBlur={() => {
+                      updateDisabled()
+                      validateString(
+                        {
+                          item: userData?.businessName,
+                          min: 1,
+                          max: 45,
+                          message: 'Please enter a valid name!'
+                        },
+                        setBusinessNameError
+                      )
+                    }}
+                    validate={() => {
+                      validateString(
+                        {
+                          item: userData?.businessName,
+                          min: 1,
+                          max: 45,
+                          message: 'Please enter a valid name!'
+                        },
+                        setBusinessNameError
+                      )
+                    }}
+                    borderRadius="10px"
+                    onChange={e => updateForm('businessName', e.target.value)}
+                    value={userData?.businessName}>
+                    Business Name
+                  </FormField>
+                </Rows>
+              )}
+              {business && (
+                <Rows>
+                  <FormField
+                    fieldType="input"
+                    width="100%"
+                    placeholder="LLC"
+                    borderRadius="10px"
+                    id="businessType"
+                    disabled={!editMode?.editCompany}
+                    zIndexUnset
+                    error={businessTypeError}
+                    onBlur={() => {
+                      updateDisabled()
+                      validateString(
+                        {
+                          item: userData?.businessName,
+                          min: 1,
+                          max: 45,
+                          message: 'Please enter business type (LLC, C-corp, etc.)!'
+                        },
+                        setBusinessTypeError
+                      )
+                    }}
+                    validate={() => {
+                      validateString(
+                        {
+                          item: userData?.businessName,
+                          min: 1,
+                          max: 45,
+                          message: 'Please enter business type (LLC, C-corp, etc.)!'
+                        },
+                        setBusinessTypeError
+                      )
+                    }}
+                    onChange={e => updateForm('businessType', e.target.value)}
+                    value={userData?.businessType}>
+                    Business Type
+                  </FormField>
+                </Rows>
+              )}
+              {business && (
+                <Rows>
+                  <Align>
+                    <FormField
+                      fieldType="input"
+                      disabled={!editMode?.editCompany}
+                      width="100%"
+                      id="businessPhone"
+                      placeholder="1 (833) 366-4285"
+                      borderRadius="10px"
+                      zIndexUnset
+                      error={businessPhoneError}
+                      onBlur={() => {
+                        updateDisabled()
+                        validateString(
+                          {
+                            item: userData?.businessPhone,
+                            min: 1,
+                            max: 24,
+                            message: 'Please enter a valid phone number!'
+                          },
+                          setBusinessPhoneError
+                        )
+                      }}
+                      validate={() => {
+                        validateString(
+                          {
+                            item: userData?.businessPhone,
+                            min: 1,
+                            max: 24,
+                            message: 'Please enter a valid phone number!'
+                          },
+                          setBusinessPhoneError
+                        )
+                      }}
+                      onChange={e => updateForm('businessPhone', e.target.value)}
+                      value={userData?.businessPhone}>
+                      Phone Number
+                    </FormField>
+                  </Align>
+                  <Align>
+                    <FormField
+                      fieldType="input"
+                      disabled={!editMode?.editCompany}
+                      width="100%"
+                      placeholder="**-*****42"
+                      id="taxId"
+                      borderRadius="10px"
+                      error={taxIdError}
+                      onBlur={() => {
+                        updateDisabled()
+                        updateForm('taxId', ValidationUtils._formatToEIN(userData?.taxId))
+                        validateEin(
+                          {
+                            item: ValidationUtils._formatToEIN(userData?.taxId),
+                            message: 'Please enter a valid EIN!'
+                          },
+                          setTaxIdError
+                        )
+                      }}
+                      validate={() => {
+                        validateEin(
+                          {
+                            item: userData?.taxId,
+                            message: 'Please enter a valid EIN!'
+                          },
+                          setTaxIdError
+                        )
+                      }}
+                      onChange={e => updateForm('taxId', e.target.value)}
+                      value={userData?.taxId}
+                      zIndexUnset>
+                      Tax EIN or Social security Number
+                    </FormField>
+                  </Align>
+                </Rows>
+              )}
+            </>
           )}
         </RightOne>
       </Container>

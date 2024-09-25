@@ -94,14 +94,20 @@ const ProjectSubHeading = styled(TEXT)`
 `
 
 const Tabs = styled.div`
+  border: 1px solid #5cb85c;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
   border-bottom: 1px solid #bcc5d3;
-  margin-bottom: 1px;
   display: flex;
+  background: #5cb85c;
+  width: 100%;
+  height: 55px;
   @media (max-width: 680px) {
     justify-content: space-around;
     display: flex;
     overflow-x: auto;
     margin-left: 10px;
+    background: #5cb85c;
   }
 `
 
@@ -110,7 +116,6 @@ const TabButton = styled.button`
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  margin-right: 30px;
   font-family: Roboto;
   font-size: 18px;
   font-style: normal;
@@ -118,10 +123,12 @@ const TabButton = styled.button`
   line-height: 23px; /* 127.778% */
   letter-spacing: 0.15px;
   background: none !important;
+  color: #fff;
+  width: -webkit-fill-available;
 
   @media (max-width: 680px) {
     display: flex;
-    color: #12151b;
+    color: #fff;
     font-family: Roboto;
     font-size: 14px;
     font-style: normal;
@@ -129,7 +136,7 @@ const TabButton = styled.button`
     line-height: 23px; /* 164.286% */
     letter-spacing: 0.15px;
     margin-right: 0px;
-    width: 100%;
+    width: -webkit-fill-available;
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -138,10 +145,9 @@ const TabButton = styled.button`
   ${({ active }) =>
     active &&
     css`
-      border-bottom: 4px solid #1772eb;
-      color: #000;
-      background: none !important;
-      color: #1772eb;
+      background: #04aa6d !important;
+      color: #fff;
+      font-weight: 600;
     `};
   @media (max-width: 680px) {
     font-weight: 600;
@@ -264,7 +270,12 @@ const FounderInvoice = ({ projectDetails, getBusinessById }) => {
             )}
           </HeaderDetail>
         </Title>
-        <Tabs data-testid="desktop_project_detail_tabs">
+        <Tabs
+          data-testid="desktop_project_detail_tabs"
+          style={{
+            width: '100%',
+            height: '55px'
+          }}>
           {projectTabs.map((tab, index) => {
             return (
               <TabButton
@@ -277,7 +288,14 @@ const FounderInvoice = ({ projectDetails, getBusinessById }) => {
           })}
         </Tabs>
       </Desktop>
-      <DIV display="block" padding="0px 0px 50px 0px">
+      <DIV
+        display="block"
+        padding="0px 0px 50px 0px"
+        style={{
+          width: '100%',
+          margin: 'auto',
+          borderRadius: selectedTab === 4 ? '5px' : '0px'
+        }}>
         {selectedTab === 0 && <DesktopProjectDetail projectDetails={projectDetails} />}
         {selectedTab === 3 && (
           <>

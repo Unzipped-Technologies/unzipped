@@ -21,6 +21,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import TextField from '@mui/material/TextField'
 import { useRouter } from 'next/router'
+import dayjs from 'dayjs' // or moment or just use JavaScript Date object
 
 const MUIDialog = withStyles(theme => ({
   paper: {
@@ -55,7 +56,14 @@ const MUIDialogActions = withStyles(theme => ({
   }
 }))(DialogActions)
 
-const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById, addEducation }) => {
+const ProjectModal = ({
+  open = false,
+  onHide,
+  loading = false,
+  getFreelancerById,
+  addEducation,
+  selectedEducation
+}) => {
   const router = useRouter()
   const { id } = router.query
   const isMobile = window.innerWidth > 680 ? false : true
@@ -68,8 +76,22 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
     title: '',
     institute: '',
     startYear: null,
-    endYear: null
+    endYear: null,
+    educationId: null
   })
+
+  useEffect(() => {
+    if (selectedEducation?._id) {
+      setData(prevState => ({
+        ...prevState,
+        title: selectedEducation?.title ?? '',
+        institute: selectedEducation?.institute ?? '',
+        startYear: dayjs(`${selectedEducation?.startYear}-01-01`) ?? '',
+        endYear: dayjs(`${selectedEducation?.endYear}-01-01`) ?? '',
+        educationId: selectedEducation?._id
+      }))
+    }
+  }, [selectedEducation])
 
   const setValues = (field, value) => {
     setData(prevFilter => {
@@ -128,7 +150,6 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
   return (
     <>
       <>
-        {loading && <Loading />}
         <MUIDialog
           data-testid="freelancer_education_modal"
           onClose={onHide}
@@ -139,7 +160,7 @@ const ProjectModal = ({ open = false, onHide, loading = false, getFreelancerById
           aria-describedby="story-preview-modal-description">
           <DialogContent>
             <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
-            <ProgressBar value={progress} width={100} showValue bar="#37DEC5" />
+            <ProgressBar value={12} width={100} showValue bar="#37DEC5" />
             <div className="mt-3 ">
               <TitleText fontWeight="500" lineHeight="25.78px" fontSize="22px">
                 Education Detail

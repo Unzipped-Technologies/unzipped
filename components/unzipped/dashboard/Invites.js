@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import Button from '../../ui/Button'
 import { useRouter } from 'next/router'
 
+import { DIV, TEXT } from './style'
 import Image from '../../ui/Image'
 import Badge from '../../ui/Badge'
 import { ConverterUtils } from '../../../utils'
@@ -142,126 +143,181 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
       {window?.innerWidth > 680 ? (
         <div
           data-testid="desktop_invites"
-          style={{ width: '60%', margin: '8px 0px 0px 0px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.4)' }}>
+          style={{ width: '80%', margin: 'auto', marginTop: '8px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.4)' }}>
           {invitesList?.length && invitesList[0]?.listEntries?.length ? (
             invitesList[0]?.listEntries.map(invitation => {
               return (
                 <span key={invitation._id} data-testid={`${invitation?._id}_invite`}>
                   {role === 0 ? (
-                    <ProjectApplications>
-                      <ProfileImage>
-                        {invitation?.freelancerId?.userId?.profileImage ? (
-                          <Image
-                            src={invitation?.freelancerId?.userId?.profileImage}
-                            alt={`${
-                              invitation?.freelancerId?.userId?.FirstName +
-                              ' ' +
-                              invitation?.freelancerId?.userId?.LastName
-                            }`}
-                            height="80px"
-                            width="auto"
-                            radius="50%"
-                          />
-                        ) : (
-                          <div
-                            id="user_avatar"
-                            style={{
-                              display: 'flex',
-                              flexFlow: 'column',
-                              alignItems: 'center',
-                              margin: '20px 20px',
-                              height: '102px',
-                              width: '102px',
-                              borderRadius: '50%',
-                              color: 'white',
-                              backgroundColor: '#0e1724',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}>
-                            {invitation?.freelancerId?.userId?.FirstName?.[0] ??
-                              invitation?.freelancerId?.userId?.LastName?.[0]}
-                          </div>
-                        )}
-                      </ProfileImage>
-                      <UserInfo>
-                        <div style={{ display: 'flex' }}>
-                          <UserName id="name">
-                            {ConverterUtils.capitalize(
-                              `${invitation?.freelancerId?.userId?.FirstName} ${invitation?.freelancerId?.userId?.LastName}`
-                            )}
-                          </UserName>
-                          <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
-                            <MdVerifiedUser />
-                          </div>
+                    <DIV
+                      display="flex"
+                      flexFlow="column"
+                      justifyItems="space-around"
+                      flexShrink="0"
+                      background="rgba(240, 240, 240, 0)"
+                      border="1px solid #d9d9d9"
+                      boxShadow="0px 4px 6px rgba(0, 0, 0, 0.4)"
+                      borderRadius="5px">
+                      <DIV
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="space-around"
+                        flexFlow="row"
+                        alignItems="center"
+                        margin="0px 20px"
+                        width="100%">
+                        <div>
+                          {invitation?.freelancerId?.userId?.profileImage ? (
+                            <Image
+                              src={invitation?.freelancerId?.userId?.profileImage}
+                              alt={`${
+                                invitation?.freelancerId?.userId?.FirstName +
+                                ' ' +
+                                invitation?.freelancerId?.userId?.LastName
+                              }`}
+                              height="80px"
+                              width="auto"
+                              radius="50%"
+                            />
+                          ) : (
+                            <div
+                              data-testid="user_avatar"
+                              style={{
+                                display: 'flex',
+                                flexFlow: 'column',
+                                alignItems: 'center',
+                                margin: '20px 20px',
+                                height: '102px',
+                                width: '102px',
+                                borderRadius: '50%',
+                                color: 'white',
+                                backgroundColor: '#0e1724',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                              {invitation?.freelancerId?.userId?.FirstName?.[0] ??
+                                invitation?.freelancerId?.userId?.LastName?.[0]}
+                            </div>
+                          )}
                         </div>
-
-                        <UserCategory id="category">{invitation?.freelancerId?.category}</UserCategory>
-                        <UserCountry id="address_country">
-                          {invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}
-                        </UserCountry>
-                        <UserRate id="rate">
-                          {invitation?.freelancerId?.rate > 0 ? (
-                            <div>
-                              {`$${invitation?.freelancerId?.rate}`}{' '}
+                        <DIV width="600px" margin="20px 0px 0px 50px">
+                          <div style={{ display: 'flex' }}>
+                            <TEXT
+                              textColor="#0057ff"
+                              fontSize=" 16px"
+                              fontWeight=" 500"
+                              lineHeight=" 24.5px"
+                              letterSpacing=" 0.4px"
+                              margin="0px">
+                              {ConverterUtils.capitalize(
+                                `${invitation?.freelancerId?.userId?.FirstName} ${invitation?.freelancerId?.userId?.LastName}`
+                              )}
+                            </TEXT>
+                            <div style={{ fontSize: '27px', color: '#37DEC5', marginTop: '-12px', marginLeft: '5px' }}>
+                              <MdVerifiedUser />
+                            </div>
+                          </div>
+                          <TEXT
+                            textColor="gray"
+                            fontSize=" 15px"
+                            fontWeight=" 400"
+                            lineHeight=" 24.5px"
+                            letterSpacing=" 0.4px"
+                            margin="0px">
+                            {invitation?.freelancerId?.category}
+                          </TEXT>
+                          <TEXT
+                            textColor="gray"
+                            fontSize=" 14px"
+                            font-style=" normal"
+                            fontWeight=" 300"
+                            lineHeight=" 24.5px"
+                            letterSpacing=" 0.4px"
+                            margin="0px">
+                            {invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}{' '}
+                          </TEXT>
+                          <TEXT
+                            textColor="#0057ff"
+                            fontSize="24px"
+                            fontWeight="400"
+                            lineHeight="24.5px"
+                            letterSpacing="0.4px"
+                            padding="5px 0px 0px 0px"
+                            margin="10px 0px 0px 0px">
+                            {invitation?.freelancerId?.rate > 0 ? (
+                              <span>
+                                {`$${invitation?.freelancerId?.rate}`}{' '}
+                                <span
+                                  style={{
+                                    fontWeight: '200',
+                                    color: '#000',
+                                    fontSize: '15px',
+                                    fontWeight: '300',
+                                    letterSpacing: '0.4px',
+                                    marginTop: '-100px'
+                                  }}>
+                                  / hour
+                                </span>
+                              </span>
+                            ) : (
                               <span
                                 style={{
-                                  fontWeight: '100',
                                   color: '#000',
-                                  fontSize: '12px',
-                                  fontWeight: '400',
-                                  letterSpacing: '0.4px',
-                                  marginTop: '-100px'
+                                  fontSize: '15px'
                                 }}>
-                                / hour
+                                Negotiable
                               </span>
-                            </div>
-                          ) : (
-                            <span
-                              style={{
-                                color: '#000',
-                                fontSize: '15px'
-                              }}>
-                              Negotiable
-                            </span>
-                          )}
-                        </UserRate>
-                        <Skills data-testid={`${invitation._id}_skills`}>
-                          {invitation?.freelancerId?.freelancerSkills?.length
-                            ? invitation?.freelancerId?.freelancerSkills.map(skill => {
-                                return (
-                                  <Badge color="blue" key={skill._id}>
-                                    {skill?.skill}
-                                  </Badge>
-                                )
-                              })
-                            : ''}
-                        </Skills>
-                      </UserInfo>
-                      <ViewProfile>
-                        <Grid2>
+                            )}
+                          </TEXT>
+                        </DIV>
+                        <DIV
+                          display="flex"
+                          flexFlow="row"
+                          margin="0px 20px 0px 0px"
+                          alignItems="flex-start"
+                          justifyContent="flex-start">
+                          <span
+                            style={{
+                              color: ' #000',
+                              fontFamily: 'Roboto',
+                              fontSize: '14px',
+                              fontStyle: 'normal',
+                              fontWeight: '400',
+                              lineHeight: '24.5px',
+                              letterSpacing: '0.4px',
+                              paddingRight: '50px',
+                              color: 'gray'
+                            }}>
+                            {invitation?.freelancerId?.likeTotal > 10000
+                              ? `10000+`
+                              : invitation?.freelancerId?.likeTotal || 0}{' '}
+                            UPVOTES BY CLIENTS
+                          </span>
                           <ViewProfileButton
                             onClick={() => {
                               redirectToProfile(invitation?.freelancerId?._id)
                             }}>
                             View Profile
                           </ViewProfileButton>
-                        </Grid2>
-                        <span
-                          id="total_likes"
-                          style={{
-                            color: 'gray',
-                            fontFamily: 'Roboto',
-                            fontSize: '12px',
-                            fontStyle: 'normal',
-                            fontWeight: 'normal',
-                            lineHeight: '24.5px' /* 163.333% */,
-                            letterSpacing: '0.4px',
-                            marginTop: '50px'
-                          }}>
-                          {invitation?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
-                        </span>
-                      </ViewProfile>
-                    </ProjectApplications>
+                        </DIV>
+                      </DIV>
+                      <div
+                        style={{
+                          margin: '20px 0px 5px 25px'
+                        }}
+                        display="flex"
+                        data-testid={`${invitation._id}_skills`}>
+                        {invitation?.freelancerId?.freelancerSkills?.length
+                          ? invitation?.freelancerId?.freelancerSkills.map(skill => {
+                              return (
+                                <Badge color="blue" key={skill._id}>
+                                  {skill?.skill}
+                                </Badge>
+                              )
+                            })
+                          : 'N/A'}
+                      </div>
+                    </DIV>
                   ) : (
                     <ProjectDesktopCard
                       project={invitation?.businessId}
@@ -273,7 +329,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
               )
             })
           ) : (
-            <DefaultDisplay>
+            <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
               <Button
                 extraWid
                 type="outlineInverse"
@@ -291,7 +347,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                 }}>
                 Invite Freelancer
               </Button>
-            </DefaultDisplay>
+            </DIV>
           )}
         </div>
       ) : (

@@ -461,7 +461,8 @@ const Nav = ({
   onBackArrowClick,
   isViewable,
   isExpanded,
-  setIsExpanded
+  setIsExpanded,
+  role
 }) => {
   const seenNames = new Set()
   const otherNames = new Set()
@@ -503,11 +504,13 @@ const Nav = ({
     if (isAuthenticated) {
       return (
         <ButtonHolder>
-          <Shift>
-            <Buttons noBorder oval type={'green'} fontSize="14px" onClick={() => startAProject()}>
-              Start A Project
-            </Buttons>
-          </Shift>
+          {role !== 1 && (
+            <Shift>
+              <Buttons noBorder oval type={'green'} fontSize="14px" onClick={startAProject}>
+                Start A Project
+              </Buttons>
+            </Shift>
+          )}
           <Image
             src={profilePic}
             alt="profile pic"
@@ -535,6 +538,7 @@ const Nav = ({
                   startAProject={startAProject}
                   isAuth={isAuthenticated}
                   logoutUser={signOut}
+                  role={role}
                   onClose={() => setMenuOpen(false)}
                 />
               </Absolute>
@@ -714,7 +718,7 @@ const Nav = ({
                     setHighlightedIndex(index)
                   }}
                   onClick={() => setDropdowns(item.name)}
-                  key={index}
+                  key={`${index}_${item.name}`}
                   style={{ color: isHighlightIndex ? highlightColor : '#333333' }}
                   onMouseLeave={() => setHighlightColor('#333333')}>
                   <Span>{item.name} </Span>
@@ -762,13 +766,14 @@ const Nav = ({
                   isAuth={isAuthenticated}
                   logoutUser={signOut}
                   onClose={() => setMenuOpen(false)}
+                  role={role}
                 />
               </Absolute>
             )}
           </Mobile>
         </Right>
       </Container>
-      {isSubMenu && (
+      {isAuthenticated && isSubMenu && (
         <SubMenTop
           padding={token ? '0px 0px 0px 15%;' : '0px 0px 25px 15%;'}
           style={{
@@ -792,7 +797,7 @@ const Nav = ({
           {token && (
             <SubMenu>
               {subMenuItems.map((item, key) => (
-                <Link href={item.link} key={key}>
+                <Link href={item.link} key={`${key}_${item.name}`}>
                   <SpanWhite
                     count={key}
                     underline={
@@ -817,6 +822,7 @@ const Nav = ({
 const mapStateToProps = state => {
   return {
     isAuthenticated: state.Auth.isAuthenticated,
+    role: state.Auth.user?.role,
     token: state.Auth.token,
     loading: state.Auth.loading,
     profilePic: state.Auth?.user?.profileImage

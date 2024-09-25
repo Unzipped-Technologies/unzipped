@@ -170,7 +170,7 @@ const Freelancers = ({
       type: item?.category,
       isPreferedFreelancer: item?.isPreferedFreelancer,
       country: item?.user?.AddressLineCountry || 'United States',
-      skills: item?.freelancerSkills?.map(e => e.skill) || [],
+      skills: item?.freelancerSkills || [],
       cover:
         item?.cover ||
         `I have been a ${item?.category || 'developer'} for over ${

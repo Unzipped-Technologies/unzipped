@@ -158,7 +158,6 @@ const Input = ({
   const [isFocused, setIsFocused] = useState(false)
 
   const Control = textarea ? InputControlArea : currency ? CurrencyControl : InputControl
-
   return (
     <ControlContainer
       textarea={textarea}
@@ -209,7 +208,7 @@ Input.propTypes = {
   /** If the value has been accepted */
   accepted: PropTypes.bool,
   /** If there is an error */
-  error: PropTypes.string,
+  error: PropTypes.element | PropTypes.string,
   /** Render this input as a text area */
   textarea: PropTypes.bool,
   /** Render this input without size constraints */

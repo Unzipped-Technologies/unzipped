@@ -95,28 +95,30 @@ const MobileNotification = ({ type, children, noButton, user }) => {
   switch (type) {
     case 'plan':
       return (
-        <InnerCard
-          data-testid="pick_plan_notification"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            alignItems: 'end',
-            background: '#000',
-            color: '#fff',
-            borderRadius: '5px',
-            marginTop: '20px'
-          }}>
-          <div style={{ padding: '20px', fontSize: '19px' }}>
-            Build your dream business, grow your following, and collaborate with other professionals to make your vision
-            a reality. Start your free trial now.
-          </div>
-          <div>
-            <Button style={{ margin: '5px' }} noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
-              PICK A PLAN
-            </Button>
-          </div>
-        </InnerCard>
+        user?.role !== 1 && (
+          <InnerCard
+            data-testid="pick_plan_notification"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%',
+              alignItems: 'end',
+              background: '#000',
+              color: '#fff',
+              borderRadius: '5px',
+              marginTop: '20px'
+            }}>
+            <div style={{ padding: '20px', fontSize: '19px' }}>
+              Build your dream business, grow your following, and collaborate with other professionals to make your
+              vision a reality. Start your free trial now.
+            </div>
+            <div>
+              <Button style={{ margin: '5px' }} noBorder type="black" onClick={() => router.push('/pick-a-plan')}>
+                PICK A PLAN
+              </Button>
+            </div>
+          </InnerCard>
+        )
       )
     case 'paymentMethod':
       return (
@@ -221,6 +223,7 @@ const MobileNotification = ({ type, children, noButton, user }) => {
       )
     case 'createBusiness':
       return (
+        user?.role !== 1 &&
         !user?.totalBusiness && (
           <WhiteCard size="large" data-testid="create_business_notification">
             <DarkText fontSize={'16'} style={{ paddingTop: 20 }}>

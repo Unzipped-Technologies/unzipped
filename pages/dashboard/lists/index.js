@@ -75,7 +75,8 @@ const Dashboard = ({ business = 'Lists', token, cookie }) => {
       <ListPanel type="list" userListItems={userListItems} />
 
       {/* Default List View for Mobile Device */}
-      {!isViewable && (
+
+      {window?.innerWidth <= 680 && !isViewable && (
         <>
           <MobileFreelancerFooter defaultSelected="Projects" />
           <MobileProjects

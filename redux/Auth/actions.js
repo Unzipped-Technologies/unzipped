@@ -35,12 +35,14 @@ import {
   USER_MAIL_CONFIRMATION,
   UPDATE_PHONE_NUMBER,
   UPDATE_PHONE_ERROR,
-  HANDLE_USER_EMAIL_REG_ERR
+  HANDLE_USER_EMAIL_REG_ERR,
+  CREATE_CALENDER_SETTING_SUCCESS,
+  CREATE_CALENDER_SETTING_ERROR
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
-import { resetCalenderSetting } from '../actions'
+import { startLoading, stopLoading } from '../Loading/actions'
 
 export const loginUser = async dispatch => {
   dispatch({ type: USER_LOADING })
@@ -249,7 +251,6 @@ export const getCurrentUserData = () => async (dispatch, getState) => {
 //Check token & Load User
 export const loadUser = user => async (dispatch, getState) => {
   //User Loading
-  dispatch(resetCalenderSetting())
   dispatch({ type: USER_LOADING })
   return await axios
     .post(`/api/auth/login`, user)
@@ -499,4 +500,24 @@ export const handleEmailRegistration = () => dispatch => {
     type: HANDLE_USER_EMAIL_REG_ERR,
     payload: { loading: false }
   })
+}
+
+export const createCalendarSetting = data => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  try {
+    const response = await axios.post(`/api/user/calendar-settings`, data, tokenConfig(getState().Auth.token))
+    dispatch({
+      type: CREATE_CALENDER_SETTING_SUCCESS,
+      payload: response.data
+    })
+    dispatch(getCurrentUserData())
+  } catch (error) {
+    dispatch({
+      type: CREATE_CALENDER_SETTING_ERROR,
+      payload: error.response
+    })
+  }
+
+  dispatch(stopLoading())
 }

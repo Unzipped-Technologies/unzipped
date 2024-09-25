@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const user = require('../models/User')
 const taxDataTables = require('../models/TaxDataTable')
 const thirdPartyApplications = require('../models/ThirdPartyApplications')
-const freelancerSkills = require('../models/FreelancerSkills')
 const list = require('../models/List')
 const freelancer = require('../models/Freelancer')
 const notifications = require('../models/Notifications')
@@ -13,9 +12,7 @@ const listHelper = require('./list')
 const { accountTypeEnum } = require('../enum/accountTypeEnum')
 const { planEnum } = require('../enum/planEnum')
 const { notificationEnum } = require('../enum/notificationEnum')
-const likeHistory = require('../models/LikeHistory')
 const { likeEnum } = require('../enum/likeEnum')
-const FreelancerSkills = require('../models/FreelancerSkills')
 const User = require('../models/User')
 const InviteModel = require('../models/Invited')
 const BusinessModel = require('../models/Business')
@@ -71,17 +68,9 @@ const createUser = async (data, hash) => {
       userId: newUser.id
     })
     if (data?.skills?.length) {
-      for (const skill of data.skills) {
-        await freelancerSkills.create({
-          ...skill,
-          profileId: newUser.id,
-          user: await user.findById(newUser.id)
-        })
-      }
-      const ids = await freelancerSkills.find({ profileId: newUser.id })
       // update users to have skills
       await user.findByIdAndUpdate(newUser.id, {
-        freelancerSkills: ids.map(item => mongoose.Types.ObjectId(item.id)),
+        freelancerSkills: data.skills,
         freelancers: response.id
       })
       newUser.freelancers = response.id
@@ -186,18 +175,14 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
   try {
     const regexQuery = new RegExp(filter, 'i')
     const existingIndexes = await freelancer.collection.getIndexes()
-    const existingFreelancerSkillsIndexes = await FreelancerSkills.collection.getIndexes()
     const existingUserIndexes = await User.collection.getIndexes()
     const indexExists = existingIndexes && 'user_1_rate_1' in existingIndexes
-    const indexExistsFreelancerSkillsIndexes =
-      existingFreelancerSkillsIndexes && 'skill_1' in existingFreelancerSkillsIndexes
+
     const indexExistsUserIndexes = existingUserIndexes && 'FullName_1' in existingUserIndexes
     if (!indexExists) {
       await freelancer.createIndex({ user: 1, rate: 1 })
     }
-    if (!indexExistsFreelancerSkillsIndexes) {
-      await FreelancerSkills.createIndex({ skill: 1 })
-    }
+
     if (!indexExistsUserIndexes) {
       await User.createIndex({ FullName: 1 })
       await User.createIndex({ freelancerSkills: 1 })
@@ -230,27 +215,6 @@ const listFreelancers = async ({ filter, take, skip, sort, minRate, maxRate, ski
       },
       {
         $unwind: '$user'
-      },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          let: { freelancerSkills: '$user.freelancerSkills' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ['$_id', '$$freelancerSkills']
-                }
-              }
-            },
-            {
-              $project: {
-                skill: 1
-              }
-            }
-          ],
-          as: 'user.freelancerSkills'
-        }
       },
       {
         $match: {
@@ -313,11 +277,6 @@ const getFreelancerById = async id => {
         {
           path: 'userId',
           model: 'users'
-        },
-        {
-          path: 'freelancerSkills',
-          model: 'freelancerskills',
-          select: 'yearsExperience skill isActive'
         }
       ])
       .exec()
@@ -367,83 +326,6 @@ const addListsToFreelancer = async (data, id) => {
   } catch (e) {
     throw Error(`Something went wrong ${e}`)
   }
-}
-
-// add like to freelancer
-
-const addLikeToFreelancer = async (data, id) => {
-  try {
-    if (data.likeType === likeEnum.PROFILE_LIKES || data.likeType === likeEnum.PROFILE_DISLIKES) {
-      await likeHistory.findOneAndUpdate(
-        { profileId: data.profileId, userId: id },
-        {
-          $set: {
-            ...data,
-            freelancers: await freelancer.findById(data.profileId),
-            user: await user.findById(id)
-          }
-        },
-        { upsert: true }
-      )
-      const ids = await likeHistory.find({ profileId: data.profileId })
-      const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
-      const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
-      // update users to have skills
-      await freelancer.findByIdAndUpdate(data.profileId, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      await user.findByIdAndUpdate(id, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length ?? 0,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      return { likes: ids?.length, msg: 'success' }
-    }
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
-
-// remove like from freelancer
-
-const removeLikeToFreelancer = async (data, id) => {
-  try {
-    if (data.likeType === likeEnum.PROFILE_LIKES || data.likeType === likeEnum.PROFILE_DISLIKES) {
-      await likeHistory.findOneAndDelete({ profileId: data.profileId, userId: id })
-      const ids = await likeHistory.find({ profileId: data.profileId })
-      const likes = ids.filter(item => item.likeType === likeEnum.PROFILE_LIKES)
-      const dislikes = ids.filter(item => item.likeType === likeEnum.PROFILE_DISLIKES)
-      // update users to have skills
-      await freelancer.findByIdAndUpdate(data.profileId, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length ?? 0,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      await user.findByIdAndUpdate(id, {
-        likes: likes.map(item => mongoose.Types.ObjectId(item.id)),
-        dislikes: dislikes.map(item => mongoose.Types.ObjectId(item.id)),
-        likeTotal: likes?.length ?? 0,
-        dislikeTotal: dislikes?.length ?? 0
-      })
-      return { likes: ids?.length, msg: 'success' }
-    }
-  } catch (e) {
-    throw Error(`Something went wrong ${e}`)
-  }
-}
-
-// list likes for user
-const listLikes = async id => {
-  return user.findById(id).populate({
-    path: 'likes',
-    model: 'likeHistorys',
-    populate: { path: 'freelancers', model: 'freelancers' }
-  })
 }
 
 // list likes for user
@@ -529,14 +411,6 @@ const getAllFreelancers = async (skip, take, minRate, maxRate, skill = [], name,
           localField: 'invites',
           foreignField: '_id',
           as: 'invites'
-        }
-      },
-      {
-        $lookup: {
-          from: 'freelancerskills',
-          localField: 'freelancerSkills',
-          foreignField: '_id',
-          as: 'freelancerSkills'
         }
       },
 
@@ -699,6 +573,15 @@ const updateUser = async (id, data) => {
   }
 }
 
+const createCalendar = async (params, userId) => {
+  const userData = await User.findOne({ _id: userId })
+  if (!userData) throw new Error(`User Not Found`)
+
+  userData['calendarSettings'] = params
+  await userData.save()
+  return userData['calendarSettings']
+}
+
 module.exports = {
   changeEmail,
   createUser,
@@ -714,13 +597,11 @@ module.exports = {
   addListsToFreelancer,
   setUpNotificationsForUser,
   updateTaxDataByid,
-  addLikeToFreelancer,
-  removeLikeToFreelancer,
-  listLikes,
   addToNewsletter,
   getAllFreelancers,
   getSingleUser,
   retrievePaymentMethods,
   registerUser,
-  updateUser
+  updateUser,
+  createCalendar
 }

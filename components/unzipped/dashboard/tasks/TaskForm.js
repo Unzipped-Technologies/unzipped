@@ -28,13 +28,12 @@ import {
   restTagsList
 } from '../../../../redux/actions'
 
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
+import SaveIcon from '@mui/icons-material/Save'
 
-
-const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest'];
-const STATUS_OPTIONS_ARR = ['Todo', 'In Progress', 'Done', 'Doing'];
-
+const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
+const STATUS_OPTIONS_ARR = ['Todo', 'In Progress', 'Done', 'Doing']
 
 const TaskForm = ({
   onHide,
@@ -74,12 +73,13 @@ const TaskForm = ({
   const [commentId, setCommentId] = useState('')
   const [hoverCommentId, setHoverCommentId] = useState('')
   const [error, setError] = useState('')
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [selectedTags, setSelectedTags] = useState([])
+  const [inputValue, setInputValue] = useState('')
 
-  const [editSelectedTags, setEditSelectedTags] = useState([]);
-  const [editInputValue, setEditInputValue] = useState('');
-
+  const [editSelectedTags, setEditSelectedTags] = useState([])
+  const [editInputValue, setEditInputValue] = useState('')
+  const statusList = departmentData?.departmentTags?.map(tag => tag.tagName)
+  const [isCommentEditable, setIsCommentEditable] = useState(false)
   useEffect(() => {
     setComments(taskDetail?.comments)
   }, [taskDetail])
@@ -246,7 +246,7 @@ const TaskForm = ({
 
   const taskStatusOptions = useMemo(() => {
     return (
-      TASK_STATUS?.map(status => ({
+      statusList?.map(status => ({
         value: status,
         label: status
       })) || []
@@ -286,9 +286,8 @@ const TaskForm = ({
   }
   const onSubmit = async () => {
     if (validateForm()) {
-
       if (taskForm?.assignee === 'unassigned') {
-        taskForm.assignee = userId;
+        taskForm.assignee = userId
       }
 
       if (newComment?.comment) {
@@ -361,26 +360,23 @@ const TaskForm = ({
     setError(error)
   }
 
-
   const handleInputChange = (event, newInputValue) => {
-    setInputValue(newInputValue);
-  };
+    setInputValue(newInputValue)
+  }
 
   const handleAddTag = () => {
     if (inputValue.trim() !== '' && !selectedTags.includes(inputValue)) {
-      setSelectedTags([...selectedTags, inputValue.trim()]);
-      setInputValue('');
-
+      setSelectedTags([...selectedTags, inputValue.trim()])
+      setInputValue('')
     }
-  };
+  }
 
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
-      setEditSelectedTags([...editSelectedTags, editInputValue.trim()]);
-      setEditInputValue('');
-
+      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
+      setEditInputValue('')
     }
-  };
+  }
 
   const handleEditInputChange = (event, newInputValue) => setEditInputValue(newInputValue)
 
@@ -402,6 +398,16 @@ const TaskForm = ({
 
   const handleRestForm = () => resetStoryForm()
 
+  const handleUserCommments = comment => {
+    if (!isCommentEditable) {
+      if (commentId === comment?._id) {
+        onHide()
+      } else {
+        setCommentId(comment?._id)
+        setIsCommentEditable(true)
+      }
+    }
+  }
 
   return (
     <>
@@ -467,11 +473,6 @@ const TaskForm = ({
           </TitleText>
         )}
         <DIV display="flex" margin="5px 0px 0px 80px" alignItems="center">
-          {taskDetail?.ticketCode && (
-            <TitleText color="#000" titleFontSize="18px" lineHeight="normal" light width="85px" marginTop="20px">
-              {taskDetail?.ticketCode?.toLowerCase()}
-            </TitleText>
-          )}
           <div>
             <FormField
               zIndexUnset
@@ -487,6 +488,7 @@ const TaskForm = ({
               onChange={e => updateForm('taskName', e?.target?.value)}
               value={taskForm?.taskName}
               clickType="taskName"
+              maxLength={'250'}
               onClick={() => {
                 enableEditMode('taskName')
               }}
@@ -494,7 +496,7 @@ const TaskForm = ({
                 validateForm()
                 enableEditMode('')
               }}
-              onUpdate={() => { }}
+              onUpdate={() => {}}
             />
           </div>
         </DIV>
@@ -534,7 +536,7 @@ const TaskForm = ({
                     label: assigneeOptions?.find(assignee => assignee.value === taskForm?.assignee)?.label
                   }}
                   clickType="assignee"
-                  onUpdate={() => { }}
+                  onUpdate={() => {}}
                   onMenuOpen={() => {
                     enableEditMode('assignee')
                   }}
@@ -568,7 +570,7 @@ const TaskForm = ({
             )}
           </DIV>
           <DIV display="flex" alignItems="center" padding="0px 0px 0px 0px" width="40%" overflow={'none'}>
-            <DIV display="flex" alignItems="center" gap='19px' >
+            <DIV display="flex" alignItems="center" gap="19px">
               <TitleText
                 color="grey"
                 titleFontSize="16px"
@@ -589,23 +591,23 @@ const TaskForm = ({
                   inputValue={editInputValue}
                   onInputChange={handleEditInputChange}
                   options={editSelectedTags}
-                  getOptionLabel={(option) => option}
+                  getOptionLabel={option => option}
                   sx={{
                     width: 225,
                     padding: '4px 0px 0px 20px',
                     '& .Mui-focused': {
-                      border: '0px !important',
+                      border: '0px !important'
                     },
                     '& .Mui-focused:after': {
-                      border: '0px !important',
+                      border: '0px !important'
                     },
                     '& .MuiInputBase-root': {
                       maxHeight: 200,
-                      overflowY: "scroll",
-                      overflowX: "hidden",
+                      overflowY: 'scroll',
+                      overflowX: 'hidden',
                       '::-webkit-scrollbar': {
                         width: 5,
-                        height: 0,
+                        height: 0
                       },
 
                       '::-webkit-scrollbar-track': {
@@ -617,39 +619,38 @@ const TaskForm = ({
                       }
                     },
                     '& input': {
-                      border: "0px !important",
-                      boxShadow: 'none !important',
+                      border: '0px !important',
+                      boxShadow: 'none !important'
                     },
                     '& input:focus': {
                       border: '0px !important',
-                      boxShadow: 'none !important',
+                      boxShadow: 'none !important'
                     },
                     '& .MuiAutocomplete-root': {
                       borderRadius: '8px !important',
                       padding: '10px !important',
-                      border: '1px solid purple !important',
+                      border: '1px solid purple !important'
                     },
                     '& .MuiInputBase-root-MuiInput-root:after': {
                       border: '0px !important',
-                      width: "100%"
+                      width: '100%'
                     }
                   }}
-                  renderInput={(params) => (
+                  renderInput={params => (
                     <TextField
                       {...params}
                       variant="standard"
                       placeholder="Tags"
-                      onKeyDown={(e) => {
+                      onKeyDown={e => {
                         if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleEditInputTags();
+                          e.preventDefault()
+                          handleEditInputTags()
                         }
                       }}
                     />
                   )}
                   noOptionsText="Add Tag"
                 />
-
               )}
               {editMode?.tag && (
                 <Autocomplete
@@ -660,23 +661,23 @@ const TaskForm = ({
                   inputValue={inputValue}
                   onInputChange={handleInputChange}
                   options={selectedTags}
-                  getOptionLabel={(option) => option}
+                  getOptionLabel={option => option}
                   sx={{
                     width: 225,
                     padding: '0px 0px 0px 20px',
                     '& .Mui-focused': {
-                      border: '0px !important',
+                      border: '0px !important'
                     },
                     '& .Mui-focused:after': {
-                      border: '0px !important',
+                      border: '0px !important'
                     },
                     '& .MuiInputBase-root': {
                       maxHeight: 200,
-                      overflowY: "scroll",
-                      overflowX: "hidden",
+                      overflowY: 'scroll',
+                      overflowX: 'hidden',
                       '::-webkit-scrollbar': {
                         width: 5,
-                        height: 0,
+                        height: 0
                       },
 
                       '::-webkit-scrollbar-track': {
@@ -688,32 +689,36 @@ const TaskForm = ({
                       }
                     },
                     '& input': {
-                      border: "0px !important",
-                      boxShadow: 'none !important',
+                      border: '0px !important',
+                      boxShadow: 'none !important'
                     },
                     '& input:focus': {
                       border: '0px !important',
-                      boxShadow: 'none !important',
+                      boxShadow: 'none !important'
                     },
                     '& .MuiAutocomplete-root': {
                       borderRadius: '8px !important',
                       padding: '10px !important',
-                      border: '1px solid purple !important',
+                      border: '1px solid purple !important'
                     },
                     '& .MuiInputBase-root-MuiInput-root:after': {
                       border: '0px !important',
-                      width: "100%"
+                      width: '100%'
                     }
                   }}
-                  renderInput={(params) => (
+                  renderInput={params => (
                     <TextField
                       {...params}
                       variant="standard"
                       placeholder="Tags"
-                      onKeyDown={(e) => {
+                      inputProps={{
+                        ...params.inputProps,
+                        maxLength: 10
+                      }}
+                      onKeyDown={e => {
                         if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleAddTag();
+                          e.preventDefault()
+                          handleAddTag()
                         }
                       }}
                     />
@@ -722,7 +727,6 @@ const TaskForm = ({
                 />
               )}
             </DIV>
-
           </DIV>
         </DIV>
 
@@ -739,11 +743,14 @@ const TaskForm = ({
               Priority:
             </TitleText>
             {editMode ? (
-
               <>
                 <Autocomplete
                   disablePortal
-                  value={selectedTaskId ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority) : taskForm?.priority}
+                  value={
+                    selectedTaskId
+                      ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority)
+                      : taskForm?.priority
+                  }
                   id="combo-box-demo"
                   options={PRIORITY_OPTIONS_ARR}
                   onChange={(event, value) => {
@@ -765,19 +772,15 @@ const TaskForm = ({
                       color: theme => theme.palette.getContrastText(theme.palette.background.paper)
                     },
                     '& input:focus': {
-                      border: '0px !important',
+                      border: '0px !important'
                     },
                     '& svg': { display: 'none' }
                   }}
-
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={params => <TextField {...params} />}
                 />
-
               </>
-
             ) : (
               <></>
-
             )}
           </DIV>
           <DIV width="50%" display="flex" alignItems="center" padding="0px 0px 0px 90px">
@@ -797,9 +800,11 @@ const TaskForm = ({
               width="245px"
               height="35px  !important"
               borderRadius="5px"
+              type="number"
+              maxLength={'3'}
               onChange={e => updateForm('storyPoints', e?.target?.value)}
               value={taskForm?.storyPoints}
-              onUpdate={() => { }}
+              onUpdate={() => {}}
               onClick={() => {
                 enableEditMode('storyPoints')
               }}
@@ -824,12 +829,18 @@ const TaskForm = ({
             </TitleText>
             {editMode || userRole === 1 ? (
               <Autocomplete
-                value={selectedTaskId ? STATUS_OPTIONS_ARR.filter(elem => elem?.toLowerCase() == taskDetail?.status?.toLowerCase()) : taskForm?.status}
+                value={
+                  selectedTaskId
+                    ? statusList.filter(elem => elem?.toLowerCase() == taskForm?.status?.toLowerCase())
+                    : taskForm?.status
+                }
                 disablePortal
                 id="combo-box-demo"
-                options={STATUS_OPTIONS_ARR}
+                options={statusList}
                 onChange={(event, value) => {
-                  updateForm('status', value)
+                  const tag = departmentData?.departmentTags.find(item => item.tagName === value)
+                  updateForm('status', tag.tagName)
+                  updateForm('tag', tag._id)
                 }}
                 sx={{
                   width: 300,
@@ -847,12 +858,11 @@ const TaskForm = ({
                     color: theme => theme.palette.getContrastText(theme.palette.background.paper)
                   },
                   '& input:focus': {
-                    border: '0px !important',
+                    border: '0px !important'
                   },
                   '& svg': { display: 'none' }
                 }}
-
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={params => <TextField {...params} />}
               />
             ) : (
               <DarkText fontSize="18px" lineHeight="21.09px" color="##000000" topMargin="10px">
@@ -867,7 +877,7 @@ const TaskForm = ({
           </TEXT>
           {editMode?.description || !taskForm?.description ? (
             <FormField
-              disableBorder={!editMode.description && taskForm?.description}
+              disableBorder={!editMode.description && !taskForm?.description}
               fieldType="input"
               margin="5px 0px 0px 0px"
               fontSize="14px"
@@ -876,6 +886,7 @@ const TaskForm = ({
               placeholder="Description"
               display="inline !important"
               borderRadius="5px"
+              maxLength={'1000'}
               textarea
               onChange={e => updateForm('description', e?.target?.value)}
               value={taskForm?.description}
@@ -907,7 +918,8 @@ const TaskForm = ({
               height="auto"
               name="comment"
               textarea
-              width="100%"
+              width="95%"
+              maxLength={'1000'}
               display="inline !important"
               onChange={e => setComment({ ...newComment, comment: e.target.value })}
               value={newComment.comment}>
@@ -929,7 +941,11 @@ const TaskForm = ({
                 unset
                 key={comment?._id}
                 half
-                padding={'10px'}
+                padding="10px"
+                width="95%"
+                margin="20px 0px 20px 8px"
+                background="#fbfbfb"
+                border="none"
                 onMouseOver={() => {
                   if (hoverCommentId !== comment?._id) setHoverCommentId(comment?._id)
                 }}
@@ -963,15 +979,34 @@ const TaskForm = ({
                       width="100%"
                       display="flex"
                       justifyContent="flex-end"
-                      onClick={() => {
-                        setCommentId(comment?._id)
-                      }}>
+                      gap="8px"
+                      onClick={() => handleUserCommments(comment)}>
                       <EditIcon width="12px" height="12px" color="#585858" />
+                      {isCommentEditable && commentId === comment?._id && (
+                        <SaveIcon
+                          sx={{
+                            width: '16px',
+                            height: '16px',
+                            color: '#585858'
+                          }}
+                          onClick={async e => {
+                            e.preventDefault()
+                            await updateComment(taskDetail?._id, comment._id, comment)
+                            setCommentId('')
+                            setIsCommentEditable(false)
+                          }}
+                        />
+                      )}
                     </DIV>
                   )}
                 </Grid2>
                 {commentId === comment?._id ? (
-                  <DIV width="100%" display="flex" flexDirection="column" alignItems="flex-end">
+                  <DIV
+                    width="100%"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="flex-end"
+                    justifyContent="space-around">
                     <FormField
                       fieldType="input"
                       fontSize="14px"
@@ -979,7 +1014,8 @@ const TaskForm = ({
                       noMargin
                       height="auto"
                       textarea
-                      width="100%"
+                      maxLength={'1000'}
+                      width="95%"
                       display="inline !important"
                       onChange={e => {
                         setComments(prevArray =>
@@ -989,15 +1025,6 @@ const TaskForm = ({
                         )
                       }}
                       value={comment?.comment}></FormField>
-
-                    <DIV
-                      onClick={async e => {
-                        e?.preventDefault()
-                        await updateComment(taskDetail?._id, comment._id, comment)
-                        setCommentId('')
-                      }}>
-                      <Icon name="send" color="#173B7F" width="24" height="24" />
-                    </DIV>
                   </DIV>
                 ) : (
                   <DarkText marginLeft="40px" fontSize="14px" lineHeight="16.41px" color="#000000">

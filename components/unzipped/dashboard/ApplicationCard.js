@@ -60,7 +60,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
   return (
     <>
       {window?.innerWidth > 680 ? (
-        <div style={{ width: '60%', margin: '8px 0px 0px 0px' }}>
+        <div style={{ width: '80%', margin: 'auto', marginTop: '8px' }}>
           {projectApplications?.length
             ? projectApplications.map(application => {
                 return (
@@ -76,8 +76,18 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                     border="1px solid #d9d9d9"
                     boxShadow="0px 4px 6px rgba(0, 0, 0, 0.4)"
                     borderRadius="5px">
-                    <DIV display="flex" flexDirection="column" margin="0px 10px 0px 0px" justifyContent="space-between">
-                      <DIV display="flex" flexFlow="column" alignItems="center" margin="20px 20px" width="120px">
+                    <DIV height="20px" display="flex" flexDirection="colummn" justifyContent="flex-end" margin="0px">
+                      <VerticalDropdown freelancerId={application?.freelancerId?._id} />
+                    </DIV>
+                    <DIV
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="space-around"
+                      flexFlow="row"
+                      alignItems="center"
+                      margin="0px 20px"
+                      width="100%">
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {application?.freelancerId?.userId?.profileImage ? (
                           <Image
                             src={application?.freelancerId?.userId?.profileImage}
@@ -111,22 +121,9 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                               application?.freelancerId?.userId?.LastName?.[0]}
                           </div>
                         )}
-
                         <InviteButton>Invited</InviteButton>
-
-                        <DIV margin="20px 0px 5px 25px" data-testid={`${application._id}_application_skills`}>
-                          {application?.freelancerId?.freelancerSkills?.length
-                            ? application?.freelancerId?.freelancerSkills.map(skill => {
-                                return (
-                                  <Badge color="blue" key={skill._id}>
-                                    {skill?.skill}
-                                  </Badge>
-                                )
-                              })
-                            : '-'}
-                        </DIV>
-                      </DIV>
-                      <DIV display="flex" flexFlow="column" width="600px" margin="20px 0px 0px 0px">
+                      </div>
+                      <DIV width="600px" margin="-40px 0px 0px 50px">
                         <div style={{ display: 'flex' }}>
                           <TEXT
                             textColor="#0057ff"
@@ -158,7 +155,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           fontSize=" 14px"
                           font-style=" normal"
                           fontWeight=" 300"
-                          lineHeight=" 24.5px" /* 175% */
+                          lineHeight=" 24.5px"
                           letterSpacing=" 0.4px"
                           margin="0px">
                           {application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}
@@ -167,7 +164,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           textColor="#0057ff"
                           fontSize="24px"
                           fontWeight="400"
-                          lineHeight="24.5px" /* 175% */
+                          lineHeight="24.5px"
                           letterSpacing="0.4px"
                           padding="5px 0px 0px 0px"
                           margin="10px 0px 0px 0px">
@@ -197,68 +194,80 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                           )}
                         </TEXT>
                       </DIV>
+
                       <DIV
                         display="flex"
-                        flexFlow="column"
-                        margin="20px 10px 0px 0px"
-                        alignItems="flex-end"
+                        flexFlow="row"
+                        margin="0px 20px 0px 0px"
+                        alignItems="flex-start"
+                        justifyContent="flex-start"
                         data-testid={`${application._id}_application_skills`}>
-                        <DIV display="flex" alignItems="center" flexDirection="row" gap={4}>
-                          <ViewProfileButton
-                            onClick={() => {
-                              redirectToProfile(application?.freelancerId?._id)
-                            }}>
-                            View Profile
-                          </ViewProfileButton>
-                        </DIV>
+                        <span
+                          style={{
+                            color: ' #000',
+                            fontFamily: 'Roboto',
+                            fontSize: '14px',
+                            fontStyle: 'normal',
+                            fontWeight: '400',
+                            lineHeight: '24.5px',
+                            letterSpacing: '0.4px',
+                            paddingRight: '50px',
+                            color: 'gray'
+                          }}>
+                          {application?.freelancerId?.likeTotal > 10000
+                            ? `10000+`
+                            : application?.freelancerId?.likeTotal || 0}{' '}
+                          UPVOTES BY CLIENTS
+                        </span>
+                        <ViewProfileButton
+                          onClick={() => {
+                            redirectToProfile(application?.freelancerId?._id)
+                          }}>
+                          View Profile
+                        </ViewProfileButton>
                       </DIV>
                     </DIV>
-                    <DIV padding="0px 10px 0px 30px">
-                      <div style={{ display: 'flex', width: '100%' }}>
-                        <TEXT
-                          textColor="#000"
-                          fontSize="13px"
-                          fontWeight="100"
-                          lineHeight="21px"
-                          letterSpacing="0.4px"
-                          padding="0px 0px 0px 3px">
-                          <b style={{ fontSize: '14px', fontWeight: '800', paddingRight: '5px', fontFamily: 'Roboto' }}>
-                            Cover letter:
-                          </b>
 
-                          {ConverterUtils.truncateString(application?.coverLetter.toLowerCase(), 150)}
-                          {application?.coverLetter?.length > 150 && (
-                            <a style={{ textDecoration: 'underline' }}>Read More</a>
-                          )}
-                        </TEXT>
-                      </div>
-                      <DIV display="flex" flexDirection="colummn" justifyContent="space-between">
-                        <DIV>
-                          <span
-                            style={{
-                              color: ' #000',
-                              fontFamily: 'Roboto',
-                              fontSize: '14px',
-                              fontStyle: 'normal',
-                              fontWeight: '400',
-                              lineHeight: '24.5px' /* 163.333% */,
-                              letterSpacing: '0.4px',
-                              marginTop: '50px',
-                              color: 'gray'
-                            }}>
-                            {application?.freelancerId?.likeTotal || 0} UPVOTES BY CLIENTS
-                          </span>
-                        </DIV>
-                        <DIV>
-                          <VerticalDropdown freelancerId={application?.freelancerId?._id} />
-                        </DIV>
-                      </DIV>
+                    <div
+                      style={{
+                        margin: '20px 0px 5px 25px'
+                      }}
+                      display="flex"
+                      data-testid={`${application._id}_application_skills`}>
+                      {application?.freelancerId?.freelancerSkills?.length
+                        ? application?.freelancerId?.freelancerSkills.map(skill => {
+                            return (
+                              <Badge color="blue" key={skill._id}>
+                                {skill?.skill}
+                              </Badge>
+                            )
+                          })
+                        : 'N/A'}
+                    </div>
+
+                    <DIV padding="0px 10px 0px 30px" display="flex" width="100%">
+                      <TEXT
+                        textColor="#000"
+                        fontSize="16px"
+                        fontWeight="100"
+                        lineHeight="21px"
+                        letterSpacing="0.4px"
+                        padding="0px 0px 0px 3px">
+                        <b style={{ fontSize: '11px', fontWeight: '800', paddingRight: '5px', fontFamily: 'Roboto' }}>
+                          Cover letter:
+                        </b>
+
+                        {ConverterUtils.truncateString(application?.coverLetter.toLowerCase(), 150)}
+                        {application?.coverLetter?.length > 150 && (
+                          <a style={{ textDecoration: 'underline' }}>Read More</a>
+                        )}
+                      </TEXT>
                     </DIV>
                   </DIV>
                 )
               })
             : ''}
-          <DIV display="flex" justifyContent="end" alignItems="end" padding="15px 0px 0px 0px">
+          <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
             <Button
               extraWid
               type="outlineInverse"

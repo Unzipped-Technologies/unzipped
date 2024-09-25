@@ -240,28 +240,29 @@ const createSubscription = async (req, obj, user) => {
           payments: await PaymentHistoryModel.find({ userId: user })
         }
       }
-    ).select('userId product payments plan').populate([
-      {
-        path: 'userId',
-        model: 'users',
-        select: 'FirstName LastName email isUserSubscribed '
-      },
-      {
-        path: 'payments',
-        model: 'PaymentHistories',
-        select: 'paymentAmount paymentDate '
-      }
-    ])
+    )
+      .select('userId product payments plan')
+      .populate([
+        {
+          path: 'userId',
+          model: 'users',
+          select: 'FirstName LastName email isUserSubscribed '
+        },
+        {
+          path: 'payments',
+          model: 'PaymentHistories',
+          select: 'paymentAmount paymentDate '
+        }
+      ])
   ])
 
-  
   if (updateSubscriptionModel?.isUserSubscribed) {
     const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan)
     const benefits = getBenefits(updateSubscriptionModel.plan)
     const userMailOpts = {
       to: updateSubscriptionModel.userId.email,
       subject: `🎉 Subscription Payment Confirmation -  ${subscriptionName}`,
-      templateId: "d-4592da9ad3494cdca58fe07dd28b9f42",
+      templateId: 'd-4592da9ad3494cdca58fe07dd28b9f42',
       dynamicTemplateData: {
         firstName: updateSubscriptionModel?.userId?.FirstName ?? '',
         lastName: updateSubscriptionModel?.userId?.LastName ?? '',
@@ -563,7 +564,7 @@ const removeExternalBankAccount = async (customerId, bankAccountId) => {
 const getUserAccountById = async userId => {
   const user = await UserModel.findById(userId)
 
-  if (user && user.stripeAccountId) {
+  if (user && user?.stripeAccountId) {
     return await retreiveAccountInfo(user.stripeAccountId)
   }
   return null

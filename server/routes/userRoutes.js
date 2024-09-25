@@ -193,4 +193,18 @@ router.patch(
     }
   }
 )
+
+router.post(
+  '/calendar-settings',
+  requireLogin,
+  permissionCheckHelper.hasPermission('createCalenderSettings'),
+  async (req, res) => {
+    try {
+      const response = await userHelper.createCalendar(req.body, req.user.sub)
+      res.json(response)
+    } catch (error) {
+      res.status(400).json({ msg: error.message })
+    }
+  }
+)
 module.exports = router

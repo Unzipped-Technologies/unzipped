@@ -5,12 +5,13 @@ import { useRouter } from 'next/router'
 import Image from '../../ui/Image'
 import Button from '../../ui/Button'
 import Badge from '../../ui/Badge'
+import { ValidationUtils } from '../../../utils'
 import { TEXT, DarkText } from './style'
 
 export const Container = styled.div`
   display: flex;
   flex-flow: row;
-  width: inherit;
+  width: 100%;
   padding: ${({ includeRate }) => (includeRate ? '0px 10px 0px 20px' : '15px 10px 0px 20px')};
 `
 const Left = styled.div`
@@ -57,7 +58,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
             router.push(`/projects/${project._id}`)
           }}
           data-testid={`${project?._id}_name`}>
-          {project?.name}
+          {ValidationUtils.truncate(project?.name, 240)}
         </TEXT>
         <Flex>
           <DarkText half data-testid={`${project?._id}_country`}>
@@ -65,7 +66,9 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
           </DarkText>
           <DarkText half data-testid={`${project?._id}_budget`}>
             Estimated Rate: $
-            {project?.projectBudgetType === 'Hourly Rate' ? project?.budget + ' / hour' : project?.budget ?? 0}
+            {project?.projectBudgetType === 'Hourly Rate'
+              ? project?.budgetRange + ' / hour'
+              : project?.budgetRange ?? 0}
           </DarkText>
         </Flex>
         <div className="d-flex justify-content-between">
@@ -75,7 +78,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
         </div>
         <div data-testid={`required_skill`}>
           {project?.requiredSkills?.map(item => (
-            <Badge key={`${item}_desktop_card`}>{item}</Badge>
+            <Badge key={`${item}_desktop_card`}>{ValidationUtils.truncate(item, 10)}</Badge>
           ))}
         </div>
       </Right>

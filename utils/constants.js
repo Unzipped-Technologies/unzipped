@@ -2938,95 +2938,95 @@ export const BUDGET_TYPE = [FIXED_BUDGET, HOURLY_RATE]
 
 export const RECENT_SKILLS = [
   {
-    text: 'React.js',
+    label: 'React.js',
     value: 'react'
   },
   {
-    text: 'React Native',
+    label: 'React Native',
     value: 'react native'
   },
   {
-    text: 'Node.js',
+    label: 'Node.js',
     value: 'node'
   },
   {
-    text: 'JavaScript',
+    label: 'JavaScript',
     value: 'javascript'
   },
   {
-    text: 'TypeScript',
+    label: 'TypeScript',
     value: 'typescript'
   },
   {
-    text: 'MongoDB',
+    label: 'MongoDB',
     value: 'mongoDB'
   },
   {
-    text: 'HTML',
+    label: 'HTML',
     value: 'html'
   },
   {
-    text: 'CSS',
+    label: 'CSS',
     value: 'css'
   },
   {
-    text: 'Wordpress',
+    label: 'Wordpress',
     value: 'wordpress'
   },
   {
-    text: 'Vue.js',
+    label: 'Vue.js',
     value: 'vue'
   },
   {
-    text: 'Nuxt.js',
+    label: 'Nuxt.js',
     value: 'nuxt'
   },
   {
-    text: 'Angular',
+    label: 'Angular',
     value: 'angular'
   },
   {
-    text: 'AWS',
+    label: 'AWS',
     value: 'aws'
   },
   {
-    text: 'Python',
+    label: 'Python',
     value: 'python'
   },
   {
-    text: 'Java',
+    label: 'Java',
     value: 'java'
   },
   {
-    text: 'C#',
+    label: 'C#',
     value: 'c#'
   },
   {
-    text: 'PhP',
+    label: 'PhP',
     value: 'php'
   },
   {
-    text: 'Laravel',
+    label: 'Laravel',
     value: 'laravel'
   },
   {
-    text: 'DevOps',
+    label: 'DevOps',
     value: 'devops'
   },
   {
-    text: 'Swift',
+    label: 'Swift',
     value: 'swift'
   },
   {
-    text: 'Kotlin',
+    label: 'Kotlin',
     value: 'kotlin'
   },
   {
-    text: 'Android',
+    label: 'Android',
     value: 'android'
   },
   {
-    text: 'C++',
+    label: 'C++',
     value: 'c++'
   }
 ]

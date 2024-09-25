@@ -115,6 +115,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 borderColor="red"
                 noMargin
                 width="100%"
+                maxLength={'20'}
                 height="36px !important"
                 onChange={e => updateForm('tagName', e?.target?.value.trim())}
                 value={tagForm?.tagName.trim()}

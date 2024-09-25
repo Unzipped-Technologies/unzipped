@@ -10,6 +10,7 @@ import {
   Items
 } from './business-styles'
 import ReviewHeaderSection from './ReviewHeaderSection'
+import {ValidationUtils} from '../../../utils'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   BUSINESS_LABEL,
@@ -22,6 +23,7 @@ import {
 import Button from '../../ui/Button'
 import { createBusiness, updateBusinessForm, updateWizardSubmission } from '../../../redux/actions'
 import { DarkText, Absolute, WhiteCard, Dismiss } from './../../../components/unzipped/dashboard/style'
+
 import { useRouter } from 'next/router'
 
 const renderSectionContent = (
@@ -162,7 +164,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '8px' }} id="required_skills">
               {businessForm?.requiredSkills?.map((skill, index) => (
-                <TagStyled key={index}>{skill}</TagStyled>
+                <TagStyled key={index}>{ValidationUtils.truncate(skill, 10)}</TagStyled>
               ))}
             </div>
           </div>
@@ -225,7 +227,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             <ol id="questions">
               {businessForm?.questionsToAsk?.map((question, index) => (
                 <li key={index} id={question}>
-                  {renderSectionContent(400, '18px', question, '', '10px', '', '1.3px')}
+                  {renderSectionContent(400, '18px', `${question} ${question?.slice(-1) !== "?" ? '?':''}`, '', '10px', '', '1.3px')}
                 </li>
               ))}
             </ol>
@@ -284,7 +286,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
           </Button>
         </div>
         <div>
-          <Button onClick={handleSubmitProject} width="58.25px" extraWide={true} oval type="black">
+          <Button onClick={handleSubmitProject} width="150px" extraWide={true} oval type="black">
             CREATE PROJECT
           </Button>
         </div>

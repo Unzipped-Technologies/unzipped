@@ -108,7 +108,29 @@ router.post('/retrieve-account-balance', requireLogin, async (req, res) => {
 
     const account = await billingHelper.getUserAccountById(userId)
 
-    const balance = await billingHelper.getFreelancerBalance(account.id)
+    let balance = null
+    if (account?.id) {
+      balance = await billingHelper.getFreelancerBalance(account.id)
+    } else {
+      balance = {
+        object: 'balance',
+        available: [
+          {
+            currency: 'usd',
+            amount: 0,
+            source_types: {}
+          }
+        ],
+        livemode: false,
+        pending: [
+          {
+            currency: 'usd',
+            amount: 0,
+            source_types: {}
+          }
+        ]
+      }
+    }
 
     res.status(200).json(balance)
   } catch (error) {

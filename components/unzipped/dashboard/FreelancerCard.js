@@ -122,7 +122,8 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
             )}
           </Flex>
         )}
-        {user.skills?.length > 0 && user.skills.map((item, index) => <Badge key={`${index}_badge`}>{item}</Badge>)}
+        {user.skills?.length > 0 &&
+          user.skills.map((item, index) => <Badge key={`${index}_badge`}>{item?.skill}</Badge>)}
         {user?.cover && (
           <DarkText topMargin="10px" width="100%">
             <b
@@ -149,11 +150,8 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           onClick={redirectToProfile}>
           View Profile
         </Button>
-        {userId && (
-          <ButtonTwo
-            onClick={handlOpen}
-            data-testid={`open_${userId}_list_modal`}
-            id={`open_${user?.userId}_list_modal`}>
+        {userId && userId !== user.userId && (
+          <ButtonTwo onClick={handlOpen} data-testid={`open_${userId}_list_modal`}>
             <Icon name="actionIcon" color="#333" />
           </ButtonTwo>
         )}

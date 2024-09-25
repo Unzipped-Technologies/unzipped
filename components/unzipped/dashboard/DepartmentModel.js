@@ -94,6 +94,7 @@ const DepartmentModel = ({
                 fontSize="14px"
                 borderColor="red"
                 noMargin
+                maxLength={'50'}
                 width="100%"
                 height="36px !important"
                 onChange={e => updateForm('name', e?.target?.value)}

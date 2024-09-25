@@ -29,19 +29,27 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
   const router = useRouter()
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
+  const [refetch, setReFetch] = useState(false)
   const [selected, setSelected] = useState(0)
   const [userData, setUserData] = useState({})
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getFreelancerById(id)
-    }
     fetchData()
   }, [])
 
   useEffect(() => {
+    refetch && fetchData()
+  }, [refetch])
+
+  const fetchData = async () => {
+    await getFreelancerById(id)
+    setReFetch(false)
+  }
+
+  useEffect(() => {
     setUserData({
       ...selected,
+      calendarSettings: selectedFreelancer?.userId?.calendarSettings ?? null,
       FirstName: selectedFreelancer?.userId?.FirstName ?? '',
       profileImage: selectedFreelancer?.userId?.profileImage,
       LastName: selectedFreelancer?.userId?.LastName ?? '',
@@ -49,8 +57,8 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
       projects: selectedFreelancer?.projects,
       freelancerSkills: selectedFreelancer?.freelancerSkills,
       category: selectedFreelancer?.category,
-      likeTotal: selectedFreelancer?.likeTotal,
-      dislikeTotal: selectedFreelancer?.dislikeTotal,
+      likeTotal: selectedFreelancer?.likes?.length ?? 0,
+      dislikeTotal: selectedFreelancer?.dislikes?.length ?? 0,
       rate: selectedFreelancer?.rate,
       updatedAt: selectedFreelancer?.updatedAt,
       education: selectedFreelancer?.education,
@@ -75,7 +83,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
           <Container>
             <Nav marginBottom={'0px'} />
             <div>
-              <ProfileCard user={userData} />
+              <ProfileCard user={userData} userId={userId} selectedFreelancer={selectedFreelancer} role={role} />
             </div>
             <div style={{ width: '100%' }}>
               <ProfileTab
@@ -87,7 +95,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
                 userId={userData?._id}
               />
             </div>
-            <ProjectsCard user={userData} freelancerId={freelancerId} />
+            <ProjectsCard user={userData} freelancerId={freelancerId} setReFetch={setReFetch} />
           </Container>
         )}
 
@@ -96,9 +104,12 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
             {interViewView ? (
               <MobileProfileCard
                 user={userData}
+                setReFetch={setReFetch}
                 handleProfilePage={handleValueFromChild}
-                role={role}
                 freelancerId={freelancerId}
+                userId={userId}
+                selectedFreelancer={selectedFreelancer}
+                role={role}
               />
             ) : (
               <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />

@@ -13,6 +13,7 @@ import { WhiteCard, DIV, TEXT } from '../style'
 import DepartmentModel from '../DepartmentModel'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { TODO_STATUS, DONE, IN_PROGRESS } from '../../../../utils/constants'
+import { ConverterUtils, ValidationUtils } from '../../../../utils'
 import {
   getProjectsList,
   getDepartmentById,
@@ -36,7 +37,8 @@ const TasksPanel = ({
   resetStoryForm,
   currentBusiness,
   isEditable,
-  taskForm
+  taskForm,
+  setSelectedDepartment
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [isDepartmentEditMode, setIsDepartmentEditMode] = React.useState(false)
@@ -62,10 +64,10 @@ const TasksPanel = ({
   }
 
   useEffect(() => {
-    if (selectedDepartment) {
-      setEditDeptInfo(selectedDepartment)
+    if (departmentData) {
+      setEditDeptInfo(departmentData)
     }
-  }, [selectedDepartment])
+  }, [departmentData])
 
   const handleOnDragEnd = async result => {
     if (!result.destination) return
@@ -77,12 +79,9 @@ const TasksPanel = ({
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
       const destItems = destColumn?.tasks || []
-      const sourcedObj = sourceItems[source.index]
-      sourcedObj.status = destColumn?.tagName
-      let ticketStatus = sourcedObj.status
-      if (!ticketStatus.includes('In Progress') || !ticketStatus.includes('In progress')) {
-        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase())
-      }
+      const sourcedObj = sourceItems[source.index];
+      sourcedObj.status = destColumn?.tagName;
+      let ticketStatus = sourcedObj.status;
 
       dispatch(updateStatusOnDrag(sourcedObj._id, { status: ticketStatus }))
       const [removed] = sourceItems.splice(source.index, 1)
@@ -154,13 +153,14 @@ const TasksPanel = ({
   }
 
   const handleDepartmentDel = async () => {
+    const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {};
     dispatch(deleteDepartment(departmentData?._id))
+    setSelectedDepartment(departmentObj)
     await getProjectsList({
       take: 'all',
       skip: 0,
       populate: false
     })
-    setEditDeptInfo({})
   }
 
   const addNewTask = async (tagId, tagName) => {
@@ -169,13 +169,7 @@ const TasksPanel = ({
       departmentId: selectedDepartment?._id,
       tag: tagId,
       priority: '',
-      status: tagName?.toLowerCase().includes('to')
-        ? TODO_STATUS
-        : tagName?.toLowerCase().includes('in')
-        ? IN_PROGRESS
-        : tagName?.toLowerCase().includes('done')
-        ? DONE
-        : TODO_STATUS
+      status: tagName
     })
     setIsEditing(false)
     setStoryModal(true)
@@ -202,7 +196,7 @@ const TasksPanel = ({
         boxShadow="0px 4px 8px 0px rgba(0, 0, 0, 0.10)">
         <DIV display="fle" alignItems="center">
           <TEXT width="max-content" fontSize="20px" padding="0px 10px 0px 0px" margin="2px">
-            {editDeptInfo?.name ?? 'Create Department'}
+            {ConverterUtils.truncateString(editDeptInfo.name, 40) ?? 'Create Department'}
           </TEXT>
           {userRole === 0 && (
             <Button
@@ -284,7 +278,7 @@ const TasksPanel = ({
                           width="100%">
                           <DIV
                             width="100%"
-                            padding="10px "
+                            padding="10px"
                             borderRadius="0px"
                             display="flex"
                             flexFlow="row"
@@ -296,12 +290,12 @@ const TasksPanel = ({
                               fontSize="14px"
                               paddingLeft="4px"
                               margin="0px 0px 0px 10px">
-                              {tag.tagName.toUpperCase()} ({tag?.tasks?.length})
+                              {ValidationUtils.truncate(tag.tagName.toUpperCase(), 20)} ({tag?.tasks?.length})
                             </TEXT>
-                            <TEXT textAlign="left" fontWeight="bold" width="200px">
+                            <TEXT textAlign="left" fontWeight="bold" width="180px">
                               STORY POINTS
                             </TEXT>
-                            <TEXT textAlign="center" fontWeight="bold" width="200px">
+                            <TEXT textAlign="center" fontWeight="bold" width="190px">
                               ASSIGNEE
                             </TEXT>
                           </DIV>
@@ -322,23 +316,21 @@ const TasksPanel = ({
                                             borderRadius="0px"
                                             row
                                             background="#F7F7F7">
-                                            <TEXT
-                                              width="300px"
-                                              fontSize="14px"
-                                              textAlign="center"
-                                              marginTop="4px"
-                                              margin="0px 0px 0px 10px"
+                                            <DIV
+                                              display="flex"
+                                              flexDirection="row"
+                                              alignItems="center"
                                               onClick={async () => {
                                                 setTaskId(task._id)
                                                 openStoryModal()
                                               }}>
-                                              <DIV display="flex" flexDirection="row">
-                                                <DIV padding="0px 10px 0px 0px">
-                                                  <FaRegCheckCircle color={getStatusColor(task)} />
-                                                </DIV>
-                                                {task.taskName}
+                                              <DIV padding="0px 10px 0px 0px">
+                                                <FaRegCheckCircle color={getStatusColor(task)} />
                                               </DIV>
-                                            </TEXT>
+                                              <TEXT fontWeight="bold" width="300px" padding="15px 0px 0px 0px">
+                                                {ValidationUtils.truncate(task.taskName, 250)}
+                                              </TEXT>
+                                            </DIV>
                                             <TEXT
                                               textAlign="left"
                                               fontSize="14px"

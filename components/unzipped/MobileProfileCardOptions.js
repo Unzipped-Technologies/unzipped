@@ -7,7 +7,6 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import { IconColors } from '../../utils/FontIcons'
 import IconSelector from './dashboard/IconSelector'
 import IconComponent from '../ui/icons/IconComponent'
-import { getCalenderSetting } from '../../redux/actions'
 import ScheduleInterview from './dashboard/ScheduleInterview'
 import ScheduleMeetingModal from './../modals/scheduleMeeting'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
@@ -48,8 +47,7 @@ function MobileProfileCardOptions({
   const [error, setError] = useState('')
   const [scheduleInterview, setScheduleInterview] = useState(false)
   const [scheduleInterviewModal, setScheduleInterviewModal] = useState(false)
-  const { _id } = useSelector(state => state.Auth.user)
-  const calenderSetting = useSelector(state => state.CalenderSetting.calenderSetting)
+  const { _id, calendarSetting } = useSelector(state => state.Auth.user)
   const receiverInfo = useSelector(state => state.Freelancers.selectedFreelancer)
 
   const handleScheduleInterviewModal = () => {
@@ -58,11 +56,6 @@ function MobileProfileCardOptions({
   }
 
   useEffect(() => {
-    if (_id !== calenderSetting?.userId || !calenderSetting) {
-      dispatch(getCalenderSetting())
-    } else {
-      console.log('')
-    }
     dispatch(getFreelancerById(navigate.query.id))
     dispatch(getCurrentUserList(_id))
   }, [])
@@ -144,7 +137,7 @@ function MobileProfileCardOptions({
           </div>
           {scheduleInterview && (
             <div>
-              {calenderSetting ? (
+              {calendarSetting ? (
                 <ScheduleMeetingModal
                   scheduleInterviewModal={scheduleInterviewModal}
                   handleScheduleInterviewModal={handleScheduleInterviewModal}

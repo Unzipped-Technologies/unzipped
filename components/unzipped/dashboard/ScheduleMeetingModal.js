@@ -13,9 +13,8 @@ import TextField from '@mui/material/TextField'
 
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
-import { createCalenderSetting } from '../../../redux/CalenderSetting/CalenderSettingAction'
+import { useDispatch, useSelector } from 'react-redux'
+import { createCalendarSetting } from '../../../redux/Auth/actions'
 import SetupCalendlyModal from './SetupCalendlyModal'
 dayjs.extend(timezone)
 dayjs.extend(utc)
@@ -259,7 +258,6 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
 
   const handleCalenderSettings = async () => {
     let calenderSettingObj = {
-      userId: _id,
       startTime: availableFromTime,
       endTime: availableEndTime,
       timezone: userTimezone,
@@ -269,7 +267,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
     setIsOpen(false)
     setIsModalOpen(false)
     setSelectedOption('APPLIED_TO_PROJECTS')
-    await dispatch(createCalenderSetting(calenderSettingObj))
+    await dispatch(createCalendarSetting(calenderSettingObj))
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
