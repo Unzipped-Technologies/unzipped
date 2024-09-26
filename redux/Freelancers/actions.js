@@ -267,3 +267,13 @@ export const deleteFreelancerSkill = skillId => async (dispatch, getState) => {
   await dispatch(stopLoading())
   return response
 }
+
+export const updateFreelancer = data => async (dispatch, getState) => {
+  const response = await axios
+    .patch(`/api/freelancer/update`, data, tokenConfig(getState()?.Auth.token))
+    .then(res => res)
+    .catch(err => {
+      return err
+    })
+  return response
+}

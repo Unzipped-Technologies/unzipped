@@ -5,6 +5,8 @@ import Image from '../ui/Image'
 import Icon from '../ui/Icon'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
+import { FormField } from '../ui'
+
 import Popper from '@mui/material/Popper'
 import { ValidationUtils, ConverterUtils } from '../../utils'
 import { TitleText, DarkText, Underline, WhiteCard } from './dashboard/style'
@@ -12,6 +14,7 @@ import { Card, CardContent, Typography, Grid, Box as MUIBox } from '@mui/materia
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import socket from '../../components/sockets/index'
 import { useDispatch } from 'react-redux'
+import { AiOutlineCheck, AiOutlineCloseCircle } from 'react-icons/ai'
 
 const Container = styled.div`
   display: flex;
@@ -58,10 +61,13 @@ const Likes = styled.span`
 
   justify-content: space-between;
 `
-const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
+const ProfileCard = ({ user, userId, selectedFreelancer, role, updateFreelancer, setReFetch }) => {
   const dispatch = useDispatch()
 
   const [anchorEl, setAnchorEl] = React.useState(null)
+  const [rate, setRate] = React.useState(user?.rate ?? 0)
+  const [showRateField, setShow] = React.useState(false)
+  const [error, setError] = React.useState('')
 
   const handleClick = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
@@ -78,6 +84,10 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       setAnchorEl(null) // Close the Popper
     }
   }
+
+  useEffect(() => {
+    setRate(user?.rate ?? 0)
+  }, [user])
 
   useEffect(() => {
     // Attach the event listener when the component mounts
@@ -142,6 +152,16 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
     }
   }
 
+  const handleKeydownEvent = async () => {
+    const response = await updateFreelancer({ rate: rate })
+    if (response?.status === 200) {
+      setShow(false)
+      setReFetch(true)
+    } else {
+      setError(response?.data?.msgs)
+    }
+  }
+
   return (
     <Container data-testid="desktop_profile_container">
       <ImageContainer>
@@ -196,7 +216,60 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
               <TextBox>
                 <Span bold>SALARY</Span>
                 {'     '}
-                <Span>{user.rate > 0 ? `  $${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
+                {showRateField ? (
+                  <div className="d-flex justify-content-end align-items-center">
+                    <div className="d-flex justify-content-end">
+                      <FormField
+                        zIndexUnset
+                        fieldType="input"
+                        type="number"
+                        placeholder="Rate"
+                        fontSize="14px"
+                        name="rate"
+                        error={error}
+                        width={'100px'}
+                        height="25px  !important"
+                        borderRadius="10px"
+                        border="2px solid #CED4DA"
+                        value={rate}
+                        maxLength="4"
+                        min={0}
+                        onChange={e => {
+                          setRate(e.target.value)
+                        }}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            handleKeydownEvent()
+                          }
+                        }}></FormField>
+                    </div>
+                    <AiOutlineCheck
+                      onClick={handleKeydownEvent}
+                      style={{
+                        fontSize: '18px',
+                        color: 'green',
+                        marginRight: '10px',
+                        marginLeft: '10px'
+                      }}
+                    />
+                    <AiOutlineCloseCircle
+                      onClick={() => {
+                        setShow(false)
+                      }}
+                      style={{
+                        fontSize: '18px',
+                        color: 'red'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <Span
+                    onDoubleClick={() => {
+                      role === 1 && setShow(true)
+                    }}>
+                    {user.rate > 0 ? `  $${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}
+                  </Span>
+                )}
               </TextBox>
 
               <TextBox>

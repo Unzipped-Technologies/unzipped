@@ -12,6 +12,9 @@ import SkillsModal from './SkillsModal'
 
 import socket from '../../components/sockets/index'
 import { useDispatch } from 'react-redux'
+import { updateFreelancer } from '../../redux/actions'
+import { AiOutlineCheck, AiOutlineCloseCircle } from 'react-icons/ai'
+import { FormField } from '../ui'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -51,10 +54,17 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
   const [selected, setSelected] = useState(0)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
+  const [rate, setRate] = useState(user?.rate ?? 0)
+  const [showRateField, setShow] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     socket.emit('userConnected', userId)
   }, [])
+
+  useEffect(() => {
+    setRate(user?.rate ?? 0)
+  }, [user])
 
   useEffect(() => {
     socket.on('like', response => {
@@ -128,6 +138,16 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
     return new Date(inputDate).toLocaleDateString(undefined, options)
   }
 
+  const handleKeydownEvent = async () => {
+    const response = await dispatch(updateFreelancer({ rate: rate }))
+    if (response?.status === 200) {
+      setShow(false)
+      setReFetch(true)
+    } else {
+      setError(response?.data?.msgs)
+    }
+  }
+
   return (
     <div data-testid="mobile_profile_container">
       <div className="text-center">
@@ -188,9 +208,62 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
               <P margin="0px 3px">{user?.dislikeTotal}</P>
             </div>
           </div>
-          <P fontSize="20px" fontWeight="600">
-            {user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}
-          </P>
+          {showRateField ? (
+            <div className="d-flex justify-content-center align-items-center">
+              <div className="d-flex">
+                <FormField
+                  zIndexUnset
+                  fieldType="input"
+                  type="number"
+                  placeholder="Rate"
+                  fontSize="14px"
+                  name="rate"
+                  error={error}
+                  width={'100px'}
+                  height="25px  !important"
+                  borderRadius="10px"
+                  border="2px solid #CED4DA"
+                  value={rate}
+                  maxLength="4"
+                  min={0}
+                  onChange={e => {
+                    setRate(e.target.value)
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      handleKeydownEvent(e)
+                    }
+                  }}></FormField>
+              </div>
+              <AiOutlineCheck
+                onClick={handleKeydownEvent}
+                style={{
+                  fontSize: '18px',
+                  color: 'green',
+                  marginRight: '10px',
+                  marginLeft: '10px'
+                }}
+              />
+              <AiOutlineCloseCircle
+                onClick={() => {
+                  setShow(false)
+                }}
+                style={{
+                  fontSize: '18px',
+                  color: 'red'
+                }}
+              />
+            </div>
+          ) : (
+            <P
+              fontSize="20px"
+              fontWeight="600"
+              onDoubleClick={() => {
+                role === 1 && setShow(true)
+              }}>
+              {user.rate > 0 ? `$${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}
+            </P>
+          )}
           <div className="d-flex justify-content-around align-items-center py-4 mb-2">
             <Icon name="colorUser" />
             <Icon name="colorEmail" />
@@ -414,7 +487,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
                   onClick={() => {
                     setSkillOpen(!openSkill)
                   }}
-                  data-testid="add_education">
+                  data-testid="add_skills">
                   <AiOutlinePlusCircle
                     style={{
                       fontSize: '18px',

@@ -818,7 +818,7 @@ describe('Freelancers Component', () => {
     fireEvent.click(SkillFilter)
     fireEvent.change(SkillFilter, { target: { value: 'CSS' } })
 
-    const SkillSuggestion = within(DesktopFilterContainer).getByTestId('CSS_suggestion')
+    const SkillSuggestion = within(DesktopFilterContainer).getByTestId('css_suggestion')
     expect(SkillSuggestion).toBeInTheDocument()
     fireEvent.click(SkillSuggestion)
 
@@ -917,7 +917,7 @@ describe('Freelancers Component', () => {
     const SkillFilter = within(DesktopFilterContainer).getByTestId('skills')
     fireEvent.click(SkillFilter)
     fireEvent.change(SkillFilter, { target: { value: 'CSS' } })
-    const SkillSuggestion = within(DesktopFilterContainer).getByTestId('CSS_suggestion')
+    const SkillSuggestion = within(DesktopFilterContainer).getByTestId('css_suggestion')
     expect(SkillSuggestion).toBeInTheDocument()
     fireEvent.click(SkillSuggestion)
   })
@@ -1639,7 +1639,7 @@ describe('Freelancers Component', () => {
     fireEvent.click(SkillFilter)
     fireEvent.change(SkillFilter, { target: { value: 'CSS' } })
 
-    const SkillSuggestion = within(MobileFilterContainer).getByTestId('CSS_suggestion')
+    const SkillSuggestion = within(MobileFilterContainer).getByTestId('css_suggestion')
     expect(SkillSuggestion).toBeInTheDocument()
     fireEvent.click(SkillSuggestion)
 
@@ -1759,7 +1759,7 @@ describe('Freelancers Component', () => {
     const SkillFilter = within(MobileFilterContainer).getByTestId('skills')
     fireEvent.click(SkillFilter)
     fireEvent.change(SkillFilter, { target: { value: 'CSS' } })
-    const SkillSuggestion = within(MobileFilterContainer).getByTestId('CSS_suggestion')
+    const SkillSuggestion = within(MobileFilterContainer).getByTestId('css_suggestion')
     expect(SkillSuggestion).toBeInTheDocument()
     fireEvent.click(SkillSuggestion)
 

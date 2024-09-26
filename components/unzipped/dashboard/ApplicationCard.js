@@ -198,8 +198,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                         flexFlow="row"
                         margin="0px 20px 0px 0px"
                         alignItems="flex-start"
-                        justifyContent="flex-start"
-                        data-testid={`${application._id}_application_skills`}>
+                        justifyContent="flex-start">
                         <span
                           style={{
                             color: ' #000',

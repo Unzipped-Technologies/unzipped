@@ -305,13 +305,13 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
             {suggestions?.map((skill, index) => (
               <Li
                 key={index}
-                data-testid={`${skill?.text}_suggestion`}
+                data-testid={`${skill?.value}_suggestion`}
                 onClick={() => {
                   handleSuggestionClick(skill)
                   setUserInput('')
                   setSuggestions([])
                 }}>
-                {skill?.text}
+                {skill?.label}
               </Li>
             ))}
           </ul>

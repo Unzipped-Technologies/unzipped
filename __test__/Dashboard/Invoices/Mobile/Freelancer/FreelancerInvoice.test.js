@@ -426,7 +426,7 @@ describe('Freelancers Invoices', () => {
     const SkillFilter = within(MobileFilterContainer).getByTestId('skills')
     fireEvent.click(SkillFilter)
     fireEvent.change(SkillFilter, { target: { value: 'CSS' } })
-    const SkillSuggestion = within(MobileFilterContainer).getByTestId('CSS_suggestion')
+    const SkillSuggestion = within(MobileFilterContainer).getByTestId('css_suggestion')
     expect(SkillSuggestion).toBeInTheDocument()
     fireEvent.click(SkillSuggestion)
 

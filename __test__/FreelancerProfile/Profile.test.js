@@ -15,7 +15,6 @@ import { FREELANCER_AUTH } from '../store/Users'
 
 import MobileProfileCardOptions, { P as Paragraph, DropDown } from '../../components/unzipped/MobileProfileCardOptions'
 import { getFreelancerById, createShowCaseProject, addEducation } from '../../redux/Freelancers/actions'
-import { getCalenderSetting } from '../../redux/CalenderSetting/CalenderSettingAction'
 import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/Lists/ListsAction'
 import { ValidationUtils, ConverterUtils } from '../../utils'
 import userEvent from '@testing-library/user-event'
@@ -42,11 +41,6 @@ jest.mock('../../redux/Lists/ListsAction', () => ({
   addEntriesToList: jest.fn(),
   getInvitesLists: jest.fn(),
   getCurrentUserList: jest.fn()
-}))
-
-jest.mock('../../redux/CalenderSetting/CalenderSettingAction', () => ({
-  ...jest.requireActual('../../redux/CalenderSetting/CalenderSettingAction'),
-  getCalenderSetting: jest.fn()
 }))
 
 describe('DesktopAccount Component', () => {
@@ -84,12 +78,6 @@ describe('DesktopAccount Component', () => {
       }
     })
     createShowCaseProject.mockReturnValue(() => {
-      return {
-        status: 200
-      }
-    })
-
-    getCalenderSetting.mockReturnValue(() => {
       return {
         status: 200
       }
@@ -143,7 +131,7 @@ describe('DesktopAccount Component', () => {
     expect(within(DesktopProfileContainer).getByTestId('react_native')).toBeInTheDocument()
     expect(within(DesktopProfileContainer).getByTestId('mongodb')).toBeInTheDocument()
     expect(
-      within(DesktopProfileContainer).getByText(`${selectedFreelancer.likeTotal} UPVOTES BY CLIENTS`)
+      within(DesktopProfileContainer).getByText(`${selectedFreelancer?.likes?.length} UPVOTES BY CLIENTS`)
     ).toBeInTheDocument()
     expect(within(DesktopProfileContainer).getByText('Email Verified')).toBeInTheDocument()
 
@@ -732,7 +720,7 @@ describe('DesktopAccount Component', () => {
 
   it('renders Freelancer profile page for mobile view without calender setting', async () => {
     initialState.Auth.user.role = 1
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calenderSetting = null
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
@@ -756,7 +744,7 @@ describe('DesktopAccount Component', () => {
 
   it('renders Freelancer profile page for mobile view and add user to list with success response', async () => {
     initialState.Auth.user.role = 1
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calenderSetting = null
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
@@ -880,7 +868,7 @@ describe('DesktopAccount Component', () => {
 
   it('renders Freelancer profile page for mobile view and add user to list without list icon', async () => {
     initialState.Auth.user.role = 1
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calenderSetting = null
     initialState.Lists.currentUserList[0].icon = 'WeiboOutlined'
 
     global.innerWidth = 640
@@ -906,7 +894,7 @@ describe('DesktopAccount Component', () => {
 
   it('renders Freelancer profile page for mobile view and add user to list without list name', async () => {
     initialState.Auth.user.role = 1
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calenderSetting = null
     initialState.Lists.currentUserList[0].name = undefined
 
     global.innerWidth = 640
@@ -932,7 +920,7 @@ describe('DesktopAccount Component', () => {
 
   it('renders Freelancer profile options without list', async () => {
     initialState.Auth.user.role = 1
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calenderSetting = null
     initialState.Lists.currentUserList = []
 
     global.innerWidth = 640
@@ -1205,7 +1193,7 @@ describe('DesktopAccount Component', () => {
 
   it('renders Freelancer profile page and mobile profile card options without _id', async () => {
     initialState.Auth.user._id = undefined
-    delete initialState.CalenderSetting.calenderSetting
+    delete initialState.Auth.user.calenderSetting
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 

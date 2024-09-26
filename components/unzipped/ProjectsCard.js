@@ -328,7 +328,7 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                 onClick={() => {
                   setSkillOpen(!openSkill)
                 }}
-                data-testid="add_education">
+                data-testid="add_skills">
                 <AiOutlinePlusCircle
                   style={{
                     fontSize: '18px',

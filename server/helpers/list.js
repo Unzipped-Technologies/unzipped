@@ -59,6 +59,18 @@ const addListItemToList = async (data, listId) => {
 const addListEntriesToList = async (data, listId) => {
   try {
     const updateList = await list.findById(listId)
+    if (data?.freelancerId) {
+      const CurrentListEntries = await ListEntriesModel.find({ listId: listId, freelancerId: data?.freelancerId })
+      if (CurrentListEntries?.length > 0) {
+        throw Error(`Freelancer is already added in this list`)
+      }
+    } else if (data?.businessId) {
+      const CurrentListEntries = await ListEntriesModel.find({ listId: listId, businessId: data?.businessId })
+      if (CurrentListEntries?.length > 0) {
+        throw Error(`Selected business is already added in this list`)
+      }
+    }
+
     const newEntry = await ListEntriesModel.create({
       ...data
     })
@@ -70,7 +82,7 @@ const addListEntriesToList = async (data, listId) => {
     await updateList.save()
     return updateList
   } catch (e) {
-    throw Error(`Something went wrong ${e}`)
+    throw Error(e ? e : `Something went wrong `)
   }
 }
 

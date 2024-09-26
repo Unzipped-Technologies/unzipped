@@ -163,6 +163,8 @@ export const FREELANCER = {
   isDeleted: false,
   isPreferedFreelancer: true,
   likeTotal: 23,
+  likes: ['6601c288149276195c3f8faf'],
+  dislikes: [],
   projects: [...FREELANCER_PROJECTS],
   education: [...FREELANCER_EDUCATION],
   rate: 23,

@@ -1,4 +1,7 @@
+import { CALENDAR_SETTINGS } from './CalendarSettings'
+
 export const CLIENT_AUTH = {
+  calenderSetting: { ...CALENDAR_SETTINGS },
   isEmailVerified: true,
   isSupportAdmin: false,
   isGithubConnected: false,
@@ -46,6 +49,8 @@ export const CLIENT_AUTH = {
 }
 
 export const FREELANCER_AUTH = {
+  calenderSetting: { ...CALENDAR_SETTINGS },
+
   isEmailVerified: true,
   isSupportAdmin: false,
   isGithubConnected: false,

@@ -296,7 +296,7 @@ describe('Freelancers Component', () => {
       const rowElement = within(TableBodyContainer).getByTestId(business?._id)
 
       expect(within(rowElement).getByText(ValidationUtils.truncate(business.name, 40))).toBeInTheDocument()
-      expect(within(rowElement).getByText(business?.budget || 0)).toBeInTheDocument()
+      expect(within(rowElement).getByText(business?.budgetRange || 0)).toBeInTheDocument()
       expect(within(rowElement).getByText(business?.valueEstimate || 'N/A')).toBeInTheDocument()
       const expectedDate = business.deadline
         ? ValidationUtils.formatDate(business.deadline)
@@ -316,7 +316,7 @@ describe('Freelancers Component', () => {
   })
 
   it('renders dashboard Projects without budget', async () => {
-    initialState.Business.projectList[0].budget = undefined
+    initialState.Business.projectList[0].budgetRange = undefined
     initialState.Business.projectList[2].updatedAt = undefined
     renderWithRedux(<Projects />, { initialState })
 
@@ -329,7 +329,7 @@ describe('Freelancers Component', () => {
       const rowElement = within(TableBodyContainer).getByTestId(business?._id)
 
       expect(within(rowElement).getByText(ValidationUtils.truncate(business.name, 40))).toBeInTheDocument()
-      expect(within(rowElement).getByText(business?.budget || 0)).toBeInTheDocument()
+      expect(within(rowElement).getByText(business?.budgetRange || 0)).toBeInTheDocument()
       expect(within(rowElement).getByText(business?.valueEstimate || 'N/A')).toBeInTheDocument()
       const expectedDate = business.deadline
         ? ValidationUtils.formatDate(business.deadline)
@@ -704,7 +704,7 @@ describe('Freelancers Component', () => {
     const projectDetailContainer = screen.getByTestId('desktop_project_detail')
 
     expect(within(projectDetailContainer).getByText('Project Hires')).toBeInTheDocument()
-    expect(within(projectDetailContainer).getByText(`Budget: $${projectDetail?.budget}`)).toBeInTheDocument()
+    expect(within(projectDetailContainer).getByText(`Budget: $${projectDetail?.budgetRange}`)).toBeInTheDocument()
     expect(within(projectDetailContainer).getByText(`Project Length`)).toBeInTheDocument()
     expect(within(projectDetailContainer).getByText(`${projectDetail?.projectType}`)).toBeInTheDocument()
     expect(within(projectDetailContainer).getByText(`${projectDetail?.description}`)).toBeInTheDocument()
@@ -1841,8 +1841,8 @@ describe('Freelancers Component', () => {
       expect(within(InviteContainer).getByTestId(`${invitation?.businessId?._id}_budget`)).toBeInTheDocument(
         `Estimated Rate: $${
           invitation?.businessId?.projectBudgetType === 'Hourly Rate'
-            ? invitation?.businessId?.budget + ' / hour'
-            : invitation?.businessId?.budget ?? 0
+            ? invitation?.businessId?.budgetRange + ' / hour'
+            : invitation?.businessId?.budgetRange ?? 0
         }`
       )
       expect(within(InviteContainer).getByTestId(`${invitation?.businessId?._id}description`)).toHaveTextContent(
@@ -1913,8 +1913,8 @@ describe('Freelancers Component', () => {
       expect(within(InviteContainer).getByTestId(`${invitation?.businessId?._id}_budget`)).toBeInTheDocument(
         `Estimated Rate: $${
           invitation?.businessId?.projectBudgetType === 'Hourly Rate'
-            ? invitation?.businessId?.budget + ' / hour'
-            : invitation?.businessId?.budget ?? 0
+            ? invitation?.businessId?.budgetRange + ' / hour'
+            : invitation?.businessId?.budgetRange ?? 0
         }`
       )
       expect(within(InviteContainer).getByTestId(`${invitation?.businessId?._id}description`)).toHaveTextContent(
@@ -1963,7 +1963,7 @@ describe('Freelancers Component', () => {
 
   it('renders dashboard Projects and verify invites without budget', async () => {
     initialState.Auth.user = FREELANCER_AUTH
-    initialState.ListEntries.userListEntries[0].businessId.budget = undefined
+    initialState.ListEntries.userListEntries[0].businessId.budgetRange = undefined
 
     const SelectProject = initialState.Business.projectList[0]
     renderWithRedux(<Projects />, { initialState })
@@ -2781,7 +2781,7 @@ describe('Freelancers Component', () => {
     const mobileDetailContainer = screen.getByTestId('mobile_project_detail')
     expect(mobileDetailContainer).toBeInTheDocument()
 
-    expect(within(mobileDetailContainer).getByText(`Budget: $${projectDetail?.budget}`)).toBeInTheDocument()
+    expect(within(mobileDetailContainer).getByText(`Budget: $${projectDetail?.budgetRange}`)).toBeInTheDocument()
     expect(within(mobileDetailContainer).getByText(`Project Length:`)).toBeInTheDocument()
     expect(within(mobileDetailContainer).getByText(`${projectDetail?.projectType}`)).toBeInTheDocument()
     expect(within(mobileDetailContainer).getByText(`${projectDetail?.description}`)).toBeInTheDocument()

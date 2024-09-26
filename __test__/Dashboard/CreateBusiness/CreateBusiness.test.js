@@ -553,14 +553,6 @@ describe('CreateBusiness Component', () => {
     let StepTen = BusinessCard.querySelector('#step_10')
     expect(StepTen).toBeInTheDocument()
 
-    const StepTenSkipButton = within(StepTen).getByRole('button', { name: 'Skip' })
-    expect(StepTenSkipButton).toBeInTheDocument()
-    fireEvent.click(StepTenSkipButton)
-
-    fireEvent.click(screen.getByRole('button', { name: 'BACK' }))
-
-    StepTen = BusinessCard.querySelector('#step_10')
-
     const StepTenNextButton = within(StepTen).getByRole('button', { name: 'Next' })
     expect(StepTenNextButton).toBeInTheDocument()
 
@@ -2730,11 +2722,6 @@ describe('CreateBusiness Component', () => {
     expect(StepThree).toHaveTextContent('What are the specific tasks and objectives for this project')
     expect(StepThree).toHaveTextContent(`What's the challenge you need to conquer? (in a sentence or two)`)
 
-    const BackButton = within(StepThree).getByRole('button', { name: 'BACK' })
-    expect(BackButton).toBeInTheDocument()
-    fireEvent.click(BackButton)
-
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))

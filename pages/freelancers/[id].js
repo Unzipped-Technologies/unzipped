@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import styled from 'styled-components'
 
 import Nav from '../../components/unzipped/header'
-import { getFreelancerById } from '../../redux/actions'
+import { getFreelancerById, updateFreelancer } from '../../redux/actions'
 import ProfileTab from '../../components/unzipped/ProfileTab'
 import ProfileCard from '../../components/unzipped/ProfileCard'
 import ProjectsCard from '../../components/unzipped/ProjectsCard'
@@ -25,7 +25,7 @@ const MobileContainer = styled.div`
     display: none;
   }
 `
-const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, userId }) => {
+const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, userId, updateFreelancer }) => {
   const router = useRouter()
   const { id } = router.query
   const [interViewView, setInterViewView] = useState(true)
@@ -83,7 +83,14 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
           <Container>
             <Nav marginBottom={'0px'} />
             <div>
-              <ProfileCard user={userData} userId={userId} selectedFreelancer={selectedFreelancer} role={role} />
+              <ProfileCard
+                user={userData}
+                userId={userId}
+                selectedFreelancer={selectedFreelancer}
+                role={role}
+                updateFreelancer={updateFreelancer}
+                setReFetch={setReFetch}
+              />
             </div>
             <div style={{ width: '100%' }}>
               <ProfileTab
@@ -133,7 +140,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getFreelancerById: bindActionCreators(getFreelancerById, dispatch)
+    getFreelancerById: bindActionCreators(getFreelancerById, dispatch),
+    updateFreelancer: bindActionCreators(updateFreelancer, dispatch)
   }
 }
 

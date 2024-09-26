@@ -72,13 +72,16 @@ export let defaultInitialState = {
         isPreferedFreelancer: true,
         isAcceptEquity: true,
         category: 'Full Stack Developer'
-      }
+      },
+      calenderSetting: { ...CALENDAR_SETTINGS }
     },
     thirdPartyDetails: {
       githubId: 24108368,
       userName: 'testUser',
       avatarUrl: 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
-    }
+    },
+    calendarError: null,
+    calendarSuccess: false
   },
   Stripe: {
     methods: [...PaymentMethods],
@@ -402,12 +405,6 @@ export let defaultInitialState = {
     freelancers: [...FREELCANCERS_LIST],
     totalCount: FREELCANCERS_LIST.length,
     selectedFreelancer: { ...FREELANCER }
-  },
-  CalenderSetting: {
-    calenderSetting: { ...CALENDAR_SETTINGS },
-    success: null,
-    loading: false,
-    error: null
   },
   Lists: {
     invitesList: [...INVITES_LIST],

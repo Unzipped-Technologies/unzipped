@@ -217,6 +217,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                             </div>
                           </div>
                           <TEXT
+                            id="category"
                             textColor="gray"
                             fontSize=" 15px"
                             fontWeight=" 400"

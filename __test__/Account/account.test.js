@@ -177,7 +177,7 @@ describe('DesktopAccount Component', () => {
       expect(within(ProfileContainer).getByText('Complete Onboarding')).toBeInTheDocument()
     }
 
-    const ViewProfileButton = within(ProfileContainer).getByRole('button', { name: 'View profile' })
+    const ViewProfileButton = within(ProfileContainer).getByRole('button', { name: 'View Profile' })
     expect(ViewProfileButton).toBeInTheDocument()
 
     const PlanContainer = container.querySelector('#plan_detail')

@@ -25,7 +25,7 @@ router.get('/list', requireLogin, permissionCheckHelper.hasPermission('getAllApp
   }
 })
 
-router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('updateApplication'), async (req, res) => {
+router.patch('/update', requireLogin, permissionCheckHelper.hasPermission('updateApplication'), async (req, res) => {
   try {
     let updateFields = {}
     for (let field in req.body) {
@@ -34,7 +34,7 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('updateAp
     if (Object.keys(updateFields).length === 0) {
       throw new Error('No valid fields provided for update')
     }
-    const response = await freelancerHelper.updateFreelancer(req.params.id, updateFields)
+    const response = await freelancerHelper.updateFreelancer(req.user?.userInfo?.freelancers, updateFields)
     if (!response) throw new Error('Freelancer not found')
 
     res.json(response)

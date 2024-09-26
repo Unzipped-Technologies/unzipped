@@ -344,14 +344,14 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           <ul>
             {suggestions?.map((skill, index) => (
               <li
-                data-testid={`${skill?.text}_suggestion`}
+                data-testid={`${skill?.value}_suggestion`}
                 key={index}
                 onClick={() => {
-                  handleSuggestionClick(skill?.text)
+                  handleSuggestionClick(skill?.value)
                   setUserInput('')
                   setSuggestions([])
                 }}>
-                {skill?.text}
+                {skill?.label}
               </li>
             ))}
           </ul>

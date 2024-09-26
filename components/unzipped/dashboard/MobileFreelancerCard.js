@@ -181,7 +181,9 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
       {user?.skills?.length > 0 && (
         <UserSkills style={{ overflowX: 'scroll', overflowY: 'hidden', padding: '10px', marginLeft: '8px' }}>
           {user?.skills?.map((skill, index) => (
-            <Badge key={index}>{skill?.skill}</Badge>
+            <span data-testid={`${skill?.skill}_${index}`} key={index}>
+              <Badge>{skill?.skill}</Badge>
+            </span>
           ))}
         </UserSkills>
       )}

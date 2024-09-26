@@ -145,7 +145,7 @@ describe('DesktopAccount Component', () => {
     const projectDetailContainer = screen.getByTestId('desktop_project_detail')
 
     expect(within(projectDetailContainer).getByText('Project Hires')).toBeInTheDocument()
-    expect(within(projectDetailContainer).getByText(`Budget: $${projectDetail?.budget}`)).toBeInTheDocument()
+    expect(within(projectDetailContainer).getByText(`Budget: $${projectDetail?.budgetRange}`)).toBeInTheDocument()
     expect(within(projectDetailContainer).getByText(`Project Length`)).toBeInTheDocument()
     expect(within(projectDetailContainer).getByText(`${projectDetail?.projectType}`)).toBeInTheDocument()
     expect(within(projectDetailContainer).getByText(`${projectDetail?.description}`)).toBeInTheDocument()
@@ -375,7 +375,7 @@ describe('DesktopAccount Component', () => {
     const mobileDetailContainer = screen.getByTestId('mobile_project_detail')
     expect(mobileDetailContainer).toBeInTheDocument()
 
-    expect(within(mobileDetailContainer).getByText(`Budget: $${projectDetail?.budget}`)).toBeInTheDocument()
+    expect(within(mobileDetailContainer).getByText(`Budget: $${projectDetail?.budgetRange}`)).toBeInTheDocument()
     expect(within(mobileDetailContainer).getByText(`Project Length:`)).toBeInTheDocument()
     expect(within(mobileDetailContainer).getByText(`${projectDetail?.projectType}`)).toBeInTheDocument()
     expect(within(mobileDetailContainer).getByText(`${projectDetail?.description}`)).toBeInTheDocument()
