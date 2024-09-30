@@ -20,7 +20,7 @@ module.exports = {
   cookieKey: '1Xxp382GgnXxYz49528',
   //payment
   stripePublishableKey:
-  'pk_test_51N8neBKbRhZhJxMgyOpWY0pyTFdJ9rb9mIIgjor3IaCfRwU5IGCP00Q9aWH629MCbML22vJg7AVOE3Etm9vk4lUs00cMojHSRC',
+    'pk_test_51N8neBKbRhZhJxMgyOpWY0pyTFdJ9rb9mIIgjor3IaCfRwU5IGCP00Q9aWH629MCbML22vJg7AVOE3Etm9vk4lUs00cMojHSRC',
   stripeSecretKey:
     'sk_test_51N8neBKbRhZhJxMgqn7xtwILzeKZPoobbygMQzxUeAFKi3D2ldnUXCsDiaGfdQOH4oALxxXcEIZXlQ3887et74cu00YBfjyyZM',
   stripeClientId: 'ca_PfJUA8aC0UA53v2zmIRQ6Se4V6qh3jmm',
@@ -38,7 +38,7 @@ module.exports = {
     'EAAHeZAVRhGZC8BAHu6ZCf2RGtph4nztDpDDJ4QqxElVNWCBa1rZBi2uqOhmGZA9IvyedXdW1rUy2x1OQSoM2wEcODpKmZBF0pR1nhdJUnqps5yCH7xSYS8ApTZAzqK7AjwTpKZAcjqhU97i3ONjCBrDE3r4YMlZAt3MALTywfPgBLVZC283n4ZAoMSQ',
   nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || '509d38179ddfee75d61f',
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '30a2ea2b0796b6092f825f80680a608ff57d5e9e',
-  githubRedirectUrl: process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URL || 'http://localhost:3000/api/auth/github',
+  githubRedirectUrl: process.env == 'local' ? 'https://staging.unzipped.io/api/auth/github' : 'http://localhost:3000/api/auth/github',
   socketUrl: process.env.ENV == 'local' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SOCKET_URL,
   supportEmail: 'jason+support@unzipped.io',
   supportAccountPassword: 'Myfirst1',
