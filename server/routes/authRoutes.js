@@ -298,6 +298,8 @@ router.post('/test', async (req, res) => {
 })
 
 router.get('/github', async (req, res) => {
+  console.log('keys.githubRedirectUrl', keys.githubRedirectUrl)
+  console.log('process.env', process.env)
   // 1) use the code to get token from github
   const { code } = req.query
   let githubToken
