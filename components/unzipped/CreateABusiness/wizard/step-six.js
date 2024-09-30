@@ -30,7 +30,7 @@ const StepSixWizardFlow = ({ goals, updateForm, goBack, submitForm, stage, handl
         <FormField
           textarea
           fieldType="input"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           id="goals"
           borderRadius="10px"
