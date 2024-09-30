@@ -24,7 +24,7 @@ module.exports = {
   sendGridEmail: 'Jason@unzipped.io',
   nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || '509d38179ddfee75d61f',
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '30a2ea2b0796b6092f825f80680a608ff57d5e9e',
-  githubRedirectUrl: process.env == 'local' ? 'https://staging.unzipped.io/api/auth/github' : 'http://localhost:3000/api/auth/github',
+  githubRedirectUrl: process.env == 'local' ?  'http://localhost:3000/api/auth/github' : 'https://staging.unzipped.io/api/auth/github',
   socketUrl:  process.env.NEXT_PUBLIC_SOCKET_URL,
   supportEmail: 'jason+support@unzipped.io',
   supportAccountPassword: 'Myfirst1',
