@@ -1,8 +1,8 @@
 /** @format */
-
+console.log('process.env.NEXT_PUBLIC_ENV', process.env.NEXT_PUBLIC_ENV)
 //dev keys here
 module.exports = {
-  env: 'localhost',
+  env:  process.env.NEXT_PUBLIC_ENV == 'staging'  ? 'staging' : 'localhost',
   //google
   googleClientID: '510901918774-aq8e215rtmogvfj7bnv1pkeonq543utq.apps.googleusercontent.com',
   googleClientSecret: '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',
