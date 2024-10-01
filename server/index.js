@@ -13,11 +13,12 @@ require('../services/passport/passport')
 const http = require('http')
 const createSocket = require('./sockets/index.js')
 
+
 const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
-console.log('process.env.NEXT_PUBLIC_ENV', process.env.NEXT_PUBLIC_ENV)
+
 mongoose.Promise = global.Promise
 mongoose.connect(keys.mongoURI, {
   useUnifiedTopology: true,
@@ -25,6 +26,7 @@ mongoose.connect(keys.mongoURI, {
   useCreateIndex: true,
   useFindAndModify: false
 })
+
 
 app
   .prepare()

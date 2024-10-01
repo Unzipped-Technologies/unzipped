@@ -298,8 +298,6 @@ router.post('/test', async (req, res) => {
 })
 
 router.get('/github', async (req, res) => {
-  console.log('keys.githubRedirectUrl', keys.githubRedirectUrl)
-  console.log('process.env', process.env.NEXT_PUBLIC_ENV)
   // 1) use the code to get token from github
   const { code } = req.query
   let githubToken
@@ -307,7 +305,7 @@ router.get('/github', async (req, res) => {
     const body = {
       client_id: keys.nextPublicGithubClientId,
       client_secret: keys.githubClientSecret,
-      redirect_uri: keys.githubRedirectUrl,
+      redirect_uri:  process.env.GITHUB_REDIRECT_URL,
       code
     }
     const headers = {
