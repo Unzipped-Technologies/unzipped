@@ -38,7 +38,7 @@ const StepSevenWizardFlow = ({
         <FormField
           textarea
           fieldType="input"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           id="companyBackground"
           borderRadius="10px"

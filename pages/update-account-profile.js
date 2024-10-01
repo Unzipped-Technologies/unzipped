@@ -575,6 +575,7 @@ const UpdateAccountProfile = ({
 
 UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
   const token = parseCookies(req)
+}
 
 const mapStateToProps = state => {
   return {

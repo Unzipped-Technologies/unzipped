@@ -29,7 +29,7 @@ const Form = styled.form`
 `
 
 const ButtonSubmit = styled.button`
-  width: 95px;
+  width: 114px;
   height: 45px;
   background: #1772eb;
   color: #fff;

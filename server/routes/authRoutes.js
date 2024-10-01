@@ -305,7 +305,7 @@ router.get('/github', async (req, res) => {
     const body = {
       client_id: keys.nextPublicGithubClientId,
       client_secret: keys.githubClientSecret,
-      redirect_uri: keys.githubRedirectUrl,
+      redirect_uri:  process.env.GITHUB_REDIRECT_URL,
       code
     }
     const headers = {

@@ -33,7 +33,7 @@ const StepEightWizardFlow = ({ budgetRange, updateForm, goBack, submitForm, stag
           id="budget"
           options={budgetOptions()}
           placeholder="Select your budget"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           borderRadius="12px"
           onChange={e => updateForm({ budgetRange: e?.value })}

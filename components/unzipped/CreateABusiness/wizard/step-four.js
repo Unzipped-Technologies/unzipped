@@ -100,7 +100,7 @@ const StepFourWizardFlow = ({
             <FormField
               textarea
               fieldType="input"
-              fontSize="20px"
+              fontSize="16px"
               id="teamDynamics"
               width="100%"
               borderRadius="10px"
