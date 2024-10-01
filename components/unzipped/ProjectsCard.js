@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { AiOutlinePlusCircle, AiOutlineCloseCircle } from 'react-icons/ai'
 import { FaPen, FaTrashAlt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 
 import Button from '../ui/Button'
 import { FormField } from '../ui'
@@ -63,6 +64,7 @@ export const OtherInformationCard = styled.div`
 
 function ProjectsCard({ user, freelancerId, setReFetch }) {
   const dispatch = useDispatch()
+  const router = useRouter()
   const [openProjectModel, setProjectModal] = useState(false)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
@@ -94,6 +96,12 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
     )
     return filteredArray
   }, [user])
+
+
+  
+  const handleSkillClick = skill => {
+    router.push(`/freelancers?skill=${encodeURIComponent(skill)}`)
+  }
 
   const handleEducationDelete = async educationID => {
     const response = await dispatch(deleteEducation(educationID))
@@ -154,7 +162,7 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                 </P>
                 <div>
                   {project?.skills?.length > 0
-                    ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                    ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`} onClick={handleSkillClick(skill)}>{skill} </Badge>)
                     : ''}
                 </div>
                 <div
@@ -223,27 +231,31 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                   margin="0"
                   radius="4px"
                   padding="5px 10px"
-                  key={`${skill}_${index}_sim`}>
-                  {ConverterUtils.capitalize(`${skill} `)}
+                  key={`${skill}_${index}_sim`}
+                  clickable
+                  onClick={() => handleSkillClick(skill)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {ConverterUtils.capitalize(`${skill}`)}
                 </P>
               ))
             ) : (
               <>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  React
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  Node
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  TypeScript
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  Nest.js
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  Next.js
-                </P>
+                {['React', 'Node', 'TypeScript', 'Nest.js', 'Next.js'].map((skill, index) => (
+                  <P
+                    key={`${skill}_${index}_sim_default`}
+                    border="1px solid #666666"
+                    fontSize="14px"
+                    margin="0"
+                    radius="4px"
+                    padding="5px 10px"
+                    clickable
+                    onClick={() => handleSkillClick(skill)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {skill}
+                  </P>
+                ))}
               </>
             )}
           </div>

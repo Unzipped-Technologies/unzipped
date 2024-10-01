@@ -111,7 +111,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
   const handleClose = () => {
     setOpen(false)
   }
-  const uniqueSkills = useMemo(() => {
+   const uniqueSkills = useMemo(() => {
     let projectSkills = user?.projects?.map(project => [...new Set(project.skills)])
     let userSkills = user?.freelancerSkills?.map(skill => skill?.skill)
     projectSkills = projectSkills?.length ? projectSkills?.join(',').split(',') : []
@@ -122,7 +122,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
     )
     return filteredArray
   }, [user])
-
+  
   function formatDate(inputDate) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' }
     return new Date(inputDate).toLocaleDateString(undefined, options)
@@ -327,8 +327,8 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
               Browse Similar Freelancers
             </P>
             <div style={{ gap: '6px', display: 'flex', padding: '20px 10px', flexWrap: 'wrap' }}>
-              {uniqueSkills?.length ? (
-                uniqueSkills?.map((skill, index) => (
+              {user?.freelancerSkills?.length 
+            ? user.freelancerSkills.map((skill, index) => (
                   <P
                     border="1px solid #666666"
                     fontSize="14px"
@@ -336,14 +336,14 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
                     radius="4px"
                     padding="5px 10px"
                     key={`${skill}_${index}_sim`}>
-                    {ConverterUtils.capitalize(`${skill} `)}
+                    {ConverterUtils.capitalize(`${skill} `)}    
                   </P>
-                ))
+                )
               ) : (
                 <>
-                  <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
+               <P style={{ border: "1px solid #666666", fontSize: "14px", margin: "0", borderRadius: "4px", padding: "5px 10px" }}>
                     React
-                  </P>
+                </P>
                   <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
                     Node
                   </P>

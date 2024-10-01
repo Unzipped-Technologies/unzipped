@@ -121,6 +121,18 @@ const Freelancers = ({
     }
   }, [])
 
+  useEffect(() => {
+    const { skill } = router.query; 
+  
+    if (skill) {
+      setFilter(prevFilter => ({
+        ...prevFilter,
+        skill: [skill] 
+      }))
+    }
+  }, [router.query])
+  
+
   const handleSearch = () => {
     getAllFreelancers({ filter, skip, take })
   }

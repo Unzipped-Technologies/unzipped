@@ -11,9 +11,21 @@ router.get('/:id', async (req, res) => {
     if (!response) throw new Error('Freelancer not found')
     res.json(response)
   } catch (e) {
-    res.status(400).json({ msg: e.message })
+    res.status(400).json({ msg: e.message });
   }
-})
+});
+
+
+router.get('/freelancerSkills', requireLogin, permissionCheckHelper.hasPermission('getFreelancerSkills'), async (req, res) => {
+  try {
+    const response = await freelancerHelper.getAllFreelancerSkills(); 
+    console.log(response)
+    res.json(response);
+  } catch (e) {
+    res.status(400).json({ msg: e.message });
+  }
+});
+
 
 router.get('/list', requireLogin, permissionCheckHelper.hasPermission('getAllApplications'), async (req, res) => {
   try {
