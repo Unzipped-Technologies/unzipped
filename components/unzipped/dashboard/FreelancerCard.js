@@ -151,7 +151,10 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           View Profile
         </Button>
         {userId && userId !== user.userId && (
-          <ButtonTwo onClick={handlOpen} data-testid={`open_${userId}_list_modal`}>
+          <ButtonTwo
+            onClick={handlOpen}
+            data-testid={`open_${userId}_list_modal`}
+            id={`open_${user.userId}_list_modal`}>
             <Icon name="actionIcon" color="#333" />
           </ButtonTwo>
         )}

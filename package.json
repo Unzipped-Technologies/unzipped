@@ -16,7 +16,9 @@
     "build-storybook": "build-storybook",
     "kill-server": "kill-port 3000",
     "test:run": "wait-on http://localhost:3000 && jest --coverage --detectOpenHandles",
-    "test": "concurrently -k \"npm run start-server\" \"npm run test:run\" && npm run kill-server"
+    "test": "concurrently -k \"npm run start-server\" \"npm run test:run\" && npm run kill-server",
+    "test:cy": "npx cypress run --browser chrome --headed",
+    "test:cy-open": "npx cypress open"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
@@ -165,7 +167,7 @@
     "babel-jest": "^29.7.0",
     "babel-loader": "^8.3.0",
     "concurrently": "^8.2.2",
-    "cypress": "^13.14.2",
+    "cypress": "^13.15.0",
     "cypress-file-upload": "^5.0.8",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^29.7.0",

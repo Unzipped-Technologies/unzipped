@@ -79,8 +79,16 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
     setIsLoading(true)
     const response = onClick && (await onClick(address))
 
-    if (!response || response?.status !== 200) {
-      setError(response?.data?.msg ?? 'Something went wrong!')
+    if (response) {
+      if (response?.status !== 200) {
+        setError(response?.data?.msg ?? 'Something went wrong!')
+      } else {
+        setIsBusinessAddress(false)
+        setIsUpdated(true)
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 500)
+      }
     } else {
       setIsBusinessAddress(false)
       setIsUpdated(true)

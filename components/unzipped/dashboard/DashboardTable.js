@@ -111,9 +111,9 @@ const DashboardTable = ({
         },
 
         {
-          text: 'View Invoice',
+          text: 'VIEW INVOICE',
           onClick: () =>
-            router.push(`/dashboard/projects/freelancer/invoice/${item._id}?tab=invoices&freelancer${freelancerId}`)
+            router.push(`/dashboard/projects/freelancer/invoice/${item._id}?tab=invoices&freelancer=${freelancerId}`)
         }
       ]
     }
@@ -225,7 +225,7 @@ const mapStateToProps = state => {
     businesses: state.Business?.projectList,
     loading: state.Business?.loading,
     role: state.Auth.user.role,
-    freelancerId: state.Auth.user?.freelancers
+    freelancerId: state.Auth.user?.freelancers?._id
   }
 }
 

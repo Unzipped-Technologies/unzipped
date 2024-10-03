@@ -54,7 +54,7 @@ const SubscriptionCard = ({
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
   return (
-    <Container data-testid="receipt_card">
+    <Container data-testid="receipt_card" id="receipt_card">
       <WhiteCard height={(selectedPlan + 1) * 50 + 450 + 'px'} padding="10px">
         <TitleText size="22px">{subscriptionName} Plan</TitleText>
         <DarkText>
@@ -72,7 +72,7 @@ const SubscriptionCard = ({
         </span>
 
         <ButtonContainer>
-          <Button disabled={disabled} noBorder block type="black" onClick={() => submitSubscription()}>
+          <Button disabled={disabled} noBorder block type="black" onClick={submitSubscription}>
             START PLAN
           </Button>
         </ButtonContainer>

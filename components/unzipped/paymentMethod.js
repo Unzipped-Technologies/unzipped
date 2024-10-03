@@ -119,7 +119,6 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
       // each type of element.
       const cardElement = elements.getElement(CardNumberElement)
 
-      // Use your card Element with other Stripe.js APIs
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
@@ -144,8 +143,11 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
         await onClick({
           paymentMethod,
           businessId: selectedBusiness?._id,
-          userId: user?._id
+          userId: user?._id,
+          address: data
         })
+        const event = new CustomEvent('paymentMethodCreated', { detail: result })
+        window.dispatchEvent(event)
         setTimeout(() => {
           setIsLoading(false)
         }, 500)
@@ -184,6 +186,8 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
               <FormWrapper>
                 <CardNumberElement
                   data-testid="card-number"
+                  name="card-number"
+                  id="card-number"
                   onBlur={() => setIsError(null)}
                   options={{
                     style: {
@@ -400,7 +404,13 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
               />
             )}
             {!isUpdated && (
-              <Button type="outlineInverse" small onClick={() => setIsPaymentForm(true)}>
+              <Button
+                type="outlineInverse"
+                id="add_payment_button"
+                small
+                onClick={() => {
+                  setIsPaymentForm(true)
+                }}>
                 Add
               </Button>
             )}

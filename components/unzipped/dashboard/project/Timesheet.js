@@ -8,15 +8,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { FormField } from '../../../ui'
 import { ConverterUtils } from '../../../../utils'
 
-import {
-  getBusinessById,
-  getInvoices,
-  createTaskHour,
-  createInvoice,
-  updateTaskHour,
-  updateInvoice,
-  addInvoiceTasks
-} from '../../../../redux/actions'
+import { getInvoices, createInvoice, updateTaskHour, updateInvoice, addInvoiceTasks } from '../../../../redux/actions'
 import AddTasksModal from '../tasks/AddTasksModal'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -379,13 +371,20 @@ const Timesheet = ({
         }}>
         <TableTop>
           <div style={{ display: 'flex' }}>
-            <P margin="0px" fontSize="24px" fontWeight="500" width="182px" data-testid={'timesheet_user_name'}>
+            <P
+              margin="0px"
+              fontSize="24px"
+              fontWeight="500"
+              width="182px"
+              data-testid={'timesheet_user_name'}
+              id="user_name">
               {ConverterUtils.capitalize(`${selectedInvoice?.freelancer?.user?.FullName.slice(0, 15) || 'User'}`)}
               {selectedInvoice?.freelancer?.user?.FullName?.length > 17 && '...'}
             </P>
             {!invoice && (
               <select
                 data-testid="timesheet_week_options"
+                id="timesheet_week_options"
                 onChange={e => {
                   handleWeekChange(e?.target?.value)
                 }}
@@ -430,9 +429,9 @@ const Timesheet = ({
           <DragDiv>
             {Object.keys(sortedData).map((day, index) => {
               return (
-                <div key={day} className="day">
+                <div key={day} className="day" id={`${day}_tasks`}>
                   {!displayFormat ? (
-                    <DaysDiv data-testid={`${day}_header`}>
+                    <DaysDiv data-testid={`${day}_header`} id={`${day}_header`}>
                       <P margin="0px" fontWeight="500" width={'40%'}>
                         {' '}
                         {day.toUpperCase()}{' '}
@@ -450,7 +449,10 @@ const Timesheet = ({
                         )
                       })}
                       {isCurrenWeek && role === 1 && timeSheet ? (
-                        <span onClick={() => handleAddModal(day)} data-testid={`${day}_add_task_icon`}>
+                        <span
+                          onClick={() => handleAddModal(day)}
+                          data-testid={`${day}_add_task_icon`}
+                          id={`${day}_add_task_icon`}>
                           <AddInvoiceTask />
                         </span>
                       ) : (
@@ -494,6 +496,7 @@ const Timesheet = ({
                             {(provided, snapshot) => (
                               <div
                                 data-testid={item._id}
+                                id={item._id}
                                 style={{
                                   ...provided.draggableProps.style,
                                   background: snapshot.isDragging ? 'red' : 'white',
@@ -609,7 +612,7 @@ const Timesheet = ({
       </div>
       {!timeSheet ? (
         role === 1 ? (
-          <HoursDiv data-testid="freelancer_invoice_totals">
+          <HoursDiv data-testid="freelancer_invoice_totals" id="freelancer_invoice_totals">
             <div className="d-flex justify-content-between  mb-3" style={{ borderBottom: '1px solid #777' }}>
               <P fontWeight="500">DAY</P>
               <P fontWeight="500">HOURS</P>
@@ -620,7 +623,8 @@ const Timesheet = ({
                   <div
                     className="d-flex justify-content-between pb-3"
                     key={`day_hours_${index}`}
-                    data-testid={`${day}_hours`}>
+                    data-testid={`${day}_hours`}
+                    id={`${day}_hours`}>
                     <P fontWeight="500">{day}</P>
                     <P fontWeight="500">{sumHours(sortedData[day])}</P>
                   </div>
@@ -628,13 +632,19 @@ const Timesheet = ({
               })}
             <div className="d-flex justify-content-between mt-3 pb-3" style={{ borderTop: '1px solid #777' }}>
               <P fontWeight="500">RATE</P>
-              {filteredData && <P fontWeight="500">${filteredData[0]?.contract?.hourlyRate || 0} /HOUR</P>}
+              {filteredData && (
+                <P id="rate" fontWeight="500">
+                  {`$${filteredData[0]?.contract?.hourlyRate || 0} / HOUR`}
+                </P>
+              )}
             </div>
             <div className="d-flex justify-content-between  pb-3">
               <P fontWeight="500">FEE</P>
-              <P fontWeight="500">${fee || 0}</P>
+              <P fontWeight="500" id="fee">
+                ${fee || 0}
+              </P>
             </div>
-            <div className="d-flex justify-content-between">
+            <div id="total" className="d-flex justify-content-between">
               <P fontWeight="500">TOTAL</P>
               <P fontWeight="500">${totalAmount || 0} </P>
             </div>
@@ -695,9 +705,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getBusinessById: bindActionCreators(getBusinessById, dispatch),
     getInvoices: bindActionCreators(getInvoices, dispatch),
-    createTaskHour: bindActionCreators(createTaskHour, dispatch),
     createInvoice: bindActionCreators(createInvoice, dispatch),
     addInvoiceTasks: bindActionCreators(addInvoiceTasks, dispatch),
     updateInvoice: bindActionCreators(updateInvoice, dispatch),
