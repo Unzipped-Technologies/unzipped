@@ -82,7 +82,7 @@ const Modal = ({
 }) => {
   const onModalClick = e => e.stopPropagation()
   return (
-    <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}} data-testid={id}>
+    <ModalShade className={className} onClick={hideOnClickOutside ? onHide : () => {}} data-testid={id} id={id}>
       <ModalContainer onClick={onModalClick} $height={height} width={width}>
         {hasHiddenIcon && (
           <Absolute onClick={onHide}>
