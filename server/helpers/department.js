@@ -21,6 +21,11 @@ const createDepartment = async data => {
       if (!parentDepartment) throw Error(`Invalid parent department Id.`)
     }
 
+    const deptExits = await departmentModel.findOne({ name: data.name, businessId: data.businessId });
+    if (deptExits) {
+      throw Error(`Department Name already Exists.`);
+    }
+
     // Create department with empty tags, tasks and employees
     const item = {
       ...data,
@@ -457,8 +462,10 @@ const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => 
 const deleteDepartment = async id => {
   try {
     // Here we also have to delete department from business, contract, parentDepartment, invoice, tags, task
-    const updateTickets = await TaskModel.updateMany({ departmentId: id }, { isArchived: true, isActive: false })
-    return await departmentModel.softDelete({ _id: id })
+    const deletedDepartment = await departmentModel.findByIdAndDelete({ _id: id })
+    await business.updateMany({ departments: id }, { $pull: { departments: id } });
+    return deletedDepartment
+
   } catch (e) {
     throw new Error(`Could not delete department, error: ${e.message}`)
   }

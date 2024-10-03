@@ -123,7 +123,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           </Flex>
         )}
         {user.skills?.length > 0 &&
-          user.skills.map((item, index) => <Badge key={`${index}_badge`}>{item?.skill}</Badge>)}
+          user.skills.map((item, index) => <Badge  className="overflow-hidden"  key={`${index}_badge`}>{item?.skill}</Badge>)}
         {user?.cover && (
           <DarkText topMargin="10px" width="100%">
             <b

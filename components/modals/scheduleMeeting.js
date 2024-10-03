@@ -119,6 +119,7 @@ export default function ScheduleMeetingModal({
   return (
     <div data-testid="schedule_meeting_modal">
       <Modal
+        disableEnforceFocus
         open={scheduleInterviewModal}
         onClose={handleScheduleInterviewModal}
         aria-labelledby="meeting_modal_title"
