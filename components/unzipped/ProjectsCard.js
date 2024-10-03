@@ -114,7 +114,7 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
       <div style={{ width: '70%' }}>
         {user?.projects?.length ? (
           user?.projects?.map(project => (
-            <ProjectCard key={project?._id}>
+            <ProjectCard key={project?._id} id={`project_${project?._id}`}>
               <ProjectInnerCard>
                 <div className="d-flex justify-content-between">
                   <P margin="0" color="#0057FF" fontSize="16px" fontWeight="500">
@@ -163,9 +163,9 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                     flexWrap: 'wrap',
                     gap: '21px',
                     maxWidth: '100%',
-                    height: '93px',
-                    borderRadius: '10px',
-                    overflow: 'visible'
+                    height: 'fit-content',
+                    borderRadius: '10px'
+                    // overflow: 'scroll'
                   }}>
                   {project?.images?.length
                     ? project?.images?.map((image, i) => (

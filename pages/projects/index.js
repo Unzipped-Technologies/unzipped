@@ -56,7 +56,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
 
   const containerRef = useRef(null)
 
-  const [take, setTake] = useState(20)
+  const [take, setTake] = useState('all')
   const [skip, setSkip] = useState(0)
   const [filter, setFilter] = useState({
     isActive: true,
@@ -162,20 +162,18 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
 
   return (
     <div data-testid="projects_page">
-      {!filterOpenClose &&
-        (
-          <Nav
-            searchValue={filter}
-            handleSearch={handleSearch}
-            searchButton
-            margin={'0px'}
-            marginBottom={marginBottom}
-            isSubMenu
-            setFilter={setFilter}
-            handleSearchValue={setFilter}
-          />
-        )
-      }
+      {!filterOpenClose && (
+        <Nav
+          searchValue={filter}
+          handleSearch={handleSearch}
+          searchButton
+          margin={'0px'}
+          marginBottom={marginBottom}
+          isSubMenu
+          setFilter={setFilter}
+          handleSearchValue={setFilter}
+        />
+      )}
 
       {!filterOpenClose && window?.innerWidth <= 680 && (
         <MobileDisplayBox>
@@ -197,14 +195,14 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
           </MobileDisplayBox>
         )}
 
-        <Box data-testid="desktop_projects_container"
+        <Box
+          data-testid="desktop_projects_container"
           style={{
             marginTop: !isExpanded ? (accessToken ? '190px' : '150px') : accessToken ? '190px' : '150px'
-          }}
-        >
+          }}>
           <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
           {!loading ? (
-            <div className="overflow-auto" style={{width:"100%"}}>
+            <div className="overflow-auto" style={{ width: '100%' }}>
               <div className="d-flex align-items-baseline py-4 bg-white">
                 <h5 className="px-4">
                   <b>Top Results</b>

@@ -300,7 +300,6 @@ export const getBusinessEmployees =
         `/api/business/get-business-employees/${businessId}?isSelectedBusiness=${isSelectedBusiness}`,
         tokenConfig(getState()?.Auth.token)
       )
-      console.log('response', response)
       if (response?.status === 200) {
         dispatch({
           type: GET_BUSINESS_EMPLOYEES,

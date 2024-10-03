@@ -302,7 +302,8 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
                 $project: {
                   FirstName: 1,
                   LastName: 1,
-                  FullName: 1
+                  FullName: 1,
+                  email: 1
                 }
               }
             ],
