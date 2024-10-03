@@ -100,6 +100,7 @@ const GetCard = ({
               fieldType="input"
               width="80%"
               noMargin
+              id="firstName"
               error={errors?.FirstName}
               fontSize="14px"
               onChange={e => updateForm({ FirstName: e.target.value })}
@@ -111,6 +112,7 @@ const GetCard = ({
               fontSize="14px"
               error={errors?.LastName}
               width="80%"
+              id="lastName"
               noMargin
               onChange={e => updateForm({ LastName: e.target.value })}
               value={LastName}>
@@ -124,6 +126,7 @@ const GetCard = ({
                 error={errors?.phoneNumber}
                 placeholder="(555) 123-4567"
                 width="80%"
+                id="phoneNumber"
                 onChange={e => updateForm({ phoneNumber: e.target.value })}
                 value={phoneNumber}>
                 Phone Number
@@ -135,6 +138,7 @@ const GetCard = ({
                 width="78%"
                 placeholder="Business Type"
                 error={errors.businessType}
+                id="businessType"
                 options={[
                   {
                     value: 'LLC',
@@ -160,6 +164,7 @@ const GetCard = ({
               fontSize="14px"
               noMargin
               width="80%"
+              id="taxEin"
               error={errors?.taxEIN}
               onChange={e => updateForm({ socialSecurityNumber: e.target.value, taxEIN: e.target.value })}
               value={socialSecurityNumber || taxEIN}>
@@ -193,6 +198,7 @@ const GetCard = ({
               fieldType="input"
               width="80%"
               noMargin
+              id="addressLineOne"
               fontSize="14px"
               error={errors?.AddressLineOne}
               onChange={e => updateForm({ AddressLineOne: e.target.value })}
@@ -202,6 +208,7 @@ const GetCard = ({
             <FormField
               fieldType="input"
               fontSize="14px"
+              id="addressLineTwo"
               width="80%"
               noMargin
               error={errors?.AddressLineTwo}
@@ -214,6 +221,7 @@ const GetCard = ({
                 fieldType="input"
                 fontSize="14px"
                 error={errors?.AddressCity}
+                id="city"
                 noMargin
                 width="80%"
                 onChange={e => updateForm({ AddressCity: e.target.value })}
@@ -224,6 +232,7 @@ const GetCard = ({
                 fieldType="input"
                 fontSize="14px"
                 error={errors?.AddressZip}
+                id="zipCode"
                 noMargin
                 width="78%"
                 onChange={e => updateForm({ AddressZip: e.target.value })}
@@ -236,6 +245,7 @@ const GetCard = ({
               fontSize="14px"
               error={errors?.AddressCountry}
               width="80%"
+              id="country"
               placeholder="Select Country"
               options={countriesList.map(country => {
                 const newCountry = {
@@ -538,7 +548,7 @@ const UpdateAccountProfile = ({
     // if on 1st page go back to dashboard
     if (stage > 1) {
       updateRegisterForm({
-        stage: (step || stage) - 1
+        stage: stage - 1
       })
     } else {
       router.push('/dashboard')
@@ -575,6 +585,7 @@ const UpdateAccountProfile = ({
 
 UpdateAccountProfile.getInitialProps = async ({ req, res }) => {
   const token = parseCookies(req)
+}
 
 const mapStateToProps = state => {
   return {

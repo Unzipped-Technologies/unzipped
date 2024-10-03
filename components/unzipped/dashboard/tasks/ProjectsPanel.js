@@ -30,7 +30,7 @@ const ProjectsPanel = ({
         {businesses?.length
           ? businesses.map(business => {
               return (
-                <div key={business._id}>
+                <div key={business._id} id={`business_${business._id}`}>
                   <DIV
                     display="flex"
                     flexDirection="row"
@@ -65,7 +65,7 @@ const ProjectsPanel = ({
                   (business._id === currentBusiness?._id || business._id === showBusinessMenu)
                     ? business?.businessDepartments?.map(department => {
                         return (
-                          <DIV key={department._id}>
+                          <DIV key={department._id} id={`department_${department._id}`}>
                             <WhiteCard
                               borderColor="transparent"
                               padding="0px 5px 30px 20px"

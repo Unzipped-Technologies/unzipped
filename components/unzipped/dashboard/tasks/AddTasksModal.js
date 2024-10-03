@@ -188,12 +188,15 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                     options={taskOptions}
                     renderInput={params => (
                       <div ref={params.InputProps.ref}>
-                        <input type="text" {...params.inputProps} data-testid="task_name" />
+                        <input type="text" {...params.inputProps} data-testid="task_name" id="task_name" />
                       </div>
                     )}
                     freeSolo
                     autoComplete
                     value={taskName}
+                    onInputChange={(event, newValue) => {
+                      setTaskName(newValue)
+                    }}
                     onChange={(event, value) => {
                       if (value?.label) {
                         addTasks(value?.label)
@@ -234,6 +237,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
                               data-testid={`delete_task_${index}`}
+                              id={`delete_task_${index}`}
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -293,7 +297,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                 {newTasks?.length &&
                   newTasks.map((task, taskIndex) => {
                     return (
-                      <div key={`${task?.taskName}`} style={{ marginBottom: '20px' }}>
+                      <div key={`${task?.taskName}`} id={`task_${taskIndex}`} style={{ marginBottom: '20px' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -312,7 +316,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                             placeholder="Story Points"
                             fontSize="14px"
                             name={'story points' + taskIndex}
-                            id={'story points' + taskIndex}
+                            id={`story_points${taskIndex}`}
                             width="130px"
                             margin="-6px 0px 0px 10px"
                             height="30px  !important"

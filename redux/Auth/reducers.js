@@ -201,7 +201,7 @@ const INIT_STATE = {
   thirdPartyDetails: {},
   userMailConfirmation: false,
   calendarError: null,
-  calendarSuccess: false
+  calendarSuccess: null
 }
 
 const Auth = (state = INIT_STATE, action) => {
@@ -243,6 +243,24 @@ const Auth = (state = INIT_STATE, action) => {
       return {
         ...state,
         user: { ...state.user, ...action.payload },
+        userForm: {
+          role: -1,
+          FirstName: '',
+          LastName: '',
+          phoneNumber: '',
+          AddressLineOne: '',
+          AddressLineTwo: '',
+          AddressLineCountry: '',
+          AddressState: '',
+          AddressZip: '',
+          AddressCity: '',
+          AddressCountry: '',
+          taxEIN: '',
+          socialSecurityNumber: '',
+          businessType: '',
+          stage: 1,
+          isAccountDetailCompleted: false
+        },
         loading: false,
         error: { data: '' }
       }

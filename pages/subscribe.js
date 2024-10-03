@@ -83,7 +83,8 @@ const Subscribe = ({
   updateSubscriptionForm,
   token,
   getPaymentMethods,
-  paymentMethods
+  paymentMethods,
+  updateBusiness
 }) => {
   const isPrimaryPayment = paymentMethods.find(item => item.isPrimary && parseInt(item.paymentType, 10) === 0)
   const updatedDate = ValidationUtils.addDaysToDate(
@@ -124,6 +125,8 @@ const Subscribe = ({
     getPaymentMethods(token)
   }, [])
 
+  const updateBusinessAddress = async data => {}
+
   return (
     <Container data-testid="subscribe_page">
       <BackHeader title={`Confirm ${getSubscriptionName(selectedPlan)} Plan`} bold size="20px" />
@@ -144,15 +147,29 @@ const Subscribe = ({
             planCost={planCost}
             subscriptionForm={subscriptionForm}
             updateSubscription={updateSubscription}
+            onClick={data => {
+              const values = {
+                BusinessAddressLineOne: data.data,
+                BusinessAddressLineTwo: data.businessAddressLineTwo,
+                BusinessAddressLineCountry: data.businessCountry,
+                BusinessFirstName: data.businessFirstName,
+                BusinessLastName: data.businessLastName,
+                BusinessAddressCity: data.businessCity,
+                BusinessAddressState: data.businessState,
+                BusinessAddressZip: data.businessZip,
+                BusinessAddressPhone: data.businessPhone
+              }
+              updateSubscription(values)
+            }}
           />
-          <AddressCard
+          {/* <AddressCard
             onClick={() => setIsSelected('address')}
             title={`Business Address`}
             isSelected={isSelected === 'address'}
             image="/img/Unzipped-Primary-Logo.png"
             badge="Address">
             Business Address
-          </AddressCard>
+          </AddressCard> */}
           {isPrimaryPayment ? (
             <FormCard
               badge="Primary"
@@ -168,7 +185,20 @@ const Subscribe = ({
               user={user}
               planCost={planCost}
               subscriptionForm={subscriptionForm}
-              updateSubscription={updateSubscription}
+              onClick={data => {
+                const paymentMethod = {
+                  BillingAddressLineOne: data.address.addressLineOne,
+                  BillingAddressLineTwo: data.address.addressLineTwo,
+                  BillingAddressLineCountry: data.address.country,
+                  BillingFirstName: data.address.firstName,
+                  BillingLastName: data.address.lastName,
+                  BillingAddressCity: data.address.city,
+                  BillingAddressState: data.address.state,
+                  BillingAddressZip: data.address.zipCode,
+                  card: data?.paymentMethod
+                }
+                updateSubscription({ paymentMethod: paymentMethod })
+              }}
             />
           )}
         </Left>
