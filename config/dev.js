@@ -1,8 +1,7 @@
 /** @format */
-console.log('process.env.NEXT_PUBLIC_ENV', process.env.NEXT_PUBLIC_ENV)
 //dev keys here
 module.exports = {
-  env:  process.env.NEXT_PUBLIC_ENV == 'staging'  ? 'staging' : 'localhost',
+  env: 'localhost',
   //google
   googleClientID: '510901918774-aq8e215rtmogvfj7bnv1pkeonq543utq.apps.googleusercontent.com',
   googleClientSecret: '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',
@@ -38,7 +37,7 @@ module.exports = {
     'EAAHeZAVRhGZC8BAHu6ZCf2RGtph4nztDpDDJ4QqxElVNWCBa1rZBi2uqOhmGZA9IvyedXdW1rUy2x1OQSoM2wEcODpKmZBF0pR1nhdJUnqps5yCH7xSYS8ApTZAzqK7AjwTpKZAcjqhU97i3ONjCBrDE3r4YMlZAt3MALTywfPgBLVZC283n4ZAoMSQ',
   nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || '509d38179ddfee75d61f',
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '30a2ea2b0796b6092f825f80680a608ff57d5e9e',
-  githubRedirectUrl: process.env.NEXT_PUBLIC_ENV == 'staging' ? 'https://staging.unzipped.io/api/auth/github' : 'http://localhost:3000/api/auth/github',
+  githubRedirectUrl: process.env.NEXT_PUBLIC_ENV == 'local' ?  'http://localhost:3000/api/auth/github' :  'https://staging.unzipped.io/api/auth/github',
   socketUrl: process.env.ENV == 'local' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SOCKET_URL,
   supportEmail: 'jason+support@unzipped.io',
   supportAccountPassword: 'Myfirst1',
