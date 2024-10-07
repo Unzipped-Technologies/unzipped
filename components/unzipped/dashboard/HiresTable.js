@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux'
 import Button from '../../ui/Button'
 import MobileProjectHires from './mobile/MobileProjectHires'
 import { TableHeading, TableData } from '../dashboard/style'
-import { getContracts } from '../../../redux/Contract/actions'
+import { getContracts, revokeAccess } from '../../../redux/Contract/actions'
 import { ConverterUtils, ValidationUtils } from '../../../utils'
 
 const Desktop = styled.div`
@@ -28,14 +28,26 @@ const Container = styled.div`
 
 const HiringTable = ({ getContracts, contracts }) => {
   const router = useRouter()
+  const dispatch = useDispatch();
+  const activeContract = useSelector(state => state.Contracts);
+  
   const { id } = router.query
-
   useEffect(() => {
     async function fetchData() {
       await getContracts({ businessId: id, freelancerId: '', limit: 25, page: 1 })
     }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if(activeContract.isAccessRevoked){
+      getContracts({ businessId: id, freelancerId: '', limit: 25, page: 1 })
+    }
+  }, [activeContract.isAccessRevoked])
+
+  const handleRevoke = (contractId, businessId) => {
+    dispatch(revokeAccess(contractId))
+  };
 
   return (
     <>
@@ -103,7 +115,9 @@ const HiringTable = ({ getContracts, contracts }) => {
                             popout={[
                               {
                                 text: 'Revoke Access',
-                                onClick: () => {}
+                                onClick: () => {
+                                  handleRevoke(row?._id, id)
+                                }
                               },
                               {
                                 text: 'View Profile',

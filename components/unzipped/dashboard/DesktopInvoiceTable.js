@@ -15,6 +15,7 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice }) => {
 
   const approveInvoice = async invoiceId => {
     await updateInvoice(invoiceId, { status: 'approved' })
+    await getInvoices({ businessId: id, limit: 'all', page: 1 })
   }
 
   const archiveapproveInvoice = async invoiceId => {

@@ -9,7 +9,9 @@ import {
   SUCCESS,
   CONTRACT_ERROR,
   UPDATE_CONTRACT_FORM,
-  RESET_CONTRACT_FORM
+  RESET_CONTRACT_FORM,
+  REVOKE_ACCESS_SUCCESS,
+  REVOKE_ACCESS_ERROR
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -64,6 +66,10 @@ export const getContracts =
         dispatch({
           type: GET_CONTRACTS,
           payload: res.data
+        })
+        dispatch({
+          type: REVOKE_ACCESS_SUCCESS,
+          payload: false
         })
       })
       .catch(err => {
@@ -170,4 +176,22 @@ export const countClientContracts = clientId => async (dispatch, getState) => {
     })
   dispatch(stopLoading())
   return response
+}
+
+
+export const revokeAccess = (contractId) => async (dispatch, getState) => {
+  dispatch(startLoading())
+
+  try {
+    const response = await axios
+      .get(`/api/contract/revoke-access/${contractId}`, tokenConfig(getState()?.Auth.token));
+    if (response.status === 200) {
+      dispatch({ type: REVOKE_ACCESS_SUCCESS, payload: true })
+    }
+  } catch (error) {
+    dispatch({ type: REVOKE_ACCESS_ERROR, payload: false })
+
+  }
+  dispatch(stopLoading())
+
 }

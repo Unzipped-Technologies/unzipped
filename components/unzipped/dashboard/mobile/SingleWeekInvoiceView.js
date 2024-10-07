@@ -90,7 +90,6 @@ const SingleWeekInvoiceView = ({
   const [selectedDay, setDay] = useState('')
   const [selectedDayDate, setDayDate] = useState('')
   const [selectedTaskId, setTaskId] = useState('')
-
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
   useEffect(() => {
@@ -357,7 +356,7 @@ const SingleWeekInvoiceView = ({
               </Accordion>
             )
           })}
-        {role !== 1 && selectedInvoice && (
+        {role !== 1 && selectedInvoice?.status !=="approved" && (
           <div style={{ width: '100%', margin: '0px auto' }}>
             <Button
               background="#1976D2"
@@ -370,7 +369,13 @@ const SingleWeekInvoiceView = ({
                 text: '#FFF'
               }}
               onClick={async () => {
-                await updateInvoice(selectedInvoice?._id, { status: 'approved' })
+              await updateInvoice(selectedInvoice?._id, { status: 'approved' });
+              await getInvoices({
+                businessId: id,
+                freelancerId: freelancerId,
+                limit: 25,
+                page: 1
+              })
               }}>
               APPROVE
             </Button>

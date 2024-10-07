@@ -1,11 +1,12 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
-
+import { useDispatch, useSelector} from 'react-redux'
 import Button from '../../../ui/Button'
 import { Absolute } from '../../dashboard/style'
 import { ConverterUtils, ValidationUtils } from '../../../../utils'
 import MobileFreelancerFooter from '../../../unzipped/MobileFreelancerFooter'
+import { getContracts, revokeAccess } from '../../../../redux/Contract/actions'
 
 const MobileDisplayBox = styled.div`
   background: #f4f4f4;
@@ -66,6 +67,20 @@ const ProjectDate = styled.div`
 
 const MobileProjectHires = ({ data = [] }) => {
   const router = useRouter()
+  const dispatch = useDispatch();
+  const activeContract = useSelector(state => state.Contracts);
+  const { id } = router.query
+
+  useEffect(() => {
+    if(activeContract.isAccessRevoked){
+      getContracts({ businessId: id, freelancerId: '', limit: 25, page: 1 })
+    }
+  }, [activeContract.isAccessRevoked])
+
+  const handleRevoke = (contractId, businessId) => {
+    dispatch(revokeAccess(contractId))
+  };
+
 
   return (
     <MobileDisplayBox>
@@ -106,7 +121,9 @@ const MobileProjectHires = ({ data = [] }) => {
                     popout={[
                       {
                         text: 'Revoke Access',
-                        onClick: () => console.log('revoke')
+                        onClick: () => {
+                          handleRevoke(row?._id, id)
+                        }
                       },
                       {
                         text: 'View Profile',

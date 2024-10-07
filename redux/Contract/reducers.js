@@ -9,7 +9,9 @@ import {
   SUCCESS,
   CONTRACT_ERROR,
   UPDATE_CONTRACT_FORM,
-  RESET_CONTRACT_FORM
+  RESET_CONTRACT_FORM,
+  REVOKE_ACCESS_SUCCESS,
+  REVOKE_ACCESS_ERROR
 } from './constants'
 
 const CONTRACT_FORM = {
@@ -31,7 +33,8 @@ const INIT_STATE = {
   error: '',
   loading: false,
   totalCount: 0,
-  contractForm: { ...CONTRACT_FORM }
+  contractForm: { ...CONTRACT_FORM },
+  isAccessRevoked: false
 }
 
 const Contracts = (state = INIT_STATE, action = {}) => {
@@ -86,6 +89,10 @@ const Contracts = (state = INIT_STATE, action = {}) => {
       }
     case RESET_CONTRACT_FORM:
       return { ...state, loading: false, contractForm: { ...CONTRACT_FORM } }
+    case   REVOKE_ACCESS_SUCCESS:
+      return { ...state, loading: false, isAccessRevoked: action.payload }
+    case   REVOKE_ACCESS_ERROR:
+      return { ...state, loading: false, isAccessRevoked: action.payload }
     default:
       return state
   }
