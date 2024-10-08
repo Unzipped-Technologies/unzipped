@@ -260,8 +260,8 @@ const MessageContainer = ({
   return (
     <>
       {data ? (
-        <WhiteCard noMargin height="100%" padding="0px">
-          <WhiteCard noMargin row padding="8px 40px">
+        <WhiteCard noMargin height="100%" padding="0px" id="message_container">
+          <WhiteCard noMargin row padding="8px 40px" id="header">
             <DarkText noMargin>
               <DarkText className="mb-0" fontSize="16px" color="#000000" lineHeight="23px">
                 {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
@@ -275,7 +275,7 @@ const MessageContainer = ({
                 {onlineUsers.includes(receiver?.userId?._id) ? 'Online' : 'Offline'}
               </p>
             </DarkText>
-            <Button type="transparent" noBorder onClick={() => setIsProfile(!isProfile)}>
+            <Button type="transparent" noBorder onClick={() => setIsProfile(!isProfile)} id="profile_action">
               <Icon name="actionIcon" color="#333" />
             </Button>
           </WhiteCard>
@@ -293,6 +293,7 @@ const MessageContainer = ({
                       return (
                         <WhiteCard
                           key={e?._id}
+                          id={e?._id}
                           autoFoucs
                           half
                           row
@@ -332,7 +333,15 @@ const MessageContainer = ({
                       )
                     } else if (e?.conversationId === data?._id && e?._id) {
                       return (
-                        <WhiteCard half row borderColor="transparent" unset padding="10px" alignEnd>
+                        <WhiteCard
+                          id={e?._id}
+                          key={e?._id}
+                          half
+                          row
+                          borderColor="transparent"
+                          unset
+                          padding="10px"
+                          alignEnd>
                           <Span space unset>
                             <Image src={receiver?.userId?.profileImage} height="54px" width="54px" radius="22%" />
                           </Span>
@@ -388,6 +397,7 @@ const MessageContainer = ({
                     }}
                     onBlur={handleBlurTyping}
                     message
+                    id="message"
                     placeholder="Type a message..."
                     width="100%"
                     fieldType="input"
@@ -395,6 +405,7 @@ const MessageContainer = ({
                 </Message>
                 <Absolute zIndex={10} width="26px" right="25px">
                   <Button
+                    id="send_message"
                     disabled={!(form.message || form.attachment) || !selectedConversationId}
                     type="transparent"
                     onClick={() => send()}>

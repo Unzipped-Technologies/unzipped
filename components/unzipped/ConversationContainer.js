@@ -236,6 +236,7 @@ const ConversationContainer = ({
         key={index}
         background={_id === selectedConversation?._id ? '#BABABA' : '#fff'}
         noMargin
+        id={`conversation_${_id}`}
         minWidth="100%"
         padding="8px"
         overflow="hidden"
@@ -304,7 +305,9 @@ const ConversationContainer = ({
           </div>
         </Span>
       </WhiteCard>
-    ): (<></>)
+    ) : (
+      <></>
+    )
 
   const RenderConversations = ({ type }) =>
     conversation
