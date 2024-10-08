@@ -210,7 +210,7 @@ const DropdownItem = styled.li`
   }
 `
 
-const options = [
+export const options = [
   { label: 'Only clients whose projects I have applied to', value: 'APPLIED_TO_PROJECTS' },
   { label: 'Recruiters, and clients whose jobs I have not applied to', value: 'RECURITERS_OTHERS' },
   { label: 'I do not wish to schedule interviews through the unzipped platform', value: 'DONOT_SCHEDULE_WITH_UNZIPPED' }
@@ -280,6 +280,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
     <>
       <Modal
         data-testid="setup_calender"
+        id="setup_calender"
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         className={classes.modal}
@@ -301,7 +302,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                   flexDirection: 'column'
                 }}>
                 <div>
-                  <TextTitleStyled> Select Your Available Times </TextTitleStyled>
+                  <TextTitleStyled>Select Your Available Times</TextTitleStyled>
                 </div>
                 <div>
                   <Label fontSize="16px" fontWeight="400">
@@ -313,7 +314,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                 <ScheduleMeetingContainer>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <div className="d-flex gap-5 mt-3">
-                      <div data-testid="calender_start_time">
+                      <div data-testid="calender_start_time" id="start_time">
                         <Label fontSize="16px" fontWeight={600} htmlFor="start-time-1">
                           Start Time
                         </Label>
@@ -342,7 +343,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                           }}
                         />
                       </div>
-                      <div data-testid="calender_end_time">
+                      <div data-testid="calender_end_time" id="end_time">
                         <Label fontSize="16px" fontWeight={600} htmlFor="end-time">
                           End Time
                         </Label>
@@ -378,7 +379,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                 </div>
                 <div style={{ width: '100%' }}>
                   <DropdownContainer ref={dropdownRef}>
-                    <DropdownButton onClick={toggleDropdown} data-testid="interviewer_options">
+                    <DropdownButton onClick={toggleDropdown} data-testid="interviewer_options" id="interviewer_options">
                       {selectedOption
                         ? options.find(option => option.value === selectedOption).label
                         : 'Select an option'}
@@ -413,7 +414,7 @@ const ScheduleMeetingModal = ({ isModalOpen, setIsModalOpen, isSmallWindow }) =>
                   justifyContent: 'flex-end'
                 }}>
                 <CancelButtonStyled onClick={handleClose}>cancel</CancelButtonStyled>
-                <AddListButtonStyled onClick={() => handleCalenderSettings()}>UPDATE</AddListButtonStyled>
+                <AddListButtonStyled onClick={handleCalenderSettings}>UPDATE</AddListButtonStyled>
               </div>
             </div>
           </div>

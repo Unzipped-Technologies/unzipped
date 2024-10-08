@@ -96,6 +96,7 @@ const NotificationsPanel = ({
           <WhiteCard
             row
             data-testid="calender_success_notification"
+            id="calender_success_notification"
             style={{
               borderRadius: '4px',
               border: '1px solid #8EDE64',

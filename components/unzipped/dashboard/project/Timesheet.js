@@ -534,11 +534,11 @@ const Timesheet = ({
                                 {role === 0 && (
                                   <P
                                     align="center"
+                                    id={`${item._id}_rate`}
                                     width={`${60 / tableColumns()?.length}%`}
                                     fontWeight="500"
                                     margin="0px 30px 0px 0px">
-                                    {' '}
-                                    {item?.contract?.hourlyRate}{' '}
+                                    {item?.contract?.hourlyRate}
                                   </P>
                                 )}
                                 <div style={{ width: `${60 / tableColumns()?.length}%` }}>
@@ -579,21 +579,21 @@ const Timesheet = ({
                                 </div>
                                 {role === 1 && (
                                   <P
+                                    id={`${item._id}_story_points`}
                                     width={`${60 / tableColumns()?.length}%`}
                                     fontWeight="500"
                                     align="center"
                                     margin="0px 30px 0px 0px">
-                                    {' '}
-                                    {item?.task?.storyPoints}{' '}
+                                    {item?.task?.storyPoints}
                                   </P>
                                 )}
                                 {role === 0 && (
-                                  <P align="left" width={`${60 / tableColumns()?.length}%`}>
+                                  <P align="left" width={`${60 / tableColumns()?.length}%`} id={`${item._id}_assignee`}>
                                     <img
                                       src={item?.freelancer?.user?.profileImage}
                                       style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '6px' }}
                                     />
-                                    {item?.freelancer?.user?.FirstName + '' + item?.freelancer?.user?.LastName}
+                                    {`${item?.freelancer?.user?.FirstName} ${item?.freelancer?.user?.LastName}`}
                                   </P>
                                 )}
                               </div>
@@ -659,12 +659,14 @@ const Timesheet = ({
               ? filteredData?.map((invoice, index) => {
                   return (
                     <div className="d-flex justify-content-between pb-3" key={invoice._id}>
-                      <P fontWeight="500">
+                      <P fontWeight="500" id="name">
                         {ConverterUtils.capitalize(
                           `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
                         )}
                       </P>
-                      <P fontWeight="500">${invoice?.contract?.hourlyRate * invoice?.hoursWorked}</P>
+                      <P fontWeight="500" id="amount">
+                        ${invoice?.contract?.hourlyRate * invoice?.hoursWorked}
+                      </P>
                     </div>
                   )
                 })
@@ -673,15 +675,21 @@ const Timesheet = ({
               className="d-flex justify-content-between pt-3 pb-3"
               style={{ borderTop: filteredData?.length ? '1px solid #777' : '' }}>
               <P fontWeight="500">Subtotal</P>
-              <P fontWeight="500">${subTotal}</P>
+              <P fontWeight="500" id="sub_total">
+                ${subTotal}
+              </P>
             </div>
             <div className="d-flex justify-content-between pb-3">
               <P fontWeight="500">FEE</P>
-              <P fontWeight="500">${fee}</P>
+              <P fontWeight="500" id="fee">
+                ${fee}
+              </P>
             </div>
             <div className="d-flex justify-content-between">
               <P fontWeight="500">TOTAL</P>
-              <P fontWeight="500">${totalAmount} </P>
+              <P fontWeight="500" id="total_amount">
+                ${totalAmount}
+              </P>
             </div>
           </HoursDiv>
         )

@@ -115,6 +115,7 @@ const Notification = ({ type, children, noButton, user }) => {
               background={'#000'}
               color="#fff"
               borderColor="0px"
+              id="pick_plan_notification"
               data-testid="pick_plan_notification">
               <div style={{ padding: 5 }}>
                 <p>
@@ -134,7 +135,7 @@ const Notification = ({ type, children, noButton, user }) => {
     case 'github':
       return (
         !user?.isGithubConnected && (
-          <WhiteCard size="large" data-testid="github_connected_notification">
+          <WhiteCard size="large" data-testid="github_connected_notification" id="github_connected_notification">
             <DarkText>
               You haven’t connected your Github account yet, connect it now so we can begin work building your project!
             </DarkText>
@@ -147,7 +148,7 @@ const Notification = ({ type, children, noButton, user }) => {
     case 'paymentMethod':
       return (
         !user?.stripeAccountId && (
-          <WhiteCard size="large" data-testid="stripe_connected_notification">
+          <WhiteCard size="large" data-testid="stripe_connected_notification" id="stripe_connected_notification">
             <DarkText>You haven’t connected your stripe account!</DarkText>
             <Button icon="github" noBorder type="dark" normal onClick={() => router.push('manage-payment-method')}>
               CONNECT YOUR STRIPE ACCOUNT
@@ -157,9 +158,9 @@ const Notification = ({ type, children, noButton, user }) => {
       )
     case 'browse':
       return (
-        <NotificationContainer data-testid="browse_projects_notification">
+        <NotificationContainer data-testid="browse_projects_notification" id="browse_projects_notification">
           <div style={{ padding: 5 }}>
-            <p> Browse other projects to inspire ideas </p>
+            <p>Browse other projects to inspire ideas</p>
           </div>
           <div>
             <Button
@@ -170,8 +171,7 @@ const Notification = ({ type, children, noButton, user }) => {
               onClick={() => {
                 router.push('/projects')
               }}>
-              {' '}
-              BROWSE{' '}
+              BROWSE
             </Button>
           </div>
         </NotificationContainer>
@@ -250,7 +250,7 @@ const Notification = ({ type, children, noButton, user }) => {
       return (
         !user?.totalBusiness &&
         user?.role !== 1 && (
-          <WhiteCard size="large" data-testid="create_business_notification">
+          <WhiteCard size="large" data-testid="create_business_notification" id="create_business_notification">
             <DarkText>
               You haven't created your first Project yet, create one now so you can begin Collaborating! Need Ideas?
               View existing projects here.
@@ -262,7 +262,7 @@ const Notification = ({ type, children, noButton, user }) => {
               onClick={() => {
                 router.push('create-your-business')
               }}>
-              CREATE FIRST PROJECT{' '}
+              CREATE FIRST PROJECT
             </Button>
           </WhiteCard>
         )
@@ -270,7 +270,7 @@ const Notification = ({ type, children, noButton, user }) => {
     case 'updateBusiness':
       return (
         user?.role !== 1 && (
-          <WhiteCard size="large" data-testid="business_page_notification">
+          <WhiteCard size="large" data-testid="business_page_notification" id="business_page_notification">
             <DarkText>
               You created your first business. Hooray! Now you need to customize your business homepage to attract
               better talent.
@@ -292,6 +292,7 @@ const Notification = ({ type, children, noButton, user }) => {
           borderRadius="5px"
           border="1px solid #d8d8d8"
           padding="25px"
+          id="explore_notification"
           data-testid="explore_notification">
           <DIV display="flex" width="100%" flexDirection="column" margin="0px 0px 20px 0px" flexFlow="column">
             <div>
@@ -312,6 +313,7 @@ const Notification = ({ type, children, noButton, user }) => {
               background="#f1f0f0"
               boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25)"
               key={`${item.name}_${index}`}
+              id={`explore_${index}`}
               data-testid={`${item.name}_${index}`}>
               <div style={{ display: 'flex' }}>
                 <DIV display="flex" padding="20px">

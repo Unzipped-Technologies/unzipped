@@ -80,7 +80,7 @@ const DashboardTable = ({
       return [
         {
           text: 'Invoice',
-          onClick: () => router.push(`projects/client/invoice/${item._id}?tab=invoices`)
+          onClick: () => router.push(`projects/details/${item._id}?tab=invoices`)
         },
         {
           text: 'View details',

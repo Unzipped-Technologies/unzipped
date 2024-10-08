@@ -28,7 +28,7 @@ const Notifications = styled.div`
   padding: 0px 15px;
 `
 
-const notifications = [
+export const notifications = [
   { type: 'plan' },
   { type: 'github' },
   { type: 'paymentMethod' },
