@@ -16,6 +16,7 @@ const ApplicationView = styled.div`
   border: 1px solid #d9d9d9;
   flex-wrap: wrap;
   padding-bottom: 10px;
+  margin: 5px 10px 7px 15px;
 `
 
 const PersonalInfo = styled.div`
@@ -46,7 +47,7 @@ const UserRate = styled.div`
 
 const Rate = styled.div`
   color: #000;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 24.5px; /* 102.083% */
   letter-spacing: 0.4px;
@@ -89,7 +90,7 @@ const Likes = styled.div`
 const TotlaLikes = styled.div`
   color: #000;
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 400;
   line-height: 19.5px; /* 121.875% */
@@ -115,21 +116,22 @@ const CoverLetter = styled.span`
 
 const ViewProfileButton = styled.button`
   display: flex;
-  width: 96%;
-  height: 50px;
-  border-radius: 16px;
+  width: 95%;
+  height: 38px;
+  border-radius: 5px;
   border: 1px solid rgba(196, 196, 196, 0);
   background: #37dec5;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24.5px; /* 153.125% */
-  letter-spacing: 0.4px;
+  line-height: 19.5px;
+  letter-spacing: 0.5px;
   margin: auto;
+  padding:1px;
 `
 
 const MobileInvitesView = ({ projectDetails, invitesList }) => {
@@ -152,8 +154,9 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
                       alt={`${
                         invitation?.freelancerId?.userId?.FirstName + ' ' + invitation?.freelancerId?.userId?.LastName
                       }`}
-                      height="65px"
+                      height="55px"
                       width="65px"
+                      radius="5px"
                     />
                   </ProfileImage>
                   <UserInfo>
@@ -169,7 +172,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
                     </div>
 
                     <UserCategory>{invitation?.freelancerId?.category}</UserCategory>
-                    <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || '-'}</UserCountry>
+                    <UserCountry>{invitation?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
                   </UserInfo>
                 </PersonalInfo>
                 <div
@@ -210,7 +213,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
                 <Skills data-testid={`${invitation._id}_skills`}>
                   {invitation?.freelancerId?.freelancerSkills?.length
                     ? invitation?.freelancerId?.freelancerSkills.map(skill => {
-                        return <Badge key={skill._id}>{skill?.skill}</Badge>
+                        return <Badge key={skill._id} small>{skill?.skill}</Badge>
                       })
                     : ''}
                 </Skills>

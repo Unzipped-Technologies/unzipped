@@ -18,6 +18,7 @@ const ProjectsPanel = ({
   setShowBusinessMenu
 }) => {
   const dispatch = useDispatch()
+  const isMobileView = window.innerWidth <= 680
   return (
     <>
       <DIV
@@ -44,8 +45,10 @@ const ProjectsPanel = ({
                       } else {
                         setShowBusinessMenu(business._id)
                         onSelectBusiness(business)
-                        onSelectDepartment(business.businessDepartments?.[0])
                         dispatch(getBusinessEmployees(business.businessDepartments?.[0].businessId, true))
+                        {!isMobileView && (
+                          onSelectDepartment(business.businessDepartments?.[0])
+                        )}
                       }
                     }}>
                     <TitleText paddingLeft clickable>
