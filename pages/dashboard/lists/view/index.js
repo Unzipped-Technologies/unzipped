@@ -22,8 +22,11 @@ const DropDown = styled.div`
   position: absolute;
   background-color: white;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  width: 100%; /* Adjust the width as needed */
+  width: 90%;
   border: 1px solid #ccc;
+  margin: 20px;
+  padding: 8px;
+  border-radius: 5px;
 `
 
 function MobileProjects({ lists, userId, getUserLists }) {
@@ -70,9 +73,9 @@ function MobileProjects({ lists, userId, getUserLists }) {
           margin="-25px 0px 0px 35px"
           onClick={handleOpen}>
           <TEXT
-            fontSize="14px"
+            fontSize="15px"
             lineHeight="19.5px"
-            fontWeight="400"
+            fontWeight="600"
             letterSpacing="0.15px"
             margin="0"
             textColor="#0057FF">
@@ -118,7 +121,7 @@ function MobileProjects({ lists, userId, getUserLists }) {
                     </TEXT>
 
                     <TEXT
-                      fontSize="7px"
+                      fontSize="11px"
                       margin="0px !important"
                       padding="0px 0px 0px 3px"
                       lineHeight="19.5px"
