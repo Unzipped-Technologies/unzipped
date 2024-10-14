@@ -109,7 +109,6 @@ const Timesheet = ({
 }) => {
   const router = useRouter()
   const { week } = router.query
-
   const [tasksModal, setTasksModal] = useState(false)
   const [selectedTaskId, setTaskId] = useState('')
   const [selectedDay, setDay] = useState('')
@@ -369,6 +368,7 @@ const Timesheet = ({
     await updateInvoice(selectedInvoice?._id, {
       status: status
     })
+    await getInvoices({ businessId: businessId, _id: invoice, freelancerId: freelancer })  
   }
 
   return (
