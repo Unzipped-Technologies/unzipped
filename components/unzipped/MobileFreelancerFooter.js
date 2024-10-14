@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import IconComponent from '../ui/icons/IconComponent'
 import styled from 'styled-components'
+import { useRouter } from 'next/router'
 
 const DarkOverlay = styled.div`
   position: fixed;
@@ -26,7 +27,7 @@ const PopupContainer = styled.div`
   background-color: white;
 `
 
-const StyledButton1 = styled.button`
+const FooterButtonStyled = styled.button`
   width: 80%;
   height: 50px;
   border: 1px solid #e60379;
@@ -37,7 +38,7 @@ const StyledButton1 = styled.button`
   margin-bottom: 0.5rem;
 `
 
-const StyledButton2 = styled.button`
+const ViewProjectsButtonStyled = styled.button`
   width: 80%;
   border: 1px solid #e60379;
   color: #e60379;
@@ -94,14 +95,15 @@ function MobileFreelancerFooter({ defaultSelected = 'footerHome' }) {
     }
     setSelected(option.name)
   }
+  const router = useRouter()
 
   return (
     <>
       <Container>
         <DarkOverlay show={showPopup} onClick={() => setShowPopup(false)}>
           <PopupContainer>
-            <StyledButton1>Post a Project</StyledButton1>
-            <StyledButton2>Quote</StyledButton2>
+            <FooterButtonStyled onClick={() => { router.push('/create-your-business') }}>Post a Project</FooterButtonStyled>
+            <ViewProjectsButtonStyled onClick={() => { router.push('/dashboard/projects') }}>View Projects</ViewProjectsButtonStyled>
           </PopupContainer>
         </DarkOverlay>
 
