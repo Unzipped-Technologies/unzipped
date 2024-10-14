@@ -69,7 +69,8 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
       isPreferedFreelancer: selectedFreelancer?.isPreferedFreelancer,
       isEmailVerified: selectedFreelancer?.userId?.isEmailVerified,
       isPhoneVerified: selectedFreelancer?.userId?.isPhoneVerified,
-      isIdentityVerified: selectedFreelancer?.userId?.isIdentityVerified
+      isIdentityVerified: selectedFreelancer?.userId?.isIdentityVerified,
+      userId:selectedFreelancer?.userId?._id
     })
   }, [selectedFreelancer])
 
