@@ -179,6 +179,12 @@ const DesktopAccount = ({
     fetchData()
   }, [])
 
+
+  useEffect(()=>{
+    setUserData(initialState)
+  },[business])
+
+  
   useEffect(() => {
     const fetchBalanceData = async () => {
       getAccountBalance()

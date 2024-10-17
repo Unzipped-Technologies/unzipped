@@ -25,6 +25,10 @@ const BadgeContainer = styled.div`
   font-weight: 600;
   overflow: scroll;
   white-space: normal;
+
+  &.overflow-hidden {
+    overflow: hidden;
+  }
 `
 
 const statusColor = {

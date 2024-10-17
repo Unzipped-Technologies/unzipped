@@ -3,20 +3,19 @@ const router = express.Router()
 const messageHelper = require('../helpers/message')
 const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
-
+const upload = require('../middlewares/multer');
 // lets user send a message
-router.post('/send', requireLogin, permissionCheckHelper.hasPermission('sendMessage'), async (req, res) => {
-  try {
-    const id = req.user.sub
-    const sentMessage = await messageHelper.sendMessage(req.body, id)
-    if (!sentMessage) throw Error('message not sent')
-    res.json(sentMessage)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
-  }
-})
+router.post('/send', requireLogin, permissionCheckHelper.hasPermission('sendMessage'), upload.array('file', 3), async (req, res) => {
+    try {
+      const id = req.user.sub
+      const sentMessage = await messageHelper.sendMessage(req.body, req.user.sub)
+      if (!sentMessage) throw Error('message not sent')
+      res.json(sentMessage)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  })
 
-// Create User Conversation with client if not exist
 router.post(
   '/check-conversation',
   requireLogin,

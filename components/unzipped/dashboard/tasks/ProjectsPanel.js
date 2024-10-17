@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { TitleText, DarkText, WhiteCard, Underline, DIV } from '../style'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import MenuIcon from '../../../ui/icons/menu'
 import { FaRegCheckCircle } from 'react-icons/fa'
-import { getBusinessEmployees } from '../../../../redux/Business/actions'
+import { getBusinessEmployees, getProjectsList } from '../../../../redux/Business/actions'
 import { ConverterUtils } from '../../../../utils'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const ProjectsPanel = ({
   businesses,
@@ -19,6 +19,14 @@ const ProjectsPanel = ({
 }) => {
   const dispatch = useDispatch()
   const isMobileView = window.innerWidth <= 680
+
+  const  businessState  = useSelector(state => state.Business)
+  useEffect(() => {
+    if (currentBusiness?.businessDepartments?.[0]?.businessId) {
+      dispatch(getBusinessEmployees(currentBusiness.businessDepartments[0].businessId, true))
+    }
+  }, [businessState.selectedBusiness?.departments])
+  
   return (
     <>
       <DIV
