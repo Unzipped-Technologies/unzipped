@@ -120,13 +120,14 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         display="flex"
                         justifyContent="space-between"
                         alignItems="center"
-                        padding="40px 10px 15px 7px">
+                        padding="10px 10px 15px 0px">
                         <TEXT
-                          fontSize="24px"
-                          fontWeight="500"
+
+                          fontSize="18px"
+                          fontWeight="bolder"
                           lineHeight="23px"
-                          textColor="#12151B
-">
+                          textColor="#12151B"
+                        >
                           Project Hires
                         </TEXT>
                         <TEXT
@@ -138,13 +139,13 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           Budget: ${projectDetails?.budgetRange || 0}
                         </TEXT>
                       </DIV>
-                      <TEXT fontSize="20px" fontWeight="500" lineHeight="23px" textColor=" #12151B">
+                      <TEXT fontSize="18px" lineHeight="23px" textColor=" #12151B" fontWeight="bolder">
                         Project Length
                       </TEXT>
                       <TEXT
                         padding="10px 0px 0px 0px"
-                        fontWeight="300"
-                        fontSize="20px"
+                        fontWeight="200"
+                        fontSize="18px"
                         lineHeight="25.78px"
                         textColor="#12151B">
                         {projectDetails?.projectType || 'N/A'}
@@ -152,16 +153,16 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
 
                       <TEXT
                         margin="15px 0px 0px 0px"
-                        fontSize="20px"
-                        fontWeight="500"
+                        fontSize="18px"
+                        fontWeight="bolder"
                         lineHeight="23px"
                         textColor=" #12151B">
                         Description
                       </TEXT>
                       <TEXT
                         padding="10px 0px 0px 0px"
-                        fontWeight="300"
-                        fontSize="20px"
+                        fontWeight="200"
+                        fontSize="18px"
                         lineHeight="25.78px"
                         textColor="#12151B">
                         {projectDetails?.challenge || projectDetails?.role || 'N/A'}
@@ -169,8 +170,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
 
                       <TEXT
                         margin="15px 0px 0px 0px"
-                        fontSize="20px"
-                        fontWeight="500"
+                        fontSize="18px"
+                        fontWeight="bolder"
                         lineHeight="23px"
                         textColor=" #12151B">
                         Requirements
@@ -179,18 +180,18 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         {projectDetails?.objectives?.length ? (
                           projectDetails?.objectives?.map((objective, index) => (
                             <li key={`${objective}_${index}`}>
-                              <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                              <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
                                 {objective}
                               </TEXT>
                             </li>
                           ))
                         ) : (
-                          <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                          <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
                             N/A
                           </TEXT>
                         )}
                       </ProjectRequirements>
-                      <TEXT padding="10px 0px 10px 0px" fontSize="20px" lineHeight="23px" textColor=" #12151B">
+                      <TEXT padding="10px 0px 10px 0px" fontSize="18px" lineHeight="23px" textColor=" #12151B" fontWeight="bolder">
                         Skills Required
                       </TEXT>
                       {projectDetails?.requiredSkills?.length
@@ -204,19 +205,22 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       </TEXT>
                     </ProjectDetail>
                     <ProjectDetail margin="10px 0px 0px 0px">
-                      <TEXT
-                        padding="20px 10px 10px 0px"
-                        fontSize="24px"
-                        fontWeight="500"
-                        lineHeight="23px"
-                        textColor="#12151B">
-                        Project Goals
-                      </TEXT>
+                      <div style={{ borderBottom: '1px solid #BCC5D3', margin: '0px auto' }}>
+                        <TEXT
+                          padding="20px 0px 10px 0px"
+                          fontSize="20px"
+                          fontWeight="bolder"
+                          lineHeight="23px"
+                          textColor="#12151B">
+                          Project Goals
+                        </TEXT>
+                      </div>
                       <TEXT
                         textAlign="justify"
-                        fontWeight="300"
-                        fontSize="20px"
-                        lineHeight="25.78px"
+                        padding="20px 0px 20px 0px"
+                        fontWeight="200"
+                        fontSize="18px"
+                        lineHeight="23.44px"
                         textColor="#12151B">
                         {projectDetails?.goals || 'N/A'}
                       </TEXT>
@@ -225,23 +229,23 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       <div style={{ borderBottom: '1px solid #BCC5D3', margin: '0px auto' }}>
                         <TEXT
                           padding="20px 0px 10px 0px"
-                          fontSize="24px"
-                          fontWeight="500"
+                          fontSize="20px"
+                          fontWeight="bolder"
                           lineHeight="23px"
                           textColor="#12151B">
                           Additional Details
                         </TEXT>
                       </div>
 
-                      <TEXT padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
+                      <TEXT padding="20px 0px 20px 0px" fontWeight="bolder" fontSize="18px" lineHeight="23.44px">
                         Budget
                       </TEXT>
-                      <TEXT fontSize="20px" lineHeight="24.5px" fontWeight="300" textColor="#444444">
+                      <TEXT fontSize="18px" lineHeight="24.5px" fontWeight="200" textColor="#444444">
                         ${projectDetails?.budgetRange || 0}{' '}
                         {projectDetails?.projectBudgetType === 'Hourly Rate' ? 'per Hour' : 'Fixed'}
                       </TEXT>
 
-                      <TEXT padding="20px 0px 20px 0px" fontWeight="500" fontSize="20px" lineHeight="23.44px">
+                      <TEXT padding="20px 0px 20px 0px" fontWeight="bolder" fontSize="18px" lineHeight="23.44px">
                         Project Image
                       </TEXT>
                       <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
@@ -257,7 +261,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                             />
                           ))
                         ) : (
-                          <TEXT fontWeight="300" fontSize="20px" lineHeight="25.78px" textColor="#444444">
+                          <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
                             N/A
                           </TEXT>
                         )}
@@ -265,17 +269,17 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                     </ProjectDetail>
                   </div>
                   <AboutClient data-testid="about_client_container">
-                    <TEXT topMargin="20px" fontSize="20px" fontWeight="500" lineHeight="24.5px" textColor="#123456">
+                    <TEXT topMargin="18px" fontSize="18px" fontWeight="bolder" lineHeight="24.5px" textColor="#123456">
                       About client
                     </TEXT>
                     <DIV margin="15px 0px 15px 0px">
                       <DIV display="flex" flexDirection="column">
                         <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
                         <TEXT
-                          fontSize="20px"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
-                          fontWeight="500"
+                          fontWeight="200"
                           padding="3px 0px 0px 5px">
                           {projectDetails?.businessCity || 'N/A'}
                         </TEXT>
@@ -283,10 +287,10 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
                         <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
                         <TEXT
-                          fontSize="20px"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
-                          fontWeight="500"
+                          fontWeight="200"
                           padding="3px 0px 0px 5px">
                           {projectDetails?.businessCountry || 'N/A'}
                         </TEXT>
@@ -294,8 +298,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       <DIV display="flex" flexDirection="column" padding="10px 0px 0px 0px">
                         <MdPerson style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
                         <TEXT
-                          fontWeight="300"
-                          fontSize="20px"
+                          fontWeight="200"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
                           padding="3px 0px 0px 5px">
@@ -305,8 +309,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
                         <MdAccessTime style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
                         <TEXT
-                          fontWeight="300"
-                          fontSize="20px"
+                          fontWeight="200"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
                           padding="3px 0px 0px 5px">
@@ -318,8 +322,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                     <DIV>
                       <TEXT
                         padding="20px 0px 0px 0px"
-                        fontSize="20px"
-                        fontWeight="500"
+                        fontSize="18px"
+                        fontWeight="bolder"
                         lineHeight="24.5px"
                         textColor="#123456">
                         Client Verification
@@ -333,8 +337,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           }}
                         />{' '}
                         <TEXT
-                          fontWeight="300"
-                          fontSize="20px"
+                          fontWeight="200"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
                           padding="3px 0px 0px 5px">
@@ -350,8 +354,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           }}
                         />{' '}
                         <TEXT
-                          fontWeight="300"
-                          fontSize="20px"
+                          fontWeight="200"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
                           padding="3px 0px 0px 5px">
@@ -361,8 +365,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
                         <MdDesktopWindows style={{ marginTop: '4px', fontSize: '24px', color: '#8EDE64' }} />{' '}
                         <TEXT
-                          fontWeight="300"
-                          fontSize="20px"
+                          fontWeight="200"
+                          fontSize="18px"
                           lineHeight="24.5px"
                           textColor="#123456"
                           padding="3px 0px 0px 5px">

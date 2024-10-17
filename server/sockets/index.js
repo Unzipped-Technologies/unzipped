@@ -7,9 +7,13 @@ const MessageHelper = require('./../helpers/message')
 const FreelancerHelper = require('./../helpers/freelancer')
 const UserModel = require('./../models/User')
 const ZoomHelper = require('./../helpers/ZoomHelper')
+const FileModel = require('./../models/file')
+const CloudinaryManager = require('../../../unzipped/services/cloudinary')
 
 module.exports = createSocket = server => {
-  const io = socketIO(server)
+  const io = socketIO(server, {
+    maxHttpBufferSize: 1e9
+  });
   const onlineUsers = {}
 
   io.on('connection', socket => {
@@ -20,7 +24,7 @@ module.exports = createSocket = server => {
         user._doc.LastName
       } is trying to schedule a meeting with you for ${getMonthByName(params.primaryTime.Date)} at ${
         params.primaryTime.Time
-      }. Please review if this time will work for you, and approve.`
+        }. Please review if this time will work for you, and approve.`
       const msgObj = {
         sender: params.senderId,
         meetingId: meetingCreated._id,
@@ -81,7 +85,7 @@ module.exports = createSocket = server => {
           user._doc.LastName || ''
         } has accepted your invitation for a meeting on ${getMonthByName(meeting.primaryTime.Date)} at ${
           meeting.primaryTime.Time
-        }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
+          }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
       }
 
       const msgObj = {
@@ -157,7 +161,7 @@ module.exports = createSocket = server => {
           user?.LastName || ''
         } has accepted your invitation for a meeting on ${getMonthByName(meeting.primaryTime.Date)} at ${
           meeting.primaryTime.Time
-        }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
+          }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
         const msgObj = {
           sender: meeting.senderId,
           meetingId: meeting._id,
@@ -207,19 +211,56 @@ module.exports = createSocket = server => {
     })
 
     socket.on('chat message', async message => {
-      const conversation = {
-        ...message,
-        unreadCount: 1
-      }
-      socket.broadcast.to(onlineUsers[message?.receiver?.userId]).emit('chat message', conversation)
-      socket.emit('chat message', conversation)
-
       try {
         const headers = {
           access_token: message?.access
         }
-        await axios.post(`${keys.redirectDomain}/api/message/send`, message, { headers })
+        const filesArray = [];
+        for (const file of message.attachment) {
+          const uploadFileResp = await CloudinaryManager.uploader.upload(file.file, {
+            filename_override: file.name,
+            folder: message?.sender?.userId,
+            resource_type: file.type.startsWith('image') ? 'image' : 'auto',
+          });
 
+          const newFile = await FileModel.create({
+            name: uploadFileResp.original_filename,
+            size: uploadFileResp.bytes,
+            url: uploadFileResp.secure_url,
+            cloudinaryId: uploadFileResp.public_id,
+            userId: message?.sender?.userId,
+            resource_type: uploadFileResp.resource_type,
+            format: uploadFileResp.format,
+            width: uploadFileResp.width,
+            height: uploadFileResp.height
+          });
+
+          const user = await UserModel.findById(message?.sender?.userId).select('files');
+          if (user) {
+            user.files.push(newFile._id);
+            await user.save();
+          }
+          if (newFile) {
+            filesArray.push({
+              fileId: newFile._id,
+              name: newFile.name,
+              url: newFile.url,
+              resourceType: newFile.resource_type,
+              format: newFile.format,
+              width: newFile.width,
+              height: newFile.height,
+            });
+          }
+        }
+
+        const messageObj = { ...message, attachment: filesArray }
+        const conversation = {
+          ...messageObj,
+          unreadCount: 1
+        }
+        socket.broadcast.to(onlineUsers[message?.receiver?.userId]).emit('chat message', conversation)
+        socket.emit('chat message', conversation)
+        await axios.post(`${keys.redirectDomain}/api/message/send`, messageObj, { headers })
         await conversations.findOneAndUpdate(
           { _id: conversation.conversationId },
           {
@@ -242,7 +283,7 @@ module.exports = createSocket = server => {
         socket.emit('chat message', error)
       }
     })
-
+  
     socket.on('typing', message => {
       io.emit('typing', message)
     })

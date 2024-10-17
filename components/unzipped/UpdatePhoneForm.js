@@ -99,16 +99,19 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
   }
 
   const isFormValid = () => {
-    // Check if all Phone fields have some text
-    let fieldsFilled = userData.currentPhone && userData.phoneNumber
-    if (!phone && userData.phoneNumber) {
-      fieldsFilled = true
-    }
-    // Check if there are no error messages set
-    const noErrors = !PhoneError
 
-    return fieldsFilled && noErrors
-  }
+    const validatedPhoneNumber = userData.phoneNumber.replace(/\D/g, '');
+    let fieldsFilled = userData.currentPhone && validatedPhoneNumber;
+    if (!phone && validatedPhoneNumber) {
+      fieldsFilled = true;
+    }
+
+    const noErrors = !PhoneError;
+    const isNumberValid = validatedPhoneNumber.length === 10;
+
+    return fieldsFilled && noErrors && isNumberValid;
+  };
+
 
   const validatePhone = phone => {
     if (phone) {
@@ -130,6 +133,41 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
   const confirmPhoneNotMatch = () => {
     return userData.phoneNumber === userData.currentPhone
   }
+
+  const validateAndFormatPhoneNumber = (phoneNumber) => {
+    const phoneRegex = /^(1\s?)?(\(\d{3}\)|\d{3})([-.\s]?)\d{3}\2\d{4}$/;
+
+    const cleanedNumber = phoneNumber.replace(/\D/g, '');
+
+    let formattedNumber = '';
+    if (cleanedNumber.length > 0) {
+      formattedNumber += '(' + cleanedNumber.substring(0, 3);
+    }
+    if (cleanedNumber.length >= 3) {
+      formattedNumber += ') ' + cleanedNumber.substring(3, 6);
+    }
+    if (cleanedNumber.length >= 6) {
+      formattedNumber += '-' + cleanedNumber.substring(6, 10);
+    }
+
+    const isValid = phoneRegex.test(formattedNumber);
+
+
+    return formattedNumber
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Backspace') {
+      const cursorPosition = e.target.selectionStart;
+      const pNumber = validateAndFormatPhoneNumber(userData.phoneNumber.slice(0, cursorPosition - 1));
+
+      updateForm('phoneNumber', pNumber);
+
+      setTimeout(() => {
+        e.target.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+      }, 0);
+    }
+  };
 
   return (
     <Container>
@@ -164,12 +202,9 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
             error={PhoneError}
             validate={validatePhone}
             onChange={e => {
-              validatePhone(ValidationUtils._formatPhoneNumber(e.target.value))
-              updateForm('phoneNumber', e.target.value)
+              updateForm('phoneNumber', validateAndFormatPhoneNumber(e.target.value))
             }}
-            onBlur={e => {
-              validatePhone(ValidationUtils._formatPhoneNumber(e.target.value))
-            }}
+            onKeyDown={handleKeyDown}
             value={userData.phoneNumber}>
             Phone
           </FormField>

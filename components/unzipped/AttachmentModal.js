@@ -1,65 +1,138 @@
-import React, {useState} from 'react'
-import Modal from '../ui/Modal'
-import Button from '../ui/Button'
-import FileUpload from '../ui/FileUpload'
-import styled from 'styled-components'
-import { BrowserUtils, ConverterUtils, FSNetHTTP, appInsights } from '../../utils'
+import React, { useState, useRef, useEffect } from 'react';
+import Modal from '../ui/Modal';
+import Button from '../ui/Button';
+import styled from 'styled-components';
+import UploadArrow from '../../components/icons/uploadArrow';
+import Dropzone from 'react-dropzone';
+import ClearSharpIcon from '@material-ui/icons/ClearSharp';
 
 const Right = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 `;
 
-const AttachmentModal = ({
-    //functions
-    setFileUploadModal, 
-    createTempFile
-}) => {
-    const [messageFile, setMessageFile] = useState({})
-    const handleFileChange = (e) => {
-        console.log(e.target.files[0])
-        return submitTemporaryFile(e.target.files[0])
-    }
-    const submitTemporaryFile = async (file) => {
-        console.log('/////', file)
-        try {
-            const tempDoc = await FSNetHTTP.getDocTempFile(file)
-            setMessageFile({name: file?.name, address: tempDoc?.data?.url})
-        } catch (err) {
-            appInsights.trackException({exception: err})
+const Left = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 20px;
+`;
+
+const ImageWrapper = styled.div`
+  width: 95%;
+  border-radius: 10px;
+  background: #D9D9D9;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: ${({ isMaxFileLimit }) => (isMaxFileLimit ? '1' : '1')};
+`;
+
+const ImageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+`;
+
+const ImageTextStyled = styled.p`
+  color: #444;
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 10px;
+`;
+
+const ContentContainer = styled.div`
+  padding: 10px 20px;
+  width: 90%;
+  font-family: 'Roboto';
+  line-height: 25px;
+  font-size: 16px;
+`;
+
+const ContainedSpan = styled.span`
+  display: inline-flex;
+  align-items: center;
+  border-radius: 15px;
+  background-color: #d9d9d9;
+  padding: 2px 10px;
+  margin: 5px;
+  font-size: 14px;
+`;
+
+const AttachmentModal = ({ setFileUploadModal, userId, onUpload, setAttachmentsInfo, attachmentsInfo }) => {
+    const dropzoneRef = useRef(null);
+    const [isMaxFileLimit, setIsMaxFileLimit] = useState(false);
+
+    const openDropzone = () => {
+        if (dropzoneRef.current && !isMaxFileLimit) {
+            dropzoneRef.current.open();
         }
-    }
-    console.log('messageFile', messageFile)
-    const openDoc = url => {
-        BrowserUtils._openDoc(url)
-    }
-    const deleteUploadedFile = () => {
-        setMessageFile({})
-    }
-    const downloadFile = () => {
-        setMessageFile({})
-    }
-    // TODO: note maximum size allowed for file is 10485760
+    };
+    const handleDrop = (acceptedFiles) => {
+
+        var reader = new FileReader();
+        reader.readAsDataURL(acceptedFiles[0]);
+        reader.onload = function () {
+            setAttachmentsInfo(prevAttachments => [...prevAttachments, {
+                file: reader.result,
+                name: acceptedFiles[0].name.split('.')[0],
+                type: acceptedFiles[0].type
+            }])
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };F
+    };
+
+    const handleFileAttachmentModal = () => {
+        setFileUploadModal(false);
+    };
+
+    const handleDeleteFile = (index) => {
+        setAttachmentsInfo((prevAttachments) => prevAttachments.filter((_, i) => i !== index));
+    };
+
     return (
         <Modal onHide={() => setFileUploadModal(false)}>
-            <FileUpload
-                fileAddress={messageFile?.address}
-                fileName={messageFile?.name}
-                handleFileChange={e => handleFileChange(e)}
-                isReplace={messageFile?.name}
-                isDelete={messageFile?.name}
-                isView={messageFile?.address}
-                isDownload={messageFile?.name}
-                title={`Upload attachment ${messageFile.name || 'file'}.`}
-                toolTipText="Form is used for..."
-                download={downloadFile}
-                openDoc={() => openDoc(messageFile?.address)}
-                deleteDoc={deleteUploadedFile}
-            />
-            <Right><Button noBorder>Attach</Button></Right>
-        </Modal>
-    )
-}
+            <ImageWrapper onClick={openDropzone} >
+                <ImageContainer>
+                    <UploadArrow />
+                    <ImageTextStyled>Upload Files (.png, .jpg, .txt, .pdf, .csv)</ImageTextStyled>
+                    <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick multiple>
+                        {({ getRootProps, getInputProps }) => (
+                            <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                            </div>
+                        )}
+                    </Dropzone>
+                </ImageContainer>
+            </ImageWrapper>
 
-export default AttachmentModal
+            <Left>
+                <ContentContainer>
+                    {attachmentsInfo.map((file, index) => (
+                        <ContainedSpan key={file.name + '_' + index}>
+                            <ClearSharpIcon
+                                data-testid={`${file.name}_icon`}
+                                style={{ fontSize: '12px', color: 'white', background: '#333', borderRadius: '50%', marginRight: '5px', cursor: 'pointer' }}
+                                onClick={() => handleDeleteFile(index)}
+                            />
+                            {file.name}
+                        </ContainedSpan>
+                    ))}
+                </ContentContainer>
+            </Left>
+
+            <Right>
+                <Button noBorder onClick={handleFileAttachmentModal}>Attach</Button>
+            </Right>
+        </Modal>
+    );
+};
+
+export default AttachmentModal;

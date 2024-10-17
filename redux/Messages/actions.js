@@ -9,7 +9,9 @@ import {
   RESET_MESSAGE_STORE,
   SET_USER_ID_FOR_CHAT,
   CHECK_CONVERSATIONS,
-  CONVERSATION_ERROR
+  CONVERSATION_ERROR,
+  INBOX_ATTACHMENTS,
+  RESET_INBOX_ATTACHMENTS
 } from './constants'
 import _ from 'lodash'
 import axios from 'axios'
@@ -130,5 +132,19 @@ export const setUserIdForChat = data => async dispatch => {
   dispatch({
     type: SET_USER_ID_FOR_CHAT,
     payload: data
+  })
+}
+
+export const inboxAttachments = data => dispatch => {
+  dispatch({
+    type: INBOX_ATTACHMENTS,
+    payload: data
+  })
+}
+
+export const resetInboxAttachments = () => dispatch => {
+  dispatch({
+    type: RESET_INBOX_ATTACHMENTS,
+    payload: []
   })
 }

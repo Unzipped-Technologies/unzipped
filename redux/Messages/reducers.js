@@ -7,7 +7,9 @@ import {
   UPDATE_CONVERSATION_MESSAGE,
   SET_COUNT_ZERO,
   RESET_MESSAGE_STORE,
-  SET_USER_ID_FOR_CHAT
+  SET_USER_ID_FOR_CHAT,
+  INBOX_ATTACHMENTS,
+  RESET_INBOX_ATTACHMENTS
 } from './constants'
 
 const INIT_STATE = {
@@ -21,7 +23,8 @@ const INIT_STATE = {
   selectedUserId: null,
   conversationId: '',
   messagesCount: null,
-  error: null
+  error: null,
+  inboxAttachments: []
 }
 
 const Messages = (state = INIT_STATE, action) => {
@@ -152,6 +155,16 @@ const Messages = (state = INIT_STATE, action) => {
       return {
         ...state,
         selectedUserId: action.payload
+      }
+    case INBOX_ATTACHMENTS:
+      return {
+        ...state,
+        inboxAttachments: action.payload
+      }
+    case RESET_INBOX_ATTACHMENTS:
+      return {
+        ...state,
+        inboxAttachments: []
       }
 
     default:
