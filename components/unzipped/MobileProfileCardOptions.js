@@ -97,11 +97,11 @@ function MobileProfileCardOptions({
   }
 
   const sendMessage = async () => {
-    await setUserIdForChat(user?.userId?._id)
+    await setUserIdForChat(user?.userId)
 
     if (window.innerWidth <= 680) {
       const response = await checkUserConversation({
-        freelancerId: user?.userId?._id,
+        freelancerId: user?.userId,
         clientId: userId
       })
       if (response?.data?._id || response?.data === true) {
