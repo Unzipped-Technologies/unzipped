@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
-
+import { FaRegThumbsDown } from "react-icons/fa";
 import ProfileTab from './ProfileTab'
 import { Badge, Icon, Image } from '../ui'
 import { ConverterUtils } from '../../utils'
@@ -167,15 +167,15 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
               {user?.category}
             </P>
           )}
-          <div>
+          <div style={{display:'flex',flexDirection: "row",justifyContent:'flex-end'}}>
+            <div>
             {user?.AddressLineCountry && (
-              <P fontSize="14px" fontWeight="300" data-testid="address_country">
-                {user?.AddressLineCountry}
+              <P fontSize="14px" fontWeight="300" style={{paddingTop:"10px"}} data-testid="address_country">
+                {user?.AddressLineCountry }
               </P>
             )}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginRight: '16px',  marginLeft:'70px'}}>
               <span onClick={handleLike}>
                 <IconComponent name="thumbUp" width="18" height="18" viewBox="0 0 15 15" fill="#0057FF" />
               </span>
@@ -183,7 +183,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <span onClick={handleDisLike}>
-                <IconComponent name="thumbUp" width="18" height="18" viewBox="0 0 15 15" fill="#0057FF" />
+              <FaRegThumbsDown style={{width:"18", height:"18",viewBox:"0 0 15 15", marginTop:"3px"}}  fill="#0057FF" />
               </span>
               <P margin="0px 3px">{user?.dislikeTotal}</P>
             </div>

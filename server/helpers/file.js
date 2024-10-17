@@ -59,7 +59,7 @@ const createFile = async (fileOrFiles, userId) => {
 
     for (const file of filesArray) {
       let ext = path.extname(file.originalname);
-      const isRaw = ['.xmls', '.xlsx', '.csv'].includes(ext);
+      const isRaw = ['.xmls', '.xlsx', '.csv','.pdf','.txt'].includes(ext);
       const resourceType = isRaw ? 'auto' : 'image';
       const result = await cloudinary.uploader.upload(file.path, {
         filename_override: file.originalname,
@@ -91,7 +91,6 @@ const createFile = async (fileOrFiles, userId) => {
     return createdFiles;
   } catch (err) {
     console.log('Failed to upload:', err);
-    throw err;
   }
 };
 
