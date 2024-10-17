@@ -63,7 +63,7 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
 
   const [anchorEl, setAnchorEl] = React.useState(null)
 
-  const handleClick = event => {
+  const handleFreelancerAvailability = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
@@ -242,18 +242,22 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       </Content>
 
       <LikeBox>
-        <Button
-          block
-          width="36px"
-          type="button"
-          buttonHeight="36px"
-          fontSize="15px"
-          noBorder
-          onClick={e => {
-            handleClick(e)
-          }}>
-          CHECK AVAILABILITY
-        </Button>
+        {
+          role !== 1 && (
+            <Button
+              block
+              width="36px"
+              type="button"
+              buttonHeight="36px"
+              fontSize="15px"
+              noBorder
+              onClick={e => {
+                handleFreelancerAvailability(e)
+              }}>
+              CHECK AVAILABILITY
+            </Button>
+          )
+        }
         <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}>
           <Card
             sx={{

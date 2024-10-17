@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux'
 
 import IconComponent from '../../ui/icons/IconComponent'
 import { logoutUser, getCurrentUserData } from '../../../redux/actions'
+import UpdateProfileModal from '../UpdateProfileModal'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -39,6 +40,8 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
   const router = useRouter()
 
   const [showSettings, setShowSettings] = useState(false)
+  const [isProfileModal, setIsProfileModal] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +62,14 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
     linkPush('/login')
   }
 
+  const handleOpenProfileModal = () => {
+    setIsProfileModal(true)
+  }
+
+  const handleCloseProfileModal = () => {
+    setIsProfileModal(false)
+  }
+
   return (
     <div className="mb-10">
       <P margin="0" padding="0 0 0 15px" fontSize="20px" fontWeight={500}>
@@ -76,11 +87,11 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
               data-testid="user_profile_image"
             />
             <div className="mx-2">
-              <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="20px">
-                {user.FullName}
+              <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="17px">
+              {user?.FirstName + ' ' + user?.LastName}
               </P>
               <P margin="0" padding="0 0 5px 0" fontSize="16px">
-                {user?.freelancers?.category}
+                {user?.freelancers?.category || 'N/A'}
               </P>
             </div>
           </div>
@@ -156,6 +167,15 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
                 </P>
                 <Link href="/change-password">Update Password</Link>
               </div>
+              <div className="d-flex align-items-center justify-content-between mt-3">
+                <P fontSize="16px" margin="0px 0px 0px 20px">
+                  Profile
+                </P>
+                <P style={{fontSize:"15px",color:"#0095dd"}} onClick={() => {
+                  handleOpenProfileModal()
+                }}>
+                  Update</P>
+              </div>
             </>
           )}
         </div>
@@ -225,6 +245,12 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
           </P>
         </div>
       </Container>
+
+      {isProfileModal && (<UpdateProfileModal
+        open={isProfileModal}
+        onHide={() => {
+          handleCloseProfileModal()
+        }} />)}
     </div>
   )
 }
