@@ -27,7 +27,7 @@ const MobileTaskDetail = ({ getTaskById, detail, resetStoryForm }) => {
         isSubMenu
         marginBottom={'85px'}
         isLogoHidden
-        listName={'Ai team'}
+        listName={detail.taskName}
         setIsViewable={() => {}}
         setListName={() => {}}
         setIsLogoHidden={() => {}}

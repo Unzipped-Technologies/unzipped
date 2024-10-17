@@ -50,6 +50,17 @@ function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, use
 
   const limitedProjects = useMemo(() => businesses.slice(0, 3), [businesses])
 
+  const limitedDepartments = useMemo(() => {
+    const departments = [];
+    limitedProjects.forEach(project => {
+      if (project.businessDepartments) {
+        departments.push(...project.businessDepartments);
+      }
+    });
+    return departments.slice(0, 3);
+  }, [limitedProjects]);
+
+
   return (
     <Container className="px-4 mb-5 pb-4">
       <span data-testid="view_mobile_projects">
@@ -113,22 +124,27 @@ function MobileProjects({ businesses = [], getProjectsList, getInvitesLists, use
           <TEXT fontSize="16px" fontWeight="500" textColor="#000">
             Departments
           </TEXT>
-          <TEXT fontSize="12px" fontWeight="500" textColor="#0057FF">
+          <TEXT fontSize="12px" fontWeight="500" textColor="#0057FF" onClick={() => {
+            router.push(`/dashboard/tasklist`)
+          }}>
             VIEW ALL
           </TEXT>
         </div>
-        <Heading>
-          <img src="/img/heart.png" height={15} width={20} />
-          <TEXT>Department one</TEXT>
-        </Heading>
-        <Heading>
-          <IconComponent name="eye" width="20" height="13" viewBox="0 0 20 13" fill="#8EDE64" />
-          <TEXT>Department two</TEXT>
-        </Heading>
-        <Heading>
-          <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
-          <TEXT>Department three</TEXT>
-        </Heading>
+        {limitedDepartments.length ? (
+          limitedDepartments.map(dept => (
+            <Heading
+              key={dept._id}
+              onClick={() => {
+                router.push(`/dashboard/department/${dept._id}`);
+              }}>
+              <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#000000" />
+              <TEXT>{ValidationUtils.truncate(dept?.name, 40)}</TEXT>
+            </Heading>
+          ))
+        ) : (
+           <p style={{ textAlign: 'center' }}>No departments</p>
+        )
+        }
       </span>
     </Container>
   )

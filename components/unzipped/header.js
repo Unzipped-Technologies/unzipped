@@ -667,10 +667,9 @@ const Nav = ({
               <span
                 style={{
                   marginLeft: 10,
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: 600,
-                  letterSpacing: '0.15px',
-                  lineHeight: '19.5px'
+                  letterSpacing: '0.85px',
                 }}>
                 Lists
               </span>
@@ -693,10 +692,9 @@ const Nav = ({
             <span
               style={{
                 marginLeft: 10,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: 600,
-                letterSpacing: '0.15px',
-                lineHeight: '19.5px'
+                letterSpacing: '0.85px',
               }}>
               {listName ? listName : ''}
             </span>

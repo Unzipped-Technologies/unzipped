@@ -25,6 +25,7 @@ import {
 } from '../../../../redux/actions'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
+import SaveIcon from '@mui/icons-material/Save'
 import { useRouter } from 'next/router'
 
 const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
@@ -40,9 +41,9 @@ const Button = styled.button`
   text-transform: uppercase;
   flex-shrink: 0;
   border-radius: 5px;
-  font-size: ${({ fontSize }) => (fontSize ? fontSize : '15px')};
-  width: ${({ width }) => (width ? width : '100px')};
-  height: ${({ height }) => (height ? height : '34px')};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '13px')};
+  width: ${({ width }) => (width ? width : '75px')};
+  height: ${({ height }) => (height ? height : '25px')};
   color: ${({ color }) => (color ? color : '#fff !important')};
   background: ${({ backgroundColor }) => (backgroundColor ? backgroundColor : '#1976d2 !important')};
   outline: ${({ outline }) => (outline ? outline : 'none !important')};
@@ -60,7 +61,7 @@ const TaskFormContainer = styled.div`
   width: 100%;
   flex-direction: column;
 
-  padding: 10px;
+  padding: 30px;
 `
 
 const Task = styled.div`
@@ -98,6 +99,10 @@ const MobileTaskForm = ({
   const [commentId, setCommentId] = useState('')
   const [tag, setTag] = useState('')
   const [error, setError] = useState('')
+  const [ticketStatus, setTicketStatus] = useState('')
+  useEffect(() => {
+    setTicketStatus(taskForm?.status)
+  }, [taskForm?.status])
 
   const [comments, setComments] = useState([])
   const [newComment, setComment] = useState({
@@ -112,6 +117,9 @@ const MobileTaskForm = ({
   const [editInputValue, setEditInputValue] = useState('')
   const [inputStatus, setInputStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
+  const statusList = departmentData?.departmentTags?.length > 0
+  ? departmentData.departmentTags.map(tag => tag.tagName)
+  : []
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
@@ -127,18 +135,18 @@ const MobileTaskForm = ({
                 width={'25px'}
                 height={'25px'}
                 radius={'50%'}
-                margin={'5px 5px  0px 0px'}
+                margin={'0px 5px  0px 0px'}
               />
             </div>
             <div>
               <div
                 style={{
-                  color: '#000',
+                  color: '#787878',
                   textAlign: 'center',
                   fontFamily: 'Roboto',
                   fontSize: '14px',
                   fontStyle: 'normal',
-                  fontWeight: 500,
+                  fontWeight: 600,
                   lineHeight: 'normal',
                   letterSpacing: '0.4px',
                   textTransform: 'capitalize'
@@ -149,11 +157,12 @@ const MobileTaskForm = ({
                 style={{
                   color: '#787878',
                   textAlign: 'center',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   fontStyle: 'normal',
                   fontWeight: 500,
                   lineHeight: 'normal',
-                  letterSpacing: '0.4px'
+                  letterSpacing: '0.4px',
+                  paddingLeft:'12px',
                 }}>
                 {contract?.freelancer?.user?.email}
               </div>
@@ -169,16 +178,16 @@ const MobileTaskForm = ({
             <Image
               src={departmentData?.client?.profileImage}
               alt="Assignee Image"
-              width={'25px'}
-              height={'25px'}
+              width={'30px'}
+              height={'30px'}
               radius={'50%'}
-              margin={'5px 5px  0px 0px'}
+              margin={'0px 5px  0px 0px'}
             />
           </div>
           <div>
             <div
               style={{
-                color: '#000',
+                color: '#787878',
                 textAlign: 'center',
                 fontFamily: 'Roboto',
                 fontSize: '14px',
@@ -194,11 +203,12 @@ const MobileTaskForm = ({
               style={{
                 color: '#787878',
                 textAlign: 'center',
-                fontSize: '10px',
+                fontSize: '11px',
                 fontStyle: 'normal',
                 fontWeight: 500,
                 lineHeight: 'normal',
-                letterSpacing: '0.4px'
+                letterSpacing: '0.4px',
+                paddingLeft: '12px'
               }}>
               {departmentData?.client?.email}
             </div>
@@ -246,7 +256,7 @@ const MobileTaskForm = ({
 
   const taskStatusOptions = useMemo(() => {
     return (
-      TASK_STATUS?.map(status => ({
+      statusList?.map(status => ({
         value: status,
         label: status
       })) || []
@@ -330,7 +340,11 @@ const MobileTaskForm = ({
     }
   }
 
-  const handleSubmit = async () => {
+  const handleTaskFormSubmission = async () => {
+    if (taskForm?.assignee === 'unassigned') {
+      taskForm.assignee = userId
+    }
+
     if (validateForm()) {
       if (newComment?.comment) {
         const comments = [
@@ -419,7 +433,6 @@ const MobileTaskForm = ({
 
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
-      updateForm('tags', [])
       setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
       setEditInputValue('')
     }
@@ -432,23 +445,23 @@ const MobileTaskForm = ({
   useEffect(() => {
     restTagsList()
     if (router.pathname.includes('department')) {
-      updateForm('tags', [...taskForm?.tags, ...selectedTags])
+      updateForm('tags',selectedTags)
     }
   }, [selectedTags])
 
   useEffect(() => {
     if (router.pathname.includes('ticket')) {
       restTagsList()
-      updateForm('tags', [...taskForm?.tags, ...editSelectedTags])
+      updateForm('tags',editSelectedTags)
     }
   }, [editSelectedTags])
 
   useEffect(() => {
     if (router.pathname.includes('ticket') && taskDetail?.tags?.length > 0) {
-      setEditSelectedTags([])
-      setEditSelectedTags([...editSelectedTags, ...taskDetail?.tags])
+      
+      setEditSelectedTags([...taskDetail?.tags])
     }
-  }, [])
+  }, [taskDetail?.tags])
 
   return (
     <TaskFormContainer>
@@ -505,7 +518,7 @@ const MobileTaskForm = ({
           flexDirection: 'row',
           justifyContent: 'flex-start',
           alignItems: 'center',
-          paddingTop: '20px',
+          paddingTop: '10px',
           width: '100%'
         }}>
         <div className="d-flex" style={{ width: '70%' }}>
@@ -541,8 +554,35 @@ const MobileTaskForm = ({
               enableEditMode('assignee')
             }}
             onBlur={() => {
+              if (taskForm?.assignee === 'unassigned') {
+                updateForm('assignee', departmentData?.client?._id);
+              }
               validateForm()
               enableEditMode('')
+            }}
+
+            styles={{
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isSelected ? '#8CBAE8' : 'white',
+                color: state.isSelected ? '#000' : '#787878',
+                ':hover': {
+                  backgroundColor: 'lightblue', 
+                },    
+              }),
+            
+              control: (provided) => ({
+                ...provided,
+                border: editMode ? 'none' : '1px solid #ccc', 
+                '&:hover': {
+                  border: 'none',
+                  borderRadius:'none'
+                },
+              }),
+            }}
+            components={{
+              DropdownIndicator: () => null, 
+              IndicatorSeparator: () => null, 
             }}
           />
         </div>
@@ -571,14 +611,16 @@ const MobileTaskForm = ({
           ''
         )}
       </div>
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ marginTop: '12px' }}>
         <TEXT
-          padding="5px 0px 0px 0px"
+          padding="15px 0px 0px 0px"
           textColor="#000000"
           fontSize="16px"
           lineHeight="21.09px"
           fontWeight="500"
-          width="65px">
+          width="65px"
+          margin="0px 0px 2px 0px"
+          >
           Priority:
         </TEXT>
       </div>
@@ -618,7 +660,7 @@ const MobileTaskForm = ({
 
       <div>
         <div>
-          <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="80px" padding="0px">
+          <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="80px" padding="10px 0px 0px 0px" margin="0px 0px 2px 0px ">
             Status:
           </TEXT>
         </div>
@@ -626,13 +668,16 @@ const MobileTaskForm = ({
 
       <div>
         <Autocomplete
-          value={inputStatus}
-          disablePortal
-          id="combo-box-demo"
-          options={STATUS_OPTIONS_ARR}
+        value={ticketStatus}
+         disablePortal
+         id="combo-box-demo" 
+          options={statusList}
           onChange={(event, value) => {
-            setInputStatus(value)
-            updateForm('status', value)
+            const tag = departmentData?.departmentTags?.find(item => item.tagName === value);
+            if (tag) {
+              updateForm('status', tag.tagName);
+              updateForm('tag', tag._id);
+            }
           }}
           sx={{
             width: '100%',
@@ -640,7 +685,7 @@ const MobileTaskForm = ({
               bgcolor: 'background.paper',
               border: '0px !important',
               borderRadius: '0px !important',
-              margin: '0px !important',
+              margin: '0px 0px 2px 0px !important',
               padding: '0px !important',
               fontSize: '16px',
               boxShadow: 'none',
@@ -658,13 +703,12 @@ const MobileTaskForm = ({
         />
       </div>
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="120px !important">
+        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="120px !important" padding="10px 0px 0px 0px" margin="0px 0px 2px 0px ">
           Story Points:
         </TEXT>
       </div>
       <div
         style={{
-          marginTop: '20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start'
@@ -701,7 +745,7 @@ const MobileTaskForm = ({
         )}
       </div>
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="40px !important">
+        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="40px !important" padding="12px 0px 0px 0px" margin="0px 0px 2px 0px ">
           Tags:
         </TEXT>
       </div>
@@ -855,7 +899,7 @@ const MobileTaskForm = ({
       </div>
 
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="100px !important">
+        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="100px !important" padding="10px 0px 0px 0px">
           Description:
         </TEXT>
       </div>
@@ -870,7 +914,7 @@ const MobileTaskForm = ({
             zIndexUnset
             fieldType="input"
             textarea
-            margin={'10px 0px 0px 0px'}
+            margin={'2px 0px 0px 0px'}
             fontSize="14px"
             borderColor="red"
             disableBorder={!editMode.description}
@@ -928,9 +972,8 @@ const MobileTaskForm = ({
           disabled={disableBtn}
           onClick={async e => {
             e?.preventDefault()
-            await handleSubmit()
+            await handleTaskFormSubmission()
           }}
-          width="58.25px"
           extraWide
           margin="0px 37px 0px 20px"
           type="black"
@@ -1012,10 +1055,25 @@ const MobileTaskForm = ({
                       <DIV
                         display="flex"
                         justifyContent="flex-end"
+                        gap = "5px"
                         onClick={() => {
                           setCommentId(comment?._id)
                         }}>
                         <EditIcon width="12px" height="12px" color="#585858" />
+                        {commentId === comment?._id && (
+                        <SaveIcon
+                          sx={{
+                            width: '16px',
+                            height: '16px',
+                            color: '#585858'
+                          }}
+                          onClick={async e => {
+                            e?.preventDefault()
+                            await updateComment(taskDetail?._id, comment._id, comment)
+                            setCommentId('')
+                          }}
+                        />
+                      )}
                       </DIV>
                     )}
                   </div>
@@ -1062,28 +1120,6 @@ const MobileTaskForm = ({
                       </span>
                     )}
                   </DarkText>
-                )}
-                {commentId === comment?._id && (
-                  <div
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'flex-end'
-                    }}>
-                    <Button
-                      disabled={false}
-                      onClick={async e => {
-                        e?.preventDefault()
-                        await updateComment(taskDetail?._id, comment._id, comment)
-                        setCommentId('')
-                      }}
-                      width="40px"
-                      fontSize="12px"
-                      margin="0px 37px 0px 20px">
-                      <Icon name="send" color="white" width="18" height="18" />
-                    </Button>
-                  </div>
                 )}
               </WhiteCard>
             )
