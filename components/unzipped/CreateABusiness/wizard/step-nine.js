@@ -72,7 +72,7 @@ const StepNineWizardFlow = ({
       sub="What questions do you have for potential hires? (max three)"
       disabled={questionsToAsk?.length === 0}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>

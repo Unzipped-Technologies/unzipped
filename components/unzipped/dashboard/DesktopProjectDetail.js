@@ -164,7 +164,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         fontSize="20px"
                         lineHeight="25.78px"
                         textColor="#12151B">
-                        {projectDetails?.description || 'N/A'}
+                        {projectDetails?.challenge || projectDetails?.role || 'N/A'}
                       </TEXT>
 
                       <TEXT
@@ -195,8 +195,8 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       </TEXT>
                       {projectDetails?.requiredSkills?.length
                         ? projectDetails?.requiredSkills?.map((skill, index) => {
-                            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-                          })
+                          return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+                        })
                         : 'N/A'}
 
                       <TEXT topPadding fontSize="13px" lineHeight="24.5px">
