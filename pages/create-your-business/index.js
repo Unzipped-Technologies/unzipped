@@ -276,6 +276,9 @@ const CreateBusiness = ({
               budgetRange={budgetRange}
               questionsToAsk={questionsToAsk}
               handleGithub={handleGithub}
+              files={files}
+              setFiles={setFiles}
+              projectFiles={projectFiles}
             />
             <MobileFreelancerFooter defaultSelected="Create" />
           </MobileBox>

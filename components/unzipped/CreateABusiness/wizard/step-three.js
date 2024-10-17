@@ -36,7 +36,7 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
       sub="What's the challenge you need to conquer? (in a sentence or two)"
       disabled={isError}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}
@@ -64,7 +64,7 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
       sub="Envision your ideal hire. What role will they play in your ongoing projects?"
       disabled={isError}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>

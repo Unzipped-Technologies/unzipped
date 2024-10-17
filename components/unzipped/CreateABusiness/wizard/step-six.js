@@ -11,7 +11,7 @@ const StepSixWizardFlow = ({ goals, updateForm, goBack, submitForm, stage, handl
       sub="Chart out the milestones. What achievements should be celebrated along the way?"
       disabled={goals?.length === 0}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>

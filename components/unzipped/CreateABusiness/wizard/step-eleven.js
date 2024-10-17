@@ -17,7 +17,7 @@ const StepElevenWizardFlow = ({
       title="Do you currently have a github account?"
       sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>

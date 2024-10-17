@@ -35,7 +35,7 @@ const StepTenWizardFlow = ({
       title="Project Image"
       sub="Upload a photo here to represent your project. This will display in the projects section of your profile."
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>

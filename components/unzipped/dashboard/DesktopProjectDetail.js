@@ -165,7 +165,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         fontSize="18px"
                         lineHeight="25.78px"
                         textColor="#12151B">
-                        {projectDetails?.description || 'N/A'}
+                        {projectDetails?.challenge || projectDetails?.role || 'N/A'}
                       </TEXT>
 
                       <TEXT

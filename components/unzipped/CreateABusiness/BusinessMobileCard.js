@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CreateABusiness from '../CreateABusiness'
 import { Grid } from '../../unzipped/dashboard/style'
 import OptionTileGroup from '../../ui/OptionTileGroup'
@@ -8,7 +8,9 @@ import ClearSharpIcon from '@material-ui/icons/ClearSharp'
 import Button from '../../ui/Button'
 import ReviewBusinessDetails from './ReviewBusinessDetails'
 import CharacterCounter from './CharacterCounter'
+import UploadImage from '../../../components/unzipped/image-upload/UploadImage';
 
+const MAX_FLIMENAME_LENGTH = 40
 const projectTypeOptions = () => {
   return [
     {
@@ -56,9 +58,29 @@ const GetCardMobile = ({
   handleSkip,
   handleCancelIcon,
   handleEnterKey,
-  handleGithub
+  handleGithub,
+  files,
+  setFiles,
+  projectFiles,
+
 }) => {
   const [isAlterable, setIsAlterable] = useState(false)
+
+  useEffect(() => {
+    if (files.length > 0) {
+      updateForm({ files });
+    }
+  }, [files]);
+
+  const handleFileName = fileName => {
+    if (fileName) {
+      if (fileName.length <= MAX_FLIMENAME_LENGTH) {
+        return fileName
+      } else {
+        return fileName.substring(0, MAX_FLIMENAME_LENGTH - 3) + '...'
+      }
+    }
+  }
 
   const handleInputChangeEvent = (e, localField) => {
     if (localField == 'name') {
@@ -122,7 +144,7 @@ const GetCardMobile = ({
           sub="Describe your project in as few words as possible"
           disabled={name?.length === 0}
           onUpdate={updateForm}
-          onBack={goBack}
+          onBack={() => goBack(stage)}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
@@ -157,7 +179,7 @@ const GetCardMobile = ({
               title="Describe the project"
               sub="What's the challenge you need to conquer? (in a sentence or two)"
               onUpdate={updateForm}
-              onBack={goBack}
+              onBack={() => goBack(stage)}
               onSubmit={submitForm}
               progress={stage}
               stage={stage}>
@@ -183,7 +205,7 @@ const GetCardMobile = ({
               sub="What are the specific tasks and objectives for this project"
               disabled={false}
               onUpdate={updateForm}
-              onBack={goBack}
+              onBack={() => goBack(stage)}
               onSubmit={submitForm}
               stage={stage + 1}>
               <Grid margin="0px">
@@ -242,7 +264,7 @@ const GetCardMobile = ({
               title="Role Description"
               sub="Envision your ideal hire. What role will they play in your ongoing projects?"
               onUpdate={updateForm}
-              onBack={goBack}
+              onBack={() => goBack(stage)}
               onSubmit={submitForm}
               progress={stage}
               stage={stage}>
@@ -269,7 +291,7 @@ const GetCardMobile = ({
               sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
               disabled={teamDynamics?.length === 0 || role?.length === 0}
               onUpdate={updateForm}
-              onBack={goBack}
+              onBack={() => goBack(stage)}
               onSubmit={submitForm}
               stage={stage + 1}>
               <Grid margin="0px 0px 50px 0px">
@@ -302,7 +324,7 @@ const GetCardMobile = ({
               title="Describe the project"
               sub="What's the challenge you need to conquer? (in a sentence or two)"
               onUpdate={updateForm}
-              onBack={goBack}
+              onBack={() => goBack(stage - 1)}
               onSubmit={submitForm}
               progress={stage - 1}
               stage={stage}>
@@ -387,7 +409,7 @@ const GetCardMobile = ({
               title="Role Description"
               sub="Envision your ideal hire. What role will they play in your ongoing projects?"
               onUpdate={updateForm}
-              onBack={goBack}
+              onBack={() => goBack(stage - 1)}
               onSubmit={submitForm}
               progress={stage - 1}
               stage={stage}>
@@ -442,7 +464,7 @@ const GetCardMobile = ({
           sub="What skills should they have mastered? List the abilities needed for your project (ex. React, AWS, SQL)."
           disabled={requiredSkills?.length === 0}
           onUpdate={updateForm}
-          onBack={goBack}
+          onBack={() => goBack(stage - 1)}
           onSubmit={submitForm}
           progress={stage - 1}
           stage={stage}>
@@ -503,7 +525,7 @@ const GetCardMobile = ({
             title="Project Goals or Role Expectations"
             sub="Chart out the milestones. What achievements should be celebrated along the way?"
             onUpdate={updateForm}
-            onBack={goBack}
+            onBack={() => goBack(stage - 1)}
             onSubmit={submitForm}
             progress={stage - 1}
             stage={stage}>
@@ -560,7 +582,7 @@ const GetCardMobile = ({
             title="Project Goals or Role Expectations"
             sub="Chart out the milestones. What achievements should be celebrated along the way?"
             onUpdate={updateForm}
-            onBack={goBack}
+            onBack={() => goBack(stage - 1)}
             onSubmit={submitForm}
             progress={stage - 2}
             stage={stage}>
@@ -789,6 +811,60 @@ const GetCardMobile = ({
         </span>
       )
     case 10:
+      return (
+        <span id="mobile_step_10">
+          <CreateABusiness
+            mobile
+            title="Project Image"
+            sub="Upload a photo here to represent your project. This will display in the projects section of your profile."
+            onUpdate={updateForm}
+            onSubmit={submitForm}
+            onBack={() => goBack(stage - 1)}
+            progress={stage}
+            stage={stage}>
+
+            <Button
+              type="transparent"
+              noUppercase
+              noPadding
+              position="absolute"
+              right="50px"
+              top="170px"
+              onClick={() => handleSkip(true)}>
+              Skip
+            </Button>
+
+            <Grid margin={files?.length > 0 ? '0 0 30px 0' : '30px 0'}>
+              <UploadImage
+                setFiles={setFiles}
+                files={files}
+                projectFiles={projectFiles}
+                id="project_images"
+              />
+            </Grid>
+
+            {projectFiles?.length > 0 && (
+              <ContentContainer padding="20px 5px 20px 10px">
+                {projectFiles.map((file, index) => (
+                  <ContainedSpan
+                    key={file?.name + '_' + index}
+                    style={{ marginRight: '10px', marginBottom: '10px', display: 'inline-block' }}
+                  >
+                    <ClearSharpIcon
+                      data-testid={`${file.name}_icon`}
+                      style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                      onClick={() => handleCancelIcon(`files:${index}`)}
+                    />
+                    {handleFileName(file.name)}
+                  </ContainedSpan>
+                ))}
+              </ContentContainer>
+            )}
+          </CreateABusiness>
+        </span>
+      );
+
+    case 11:
       if (!isGithubConnected) {
         return (
           <CreateABusiness
@@ -797,10 +873,10 @@ const GetCardMobile = ({
             title="Do you currently have a github account?"
             sub="Connect your project to github so you can immidiately begin hiring developers and creating your project."
             onUpdate={updateForm}
-            onBack={goBack}
+            onBack={() => goBack(stage)}
             onSubmit={submitForm}
-            progress={stage - 1}
-            stage={stage + 1}>
+            progress={stage}
+            stage={stage}>
             <Grid margin="50px 0px 100px 0px">
               <Button icon="github" noBorder type="dark" normal onClick={handleGithub}>
                 CONNECT YOUR GITHUB ACCOUNT
@@ -813,7 +889,7 @@ const GetCardMobile = ({
       }
 
     case 12:
-      return <ReviewBusinessDetails isGithubConnected={isGithubConnected} stage={stage} isMobileViewActive={true} />
+      return <ReviewBusinessDetails isGithubConnected={isGithubConnected} stage={stage} isMobileViewActive={true} files={files} progress={stage}   />
     default:
       return <></>
   }

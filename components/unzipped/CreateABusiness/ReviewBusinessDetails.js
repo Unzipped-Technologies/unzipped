@@ -71,7 +71,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
       wizradStep = stage - 1
     }
     if (isMobileViewActive) {
-      wizradStep = stage - 2
+      wizradStep = stage - 1
     }
     dispatch(
       updateBusinessForm({
