@@ -213,51 +213,54 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
               <P fontSize="14px">YES</P>
             </div>
           </div>
-          <div
-            className="d-flex"
-            data-testid="profile_schedule_interview"
-            onClick={e => {
-              e.preventDefault()
-              handleProfilePage(false)
-            }}>
+          {
+          role !== 1  && ( 
             <div
-              style={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                background: '#37DEC5',
-                borderRadius: '4px'
+              className="d-flex"
+              data-testid="profile_schedule_interview"
+              onClick={e => {
+                e.preventDefault()
+                handleProfilePage(false)
               }}>
-              <div style={{ width: '80%' }}>
-                <button
-                  style={{
-                    background: '#37DEC5',
-                    color: 'white',
-                    fontSize: '18px',
-                    border: '0',
-                    padding: '16px 0px',
-                    fontWeight: '600'
-                  }}>
-                  Schedule an Interview
-                </button>
-              </div>
               <div
                 style={{
-                  borderLeft: '1.3px solid #B5B5B5',
-                  background: '#37DEC5',
-                  width: '20%',
                   display: 'flex',
+                  width: '100%',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  flexDirection: 'column'
+                  background: '#37DEC5',
+                  borderRadius: '4px'
                 }}>
-                <div style={{ position: 'relative', top: '15px', left: '8px' }}>
-                  <IconComponent name="downArrow" width="35" height="35" viewBox="0 0 20 20" fill="white" />
+                <div style={{ width: '80%' }}>
+                  <button
+                    style={{
+                      background: '#37DEC5',
+                      color: 'white',
+                      fontSize: '18px',
+                      border: '0',
+                      padding: '16px 0px',
+                      fontWeight: '600'
+                    }}>
+                    Schedule an Interview
+                  </button>
+                </div>
+                <div
+                  style={{
+                    borderLeft: '1.3px solid #B5B5B5',
+                    background: '#37DEC5',
+                    width: '20%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column'
+                  }}>
+                  <div style={{ position: 'relative', top: '15px', left: '8px' }}>
+                    <IconComponent name="downArrow" width="35" height="35" viewBox="0 0 20 20" fill="white" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          ) } 
         </div>
       </div>
       <div>

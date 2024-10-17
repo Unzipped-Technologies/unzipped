@@ -27,7 +27,8 @@ import {
   RESET_HIRED_EMPLOYEES_FAILED,
   GET_BUSINESS_INFO_TASKLIST_PANEL,
   LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,
-  REST_BUSINESS_LIST
+  REST_BUSINESS_LIST,
+  UPDATE_BUSINESS_DETAILS
 } from './constants'
 
 const INIT_STATE = {
@@ -197,6 +198,9 @@ const Business = (state = INIT_STATE, action = {}) => {
     case REST_BUSINESS_LIST: {
       return { ...state, loading: false, fullBoardViewTickets: [] }
     }
+    case UPDATE_BUSINESS_DETAILS:
+      return { ...state, loading: false, details: action.payload }
+
     default:
       return state
   }

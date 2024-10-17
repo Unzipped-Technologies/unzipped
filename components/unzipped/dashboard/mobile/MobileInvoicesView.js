@@ -27,7 +27,7 @@ const MobileInvoicesView = ({ selectedWeek, weekOptions, role, freelancerId }) =
           timeSheet={true}
         />
       )}
-      <MobileFreelancerFooter />
+      <MobileFreelancerFooter defaultSelected="Projects" />
     </MobileView>
   )
 }

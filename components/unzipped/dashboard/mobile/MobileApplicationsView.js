@@ -7,6 +7,9 @@ import { useRouter } from 'next/router'
 import { MdVerifiedUser, MdOutlineThumbUpAlt } from 'react-icons/md'
 import IconComponent from '../../../ui/icons/IconComponent'
 import { ConverterUtils } from '../../../../utils'
+import MobileFreelancerFooter from '../../MobileFreelancerFooter'
+
+
 
 const Container = styled.div`
   @media (min-width: 680px) {
@@ -22,6 +25,8 @@ const ApplicationView = styled.div`
   border: 1px solid #d9d9d9;
   flex-wrap: wrap;
   padding-bottom: 10px;
+  margin: 10px 0px 0px 10px;
+
 `
 
 const PersonalInfo = styled.div`
@@ -52,7 +57,7 @@ const UserRate = styled.div`
 
 const Rate = styled.div`
   color: #000;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 24.5px; /* 102.083% */
   letter-spacing: 0.4px;
@@ -121,19 +126,19 @@ const CoverLetter = styled.span`
 
 const ViewProfileButton = styled.button`
   display: flex;
-  width: 96%;
-  height: 50px;
-  border-radius: 16px;
+  width: 90%;
+  height: 40px;
+  border-radius: 5px;
   border: 1px solid rgba(196, 196, 196, 0);
   background: #37dec5;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 24.5px; /* 153.125% */
+  line-height: 20.5px; 
   letter-spacing: 0.4px;
   margin: auto;
 `
@@ -161,8 +166,9 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                           ' ' +
                           application?.freelancerId?.userId?.LastName
                         }`}
-                        height="65px"
-                        width="65px"
+                        height="55px"
+                        width="55px"
+                        radius="5px"
                       />
                     </ProfileImage>
                     <UserInfo>
@@ -178,7 +184,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                       </div>
 
                       <UserCategory>{application?.freelancerId?.category}</UserCategory>
-                      <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || '-'}</UserCountry>
+                      <UserCountry>{application?.freelancerId?.userId?.AddressLineCountry || 'N/A'}</UserCountry>
                     </UserInfo>
                   </PersonalInfo>
                   <div
@@ -213,7 +219,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                       ? application?.freelancerId?.freelancerSkills.map(skill => {
                           return <Badge key={skill._id}>{skill?.skill}</Badge>
                         })
-                      : '-'}
+                      : 'N/A'}
                   </Skills>
                   <div
                     style={{
@@ -258,9 +264,9 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
         <div
           style={{
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'end',
             alignItems: 'center',
-            paddingTop: '200px'
+            paddingTop: '15px'
           }}>
           <Button
             extraWid
@@ -281,6 +287,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
           </Button>
         </div>
       </Container>
+      <MobileFreelancerFooter defaultSelected="Projects" />
     </>
   )
 }

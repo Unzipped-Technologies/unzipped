@@ -10,7 +10,7 @@ import IconComponent from '../ui/icons/IconComponent'
 import ScheduleInterview from './dashboard/ScheduleInterview'
 import ScheduleMeetingModal from './../modals/scheduleMeeting'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
-import { getInvitesLists, addEntriesToList, getCurrentUserList } from '../../redux/actions'
+import { getInvitesLists, addEntriesToList, getCurrentUserList,setUserIdForChat, checkUserConversation} from '../../redux/actions'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -39,15 +39,19 @@ function MobileProfileCardOptions({
   addEntriesToList,
   userId,
   getInvitesLists,
-  lists
+  lists,
+  setUserIdForChat,
+  checkUserConversation,
+  user
 }) {
+  
   const dispatch = useDispatch()
   const [openList, setOpenList] = useState(false)
   const navigate = useRouter()
   const [error, setError] = useState('')
   const [scheduleInterview, setScheduleInterview] = useState(false)
   const [scheduleInterviewModal, setScheduleInterviewModal] = useState(false)
-  const { _id, calendarSetting } = useSelector(state => state.Auth.user)
+  const { _id, calendarSettings } = useSelector(state => state.Auth.user)
   const receiverInfo = useSelector(state => state.Freelancers.selectedFreelancer)
 
   const handleScheduleInterviewModal = () => {
@@ -90,6 +94,24 @@ function MobileProfileCardOptions({
   const handleMeetingScheduling = () => {
     setScheduleInterview(!scheduleInterview)
     setScheduleInterviewModal(true)
+  }
+
+  const sendMessage = async () => {
+    await setUserIdForChat(user?.userId)
+
+    if (window.innerWidth <= 680) {
+      const response = await checkUserConversation({
+        freelancerId: user?.userId,
+        clientId: userId
+      })
+      if (response?.data?._id || response?.data === true) {
+        navigate.push(`/dashboard/chat/${response?.data?._id}`)
+        setUserIdForChat(null)
+      } else {
+      }
+    } else {
+      navigate.push('/dashboard/inbox')
+    }
   }
 
   return (
@@ -137,7 +159,7 @@ function MobileProfileCardOptions({
           </div>
           {scheduleInterview && (
             <div>
-              {calendarSetting ? (
+              {calendarSettings ? (
                 <ScheduleMeetingModal
                   scheduleInterviewModal={scheduleInterviewModal}
                   handleScheduleInterviewModal={handleScheduleInterviewModal}
@@ -153,7 +175,8 @@ function MobileProfileCardOptions({
           )}
         </div>
 
-        <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600">
+        <P padding="12px 0 18px 0" borderBottom="3px solid #EFF1F4" margin="0" fontWeight="600" 
+        onClick={() => {sendMessage()}}>
           Send A Message
         </P>
         <div
@@ -248,7 +271,10 @@ const mapDispatchToProps = dispatch => {
   return {
     getInvitesLists: bindActionCreators(getInvitesLists, dispatch),
     addEntriesToList: bindActionCreators(addEntriesToList, dispatch),
-    getCurrentUserList: bindActionCreators(getCurrentUserList, dispatch)
+    getCurrentUserList: bindActionCreators(getCurrentUserList, dispatch),
+    setUserIdForChat: bindActionCreators(setUserIdForChat, dispatch),
+    checkUserConversation: bindActionCreators(checkUserConversation, dispatch)
+
   }
 }
 
