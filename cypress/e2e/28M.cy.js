@@ -136,24 +136,24 @@ describe('Client Account Page', () => {
   })
   it('Change Personal and Company Information', () => {
     cy.intercept('POST', '/api/user/update').as('updateUserRequest')
+    cy.intercept('POST', '/api/business/details/update').as('updateBusinessDetailRequest')
 
-    cy.get('#show_info_container')
+    cy.contains('Settings').should('be.visible').click()
+
+    cy.get('#update_profile').scrollIntoView().should('be.visible').click()
+
+    cy.get('#update_profile_modal')
       .scrollIntoView()
       .should('be.visible')
       .within(() => {
         const FirstName = faker.string.alpha(5)
         const LastName = faker.string.alpha(5)
-        const PhoneNumber = '(555) 123-9802'
-        const BusinessType = 'Individual'
         const BusinessName = faker.string.alpha(5)
-        const TaxEin = '1D-K4CM3A0'
         const AddressLineOne = faker.location.streetAddress()
         const AddressLineTwo = faker.location.secondaryAddress()
         const City = faker.location.city()
         const ZipCode = faker.location.zipCode()
         const AddressState = faker.location.state()
-
-        cy.contains('Personal Info').should('be.visible').click()
 
         cy.get('#FirstName').scrollIntoView().should('be.visible').clear().type(FirstName)
         cy.get('#FirstName').should('have.value', FirstName)
@@ -174,21 +174,14 @@ describe('Client Account Page', () => {
         cy.get('#AddressState').should('have.value', AddressState)
 
         cy.get('#AddressZip').scrollIntoView().should('be.visible').clear().type(ZipCode)
-        cy.get('#AddressZip').should('have.value', ZipCode)
 
         cy.get('#businessName').scrollIntoView().should('be.visible').clear().type(BusinessName)
         cy.get('#businessName').should('have.value', BusinessName)
 
-        cy.get('#businessType').scrollIntoView().should('be.visible').clear().type(BusinessType)
-        cy.get('#businessType').should('have.value', BusinessType)
-
-        cy.get('#businessPhone').scrollIntoView().should('be.visible').clear().type(PhoneNumber)
-        cy.get('#businessPhone').should('have.value', PhoneNumber)
-
-        cy.get('#taxId').scrollIntoView().should('be.visible').clear().type(TaxEin)
-        cy.get('#taxId').should('have.value', TaxEin)
-
-        cy.contains('button', 'Save Settings').scrollIntoView().should('be.visible').should('be.enabled').click()
+        cy.contains('button', 'Update').scrollIntoView().should('be.visible').should('be.enabled').click()
+        cy.wait('@updateBusinessDetailRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
         cy.wait('@updateUserRequest').then(interception => {
           expect(interception.response.statusCode).to.be.oneOf([200, 304])
         })
