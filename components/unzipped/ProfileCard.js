@@ -1,4 +1,4 @@
-import React, { useEffect , useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import Image from '../ui/Image'
@@ -254,24 +254,29 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       </Content>
 
       <LikeBox>
-        <Button
-          block
-          width="36px"
-          type="button"
-          buttonHeight="36px"
-          fontSize="15px"
-          noBorder
-          onClick={e => {
-            handleClick(e)
-          }}>
-          CHECK AVAILABILITY
-        </Button>
+        {
+          role !== 1 && (
+            <Button
+              block
+              width="36px"
+              type="button"
+              buttonHeight="36px"
+              fontSize="15px"
+              noBorder
+              onClick={e => {
+                handleClick(e)
+              }}>
+              CHECK AVAILABILITY
+            </Button>
+          )
+        }
+
 
         {isOpen && (
-            <ListModal handleClose={handleCloseModal} open={isOpen} userId={userId} freelancerId={user?._id} user={user} />
-          )}
+          <ListModal handleClose={handleCloseModal} open={isOpen} userId={userId} freelancerId={user?._id} user={user} />
+        )}
 
-         {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 
+        {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 
            <Card
             sx={{
               minWidth: 275,

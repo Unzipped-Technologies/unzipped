@@ -265,7 +265,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                 )
               })
             : ''}
-          <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
+          <DIV display="flex" justifyContent="end" alignItems="end" padding="15px 0px 0px 0px">
             <Button
               extraWid
               type="outlineInverse"

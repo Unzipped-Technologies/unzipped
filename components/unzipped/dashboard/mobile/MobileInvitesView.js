@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { MdVerifiedUser } from 'react-icons/md'
 import IconComponent from '../../../ui/icons/IconComponent'
 import { ConverterUtils } from '../../../../utils'
+import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 
 const ApplicationView = styled.div`
   display: flex;
@@ -254,6 +255,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
           </div>
         )}
       </div>
+      <MobileFreelancerFooter defaultSelected="Projects" />
     </>
   )
 }

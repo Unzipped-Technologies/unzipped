@@ -191,7 +191,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
           </DIV>
         </DIV>
       </div>
-      <MobileFreelancerFooter />
+      <MobileFreelancerFooter defaultSelected="Projects" />
     </MobileView>
   )
 }
