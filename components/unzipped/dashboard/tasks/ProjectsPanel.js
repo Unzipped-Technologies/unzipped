@@ -40,11 +40,9 @@ const ProjectsPanel = ({
                       if (business._id === showBusinessMenu || business._id === currentBusiness?._id) {
                         setShowBusinessMenu('')
                         onSelectBusiness('')
-                        onSelectDepartment(null)
                       } else {
                         setShowBusinessMenu(business._id)
                         onSelectBusiness(business)
-                        onSelectDepartment(business.businessDepartments?.[0])
                         dispatch(getBusinessEmployees(business.businessDepartments?.[0].businessId, true))
                       }
                     }}>

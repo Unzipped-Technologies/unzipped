@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import { MdVerifiedUser, MdOutlineThumbUpAlt } from 'react-icons/md'
 import IconComponent from '../../../ui/icons/IconComponent'
 import { ConverterUtils } from '../../../../utils'
+import VerticalDropdown from '../../../VerticalDropdown'
+import { TEXT, DIV } from '../style'
 
 const Container = styled.div`
   @media (min-width: 680px) {
@@ -150,21 +152,32 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
       <Container>
         {projectApplications?.length
           ? projectApplications.map(application => {
+              console.log('application', application)
               return (
                 <ApplicationView key={application._id} data-testid={`${application._id}_application_card`}>
                   <PersonalInfo>
-                    <ProfileImage>
-                      <Image
-                        src={application?.freelancerId?.userId?.profileImage}
-                        alt={`${
-                          application?.freelancerId?.userId?.FirstName +
-                          ' ' +
-                          application?.freelancerId?.userId?.LastName
-                        }`}
-                        height="65px"
-                        width="65px"
-                      />
-                    </ProfileImage>
+                    <div className="d-flex justify-content-between align-items-center" style={{ width: '100%' }}>
+                      <ProfileImage>
+                        <Image
+                          src={application?.freelancerId?.userId?.profileImage}
+                          alt={`${
+                            application?.freelancerId?.userId?.FirstName +
+                            ' ' +
+                            application?.freelancerId?.userId?.LastName
+                          }`}
+                          height="65px"
+                          width="65px"
+                        />
+                      </ProfileImage>
+                      <DIV
+                        height="20px"
+                        display="flex"
+                        flexDirection="colummn"
+                        justifyContent="space-between"
+                        margin="0px">
+                        <VerticalDropdown freelancerId={application?.freelancerId?._id} />
+                      </DIV>
+                    </div>
                     <UserInfo>
                       <div style={{ display: 'flex' }}>
                         <UserName>

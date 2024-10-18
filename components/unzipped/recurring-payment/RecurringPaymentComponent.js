@@ -88,110 +88,124 @@ const RecurringPaymentComponent = ({
 
   return (
     <RecurringWrapper>
-      <Container>
-        <HireDivider title="Confirm Recurring Payment" />
-        <Content>
-          <Notification type="blue" noButton paddingLeft="20px">
-            You will be charged weekly on tuesday at 11:59 PM for all agreed upon hours worked.
-          </Notification>
-        </Content>
-        <ContentContainer>
-          <div style={{ width: '725px', display: 'flex', gap: '20px', flexDirection: 'column' }}>
-            <ContainerBox>
-              <EmployeeCard
-                paymentDate={paymentDate}
-                contracts={activeContracts}
-                plan={plans[plan]}
-                unpaidInvoices={unpaidInvoices}
+      {window.innerWidth > 680 && (
+        <Container>
+          <HireDivider title="Confirm Recurring Payment" />
+          <Content>
+            <Notification type="blue" noButton paddingLeft="20px">
+              You will be charged weekly on tuesday at 11:59 PM for all agreed upon hours worked.
+            </Notification>
+          </Content>
+          <ContentContainer>
+            <div style={{ width: '725px', display: 'flex', gap: '20px', flexDirection: 'column' }}>
+              <ContainerBox>
+                <EmployeeCard
+                  paymentDate={paymentDate}
+                  contracts={activeContracts}
+                  plan={plans[plan]}
+                  unpaidInvoices={unpaidInvoices}
+                />
+              </ContainerBox>
+              <BusinessAddress
+                style={{ width: '100%', marginTop: 20 }}
+                selectedBusiness={selectedBusiness}
+                onClick={updateBusinessAddress}
               />
-            </ContainerBox>
-            <BusinessAddress
-              style={{ width: '100%', marginTop: 20 }}
-              selectedBusiness={selectedBusiness}
-              onClick={updateBusinessAddress}
-            />
-            <PaymentMethod user={user} selectedBusiness={selectedBusiness} onClick={onSubmitPaymentMethod} />
-          </div>
-          <PaymentDetailContainer>
-            <DetailsContainer>
-              <PaymentDetailHeading>Recurring Payment</PaymentDetailHeading>
-              <TextStyledSubHeader>**You will still get a chance to review invoices each week</TextStyledSubHeader>
-              <PaymentHeaderDescription>
-                You will be charged up to $6,100 USD at 11:59 PM for hours invoiced from previous week.
-              </PaymentHeaderDescription>
-              <PaymentDivider />
-              <SpanText>Payment Details</SpanText>
-              <PaymentParagraphText>1.Each week employees will create an invoice of hours worked </PaymentParagraphText>
-              <PaymentParagraphText>2.You will have a chance to approve the invoice</PaymentParagraphText>
-              <PaymentParagraphText>
-                3.Each week on tuesday, payment will be charged to your account in full
-              </PaymentParagraphText>
-              <PaymentDivider />
-            </DetailsContainer>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingTop: 5
-              }}>
-              <div>
-                <BillingTextStyled>SUBTOTAL</BillingTextStyled>
-              </div>
-              <div>
-                <span>$0.00</span>
-              </div>
+              <PaymentMethod user={user} selectedBusiness={selectedBusiness} onClick={onSubmitPaymentMethod} />
             </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingTop: 5
-              }}>
-              <div>
-                <span>HIRING FEE</span>
+            <PaymentDetailContainer>
+              <DetailsContainer>
+                <PaymentDetailHeading>Recurring Payment</PaymentDetailHeading>
+                <TextStyledSubHeader>**You will still get a chance to review invoices each week</TextStyledSubHeader>
+                <PaymentHeaderDescription>
+                  You will be charged up to $6,100 USD at 11:59 PM for hours invoiced from previous week.
+                </PaymentHeaderDescription>
+                <PaymentDivider />
+                <SpanText>Payment Details</SpanText>
+                <PaymentParagraphText>
+                  1.Each week employees will create an invoice of hours worked{' '}
+                </PaymentParagraphText>
+                <PaymentParagraphText>2.You will have a chance to approve the invoice</PaymentParagraphText>
+                <PaymentParagraphText>
+                  3.Each week on tuesday, payment will be charged to your account in full
+                </PaymentParagraphText>
+                <PaymentDivider />
+              </DetailsContainer>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  paddingTop: 5
+                }}>
+                <div>
+                  <BillingTextStyled>SUBTOTAL</BillingTextStyled>
+                </div>
+                <div>
+                  <span>$0.00</span>
+                </div>
               </div>
-              <div>
-                <span style={{ color: '#37DEC5' }}>-$0.00</span>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  paddingTop: 5
+                }}>
+                <div>
+                  <span>HIRING FEE</span>
+                </div>
+                <div>
+                  <span style={{ color: '#37DEC5' }}>-$0.00</span>
+                </div>
               </div>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingTop: 5
-              }}>
-              <div>
-                <BillingTextStyled>BILLED NOW</BillingTextStyled>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  paddingTop: 5
+                }}>
+                <div>
+                  <BillingTextStyled>BILLED NOW</BillingTextStyled>
+                </div>
+                <div>
+                  <span>$0.00</span>
+                </div>
               </div>
-              <div>
-                <span>$0.00</span>
+              <div style={{ marginTop: '10px' }}>
+                <UpdatePaymentButton onClick={onSubmit}>update payment terms</UpdatePaymentButton>
+                {contractError && <Error>{contractError}</Error>}
               </div>
-            </div>
-            <div style={{ marginTop: '10px' }}>
-              <UpdatePaymentButton onClick={onSubmit}>update payment terms</UpdatePaymentButton>
-              {contractError && <Error>{contractError}</Error>}
-            </div>
-            <PaymentDetailNote>
-              <ConfirmationText>
-                You need to confirm your billing cycle, add a business address, and add a payment method before you can
-                start this plan.
-              </ConfirmationText>
-            </PaymentDetailNote>
-          </PaymentDetailContainer>
-        </ContentContainer>
-      </Container>
+              <PaymentDetailNote>
+                <ConfirmationText>
+                  You need to confirm your billing cycle, add a business address, and add a payment method before you
+                  can start this plan.
+                </ConfirmationText>
+              </PaymentDetailNote>
+            </PaymentDetailContainer>
+          </ContentContainer>
+        </Container>
+      )}
       {window.innerWidth <= 680 && (
         <ResponsiveContainer>
-          <RecurringPaymentResponsive onClick={onSubmit} selectedBusiness={selectedBusiness} />
+          <RecurringPaymentResponsive
+            paymentDate={paymentDate}
+            contracts={activeContracts}
+            plan={plans[plan]}
+            unpaidInvoices={unpaidInvoices}
+            onClick={onSubmit}
+            selectedBusiness={selectedBusiness}
+            onAddressUpdate={updateBusinessAddress}
+            onSubmitPaymentMethod={onSubmitPaymentMethod}
+            contractError={contractError}
+          />
         </ResponsiveContainer>
       )}
     </RecurringWrapper>

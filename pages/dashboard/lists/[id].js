@@ -122,7 +122,8 @@ const MobileListDetail = () => {
       handleOpen()
     }
     if (value == 'DELETE') {
-      dispatch(deleteList(selectedList?.listId, () => dispatch(getUserLists(userId))))
+      dispatch(deleteList(selectedList?._id, () => dispatch(getUserLists(userId))))
+      router.back()
     }
   }
 
@@ -220,20 +221,26 @@ const MobileListDetail = () => {
           <MobileFreelancerCard user={freelancer} hasBorder={false} />
         </div>
       ))}
-      {freelancers?.length < 1 && (
-        <NoUsersInList>
-          <WorkIcon width={200} height={200} />
-          <TEXT textAlign="center" fontSize="24px">
-            This list is empty
-          </TEXT>
-          <TEXT center>Add investors to your list to quickly find them later. </TEXT>
+      <NoUsersInList>
+        {freelancers?.length < 1 && (
           <div>
-            <Button noBorder oval style={{ color: 'black' }}>
-              BROWSE FREELANCERS
-            </Button>
+            <WorkIcon width={200} height={200} />
+            <TEXT textAlign="center" fontSize="24px">
+              This list is empty
+            </TEXT>
+            <TEXT center>Add investors to your list to quickly find them later. </TEXT>
           </div>
-        </NoUsersInList>
-      )}
+        )}
+        <Button
+          noBorder
+          oval
+          style={{ color: 'black' }}
+          onClick={() => {
+            router.push('/freelancers')
+          }}>
+          BROWSE FREELANCERS
+        </Button>
+      </NoUsersInList>
 
       {isOpen && (
         <ListManagementPanel

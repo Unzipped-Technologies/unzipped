@@ -62,6 +62,7 @@ function MobileProjects({ lists, userId, getUserLists }) {
           Lists
         </TEXT>
         <DIV
+          id="add_new_list"
           width="97%"
           display="flex"
           overflow="hidden"
