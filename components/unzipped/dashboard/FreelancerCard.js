@@ -101,16 +101,18 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         <TEXT textColor="#0057FF" onClick={redirectToProfile}>
           {user.name}
         </TEXT>
-        <TEXT margin="0px">{user.type}</TEXT>
+        <TEXT margin="0px" id="freelancer_type">
+          {user.type}
+        </TEXT>
         {user?.country ? <DarkText half>{user.country}</DarkText> : <DarkText half>-</DarkText>}
         {includeRate && (
           <Flex>
             {user?.rate > 0 ? (
-              <DarkText small half>
+              <DarkText small half id="rate">
                 <DarkSpan large>${user?.rate}</DarkSpan> / hour
               </DarkText>
             ) : (
-              <DarkText small half>
+              <DarkText small half id="rate">
                 Negotiable
               </DarkText>
             )}
