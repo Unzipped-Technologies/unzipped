@@ -46,6 +46,7 @@ const DialogContent = withStyles(theme => ({
 
 const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
   const [isButtonEnabled, setIsButtonEnabled] = useState(true)
+  const isMobileView = window.innerWidth <= 680
 
   useEffect(() => {
     updateCreateTagForm({
@@ -88,18 +89,24 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
         id="tag-dialog-title"
         sx={{
           '& .MuiDialogTitle-root > .MuiTypography-h6': {
-            color: ' blue !important',
-            fontWeight: 700
+            color: 'blue !important',
+            fontWeight: isMobileView ? 600 : 700
           },
           '& .MuiTypography-h6': {
-            color: ' blue !important',
-            fontWeight: 700
+            color: 'blue !important',
+            fontWeight: isMobileView ? 600 : 700
           }
         }}>
         CREATE TAG
       </StyledDiagTitle>
 
-      <DialogContent>
+      <DialogContent
+        sx={{
+          '& .MuiDialogContent-root': {
+            paddingBottom: isMobileView ? '20px' : '30px',
+            padding: isMobileView ? '8px 18px' : 'initial'
+          }
+        }}>
         <DIV flex="0 0 auto" boxSizing="border-box">
           <form>
             <DIV display="flex" margin="5px 0px 15px 0px" alignItems="center">
@@ -125,13 +132,46 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               </FormField>
             </DIV>
           </form>
-          <DIV width="100%" margin="48px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
+
+          <DIV
+            width="100%"
+            margin={isMobileView ? "40px 0px 10px 0px" : "48px 0px 0px 0px"}
+            display={isMobileView ? "block" : "flex"}
+            justifyContent={isMobileView ? "center" : "flex-end"}
+            flexDirection={isMobileView ? "column" : "row"}
+            alignItems={isMobileView? "center" : "flex-end"}
+            gap={isMobileView? '0px' :'5px'}
+          >
             <Button
-              width="125px"
+              disabled={!isButtonEnabled}
+              onClick={async () => {
+                await onSubmit()
+              }}
+              margin={isMobileView ? "0px 0px 7px 0px" : "0px 0px 0px 20px"}
+              contentMargin="0px !important"
+              type="black"
+              fontSize="15px"
+              boxShadow="0px 1px 3px rgba(0, 0, 0, 0.1)"
+              style={{
+                borderRadius: '5px',
+                padding: isMobileView ? '6px' : '8px'
+              }}
+              colors={{
+                text: '#FFF',
+                background: '#1976D2',
+                border: '1px',
+                wideBorder: '#1976D2'
+              }}
+              width={isMobileView ?'100%' : '125px'}
+            >
+              Save
+            </Button>
+
+            <Button
               type="outlineInverse"
               fontSize="15px"
               contentMargin="0px !important"
-              boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
+              boxShadow="0px 1px 3px rgba(0, 0, 0, 0.1)"
               borderRadius
               colors={{
                 text: '#1976D2',
@@ -141,36 +181,14 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
               }}
               style={{
                 borderRadius: '5px',
-                padding: '8px'
+                padding: isMobileView ? '6px' : '8px'
               }}
+              width={isMobileView ?'100%' : '125px'}
               onClick={() => {
                 onHide()
-              }}>
-              CANCEL
-            </Button>
-
-            <Button
-              disabled={!isButtonEnabled}
-              onClick={async () => {
-                await onSubmit()
               }}
-              margin="0px 0px 0px 20px"
-              width="125px"
-              contentMargin="0px !important"
-              type="black"
-              fontSize="15px"
-              boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
-              style={{
-                borderRadius: '5px',
-                padding: '8px'
-              }}
-              colors={{
-                text: '#FFF',
-                background: '#1976D2',
-                border: '1px',
-                wideBorder: '#1976D2'
-              }}>
-              Save
+            >
+              Cancel
             </Button>
           </DIV>
         </DIV>
