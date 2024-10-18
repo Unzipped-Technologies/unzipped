@@ -9,7 +9,7 @@ import ScheduleInterview from './ScheduleInterview'
 import { TitleText, DarkText, WhiteCard, Dismiss } from './style'
 import { nextPublicGithubClientId } from '../../../config/keys'
 
-const help = [
+export const help = [
   {
     name: 'Help Center',
     icon: 'glasses',
@@ -263,6 +263,7 @@ const MobileNotification = ({ type, children, noButton, user }) => {
             <InnerCard
               key={`${item.name}_${index}`}
               data-testid={`${item.name}_${index}`}
+              id={`explore_${index}`}
               style={{
                 display: 'flex',
                 width: '100%',

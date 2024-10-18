@@ -504,6 +504,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                             style={{ display: 'flex', flexDirection: 'row', marginLeft: '10px' }}
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
+                              id={`delete_task_${index}`}
                               data-testid={`delete_task_${index}`}
                               style={{
                                 display: 'flex',
@@ -573,6 +574,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                       return (
                         <div
                           key={`${task?.taskName}`}
+                          id={`task_${taskIndex}`}
                           style={{
                             marginBottom: '20px',
                             borderBottom: '1px solid #CACACA'
@@ -595,7 +597,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                               placeholder="Story Points"
                               fontSize="14px"
                               name={'story points' + taskIndex}
-                              id={'story points' + taskIndex}
+                              id={`story_points${taskIndex}`}
                               width="90px"
                               margin="0px 0px 0px 15px"
                               height="30px  !important"

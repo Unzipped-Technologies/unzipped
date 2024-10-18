@@ -91,6 +91,10 @@ const SingleWeekInvoiceView = ({
   const [selectedDayDate, setDayDate] = useState('')
   const [selectedTaskId, setTaskId] = useState('')
 
+  const [subTotal, setSubTotal] = useState(0)
+  const [fee, setFee] = useState(0)
+  const [totalAmount, setAmount] = useState(0)
+
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
   useEffect(() => {
@@ -165,6 +169,27 @@ const SingleWeekInvoiceView = ({
     setSortedData(organizedItems)
   }, [selectedWeek, filteredData])
 
+  useEffect(() => {
+    let subTotal = 0
+    let fee = 0
+    let totalAmount = 0
+    if (filteredData?.length) {
+      if (role === 0) {
+        for (var invoice of filteredData) {
+          subTotal += invoice?.contract.hourlyRate * invoice.hoursWorked
+        }
+        fee = subTotal * 0.05
+      } else {
+        subTotal = filteredData[0]?.contract?.hourlyRate * filteredData[0]?.hoursWorked
+        fee = subTotal * 0.05
+      }
+      totalAmount = subTotal - fee
+    }
+    setSubTotal(subTotal)
+    setFee(Math.round(fee))
+    setAmount(totalAmount)
+  }, [filteredData])
+
   const showTasksModal = day => {
     const daysToAdd = daysOfWeek.indexOf(day)
     const date = new Date(weekOptions[selectedWeek]?.startOfWeek)
@@ -230,6 +255,13 @@ const SingleWeekInvoiceView = ({
       return newData
     })
   }
+
+  const handleSubmit = async status => {
+    await updateInvoice(selectedInvoice?._id, {
+      status: status
+    })
+  }
+
   return (
     <>
       <DIV
@@ -241,13 +273,183 @@ const SingleWeekInvoiceView = ({
         flexDirection="row"
         justifyContent="space-around"
         data-testid="single_week_invoice">
+        <DIV width="100%" background="#fff" padding="10px 0px 0px 0px" display="flex" margin="0px 0px 20px 0px">
+          <DIV width="50%" padding="0px 0px 0px 20px" data-testid="employess_single_invoices">
+            <DIV display="flex" justifyContent="space-around">
+              <TEXT
+                fontSize="14px"
+                lineHeight="14.5px"
+                letterSpacing="0.4px"
+                textTransform="capitalize"
+                width="90%"
+                padding="0px !important">
+                Day
+              </TEXT>
+              <TEXT
+                textAlign="right"
+                fontSize="14px"
+                lineHeight="14.5px"
+                letterSpacing="0.4px"
+                textTransform="capitalize"
+                width="10%"
+                padding="0px !important">
+                Hours
+              </TEXT>
+            </DIV>
+            <div
+              style={{
+                position: 'absolute',
+                borderBottom: '1px solid #777',
+                width: '190px',
+                minWidth: '190px'
+              }}></div>
+            <DIV margin="5px 0px 0px 0px">
+              {Object?.keys(sortedData)?.map(day => {
+                return (
+                  <DIV
+                    height="20px"
+                    display="flex"
+                    justifyContent="space-around"
+                    key={`${day}_hours`}
+                    data-testid={`${day}_hours`}>
+                    <TEXT
+                      fontSize="14px"
+                      lineHeight="24.5px"
+                      letterSpacing="0.4px"
+                      textTransform="uppercase"
+                      padding="0px !important"
+                      width="85%">
+                      {day}
+                    </TEXT>
+                    <TEXT
+                      whiteSpace="normal"
+                      fontSize="14px"
+                      lineHeight="20.5px"
+                      letterSpacing="0.4px"
+                      textTransform="uppercase"
+                      wordBreak="break-word"
+                      width="15%"
+                      textAlign="right"
+                      padding="0px 0px 0px 5px">
+                      {sortedData[day]?.reduce((accumulator, currentValue) => {
+                        const totalHours = +accumulator + +currentValue.hours
+                        return totalHours
+                      }, 0) || 0}
+                    </TEXT>
+                  </DIV>
+                )
+              })}
+            </DIV>
+          </DIV>
+          <DIV margin="0px 0px 0px 35px" borderLeft="1px solid #000"></DIV>
+          <DIV
+            margin="55px 0px 0px 0px"
+            display="flex"
+            flexDirection="column"
+            flexFlow="column"
+            justifyContent="end"
+            padding="0px 0px 0px 10px"
+            width="50%"
+            data-testid="single_invoice_totals">
+            <DIV display="flex">
+              <TEXT
+                fontSize="14px"
+                fontWeight="800"
+                lineHeight="24.5px"
+                letterSpacing="0.4px"
+                textTransform="uppercase"
+                overflow="visible"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                width="50px"
+                margin="0px !important">
+                Hours
+              </TEXT>
+              <DIV display="flex" alignItems="flex-end">
+                <TEXT
+                  textColor="#000"
+                  fontSize="14px"
+                  lineHeight="24.5px"
+                  letterSpacing="0.4px"
+                  textTransform="uppercase"
+                  padding="0px 0px 0px 10px"
+                  whiteSpace="pre-line"
+                  textAlign="right"
+                  overflow="scroll"
+                  id="total_hours"
+                  wordWrap="break-word"
+                  margin="0px !important">
+                  {selectedInvoice?.hoursWorked || 0}
+                </TEXT>
+              </DIV>
+            </DIV>
+            <DIV display="flex">
+              <TEXT
+                fontSize="14px"
+                fontWeight="800"
+                lineHeight="24.5px"
+                letterSpacing="0.4px"
+                textTransform="uppercase"
+                overflow="scroll"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                width="50px"
+                margin="0px !important">
+                Fee
+              </TEXT>
+              <TEXT
+                textColor="#000"
+                fontSize="14px"
+                lineHeight="24.5px"
+                letterSpacing="0.4px"
+                textTransform="uppercase"
+                padding="0px 0px 0px 10px"
+                whiteSpace="pre-line"
+                overflow="scroll"
+                id="fee"
+                wordWrap="break-word"
+                margin="0px !important">
+                ${fee}
+              </TEXT>
+            </DIV>
+            <DIV display="flex">
+              <TEXT
+                fontSize="14px"
+                fontWeight="800"
+                lineHeight="24.5px"
+                letterSpacing="0.4px"
+                textTransform="uppercase"
+                overflow="scroll"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                width="50px"
+                margin="0px !important">
+                Total
+              </TEXT>
+              <TEXT
+                textColor="#000"
+                fontSize="14px"
+                lineHeight="24.5px"
+                letterSpacing="0.4px"
+                textTransform="uppercase"
+                padding="0px 0px 0px 10px"
+                whiteSpace="pre-line"
+                id="total"
+                overflow="hidden"
+                wordWrap="break-word"
+                margin="0px !important">
+                ${totalAmount}
+              </TEXT>
+            </DIV>
+          </DIV>
+        </DIV>
         {sortedData &&
           Object?.keys(sortedData)?.map((day, index) => {
             return (
               <Accordion style={{ marginTop: '0px' }} key={`${day}`} data-testid={`${day}_invoice`}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id={`${day}_header`}>
                   <Typography className={classes.heading}>
-                    {day} -{' '}
+                    {`${day} - `}
                     {sortedData[day]?.reduce((accumulator, currentValue) => {
                       const totalHours = +accumulator + +currentValue.hours
                       return totalHours
@@ -259,7 +461,7 @@ const SingleWeekInvoiceView = ({
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {sortedData[day]?.map(task => {
                       return (
-                        <Tasks key={`${task._id}`}>
+                        <Tasks key={`${task._id}`} id={`${task._id}`}>
                           <TaskIcon>
                             <FaRegCheckCircle
                               size={15}
@@ -282,11 +484,13 @@ const SingleWeekInvoiceView = ({
                             letterSpacing="0.4px"
                             textTransform="capitalize"
                             padding="16px 0px 0px 10px"
+                            overflow="scroll"
+                            whiteSpace="nowrap"
                             width="167px">
                             {task?.task?.taskName}
                           </TEXT>
 
-                          {selectedTaskId === task._id && isCurrenWeek ? (
+                          {selectedTaskId === task._id && isCurrenWeek && role === 1 ? (
                             <FormField
                               zIndexUnset
                               fieldType="input"
@@ -317,6 +521,7 @@ const SingleWeekInvoiceView = ({
                               textAlign="center"
                               font-size="14px"
                               fontStyle="normal"
+                              id={`${task._id}_hours`}
                               fontWeight="400"
                               lineHeight="24.5px" /* 175% */
                               letterSpacing="0.4px"
@@ -357,7 +562,7 @@ const SingleWeekInvoiceView = ({
               </Accordion>
             )
           })}
-        {role !== 1 && selectedInvoice && (
+        {role !== 1 && selectedInvoice ? (
           <div style={{ width: '100%', margin: '0px auto' }}>
             <Button
               background="#1976D2"
@@ -375,6 +580,24 @@ const SingleWeekInvoiceView = ({
               APPROVE
             </Button>
           </div>
+        ) : isCurrenWeek && selectedInvoice?.tasks?.length ? (
+          <Button
+            background="#1976D2"
+            noBorder
+            margin="5px 0px 5px 0px"
+            buttonHeight="35px"
+            webKit
+            colors={{
+              background: '#1976D2',
+              text: '#FFF'
+            }}
+            onClick={() => {
+              handleSubmit('active')
+            }}>
+            SUBMIT
+          </Button>
+        ) : (
+          ''
         )}
       </DIV>
       {tasksModal && <AddTasksModal onHide={hideTasksModal} onAdd={addTasks} open={tasksModal} />}
