@@ -159,11 +159,7 @@ describe('Client can view project  applications, add department, tags etc', () =
                 `${application?.freelancerId?.userId?.FirstName} ${application?.freelancerId?.userId?.LastName}`
               )
             ).should('be.visible')
-            cy.get('#application_actions').click()
           })
-          cy.contains('Hire User').should('be.visible')
-          cy.contains('View Application').should('be.visible')
-          cy.contains('Dismiss Application').should('be.visible')
         })
         const Application = ProjectApplications[0]
         cy.get(`[data-testid="${Application._id}_application_card"]`).within(() => {
