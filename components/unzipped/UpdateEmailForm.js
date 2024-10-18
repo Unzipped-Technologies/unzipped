@@ -139,6 +139,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
             placeholder="Current Email"
             borderRadius="10px"
             name="currentEmail"
+            id="currentEmail"
             width="100%"
             zIndexUnset
             error={currentEmailError}
@@ -151,6 +152,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
             placeholder="New Email"
             borderRadius="10px"
             name="email"
+            id="email"
             width="100%"
             zIndexUnset
             error={emailError}

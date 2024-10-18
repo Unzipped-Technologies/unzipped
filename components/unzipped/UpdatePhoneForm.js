@@ -147,6 +147,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
             placeholder="Current Phone"
             borderRadius="10px"
             name="currentPhone"
+            id="currentPhone"
             width="100%"
             zIndexUnset
             error={''}
@@ -159,6 +160,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
             placeholder="phone"
             borderRadius="10px"
             name="phone"
+            id="phone"
             width="100%"
             zIndexUnset
             error={PhoneError}

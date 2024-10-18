@@ -111,7 +111,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
   const validatePassword = () => {
     const isValid = ValidationUtils._strongPasswordValidation(userData.newPassword)
     if (!isValid && userData.newPassword) {
-      setNewPasswordError('Password must contain numbers, 1 capital letter and 1 special character!')
+      setNewPasswordError('Password must be 8+ characters including numbers, 1 capital letter and 1 special character.')
     } else {
       setNewPasswordError('')
     }
@@ -145,6 +145,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             placeholder="Current Password"
             borderRadius="10px"
             name="password"
+            id="password"
             width="100%"
             zIndexUnset
             error={currentPasswordError}
@@ -180,6 +181,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             placeholder="New Password"
             borderRadius="10px"
             name="newPassword"
+            id="newPassword"
             width="100%"
             zIndexUnset
             error={newPasswordError}
@@ -195,6 +197,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             placeholder="Confirm Password"
             borderRadius="10px"
             name="confirmNewPassword"
+            id="confirmNewPassword"
             width="100%"
             zIndexUnset
             error={confirmPasswordError}
