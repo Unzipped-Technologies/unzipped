@@ -108,7 +108,10 @@ function MobileFreelancerFooter({ defaultSelected = 'footerHome' }) {
         <FooterContainer>
           {footerOptions.map((option, index) => (
             <Link key={index} href={option.link} passHref>
-              <FooterLink isSelected={option.name === selected} onClick={e => handleIconClick(e, option)}>
+              <FooterLink
+                id={option.name}
+                isSelected={option.name === selected}
+                onClick={e => handleIconClick(e, option)}>
                 <IconComponent
                   name={option.icon}
                   width={option.icon === 'footerMenu' ? '30' : '24'}
