@@ -511,7 +511,7 @@ const TaskForm = ({
               justifyContent="flex-end">
               <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
             </DIV>
-            {editMode ? (
+            {editMode.assignee ? (
               <span style={{ width: '300px', height: '50px' }}>
                 <FormField
                   mobile
@@ -860,6 +860,9 @@ const TaskForm = ({
                     border: '0px !important'
                   },
                   '& svg': { display: 'none' }
+                }}
+                onBlur={() => {
+                  validateForm()
                 }}
                 renderInput={params => <TextField {...params} />}
               />

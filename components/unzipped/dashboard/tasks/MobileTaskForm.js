@@ -394,7 +394,7 @@ const MobileTaskForm = ({
       setValidationErrors('Priority are required.')
       return false
     } else if (!taskForm?.status) {
-      setValidationErrors('Status are required.')
+      setValidationErrors('Status is required.')
       return false
     }
     setValidationErrors('')
@@ -420,7 +420,9 @@ const MobileTaskForm = ({
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
       updateForm('tags', [])
-      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
+      setEditSelectedTags(
+        editSelectedTags?.length ? [...editSelectedTags, editInputValue.trim()] : [editInputValue.trim()]
+      )
       setEditInputValue('')
     }
   }
@@ -439,7 +441,7 @@ const MobileTaskForm = ({
   useEffect(() => {
     if (router.pathname.includes('ticket')) {
       restTagsList()
-      updateForm('tags', [...taskForm?.tags, ...editSelectedTags])
+      updateForm('tags', taskForm?.tags?.length ? [...taskForm?.tags, ...editSelectedTags] : [...editSelectedTags])
     }
   }, [editSelectedTags])
 
@@ -451,7 +453,7 @@ const MobileTaskForm = ({
   }, [])
 
   return (
-    <TaskFormContainer>
+    <TaskFormContainer id="task_form_modal">
       <div>
         {taskForm?.ticketCode && (
           <TEXT fontSize="18px" textColor="#0057FF" lineHeight="normal">
@@ -473,6 +475,7 @@ const MobileTaskForm = ({
               disableBorder={!editMode.taskName}
               disabled={userRole === 1}
               noMargin
+              id="taskName"
               width="100%"
               height="36px !important"
               onChange={e => updateForm('taskName', e?.target?.value)}
@@ -527,6 +530,7 @@ const MobileTaskForm = ({
             fieldType="searchField"
             isSearchable={true}
             name="select"
+            id="assignee"
             options={assigneeOptions}
             fontSize="14px"
             width="100%"
@@ -586,7 +590,7 @@ const MobileTaskForm = ({
         <Autocomplete
           value={taskPriority}
           disablePortal
-          id="combo-box-demo"
+          id="priority_autocomplete"
           options={PRIORITY_OPTIONS_ARR}
           onChange={(event, value) => {
             setTaskPriority(value)
@@ -628,11 +632,14 @@ const MobileTaskForm = ({
         <Autocomplete
           value={inputStatus}
           disablePortal
-          id="combo-box-demo"
+          id="status_autocomplete"
           options={STATUS_OPTIONS_ARR}
           onChange={(event, value) => {
             setInputStatus(value)
             updateForm('status', value)
+          }}
+          onBlur={() => {
+            validateForm()
           }}
           sx={{
             width: '100%',
@@ -669,36 +676,31 @@ const MobileTaskForm = ({
           alignItems: 'center',
           justifyContent: 'flex-start'
         }}>
-        {editMode ? (
-          <FormField
-            zIndexUnset
-            fieldType="input"
-            disableBorder={!editMode.storyPoints}
-            borderRadius="0px"
-            border="1px solid #ccc"
-            margin="0px 0px 0px 0px !important"
-            fontSize="14px"
-            disabled={userRole === 1}
-            width="100%"
-            height="30px  !important"
-            onChange={e => updateForm('storyPoints', e?.target?.value)}
-            value={taskForm?.storyPoints}
-            clickType="storyPoints"
-            onUpdate={() => {}}
-            onClick={() => {
-              enableEditMode('storyPoints')
-            }}
-            onBlur={() => {
-              validateForm()
-              enableEditMode('')
-            }}
-            style={{ color: '#000000' }}
-          />
-        ) : (
-          <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px">
-            {taskForm?.storyPoints}
-          </DarkText>
-        )}
+        <FormField
+          zIndexUnset
+          fieldType="input"
+          disableBorder={!editMode.storyPoints}
+          borderRadius="0px"
+          border="1px solid #ccc"
+          margin="0px 0px 0px 0px !important"
+          fontSize="14px"
+          id="storyPoints"
+          disabled={userRole === 1}
+          width="100%"
+          height="30px  !important"
+          onChange={e => updateForm('storyPoints', e?.target?.value)}
+          value={taskForm?.storyPoints}
+          clickType="storyPoints"
+          onUpdate={() => {}}
+          onClick={() => {
+            enableEditMode('storyPoints')
+          }}
+          onBlur={() => {
+            validateForm()
+            enableEditMode('')
+          }}
+          style={{ color: '#000000' }}
+        />
       </div>
       <div>
         <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="40px !important">
@@ -872,6 +874,7 @@ const MobileTaskForm = ({
             textarea
             margin={'10px 0px 0px 0px'}
             fontSize="14px"
+            id="description"
             borderColor="red"
             disableBorder={!editMode.description}
             disabled={userRole === 1}
@@ -964,6 +967,7 @@ const MobileTaskForm = ({
               fieldType="input"
               fontSize="14px"
               height="auto"
+              id="comment"
               textarea
               width="100%"
               maxLength={'1000'}
@@ -984,6 +988,7 @@ const MobileTaskForm = ({
                 borderColor="1px solid #CED4DA"
                 borderRadius="4px"
                 unset
+                id={comment?._id}
                 key={comment?._id}
                 half
                 padding="10px">
@@ -991,10 +996,21 @@ const MobileTaskForm = ({
                   <div className="d-flex">
                     <Span margin="0px 0px 10px 0px">
                       {userData?.profilePic && (
-                        <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
+                        <Image
+                          src={userData?.profilePic}
+                          width="24px"
+                          height="24px"
+                          radius="50%"
+                          id={`comment_${comment?._id}_image`}
+                        />
                       )}
                       <Span space>
-                        <DarkText fontSize="18px" color="#000000" lineHeight="21.09px" noMargin>
+                        <DarkText
+                          id={`comment_${comment?._id}_user_info`}
+                          fontSize="18px"
+                          color="#000000"
+                          lineHeight="21.09px"
+                          noMargin>
                           {userData?.name || ''}
                           <span
                             style={{
@@ -1010,6 +1026,7 @@ const MobileTaskForm = ({
                     </Span>
                     {comment?.userId === userId && (
                       <DIV
+                        id={`edit_${comment?._id}_comment`}
                         display="flex"
                         justifyContent="flex-end"
                         onClick={() => {
@@ -1027,6 +1044,7 @@ const MobileTaskForm = ({
                     placeholder="Leave a comment..."
                     noMargin
                     height="auto"
+                    id={`comment_${comment?._id}`}
                     textarea
                     width="100%"
                     maxLength={'1000'}

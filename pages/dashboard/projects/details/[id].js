@@ -71,6 +71,7 @@ const ProjectName = styled.div`
     width: 100%;
     justify-content: center;
     padding: 0px 0px 0px 15px;
+    overflow: scroll;
   }
 `
 
