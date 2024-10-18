@@ -30,7 +30,7 @@ const StepTwoWizardFlow = ({ updateForm, goBack, submitForm, stage, name, isSubm
         sub="Describe your project in as few words as possible"
         disabled={name?.length === 0}
         onUpdate={updateForm}
-        onBack={goBack}
+        onBack={() => goBack(stage)}
         onSubmit={submitForm}
         progress={stage}
         stage={stage}>

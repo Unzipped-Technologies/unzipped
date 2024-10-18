@@ -130,6 +130,7 @@ export const createBusiness =
             })
           }
           dispatch({ type: RESET_BUSINESS_FORM })
+          dispatch({ type: RESET_PROJECT_FILES })
         })
         .catch(err => {
           dispatch({
