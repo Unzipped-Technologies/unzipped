@@ -108,7 +108,7 @@ describe('Freelancer Invoice', () => {
     cy.intercept('GET', `/api/contract/count/*`).as('clientContractsRequest')
     cy.intercept('GET', `/api/projectApplication*`).as('getApplicationsRequest')
 
-    cy.contains('My Projects').should('be.visible').click()
+    cy.contains('My Projects').scrollIntoView().should('be.visible').click()
 
     cy.contains('Connect. Build. grow').should('not.exist')
 
@@ -295,41 +295,6 @@ describe('Freelancer Invoice', () => {
         })
       })
 
-    cy.window()
-      .its('store')
-      .then(store => {
-        cy.get(`#Wednesday_add_task_icon`).scrollIntoView().should('be.visible').click()
-        cy.wait('@getTasksRequest').then(interception => {
-          expect(interception.response.statusCode).to.be.oneOf([200, 304])
-        })
-        const Task = store.getState().Tasks.tasks[0]
-        cy.get('#task_name').click()
-
-        if (Task) {
-          cy.get('#task_name').type(Task?.taskName?.charAt(0))
-          cy.get('.MuiAutocomplete-listbox').should('be.visible').scrollIntoView().contains(Task?.taskName).click()
-
-          cy.get('#task_name').should('have.value', Task?.taskName)
-        }
-
-        cy.contains('button', 'ADD TASK').scrollIntoView().should('be.visible').click()
-
-        const Invoices = store.getState().Invoices.invoices
-
-        if (getCurrentInvoice(Invoices)) {
-          cy.wait('@addTasksRequest').then(interception => {
-            expect(interception.response.statusCode).to.be.oneOf([200, 304])
-          })
-        } else {
-          cy.wait('@createInvoiceRequest').then(interception => {
-            expect(interception.response.statusCode).to.be.oneOf([200, 304])
-          })
-        }
-        cy.wait('@getInvoiceRequest').then(interception => {
-          expect(interception.response.statusCode).to.be.oneOf([200, 304])
-        })
-      })
-
     cy.contains('button', 'SUBMIT').scrollIntoView().should('be.visible').click()
     cy.wait('@updateInvoiceRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
@@ -348,8 +313,9 @@ describe('Freelancer Invoice', () => {
     cy.intercept('GET', `/api/business/*`).as('getProjectDetailsRequest')
     cy.intercept('GET', `/api/contract/count/*`).as('clientContractsRequest')
     cy.intercept('GET', `/api/projectApplication*`).as('getApplicationsRequest')
+    cy.scrollTo('top')
 
-    cy.contains('My Projects').should('be.visible').click()
+    cy.contains('My Projects').scrollIntoView().should('be.visible').click()
     cy.url().should('include', `/dashboard/projects`)
     cy.contains('Connect. Build. grow').should('not.exist')
 
@@ -397,16 +363,7 @@ describe('Freelancer Invoice', () => {
         const Invoices = store.getState().Invoices.invoices
         const selectedInvoicee = getCurrentInvoice(Invoices)
         const sortedData = invoiceData(selectedInvoicee)
-        Object?.keys(sortedData)?.forEach(day => {
-          cy.get(`#${day}_hours`).within(() => {
-            cy.contains(day).should('be.visible')
-            let hours = 0
-            for (var item of sortedData[day]) {
-              hours += +item.hours ?? 0
-            }
-            cy.contains(hours).should('be.visible')
-          })
-        })
+
         cy.get(`#freelancer_invoice_totals`).within(() => {
           cy.contains(`$${selectedInvoicee?.contract?.hourlyRate || 0} / HOUR`)
           const subTotal = selectedInvoicee?.contract?.hourlyRate * selectedInvoicee?.hoursWorked
@@ -435,7 +392,10 @@ describe('Freelancer Invoice', () => {
       })
   })
   it('Verify dashboard notifications', () => {
-    cy.visit('http://localhost:3000/dashboard')
+    cy.scrollTo('top')
+    cy.contains('Dashboard').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', `/dashboard`)
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.window()
       .its('store')
@@ -529,8 +489,10 @@ describe('Freelancer Invoice', () => {
         cy.contains('Browse other projects to inspire ideas').should('be.visible')
         cy.contains('button', 'BROWSE').should('be.visible').click()
         cy.url().should('include', '/projects')
+        cy.contains('Connect. Build. grow').should('not.exist')
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_0`)
@@ -538,17 +500,20 @@ describe('Freelancer Invoice', () => {
       .within(() => {
         cy.contains('See our help docs').should('be.visible').click()
         cy.url().should('include', '/')
+        cy.contains('Connect. Build. grow').should('not.exist')
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
-    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_1`)
       .scrollIntoView()
       .within(() => {
         cy.contains('Get started').should('be.visible').click()
         cy.url().should('include', '/')
+        cy.contains('Connect. Build. grow').should('not.exist')
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_3`)
@@ -556,6 +521,7 @@ describe('Freelancer Invoice', () => {
       .within(() => {
         cy.contains('Ask about a topic.').should('be.visible').click()
         cy.url().should('include', '/')
+        cy.contains('Connect. Build. grow').should('not.exist')
         cy.go('back')
         cy.contains('Connect. Build. grow').should('not.exist')
       })

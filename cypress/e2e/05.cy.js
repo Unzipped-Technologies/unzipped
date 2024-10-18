@@ -70,7 +70,7 @@ describe('Client can view project  applications, add department, tags etc', () =
       cy.intercept('GET', `/api/business/${selectedProject?._id}`).as('getProjectDetailsRequest')
       cy.intercept('GET', `/api/contract/count/${userId}`).as('clientContractsRequest')
 
-      cy.get(`#${selectedProject?._id}`).contains(ValidationUtils.truncate(selectedProject.name, 40)).click()
+      cy.get(`#${selectedProject?._id}`).contains(ValidationUtils.truncate(selectedProject?.name, 40)).click()
       cy.contains('Connect. Build. grow').should('not.exist')
 
       cy.wait('@getProjectDetailsRequest').then(interception => {

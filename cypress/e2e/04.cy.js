@@ -69,15 +69,17 @@ describe('Apply for project', () => {
       ProjectsList?.forEach(project => {
         cy.get(`#${project._id}`).contains(project.name)
         cy.contains(
-          `Estimated Rate: $${
+          `Estimated Rate: ${
             project?.projectBudgetType === 'Hourly Rate' ? project?.budgetRange + ' / hour' : project?.budgetRange ?? 0
           }`
         )
       })
 
-      const FreelancerId = reduxStore.getState().Auth.user.freelancers
+      const FreelancerId = reduxStore.getState().Auth.user.freelancers?._id
 
-      const Project = ProjectsList?.filter(project => project?.user?.email === 'client@gmail.com')?.[0]
+      const Project = ProjectsList?.filter(
+        project => project?.user?.email === 'client@gmail.com' && !project?.applicants?.includes(FreelancerId)
+      )?.[0]
       cy.get(`#${Project._id}`).contains(Project.name).click()
 
       cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')

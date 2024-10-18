@@ -262,10 +262,13 @@ describe('Client Invoices', () => {
           })
         }
       })
+    cy.scrollTo('top')
+    cy.contains('Dashboard').should('be.visible').click()
+    cy.url().should('include', '/dashboard')
+
+    cy.contains('Connect. Build. grow').should('not.exist')
   })
   it('Verify dashboard notifications', () => {
-    cy.visit('http://localhost:3000/dashboard')
-
     cy.window()
       .its('store')
       .then(store => {
@@ -393,9 +396,11 @@ describe('Client Invoices', () => {
       .scrollIntoView()
       .within(() => {
         cy.contains('button', 'PICK A PLAN').should('be.visible').click()
+        cy.url().should('include', '/pick-a-plan')
+
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
-    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get('#browse_projects_notification')
       .scrollIntoView()
@@ -403,27 +408,27 @@ describe('Client Invoices', () => {
         cy.contains('Browse other projects to inspire ideas').should('be.visible')
         cy.contains('button', 'BROWSE').should('be.visible').click()
         cy.url().should('include', '/projects')
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
-    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_0`)
       .scrollIntoView()
       .within(() => {
         cy.contains('See our help docs').should('be.visible').click()
         cy.url().should('include', '/')
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
-    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_1`)
       .scrollIntoView()
       .within(() => {
         cy.contains('Get started').should('be.visible').click()
         cy.url().should('include', '/')
+        cy.go('back')
+        cy.contains('Connect. Build. grow').should('not.exist')
       })
-    cy.go('back')
-    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_3`)
       .scrollIntoView()
