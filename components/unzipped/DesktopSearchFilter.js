@@ -52,7 +52,6 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
     const input = event.target.value.toLowerCase()
     setUserInput(input)
     var matchingSkills = RECENT_SKILLS.filter(skill => skill.value.toLowerCase().includes(input))
-
     setSuggestions([...matchingSkills])
   }
 
@@ -122,6 +121,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
               </TEXT>
             </div>
             <select
+              id="sort_by"
               style={{ display: 'block', border: '1px solid #BCC5D3', height: '45px' }}
               value={filter?.sort}
               onChange={e => setFilters('sort', e?.target?.value)}>
@@ -285,6 +285,7 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
           <input
             placeholder="Search"
             data-testid="skills"
+            id="skill_name"
             style={{ margin: '0', border: '0', height: 'auto' }}
             type="text"
             value={userInput}
@@ -305,13 +306,13 @@ function DesktopSearchFilterProjects({ filter, setFilters, filterType = 'project
             {suggestions?.map((skill, index) => (
               <Li
                 key={index}
-                data-testid={`${skill?.text}_suggestion`}
+                data-testid={`${skill?.value}_suggestion`}
                 onClick={() => {
                   handleSuggestionClick(skill)
                   setUserInput('')
                   setSuggestions([])
                 }}>
-                {skill?.text}
+                {skill?.label}
               </Li>
             ))}
           </ul>

@@ -65,7 +65,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
             {project?.businessCountry}
           </DarkText>
           <DarkText half data-testid={`${project?._id}_budget`}>
-            Estimated Rate: $
+            Estimated Rate:{' '}
             {project?.projectBudgetType === 'Hourly Rate'
               ? project?.budgetRange + ' / hour'
               : project?.budgetRange ?? 0}

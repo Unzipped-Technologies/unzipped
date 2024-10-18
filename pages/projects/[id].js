@@ -56,6 +56,7 @@ const ProjectSubHeading = styled.div`
   line-height: 24.5px; /* 102.083% */
   letter-spacing: 0.4px;
   text-transform: uppercase;
+  overflow: scroll;
   @media (max-width: 680px) {
     font-size: 16px;
     padding: 15px 0px 0px 10px;

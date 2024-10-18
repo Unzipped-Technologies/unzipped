@@ -137,10 +137,6 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
       return '1 result'
     } else if (skip === 0) {
       return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
-    } else {
-      const start = +skip * +take + 1
-      const end = Math.min(+skip * +take + +take, totalCount)
-      return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
     }
   }
 
@@ -195,43 +191,45 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
           </MobileDisplayBox>
         )}
 
-        <Box
-          data-testid="desktop_projects_container"
-          style={{
-            marginTop: !isExpanded ? (accessToken ? '190px' : '150px') : accessToken ? '190px' : '150px'
-          }}>
-          <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
-          {!loading ? (
-            <div className="overflow-auto" style={{ width: '100%' }}>
-              <div className="d-flex align-items-baseline py-4 bg-white">
-                <h5 className="px-4">
-                  <b>Top Results</b>
-                </h5>
-                <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+        {window?.innerWidth > 680 && (
+          <Box
+            data-testid="desktop_projects_container"
+            style={{
+              marginTop: !isExpanded ? (accessToken ? '190px' : '150px') : accessToken ? '190px' : '150px'
+            }}>
+            <DesktopSearchFilter filter={filter} setFilters={setFilters} filterType="projects" />
+            {!loading ? (
+              <div className="overflow-auto" style={{ width: '100%' }}>
+                <div className="d-flex align-items-baseline py-4 bg-white" id="top_results">
+                  <h5 className="px-4">
+                    <b>Top Results</b>
+                  </h5>
+                  <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+                </div>
+                {projectList?.length === 0 && (
+                  <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
+                    No Projects found for this search
+                  </DarkText>
+                )}
+                {projectList?.map((project, index) => {
+                  return (
+                    <div key={`${project._id}_desktop`} id={`${project._id}_desktop`}>
+                      <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
+                        <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
+                      </WhiteCard>
+                      {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
+                    </div>
+                  )
+                })}
               </div>
-              {projectList?.length === 0 && (
-                <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
-                  No Projects found for this search
-                </DarkText>
-              )}
-              {projectList?.map((project, index) => {
-                return (
-                  <div key={`${project._id}_desktop`}>
-                    <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
-                      <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
-                    </WhiteCard>
-                    {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
-                  </div>
-                )
-              })}
-            </div>
-          ) : (
-            ''
-          )}
-        </Box>
+            ) : (
+              ''
+            )}
+          </Box>
+        )}
         {projectList?.map((project, index) => {
           return (
-            <div key={`${project._id}_mobile`}>
+            <div key={`${project._id}_mobile`} id={`${project._id}_mobile`}>
               {!filterOpenClose && window?.innerWidth <= 680 && (
                 <MobileDisplayBox key={`${project._id}_mobile_listing`}>
                   <MobileProjectCard project={project} includeRate />
@@ -252,7 +250,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
 const mapStateToProps = state => {
   return {
     freelancerSkillsList: state.FreelancerSkills?.freelancerSkills,
-    freelancerId: state?.Auth?.user?.freelancers,
+    freelancerId: state?.Auth?.user?.freelancers?._id,
     totalCount: state.Business.totalCount,
     projectList: state.Business.projectList,
     loading: state.Loading.loading,
