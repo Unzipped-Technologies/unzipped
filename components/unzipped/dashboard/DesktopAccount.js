@@ -327,7 +327,7 @@ const DesktopAccount = ({
               onClick={() => {
                 router.push('/change-password')
               }}>
-              Change password
+              Change Password
             </a>
           </Rows>
           <Rows>
