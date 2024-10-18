@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Checkbox from '@mui/material/Checkbox'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
-
+import { useRouter } from 'next/router'
 import { Icon } from '../ui'
 import IconComponent from '../ui/icons/IconComponent'
 import { BUDGET_TYPE, RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
@@ -20,6 +20,7 @@ const ClearIcon = styled.span`
 function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterType = 'projects' }) {
   const minRef = React.useRef()
   const maxRef = React.useRef()
+  const router = useRouter()
   const [filters, setMobileFilters] = useState({
     sort: '',
     isActive: true,
@@ -34,7 +35,8 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
   const [userInput, setUserInput] = useState('')
 
   const [error, setError] = useState({ maxError: '', minError: '' })
-
+  const { skill } = router.query;
+  
   useEffect(() => {
     const updatedFilter = { ...filter }
     for (var field in updatedFilter) {
@@ -91,6 +93,14 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
     }
   }
 
+  useEffect(() => {
+    if (skill) {
+      setMobileFilters(({
+        skill: Array.isArray(skill) ? skill : [skill]
+      }));
+    }
+  }, [skill]);
+
   const handleSearhButton = () => {
     if (error?.maxError) {
       maxRef.current.focus()
@@ -117,6 +127,23 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
         }
       } else {
         updatedFilter[field] = value
+      }
+
+
+      if (value === '' || (Array.isArray(value) && value.length === 0)) {
+        const { [field]: removed, ...restQuery } = router.query;
+        router.push({
+          pathname: router.pathname,
+          query: restQuery
+        });
+      } else {
+        router.push({
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            [field]: value
+          }
+        });
       }
 
       return updatedFilter

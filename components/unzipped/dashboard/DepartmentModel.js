@@ -126,7 +126,7 @@ const DepartmentModel = ({
               </Button>
 
               <Button
-                disabled={false}
+                disabled={!departmentForm?.name}
                 onClick={async () => {
                   await onSubmit()
                 }}

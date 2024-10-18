@@ -14,6 +14,7 @@ const http = require('http')
 const createSocket = require('./sockets/index.js')
 const cors = require('cors') // Import the cors middleware
 
+
 const PORT = process.env.PORT || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -26,6 +27,7 @@ mongoose.connect(keys.mongoURI, {
   useCreateIndex: true,
   useFindAndModify: false
 })
+
 
 app
   .prepare()

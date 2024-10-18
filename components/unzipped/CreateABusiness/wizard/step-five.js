@@ -24,7 +24,7 @@ const StepFiveWizardFlow = ({
       sub="What skills should they have mastered? List the abilities needed for your project (ex. React, AWS, SQL)."
       disabled={requiredSkills?.length === 0}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>

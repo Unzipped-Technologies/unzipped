@@ -75,6 +75,7 @@ const Freelancers = ({
   const containerRef = useRef(null)
   const router = useRouter()
   const { project } = router.query
+  const { skill } = router.query;
 
   const [filter, setFilter] = useState({
     businessId: project,
@@ -93,6 +94,16 @@ const Freelancers = ({
   const { isExpanded } = useSelector(state => state.Freelancers)
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
+
+
+  useEffect(() => {
+    if (skill) {
+      setFilter(prevFilter => ({
+        ...prevFilter,
+        skill: Array.isArray(skill) ? skill : [skill]
+      }));
+    }
+  }, [skill]);
 
   const debouncedSearch = useRef(
     _.debounce(filter => {
@@ -169,8 +180,7 @@ const Freelancers = ({
       skills: item?.freelancerSkills || [],
       cover:
         item?.cover ||
-        `I have been a ${item?.category || 'developer'} for over ${
-          (item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
+        `I have been a ${item?.category || 'developer'} for over ${(item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
         } years. schedule a meeting to check if I'm a good fit for your business.`,
       profilePic:
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
@@ -194,7 +204,22 @@ const Freelancers = ({
       } else {
         updatedFilter[field] = value
       }
-      updatedFilter[field] = value
+
+      if (value === '' || (Array.isArray(value) && value.length === 0)) {
+        const { [field]: removed, ...restQuery } = router.query;
+        router.push({
+          pathname: router.pathname,
+          query: restQuery
+        });
+      } else {
+        router.push({
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            [field]: value
+          }
+        });
+      }
 
       return updatedFilter
     })
@@ -284,7 +309,9 @@ const Freelancers = ({
                       fontSize="20px"
                       padding="20px 40px"
                       backgroundColor="white"
-                      width="-webkit-fill-available">
+                      width="-webkit-fill-available"
+                      className="px-4"
+                    >
                       Loading...
                     </DarkText>
                   ) : (
@@ -293,7 +320,9 @@ const Freelancers = ({
                         fontSize="20px"
                         padding="20px 40px"
                         backgroundColor="white"
-                        width="-webkit-fill-available">
+                        width="-webkit-fill-available"
+                        className="px-4"
+                      >
                         No freelancers found for this search
                       </DarkText>
                     )

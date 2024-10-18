@@ -29,7 +29,7 @@ const StepFourWizardFlow = ({
           sub="What are the specific tasks and objectives for this project"
           disabled={objectives?.length === 0}
           onUpdate={updateForm}
-          onBack={goBack}
+          onBack={() => goBack(stage)}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
@@ -81,7 +81,7 @@ const StepFourWizardFlow = ({
           sub="Tell us about the team they’ll join. What’s the culture and rhythm within your company?"
           disabled={teamDynamics?.length === 0}
           onUpdate={updateForm}
-          onBack={goBack}
+          onBack={() => goBack(stage)}
           onSubmit={submitForm}
           progress={stage}
           stage={stage}>
@@ -100,7 +100,7 @@ const StepFourWizardFlow = ({
             <FormField
               textarea
               fieldType="input"
-              fontSize="20px"
+              fontSize="16px"
               id="teamDynamics"
               width="100%"
               borderRadius="10px"

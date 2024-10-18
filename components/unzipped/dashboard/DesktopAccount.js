@@ -181,6 +181,12 @@ const DesktopAccount = ({
     fetchData()
   }, [router])
 
+
+  useEffect(()=>{
+    setUserData(initialState)
+  },[business])
+
+  
   useEffect(() => {
     const initialState = {
       email: user?.email,

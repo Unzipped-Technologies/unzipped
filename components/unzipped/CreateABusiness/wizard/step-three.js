@@ -9,15 +9,19 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
   const { businessForm } = useSelector(state => state.Business)
   const [isAlterable, setIsAlterable] = useState(false)
   const fieldName = businessForm?.projectType === 'Short Term Business' ? 'challenge' : 'role'
+  const [isError, setIsError] = useState(false); 
 
   const handleInputChangeEvent = e => {
-    if (businessForm?.[fieldName]?.length >= 1000) {
+    const value = e.target.value;
+    if (value.length > 1000) {
+      setIsError(true); 
       if (isAlterable) {
-        setIsAlterable(false)
-        updateForm({ [fieldName]: e.target.value })
+        setIsAlterable(false);
+        updateForm({ [fieldName]: value });
       }
     } else {
-      updateForm({ [fieldName]: e.target.value })
+      setIsError(false); 
+      updateForm({ [fieldName]: value });
     }
   }
 
@@ -30,35 +34,37 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
     <CreateABusiness
       title="Describe the project"
       sub="What's the challenge you need to conquer? (in a sentence or two)"
-      disabled={challenge?.length === 0}
+      disabled={isError}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
-      stage={stage}>
+      stage={stage}
+    >
       <Grid id="step_3">
         <FormField
           textarea
           fieldType="input"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           placeholder="Enter Project Summary..."
           borderRadius="10px"
           id="challenge"
-          onChange={e => handleInputChangeEvent(e)}
+          onChange={handleInputChangeEvent}
           value={challenge}
           onKeyDown={handleKeydownEvent}
         />
       </Grid>
+      {isError && <p style={{ color: 'red', marginTop: '10px' }}>Exceeded character limit of 1000!</p>} 
       <CharacterCounter field={'challenge'} />
     </CreateABusiness>
   ) : (
     <CreateABusiness
       title="Role Description"
       sub="Envision your ideal hire. What role will they play in your ongoing projects?"
-      disabled={role ? false : true}
+      disabled={isError}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>
@@ -66,15 +72,16 @@ const StepThreeWizardFlow = ({ challenge, updateForm, goBack, submitForm, stage,
         <FormField
           textarea
           fieldType="input"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           borderRadius="10px"
           id="role"
-          onChange={e => handleInputChangeEvent(e)}
+          onChange={handleInputChangeEvent}
           value={role}
           onKeyDown={handleKeydownEvent}
         />
       </Grid>
+      {isError && <p style={{ color: 'red', marginTop: '10px' }}>Exceeded character limit of 1000!</p>} 
       <CharacterCounter field={fieldName} />
     </CreateABusiness>
   )

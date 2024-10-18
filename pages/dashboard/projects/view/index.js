@@ -76,7 +76,8 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
       projectTabs = [
         { name: 'Open Projects', index: 0 },
         { name: 'Invoices', index: 1 },
-        { name: 'Hires', index: 2 }
+        { name: 'Hires', index: 2 },
+        { name: 'Archived Projects', index: 3 },
       ]
   }
 
@@ -118,6 +119,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
           })
         }
       }
+      getProjectsList({ take: 1000, skip: 0, filter });
     })
   }
 
@@ -192,14 +194,17 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
         <MobileSearchFilter handleFilterOpenClose={handleFilterOpenClose} filter={filter} setFilters={setFilters} />
       ) : (
         <>
-          <DIV display="flex" flexWrap="wrap" flexDirection="row" flexFlow="column">
+          <DIV display="flex" flexWrap="wrap" flexDirection="row" flexFlow="column" alignItems="end" margin="10px" >
             <DIV
               width="100%"
               display="flex"
               justifyContent="space-around"
-              gap="20px"
+              gap="50px"
               borderBottom="1px solid #bcc5d3"
-              margin="0px 0px 1px 10px">
+              margin="0px 0px 1px 10px"
+              whiteSpace="nowrap"
+              overFlowX="scroll"
+            >
               {projectTabs.map((tab, index) => {
                 return (
                   <TabButton
@@ -222,7 +227,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
               {selectedTab === 0 && (
                 <div>
                   {!filterOpenClose && (
-                    <DIV height="50px" width="96%" margin="5px 0px 5px 2.5%">
+                    <DIV height="50px" margin="5px 0px 0px 0px">
                       <MobileSearchBar setFilters={setFilters} handleFilterOpenClose={handleFilterOpenClose} />
                     </DIV>
                   )}
@@ -293,6 +298,76 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
               )}
               {selectedTab === 1 && <AllProjectsInvoices />}
               {selectedTab === 2 && <AllProjectHires />}
+              {selectedTab === 3 && (
+                <div>
+                  <DIV display="flex" flexDirection="column" flexFlow="column" data-testid="all_projects" margin="20px 0px 0px 0px">
+                    {businesses?.map((business, index) => {
+                      if (business.isArchived) {
+                        return (
+                          <DIV
+                            key={business._id}
+                            borderRadius="4px"
+                            background="#fff"
+                            margin="0px 0px 5px 0px"
+                            data-testid={business?._id}>
+                            <TEXT
+                              textColor="#000"
+                              fontSize="16px"
+                              fontWeight="600"
+                              lineHeight="23px"
+                              letterSpacing="0.15px"
+                              padding="20px 0px 0px 18px">
+                              {ValidationUtils.truncate(business?.name, 40)}
+                            </TEXT>
+                            <TEXT
+                              textColor="#000"
+                              fontFamily="Roboto"
+                              fontSize="13px"
+                              fontStyle="normal"
+                              fontWeight="400"
+                              lineHeight="23px"
+                              letterSpacing="0.15px"
+                              padding="0px 0px 0px 18px">
+                              {(business?.deadline && ValidationUtils.formatDate(business?.deadline)) ||
+                                ValidationUtils.formatDate(business?.updatedAt || business?.createdAt)}
+                            </TEXT>
+                            <Absolute
+                              buttonHeight="33px"
+                              position="none"
+                              style={{
+                                width: '90%',
+                                border: '0.25px solid #000',
+                                margin: '20px auto 20px auto',
+                                background: 'rgba(217, 217, 217, 0.28)'
+                              }}>
+                              <Button
+                                icon="largeExpand"
+                                popoutWidth="324px"
+                                noBorder
+                                type="lightgrey"
+                                fontSize="13px"
+                                zIndex={'auto'}
+                                popout={generatePopout(business)}
+                                iconRight
+                                colors={{
+                                  hover: 'none',
+                                  background: 'none'
+                                }}
+                                style={{
+                                  width: '324px'
+                                }}>
+                                Details
+                              </Button>
+                            </Absolute>
+                          </DIV>
+                        );
+                      }
+                      return null; 
+                    })}
+                  </DIV>
+
+                </div>
+              )}
             </DIV>
           </DIV>
           <MobileFreelancerFooter defaultSelected="Projects" />

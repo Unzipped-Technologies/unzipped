@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import Image from '../ui/Image'
@@ -12,6 +12,7 @@ import { Card, CardContent, Typography, Grid, Box as MUIBox } from '@mui/materia
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import socket from '../../components/sockets/index'
 import { useDispatch } from 'react-redux'
+import ListModal from './ListModal'
 
 const Container = styled.div`
   display: flex;
@@ -62,9 +63,10 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
   const dispatch = useDispatch()
 
   const [anchorEl, setAnchorEl] = React.useState(null)
-
+  const [isOpen, setIsOpen] = useState(false);
   const handleClick = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget)
+    handleOpenModal()
+    // setAnchorEl(anchorEl ? null : event.currentTarget)
   }
 
   const open = Boolean(anchorEl)
@@ -142,6 +144,16 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
     }
   }
 
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+  console.log("Skills",user?.freelancerSkills)
+
   return (
     <Container data-testid="desktop_profile_container" id="freelancer_profile">
       <ImageContainer>
@@ -157,7 +169,7 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
           </DarkText>
           {user?.freelancerSkills?.length > 0
             ? user?.freelancerSkills.map(item => (
-                <Badge key={item._id}>
+                <Badge className="overflow-hidden" key={item._id}>
                   <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
                 </Badge>
               ))
@@ -242,20 +254,30 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       </Content>
 
       <LikeBox>
-        <Button
-          block
-          width="36px"
-          type="button"
-          buttonHeight="36px"
-          fontSize="15px"
-          noBorder
-          onClick={e => {
-            handleClick(e)
-          }}>
-          CHECK AVAILABILITY
-        </Button>
-        <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}>
-          <Card
+        {
+          role !== 1 && (
+            <Button
+              block
+              width="36px"
+              type="button"
+              buttonHeight="36px"
+              fontSize="15px"
+              noBorder
+              onClick={e => {
+                handleClick(e)
+              }}>
+              CHECK AVAILABILITY
+            </Button>
+          )
+        }
+
+
+        {isOpen && (
+          <ListModal handleClose={handleCloseModal} open={isOpen} userId={userId} freelancerId={user?._id} user={user} />
+        )}
+
+        {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 
+           <Card
             sx={{
               minWidth: 275,
               borderRadius: 3,
@@ -283,8 +305,8 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
                 Available Time Slot
               </Typography>
             </CardContent>
-          </Card>
-        </Popper>
+          </Card> 
+         </Popper>  */}
         <Likes>
           <div className="inline-flex flex-direction-column">
             <span onClick={handleLike}>

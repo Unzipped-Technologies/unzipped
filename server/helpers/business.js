@@ -234,7 +234,8 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             objectives: 1,
             goals: 1,
             requiredSkills: 1,
-            projectBudgetType: 1
+            projectBudgetType: 1,
+            isArchived:1
           }
         },
         {

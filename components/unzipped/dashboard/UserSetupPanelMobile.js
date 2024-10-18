@@ -67,7 +67,7 @@ const Text = styled.p`
   font-style: normal;
   font-weight: 400;
   color: ${({ color }) => (color ? color : '#000')};
-  margin:  0px
+  margin:  4px;
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '40px')};
 `
 

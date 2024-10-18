@@ -11,7 +11,8 @@ import { ValidationUtils } from '../../../utils'
 import { areObjectsEqual } from '../../../services/formHelper'
 
 import IconComponent from '../../ui/icons/IconComponent'
-import { logoutUser, getCurrentUserData, updateCurrentUser } from '../../../redux/actions'
+import { logoutUser, getCurrentUserData,updateCurrentUser } from '../../../redux/actions'
+import UpdateProfileModal from '../UpdateProfileModal'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -88,6 +89,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, business
   const [businessPhoneError, setBusinessPhoneError] = useState('')
   const [taxIdError, setTaxIdError] = useState('')
   const [error, setError] = useState('')
+    const [isProfileModal, setIsProfileModal] = useState(false);
 
   const [showSettings, setShowSettings] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
@@ -139,6 +141,13 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, business
     linkPush('/login')
   }
 
+const handleOpenProfileModal = () => {
+    setIsProfileModal(true)
+  }
+
+  const handleCloseProfileModal = () => {
+    setIsProfileModal(false)
+  }
   const validateString = ({ item, min, max, message }, setErrorMessage) => {
     if (item === '') {
       setErrorMessage('This field is required!')
@@ -204,11 +213,11 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, business
               data-testid="user_profile_image"
             />
             <div className="mx-2">
-              <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="20px">
-                {user.FullName}
+              <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="17px">
+              {user?.FirstName + ' ' + user?.LastName}
               </P>
               <P margin="0" padding="0 0 5px 0" fontSize="16px">
-                {user?.freelancers?.category}
+                {user?.freelancers?.category || 'N/A'}
               </P>
             </div>
           </div>
@@ -281,6 +290,15 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, business
                   Password *****
                 </P>
                 <Link href="/change-password">Update Password</Link>
+              </div>
+              <div className="d-flex align-items-center justify-content-between mt-3">
+                <P fontSize="16px" margin="0px 0px 0px 20px">
+                  Profile
+                </P>
+                <P style={{fontSize:"15px",color:"#0095dd"}} onClick={() => {
+                  handleOpenProfileModal()
+                }}>
+                  Update</P>
               </div>
             </>
           )}
@@ -765,6 +783,12 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData, business
           </P>
         </div>
       </Container>
+
+      {isProfileModal && (<UpdateProfileModal
+        open={isProfileModal}
+        onHide={() => {
+          handleCloseProfileModal()
+        }} />)}
     </div>
   )
 }

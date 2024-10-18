@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 
 import Toggle from '../../../ui/Toggle'
 import IconComponent from '../../../ui/icons/IconComponent'
 import ScheduleMeetingModal from '../../../modals/scheduleMeeting'
+import { getCurrentUserList, addEntriesToList } from '../../../../redux/actions'
+import { bindActionCreators } from 'redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
+import IconSelector from '../../../unzipped/dashboard/IconSelector'
+import { IconColors } from '../../../../utils/FontIcons'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -28,11 +33,13 @@ const DropDown = styled.div`
   border-top: 0px;
 `
 
-function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute, handleChatArchive, handleChatMute }) {
+function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute, handleChatArchive, handleChatMute,
+  lists}) {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [openList, setOpenList] = useState(false)
   const [scheduleInterviewModal, setScheduleInterviewModal] = useState(false)
+  const { _id } = useSelector(state => state.Auth.user)
   const handleMute = value => {
     handleChatMute(value)
   }
@@ -42,6 +49,27 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
   }
   const handleScheduleInterviewModal = () => {
     setScheduleInterviewModal(!scheduleInterviewModal)
+  }
+
+  useEffect(() => {
+    dispatch(getCurrentUserList(_id))
+  }, [])
+
+  const addToList = listData => {
+    const freelancerID = data?.userId?.freelancers?._id;
+    if (freelancerID) {
+      dispatch(addEntriesToList(
+        {
+          name: listData?.name,
+          icon: listData?.icon,
+          userId: _id,
+          freelancerId: data?.userId?.freelancers?._id,
+          listId: listData?._id
+        },
+        listData?._id
+      ))
+      setOpenList(false);
+    }
   }
 
   return (
@@ -133,96 +161,55 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
         </div>
 
         <DropDown display={openList ? 'block' : 'none'}>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}>
-            <div>
-              <img src="/img/heart.png" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                Favourites
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="closedLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Private
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}>
-            <div>
-              <IconComponent name="eye" width="20" height="13" viewBox="0 0 20 13" fill="#8EDE64" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                Recently Viewed
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="closedLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Private
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}>
-            <div>
-              <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                My Team
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="closedLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Private
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
-          </div>
-          <div className="d-flex px-4 py-2 mx-2" style={{ gap: '15px' }}>
-            <div>
-              <IconComponent name="team" width="18" height="15" viewBox="0 0 18 15" fill="#FFC24E" />
-            </div>
-            <div>
-              <P fontSize="16px" margin="0">
-                My Team
-              </P>
-              <div className="d-flex align-items-center">
-                <IconComponent name="openLock" width="4.47" height="5.11" viewBox="0 0 4.47 5.11" fill="#B2B9C5" />
-                <P fontSize="7px" margin="0" padding="0 0 0 3px">
-                  Public
-                </P>
-                <P fontSize="7px" margin="0">
-                  .
-                </P>
-                <P fontSize="7px" margin="0">
-                  1 member
-                </P>
-              </div>
-            </div>
+          <div>
+            {lists?.length
+              ? lists.map(list => (
+                <div
+                  className="d-flex px-4 py-2 me-2"
+                  style={{ gap: '15px', borderBottom: '3px solid #EFF1F4' }}
+                  key={list?._id}
+                  data-testid={list?._id}
+                  onClick={() => {
+                    addToList(list)
+                  }}>
+                  <div>
+                    {list?.icon && (
+                      <IconSelector
+                        icon={list.icon}
+                        size={24}
+                        style={{ color: IconColors[list.icon] || '#1C1C1C' }}
+                        twoToneColor={IconColors[list.icon]}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <P fontSize="16px" margin="0">
+                      {list?.name || 'Favorites'}
+                    </P>
+                    <div className="d-flex align-items-center">
+                      <IconComponent
+                        name="closedLock"
+                        width="4.47"
+                        height="5.11"
+                        viewBox="0 0 4.47 5.11"
+                        fill="#B2B9C5"
+                      />
+                      <P fontSize="7px" margin="0" padding="0 0 0 3px">
+                        {list?.isPrivate && 'Private'}
+                      </P>
+                      <P fontSize="7px" margin="0">
+                        .
+                      </P>
+                      <P fontSize="7px" margin="0">
+                        {list?.listEntries?.length || 0} member
+                      </P>
+                    </div>
+                  </div>
+                </div>
+              ))
+              : ''}
           </div>
         </DropDown>
-
         <div style={{ padding: '10px', marginTop: '20px' }}>
           <Toggle
             className="mt-3"
@@ -251,4 +238,16 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
   )
 }
 
-export default MobileChatMenu
+const mapStateToProps = state => {
+  return {
+    lists: state.Lists?.currentUserList
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getCurrentUserList: bindActionCreators(getCurrentUserList, dispatch),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MobileChatMenu)

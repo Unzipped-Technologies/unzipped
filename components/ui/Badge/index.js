@@ -21,11 +21,14 @@ const BadgeContainer = styled.div`
   display: inline-block;
   text-transform: uppercase;
   white-space: nowrap;
-  font-size: 13px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 600;
   overflow: scroll;
   white-space: normal;
+
+  &.overflow-hidden {
+    overflow: hidden;
+  }
 `
 
 const statusColor = {

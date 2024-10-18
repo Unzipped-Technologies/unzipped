@@ -19,7 +19,7 @@ const StepSevenWizardFlow = ({
       sub="Every great story has a setting. What's the backdrop of your company or venture?"
       disabled={companyBackground?.length === 0}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>
@@ -38,7 +38,7 @@ const StepSevenWizardFlow = ({
         <FormField
           textarea
           fieldType="input"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           id="companyBackground"
           borderRadius="10px"

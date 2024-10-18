@@ -11,7 +11,7 @@ const StepSixWizardFlow = ({ goals, updateForm, goBack, submitForm, stage, handl
       sub="Chart out the milestones. What achievements should be celebrated along the way?"
       disabled={goals?.length === 0}
       onUpdate={updateForm}
-      onBack={goBack}
+      onBack={() => goBack(stage)}
       onSubmit={submitForm}
       progress={stage}
       stage={stage}>
@@ -30,7 +30,7 @@ const StepSixWizardFlow = ({ goals, updateForm, goBack, submitForm, stage, handl
         <FormField
           textarea
           fieldType="input"
-          fontSize="20px"
+          fontSize="16px"
           width="100%"
           id="goals"
           borderRadius="10px"

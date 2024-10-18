@@ -28,7 +28,8 @@ import {
   GET_BUSINESS_INFO_TASKLIST_PANEL,
   LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW,
   REST_BUSINESS_LIST,
-  LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW_ERROR
+  LOAD_BUSINESS_ASSOCIATED_TASK_FULL_VIEW_ERROR,
+  UPDATE_BUSINESS_DETAILS
 } from './constants'
 import axios from 'axios'
 import { tokenConfig } from '../../services/tokenConfig'
@@ -90,6 +91,26 @@ export const getBusinessDetails = userId => async (dispatch, getState) => {
     })
 }
 
+
+export const updateBusinessDetails = data => async (dispatch, getState) => {
+  dispatch({ type: LOAD_STATE })
+  await axios
+    .post(`/api/business/details/update`, data, tokenConfig(getState()?.Auth.token))
+    .then(res =>
+      dispatch({
+        type: UPDATE_BUSINESS_DETAILS,
+        payload: res.data
+      })
+    )
+    .catch(err => {
+      dispatch({
+        type: BUSINESS_ERROR,
+        payload: err.response
+      })
+    })
+}
+
+
 export const createBusiness =
   (data, isWizard = false) =>
   async (dispatch, getState) => {
@@ -109,6 +130,7 @@ export const createBusiness =
           })
         }
         dispatch({ type: RESET_BUSINESS_FORM })
+                  dispatch({ type: RESET_PROJECT_FILES })
       })
       .catch(err => {
         dispatch({

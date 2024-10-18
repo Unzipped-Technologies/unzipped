@@ -192,6 +192,7 @@ const ConversationContainer = ({
   const [selectedItem, setSelectedItem] = useState(null)
   const [archivedChatsShow, setArchivedChatsShow] = useState(false)
   const [typing, setTyping] = useState({})
+  const [filter, setFilter] = useState({ searchKey: '' }); 
 
   useEffect(() => {
     setConversation(conversations)
@@ -209,27 +210,28 @@ const ConversationContainer = ({
     })
   })
 
-  const handleSearch = e => {
-    const { searchKey } = e
+  const handleSearch = () => {
+    const { searchKey } = filter;
+    if (!searchKey) {
+      setConversation(conversations);
+      return;
+    }
+  
     const filteredConversations = conversations.filter(convo => {
       const participants = convo.participants
       return participants.some(participant => {
         const fullName = `${participant.userId?.FirstName} ${participant.userId?.LastName}`
         const searchChars = searchKey.split('')
-
-        return (
+      return (
           participant.userId?._id !== userId &&
           searchChars.every(char => fullName.toLocaleLowerCase().includes(char.toLocaleLowerCase()))
-        )
+       )
       })
     })
-
+  
     setConversation(filteredConversations)
-    if (e === '' || e === undefined || e === null || !e) {
-      setConversation(conversations)
-    }
   }
-
+  
   const ConversationCard = ({ receiver, sender, index, item: { _id, messages, updatedAt } }) =>
     receiver?.userId ? (
       <WhiteCard
@@ -309,21 +311,31 @@ const ConversationContainer = ({
       <></>
     )
 
-  const RenderConversations = ({ type }) =>
-    conversation
-      .filter(item => item?.isArchived === (type === 'archived'))
-      .map((item, index) => {
-        const receiver = item?.participants?.find(e => e?.userId?.email !== userEmail)
-        const sender = item?.participants?.find(e => e?.userId?.email === userEmail)
-        return (
-          <ConversationCard receiver={receiver} sender={sender} item={item} index={index} key={item?._id ?? index} />
-        )
-      })
+  const RenderConversations = ({ type }) => {
+    const filteredConversations = conversation.filter(item => item?.isArchived === (type === 'archived'));
+
+    if (filteredConversations.length === 0) {
+      return (
+        <Div style={{ padding: '20px', textAlign: 'center', color: '#888' }}>
+          No results found
+        </Div>
+      );
+    }
+
+    return filteredConversations.map((item, index) => {
+      const receiver = item?.participants?.find(e => e?.userId?.email !== userEmail)
+      const sender = item?.participants?.find(e => e?.userId?.email === userEmail)
+      return (
+        <ConversationCard receiver={receiver} sender={sender} item={item} index={index} key={item?._id ?? index} />
+      )
+    });
+  }
 
   return (
     <WhiteCard minWidth="420px" padding="10px 0px 0px 0px" overflow="hidden" noMargin>
       <Div>
-        <SearchBar margin="10px 0px 10px 0px" width="100%" setFilter={handleSearch} />
+        <SearchBar margin="10px 0px 10px 0px" width="100%"   setFilter={setFilter}
+         handleSearch={handleSearch} />
       </Div>
       <Scroll>
         <RenderConversations type="unarchived" />

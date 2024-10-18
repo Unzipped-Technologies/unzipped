@@ -456,6 +456,7 @@ const DIV = styled.div`
   gap: ${({ gap }) => (gap ? gap : '0px')};
   border-bottom-left-radius: ${({ borderBottomLeftRadius }) => (borderBottomLeftRadius ? borderBottomLeftRadius : '0px')};
   border-bottom-right-radius: ${({ borderBottomRightRadius }) => (borderBottomRightRadius ? borderBottomRightRadius : '0px')};
+  overflow-x: ${({ overFlowX }) => (overFlowX ? overFlowX : 'visible')};
 `
 
 const TEXT = styled.p`
