@@ -9,9 +9,11 @@ import { ConverterUtils } from '../../utils'
 import EducationModal from './EducationModal'
 import IconComponent from '../ui/icons/IconComponent'
 import SkillsModal from './SkillsModal'
-
 import socket from '../../components/sockets/index'
 import { useDispatch } from 'react-redux'
+
+const FREELANCER_SKILLS = ['React', 'Node', 'TypeScript', 'Nest.js', 'Next.js'];
+
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -111,6 +113,11 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
   const handleClose = () => {
     setOpen(false)
   }
+
+  const handleBrowseFreelancerSkills = skill => {
+    router.push(`/freelancers?skill=${encodeURIComponent(skill)}`)
+  }
+
   const uniqueSkills = useMemo(() => {
     let projectSkills = user?.projects?.map(project => [...new Set(project.skills)])
     let userSkills = user?.freelancerSkills?.map(skill => skill?.skill)
@@ -167,15 +174,15 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
               {user?.category}
             </P>
           )}
-          <div style={{display:'flex',flexDirection: "row",justifyContent:'flex-end'}}>
+          <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'flex-end' }}>
             <div>
-            {user?.AddressLineCountry && (
-              <P fontSize="14px" fontWeight="300" style={{paddingTop:"10px"}} data-testid="address_country">
-                {user?.AddressLineCountry }
-              </P>
-            )}
+              {user?.AddressLineCountry && (
+                <P fontSize="14px" fontWeight="300" style={{ paddingTop: "10px", paddingRight: "50px" }} data-testid="address_country">
+                  {user?.AddressLineCountry}
+                </P>
+              )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginRight: '16px',  marginLeft:'70px'}}>
+            <div style={{ display: 'flex', alignItems: 'center', marginRight: '16px', marginLeft: '70px' }}>
               <span onClick={handleLike}>
                 <IconComponent name="thumbUp" width="18" height="18" viewBox="0 0 15 15" fill="#0057FF" />
               </span>
@@ -183,7 +190,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <span onClick={handleDisLike}>
-              <FaRegThumbsDown style={{width:"18", height:"18",viewBox:"0 0 15 15", marginTop:"3px"}}  fill="#0057FF" />
+                <FaRegThumbsDown style={{ width: "18", height: "18", viewBox: "0 0 15 15", marginTop: "3px" }} fill="#0057FF" />
               </span>
               <P margin="0px 3px">{user?.dislikeTotal}</P>
             </div>
@@ -316,10 +323,10 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
             </P>
             {uniqueSkills?.length
               ? uniqueSkills?.map((skill, index) => (
-                  <P padding="0 10px" key={`${skill}_${index}`}>
-                    {ConverterUtils.capitalize(`${skill} `)}
-                  </P>
-                ))
+                <P padding="0 10px" key={`${skill}_${index}`}>
+                  {ConverterUtils.capitalize(`${skill} `)}
+                </P>
+              ))
               : ''}
           </OtherInformationCard>
           <OtherInformationCard>
@@ -335,28 +342,28 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
                     margin="0"
                     radius="4px"
                     padding="5px 10px"
+                    onClick={() => handleBrowseFreelancerSkills(skill)}
+                    style={{ cursor: 'pointer' }}
                     key={`${skill}_${index}_sim`}>
                     {ConverterUtils.capitalize(`${skill} `)}
                   </P>
                 ))
               ) : (
-                <>
-                  <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                    React
+                FREELANCER_SKILLS.map((skill, index) => (
+                  <P
+                    key={`${skill}_${index}_default`}
+                    style={{ cursor: 'pointer' }}
+                    border="1px solid #666666"
+                    fontSize="14px"
+                    margin="0"
+                    radius="4px"
+                    padding="5px 10px"
+                    clickable
+                    onClick={() => handleBrowseFreelancerSkills(skill)}
+                  >
+                    {skill}
                   </P>
-                  <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                    Node
-                  </P>
-                  <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                    TypeScript
-                  </P>
-                  <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                    Nest.js
-                  </P>
-                  <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                    Next.js
-                  </P>
-                </>
+                ))
               )}
             </div>
           </OtherInformationCard>
@@ -384,19 +391,19 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
 
             {user?.education?.length
               ? user.education.map(education => (
-                  <div key={education?._id}>
-                    <P padding="0 10px" fontWeight="500">
-                      {education?.title}
-                    </P>
-                    <P padding="0 10px" margin="0">
-                      {education?.institute}
-                    </P>
-                    <P padding="0 10px">
-                      {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear}{' '}
-                      years)
-                    </P>
-                  </div>
-                ))
+                <div key={education?._id}>
+                  <P padding="0 10px" fontWeight="500">
+                    {education?.title}
+                  </P>
+                  <P padding="0 10px" margin="0">
+                    {education?.institute}
+                  </P>
+                  <P padding="0 10px">
+                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear}{' '}
+                    years)
+                  </P>
+                </div>
+              ))
               : ''}
           </OtherInformationCard>
           <OtherInformationCard>
@@ -427,18 +434,18 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
             </div>
             {user?.freelancerSkills?.length
               ? user.freelancerSkills.map((skill, index) => (
-                  <div
-                    key={`${index}_${skill}`}
-                    style={{ display: 'flex', justifyContent: 'space-between', alignSelf: 'flex-end' }}>
-                    <P padding="0 10px" fontWeight="500">
-                      {ConverterUtils.capitalize(skill?.skill)}
-                    </P>
-                    <P padding="0 10px" fontWeight="500">
-                      {!skill?.yearsExperience ? 0 : skill?.yearsExperience}
-                      {skill.yearsExperience > 1 ? ' Years' : ' Year'}
-                    </P>
-                  </div>
-                ))
+                <div
+                  key={`${index}_${skill}`}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignSelf: 'flex-end' }}>
+                  <P padding="0 10px" fontWeight="500">
+                    {ConverterUtils.capitalize(skill?.skill)}
+                  </P>
+                  <P padding="0 10px" fontWeight="500">
+                    {!skill?.yearsExperience ? 0 : skill?.yearsExperience}
+                    {skill.yearsExperience > 1 ? ' Years' : ' Year'}
+                  </P>
+                </div>
+              ))
               : ''}
           </OtherInformationCard>
         </OtherInformationBox>

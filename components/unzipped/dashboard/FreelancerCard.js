@@ -128,7 +128,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           <DarkText topMargin="10px" width="100%">
             <b
               style={{
-                fontSize: '11px',
+                fontSize: '16px',
                 fontWeight: '800',
                 paddingRight: '5px',
                 lineHeight: '21px'

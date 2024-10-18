@@ -3,9 +3,11 @@ import styled from 'styled-components'
 import { AiOutlinePlusCircle, AiOutlineCloseCircle } from 'react-icons/ai'
 import { FaPen, FaTrashAlt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 
 import Button from '../ui/Button'
 import { FormField } from '../ui'
+
 
 import { deleteEducation, deleteShowCaseProject } from '../../redux/Freelancers/actions'
 import { Badge } from '../ui'
@@ -63,12 +65,13 @@ export const OtherInformationCard = styled.div`
 
 function ProjectsCard({ user, freelancerId, setReFetch }) {
   const dispatch = useDispatch()
+  const router = useRouter()
   const [openProjectModel, setProjectModal] = useState(false)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
   const [selectedEducation, setEducation] = useState({})
   const [selectedProject, setProject] = useState({})
-
+  const FREELANCER_SKILLS = ['React', 'Node', 'TypeScript', 'Nest.js', 'Next.js'];
   const handleOpen = () => {
     setOpen(true)
   }
@@ -107,6 +110,10 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
     if (response?.status === 200) {
       setReFetch(true)
     }
+  }
+
+  const handleSkillClick = skill => {
+    router.push(`/freelancers?skill=${encodeURIComponent(skill)}`)
   }
 
   return (
@@ -223,28 +230,30 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                   margin="0"
                   radius="4px"
                   padding="5px 10px"
-                  key={`${skill}_${index}_sim`}>
+                  clickable
+                  onClick={() => handleSkillClick(skill)}
+                  style={{ cursor: 'pointer' }}
+                  key={`${skill}_${index}_sim`}
+                >
                   {ConverterUtils.capitalize(`${skill} `)}
                 </P>
               ))
             ) : (
-              <>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  React
+              FREELANCER_SKILLS.map((skill, index) => (
+                <P
+                  key={`${skill}_${index}_default`}
+                  style={{ cursor: 'pointer' }}
+                  border="1px solid #666666"
+                  fontSize="14px"
+                  margin="0"
+                  radius="4px"
+                  padding="5px 10px"
+                  clickable
+                  onClick={() => handleSkillClick(skill)}
+                >
+                  {skill}
                 </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  Node
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  TypeScript
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  Nest.js
-                </P>
-                <P border="1px solid #666666" fontSize="14px" margin="0" radius="4px" padding="5px 10px">
-                  Next.js
-                </P>
-              </>
+              ))
             )}
           </div>
         </OtherInformationCard>
@@ -271,46 +280,46 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
           </div>
           {user?.education?.length
             ? user.education.map(education => (
-                <div key={education?._id}>
-                  <div className="d-flex justify-content-between">
-                    <P padding="0 10px" fontWeight="500">
-                      {education?.title}
-                    </P>
-                    {user?.role === 1 && freelancerId === user?._id && (
-                      <div className="d-flex justify-content-between mt-2">
-                        <FaPen
-                          style={{
-                            fontSize: '14px',
-                            marginRight: '20px',
-                            color: '#2F76FF'
-                          }}
-                          onClick={() => {
-                            setEducation(education)
-                            handleOpen()
-                          }}
-                        />
+              <div key={education?._id}>
+                <div className="d-flex justify-content-between">
+                  <P padding="0 10px" fontWeight="500">
+                    {education?.title}
+                  </P>
+                  {user?.role === 1 && freelancerId === user?._id && (
+                    <div className="d-flex justify-content-between mt-2">
+                      <FaPen
+                        style={{
+                          fontSize: '14px',
+                          marginRight: '20px',
+                          color: '#2F76FF'
+                        }}
+                        onClick={() => {
+                          setEducation(education)
+                          handleOpen()
+                        }}
+                      />
 
-                        <FaTrashAlt
-                          style={{
-                            fontSize: '14px',
-                            marginRight: '20px',
-                            color: '#2F76FF'
-                          }}
-                          onClick={() => {
-                            handleEducationDelete(education?._id)
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <P padding="0 10px" margin="0">
-                    {education?.institute}
-                  </P>
-                  <P padding="0 10px">
-                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
-                  </P>
+                      <FaTrashAlt
+                        style={{
+                          fontSize: '14px',
+                          marginRight: '20px',
+                          color: '#2F76FF'
+                        }}
+                        onClick={() => {
+                          handleEducationDelete(education?._id)
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
-              ))
+                <P padding="0 10px" margin="0">
+                  {education?.institute}
+                </P>
+                <P padding="0 10px">
+                  {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
+                </P>
+              </div>
+            ))
             : ''}
         </OtherInformationCard>
         <OtherInformationCard>
