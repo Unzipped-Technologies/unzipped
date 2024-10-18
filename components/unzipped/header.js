@@ -644,7 +644,7 @@ const Nav = ({
     }
   }, [isAuthenticated, menuItems])
   return (
-    <Div marginBottom={marginBottom && marginBottom}>
+    <Div marginBottom={marginBottom && marginBottom} id="navbar">
       <Container zIndex={zIndex}>
         {!isLogoHidden && !isListViewable && (
           <Link href="/">
@@ -742,12 +742,14 @@ const Nav = ({
             })}
         </Menu>
         <Right>
-          <Desktop>
-            <Search placeholder="Search" icon="search" />
-            {getButtons(token)}
-          </Desktop>
+          {window?.innerWidth > 680 && (
+            <Desktop>
+              <Search placeholder="Search" icon="search" />
+              {getButtons(token)}
+            </Desktop>
+          )}
           <Mobile>
-            <MenuIcon onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
+            <MenuIcon id="mobile_menu_icon" onClick={() => setMenuOpen(!menuOpen ? 'mobile' : false)} ref={wrapperRef}>
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </MenuIcon>
             {menuOpen === 'mobile' && (
