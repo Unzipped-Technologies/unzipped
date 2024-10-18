@@ -107,18 +107,18 @@ const Inbox = ({
 
   useEffect(() => {
     if (selectedUserId !== null) {
-      (async () => {
+      ;(async () => {
         try {
           await checkUserConversation({
             freelancerId: selectedUserId,
             clientId: user?._id
-          });
-          await getConversationList(form, access);
-          setUserIdForChat(null);
+          })
+          await getConversationList(form, access)
+          setUserIdForChat(null)
         } catch (error) {
-          console.error('Error in useEffect:', error);
+          console.error('Error in useEffect:', error)
         }
-      })();
+      })()
     }
   }, [selectedUserId])
 
@@ -212,6 +212,7 @@ const Inbox = ({
       receiverId: receiverId
     })
   }
+  console.log('conversations', conversations)
   return (
     <Page>
       {window.innerWidth >= 680 ? (

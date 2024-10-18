@@ -135,9 +135,12 @@ const Chat = ({
     selectConversation(id, 10)
   }
 
-  useEffect(async () => {
-    if (id) await openConversation()
-    handleLastMessageScroll()
+  useEffect(() => {
+    const fetchData = () => {
+      id && openConversation()
+      handleLastMessageScroll()
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -156,7 +159,7 @@ const Chat = ({
   // Sockets
 
   useEffect(() => {
-    if(!token) {
+    if (!token) {
       router.push('/login')
     }
   }, [])
@@ -310,7 +313,7 @@ const Chat = ({
       {showSubMenu ? (
         <MobileChatMenu
           handleFilterOpenClose={closeMenu}
-          role={user}
+          role={user?.role}
           isArchived={selectedConversation?.isArchived}
           isMute={selectedConversation?.isMute}
           handleChatArchive={handleArchive}
@@ -320,11 +323,11 @@ const Chat = ({
       ) : (
         <>
           <BackHeader title="Messages">
-            <span onClick={openMenu}>
+            <span onClick={openMenu} id="header_action">
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </span>
           </BackHeader>
-          <WhiteCard noMargin height="100%" style={{ position: 'static' }}>
+          <WhiteCard noMargin height="100%" style={{ position: 'static' }} id="message_container">
             <Div
               margin="0px 0px 0px 0px"
               onScroll={() => {
@@ -339,7 +342,12 @@ const Chat = ({
               {messages?.map((e, index) => {
                 if (e?.sender === user._id) {
                   return (
-                    <Container key={`message_${index}`} display="flex" justifyContent="flex-end" padding="10px">
+                    <Container
+                      id={`message_${e?._id}`}
+                      key={`message_${index}`}
+                      display="flex"
+                      justifyContent="flex-end"
+                      padding="10px">
                       <Container width="auto" minWidth="auto" padding="5px 10px 10px 10px">
                         <Container background="#007FED" borderRadius="8px 8px 0px 8px" padding="20px 20px 10px 20px">
                           <DarkText small noMargin fontSize="16px" lineHeight="23px" color={'#fff'}>
@@ -358,6 +366,7 @@ const Chat = ({
                 } else {
                   return (
                     <Container
+                      id={`message_${e?._id}`}
                       key={`message_${index}`}
                       display="flex"
                       justifyContent="flex-start"
@@ -410,6 +419,7 @@ const Chat = ({
                   }}
                   onBlur={handleBlurTyping}
                   message
+                  id="message"
                   placeholder="Type a message..."
                   width="100%"
                   border="1px solid #C4C4C4"
@@ -418,7 +428,11 @@ const Chat = ({
                   autosize></FormField>
               </Message>
               <Absolute zIndex={10} width="26px" right="25px">
-                <Button type="transparent" disabled={!(form.message || form.attachment)} onClick={() => send()}>
+                <Button
+                  id="send_message"
+                  type="transparent"
+                  disabled={!(form.message || form.attachment)}
+                  onClick={() => send()}>
                   <Icon name="send" />
                 </Button>
               </Absolute>
