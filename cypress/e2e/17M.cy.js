@@ -147,6 +147,7 @@ describe('Create Long term and short term projects.', () => {
     cy.get(`#${Question2}_icon`).should('not.exist')
     cy.contains('button', 'Next').should('be.visible').click()
     cy.contains('button', 'Next').should('be.visible').click()
+    cy.contains('button', 'Next').should('be.visible').click()
     // Step Nine End
 
     // Step Twelve Start
@@ -199,7 +200,7 @@ describe('Create Long term and short term projects.', () => {
 
   it('Create A Long Term Project', () => {
     cy.get('#mobile_menu_icon').should('be.visible').click()
-    cy.contains('button', 'Start A Project').scrollIntoView().click()
+    cy.contains('button', 'Start A Project').scrollIntoView().should('be.visible').click()
     cy.contains('Connect. Build. grow').should('not.exist')
     cy.url().should('include', '/create-your-business')
 
@@ -335,6 +336,7 @@ describe('Create Long term and short term projects.', () => {
 
     cy.contains('button', 'Next').should('be.visible').click()
     // Step Ten End
+    cy.contains('button', 'Next').should('be.visible').click()
 
     // Step Twelve Start
 

@@ -20,13 +20,13 @@ const ProjectsPanel = ({
   const dispatch = useDispatch()
   const isMobileView = window.innerWidth <= 680
 
-  const  businessState  = useSelector(state => state.Business)
+  const businessState = useSelector(state => state.Business)
   useEffect(() => {
     if (currentBusiness?.businessDepartments?.[0]?.businessId) {
       dispatch(getBusinessEmployees(currentBusiness.businessDepartments[0].businessId, true))
     }
   }, [businessState.selectedBusiness?.departments])
-  
+
   return (
     <>
       <DIV
@@ -53,13 +53,13 @@ const ProjectsPanel = ({
                         setShowBusinessMenu(business._id)
                         onSelectBusiness(business)
                         dispatch(getBusinessEmployees(business.businessDepartments?.[0].businessId, true))
-                        {!isMobileView && (
-                          onSelectDepartment(business.businessDepartments?.[0])
-                        )}
+                        {
+                          !isMobileView && onSelectDepartment(business.businessDepartments?.[0])
+                        }
                       }
                     }}>
                     <TitleText paddingLeft clickable>
-                      {ConverterUtils.truncateString(business.name, 40)}
+                      {ConverterUtils.truncateString(business.name, 30)}
                     </TitleText>
                     <MdKeyboardArrowDown
                       style={{

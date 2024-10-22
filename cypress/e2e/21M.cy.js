@@ -95,20 +95,9 @@ describe('Freelancer can add comments to tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        let Business = null
-        let Department = null
-        for (var business of store.getState()?.Business?.projectList) {
-          let isMatch = false
-          for (var department of business.businessDepartments) {
-            if (!department?.isDeleted) {
-              Department = department
-              Business = business
-              isMatch = true
-              break
-            }
-          }
-          if (isMatch) break
-        }
+        let Business = store.getState()?.Business?.projectList[0]
+        let Department = Business?.businessDepartments[0]
+
         cy.get(`#business_${Business?._id}`).scrollIntoView().should('be.visible').click()
 
         cy.contains(ConverterUtils.truncateString(Department.name, 20)).scrollIntoView().should('be.visible').click()

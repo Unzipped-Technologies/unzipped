@@ -44,10 +44,8 @@ describe('Freelancer inbox', () => {
         const conversations = store?.getState().Messages?.conversations
         const user = store?.getState().Auth?.user
 
-        const selectedConversation = store?.getState().Messages?.selectedConversation
         conversations?.forEach(conversation => {
           const receiver = conversation?.participants?.find(e => e?.userId?.email !== user?.email)
-          const sender = conversation?.participants?.find(e => e?.userId?.email === user?.email)
 
           cy.get(`#conversation_${conversation?._id}`).within(() => {
             cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)).should(

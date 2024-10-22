@@ -12,6 +12,8 @@ describe('Client Signup', () => {
     cy.visit('http://localhost:3000')
   })
   it('Click  on sigup and  verify links', () => {
+    cy.window().its('document.readyState').should('eq', 'complete')
+
     cy.contains('Sign up').click()
     cy.contains('Connect. Build. grow').should('not.exist')
     cy.get('#signup').within(() => {

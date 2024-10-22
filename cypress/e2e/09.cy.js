@@ -552,7 +552,6 @@ describe('Client Invoices', () => {
   })
   it('Send message to freelancer', () => {
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
-    cy.visit('http://localhost:3000/dashboard/inbox')
 
     cy.wait('@getConvesationRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])

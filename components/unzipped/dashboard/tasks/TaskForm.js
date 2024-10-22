@@ -549,7 +549,16 @@ const TaskForm = ({
                 />
               </span>
             ) : (
-              <DarkText fontSize="18px" color="grey" lineHeight="normal" topMargin="20px" marginRight="100px">
+              <DarkText
+                id="assignee"
+                onClick={() => {
+                  enableEditMode('assignee')
+                }}
+                fontSize="18px"
+                color="grey"
+                lineHeight="normal"
+                topMargin="20px"
+                marginRight="100px">
                 {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label || 'assignee'}
               </DarkText>
             )}

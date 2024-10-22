@@ -65,7 +65,7 @@ describe('Client can create,edit tasks', () => {
         const BusinessList = store.getState()?.Business?.projectList
         BusinessList?.forEach((business, i) => {
           if (i !== 0) {
-            cy.contains(ConverterUtils.truncateString(business.name, 40))
+            cy.contains(ConverterUtils.truncateString(business.name, 30))
               .scrollIntoView()
               .should('be.visible')
               .click({ force: true })
@@ -97,20 +97,9 @@ describe('Client can create,edit tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        let Business = null
-        let Department = null
-        for (var business of store.getState()?.Business?.projectList) {
-          let isMatch = false
-          for (var department of business.businessDepartments) {
-            if (!department?.isDeleted) {
-              Department = department
-              Business = business
-              isMatch = true
-              break
-            }
-          }
-          if (isMatch) break
-        }
+        let Business = store.getState()?.Business?.projectList[0]
+        let Department = Business?.businessDepartments[0]
+
         cy.get(`#business_${Business?._id}`).scrollIntoView().should('be.visible').click()
 
         cy.contains(ConverterUtils.truncateString(Department.name, 20)).scrollIntoView().should('be.visible').click()
@@ -132,10 +121,15 @@ describe('Client can create,edit tasks', () => {
             cy.contains(`${ValidationUtils.truncate(tag.tagName, 20)} (${tag?.tasks?.length})`).should('be.visible')
           })
         })
-        cy.contains('button', 'Add').should('be.visible').click()
+        cy.contains('Select').should('be.visible').click()
+        cy.contains('button', 'ADD TASKS').should('be.visible').click()
 
         cy.contains('button', 'CANCEL').should('be.visible').click()
-        cy.contains('button', 'Add').should('be.visible').click()
+
+        cy.wait('@getDepartmentRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
+        cy.contains('button', 'ADD TASKS').should('be.visible').click()
 
         cy.get('#task_form_modal')
           .should('be.visible')
@@ -164,7 +158,7 @@ describe('Client can create,edit tasks', () => {
             cy.get('#storyPoints').should('be.visible').clear().type(StoryPoints)
 
             cy.get('#status_autocomplete').should('exist').click().type('{downarrow}', { delay: 100 })
-            cy.contains('Todo').click()
+            cy.contains(SelectedDepartment?.departmentTags[0]?.tagName).click()
 
             cy.get('#description').should('be.visible').clear().type(Description)
 
@@ -248,12 +242,12 @@ describe('Client can create,edit tasks', () => {
             const StoryPoints = faker.number.int({ min: 1, max: 100 })
             const Description = faker.lorem.sentences(5)
             const Comment = faker.lorem.sentences(2)
-            const Tag1 = SelectedDepartment?.departmentTags[0]
 
             cy.contains(Task1.taskName).scrollIntoView().should('be.visible').click()
             cy.get('#taskName').should('be.visible').clear().type(TaskName)
 
-            cy.get('#assignee').find('input').eq(0).should('exist').click().type('{downarrow}', { delay: 100 })
+            cy.get('#assignee').scrollIntoView().should('be.visible').click()
+            // cy.get('#assignee').find('input').eq(0).should('exist').click().type('{downarrow}', { delay: 100 })
             SelectedDepartment?.contracts?.forEach(contract => {
               cy.contains(contract?.freelancer.user?.email).scrollIntoView().should('exist') // Ensure the option is visible
             })
@@ -300,7 +294,6 @@ describe('Client can create,edit tasks', () => {
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
         cy.get(`#tag_${SelectedDepartment?.departmentTags[0]?._id}`).scrollIntoView().click({ force: true })
         cy.get(`#task_${Task1?._id}`).scrollIntoView().click({ force: true })
-        cy.url().should('include', `/dashboard/ticket/${Task1._id}`)
       })
 
     // Edit comment

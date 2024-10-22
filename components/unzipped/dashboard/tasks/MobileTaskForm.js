@@ -117,9 +117,8 @@ const MobileTaskForm = ({
   const [editInputValue, setEditInputValue] = useState('')
   const [inputStatus, setInputStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
-  const statusList = departmentData?.departmentTags?.length > 0
-  ? departmentData.departmentTags.map(tag => tag.tagName)
-  : []
+  const statusList =
+    departmentData?.departmentTags?.length > 0 ? departmentData.departmentTags.map(tag => tag.tagName) : []
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
@@ -162,7 +161,7 @@ const MobileTaskForm = ({
                   fontWeight: 500,
                   lineHeight: 'normal',
                   letterSpacing: '0.4px',
-                  paddingLeft:'12px',
+                  paddingLeft: '12px'
                 }}>
                 {contract?.freelancer?.user?.email}
               </div>
@@ -245,24 +244,6 @@ const MobileTaskForm = ({
     return assignee
   }, [departmentData])
 
-  const taskPriorityOptions = useMemo(() => {
-    return (
-      TASK_PRIORITY?.map(priority => ({
-        value: priority,
-        label: priority
-      })) || []
-    )
-  }, [])
-
-  const taskStatusOptions = useMemo(() => {
-    return (
-      statusList?.map(status => ({
-        value: status,
-        label: status
-      })) || []
-    )
-  }, [])
-
   useEffect(() => {
     if (isCreating) {
       setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, true])))
@@ -288,6 +269,7 @@ const MobileTaskForm = ({
         tag: taskDetail?.tag,
         ticketCode: taskDetail?.ticketCode
       })
+      setSelectedTags(taskDetail?.tags)
     }
   }, [taskDetail])
 
@@ -430,7 +412,6 @@ const MobileTaskForm = ({
       setInputValue('')
     }
   }
-
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
       updateForm('tags', [])
@@ -448,7 +429,7 @@ const MobileTaskForm = ({
   useEffect(() => {
     restTagsList()
     if (router.pathname.includes('department')) {
-      updateForm('tags',selectedTags)
+      updateForm('tags', selectedTags)
     }
   }, [selectedTags])
 
@@ -461,7 +442,6 @@ const MobileTaskForm = ({
 
   useEffect(() => {
     if (router.pathname.includes('ticket') && taskDetail?.tags?.length > 0) {
-      
       setEditSelectedTags([...taskDetail?.tags])
     }
   }, [taskDetail?.tags])
@@ -543,7 +523,7 @@ const MobileTaskForm = ({
             disabled={userRole === 1}
             fieldType="searchField"
             isSearchable={true}
-            name="select"
+            name="assignee"
             id="assignee"
             options={assigneeOptions}
             fontSize="14px"
@@ -560,34 +540,33 @@ const MobileTaskForm = ({
             }}
             onBlur={() => {
               if (taskForm?.assignee === 'unassigned') {
-                updateForm('assignee', departmentData?.client?._id);
+                updateForm('assignee', departmentData?.client?._id)
               }
               validateForm()
               enableEditMode('')
             }}
-
             styles={{
               option: (provided, state) => ({
                 ...provided,
                 backgroundColor: state.isSelected ? '#8CBAE8' : 'white',
                 color: state.isSelected ? '#000' : '#787878',
                 ':hover': {
-                  backgroundColor: 'lightblue', 
-                },    
+                  backgroundColor: 'lightblue'
+                }
               }),
-            
-              control: (provided) => ({
+
+              control: provided => ({
                 ...provided,
-                border: editMode ? 'none' : '1px solid #ccc', 
+                border: editMode ? 'none' : '1px solid #ccc',
                 '&:hover': {
                   border: 'none',
-                  borderRadius:'none'
-                },
-              }),
+                  borderRadius: 'none'
+                }
+              })
             }}
             components={{
-              DropdownIndicator: () => null, 
-              IndicatorSeparator: () => null, 
+              DropdownIndicator: () => null,
+              IndicatorSeparator: () => null
             }}
           />
         </div>
@@ -624,8 +603,7 @@ const MobileTaskForm = ({
           lineHeight="21.09px"
           fontWeight="500"
           width="65px"
-          margin="0px 0px 2px 0px"
-          >
+          margin="0px 0px 2px 0px">
           Priority:
         </TEXT>
       </div>
@@ -665,7 +643,14 @@ const MobileTaskForm = ({
 
       <div>
         <div>
-          <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="80px" padding="10px 0px 0px 0px" margin="0px 0px 2px 0px ">
+          <TEXT
+            textColor="#000000"
+            fontSize="16px"
+            lineHeight="21.09px"
+            fontWeight="500"
+            width="80px"
+            padding="10px 0px 0px 0px"
+            margin="0px 0px 2px 0px ">
             Status:
           </TEXT>
         </div>
@@ -673,15 +658,15 @@ const MobileTaskForm = ({
 
       <div>
         <Autocomplete
-        value={ticketStatus}
-         disablePortal
-         id="status_autocomplete" 
+          value={ticketStatus}
+          disablePortal
+          id="status_autocomplete"
           options={statusList}
           onChange={(event, value) => {
-            const tag = departmentData?.departmentTags?.find(item => item.tagName === value);
+            const tag = departmentData?.departmentTags?.find(item => item.tagName === value)
             if (tag) {
-              updateForm('status', tag.tagName);
-              updateForm('tag', tag._id);
+              updateForm('status', tag.tagName)
+              updateForm('tag', tag._id)
             }
           }}
           onBlur={() => {
@@ -711,7 +696,14 @@ const MobileTaskForm = ({
         />
       </div>
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="120px !important" padding="10px 0px 0px 0px" margin="0px 0px 2px 0px ">
+        <TEXT
+          textColor="#000000"
+          fontSize="16px"
+          lineHeight="21.09px"
+          fontWeight="500"
+          width="120px !important"
+          padding="10px 0px 0px 0px"
+          margin="0px 0px 2px 0px ">
           Story Points:
         </TEXT>
       </div>
@@ -748,7 +740,14 @@ const MobileTaskForm = ({
         />
       </div>
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="40px !important" padding="12px 0px 0px 0px" margin="0px 0px 2px 0px ">
+        <TEXT
+          textColor="#000000"
+          fontSize="16px"
+          lineHeight="21.09px"
+          fontWeight="500"
+          width="40px !important"
+          padding="12px 0px 0px 0px"
+          margin="0px 0px 2px 0px ">
           Tags:
         </TEXT>
       </div>
@@ -816,7 +815,7 @@ const MobileTaskForm = ({
                 variant="standard"
                 placeholder="Tags"
                 onKeyDown={e => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' && editSelectedTags?.length < 5) {
                     e.preventDefault()
                     handleEditInputTags()
                   }
@@ -889,7 +888,7 @@ const MobileTaskForm = ({
                 }}
                 placeholder="Tags"
                 onKeyDown={e => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' && selectedTags?.length < 5) {
                     e.preventDefault()
                     handleAddTag()
                   }
@@ -902,8 +901,14 @@ const MobileTaskForm = ({
       </div>
 
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="100px !important" padding="10px 0px 0px 0px">
-          Description:
+        <TEXT
+          textColor="#000000"
+          fontSize="16px"
+          lineHeight="21.09px"
+          fontWeight="500"
+          width="100px !important"
+          padding="10px 0px 0px 0px">
+          Description: {selectedTags?.length}
         </TEXT>
       </div>
 
@@ -1004,7 +1009,7 @@ const MobileTaskForm = ({
               lineHeight="21.09px"
               fontWeight="500"
               margin="10px 0px 10px 0px"
-              width="70px">
+              width="90px">
               Discussion:
             </TEXT>
             <FormField
@@ -1073,25 +1078,25 @@ const MobileTaskForm = ({
                         id={`edit_${comment?._id}_comment`}
                         display="flex"
                         justifyContent="flex-end"
-                        gap = "5px"
+                        gap="5px"
                         onClick={() => {
                           setCommentId(comment?._id)
                         }}>
                         <EditIcon width="12px" height="12px" color="#585858" />
                         {commentId === comment?._id && (
-                        <SaveIcon
-                          sx={{
-                            width: '16px',
-                            height: '16px',
-                            color: '#585858'
-                          }}
-                          onClick={async e => {
-                            e?.preventDefault()
-                            await updateComment(taskDetail?._id, comment._id, comment)
-                            setCommentId('')
-                          }}
-                        />
-                      )}
+                          <SaveIcon
+                            sx={{
+                              width: '16px',
+                              height: '16px',
+                              color: '#585858'
+                            }}
+                            onClick={async e => {
+                              e?.preventDefault()
+                              await updateComment(taskDetail?._id, comment._id, comment)
+                              setCommentId('')
+                            }}
+                          />
+                        )}
                       </DIV>
                     )}
                   </div>

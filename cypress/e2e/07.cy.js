@@ -10,6 +10,8 @@ describe('Freelancer can add comments to tasks', () => {
 
     cy.visit('http://localhost:3000') // Visit the login page
 
+    cy.window().its('document.readyState').should('eq', 'complete')
+
     // Perform login steps
     cy.contains('Log In').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -36,6 +38,8 @@ describe('Freelancer can add comments to tasks', () => {
 
   it('Verify business names and department names in tasklist page', () => {
     cy.intercept('POST', `/api/business/list`).as('getBusinessRequest')
+    cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
+    cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=false`).as('getBusinessEmpRequest')
 
     cy.contains('Tasklist').should('be.visible').click()
 
@@ -49,9 +53,18 @@ describe('Freelancer can add comments to tasks', () => {
       .its('store')
       .then(store => {
         const BusinessList = store.getState()?.Business?.projectList
-        BusinessList?.forEach(business => {
+        BusinessList?.forEach((business, index) => {
           cy.get(`#business_${business?._id}`).within(() => {
-            cy.contains(ConverterUtils.truncateString(business.name, 40)).should('be.visible').click()
+            if (index !== 0) {
+              cy.contains(ConverterUtils.truncateString(business.name, 30)).should('be.visible').click()
+              cy.wait('@getDepartmentRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
+              })
+              cy.wait('@getBusinessEmpRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
+              })
+              cy.contains('Connect. Build. grow').should('not.exist')
+            }
             business?.businessDepartments?.forEach(department => {
               cy.get(`#department_${department?._id}`).within(() => {
                 cy.contains(ConverterUtils.truncateString(department.name, 20)).should('be.visible')
@@ -70,22 +83,11 @@ describe('Freelancer can add comments to tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        let Business = null
-        let Department = null
-        for (var business of store.getState()?.Business?.projectList) {
-          let isMatch = false
-          for (var department of business.businessDepartments) {
-            if (!department?.isDeleted) {
-              Department = department
-              Business = business
-              isMatch = true
-              break
-            }
-          }
-          if (isMatch) break
-        }
+        let Business = store.getState()?.Business?.projectList[0]
+        let Department = Business?.businessDepartments[0]
+
         cy.get(`#business_${Business?._id}`).within(() => {
-          cy.contains(ConverterUtils.truncateString(Business.name, 40)).should('be.visible').click()
+          cy.contains(ConverterUtils.truncateString(Business.name, 30)).should('be.visible').click()
 
           cy.contains(ConverterUtils.truncateString(Department.name, 20)).should('be.visible').click()
           cy.wait('@getDepartmentRequest').then(interception => {

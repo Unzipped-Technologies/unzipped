@@ -124,7 +124,6 @@ describe('Freelancer Invoice', () => {
 
         // Now you have access to reduxStore
         const ProjectsList = store.getState().Business.projectList
-        const userId = store.getState().Auth.user._id
         const selectedProject = ProjectsList[0]
 
         cy.get(`#${selectedProject?._id}`).contains(ValidationUtils.truncate(selectedProject.name, 40)).click()
