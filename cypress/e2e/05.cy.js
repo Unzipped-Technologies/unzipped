@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
+import { testClientEmail, testClientPassword } from '../../config/keys'
 
 describe('Client can view project  applications, add department, tags etc', () => {
   let reduxStore
@@ -17,8 +18,8 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -213,9 +214,6 @@ describe('Client can view project  applications, add department, tags etc', () =
                   cy.contains(skill)
                 })
                 project?.images?.forEach((image, index) => {
-                  cy.log('imageeeee', selectedFreelancer?.userId?.profileImage)
-                  cy.log('image?.url', image?.url)
-
                   cy.get(`img[src*="${image?.url}"]`)
                     .should('be.visible')
                     .should('have.attr', 'src')
@@ -369,8 +367,7 @@ describe('Client can view project  applications, add department, tags etc', () =
 
         let InvitesList = store.getState().Lists?.invitesList
         let ListToAdd = InvitesList[InvitesList?.length - 1]
-        cy.log('InvitesList', InvitesList)
-        cy.log('ListToAdd', ListToAdd)
+
         if (ListToAdd) {
           cy.intercept('PATCH', `/api/list/add-entry/${ListToAdd?._id}`).as('addToListRequest')
           cy.contains(ListToAdd?.name).click()
@@ -496,8 +493,6 @@ describe('Client can view project  applications, add department, tags etc', () =
       .its('store')
       .then(store => {
         const State = store.getState()
-        cy.log('State.Contracts', State.Contracts)
-        cy.log('State.Invoices', State.Invoices)
         const activeContracts = State.Contracts.activeContracts
         if (activeContracts?.length) {
           const calcAmtOwed = data => {

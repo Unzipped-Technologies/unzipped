@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
+import { testFreelancerEmail, testFreelancerPassword } from '../../config/keys'
 
 describe('Freelancer can add comments to tasks', () => {
   before(() => {
@@ -19,8 +20,8 @@ describe('Freelancer can add comments to tasks', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('haseebiqbal3394@gmail.com')
-    cy.get('#password').type('Hello@2024')
+    cy.get('#email').clear().type(testFreelancerEmail)
+    cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -62,7 +63,6 @@ describe('Freelancer can add comments to tasks', () => {
       .its('store')
       .then(store => {
         const BusinessList = store.getState()?.Business?.projectList
-        cy.log('BusinessList', BusinessList)
         BusinessList?.forEach((business, i) => {
           if (i !== 0) {
             cy.contains(ConverterUtils.truncateString(business.name, 40))

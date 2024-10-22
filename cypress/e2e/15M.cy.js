@@ -2,9 +2,9 @@ import { faker } from '@faker-js/faker'
 import { createPaymentMethod } from '../../redux/actions'
 import { ValidationUtils } from '../../utils/index'
 import { paymentFrequencyEnum, planEnum } from '../../server/enum/planEnum'
+import { testClientEmail } from '../../config/keys'
 
 describe('Client Signup', () => {
-  let reduxStore
   before(() => {
     cy.viewport(480, 896)
     cy.clearCookies()
@@ -121,7 +121,6 @@ describe('Client Signup', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const updatedDate = ValidationUtils.addDaysToDate(
           store.getState()?.Auth?.user?.updatedAt || new Date(),
           store.getState()?.Auth?.trialLength ?? 7
@@ -161,7 +160,6 @@ describe('Client Signup', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const updatedDate = ValidationUtils.addDaysToDate(
           store.getState()?.Auth?.user?.updatedAt || new Date(),
           store.getState()?.Auth?.trialLength ?? 7
@@ -285,7 +283,6 @@ describe('Client Signup', () => {
         cy.window()
           .its('store')
           .then(store => {
-            reduxStore = store
             const PaymentMethod = {
               BillingAddressLineOne: faker.location.streetAddress(),
               BillingAddressLineTwo: faker.location.secondaryAddress(),
@@ -308,7 +305,7 @@ describe('Client Signup', () => {
                     postal_code: '23123',
                     state: 'NY'
                   },
-                  email: 'client@gmail.com',
+                  email: testClientEmail,
                   name: 'Hello World',
                   phone: null
                 },

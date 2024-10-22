@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
+import { testClientEmail, testClientPassword } from '../../config/keys'
 
 describe('Client Account Page', () => {
   before(() => {
@@ -8,7 +9,8 @@ describe('Client Account Page', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    // Visit the login page
+    cy.visit('http://localhost:3000')
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -17,8 +19,8 @@ describe('Client Account Page', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -30,18 +32,21 @@ describe('Client Account Page', () => {
     // Wait for the login request and verify success
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
+      // It must redirect to the dashboard page
       cy.url().should('include', '/dashboard')
     })
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 
   beforeEach(() => {
+    // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
 
   it('Verify change email', () => {
     cy.intercept('GET', '/api/auth/current_user').as('getUserRequest')
 
+    // Click on the menu icon to visit account page
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.get(`#mobile_menu_0`).click()
     cy.get(`#mobile_menu_0`).within(() => {
@@ -49,6 +54,7 @@ describe('Client Account Page', () => {
     })
 
     cy.contains('Connect. Build. grow').should('not.exist')
+    // It must redirect to the account page
     cy.url().should('include', '/dashboard/account')
 
     cy.wait('@getUserRequest').then(interception => {
@@ -58,17 +64,16 @@ describe('Client Account Page', () => {
     cy.window()
       .its('store')
       .then(store => {
-        const FreelancerList = store.getState()?.Freelancers?.freelancers
-        const TotalCount = store.getState()?.Freelancers?.totalCount
-        const freelancerId = store.getState()?.Auth?.user?.freelancers?._id
         const user = store.getState()?.Auth?.user
         const NewEmail = faker.internet.email()
 
         cy.contains('Settings').should('be.visible').click()
 
+        // Change email
         cy.contains(user.email).should('be.visible')
         cy.contains('Change email').should('be.visible').click()
 
+        // It must redirect to the change email page
         cy.url().should('include', `/change-email`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
@@ -77,6 +82,7 @@ describe('Client Account Page', () => {
 
         cy.get('#email').clear().type('dsdsdsdsds')
         cy.contains('button', 'Save').should('be.visible').click()
+        // Email Validation
         cy.contains('Enter a valid email address!')
         cy.get('#email').clear().type(NewEmail)
 
@@ -84,16 +90,19 @@ describe('Client Account Page', () => {
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.contains('Settings').should('be.visible').click()
 
+        // Change Password
         cy.contains('Update Password').should('be.visible').click()
+        // It must redirect to the change password page
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.get('#password').clear().type('Hello@2023')
+        cy.get('#password').clear().clear().type(testClientPassword)
         cy.get('#password').blur()
 
         let NewPassword = faker.internet.password({ length: 5 })
         cy.get('#newPassword').clear().type(NewPassword)
         cy.get('#newPassword').blur()
+        // Password Validation
         cy.contains('Password must be 8+ characters including numbers, 1 capital letter and 1 special character.')
 
         NewPassword = 'Hello@2024'
@@ -115,7 +124,9 @@ describe('Client Account Page', () => {
 
         cy.contains('Settings').should('be.visible').click()
 
+        // Change Phone
         cy.contains('Change Phone').should('be.visible').click()
+        // It must redirect to the change phone page
         cy.url().should('include', `/change-phone`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
@@ -124,6 +135,7 @@ describe('Client Account Page', () => {
 
         cy.get('#phone').clear().type('19879')
         cy.get('#phone').blur()
+        // Phone Validation
         cy.contains('Enter a valid Phone Number!').should('be.visible')
 
         cy.get('#phone').clear().type('(555) 123-9879')
@@ -135,11 +147,13 @@ describe('Client Account Page', () => {
       })
   })
   it('Change Personal and Company Information', () => {
+    // Intercept the update user request, update business details request
     cy.intercept('POST', '/api/user/update').as('updateUserRequest')
     cy.intercept('POST', '/api/business/details/update').as('updateBusinessDetailRequest')
 
     cy.contains('Settings').should('be.visible').click()
 
+    // Click on update profile to edit personal and company information
     cy.get('#update_profile').scrollIntoView().should('be.visible').click()
 
     cy.get('#update_profile_modal')
@@ -186,5 +200,19 @@ describe('Client Account Page', () => {
           expect(interception.response.statusCode).to.be.oneOf([200, 304])
         })
       })
+  })
+  it('Test logout functionality', () => {
+    cy.intercept('GET', '/api/auth/logout').as('logOutRequest')
+
+    // Click on the menu icon to logout the user
+    cy.get('#mobile_menu_icon').should('be.visible').click()
+    cy.contains('button', 'Log Out').scrollIntoView().click()
+
+    cy.wait('@logOutRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+      // It must redirect to the login page
+      cy.url().should('include', '/login')
+    })
+    cy.contains('Connect. Build. grow').should('not.exist')
   })
 })

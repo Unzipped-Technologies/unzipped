@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
 import { RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
+import { testClientEmail, testClientPassword } from '../../config/keys'
 
 describe('Client Account Page', () => {
   before(() => {
@@ -17,8 +18,8 @@ describe('Client Account Page', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -64,7 +65,7 @@ describe('Client Account Page', () => {
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.get('#password').clear().type('Hello@2023')
+        cy.get('#password').clear().clear().type(testClientPassword)
         cy.get('#password').blur()
 
         let NewPassword = faker.internet.password({ length: 5 })

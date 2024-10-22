@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
+import { testClientEmail, testClientPassword } from '../../config/keys'
 
 describe('Client can create,edit tasks', () => {
-  let reduxStore
   before(() => {
     cy.viewport(480, 896)
 
@@ -20,8 +20,8 @@ describe('Client can create,edit tasks', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -39,13 +39,6 @@ describe('Client can create,edit tasks', () => {
 
   beforeEach(() => {
     cy.viewport(480, 896)
-
-    cy.window()
-      .its('store')
-      .then(store => {
-        reduxStore = store
-        // Get the current state of the store
-      })
   })
 
   it('Verify business names and department names in tasklist page', () => {
@@ -69,11 +62,8 @@ describe('Client can create,edit tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const BusinessList = store.getState()?.Business?.projectList
-        cy.log('BusinessList', BusinessList)
         BusinessList?.forEach((business, i) => {
-          cy.log('idddd', business?._id)
           if (i !== 0) {
             cy.contains(ConverterUtils.truncateString(business.name, 40))
               .scrollIntoView()
@@ -194,7 +184,6 @@ describe('Client can create,edit tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const SelectedDepartment = store.getState()?.Departments.selectedDepartment
         SelectedDepartment?.departmentTags?.forEach(tag => {
           cy.get(`#tag_${tag?._id}`).scrollIntoView().click()
@@ -246,7 +235,6 @@ describe('Client can create,edit tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const SelectedDepartment = store.getState()?.Departments.selectedDepartment
         const Task1 =
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
@@ -307,7 +295,6 @@ describe('Client can create,edit tasks', () => {
       .its('store')
       .then(store => {
         const SelectedDepartment = store.getState()?.Departments.selectedDepartment
-        cy.log('SelectedDepartment', SelectedDepartment)
 
         const Task1 =
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]

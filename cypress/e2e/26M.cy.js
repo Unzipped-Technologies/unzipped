@@ -1,9 +1,7 @@
-import { faker } from '@faker-js/faker'
-import { ValidationUtils } from '../../utils'
-import { ConverterUtils } from '../../utils'
 import { RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
 
 describe('Freelancers Page', () => {
+  // Format the result message
   const getResultMessage = (freelancerList, skip, take, totalCount) => {
     if (freelancerList?.length === 0) {
       return '0 result'
@@ -16,20 +14,25 @@ describe('Freelancers Page', () => {
   before(() => {
     cy.viewport(480, 896)
 
+    // Clear cookies and local storage before start theses test cases
     cy.clearCookies()
     cy.clearLocalStorage()
 
+    // Visit the home page without logging in
     cy.visit('http://localhost:3000')
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 
   beforeEach(() => {
+    // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
 
   it('Verify freelancers are rendering correctly', () => {
+    // Intercept the request to get freelancers
     cy.intercept('POST', '/api/freelancer/public/list').as('getFreelancersRequest')
 
+    // Click on the menu icon to visit freelancers page
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.get(`#mobile_menu_0`).click()
     cy.get(`#mobile_menu_0`).within(() => {
@@ -37,6 +40,7 @@ describe('Freelancers Page', () => {
     })
 
     cy.contains('Connect. Build. grow').should('not.exist')
+    // It must redirect to the freelancers page
     cy.url().should('include', '/freelancers')
 
     cy.wait('@getFreelancersRequest').then(interception => {
@@ -48,8 +52,8 @@ describe('Freelancers Page', () => {
       .then(store => {
         const FreelancerList = store.getState()?.Freelancers?.freelancers
         const TotalCount = store.getState()?.Freelancers?.totalCount
-        const userId = store.getState()?.Auth?.user?._id
 
+        // Verify the freelancers are rendering correctly
         cy.contains('Top Results')
         cy.contains(getResultMessage(FreelancerList, 0, 'all', TotalCount))
         FreelancerList?.forEach((freelancer, index) => {
@@ -87,11 +91,14 @@ describe('Freelancers Page', () => {
       })
   })
   it('Implement fiters on freelancers', () => {
+    // Intercept the request to get freelancers
     cy.intercept('POST', `/api/freelancer/public/list`).as('getFreelancersRequest')
+
+    // Click on filter icon to open filters
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Apply sort  filter by "Most Relavent"
     cy.get(`select[name="sort_options"]`).should('be.visible').select(SORT_OPTIONS[1].text)
-
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
@@ -102,6 +109,7 @@ describe('Freelancers Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Apply sort  filter by "Most Reviews"
     cy.get(`select[name="sort_options"]`).should('be.visible').select(SORT_OPTIONS[2].text)
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     cy.wait('@getFreelancersRequest').then(interception => {
@@ -113,6 +121,7 @@ describe('Freelancers Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Apply sort  filter by "Highest Hourly Rate"
     cy.get(`select[name="sort_options"]`).should('be.visible').select(SORT_OPTIONS[3].text)
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     cy.wait('@getFreelancersRequest').then(interception => {
@@ -124,6 +133,7 @@ describe('Freelancers Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Apply sort  filter by "Lowest Hourly Rate"
     cy.get(`select[name="sort_options"]`).should('be.visible').select(SORT_OPTIONS[4].text)
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     cy.wait('@getFreelancersRequest').then(interception => {
@@ -134,12 +144,13 @@ describe('Freelancers Page', () => {
     })
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
+
+    // Apply rate filters
     cy.contains('Rate').should('be.visible')
     cy.get('#minRate').clear().type(10)
     cy.get('#maxRate').clear().type(100)
 
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
-
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
@@ -154,6 +165,7 @@ describe('Freelancers Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Clear rate filters
     cy.get(`[data-testid="clear_rates"]`).should('be.visible').click()
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
 
@@ -171,6 +183,7 @@ describe('Freelancers Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Applly skills filter
     cy.contains('Skills').should('be.visible')
 
     cy.get('#skill_name').clear().type('cs')
@@ -192,6 +205,7 @@ describe('Freelancers Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Clear skills filter
     cy.get(`[data-testid="clear_skills"]`).should('be.visible').click()
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     cy.wait('@getFreelancersRequest').then(interception => {

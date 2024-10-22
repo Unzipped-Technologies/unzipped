@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker'
+import { testFreelancerEmail, testFreelancerPassword } from '../../config/keys'
+import { testClientEmail } from '../../config/keys'
 
 describe('Apply for project', () => {
   let reduxStore
@@ -15,8 +17,8 @@ describe('Apply for project', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('haseebiqbal3394@gmail.com')
-    cy.get('#password').type('Hello@2024')
+    cy.get('#email').clear().type(testFreelancerEmail)
+    cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -30,14 +32,6 @@ describe('Apply for project', () => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url({ timeout: 60000 }).should('include', '/dashboard')
     })
-  })
-
-  beforeEach(() => {
-    cy.window()
-      .its('store')
-      .then(store => {
-        reduxStore = store
-      })
   })
 
   it('Apply to a Project', () => {
@@ -78,7 +72,7 @@ describe('Apply for project', () => {
       const FreelancerId = reduxStore.getState().Auth.user.freelancers?._id
 
       const Project = ProjectsList?.filter(
-        project => project?.user?.email === 'client@gmail.com' && !project?.applicants?.includes(FreelancerId)
+        project => project?.user?.email === testClientEmail && !project?.applicants?.includes(FreelancerId)
       )?.[0]
       cy.get(`#${Project._id}`).contains(Project.name).click()
 

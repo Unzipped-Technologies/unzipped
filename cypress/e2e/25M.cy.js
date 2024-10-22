@@ -1,9 +1,8 @@
-import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
-import { ConverterUtils } from '../../utils'
-import { BUDGET_TYPE, RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
+import { BUDGET_TYPE, RECENT_SKILLS } from '../../utils/constants'
 
 describe('Projects Page', () => {
+  // Format the result message
   const getResultMessage = (freelancerList, skip, take, totalCount) => {
     if (freelancerList?.length === 0) {
       return '0 result'
@@ -16,20 +15,25 @@ describe('Projects Page', () => {
   before(() => {
     cy.viewport(480, 896)
 
+    // Clear cookies and local storage before start theses test cases
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    // Visit the home page without logging in
+    cy.visit('http://localhost:3000')
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 
   beforeEach(() => {
+    // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
 
   it('Verify projects are rendering correctly', () => {
+    // Intercept the request to get the projects
     cy.intercept('POST', '/api/business/public/list').as('getProjectsRequest')
 
+    // Click on the menu icon to visit projects page
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.get(`#mobile_menu_1`).click()
     cy.get(`#mobile_menu_1`).within(() => {
@@ -37,6 +41,7 @@ describe('Projects Page', () => {
     })
 
     cy.contains('Connect. Build. grow').should('not.exist')
+    // It must redirect to the projects page
     cy.url().should('include', '/projects')
 
     cy.wait('@getProjectsRequest').then(interception => {
@@ -49,6 +54,7 @@ describe('Projects Page', () => {
         const Projects = store.getState()?.Business?.projectList
         const TotalCount = store.getState()?.Business?.totalCount
 
+        // Verify the freelancers are rendering correctly
         cy.contains('Top Results').should('be.visible')
         cy.contains(getResultMessage(Projects, 0, 'all', TotalCount)).should('be.visible')
         Projects?.forEach((project, index) => {
@@ -79,16 +85,21 @@ describe('Projects Page', () => {
       })
   })
   it('Implement fiters on projects', () => {
+    // Intercept the request to get the projects
     cy.intercept('POST', `/api/business/public/list`).as('getProjectsRequest')
+
+    // Click on filter icon to open filters
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
     cy.get(`[data-testid="mobile_filters"]`).within(() => {
       cy.contains('Filters').should('be.visible')
+
       cy.contains('Project type').should('be.visible')
       BUDGET_TYPE?.forEach(type => {
         cy.contains(type).should('be.visible')
         cy.get(`[data-testid="${type}"]`).should('have.text', '')
       })
+      // Apply project typ  filter by "Fixed Price"
       cy.contains(BUDGET_TYPE[0]).should('be.visible').click()
       cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     })
@@ -107,6 +118,7 @@ describe('Projects Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Apply project typ  filter by "Hourly Rate"
     cy.contains(BUDGET_TYPE?.[1]).should('be.visible').click()
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
     cy.wait('@getProjectsRequest').then(interception => {
@@ -122,6 +134,7 @@ describe('Projects Page', () => {
     })
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
+    // Clear the project type filter
     cy.get(`[data-testid="clear_type_filter"]`).should('be.visible').click()
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
 
@@ -138,6 +151,7 @@ describe('Projects Page', () => {
     })
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
+    // Apply rate filters
     cy.contains('Rate').should('be.visible')
     cy.get('#minRate').clear().type(10)
     cy.get('#maxRate').clear().type(100)
@@ -158,6 +172,7 @@ describe('Projects Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Clear the rate filters
     cy.get(`[data-testid="clear_rates"]`).should('be.visible').click()
     cy.contains('button', 'SEE RESULTS').scrollIntoView().should('be.visible').click()
 
@@ -175,6 +190,7 @@ describe('Projects Page', () => {
 
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
 
+    // Apply skills filters
     cy.contains('Skills').should('be.visible')
 
     cy.get('#skill_name').clear().type('cs')

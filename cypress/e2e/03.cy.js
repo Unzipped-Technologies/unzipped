@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { ConverterUtils } from '../../utils'
+import { testClientEmail, testClientPassword } from '../../config/keys'
 
 describe('Create Long term and short term projects.', () => {
   before(() => {
@@ -15,8 +15,8 @@ describe('Create Long term and short term projects.', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')

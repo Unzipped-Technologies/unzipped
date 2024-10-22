@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
+import { testFreelancerEmail, testFreelancerPassword } from '../../config/keys'
 
 describe('Freelancer can add comments to tasks', () => {
-  let reduxStore
   before(() => {
     cy.clearCookies()
     cy.clearLocalStorage()
@@ -17,8 +17,8 @@ describe('Freelancer can add comments to tasks', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('haseebiqbal3394@gmail.com')
-    cy.get('#password').type('Hello@2024')
+    cy.get('#email').clear().type(testFreelancerEmail)
+    cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -32,15 +32,6 @@ describe('Freelancer can add comments to tasks', () => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
     })
-  })
-
-  beforeEach(() => {
-    cy.window()
-      .its('store')
-      .then(store => {
-        reduxStore = store
-        // Get the current state of the store
-      })
   })
 
   it('Verify business names and department names in tasklist page', () => {
@@ -57,7 +48,6 @@ describe('Freelancer can add comments to tasks', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const BusinessList = store.getState()?.Business?.projectList
         BusinessList?.forEach(business => {
           cy.get(`#business_${business?._id}`).within(() => {

@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
+import { testClientEmail, testClientPassword } from '../../config/keys'
 
 describe('Client can view project  applications, add department, tags etc', () => {
   let reduxStore
@@ -20,8 +21,8 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
