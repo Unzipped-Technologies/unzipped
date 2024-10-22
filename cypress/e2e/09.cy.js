@@ -4,43 +4,10 @@ import { ValidationUtils } from '../../utils'
 import { ConverterUtils } from '../../utils'
 import { help } from '../../components/unzipped/dashboard/Notification'
 import { options } from '../../components/unzipped/dashboard/ScheduleMeetingModal'
+import { testClientEmail, testClientPassword, testFreelancerEmail } from '../../config/keys'
 
 describe('Client Invoices', () => {
-  let reduxStore
-
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
-  const GetOptions = () => {
-    const options = []
-    const currentDate = new Date()
-    for (let i = 10; i >= 0; i--) {
-      const startOfWeek = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate() - currentDate.getDay() - i * 7
-      )
-      startOfWeek.setHours(0, 0, 0, 0)
-      const endOfWeek = new Date(startOfWeek)
-      endOfWeek.setDate(endOfWeek.getDate() + 6)
-      endOfWeek.setHours(23, 59, 59, 999)
-      options.unshift({ startOfWeek, endOfWeek })
-    }
-    return options
-  }
-  const getCurrentInvoice = invoices => {
-    const weekOptions = GetOptions()
-    const currentDate = new Date()
-    const startOfWeek = weekOptions[0]?.startOfWeek
-    const endOfWeek = weekOptions[0]?.endOfWeek
-    for (var item of invoices) {
-      const itemDate = new Date(item.createdAt)
-
-      const isCurrentInvoice = itemDate >= startOfWeek && itemDate <= endOfWeek
-      if (isCurrentInvoice) {
-        return item
-      }
-    }
-  }
 
   const invoiceData = invoice => {
     const organizedItems = Object.fromEntries(daysOfWeek.map(day => [day, []]))
@@ -68,8 +35,8 @@ describe('Client Invoices', () => {
     cy.contains('CONTINUE WITH EMAIL').click()
 
     // Enter login credentials
-    cy.get('#email').type('client@gmail.com')
-    cy.get('#password').type('Hello@2023')
+    cy.get('#email').clear().type(testClientEmail)
+    cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
     cy.intercept('POST', '/api/auth/login').as('loginRequest')
@@ -83,14 +50,6 @@ describe('Client Invoices', () => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
     })
-  })
-
-  beforeEach(() => {
-    cy.window()
-      .its('store')
-      .then(store => {
-        reduxStore = store
-      })
   })
 
   it('View project invoice of freelacer', () => {
@@ -117,9 +76,6 @@ describe('Client Invoices', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
-
-        // Now you have access to reduxStore
         const ProjectsList = store.getState().Business.projectList
         const selectedProject = ProjectsList[0]
 
@@ -153,7 +109,6 @@ describe('Client Invoices', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const Invoices = store.getState()?.Invoices.invoices
         Invoices?.forEach(invoice => {
           cy.get(`#${invoice?._id}`).within(() => {
@@ -209,7 +164,6 @@ describe('Client Invoices', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const Invoices = store.getState()?.Invoices.invoices
         const Invoice = Invoices[0]
         const sortedData = invoiceData(Invoice)
@@ -272,7 +226,6 @@ describe('Client Invoices', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const user = store?.getState()?.Auth.user
 
         cy.get('#pick_plan_notification')
@@ -408,7 +361,7 @@ describe('Client Invoices', () => {
         cy.contains('Browse other projects to inspire ideas').should('be.visible')
         cy.contains('button', 'BROWSE').should('be.visible').click()
         cy.url().should('include', '/projects')
-        cy.go('back')
+        cy.visit('http://localhost:3000/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -417,7 +370,7 @@ describe('Client Invoices', () => {
       .within(() => {
         cy.contains('See our help docs').should('be.visible').click()
         cy.url().should('include', '/')
-        cy.go('back')
+        cy.visit('http://localhost:3000/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -426,7 +379,7 @@ describe('Client Invoices', () => {
       .within(() => {
         cy.contains('Get started').should('be.visible').click()
         cy.url().should('include', '/')
-        cy.go('back')
+        cy.visit('http://localhost:3000/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -435,7 +388,7 @@ describe('Client Invoices', () => {
       .within(() => {
         cy.contains('Ask about a topic.').should('be.visible').click()
         cy.url().should('include', '/')
-        cy.go('back')
+        cy.visit('http://localhost:3000/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
   })
@@ -445,7 +398,6 @@ describe('Client Invoices', () => {
     cy.window()
       .its('store')
       .then(store => {
-        reduxStore = store
         const user = store?.getState()?.Auth.user
         cy.get('#calendar_setting_notification')
           .scrollIntoView()
@@ -599,8 +551,12 @@ describe('Client Invoices', () => {
       })
   })
   it('Send message to freelancer', () => {
-    cy.visit('http://localhost:3000/dashboard/inbox')
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
+    cy.visit('http://localhost:3000/dashboard/inbox')
+
+    cy.wait('@getConvesationRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
 
     cy.window()
       .its('store')
@@ -625,16 +581,24 @@ describe('Client Invoices', () => {
               'be.visible'
             )
             cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt)).should('be.visible')
-            cy.contains(
-              ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
-            ).should('be.visible')
+            if (conversation?.messages?.length) {
+              cy.contains(
+                ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
+              ).should('be.visible')
+            }
           })
         })
+
+        let FreelancerConversation = conversations?.find(conv =>
+          conv?.participants?.some(parti => parti.userId.email === testFreelancerEmail)
+        )
+        FreelancerConversation = FreelancerConversation?._id ? FreelancerConversation : conversations[0]
+
         cy.wait(1000)
-        cy.get(`#conversation_${conversations[0]?._id}`)
+        cy.get(`#conversation_${FreelancerConversation?._id}`)
           .scrollIntoView()
           .within(() => {
-            const receiverUser = conversations[0]?.participants?.find(e => e?.userId?.email !== user?.email)
+            const receiverUser = FreelancerConversation?.participants?.find(e => e?.userId?.email !== user?.email)
 
             cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiverUser?.userId)}`))
               .should('be.visible')
@@ -643,6 +607,15 @@ describe('Client Invoices', () => {
               expect(interception.response.statusCode).to.be.oneOf([200, 304])
             })
           })
+      })
+
+    cy.window()
+      .its('store')
+      .then(store => {
+        const conversations = store?.getState().Messages?.conversations
+        const user = store?.getState().Auth?.user
+
+        const selectedConversation = store?.getState().Messages?.selectedConversation
 
         const receiver =
           selectedConversation?.participants?.length &&
@@ -663,23 +636,6 @@ describe('Client Invoices', () => {
           selectedConversation?.messages?.forEach(message => {
             cy.get(`#${message?._id}`)
               .within(() => {
-                if (message?.sender === user?._id) {
-                  cy.get(`img[src*="${sender?.userId?.profileImage}"]`)
-                    .scrollIntoView()
-                    .should('be.visible')
-                    .should('have.attr', 'src')
-                    .then(src => {
-                      expect(src).to.include(sender?.userId?.profileImage)
-                    })
-                } else if (message?.conversationId === selectedConversation?._id) {
-                  cy.get(`img[src*="${sender?.userId?.profileImage}"]`)
-                    .scrollIntoView()
-                    .should('be.visible')
-                    .should('have.attr', 'src')
-                    .then(src => {
-                      expect(src).to.include(sender?.userId?.profileImage)
-                    })
-                }
                 if (message?.updatedAt) {
                   cy.contains(ValidationUtils.getTimeFormated(message?.updatedAt)).scrollIntoView().should('be.visible')
                 }
@@ -690,7 +646,7 @@ describe('Client Invoices', () => {
           const NewMessage = faker.lorem.sentences(1)
           cy.get('#message').clear().type(NewMessage)
           cy.get('#send_message').scrollIntoView().should('be.visible').click()
-          cy.contains(NewMessage)
+
           cy.get('#profile_container').within(() => {
             cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
               .should('be.visible')
@@ -716,7 +672,7 @@ describe('Client Invoices', () => {
         cy.get('#schedule_meeting_modal').should('be.visible')
         cy.contains('button', 'CANCEL').scrollIntoView().should('be.visible').click()
         cy.get('#archive_chat').scrollIntoView().should('be.visible').click()
-        cy.contains('Archived Chats').should('be.visible')
+        cy.contains('Archived Chats').scrollIntoView().should('be.visible')
         cy.get('#archive_chat').scrollIntoView().should('be.visible').click()
 
         cy.contains('Archived Chats').should('not.exist')

@@ -115,9 +115,7 @@ const Inbox = ({
           })
           await getConversationList(form, access)
           setUserIdForChat(null)
-        } catch (error) {
-          console.error('Error in useEffect:', error)
-        }
+        } catch (error) {}
       })()
     }
   }, [selectedUserId])
@@ -212,7 +210,6 @@ const Inbox = ({
       receiverId: receiverId
     })
   }
-  console.log('conversations', conversations)
   return (
     <Page>
       {window.innerWidth >= 680 ? (
