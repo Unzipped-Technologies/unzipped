@@ -264,18 +264,18 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                 </List>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-                <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={onHide}>
+                <Button width="120px" buttonHeight="42px" oval type="outlineInverse" onClick={onHide}>
                   CANCEL
                 </Button>
                 <Button
                   disabled={false}
                   onClick={addTasksToInvoice}
-                  width="63px"
-                  buttonHeight="25px"
+                  width="120px"
+                  buttonHeight="42px"
                   oval
                   type="black"
                   margin="0px 0px 0px 20px">
-                  ADD TASK
+                  SAVE
                 </Button>
               </div>
             </div>
@@ -389,16 +389,37 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                   })}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-                  <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={HideNewTasksModal}>
+                  <Button
+                    extraWid
+                    type="outlineInverse"
+                    width="148px"
+                    fontSize="15px"
+                    buttonHeight="25px"
+                    colors={{
+                      text: '#1976D2',
+                      background: 'white',
+                      border: '1px ',
+                      wideBorder: '#1976D2',
+                      borderRadius: '8px'
+                    }}
+                    onClick={HideNewTasksModal}>
                     CANCEL
                   </Button>
                   <Button
                     disabled={false}
                     onClick={handleSubmit}
-                    width="63px"
+                    width="148px"
                     buttonHeight="25px"
-                    oval
+                    extraWide
+                    fontSize="15px"
                     type="black"
+                    colors={{
+                      text: '#FFF',
+                      background: '#1976D2',
+                      border: '1px',
+                      wideBorder: '#1976D2',
+                      borderRadius: '8px'
+                    }}
                     margin="0px 0px 0px 20px">
                     ADD TASK(S)
                   </Button>
