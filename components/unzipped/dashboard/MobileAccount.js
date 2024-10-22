@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux'
 import IconComponent from '../../ui/icons/IconComponent'
 import { logoutUser, getCurrentUserData } from '../../../redux/actions'
 import UpdateProfileModal from '../UpdateProfileModal'
+import BackHeader from '../BackHeader'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -70,11 +71,8 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
   }
 
   return (
-    <div className="mb-10">
-      <P margin="0" padding="0 0 0 15px" fontSize="20px" fontWeight={500}>
-        Account
-      </P>
-      <hr />
+    <div className="mb-10 ">
+      <BackHeader title="Account" />
       <Container>
         <div className="d-flex px-3 pb-4 pt-3 mb-6 justify-content-between">
           <div className="d-flex">
