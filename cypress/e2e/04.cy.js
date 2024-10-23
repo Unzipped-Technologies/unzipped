@@ -12,7 +12,7 @@ describe('Apply for project', () => {
 
     // Perform login steps
     cy.contains('Log In').click()
-    cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.contains('CONTINUE WITH EMAIL').click()
 
@@ -25,25 +25,26 @@ describe('Apply for project', () => {
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
-    cy.contains('Connect. Build. grow', { timeout: 100000 }).should('not.exist')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     // Wait for the login request and verify success
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
-      cy.url({ timeout: 60000 }).should('include', '/dashboard')
+      cy.url().should('include', '/dashboard')
     })
   })
 
   it('Apply to a Project', () => {
     cy.intercept('POST', '/api/business/public/list').as('getProjectsRequest')
-    cy.contains('Find a Project', { timeout: 6000 }).click({ force: true })
+    cy.contains('Find a Project').click({ force: true })
+    cy.wait(1000)
     cy.contains('Browse Projects').click({ force: true })
 
-    cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
-    cy.url({ timeout: 60000 }).should('include', '/projects')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/projects')
 
     // Submit login form
-    cy.contains('Connect. Build. grow', { timeout: 100000 }).should('not.exist')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     // Wait for the login request and verify success
     let ProjectsList = []
@@ -76,8 +77,8 @@ describe('Apply for project', () => {
       )?.[0]
       cy.get(`#${Project._id}`).contains(Project.name).click()
 
-      cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
-      cy.url({ timeout: 60000 }).should('include', `/projects/${Project._id}`)
+      cy.contains('Connect. Build. grow').should('not.exist')
+      cy.url().should('include', `/projects/${Project._id}`)
 
       cy.get('#desired_rate').type(20)
       const CoverLetter = faker.lorem.sentences(10)
@@ -96,10 +97,10 @@ describe('Apply for project', () => {
         expect(interception.response.statusCode).to.be.oneOf([200, 400])
       })
 
-      cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
-      cy.url({ timeout: 60000 }).should('include', `/dashboard`)
+      cy.contains('Connect. Build. grow').should('not.exist')
+      cy.url().should('include', `/dashboard`)
 
-      cy.contains('You have successfully applied for project!', { timeout: 6000 }).should('be.visible')
+      cy.contains('You have successfully applied for project!').should('be.visible')
     })
   })
 })
