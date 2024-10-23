@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-
 import IconComponent from '../../ui/icons/IconComponent'
 import { logoutUser, getCurrentUserData } from '../../../redux/actions'
 import UpdateProfileModal from '../UpdateProfileModal'
@@ -40,9 +39,9 @@ const Like = styled.div`
 const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
   const router = useRouter()
 
-  const [showSettings, setShowSettings] = useState(false)
-  const [isProfileModal, setIsProfileModal] = useState(false);
+  const [isProfileModal, setIsProfileModal] = useState(false)
 
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +85,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
             />
             <div className="mx-2">
               <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="17px">
-              {user?.FirstName + ' ' + user?.LastName}
+                {user?.FirstName + ' ' + user?.LastName}
               </P>
               <P margin="0" padding="0 0 5px 0" fontSize="16px">
                 {user?.freelancers?.category || 'N/A'}
@@ -97,8 +96,6 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
             onClick={() => {
               if (user?.role === 1) {
                 linkPush(`/freelancers/${user.freelancers?._id}`)
-              } else {
-                linkPush(`/client/${user._id}`)
               }
             }}>
             <P margin="0" padding="0 0 5px 0" color="#1E70E0" fontSize="18px">
@@ -127,7 +124,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
         <div className="mb-4 px-3  py-1">
           <div
             data-testid="show_setting_container"
-            className="d-flex align-items-center justify-content-between"
+            className="d-flex align-items-center justify-content-between mb-4 py-1"
             onClick={() => {
               setShowSettings(!showSettings)
             }}>
@@ -169,10 +166,14 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
                 <P fontSize="16px" margin="0px 0px 0px 20px">
                   Profile
                 </P>
-                <P style={{fontSize:"15px",color:"#0095dd"}} onClick={() => {
-                  handleOpenProfileModal()
-                }}>
-                  Update</P>
+                <P
+                  id="update_profile"
+                  style={{ fontSize: '15px', color: '#0095dd' }}
+                  onClick={() => {
+                    handleOpenProfileModal()
+                  }}>
+                  Update
+                </P>
               </div>
             </>
           )}
@@ -244,11 +245,14 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
         </div>
       </Container>
 
-      {isProfileModal && (<UpdateProfileModal
-        open={isProfileModal}
-        onHide={() => {
-          handleCloseProfileModal()
-        }} />)}
+      {isProfileModal && (
+        <UpdateProfileModal
+          open={isProfileModal}
+          onHide={() => {
+            handleCloseProfileModal()
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -256,7 +260,8 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
 const mapStateToProps = state => {
   return {
     user: state.Auth.user,
-    balance: state.Stripe?.balance
+    balance: state.Stripe?.balance,
+    business: state.Business.details
   }
 }
 

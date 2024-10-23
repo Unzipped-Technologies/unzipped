@@ -79,8 +79,16 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
     setIsLoading(true)
     const response = onClick && (await onClick(address))
 
-    if (!response || response?.status !== 200) {
-      setError(response?.data?.msg ?? 'Something went wrong!')
+    if (response) {
+      if (response?.status !== 200) {
+        setError(response?.data?.msg ?? 'Something went wrong!')
+      } else {
+        setIsBusinessAddress(false)
+        setIsUpdated(true)
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 500)
+      }
     } else {
       setIsBusinessAddress(false)
       setIsUpdated(true)
@@ -93,7 +101,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
   return (
     <Container>
       {isBusinessAddress ? (
-        <WhiteCard height="650px" padding="0px" data-testid="business_address">
+        <WhiteCard height="650px" padding="0px" data-testid="business_address" id="business_address">
           <TitleText size="22px" paddingTop={isMobile ? '10px' : '20px'} paddingLeft={isMobile ? '10px' : '0px'}>
             Business Address
           </TitleText>
@@ -243,7 +251,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
             Business address
           </TitleText>
           <Absolute top={!isLoading ? '12px' : '18px'}>
-            {isLoading && <CircularProgress data-testid="loading_spinner" size={24} />}
+            {isLoading && <CircularProgress data-testid="loading_spinner" id="loading_spinner" size={24} />}
 
             {isUpdated && !isLoading && (
               <Image

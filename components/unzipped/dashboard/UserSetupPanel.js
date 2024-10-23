@@ -162,7 +162,7 @@ const Panel = ({ user, verifyIdentity }) => {
 
   const router = useRouter()
   return (
-    <Container data-testid="user_profile_panel">
+    <Container data-testid="user_profile_panel" id="user_profile_panel">
       <TitleText size={18}>Set up your account</TitleText>
       <ProgressBarContainer>
         <ProgressBarFiller percentage={trackProgress}>
@@ -195,7 +195,7 @@ const Panel = ({ user, verifyIdentity }) => {
           </AccountSetup>
         </AccountSetupContainer>
       )}
-      {!user?.profileImage && (
+      {user?.profileImage === 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png' && (
         <AccountSetupContainer>
           <img
             style={{ borderRadius: '100%' }}

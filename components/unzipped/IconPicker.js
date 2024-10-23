@@ -87,10 +87,13 @@ const IconPicker = ({
               </>
             ) : (
               <>
-                {Object.keys(Icons).map(icon => {
+                {Object.keys(Icons).map((icon, index) => {
                   const Icon = Icons[icon]
                   return (
-                    <div key={icon} style={{ fontSize: '30px', paddingLeft: '10px', color: IconColors[icon] }}>
+                    <div
+                      key={icon}
+                      id={`icon_${index}`}
+                      style={{ fontSize: '30px', paddingLeft: '10px', color: IconColors[icon] }}>
                       <Icon
                         style={{ color: IconColors[icon] || '#1C1C1C' }}
                         onClick={() => {

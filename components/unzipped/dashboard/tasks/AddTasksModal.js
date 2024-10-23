@@ -188,12 +188,15 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                     options={taskOptions}
                     renderInput={params => (
                       <div ref={params.InputProps.ref}>
-                        <input type="text" {...params.inputProps} data-testid="task_name" />
+                        <input type="text" {...params.inputProps} data-testid="task_name" id="task_name" />
                       </div>
                     )}
                     freeSolo
                     autoComplete
                     value={taskName}
+                    onInputChange={(event, newValue) => {
+                      setTaskName(newValue)
+                    }}
                     onChange={(event, value) => {
                       if (value?.label) {
                         addTasks(value?.label)
@@ -234,6 +237,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
                               data-testid={`delete_task_${index}`}
+                              id={`delete_task_${index}`}
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -260,18 +264,18 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                 </List>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-                <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={onHide}>
+                <Button width="120px" buttonHeight="42px" oval type="outlineInverse" onClick={onHide}>
                   CANCEL
                 </Button>
                 <Button
                   disabled={false}
                   onClick={addTasksToInvoice}
-                  width="63px"
-                  buttonHeight="25px"
+                  width="120px"
+                  buttonHeight="42px"
                   oval
                   type="black"
                   margin="0px 0px 0px 20px">
-                  ADD TASK
+                  SAVE
                 </Button>
               </div>
             </div>
@@ -293,7 +297,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                 {newTasks?.length &&
                   newTasks.map((task, taskIndex) => {
                     return (
-                      <div key={`${task?.taskName}`} style={{ marginBottom: '20px' }}>
+                      <div key={`${task?.taskName}`} id={`task_${taskIndex}`} style={{ marginBottom: '20px' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -312,7 +316,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                             placeholder="Story Points"
                             fontSize="14px"
                             name={'story points' + taskIndex}
-                            id={'story points' + taskIndex}
+                            id={`story_points${taskIndex}`}
                             width="130px"
                             margin="-6px 0px 0px 10px"
                             height="30px  !important"
@@ -385,16 +389,37 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                   })}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-                  <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={HideNewTasksModal}>
+                  <Button
+                    extraWid
+                    type="outlineInverse"
+                    width="148px"
+                    fontSize="15px"
+                    buttonHeight="25px"
+                    colors={{
+                      text: '#1976D2',
+                      background: 'white',
+                      border: '1px ',
+                      wideBorder: '#1976D2',
+                      borderRadius: '8px'
+                    }}
+                    onClick={HideNewTasksModal}>
                     CANCEL
                   </Button>
                   <Button
                     disabled={false}
                     onClick={handleSubmit}
-                    width="63px"
+                    width="148px"
                     buttonHeight="25px"
-                    oval
+                    extraWide
+                    fontSize="15px"
                     type="black"
+                    colors={{
+                      text: '#FFF',
+                      background: '#1976D2',
+                      border: '1px',
+                      wideBorder: '#1976D2',
+                      borderRadius: '8px'
+                    }}
                     margin="0px 0px 0px 20px">
                     ADD TASK(S)
                   </Button>
@@ -500,6 +525,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                             style={{ display: 'flex', flexDirection: 'row', marginLeft: '10px' }}
                             key={task?.value || `${task?.taskName}_${index}`}>
                             <span
+                              id={`delete_task_${index}`}
                               data-testid={`delete_task_${index}`}
                               style={{
                                 display: 'flex',
@@ -569,6 +595,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                       return (
                         <div
                           key={`${task?.taskName}`}
+                          id={`task_${taskIndex}`}
                           style={{
                             marginBottom: '20px',
                             borderBottom: '1px solid #CACACA'
@@ -591,7 +618,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                               placeholder="Story Points"
                               fontSize="14px"
                               name={'story points' + taskIndex}
-                              id={'story points' + taskIndex}
+                              id={`story_points${taskIndex}`}
                               width="90px"
                               margin="0px 0px 0px 15px"
                               height="30px  !important"

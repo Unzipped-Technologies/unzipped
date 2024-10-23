@@ -29,7 +29,7 @@ const MobileDisplayBox = styled.div`
 // Define a styled AccordionDetails component
 const CustomAccordionDetails = styled(AccordionDetails)`
   /* Add your custom styles here */
-  width: 100% !important;
+  // width: 100% !important;
   padding: 0px !important;
 
   display: block !important;
@@ -58,6 +58,8 @@ const TaskName = styled.div`
   text-transform: capitalize;
   padding-left: 10px;
   width: 167px;
+  overflow: scroll;
+  white-space: nowrap;
 `
 
 const TaskHours = styled.div`
@@ -168,9 +170,19 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
         allInvoices?.map(invoice => {
           return (
             <Accordion key={`${invoice._id}_${invoice?.user?._id}`} data-testid={`${invoice?.business?._id}_invoices`}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                <Typography className={classes.heading}>
-                  {ConverterUtils.capitalize(`${invoice?.business?.name}`)}
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  overflow: 'scroll',
+                  whiteSpace: 'nowrap'
+                }}>
+                <Typography>
+                  {ConverterUtils.truncateString(ConverterUtils.capitalize(`${invoice?.business?.name}`), 40)}
                 </Typography>
               </AccordionSummary>
               <CustomAccordionDetails>

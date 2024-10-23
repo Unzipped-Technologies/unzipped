@@ -121,13 +121,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         justifyContent="space-between"
                         alignItems="center"
                         padding="10px 10px 15px 0px">
-                        <TEXT
-
-                          fontSize="18px"
-                          fontWeight="bolder"
-                          lineHeight="23px"
-                          textColor="#12151B"
-                        >
+                        <TEXT fontSize="18px" fontWeight="bolder" lineHeight="23px" textColor="#12151B">
                           Project Hires
                         </TEXT>
                         <TEXT
@@ -164,6 +158,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                         fontWeight="200"
                         fontSize="18px"
                         lineHeight="25.78px"
+                        overflowWrap="break-word"
                         textColor="#12151B">
                         {projectDetails?.challenge || projectDetails?.role || 'N/A'}
                       </TEXT>
@@ -191,13 +186,18 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           </TEXT>
                         )}
                       </ProjectRequirements>
-                      <TEXT padding="10px 0px 10px 0px" fontSize="18px" lineHeight="23px" textColor=" #12151B" fontWeight="bolder">
+                      <TEXT
+                        padding="10px 0px 10px 0px"
+                        fontSize="18px"
+                        lineHeight="23px"
+                        textColor=" #12151B"
+                        fontWeight="bolder">
                         Skills Required
                       </TEXT>
                       {projectDetails?.requiredSkills?.length
                         ? projectDetails?.requiredSkills?.map((skill, index) => {
-                          return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-                        })
+                            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+                          })
                         : 'N/A'}
 
                       <TEXT topPadding fontSize="13px" lineHeight="24.5px">

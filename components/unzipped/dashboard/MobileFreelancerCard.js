@@ -129,7 +129,10 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
             </p>
           </div>
           {userId && (
-            <ButtonTwo onClick={handlOpen} data-testid={`open_${user?.id}_mobile`}>
+            <ButtonTwo
+              onClick={handlOpen}
+              data-testid={`open_${user?.id}_mobile`}
+              id={`open_${user.userId}_list_modal`}>
               <Icon name="actionIcon" color="#333" />
             </ButtonTwo>
           )}
@@ -157,8 +160,8 @@ function MobileFreelancerCard({ user, includeRate, clearSelectedFreelancer, afte
               id="freelancer_rate">
               {user?.rate > 0 ? (
                 <span className="d-flex">
-                  <span style={{ paddingRight: '5px' }}> ${`${user?.rate}`}</span> /{' '}
-                  <span style={{ fontSize: '15px', padding: '5px 0px 0px 2px ' }}>hour</span>
+                  <span style={{ paddingRight: '5px' }}>${user?.rate}</span> /{' '}
+                  <span style={{ fontSize: '15px', padding: '5px 0px 0px 0px' }}>hour</span>
                 </span>
               ) : (
                 'Negotiable'

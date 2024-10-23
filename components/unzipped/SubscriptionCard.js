@@ -96,6 +96,7 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription }
               background="#EAEAEA"
               key={index}
               noMargin
+              id={`card_${index}`}
               padding="5px 40px"
               borderRadius={index === 0 ? '10px 10px 0px 0px' : index === 3 ? '0px 0px 10px 10px' : '0px'}>
               <Absolute smallLeft top="0px">
@@ -131,7 +132,7 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription }
           </TitleText>
           {isLoading && (
             <Absolute top="18px">
-              <CircularProgress size={24} />
+              <CircularProgress id="loading_spinner" size={24} />
             </Absolute>
           )}
           {!isLoading && (

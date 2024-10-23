@@ -391,7 +391,7 @@ const TableHeading = styled.th`
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24.5px')};
   letter-spacing: ${({ letterSpacing }) => (letterSpacing ? letterSpacing : '0.4px')};
   text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'uppercase')};
-  padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '5px')};
 `
 
 const TableData = styled.td`
@@ -408,7 +408,7 @@ const TableData = styled.td`
   &:hover {
     ${({ $default }) => ($default ? 'color: darkred;' : '')}
   }
-  padding-left: ${({paddingLeft}) => (paddingLeft ? paddingLeft : '5px')}
+  padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '5px')}
   margin: ${({ margin }) => (margin ? margin : '0px')};
 `
 
@@ -454,8 +454,10 @@ const DIV = styled.div`
   box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
   gap: ${({ gap }) => (gap ? gap : '0px')};
-  border-bottom-left-radius: ${({ borderBottomLeftRadius }) => (borderBottomLeftRadius ? borderBottomLeftRadius : '0px')};
-  border-bottom-right-radius: ${({ borderBottomRightRadius }) => (borderBottomRightRadius ? borderBottomRightRadius : '0px')};
+  border-bottom-left-radius: ${({ borderBottomLeftRadius }) =>
+    borderBottomLeftRadius ? borderBottomLeftRadius : '0px'};
+  border-bottom-right-radius: ${({ borderBottomRightRadius }) =>
+    borderBottomRightRadius ? borderBottomRightRadius : '0px'};
   overflow-x: ${({ overFlowX }) => (overFlowX ? overFlowX : 'visible')};
 `
 
@@ -479,6 +481,7 @@ const TEXT = styled.p`
   text-transform: ${({ textTransform }) => (textTransform ? textTransform : 'none')};
   white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : 'normal')};
   overflow: ${({ overflow }) => (overflow ? overflow : 'visible')};
+  overflow-wrap: ${({ overflowWrap }) => (overflowWrap ? overflowWrap : 'break-word')};
   text-align: ${({ textAlign }) => (textAlign ? textAlign : 'left')};
   color: ${({ textColor }) => (textColor ? textColor : '#000000')};
   font-family: 'Roboto';

@@ -26,7 +26,10 @@ function MobileProjectCard({ project }) {
   const router = useRouter()
 
   return (
-    <div className="bg-white" style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}>
+    <div
+      className="bg-white"
+      style={{ borderBottom: '2px solid rgba(0, 0, 0, 0.25)', color: 'black' }}
+      id={project?._id}>
       <div className="px-3 py-2">
         <div className="d-flex">
           <div>

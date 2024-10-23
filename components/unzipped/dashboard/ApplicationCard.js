@@ -67,6 +67,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                   <DIV
                     key={application._id}
                     data-testid={`${application._id}_application_card`}
+                    id={`application_${application._id}`}
                     display="flex "
                     flexFlow="column"
                     justifyItems="space-around"
@@ -102,6 +103,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                         ) : (
                           <div
                             data-testid="no_profile_image"
+                            id="no_profile_image"
                             style={{
                               display: 'flex',
                               flexFlow: 'column',

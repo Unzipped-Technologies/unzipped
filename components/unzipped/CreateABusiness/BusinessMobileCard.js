@@ -707,6 +707,7 @@ const GetCardMobile = ({
                 <div className="d-flex mb-3" key={question + '_' + index}>
                   <div>
                     <ClearSharpIcon
+                      id={`${question}_icon`}
                       data-testid={`${question}`}
                       style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
                       onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
@@ -798,6 +799,7 @@ const GetCardMobile = ({
                 <div className="d-flex mb-3" key={question + '_' + index}>
                   <div>
                     <ClearSharpIcon
+                      id={`${question}_icon`}
                       data-testid={`${question}`}
                       style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
                       onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}

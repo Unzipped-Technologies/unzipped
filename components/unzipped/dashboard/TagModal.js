@@ -117,6 +117,7 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 fieldType="input"
                 margin="5px 0px 6px 0px"
                 name="tagName"
+                id="tagName"
                 fontSize="14px"
                 borderColor="red"
                 noMargin

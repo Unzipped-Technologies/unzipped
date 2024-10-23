@@ -186,6 +186,8 @@ const Input = ({
           height={height}
           fontSize={fontSize}
           type={type}
+          id={id ?? name}
+          name={name ?? id}
           accepted={accepted}
           disabled={disabled}
           {...rest}

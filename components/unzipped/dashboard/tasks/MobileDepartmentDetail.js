@@ -305,7 +305,7 @@ const MobileTaskDetail = ({
                 {departmentData?.departmentTags?.length
                   ? departmentData?.departmentTags.map(tag => {
                       return (
-                        <Accordion key={tag?._id} expanded={expandedAccordian[`${tag?.id}`]}>
+                        <Accordion key={tag?._id} id={`tag_${tag?._id}`} expanded={expandedAccordian[`${tag?.id}`]}>
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
@@ -329,6 +329,7 @@ const MobileTaskDetail = ({
                                     ? tag?.tasks.map((task, index) => {
                                         return (
                                           <Task
+                                            id={`task_${task?._id}`}
                                             key={task?._id}
                                             onClick={() => {
                                               router.push(`/dashboard/ticket/${task._id}`)
@@ -340,7 +341,7 @@ const MobileTaskDetail = ({
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}>
                                                   <DarkText>{task?.ticketCode}</DarkText>
-                                                  <DarkText topMargin="5px">{task?.description}</DarkText>
+                                                  <DarkText topMargin="5px">{task?.taskName}</DarkText>
                                                   <DarkText margin bold topMargin="10px">
                                                     <img
                                                       src={
@@ -428,7 +429,6 @@ const MobileTaskDetail = ({
 const mapStateToProps = state => {
   return {
     userRole: state.Auth.user?.role,
-
     departmentData: state.Departments.selectedDepartment,
     taskForm: state.Tasks.createStoryForm,
     currentDepartment: state.Tasks.currentDepartment

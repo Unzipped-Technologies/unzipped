@@ -45,6 +45,7 @@ const TicketPreview = ({
       open={open}
       maxWidth="md"
       aria-labelledby="story-preview-modal"
+      id="task_form_modal"
       aria-describedby="story-preview-modal-description">
       <DialogContent dividers>
         <TaskForm

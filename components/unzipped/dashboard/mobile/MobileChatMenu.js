@@ -73,7 +73,7 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
   }
 
   return (
-    <div style={{ backgroundColor: 'white', color: 'black' }}>
+    <div style={{ backgroundColor: 'white', color: 'black' }} id="profile_menu_container">
       <div
         className="py-3 px-2 d-flex align-items-center"
         style={{
@@ -84,6 +84,7 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
           zIndex: '100'
         }}>
         <span
+          id="hide_chat_menu"
           onClick={() => {
             handleFilterOpenClose(false)
           }}
@@ -94,21 +95,35 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
       </div>
       <div style={{ padding: '5px' }}>
         <div className="w-100">
-          {role === 2 || role === 0 ? (
-            <P
-              fontSize="14px"
-              fontWeight="600"
-              lineHeight="19.5px"
-              color="#000000"
-              padding="25px 0px 18px 10px"
-              margin="7px 0 0 0"
-              borderBottom="2px solid #EFF1F4"
-              className="px-1"
-              onClick={() => {
-                router.push('/hire')
-              }}>
-              Make An Offer
-            </P>
+          {role !== 1 ? (
+            <div>
+              <P
+                fontSize="14px"
+                fontWeight="600"
+                lineHeight="19.5px"
+                color="#000000"
+                padding="25px 0px 18px 10px"
+                margin="7px 0 0 0"
+                borderBottom="2px solid #EFF1F4"
+                className="px-1"
+                onClick={() => {
+                  router.push('/hire')
+                }}>
+                Make An Offer
+              </P>
+              <P
+                fontSize="14px"
+                fontWeight="600"
+                lineHeight="19.5px"
+                color="#000000"
+                padding="25px 0px 18px 10px"
+                borderBottom="2px solid #EFF1F4"
+                margin="0"
+                className="px-1"
+                onClick={handleScheduleInterviewModal}>
+                Schedule an Interview
+              </P>
+            </div>
           ) : (
             <P
               fontSize="14px"
@@ -125,21 +140,7 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
               Apply for Position
             </P>
           )}
-          {role === 2 ||
-            (role === 0 && (
-              <P
-                fontSize="14px"
-                fontWeight="600"
-                lineHeight="19.5px"
-                color="#000000"
-                padding="25px 0px 18px 10px"
-                borderBottom="2px solid #EFF1F4"
-                margin="0"
-                className="px-1"
-                onClick={handleScheduleInterviewModal}>
-                Schedule an Interview
-              </P>
-            ))}
+
           <div
             onClick={() => setOpenList(!openList)}
             className="d-flex justify-content-between align-items-center pt-4"
@@ -215,12 +216,14 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
             toggled={isArchived}
             handleSetToggle={handleArchive}
             title="Archive"
+            id="archive_chat"
             sideText="Hide chat from your active list."
           />
           <Toggle
             toggled={isMute}
             handleSetToggle={handleMute}
             title="Mute"
+            id="mute"
             sideText="Turn off this chat's notifications."
           />
           <ScheduleMeetingModal

@@ -190,6 +190,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
               </p>
             </div>
             <select
+              name="sort_options"
               className="mb-3"
               style={{ display: 'block', width: '100%', border: '1px solid', height: '37px' }}
               value={filters?.sort}
@@ -231,6 +232,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                   }}
                   control={
                     <Checkbox
+                      data-testid={type}
                       checked={type === filters?.projectBudgetType}
                       inputProps={{ 'aria-label': 'controlled' }}
                       onChange={e => {
@@ -351,6 +353,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           <IconComponent name="footerSearch" width="24" height="20" viewBox="0 0 24 20" fill="black" />
           <input
             data-testid="skills"
+            id="skill_name"
             placeholder="Search Skills"
             style={{ margin: '0', border: '0', height: 'auto' }}
             type="text"
@@ -371,14 +374,14 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           <ul>
             {suggestions?.map((skill, index) => (
               <li
-                data-testid={`${skill?.text}_suggestion`}
+                data-testid={`${skill?.value}_suggestion`}
                 key={index}
                 onClick={() => {
-                  handleSuggestionClick(skill?.text)
+                  handleSuggestionClick(skill)
                   setUserInput('')
                   setSuggestions([])
                 }}>
-                {skill?.text}
+                {skill?.label}
               </li>
             ))}
           </ul>

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import Icon from '../ui/Icon'
 import theme from '../ui/theme'
-import Image from '../ui/Image'
 import Button from '../ui/Button'
 import FormField from '../ui/FormField'
 import AttachmentModal from './AttachmentModal'
@@ -11,9 +10,9 @@ import ProfileContainer from './ProfileContainer'
 import { ValidationUtils, ConverterUtils } from '../../utils'
 import { DarkText, Span, WhiteCard, Absolute, TypingAnimation } from './dashboard/style'
 import { useDispatch } from 'react-redux'
-import ClearSharpIcon from '@material-ui/icons/ClearSharp';
+import ClearSharpIcon from '@material-ui/icons/ClearSharp'
 import { inboxAttachments, resetInboxAttachments } from '../../../unzipped/redux/Messages/actions'
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 
 const Right = styled.div`
   display: grid;
@@ -105,26 +104,7 @@ const AttachmentTag = styled.div`
     margin-left: 5px;
     fill: #fff;
   }
-`;
-
-
-const ContentContainer = styled.div`
-  padding: 10px 20px;
-  width: 90%;
-  font-family: 'Roboto';
-  line-height: 25px;
-  font-size: 16px;
-`;
-
-const ContainedSpan = styled.span`
-  display: inline-flex;
-  align-items: center;
-  border-radius: 15px;
-  background-color: #d9d9d9;
-  padding: 2px 10px;
-  margin: 5px;
-  font-size: 14px;
-`;
+`
 
 const MessageContainer = ({
   data = {},
@@ -160,7 +140,7 @@ const MessageContainer = ({
     attachment: []
   })
   const [isMessagesLoading, setIsMessagesLoading] = useState(false)
-  const [attachmentsInfo, setAttachmentsInfo] = useState([]);
+  const [attachmentsInfo, setAttachmentsInfo] = useState([])
 
   useEffect(() => {
     socket.on('typing', typingData => {
@@ -175,34 +155,33 @@ const MessageContainer = ({
   })
 
   useEffect(() => {
+    setMessages(data?.messages?.slice().reverse())
+
     if (data?.participants?.length) {
+      const receiver = data.participants.find(e => e?.userId?._id !== userId) || {}
+      const sender = data.participants.find(e => e?.userId?._id === userId) || {}
 
-      const receiver = data.participants.find(e => e?.userId?._id !== userId) || {};
-      const sender = data.participants.find(e => e?.userId?._id === userId) || {};
-
-      setReceiver(receiver);
-      setSender(sender);
+      setReceiver(receiver)
+      setSender(sender)
 
       setForm(prevForm => ({
         ...prevForm,
         receiverId: receiver.userId ? receiver.userId._id : prevForm.receiverId,
         senderId: sender.userId ? sender.userId._id : prevForm.senderId
-      }));
+      }))
     }
-  }, [data, userId]);
+  }, [data, userId])
 
-
-  const handleAttachmentUpload = (files) => {
+  const handleAttachmentUpload = files => {
     setForm(prevForm => ({
       ...prevForm,
       attachment: files.map(file => ({ name: file.name }))
-    }));
-  };
-
+    }))
+  }
 
   useEffect(() => {
     socket.on('chat message', message => {
-      handleUnreadCount(message);
+      handleUnreadCount(message)
       setMessages(prevMessages => [
         ...prevMessages,
         {
@@ -218,21 +197,20 @@ const MessageContainer = ({
           conversationId: message?.conversationId,
           updatedAt: message?.updatedAt
         }
-      ]);
-      const scroll = document.getElementById('topScroll');
+      ])
+      const scroll = document.getElementById('topScroll')
       if (scroll?.scrollTop + scroll.clientHeight >= scroll.scrollHeight) {
-        setUnreadToZero(selectedConversationId, sender?.userId?._id);
+        setUnreadToZero(selectedConversationId, sender?.userId?._id)
       }
-    });
+    })
 
     return () => {
-      socket.off('chat message');
-    };
-  }, [socket, handleUnreadCount, setUnreadToZero, selectedConversationId]);
-
+      socket.off('chat message')
+    }
+  })
 
   const handleLastMessageScroll = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {
@@ -241,8 +219,9 @@ const MessageContainer = ({
 
   const send = () => {
     if (form.message || form.attachment.length) {
-    setForm({
-        ...form, sender: { userId: form.senderId, isInitiated: true },
+      setForm({
+        ...form,
+        sender: { userId: form.senderId, isInitiated: true },
         receiver: { userId: form.receiverId },
         message: form.message,
         attachment: attachmentsInfo,
@@ -258,11 +237,11 @@ const MessageContainer = ({
         conversationId: data._id || null,
         updatedAt: new Date().toISOString(),
         access
-      });
+      })
 
-      handleLastMessageScroll();
-      setForm({ ...form, message: '', attachment: [] });
-      setAttachmentsInfo([]);
+      handleLastMessageScroll()
+      setForm({ ...form, message: '', attachment: [] })
+      setAttachmentsInfo([])
       dispatch(resetInboxAttachments())
     }
   }
@@ -310,8 +289,8 @@ const MessageContainer = ({
   return (
     <>
       {data ? (
-        <WhiteCard noMargin height="100%" padding="0px">
-          <WhiteCard noMargin row padding="8px 40px">
+        <WhiteCard noMargin height="100%" padding="0px" id="message_container">
+          <WhiteCard noMargin row padding="8px 40px" id="header">
             <DarkText noMargin>
               <DarkText className="mb-0" fontSize="16px" color="#000000" lineHeight="23px">
                 {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
@@ -325,7 +304,7 @@ const MessageContainer = ({
                 {onlineUsers.includes(receiver?.userId?._id) ? 'Online' : 'Offline'}
               </p>
             </DarkText>
-            <Button type="transparent" noBorder onClick={() => setIsProfile(!isProfile)}>
+            <Button type="transparent" noBorder onClick={() => setIsProfile(!isProfile)} id="profile_action">
               <Icon name="actionIcon" color="#333" />
             </Button>
           </WhiteCard>
@@ -339,32 +318,88 @@ const MessageContainer = ({
                 {isMessagesLoading && <LoadingHistory>Loading history...</LoadingHistory>}
                 <div>
                   {messages?.map((e, index) => {
-                    const isSender = e?.sender === userId && e?._id;
+                    const isSender = e?.sender === userId && e?._id
                     return (
-                      <WhiteCard key={e?._id} autoFoucs half row borderColor="transparent" unset padding="10px" alignEnd={isSender} justifyEnd={isSender}>
-                        <WhiteCard background={isSender ? "#007FED" : "#EDEDED"} noMargin maxWidth="50%" width="436px" unset borderRadius="15px 15px 3px 15px" padding="15px 15px" style={{ color: isSender ? "#fff" : "#333" }}>
-                          <DarkText small noMargin color={isSender ? "#fff" : "#333"} >
+                      <WhiteCard
+                        id={e?._id}
+                        key={e?._id}
+                        autoFoucs
+                        half
+                        row
+                        borderColor="transparent"
+                        unset
+                        padding="10px"
+                        alignEnd={isSender}
+                        justifyEnd={isSender}>
+                        <WhiteCard
+                          background={isSender ? '#007FED' : '#EDEDED'}
+                          noMargin
+                          maxWidth="50%"
+                          width="436px"
+                          unset
+                          borderRadius="15px 15px 3px 15px"
+                          padding="15px 15px"
+                          style={{ color: isSender ? '#fff' : '#333' }}>
+                          <DarkText small noMargin color={isSender ? '#fff' : '#333'}>
                             <span dangerouslySetInnerHTML={{ __html: e?.message }}></span>
                           </DarkText>
-                          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", padding: 10, width: "100%", marginRight: "12px" }}>
-                            <div style={{ display: "block" }}>
-                              {e?.attachment.length > 0 && (<p style={{ display: "block", marginBlockStart: "1em", marginBlockEnd: "1em", marginInlineStart: "0px", marginInlineEnd: "0px" }}>Attachments:</p>)}
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'flex-start',
+                              padding: 10,
+                              width: '100%',
+                              marginRight: '12px'
+                            }}>
+                            <div style={{ display: 'block' }}>
+                              {e?.attachment?.length > 0 && (
+                                <p
+                                  style={{
+                                    display: 'block',
+                                    marginBlockStart: '1em',
+                                    marginBlockEnd: '1em',
+                                    marginInlineStart: '0px',
+                                    marginInlineEnd: '0px'
+                                  }}>
+                                  Attachments:
+                                </p>
+                              )}
                             </div>
-                            {e?.attachment?.map(att => (
-                              <div style={{ display: "block" }} key={att.fileId}>
-                                <FiberManualRecordIcon style={{ height: "10px", width: "10px" }} />
-                                <a style={{ fontSize: "13px", textDecoration: "none", letterSpacing: "1px", paddingLeft: "5px", fontWeight: "600" }} href={att.url} target="_blank" rel="noopener noreferrer">{att.name}</a>
-                              </div>
-                            ))}
+                            {e?.attachment?.length > 0 &&
+                              e?.attachment?.map(att => (
+                                <div style={{ display: 'block' }} key={att.fileId}>
+                                  <FiberManualRecordIcon style={{ height: '10px', width: '10px' }} />
+                                  <a
+                                    style={{
+                                      fontSize: '13px',
+                                      textDecoration: 'none',
+                                      letterSpacing: '1px',
+                                      paddingLeft: '5px',
+                                      fontWeight: '600'
+                                    }}
+                                    href={att.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    {att.name}
+                                  </a>
+                                </div>
+                              ))}
                           </div>
                           <Absolute bottom="5px" width="100px">
-                            <DarkText noMargin color={isSender ? "#fff" : "#333"} fontSize="12px" right topPadding="15px" padding="0px 0px 0px 0px">
+                            <DarkText
+                              noMargin
+                              color={isSender ? '#fff' : '#333'}
+                              fontSize="12px"
+                              right
+                              topPadding="15px"
+                              padding="0px 0px 0px 0px">
                               {ValidationUtils.getTimeFormated(e?.updatedAt)}
                             </DarkText>
                           </Absolute>
                         </WhiteCard>
                       </WhiteCard>
-                    );
+                    )
                   })}
                 </div>
                 <div ref={messagesEndRef} />
@@ -379,63 +414,62 @@ const MessageContainer = ({
               )}
 
               <Absolute bottom="6px" width="95%" right="2.5%">
-                <Message style={{ paddingTop: form.attachment.length > 0 ? "0px" : "4px" }}>
+                <Message style={{ paddingTop: form.attachment.length > 0 ? '0px' : '4px' }}>
                   <FormField
                     value={form.message}
                     onChange={e => {
-                      setForm({ ...form, message: e.target.value });
+                      setForm({ ...form, message: e.target.value })
                       socket.emit('typing', {
                         receiverId: form.receiverId,
                         conversationId: data._id || null,
                         name: userName,
                         isTyping: true
-                      });
+                      })
                     }}
                     handleEnterKey={e => {
-                      handleEnterKey(e);
+                      handleEnterKey(e)
                     }}
                     onBlur={handleBlurTyping}
                     message
+                    id="message"
                     placeholder="Type a message..."
                     width="100%"
                     fieldType="input"
                     autosize
                   />
-                  {attachmentsInfo && attachmentsInfo?.map((att, index) => (
-                    <>
-                      <AttachmentTag key={index} >
-                        <ClearSharpIcon
-                          data-testid={`${att.name}_icon`}
-                          style={{ fontSize: '12px', color: 'white', background: '#333', borderRadius: '50%', marginRight: '5px', cursor: 'pointer' }}
-                          onClick={() => {
-                            setAttachmentsInfo((prevAttachments) => prevAttachments.filter((_, i) => i !== index));
-                          }}
-                        />
-                        {att.name}
-                      </AttachmentTag>
-                    </>
-                  ))}
-
+                  {attachmentsInfo &&
+                    attachmentsInfo?.map((att, index) => (
+                      <>
+                        <AttachmentTag key={index}>
+                          <ClearSharpIcon
+                            data-testid={`${att.name}_icon`}
+                            style={{
+                              fontSize: '12px',
+                              color: 'white',
+                              background: '#333',
+                              borderRadius: '50%',
+                              marginRight: '5px',
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                              setAttachmentsInfo(prevAttachments => prevAttachments.filter((_, i) => i !== index))
+                            }}
+                          />
+                          {att.name}
+                        </AttachmentTag>
+                      </>
+                    ))}
                 </Message>
-                <Absolute
-                  zIndex={10}
-                  width="26px"
-                  right="25px"
-                  top={form.attachment.length > 0 ? "25px" : "0px"}
-                >
+                <Absolute zIndex={10} width="26px" right="25px" top={form.attachment.length > 0 ? '25px' : '0px'}>
                   <Button
+                    id="send_message"
                     disabled={!(form.message || form.attachment.length) || !selectedConversationId}
                     type="transparent"
                     onClick={() => send()}>
                     <Icon name="send" />
                   </Button>
                 </Absolute>
-                <Absolute
-                  width="13px"
-                  smallLeft
-                  zIndex={10}
-                  top={form.attachment.length > 0 ? "25px" : "0px"}
-                >
+                <Absolute width="13px" smallLeft zIndex={10} top={form.attachment.length > 0 ? '25px' : '0px'}>
                   <Button type="transparent" onClick={() => setFileUploadModal(true)}>
                     <Icon name="paperClip" />
                   </Button>
@@ -461,13 +495,15 @@ const MessageContainer = ({
           Send a message?
         </WhiteCard>
       )}
-      {fileUploadModal && <AttachmentModal
-        setFileUploadModal={setFileUploadModal}
-        userId={userId}
-        onUpload={handleAttachmentUpload}
-        setAttachmentsInfo={setAttachmentsInfo}
-        attachmentsInfo={attachmentsInfo}
-      />}
+      {fileUploadModal && (
+        <AttachmentModal
+          setFileUploadModal={setFileUploadModal}
+          userId={userId}
+          onUpload={handleAttachmentUpload}
+          setAttachmentsInfo={setAttachmentsInfo}
+          attachmentsInfo={attachmentsInfo}
+        />
+      )}
     </>
   )
 }

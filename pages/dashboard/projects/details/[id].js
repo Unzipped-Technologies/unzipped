@@ -71,6 +71,7 @@ const ProjectName = styled.div`
     width: 100%;
     justify-content: center;
     padding: 0px 0px 0px 15px;
+    overflow: scroll;
   }
 `
 
@@ -270,6 +271,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
 
         <Tabs
           data-testid="desktop_project_detail_tabs"
+          id="desktop_project_detail_tabs"
           style={{
             width: '100%',
             height: '55px'

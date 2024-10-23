@@ -66,7 +66,7 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice }) => {
           border: '1px solid #D9D9D9',
           background: 'rgba(255, 255, 255, 0.36)'
         }}>
-        <thead data-testid="project_invoices_table_header">
+        <thead data-testid="project_invoices_table_header" id="project_invoices_table_header">
           <tr>
             <TableHeading
               style={{
@@ -93,16 +93,16 @@ const DesktopInvoicesTable = ({ invoices, getInvoices, updateInvoice }) => {
         <tbody data-testid="project_invoices_table_body">
           {invoices?.length > 0 &&
             invoices?.map(row => (
-              <tr key={row._id} data-testid={row?._id}>
+              <tr key={row._id} data-testid={row?._id} id={row?._id}>
                 <TableData>
                   {ConverterUtils.capitalize(
                     `${row?.freelancer?.user?.FirstName} ${row?.freelancer?.user?.LastName}`
                   ) || row?.freelancer?.user?.FullName}
                 </TableData>
                 <TableData>
-                  {' '}
-                  {moment(moment(row?.createdAt).startOf('isoWeek')).format('MM-DD-YYYY')} -{' '}
-                  {moment(moment(row?.createdAt).endOf('isoWeek')).format('MM-DD-YYYY')}
+                  {`${moment(moment(row?.createdAt).startOf('isoWeek')).format('MM-DD-YYYY')} - ${moment(
+                    moment(row?.createdAt).endOf('isoWeek')
+                  ).format('MM-DD-YYYY')}`}
                 </TableData>
 
                 <TableData>{row.hoursWorked}</TableData>

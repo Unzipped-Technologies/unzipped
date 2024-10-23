@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
 import { useDispatch } from 'react-redux'
@@ -32,11 +32,11 @@ const VerticalDropdown = ({ freelancerId }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
-  const handleOnOptionChange = item => {
+  const handleOnOptionChange = async item => {
     switch (item) {
       case 'Hire User':
         {
-          dispatch(getFreelancerById(freelancerId))
+          await dispatch(getFreelancerById(freelancerId))
           router.push(`/hire`)
         }
         break
@@ -55,7 +55,11 @@ const VerticalDropdown = ({ freelancerId }) => {
 
   return (
     <Container>
-      <IconButton data-testid="application_actions" onClick={handleOnOptionClick} sx={ICON_STYLES}>
+      <IconButton
+        data-testid="application_actions"
+        id="application_actions"
+        onClick={handleOnOptionClick}
+        sx={ICON_STYLES}>
         <MoreHorizSharpIcon />
       </IconButton>
       <Menu

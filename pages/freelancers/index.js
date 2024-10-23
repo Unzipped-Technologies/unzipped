@@ -166,10 +166,6 @@ const Freelancers = ({
       return '1 result'
     } else if (skip === 0) {
       return `1 - ${allFreelancers?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
-    } else {
-      const start = +skip * +take + 1
-      const end = Math.min(+skip * +take + +take, totalCount)
-      return `${start} - ${end} ${totalCount > +take * +skip ? `of ${totalCount} results` : `results`}`
     }
   }
 
@@ -189,7 +185,7 @@ const Freelancers = ({
       profilePic:
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
       rate: item?.rate,
-      likes: item?.likeTotal,
+      likes: item?.likes?.length ?? 0,
       invites: item?.invites
     }
     return freelancer
@@ -334,7 +330,7 @@ const Freelancers = ({
                   {freelancerList?.map((item, index) => {
                     const freelancer = constructFreelancerModel(item)
                     return (
-                      <div key={item?._id}>
+                      <div key={item?._id} id={`freelancer_${item?._id}`}>
                         <WhiteCard noMargin overlayDesktop cardHeightDesktop>
                           <FreelancerCard
                             user={freelancer}
@@ -358,7 +354,7 @@ const Freelancers = ({
               freelancerList?.map((item, index) => {
                 const freelancer = constructFreelancerModel(item)
                 return (
-                  <div key={`${item._id}_${index}`}>
+                  <div key={`${item._id}_${index}`} id={`freelancer_${item?._id}`}>
                     {!filterOpenClose && (
                       <MobileDisplayBox>
                         <MobileFreelancerCard

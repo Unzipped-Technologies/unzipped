@@ -136,7 +136,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
   }
 
   return (
-    <div data-testid="mobile_profile_container">
+    <div data-testid="mobile_profile_container" id="freelancer_profile">
       <div className="text-center">
         <div
           className="py-3 px-2 d-flex align-items-center"
@@ -167,7 +167,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
             style={{ borderRadius: '15px' }}
           />
           <P fontSize="26px" margin="0" data-testid="user_name">
-            {user?.FirstName + ' ' + user?.LastName}
+            {ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}
           </P>
           {user?.category && (
             <P fontSize="15px" fontWeight="400" margin="0">
@@ -270,11 +270,11 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
           ) } 
         </div>
       </div>
-      <div>
+      <div id="freelancer_info">
         <ProfileTab tabs={['PROJECTS']} selected={selected} setSelected={setSelected} role={role} />
         {user?.projects?.length ? (
           user?.projects?.map(project => (
-            <ProjectCard key={project?._id}>
+            <ProjectCard key={project?._id} id={`project_${project?._id}`}>
               <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
                 {project?.projectName ?? 'Project Name'}
               </P>

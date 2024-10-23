@@ -110,7 +110,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
 
   return (
     <>
-      <div style={{ width: '100%', height: '100%' }}>
+      <div style={{ width: '100%', height: '100%' }} id="project_users">
         <div onClick={handleClick}>
           <MenuItem
             key={'index'}
@@ -191,6 +191,7 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
               <>
                 {member?.userId && (
                   <MenuItem
+                    id={`assignee_${member?.userId}`}
                     key={index}
                     value={member}
                     onClick={() => handleOnTeammemberSelect(member)}

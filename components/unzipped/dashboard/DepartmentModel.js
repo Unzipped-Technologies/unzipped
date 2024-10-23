@@ -90,6 +90,7 @@ const DepartmentModel = ({
                 fieldType="input"
                 margin="5px 0px 0px 0px"
                 name="name"
+                id="name"
                 fontSize="14px"
                 borderColor="red"
                 noMargin

@@ -3,9 +3,14 @@ const router = express.Router()
 const messageHelper = require('../helpers/message')
 const requireLogin = require('../middlewares/requireLogin')
 const permissionCheckHelper = require('../middlewares/permissionCheck')
-const upload = require('../middlewares/multer');
+const upload = require('../middlewares/multer')
 // lets user send a message
-router.post('/send', requireLogin, permissionCheckHelper.hasPermission('sendMessage'), upload.array('file', 3), async (req, res) => {
+router.post(
+  '/send',
+  requireLogin,
+  permissionCheckHelper.hasPermission('sendMessage'),
+  upload.array('file', 3),
+  async (req, res) => {
     try {
       const id = req.user.sub
       const sentMessage = await messageHelper.sendMessage(req.body, req.user.sub)
@@ -14,7 +19,8 @@ router.post('/send', requireLogin, permissionCheckHelper.hasPermission('sendMess
     } catch (e) {
       res.status(400).json({ msg: e.message })
     }
-  })
+  }
+)
 
 router.post(
   '/check-conversation',

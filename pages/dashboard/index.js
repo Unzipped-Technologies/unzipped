@@ -28,7 +28,7 @@ const Notifications = styled.div`
   padding: 0px 15px;
 `
 
-const notifications = [
+export const notifications = [
   { type: 'plan' },
   { type: 'github' },
   { type: 'paymentMethod' },
@@ -64,10 +64,12 @@ const Dashboard = ({ getCurrentUserData, userData, isAuthenticated }) => {
   return (
     <React.Fragment>
       <Nav isSubMenu marginBottom={window.innerWidth >= 680 ? '120px' : '100px'} />
-      <DesktopBox>
-        <NotificationsPanel notifications={notifications} />
-        <Footer />
-      </DesktopBox>
+      {window?.innerWidth > 680 && (
+        <DesktopBox>
+          <NotificationsPanel notifications={notifications} />
+          <Footer />
+        </DesktopBox>
+      )}
       <MobileBox>
         <div data-testid="mobile_notification_panel">
           <UserSetupPanelMobile />

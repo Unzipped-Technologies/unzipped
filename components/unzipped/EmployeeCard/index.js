@@ -175,7 +175,7 @@ const EmployeeCard = ({ contracts = [], paymentDate, plan, unpaidInvoices = [] }
   }
 
   return (
-    <Container data-testid="employee_card">
+    <Container data-testid="employee_card" id="employee_card">
       <LeftBox>
         <Title>Amount Due</Title>
         <SubTitle>Current Employees</SubTitle>

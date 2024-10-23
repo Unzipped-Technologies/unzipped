@@ -57,7 +57,9 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
       await UserModel.collection.createIndex({ freelancerSkills: 1 })
     }
 
-    const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
+    const regexPatterns = Array.isArray(filter?.skill)
+      ? filter?.skill?.map(skill => `.*${skill}.*`)
+      : [`.*${filter?.skill}.*`]
     const regexPattern = regexPatterns?.join('|')
     const limitValue = limit === 'all' ? await countFreelancers(filter) : Number(limit)
     const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 }
