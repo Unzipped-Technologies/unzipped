@@ -8,7 +8,7 @@ describe('Freelancer can add comments to tasks', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
 
     cy.window().its('document.readyState').should('eq', 'complete')
 

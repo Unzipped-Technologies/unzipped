@@ -57,7 +57,7 @@ describe('Freelancer Invoice', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -491,7 +491,7 @@ describe('Freelancer Invoice', () => {
         cy.url().should('include', '/projects')
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -502,7 +502,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('See our help docs').should('be.visible').click()
         cy.url().should('include', '/')
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -512,7 +512,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Get started').should('be.visible').click()
         cy.url().should('include', '/')
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -523,7 +523,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Ask about a topic.').should('be.visible').click()
         cy.url().should('include', '/')
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
   })

@@ -17,7 +17,7 @@ describe('Freelancers Page', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000/freelancers')
+    cy.visit('/freelancers')
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 

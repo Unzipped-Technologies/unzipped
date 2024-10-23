@@ -8,7 +8,7 @@ describe('Freelancer inbox', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -35,7 +35,7 @@ describe('Freelancer inbox', () => {
   })
 
   it('Send message to client', () => {
-    cy.visit('http://localhost:3000/dashboard/inbox')
+    cy.visit('/dashboard/inbox')
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
 
     cy.window()

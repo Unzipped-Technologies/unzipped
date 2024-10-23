@@ -9,7 +9,7 @@ describe('Client Account Page', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -33,7 +33,7 @@ describe('Client Account Page', () => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.url().should('include', '/dashboard')
     })
-    cy.visit('http://localhost:3000/dashboard/account')
+    cy.visit('/dashboard/account')
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 

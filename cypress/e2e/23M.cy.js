@@ -80,7 +80,7 @@ describe('Client Invoice', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     // Click on the menu icon to visit the login page
     cy.get('#mobile_menu_icon').should('be.visible').click()
@@ -563,7 +563,7 @@ describe('Client Invoice', () => {
             cy.contains('Connect. Build. grow').should('not.exist')
             cy.window().its('document.readyState').should('eq', 'complete')
 
-            cy.visit('http://localhost:3000/dashboard')
+            cy.visit('/dashboard')
             cy.contains('Connect. Build. grow').should('not.exist')
             cy.url().should('include', '/dashboard')
           })
@@ -576,7 +576,7 @@ describe('Client Invoice', () => {
             cy.contains('Connect. Build. grow').should('not.exist')
             cy.wait(500)
 
-            cy.visit('http://localhost:3000/dashboard')
+            cy.visit('/dashboard')
             cy.contains('Connect. Build. grow').should('not.exist')
             cy.url().should('include', '/dashboard')
           })
@@ -590,7 +590,7 @@ describe('Client Invoice', () => {
             cy.contains('Connect. Build. grow').should('not.exist')
             cy.wait(500)
 
-            cy.visit('http://localhost:3000/dashboard')
+            cy.visit('/dashboard')
             cy.contains('Connect. Build. grow').should('not.exist')
             cy.url().should('include', '/dashboard')
           })
@@ -690,7 +690,7 @@ describe('Client Invoice', () => {
 
   it('Schedule an interview and verify message', () => {
     // Visit freeelancers page
-    cy.visit('http://localhost:3000/freelancers')
+    cy.visit('/freelancers')
     cy.contains('Connect. Build. grow').should('not.exist')
 
     // Intercept the requests to get freelancers, messages and check conversation
@@ -772,7 +772,7 @@ describe('Client Invoice', () => {
 
   it('Send message to freelancer', () => {
     // Visit inbox page
-    cy.visit('http://localhost:3000/dashboard/inbox')
+    cy.visit('/dashboard/inbox')
     // Intercept the requests to get  conversation
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
 

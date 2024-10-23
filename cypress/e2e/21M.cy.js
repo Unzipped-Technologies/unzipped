@@ -10,7 +10,7 @@ describe('Freelancer can add comments to tasks', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
@@ -48,7 +48,7 @@ describe('Freelancer can add comments to tasks', () => {
 
     cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
 
-    cy.visit('http://localhost:3000/dashboard/tasklist')
+    cy.visit('/dashboard/tasklist')
 
     cy.wait('@getBusinessEmpRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])

@@ -2,6 +2,7 @@ const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   e2e: {
+    baseUrl: 'http://localhost:3000',
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 1,
     defaultCommandTimeout: 50000,

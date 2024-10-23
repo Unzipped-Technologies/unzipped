@@ -9,7 +9,7 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
     cy.window().its('document.readyState').should('eq', 'complete')
 
     // Perform login steps
@@ -235,7 +235,7 @@ describe('Client can view project  applications, add department, tags etc', () =
   })
 
   it('Create,Edit and Delete Lists', () => {
-    cy.visit('http://localhost:3000/dashboard')
+    cy.visit('/dashboard')
     cy.scrollTo('top')
     cy.contains('Lists').should('be.visible').click()
     cy.url().should('include', '/dashboard/lists')
@@ -377,7 +377,7 @@ describe('Client can view project  applications, add department, tags etc', () =
       })
   })
   it('View Freelancer application and hire him.', () => {
-    cy.visit('http://localhost:3000/dashboard')
+    cy.visit('/dashboard')
     cy.intercept('POST', `/api/business/list`).as('getProjectsRequest')
     cy.contains('My Projects').should('be.visible').click()
 

@@ -20,7 +20,7 @@ describe('Projects Page', () => {
     cy.clearLocalStorage()
 
     // Visit the home page without logging in
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 

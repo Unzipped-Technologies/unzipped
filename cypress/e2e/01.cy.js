@@ -9,7 +9,7 @@ describe('Client Signup', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
   })
   it('Click  on sigup and  verify links', () => {
     cy.window().its('document.readyState').should('eq', 'complete')
@@ -29,7 +29,7 @@ describe('Client Signup', () => {
   it('Signup for Client', () => {
     const email = faker.internet.email()
     const password = 'Hello@2024'
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     cy.contains('Sign up').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -57,14 +57,14 @@ describe('Client Signup', () => {
         expect(interception.response.statusCode).to.eq(200)
         cy.url().should('include', '/verify-email')
         cy.intercept('GET', `/api/auth/verify/${interception.response?.body?._id}`).as('verifyEmailRequest')
-        cy.visit(`http://localhost:3000/verified/${interception.response?.body?._id}`)
+        cy.visit(`/verified/${interception.response?.body?._id}`)
         cy.wait('@verifyEmailRequest').then(res => {
           expect(res.response.statusCode).to.eq(200)
           expect(res.response.body.message).to.eq('SUCCESS')
         })
       })
     })
-    cy.wait(15000)
+    cy.contains('Connect. Build. grow').should('not.exist')
     cy.url().should('include', '/update-account-profile')
 
     cy.contains('button', 'Cancel').should('be.visible').click()

@@ -58,7 +58,7 @@ describe('Freelancer Invoice', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     // Clear cookies and local storage before start theses test cases
     cy.get('#mobile_menu_icon').should('be.visible').click()
@@ -575,7 +575,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Connect. Build. grow').should('not.exist')
 
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.url().should('include', '/dashboard')
       })
@@ -589,7 +589,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.window().its('document.readyState').should('eq', 'complete')
 
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.url().should('include', '/dashboard')
       })
@@ -602,7 +602,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.wait(500)
 
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.url().should('include', '/dashboard')
       })
@@ -616,7 +616,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.wait(500)
 
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.url().should('include', '/dashboard')
       })

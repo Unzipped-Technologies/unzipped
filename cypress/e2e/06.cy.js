@@ -9,7 +9,7 @@ describe('Client can create,edit tasks', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -71,7 +71,6 @@ describe('Client can create,edit tasks', () => {
                 })
                 cy.contains('Connect. Build. grow').should('not.exist')
               }
-              // cy.wait(1000)
               business?.businessDepartments?.forEach(department => {
                 cy.get(`#department_${department?._id}`).within(() => {
                   cy.contains(ConverterUtils.truncateString(department.name, 20)).scrollIntoView().should('be.visible')

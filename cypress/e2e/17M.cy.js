@@ -9,7 +9,7 @@ describe('Create Long term and short term projects.', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
     cy.contains('Connect. Build. grow').should('not.exist')
