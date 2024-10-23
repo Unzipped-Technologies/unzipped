@@ -154,7 +154,7 @@ describe('Client Signup', () => {
         })
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.url({ timeout: 20000 }).should('include', '/subscribe')
+        cy.url().should('include', '/subscribe')
       })
 
     cy.window()
