@@ -3,13 +3,13 @@ import { BUDGET_TYPE, RECENT_SKILLS } from '../../utils/constants'
 
 describe('Projects Page', () => {
   // Format the result message
-  const getResultMessage = (freelancerList, skip, take, totalCount) => {
-    if (freelancerList?.length === 0) {
+  const getResultMessage = (projectsList, skip, take, totalCount) => {
+    if (projectsList?.length === 0) {
       return '0 result'
-    } else if (freelancerList?.length === 1) {
+    } else if (projectsList?.length === 1) {
       return '1 result'
-    } else if (skip === 0) {
-      return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
+    } else if (skip === 0 && projectsList?.length > 1) {
+      return `1 - ${projectsList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     }
   }
   before(() => {

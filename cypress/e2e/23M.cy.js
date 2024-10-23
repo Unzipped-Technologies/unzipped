@@ -918,10 +918,15 @@ describe('Client Invoice', () => {
       .then(store => {
         const conversations = store?.getState().Messages?.conversations
 
+        let FreelancerConversation = conversations?.find(conv =>
+          conv?.participants?.some(parti => parti.userId.email === testFreelancerEmail)
+        )
+        FreelancerConversation = FreelancerConversation?._id ? FreelancerConversation : conversations[0]
+
         cy.contains('Archived Chats').should('be.visible').click()
         cy.wait(1000)
-        cy.get(`#conversation_${conversations[0]?._id}`).scrollIntoView().should('be.visible').click()
-        cy.url().should('include', `/dashboard/chat/${conversations[0]?._id}`)
+        cy.get(`#conversation_${FreelancerConversation?._id}`).scrollIntoView().should('be.visible').click()
+        cy.url().should('include', `/dashboard/chat/${FreelancerConversation?._id}`)
 
         cy.get('#header_action').scrollIntoView().should('be.visible').click()
         cy.get('#archive_chat').scrollIntoView().should('be.visible').click()

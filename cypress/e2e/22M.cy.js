@@ -205,7 +205,7 @@ describe('Freelancer Invoice', () => {
         })
       })
     // Click on add task button to add task for Monday Tasks
-    cy.contains('Monday').scrollIntoView().should('be.visible').click()
+    cy.get(`#Monday_header`).scrollIntoView().should('be.visible').click()
     cy.get('[data-testid="Monday_add_task_icon"]').scrollIntoView().should('be.visible').click()
     cy.get(`[data-testid="mobile_add_tasks"]`)
       .scrollIntoView()

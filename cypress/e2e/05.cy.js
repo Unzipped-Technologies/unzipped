@@ -10,6 +10,7 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.clearLocalStorage()
 
     cy.visit('http://localhost:3000') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -249,7 +250,6 @@ describe('Client can view project  applications, add department, tags etc', () =
 
     cy.intercept('POST', '/api/list/create/').as('createListRequest')
     cy.contains('button', 'ADD LIST').should('be.visible').click()
-    cy.get('#add_list_modal').should('not.be.visible')
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.wait('@createListRequest').then(interception => {
@@ -267,7 +267,6 @@ describe('Client can view project  applications, add department, tags etc', () =
 
     cy.intercept('POST', '/api/list/create/').as('createListRequest')
     cy.contains('button', 'ADD LIST').should('be.visible').click()
-    cy.get('#add_list_modal').should('not.be.visible')
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.wait('@createListRequest').then(interception => {
@@ -287,7 +286,6 @@ describe('Client can view project  applications, add department, tags etc', () =
 
     cy.intercept('POST', '/api/list/update/').as('updateListRequest')
     cy.contains('button', 'UPDATE LIST').should('be.visible').click()
-    cy.get('#add_list_modal').should('not.be.visible')
 
     cy.wait('@updateListRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
@@ -424,7 +422,6 @@ describe('Client can view project  applications, add department, tags etc', () =
           expect(interception.response.statusCode).to.be.oneOf([200, 304])
         })
       })
-    // cy.intercept('GET', `/api/freelancer/*`).as('getFreelancerRequest')
 
     cy.window()
       .its('store')

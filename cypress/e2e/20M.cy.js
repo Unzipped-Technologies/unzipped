@@ -146,8 +146,14 @@ describe('Client can create,edit tasks', () => {
             SelectedDepartment?.contracts?.forEach(contract => {
               cy.contains(contract?.freelancer.user?.email).scrollIntoView().should('exist') // Ensure the option is visible
             })
-            cy.contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email).click()
-            cy.contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email)
+            let assigneeEmail = ''
+            if (SelectedDepartment?.contracts?.length > 0) {
+              assigneeEmail = SelectedDepartment?.contracts[0]?.freelancer.user?.email
+            } else {
+              assigneeEmail = SelectedDepartment?.client?.email
+            }
+            cy.contains(assigneeEmail).click()
+            cy.contains(assigneeEmail)
 
             cy.get('#tags-standard').should('be.visible').clear().type(TagNam1).type('{enter}', { delay: 100 })
             cy.get('#tags-standard').should('be.visible').clear().type(TagNam2).type('{enter}', { delay: 100 })

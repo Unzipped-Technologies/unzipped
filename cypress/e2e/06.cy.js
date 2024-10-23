@@ -101,6 +101,7 @@ describe('Client can create,edit tasks', () => {
     cy.intercept('POST', '/api/department').as('createDepartmentRequest')
     cy.intercept('POST', `/api/business/list`).as('getBusinessRequest')
     cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
+    cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=true`).as('getBusinessEmpRequest')
 
     cy.contains('button', 'Save').should('be.visible').click()
 
@@ -112,6 +113,14 @@ describe('Client can create,edit tasks', () => {
       expect(interception.response.statusCode).to.eq(200)
     })
 
+    cy.wait('@getDepartmentRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+
+    cy.contains(ConverterUtils.truncateString(DepartmentName, 20)).should('be.visible').click()
+    cy.wait('@getBusinessEmpRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
     cy.wait('@getDepartmentRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
@@ -239,8 +248,15 @@ describe('Client can create,edit tasks', () => {
             SelectedDepartment?.contracts?.forEach(contract => {
               cy.contains(contract?.freelancer.user?.email).scrollIntoView().should('exist') // Ensure the option is visible
             })
-            cy.contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email).click()
-            cy.contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email)
+            let assigneeEmail = ''
+            if (SelectedDepartment?.contracts?.length > 0) {
+              assigneeEmail = SelectedDepartment?.contracts[0]?.freelancer.user?.email
+            } else {
+              assigneeEmail = SelectedDepartment?.client?.email
+            }
+
+            cy.contains(assigneeEmail).click()
+            cy.contains(assigneeEmail)
 
             cy.get('#tags-standard').should('be.visible').clear().type(TagNam1).type('{enter}', { delay: 100 })
             cy.get('#tags-standard').should('be.visible').clear().type(TagNam2).type('{enter}', { delay: 100 })
@@ -292,8 +308,10 @@ describe('Client can create,edit tasks', () => {
                 .should('be.visible')
                 .click({ force: true })
             })
-            const member = ProjectTeam[ProjectTeam?.length - 1]
-            cy.get(`#assignee_${member?.userId}`).click({ force: true })
+            cy.contains(`${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`)
+              .scrollIntoView()
+              .should('be.visible')
+              .click({ force: true })
           })
         })
       })
@@ -341,10 +359,14 @@ describe('Client can create,edit tasks', () => {
             SelectedDepartment?.contracts?.forEach(contract => {
               cy.contains(contract?.freelancer.user?.email).scrollIntoView().should('exist') // Ensure the option is visible
             })
-            cy.get('div[id^="react-select-"]')
-              .contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email)
-              .click()
-            cy.contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email)
+            let assigneeEmail = ''
+            if (SelectedDepartment?.contracts?.length > 0) {
+              assigneeEmail = SelectedDepartment?.contracts[0]?.freelancer.user?.email
+            } else {
+              assigneeEmail = SelectedDepartment?.client?.email
+            }
+            cy.get('div[id^="react-select-"]').contains(assigneeEmail).click()
+            cy.contains(assigneeEmail)
 
             if (Task1?.tags?.length < 5) {
               cy.get('#tags-standard').should('be.visible').clear().type(TagNam1).type('{enter}', { delay: 100 })

@@ -201,7 +201,9 @@ const ListModal = ({
               borderBottom="3px solid #EFF1F4"
               margin="0"
               fontWeight="600"
-              onClick={() => {
+              onClick={async () => {
+                await getFreelancerById(freelancerId)
+
                 sendMessage()
               }}>
               Send A Message

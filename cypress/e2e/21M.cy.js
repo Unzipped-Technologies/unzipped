@@ -65,7 +65,7 @@ describe('Freelancer can add comments to tasks', () => {
         const BusinessList = store.getState()?.Business?.projectList
         BusinessList?.forEach((business, i) => {
           if (i !== 0) {
-            cy.contains(ConverterUtils.truncateString(business.name, 40))
+            cy.contains(ConverterUtils.truncateString(business.name, 30))
               .scrollIntoView()
               .should('be.visible')
               .click({ force: true })

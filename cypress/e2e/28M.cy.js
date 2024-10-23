@@ -96,7 +96,7 @@ describe('Client Account Page', () => {
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.get('#password').clear().clear().type(testClientPassword)
+        cy.get('#password').clear().clear().type('Hello@2024')
         cy.get('#password').blur()
 
         let NewPassword = faker.internet.password({ length: 5 })
