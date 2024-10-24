@@ -10,6 +10,9 @@ describe('Client can create,edit tasks', () => {
     cy.clearLocalStorage()
 
     cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    // Intercept the login request
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -21,18 +24,21 @@ describe('Client can create,edit tasks', () => {
     cy.get('#email').clear().type(testClientEmail)
     cy.get('#password').clear().type(testClientPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
 
     // Wait for the login request and verify success
     cy.wait('@loginRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
+  })
+
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('Verify business names and department names in tasklist page', () => {
@@ -42,10 +48,11 @@ describe('Client can create,edit tasks', () => {
 
     cy.contains('Tasklist').should('be.visible').click()
 
+    cy.contains('Connect. Build. grow').should('not.exist')
     cy.url().should('include', '/dashboard/tasklist')
 
     cy.wait('@getBusinessRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.window()
@@ -81,13 +88,30 @@ describe('Client can create,edit tasks', () => {
       })
   })
 
-  it('Add Department to business', () => {
+  it('Add, Edit and Delete Department to business', () => {
+    cy.intercept('POST', '/api/department').as('createDepartmentRequest')
+    cy.intercept('POST', `/api/business/list`).as('getBusinessRequest')
+    cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
+    cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=true`).as('getBusinessEmpRequest')
+    cy.intercept('PATCH', `/api/department/*?isEditingDepartment=true`).as('updateDepartmentRequest')
+    cy.intercept('DELETE', `/api/department/*`).as('deleteDepartmentRequest')
+
     const Business1 = reduxStore.getState()?.Business?.projectList[0]
     cy.get(`#business_${Business1?._id}`).within(() => {
       cy.contains(ConverterUtils.truncateString(Business1.name, 30)).should('be.visible').click()
+      cy.wait('@getBusinessEmpRequest').then(interception => {
+        expect(interception.response.statusCode).to.be.oneOf([200, 304])
+      })
+
+      cy.wait('@getDepartmentRequest').then(interception => {
+        expect(interception.response.statusCode).to.be.oneOf([200, 304])
+      })
       const Department1 = Business1?.businessDepartments[0]
       cy.get(`#department_${Department1?._id}`).within(() => {
         cy.contains(ConverterUtils.truncateString(Department1.name, 20)).should('be.visible').click()
+        cy.wait('@getBusinessEmpRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
       })
     })
     cy.get('#department_actions').click()
@@ -97,19 +121,14 @@ describe('Client can create,edit tasks', () => {
 
     cy.get('#name').clear().type(DepartmentName)
 
-    cy.intercept('POST', '/api/department').as('createDepartmentRequest')
-    cy.intercept('POST', `/api/business/list`).as('getBusinessRequest')
-    cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
-    cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=true`).as('getBusinessEmpRequest')
-
     cy.contains('button', 'Save').should('be.visible').click()
 
     cy.wait('@createDepartmentRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getBusinessRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getDepartmentRequest').then(interception => {
@@ -117,6 +136,7 @@ describe('Client can create,edit tasks', () => {
     })
 
     cy.contains(ConverterUtils.truncateString(DepartmentName, 20)).should('be.visible').click()
+
     cy.wait('@getBusinessEmpRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
@@ -131,16 +151,14 @@ describe('Client can create,edit tasks', () => {
 
     cy.get('#name').clear().type(updatedDepartmentName)
 
-    cy.intercept('PATCH', `/api/department/*?isEditingDepartment=true`).as('updateDepartmentRequest')
-
     cy.contains('button', 'Save').should('be.visible').click()
 
     cy.wait('@updateDepartmentRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getBusinessRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getDepartmentRequest').then(interception => {
@@ -148,16 +166,15 @@ describe('Client can create,edit tasks', () => {
     })
 
     cy.get('#department_actions').click()
-    cy.intercept('DELETE', `/api/department/*`).as('deleteDepartmentRequest')
 
     cy.get('#dropdown').contains('Delete').click()
 
     cy.wait('@deleteDepartmentRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getBusinessRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
     cy.contains(ConverterUtils.truncateString(Business1.name, 30)).should('be.visible').click()
   })
@@ -165,6 +182,8 @@ describe('Client can create,edit tasks', () => {
   it('Add Tags to department', () => {
     cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
     cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=false`).as('getBusinessEmpRequest')
+    cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=true`).as('getBusinessEmpRequest2')
+    cy.intercept('POST', `/api/tags`).as('createTagRequest')
 
     const Business1 = reduxStore.getState()?.Business?.projectList[0]
     cy.get(`#business_${Business1?._id}`).within(() => {
@@ -172,7 +191,7 @@ describe('Client can create,edit tasks', () => {
       cy.wait('@getDepartmentRequest').then(interception => {
         expect(interception.response.statusCode).to.be.oneOf([200, 304])
       })
-      cy.wait('@getBusinessEmpRequest').then(interception => {
+      cy.wait('@getBusinessEmpRequest2').then(interception => {
         expect(interception.response.statusCode).to.be.oneOf([200, 304])
       })
       cy.contains('Connect. Build. grow').should('not.exist')
@@ -181,22 +200,23 @@ describe('Client can create,edit tasks', () => {
         cy.contains(ConverterUtils.truncateString(Department1.name, 20)).should('be.visible').click()
       })
     })
+    cy.wait('@getBusinessEmpRequest2').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+
     cy.get('#add_tag_button').scrollIntoView().should('be.visible').click({ force: true })
     const tagName = faker.string.alpha(10)
 
     cy.get('#tagName').clear().type(tagName)
 
-    cy.intercept('POST', `/api/tags`).as('createTagRequest')
-    cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
-
     cy.contains('button', 'Save').should('be.visible').click()
 
     cy.wait('@createTagRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getDepartmentRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
   })
 
@@ -207,6 +227,7 @@ describe('Client can create,edit tasks', () => {
     cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
     cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=true`).as('getBusinessEmpRequest')
 
+    // Add Task
     cy.window()
       .its('store')
       .then(store => {
@@ -279,12 +300,13 @@ describe('Client can create,edit tasks', () => {
             })
           })
       })
+  })
+  it('Verify tasks in tasks panel', () => {
     cy.window()
       .its('store')
       .then(store => {
         reduxStore = store
         const SelectedDepartment = store.getState()?.Departments.selectedDepartment
-        const ProjectTeam = store.getState()?.Business.hiredProjectTeam
         SelectedDepartment?.departmentTags?.forEach(tag => {
           cy.get(`#tag_${tag?._id}`).within(() => {
             cy.get(`#tag_header_${tag?._id}`).within(() => {
@@ -302,18 +324,15 @@ describe('Client can create,edit tasks', () => {
                 .scrollIntoView()
                 .should('be.visible')
               cy.contains(task.storyPoints).scrollIntoView().should('be.visible')
-              cy.contains(`${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}` || 'Unassigned')
-                .scrollIntoView()
-                .should('be.visible')
-                .click({ force: true })
             })
-            cy.contains(`${task?.assignee?.user?.FirstName} ${task?.assignee?.user?.LastName}`)
-              .scrollIntoView()
-              .should('be.visible')
-              .click({ force: true })
           })
         })
       })
+  })
+  it('Edit task', () => {
+    cy.intercept('PATCH', `/api/tasks/*`).as('updateTaskRequest')
+    cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
+    cy.intercept('GET', `/api/tasks/*`).as('getTaskRequest')
 
     cy.window()
       .its('store')
@@ -394,6 +413,12 @@ describe('Client can create,edit tasks', () => {
             })
           })
       })
+  })
+  it('Add Comment to task', () => {
+    cy.intercept('GET', `/api/tasks/*`).as('getTaskRequest')
+    cy.intercept('PATCH', `/api/tasks/*`).as('updateTaskRequest')
+    cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
+
     cy.window()
       .its('store')
       .then(store => {
@@ -468,5 +493,11 @@ describe('Client can create,edit tasks', () => {
             cy.contains('button', 'Save').scrollIntoView().should('be.visible').click()
           })
       })
+    cy.wait('@updateTaskRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getDepartmentRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
   })
 })

@@ -52,7 +52,6 @@ const updateList = (params, token, cb) => async dispatch => {
 
   try {
     const response = await axios.post(`/api/list/update/`, params, tokenConfig(token))
-    console.log('response', response)
     dispatch({
       type: EDIT_USER_LIST_SUCCESS,
       payload: response.data

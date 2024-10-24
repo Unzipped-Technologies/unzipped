@@ -10,6 +10,8 @@ describe('Client Account Page', () => {
     cy.clearLocalStorage()
 
     cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -21,9 +23,6 @@ describe('Client Account Page', () => {
     cy.get('#email').clear().type(testClientEmail)
     cy.get('#password').clear().type(testClientPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -32,9 +31,16 @@ describe('Client Account Page', () => {
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
     cy.visit('/dashboard/account')
     cy.contains('Connect. Build. grow').should('not.exist')
+    cy.window().its('document.readyState').should('eq', 'complete')
+  })
+
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('Change Client credentials', () => {
@@ -50,6 +56,7 @@ describe('Client Account Page', () => {
         })
         cy.url().should('include', `/change-email`)
         cy.contains('Connect. Build. grow').should('not.exist')
+        cy.window().its('document.readyState').should('eq', 'complete')
 
         cy.get('#currentEmail').should('have.value', user.email)
         cy.contains('button', 'Save').should('be.disabled')
@@ -64,6 +71,7 @@ describe('Client Account Page', () => {
         cy.contains('Change Password').should('be.visible').click()
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
+        cy.window().its('document.readyState').should('eq', 'complete')
 
         cy.get('#password').clear().clear().type(testClientPassword)
         cy.get('#password').blur()
@@ -93,6 +101,7 @@ describe('Client Account Page', () => {
         cy.contains('Change number').should('be.visible').click()
         cy.url().should('include', `/change-phone`)
         cy.contains('Connect. Build. grow').should('not.exist')
+        cy.window().its('document.readyState').should('eq', 'complete')
 
         cy.get('#currentPhone').should('have.value', ValidationUtils._formatPhoneNumber(user?.phoneNumber) ?? '')
         cy.contains('button', 'Save').should('be.disabled')
@@ -120,7 +129,6 @@ describe('Client Account Page', () => {
         let City = faker.location.city()
         let State = faker.location.state()
         let ZipCode = faker.location.zipCode()
-        let Country = faker.location.country()
 
         cy.get('#AddressLineOne').clear().type(AddressLineOne)
         cy.get('#AddressLineTwo').clear().type(AddressLineTwo)
@@ -172,6 +180,7 @@ describe('Client Account Page', () => {
             expect(interception.response.statusCode).to.be.oneOf([200, 304])
             cy.url().should('include', '/login')
             cy.contains('Connect. Build. grow').should('not.exist')
+            cy.window().its('document.readyState').should('eq', 'complete')
           })
         })
       })

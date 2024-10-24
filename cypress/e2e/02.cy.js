@@ -7,7 +7,13 @@ describe('Freelancer Signup', () => {
 
     cy.visit('/')
   })
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Signup for Freelancer', () => {
+    cy.intercept('POST', '/api/auth/register').as('regsiterUserRequest')
+
     const email = faker.internet.email()
     const password = 'Hello@2024'
     cy.visit('/')
@@ -31,7 +37,6 @@ describe('Freelancer Signup', () => {
       cy.get('#email').should('be.visible').clear().type(email)
       cy.get('#password').should('be.visible').clear().type(password)
       cy.get('[name="remember_me"]').click({ force: true }).should('be.checked')
-      cy.intercept('POST', '/api/auth/register').as('regsiterUserRequest')
       cy.contains('button', 'Sign up').should('be.visible').click()
 
       cy.wait('@regsiterUserRequest').then(interception => {
@@ -47,6 +52,21 @@ describe('Freelancer Signup', () => {
     })
     cy.contains('Connect. Build. grow').should('not.exist')
     cy.url().should('include', '/update-account-profile')
+  })
+  it('Update profile', () => {
+    cy.intercept('POST', `/api/user/current/update`).as('updateUserRequest')
+    cy.intercept('GET', `/api/auth/current_user`).as('getCurrentRequest')
+
+    const FirstName = faker.string.alpha(5)
+    const LastName = faker.string.alpha(5)
+    const PhoneNumber = '(555) 123-9802'
+    const BusinessType = 'Individual'
+    const TaxEin = '1DK4C'
+    const AddressLineOne = faker.location.streetAddress()
+    const AddressLineTwo = faker.location.secondaryAddress()
+    const City = faker.location.city()
+    const ZipCode = faker.location.zipCode()
+    const Country = faker.location.country()
 
     cy.contains('button', 'Cancel').should('be.visible').click()
     cy.contains('button', 'Next').should('be.visible').should('be.disabled')
@@ -58,12 +78,6 @@ describe('Freelancer Signup', () => {
     cy.contains('button', 'BACK').should('be.visible').should('be.enabled').click()
     cy.contains('button', 'Next').should('be.visible').should('be.enabled').click()
 
-    let FirstName = faker.string.alpha(5)
-    let LastName = faker.string.alpha(5)
-    let PhoneNumber = '(555) 123-9802'
-    let BusinessType = 'Individual'
-    let TaxEin = '1DK4C'
-
     cy.get('#firstName').should('be.visible').clear().type(FirstName)
     cy.get('#lastName').should('be.visible').clear().type(LastName)
     cy.get('#phoneNumber').should('be.visible').clear().type(PhoneNumber)
@@ -72,23 +86,19 @@ describe('Freelancer Signup', () => {
 
     cy.contains('button', 'Next').should('be.visible').should('be.enabled').click()
 
-    let AddressLineOne = faker.location.streetAddress()
-    let AddressLineTwo = faker.location.secondaryAddress()
-    let City = faker.location.city()
-    let ZipCode = faker.location.zipCode()
-    let Country = faker.location.country()
-
     cy.get('#addressLineOne').should('be.visible').clear().type(AddressLineOne)
     cy.get('#addressLineTwo').should('be.visible').clear().type(AddressLineTwo)
     cy.get('#city').should('be.visible').clear().type(City)
     cy.get('#zipCode').should('be.visible').clear().type(ZipCode)
     cy.get('#country').should('be.visible').clear().type(Country)
 
-    cy.intercept('POST', `/api/user/current/update`).as('updateUserRequest')
-
     cy.contains('button', 'SUBMIT').should('be.visible').should('be.enabled').click()
 
     cy.wait('@updateUserRequest').then(res => {
+      expect(res.response.statusCode).to.eq(200)
+    })
+
+    cy.wait('@getCurrentRequest').then(res => {
       expect(res.response.statusCode).to.eq(200)
     })
 

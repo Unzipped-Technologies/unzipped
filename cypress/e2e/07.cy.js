@@ -12,6 +12,7 @@ describe('Freelancer can add comments to tasks', () => {
 
     cy.window().its('document.readyState').should('eq', 'complete')
 
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
     // Perform login steps
     cy.contains('Log In').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -22,9 +23,6 @@ describe('Freelancer can add comments to tasks', () => {
     cy.get('#email').clear().type(testFreelancerEmail)
     cy.get('#password').clear().type(testFreelancerPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -33,7 +31,13 @@ describe('Freelancer can add comments to tasks', () => {
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
+  })
+
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('Verify business names and department names in tasklist page', () => {
@@ -44,7 +48,7 @@ describe('Freelancer can add comments to tasks', () => {
     cy.contains('Tasklist').should('be.visible').click()
 
     cy.url().should('include', '/dashboard/tasklist')
-
+    cy.contains('Connect. Build. grow').should('not.exist')
     cy.wait('@getBusinessRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
     })
@@ -80,6 +84,7 @@ describe('Freelancer can add comments to tasks', () => {
     cy.intercept('PATCH', `/api/tasks/*`).as('updateTaskRequest')
     cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
     cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=true`).as('getBusinessEmpRequest')
+
     cy.window()
       .its('store')
       .then(store => {

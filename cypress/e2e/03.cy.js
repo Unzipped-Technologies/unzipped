@@ -8,6 +8,8 @@ describe('Create Long term and short term projects.', () => {
 
     cy.visit('/') // Visit the login page
 
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
+
     // Perform login steps
     cy.contains('Log In').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -19,7 +21,6 @@ describe('Create Long term and short term projects.', () => {
     cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
@@ -32,7 +33,15 @@ describe('Create Long term and short term projects.', () => {
     })
   })
 
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
+
   it('Create A Short Term Project', () => {
+    cy.intercept('POST', '/api/business/create').as('createBusinessRequest')
+    cy.intercept('GET', '/api/auth/current_user').as('userDataRequest')
+
     cy.contains('Start A Project').should('be.visible')
     cy.contains('Start A Project').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -175,8 +184,7 @@ describe('Create Long term and short term projects.', () => {
     })
 
     // Business Create API and dashboard API
-    cy.intercept('POST', '/api/business/create').as('createBusinessRequest')
-    cy.intercept('GET', '/api/auth/current_user').as('userDataRequest')
+
     cy.contains('button', 'CREATE PROJECT').should('be.visible').click()
     cy.contains('Connect. Build. grow').should('not.exist')
 
@@ -195,6 +203,9 @@ describe('Create Long term and short term projects.', () => {
   })
 
   it('Create A Long Term Project', () => {
+    cy.intercept('POST', '/api/business/create').as('createBusinessRequest')
+    cy.intercept('GET', '/api/auth/current_user').as('userDataRequest')
+
     cy.contains('Start A Project').should('be.visible')
     cy.contains('Start A Project').click()
 
@@ -364,9 +375,6 @@ describe('Create Long term and short term projects.', () => {
       cy.contains('Skilled ($25 - $50)') // Checks if Budget is present
       cy.contains(Question1) // Checks if Questions are present
     })
-
-    cy.intercept('POST', '/api/business/create').as('createBusinessRequest')
-    cy.intercept('GET', '/api/auth/current_user').as('userDataRequest')
 
     cy.contains('button', 'CREATE PROJECT').should('be.visible').click()
 

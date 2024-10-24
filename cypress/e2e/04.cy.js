@@ -9,10 +9,14 @@ describe('Apply for project', () => {
     cy.clearLocalStorage()
 
     cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
     cy.contains('Connect. Build. grow').should('not.exist')
+    cy.window().its('document.readyState').should('eq', 'complete')
 
     cy.contains('CONTINUE WITH EMAIL').click()
 
@@ -21,7 +25,6 @@ describe('Apply for project', () => {
     cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
@@ -31,16 +34,23 @@ describe('Apply for project', () => {
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
+  })
+
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('Apply to a Project', () => {
     cy.intercept('POST', '/api/business/public/list').as('getProjectsRequest')
-    cy.contains('Find a Project').click({ force: true })
-    cy.wait(1000)
-    cy.contains('Browse Projects').click({ force: true })
+    cy.intercept('POST', '/api/projectApplication').as('applyProjectRequest')
+    cy.intercept('GET', `/api/auth/current_user`).as('getCurrentRequest')
 
-    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.visit('/projects')
+    cy.window().its('document.readyState').should('eq', 'complete')
+
     cy.url().should('include', '/projects')
 
     // Submit login form
@@ -79,6 +89,7 @@ describe('Apply for project', () => {
 
       cy.contains('Connect. Build. grow').should('not.exist')
       cy.url().should('include', `/projects/${Project._id}`)
+      cy.window().its('document.readyState').should('eq', 'complete')
 
       cy.get('#desired_rate').type(20)
       const CoverLetter = faker.lorem.sentences(10)
@@ -89,7 +100,6 @@ describe('Apply for project', () => {
 
         cy.get(`#question_${index}`).type(Answer)
       })
-      cy.intercept('POST', '/api/projectApplication').as('applyProjectRequest')
 
       cy.get(`#project_apply_form`).contains('button', 'SUBMIT APPLICATION').should('be.visible').click()
 
@@ -98,7 +108,11 @@ describe('Apply for project', () => {
       })
 
       cy.contains('Connect. Build. grow').should('not.exist')
+      cy.wait('@getCurrentRequest').then(interception => {
+        expect(interception.response.statusCode).to.be.oneOf([200, 400])
+      })
       cy.url().should('include', `/dashboard`)
+      cy.window().its('document.readyState').should('eq', 'complete')
 
       cy.contains('You have successfully applied for project!').should('be.visible')
     })

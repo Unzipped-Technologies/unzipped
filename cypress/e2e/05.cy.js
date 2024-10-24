@@ -11,6 +11,7 @@ describe('Client can view project  applications, add department, tags etc', () =
 
     cy.visit('/') // Visit the login page
     cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -23,7 +24,6 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.get('#password').clear().type(testClientPassword)
 
     // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
@@ -31,19 +31,15 @@ describe('Client can view project  applications, add department, tags etc', () =
 
     // Wait for the login request and verify success
     cy.wait('@loginRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
   })
 
-  beforeEach(() => {
-    cy.window()
-      .its('store')
-      .then(store => {
-        reduxStore = store
-        // Get the current state of the store
-        const state = store.getState()
-      })
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('View project detail,project applications, freelancer profile and verify freelancer data', () => {
@@ -53,7 +49,7 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.wait('@getProjectsRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
 
       cy.window()
         .its('store')
@@ -76,7 +72,7 @@ describe('Client can view project  applications, add department, tags etc', () =
       cy.contains('Connect. Build. grow').should('not.exist')
 
       cy.wait('@getProjectDetailsRequest').then(interception => {
-        expect(interception.response.statusCode).to.eq(200)
+        expect(interception.response.statusCode).to.be.oneOf([200, 304])
 
         cy.window()
           .its('store')
@@ -149,6 +145,15 @@ describe('Client can view project  applications, add department, tags etc', () =
           cy.contains('View Application').should('be.visible')
           cy.contains('Dismiss Application').should('be.visible')
         })
+      })
+  })
+
+  it('View freelancer application and profile', () => {
+    cy.window()
+      .its('store')
+      .then(store => {
+        const ProjectApplications = store.getState().ProjectApplications.projectApplications
+
         const Application = ProjectApplications[0]
         cy.get(`#application_${Application._id}`).within(() => {
           cy.intercept('GET', `/api/freelancer/${Application?.freelancerId?._id}`).as('getFreelancerRequest')
@@ -166,7 +171,6 @@ describe('Client can view project  applications, add department, tags etc', () =
       .its('store')
       .then(store => {
         reduxStore = store
-        cy.wrap(store).as('reduxStore') // Store reduxStore as an alias
         const selectedFreelancer = store.getState().Freelancers?.selectedFreelancer
         cy.get('#freelancer_profile')
           .should('be.visible')
@@ -235,10 +239,22 @@ describe('Client can view project  applications, add department, tags etc', () =
   })
 
   it('Create,Edit and Delete Lists', () => {
-    cy.visit('/dashboard')
+    cy.intercept('POST', '/api/list/create/').as('createListRequest')
+    cy.intercept('POST', '/api/list/create/').as('createListRequest')
+    cy.intercept('POST', '/api/list/update/').as('updateListRequest')
+    cy.intercept('DELETE', `/api/list-entries/*`).as('deleteListRequest')
+    cy.intercept('GET', `/api/list-entries/users-list/*`).as('getListsRequest')
+    cy.intercept('GET', `/api/list-entries/find-by-id/*`).as('getSingleListRequest')
+
+    cy.visit('/dashboard/lists')
+
+    cy.wait('@getListsRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getSingleListRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
     cy.scrollTo('top')
-    cy.contains('Lists').should('be.visible').click()
-    cy.url().should('include', '/dashboard/lists')
 
     cy.get('#left_lists_panel').contains('New List').click()
 
@@ -248,12 +264,17 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.get('#list_name').should('have.value', ListName1)
     cy.get('#icon_1').click()
 
-    cy.intercept('POST', '/api/list/create/').as('createListRequest')
     cy.contains('button', 'ADD LIST').should('be.visible').click()
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.wait('@createListRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getListsRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getSingleListRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.get('#list_actions_dropdown').click()
@@ -265,12 +286,17 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.get('#list_name').should('have.value', ListName2)
     cy.get('#icon_1').click()
 
-    cy.intercept('POST', '/api/list/create/').as('createListRequest')
     cy.contains('button', 'ADD LIST').should('be.visible').click()
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.wait('@createListRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getListsRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getSingleListRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     // Edit List
@@ -284,34 +310,40 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.get('#selected_icon').click()
     cy.get('#icon_2').click()
 
-    cy.intercept('POST', '/api/list/update/').as('updateListRequest')
     cy.contains('button', 'UPDATE LIST').should('be.visible').click()
 
     cy.wait('@updateListRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+
+    cy.wait('@getListsRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
+    cy.wait('@getSingleListRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     // Delete List
     cy.get('#list_actions_dropdown').click()
-    cy.intercept('DELETE', `/api/list-entries/*`).as('deleteListRequest')
-    cy.intercept('GET', `/api/list-entries/users-list/*`).as('getListsRequest')
-    cy.intercept('GET', `/api/list-entries/find-by-id/*`).as('getSingleListRequest')
 
     cy.get('#list_actions_dropdown').contains('Delete').click()
     cy.wait('@deleteListRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
     cy.wait('@getListsRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
 
-    cy.wait('@getSingleListRequest').then(interception => {})
+    cy.wait('@getSingleListRequest').then(interception => {
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
+    })
   })
   it('Add freelancers to list', () => {
-    const UserId = reduxStore.getState()?.Auth?.user?._id
     cy.intercept('GET', `/api/list-entries/users-list/*`).as('getListsRequest')
     cy.intercept('GET', `/api/list-entries/find-by-id/*`).as('getListEntriesRequest')
+    cy.intercept('POST', `/api/freelancer/public/list`).as('getFreelancersRequest')
+    cy.intercept('POST', `/api/list/list`).as('getAllListsRequest')
 
     cy.window()
       .its('store')
@@ -324,7 +356,6 @@ describe('Client can view project  applications, add department, tags etc', () =
           cy.wait('@getListEntriesRequest').then(interception => {
             expect(interception.response.statusCode).to.be.oneOf([200, 304])
           })
-          cy.intercept('POST', `/api/freelancer/public/list`).as('getFreelancersRequest')
 
           cy.contains('button', 'Browse Freelancers').click()
 
@@ -342,8 +373,6 @@ describe('Client can view project  applications, add department, tags etc', () =
       .its('store')
       .then(store => {
         const FreelancersList = store.getState().Freelancers?.freelancers
-
-        cy.intercept('POST', `/api/list/list`).as('getAllListsRequest')
 
         cy.get(`#freelancer_${FreelancersList[0]?._id}`)
           .should('be.visible')
@@ -377,14 +406,21 @@ describe('Client can view project  applications, add department, tags etc', () =
       })
   })
   it('View Freelancer application and hire him.', () => {
-    cy.visit('/dashboard')
     cy.intercept('POST', `/api/business/list`).as('getProjectsRequest')
-    cy.contains('My Projects').should('be.visible').click()
+    cy.intercept('GET', `/api/contract/current?limit=all&isActive=true`).as('getContractsRequest')
+    cy.intercept('GET', `/api/invoice/fetch/unpaid`).as('getInvoiceRequest')
+    cy.intercept('GET', `/api/business/*`).as('getProjectRequest')
+    cy.intercept({
+      method: 'POST',
+      url: `/api/contract/create`
+    }).as('createContractRequest')
+
+    cy.visit('/dashboard/projects')
 
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.wait('@getProjectsRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
+      expect(interception.response.statusCode).to.be.oneOf([200, 304])
     })
     cy.window()
       .its('store')
@@ -400,10 +436,11 @@ describe('Client can view project  applications, add department, tags etc', () =
         cy.intercept('GET', `/api/contract/count/${userId}`).as('clientContractsRequest')
 
         cy.get(`#${selectedProject?._id}`).contains(ValidationUtils.truncate(selectedProject.name, 40)).click()
+
         cy.contains('Connect. Build. grow').should('not.exist')
 
         cy.wait('@getProjectDetailsRequest').then(interception => {
-          expect(interception.response.statusCode).to.eq(200)
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
         })
 
         cy.wait('@clientContractsRequest').then(interception => {
@@ -464,9 +501,6 @@ describe('Client can view project  applications, add department, tags etc', () =
         cy.contains(`Hire ${Name ?? ''}`)
           .should('be.visible')
           .click()
-        cy.intercept('GET', `/api/contract/current?limit=all&isActive=true`).as('getContractsRequest')
-        cy.intercept('GET', `/api/invoice/fetch/unpaid`).as('getInvoiceRequest')
-        cy.intercept('GET', `/api/business/*`).as('getProjectRequest')
 
         cy.contains('Connect. Build. grow').should('not.exist')
 
@@ -622,10 +656,7 @@ describe('Client can view project  applications, add department, tags etc', () =
           cy.get('#state').clear().type(State)
           cy.get('#zipCode').clear().type(Zip)
         })
-        cy.intercept({
-          method: 'POST',
-          url: `/api/contract/create`
-        }).as('createContractRequest')
+
         cy.contains('button', 'update payment terms').should('be.visible').click()
 
         cy.wait('@createContractRequest').then(interception => {

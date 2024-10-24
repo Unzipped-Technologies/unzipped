@@ -21,6 +21,11 @@ describe('Projects Page', () => {
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
+
   it('Verify projects are rendering correctly', () => {
     cy.window()
       .its('store')

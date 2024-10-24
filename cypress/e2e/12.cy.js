@@ -21,6 +21,10 @@ describe('Freelancers Page', () => {
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Verify freelancers are rendering correctly', () => {
     cy.window()
       .its('store')

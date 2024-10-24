@@ -27,6 +27,8 @@ describe('Client Invoices', () => {
     cy.clearLocalStorage()
 
     cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -38,9 +40,6 @@ describe('Client Invoices', () => {
     cy.get('#email').clear().type(testClientEmail)
     cy.get('#password').clear().type(testClientPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -50,6 +49,11 @@ describe('Client Invoices', () => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
     })
+  })
+
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('View project invoice of freelacer', () => {
@@ -668,10 +672,13 @@ describe('Client Invoices', () => {
               cy.window().its('document.readyState').should('eq', 'complete')
               cy.go('back')
 
-              cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
-              cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
+              cy.wait('@getConvesationRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
+              })
             })
           })
+        cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
+        cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
         cy.contains('Schedule an Interview').scrollIntoView().should('be.visible').click()
         cy.get('#schedule_meeting_modal').should('be.visible')
         cy.contains('button', 'CANCEL').scrollIntoView().should('be.visible').click()

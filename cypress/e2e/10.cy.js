@@ -9,6 +9,8 @@ describe('Freelancer inbox', () => {
     cy.clearLocalStorage()
 
     cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -21,7 +23,6 @@ describe('Freelancer inbox', () => {
     cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
@@ -31,9 +32,13 @@ describe('Freelancer inbox', () => {
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
   })
-
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Send message to client', () => {
     cy.visit('/dashboard/inbox')
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
