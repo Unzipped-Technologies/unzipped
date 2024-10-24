@@ -135,7 +135,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
       return '0 result'
     } else if (freelancerList?.length === 1) {
       return '1 result'
-    } else if (skip === 0) {
+    } else if (skip === 0 && freelancerList?.length > 1) {
       return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     }
   }

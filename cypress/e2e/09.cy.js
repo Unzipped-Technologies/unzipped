@@ -26,7 +26,9 @@ describe('Client Invoices', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -38,9 +40,6 @@ describe('Client Invoices', () => {
     cy.get('#email').clear().type(testClientEmail)
     cy.get('#password').clear().type(testClientPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -50,6 +49,11 @@ describe('Client Invoices', () => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
     })
+  })
+
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('View project invoice of freelacer', () => {
@@ -144,7 +148,7 @@ describe('Client Invoices', () => {
         cy.get(`#${Invoices[0]?._id} li`).eq(1).click()
         cy.url().should(
           'include',
-          `/dashboard/projects/client/invoice/${Invoices[0].businessId}?tab=invoices&invoice=${Invoices[0]._id}`
+          `/dashboard/projects/client/invoice/${Invoices[0]?.businessId}?tab=invoices&invoice=${Invoices[0]?._id}`
         )
       })
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -361,7 +365,7 @@ describe('Client Invoices', () => {
         cy.contains('Browse other projects to inspire ideas').should('be.visible')
         cy.contains('button', 'BROWSE').should('be.visible').click()
         cy.url().should('include', '/projects')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -370,7 +374,7 @@ describe('Client Invoices', () => {
       .within(() => {
         cy.contains('See our help docs').should('be.visible').click()
         cy.url().should('include', '/')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -379,7 +383,7 @@ describe('Client Invoices', () => {
       .within(() => {
         cy.contains('Get started').should('be.visible').click()
         cy.url().should('include', '/')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -388,7 +392,7 @@ describe('Client Invoices', () => {
       .within(() => {
         cy.contains('Ask about a topic.').should('be.visible').click()
         cy.url().should('include', '/')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
   })
@@ -479,7 +483,7 @@ describe('Client Invoices', () => {
       })
   })
   it('Schedule an interview', () => {
-    cy.visit('http://localhost:3000/freelancers')
+    cy.visit('/freelancers')
     cy.contains('Connect. Build. grow').should('not.exist')
     cy.intercept('POST', `/api/freelancer/public/list`).as('getFreelancersRequest')
     cy.intercept('POST', `/api/message/list`).as('getConvesationsRequest')
@@ -553,10 +557,6 @@ describe('Client Invoices', () => {
   it('Send message to freelancer', () => {
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
 
-    cy.wait('@getConvesationRequest').then(interception => {
-      expect(interception.response.statusCode).to.be.oneOf([200, 304])
-    })
-
     cy.window()
       .its('store')
       .then(store => {
@@ -568,24 +568,31 @@ describe('Client Invoices', () => {
           const receiver = conversation?.participants?.find(e => e?.userId?.email !== user?.email)
           const sender = conversation?.participants?.find(e => e?.userId?.email === user?.email)
 
-          cy.get(`#conversation_${conversation?._id}`).within(() => {
-            cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
-              .scrollIntoView()
-              .should('be.visible')
-              .should('have.attr', 'src')
-              .then(src => {
-                expect(src).to.include(receiver?.userId?.profileImage)
-              })
-            cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)).should(
-              'be.visible'
-            )
-            cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt)).should('be.visible')
-            if (conversation?.messages?.length) {
-              cy.contains(
-                ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
-              ).should('be.visible')
-            }
-          })
+          cy.get(`#conversation_${conversation?._id}`)
+            .scrollIntoView()
+            .should('be.visible')
+            .within(() => {
+              cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
+                .scrollIntoView()
+                .should('be.visible')
+                .should('have.attr', 'src')
+                .then(src => {
+                  expect(src).to.include(receiver?.userId?.profileImage)
+                })
+              cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                .scrollIntoView()
+                .should('be.visible')
+              cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt))
+                .scrollIntoView()
+                .should('be.visible')
+              if (conversation?.messages?.length) {
+                cy.contains(
+                  ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
+                )
+                  .scrollIntoView()
+                  .should('be.visible')
+              }
+            })
         })
 
         let FreelancerConversation = conversations?.find(conv =>
@@ -594,24 +601,16 @@ describe('Client Invoices', () => {
         FreelancerConversation = FreelancerConversation?._id ? FreelancerConversation : conversations[0]
 
         cy.wait(1000)
-        cy.get(`#conversation_${FreelancerConversation?._id}`)
-          .scrollIntoView()
-          .within(() => {
-            const receiverUser = FreelancerConversation?.participants?.find(e => e?.userId?.email !== user?.email)
+        cy.get(`#conversation_${FreelancerConversation?._id}`).scrollIntoView().should('be.visible').click()
 
-            cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiverUser?.userId)}`))
-              .should('be.visible')
-              .click()
-            cy.wait('@getConvesationRequest').then(interception => {
-              expect(interception.response.statusCode).to.be.oneOf([200, 304])
-            })
-          })
+        cy.wait('@getConvesationRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
       })
 
     cy.window()
       .its('store')
       .then(store => {
-        const conversations = store?.getState().Messages?.conversations
         const user = store?.getState().Auth?.user
 
         const selectedConversation = store?.getState().Messages?.selectedConversation
@@ -619,54 +618,67 @@ describe('Client Invoices', () => {
         const receiver =
           selectedConversation?.participants?.length &&
           selectedConversation?.participants?.find(e => e?.userId?.email !== user.email)
-        const sender =
-          selectedConversation?.participants?.length &&
-          selectedConversation?.participants?.find(e => e?.userId?.email === user.email)
 
-        cy.get('#message_container').within(() => {
-          cy.get('#header').within(() => {
-            cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
-            if (receiver?.userId?.freelancers?.category) {
-              cy.contains(receiver?.userId?.freelancers?.category)
-            }
-            cy.get('#profile_action').should('be.visible').click()
-            cy.get('#profile_action').should('be.visible').click()
-          })
-          selectedConversation?.messages?.forEach(message => {
-            cy.get(`#${message?._id}`)
+        cy.get('#message_container')
+          .scrollIntoView()
+          .should('be.visible')
+          .within(() => {
+            cy.get('#header')
+              .scrollIntoView()
+              .should('be.visible')
               .within(() => {
-                if (message?.updatedAt) {
-                  cy.contains(ValidationUtils.getTimeFormated(message?.updatedAt)).scrollIntoView().should('be.visible')
+                cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                  .scrollIntoView()
+                  .should('be.visible')
+                  .scrollIntoView()
+                  .should('be.visible')
+                if (receiver?.userId?.freelancers?.category) {
+                  cy.contains(receiver?.userId?.freelancers?.category)
                 }
-                cy.contains(message?.message).scrollIntoView().should('be.visible')
+                cy.get('#profile_action').should('be.visible').click().scrollIntoView().should('be.visible')
+                cy.get('#profile_action').should('be.visible').click().scrollIntoView().should('be.visible')
               })
-              .should('be.visible')
-          })
-          const NewMessage = faker.lorem.sentences(1)
-          cy.get('#message').clear().type(NewMessage)
-          cy.get('#send_message').scrollIntoView().should('be.visible').click()
+            selectedConversation?.messages?.forEach(message => {
+              cy.get(`#${message?._id}`)
+                .within(() => {
+                  if (message?.updatedAt) {
+                    cy.contains(ValidationUtils.getTimeFormated(message?.updatedAt))
+                      .scrollIntoView()
+                      .should('be.visible')
+                  }
+                  cy.contains(message?.message).scrollIntoView().should('be.visible')
+                })
+                .should('be.visible')
+            })
+            const NewMessage = faker.lorem.sentences(1)
+            cy.get('#message').clear().type(NewMessage)
+            cy.get('#send_message').scrollIntoView().should('be.visible').click()
 
-          cy.get('#profile_container').within(() => {
-            cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
-              .should('be.visible')
-              .scrollIntoView()
-              .should('be.visible')
-            cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
-              .scrollIntoView()
-              .should('be.visible')
-              .should('have.attr', 'src')
-              .then(src => {
-                expect(src).to.include(receiver?.userId?.profileImage)
+            cy.get('#profile_container').within(() => {
+              cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                .should('be.visible')
+                .scrollIntoView()
+                .should('be.visible')
+              cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
+                .scrollIntoView()
+                .should('be.visible')
+                .should('have.attr', 'src')
+                .then(src => {
+                  expect(src).to.include(receiver?.userId?.profileImage)
+                })
+              cy.contains('Make An Offer').scrollIntoView().should('be.visible').click()
+              cy.contains('Connect. Build. grow').should('not.exist')
+              cy.url().should('include', '/hire')
+              cy.window().its('document.readyState').should('eq', 'complete')
+              cy.go('back')
+
+              cy.wait('@getConvesationRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
               })
-            cy.contains('Make An Offer').scrollIntoView().should('be.visible').click()
-            cy.url().should('include', '/hire')
-            cy.contains('Connect. Build. grow').should('not.exist')
-            cy.go('back')
-
-            cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
-            cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
+            })
           })
-        })
+        cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
+        cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
         cy.contains('Schedule an Interview').scrollIntoView().should('be.visible').click()
         cy.get('#schedule_meeting_modal').should('be.visible')
         cy.contains('button', 'CANCEL').scrollIntoView().should('be.visible').click()

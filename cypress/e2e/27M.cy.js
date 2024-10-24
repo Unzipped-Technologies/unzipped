@@ -10,7 +10,7 @@ describe('Freelancer Account Page', () => {
     cy.clearLocalStorage()
 
     // Visit the login page
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -115,7 +115,7 @@ describe('Freelancer Account Page', () => {
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.get('#password').clear().clear().type(testClientPassword)
+        cy.get('#password').clear().clear().type('Hello@2024')
         cy.get('#password').blur()
 
         let NewPassword = faker.internet.password({ length: 5 })

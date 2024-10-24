@@ -265,7 +265,7 @@ const MobileTaskForm = ({
         businessId: taskDetail?.businessId || departmentData?.businessId,
         departmentId: taskDetail?.departmentId || departmentData?.departmentId,
         assignee: taskDetail?.assignee,
-        tags: taskDetail?.tags,
+        tags: [],
         tag: taskDetail?.tag,
         ticketCode: taskDetail?.ticketCode
       })
@@ -408,7 +408,11 @@ const MobileTaskForm = ({
 
   const handleAddTag = () => {
     if (inputValue.trim() !== '' && !selectedTags.includes(inputValue)) {
-      setSelectedTags([...selectedTags, inputValue.trim()])
+      console.log('inputValue', inputValue)
+      const AllTags = [...selectedTags, inputValue.trim()]
+      setSelectedTags(AllTags)
+      updateForm('tags', AllTags)
+
       setInputValue('')
     }
   }
@@ -756,9 +760,10 @@ const MobileTaskForm = ({
           display: 'flex',
           alignItems: 'center'
         }}>
-        {!editMode?.tag && userRole !== 1 && (
+        {userRole === 1 && (
           <Autocomplete
             multiple
+            disabled
             id="tags-standard"
             value={editSelectedTags}
             onChange={(event, newValue) => setEditSelectedTags(newValue)}
@@ -825,7 +830,7 @@ const MobileTaskForm = ({
             noOptionsText="Add Tag"
           />
         )}
-        {editMode?.tag && (
+        {userRole !== 1 && (
           <Autocomplete
             multiple
             id="tags-standard"
@@ -908,7 +913,7 @@ const MobileTaskForm = ({
           fontWeight="500"
           width="100px !important"
           padding="10px 0px 0px 0px">
-          Description: {selectedTags?.length}
+          Description:
         </TEXT>
       </div>
 
@@ -1009,7 +1014,7 @@ const MobileTaskForm = ({
               lineHeight="21.09px"
               fontWeight="500"
               margin="10px 0px 10px 0px"
-              width="90px">
+              width="120px">
               Discussion:
             </TEXT>
             <FormField

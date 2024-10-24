@@ -8,7 +8,9 @@ describe('Freelancer inbox', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -21,7 +23,6 @@ describe('Freelancer inbox', () => {
     cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
@@ -31,11 +32,15 @@ describe('Freelancer inbox', () => {
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
   })
-
+  after(() => {
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Send message to client', () => {
-    cy.visit('http://localhost:3000/dashboard/inbox')
+    cy.visit('/dashboard/inbox')
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
 
     cy.window()
@@ -47,15 +52,25 @@ describe('Freelancer inbox', () => {
         conversations?.forEach(conversation => {
           const receiver = conversation?.participants?.find(e => e?.userId?.email !== user?.email)
 
-          cy.get(`#conversation_${conversation?._id}`).within(() => {
-            cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)).should(
-              'be.visible'
-            )
-            cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt)).should('be.visible')
-            cy.contains(
-              ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
-            ).should('be.visible')
-          })
+          cy.get(`#conversation_${conversation?._id}`)
+            .scrollIntoView()
+            .should('be.visible')
+            .within(() => {
+              cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                .scrollIntoView()
+                .should('be.visible')
+              cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt))
+                .should('be.visible')
+                .scrollIntoView()
+                .should('be.visible')
+              if (conversation?.messages?.length) {
+                cy.contains(
+                  ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
+                )
+                  .scrollIntoView()
+                  .should('be.visible')
+              }
+            })
         })
         cy.wait(1000)
         let ClientConversation = conversations?.find(conv =>
@@ -106,23 +121,26 @@ describe('Freelancer inbox', () => {
           const NewMessage = faker.lorem.sentences(1)
           cy.get('#message').clear().type(NewMessage)
           cy.get('#send_message').scrollIntoView().should('be.visible').click()
-          cy.get('#profile_container').within(() => {
-            cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
-              .should('be.visible')
-              .scrollIntoView()
-              .should('be.visible')
-            cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
-              .scrollIntoView()
-              .should('be.visible')
-              .should('have.attr', 'src')
-              .then(src => {
-                expect(src).to.include(receiver?.userId?.profileImage)
-              })
-            cy.contains('Apply for Position').scrollIntoView().should('be.visible')
+          cy.get('#profile_container')
+            .scrollIntoView()
+            .should('be.visible')
+            .within(() => {
+              cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                .scrollIntoView()
+                .should('be.visible')
+                .should('be.visible')
+              cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
+                .scrollIntoView()
+                .should('be.visible')
+                .should('have.attr', 'src')
+                .then(src => {
+                  expect(src).to.include(receiver?.userId?.profileImage)
+                })
+              cy.contains('Apply for Position').scrollIntoView().should('be.visible')
 
-            cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
-            cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
-          })
+              cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
+              cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
+            })
         })
         cy.get('#archive_chat').scrollIntoView().should('be.visible').click()
         cy.contains('Archived Chats').scrollIntoView().should('be.visible')
