@@ -11,7 +11,7 @@ import { ValidationUtils, ConverterUtils } from '../../utils'
 import { DarkText, Span, WhiteCard, Absolute, TypingAnimation } from './dashboard/style'
 import { useDispatch } from 'react-redux'
 import ClearSharpIcon from '@material-ui/icons/ClearSharp'
-import { inboxAttachments, resetInboxAttachments } from '../../../unzipped/redux/Messages/actions'
+import { inboxAttachments, resetInboxAttachments } from '../../redux/actions'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 
 const Right = styled.div`
