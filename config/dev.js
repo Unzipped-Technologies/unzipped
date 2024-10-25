@@ -7,7 +7,8 @@ module.exports = {
   googleClientSecret: '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',
   googleApiKey: 'AIzaSyDtayOFbb3R-I_0lwlhCovFDBZJzc4K_4k',
   //database
-  mongoURI: 'mongodb://localhost:27017/unzipped',
+  mongoURI:
+    'mongodb://jason123:Myfirst1@contactkeeper-shard-00-00.n6tza.mongodb.net:27017,contactkeeper-shard-00-01.n6tza.mongodb.net:27017,contactkeeper-shard-00-02.n6tza.mongodb.net:27017/?replicaSet=atlas-68rw1e-shard-0&ssl=true&authSource=admin',
   CLOUDINARY_URL: 'cloudinary://367721181168573:LDo3thl241Z86yWH59SVb0dU5H4@dghsmwkfq',
   CloudName: 'dghsmwkfq',
   CloudinaryAPIKey: '367721181168573',
@@ -36,7 +37,10 @@ module.exports = {
     'EAAHeZAVRhGZC8BAHu6ZCf2RGtph4nztDpDDJ4QqxElVNWCBa1rZBi2uqOhmGZA9IvyedXdW1rUy2x1OQSoM2wEcODpKmZBF0pR1nhdJUnqps5yCH7xSYS8ApTZAzqK7AjwTpKZAcjqhU97i3ONjCBrDE3r4YMlZAt3MALTywfPgBLVZC283n4ZAoMSQ',
   nextPublicGithubClientId: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || '509d38179ddfee75d61f',
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '30a2ea2b0796b6092f825f80680a608ff57d5e9e',
-  githubRedirectUrl: process.env.NEXT_PUBLIC_ENV == 'local' ?  'http://localhost:3000/api/auth/github' :  'https://staging.unzipped.io/api/auth/github',
+  githubRedirectUrl:
+    process.env.NEXT_PUBLIC_ENV == 'local'
+      ? 'http://localhost:3000/api/auth/github'
+      : 'https://staging.unzipped.io/api/auth/github',
   socketUrl: process.env.ENV == 'local' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SOCKET_URL,
   supportEmail: 'jason+support@unzipped.io',
   supportAccountPassword: 'Myfirst1',
