@@ -55,7 +55,7 @@ describe('Freelancers Page', () => {
 
         // Verify the freelancers are rendering correctly
         cy.contains('Top Results')
-        cy.contains(getResultMessage(FreelancerList, 0, 'all', TotalCount))
+        cy.contains(getResultMessage(FreelancerList, 0, 10, TotalCount))
         FreelancerList?.forEach((freelancer, index) => {
           cy.get(`#freelancer_${freelancer?._id}`)
             .scrollIntoView()
@@ -103,7 +103,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -115,7 +115,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -127,7 +127,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -139,7 +139,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -149,7 +149,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -164,7 +164,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -177,7 +177,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -194,7 +194,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -206,7 +206,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
 
@@ -224,7 +224,7 @@ describe('Freelancers Page', () => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
 
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
     cy.get('[data-testid="toggle_filter"]').should('be.visible').click()
@@ -235,7 +235,7 @@ describe('Freelancers Page', () => {
     cy.wait('@getFreelancersRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
       cy.contains(
-        getResultMessage(interception.response.body.limitedRecords, 0, 'all', interception.response.body.totalCount)
+        getResultMessage(interception.response.body.limitedRecords, 0, 10, interception.response.body.totalCount)
       ).should('be.visible')
     })
   })

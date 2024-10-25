@@ -567,59 +567,45 @@ describe('Freelancer Invoice', () => {
 
   it('Click on notifications', () => {
     // Click on browse projects notification
-    cy.get('[data-testid="browse_projects_notification"]')
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Browse other projects to inspire ideas').scrollIntoView().should('be.visible')
-        cy.contains('button', 'BROWSE').scrollIntoView().should('be.visible').click()
-        cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
-
-    // Click on explore notification
-    cy.get(`#explore_0`)
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('See our help docs').scrollIntoView().should('be.visible').click()
-        cy.url().should('include', '/')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.window().its('document.readyState').should('eq', 'complete')
-
-        cy.visit('/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
-
-    cy.get(`#explore_1`)
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Get started').should('be.visible').click()
-        cy.url().should('include', '/')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.wait(500)
-
-        cy.visit('/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
+    cy.contains('Browse other projects to inspire ideas').scrollIntoView().should('be.visible')
+    cy.contains('button', 'BROWSE').scrollIntoView().should('be.visible').click()
     cy.contains('Connect. Build. grow').should('not.exist')
 
-    cy.get(`#explore_3`)
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Ask about a topic.').should('be.visible').click()
-        cy.url().should('include', '/')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.wait(500)
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
 
-        cy.visit('/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
+    // Click on explore notification
+
+    cy.contains('See our help docs').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', '/')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.window().its('document.readyState').should('eq', 'complete')
+
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
+
+    cy.contains('Get started').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', '/')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.wait(500)
+
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+
+    cy.contains('Ask about a topic.').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', '/')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.wait(500)
+
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
   })
   it('Update calendar settings', () => {
     // Intercept the requests to create calendar settings
@@ -631,7 +617,7 @@ describe('Freelancer Invoice', () => {
         reduxStore = store
         const user = store?.getState()?.Auth.user
         cy.get('[data-testid="calendar_setting_notification"]')
-          .scrollIntoView()
+          .should('be.visible')
           .within(() => {
             if (!user?.calendarSettings?.startTime) {
               cy.contains(

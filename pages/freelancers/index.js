@@ -163,7 +163,7 @@ const Freelancers = ({
       return '0 result'
     } else if (allFreelancers?.length === 1) {
       return '1 result'
-    } else if (skip === 0 && allFreelancers?.length > 1) {
+    } else if (skip === 0 && +allFreelancers?.length > 1) {
       return `1 - ${allFreelancers?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     }
   }
@@ -254,7 +254,7 @@ const Freelancers = ({
               <MobileDisplayBox>
                 <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
                   <b style={{ paddingRight: '20px' }}>Top Results</b>
-                  <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
+                  <small>{getResultMessage(freelancerList, 0, take, totalCount)}</small>
                 </div>
                 <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
               </MobileDisplayBox>
@@ -286,7 +286,7 @@ const Freelancers = ({
                     <h5 className="px-4">
                       <b>Top Results</b>
                     </h5>
-                    <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+                    <h6>{getResultMessage(freelancerList, 0, take, totalCount)}</h6>
                   </div>
                   {loading ? (
                     <DarkText
