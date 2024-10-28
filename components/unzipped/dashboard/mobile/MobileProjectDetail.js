@@ -10,6 +10,7 @@ import { MdMonetizationOn } from 'react-icons/md'
 import { TEXT, DIV } from '../style'
 import { Image } from '../../../ui'
 import { ConverterUtils } from '../../../../utils'
+import Carousel from 'react-material-ui-carousel'
 
 import Badge from '../../../ui/Badge'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
@@ -70,12 +71,12 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
       <ProjectRequirements>
         {projectDetails?.objectives?.length
           ? projectDetails?.objectives?.map((objective, index) => (
-            <li key={`${objective}_${index}`}>
-              <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
-                {objective}
-              </TEXT>{' '}
-            </li>
-          ))
+              <li key={`${objective}_${index}`}>
+                <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
+                  {objective}
+                </TEXT>{' '}
+              </li>
+            ))
           : 'N/A'}
       </ProjectRequirements>
       <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
@@ -83,8 +84,8 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
       </TEXT>{' '}
       {projectDetails?.requiredSkills?.length
         ? projectDetails?.requiredSkills?.map((skill, index) => {
-          return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-        })
+            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+          })
         : 'N/A'}
       <TEXT fontSize="13px" padding="5px 0px 0px 0px">
         Project ID: {projectDetails?._id || 'N/A'}
@@ -96,9 +97,57 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
         {projectDetails?.goals || 'N/A'}
       </TEXT>
       <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
-        Project Image
+        Project {projectDetails?.projectImagesUrl?.length > 0 ? `Images` : `Image`}
       </TEXT>
-      <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-around',
+          width: '80%',
+          margin: 'auto',
+          gap: '10px'
+        }}>
+        <Carousel
+          autoPlay={false}
+          fullHeightHover={false}
+          NavButton={({ onClick, className, style, next, prev }) => {
+            return (
+              <>
+                <button onClick={onClick} className="Carousel-button" style={style} aria-label="navigate">
+                  {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                  {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                </button>
+              </>
+            )
+          }}>
+          {projectDetails &&
+            projectDetails?.projectImagesUrl?.length > 0 &&
+            projectDetails.projectImagesUrl.map((item, i) => {
+              return (
+                <div
+                  key={i}
+                  style={{
+                    height: '200px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'hidden'
+                  }}>
+                  <img
+                    alt="..."
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                    src={item.url}></img>
+                </div>
+              )
+            })}
+        </Carousel>
+      </div>
+      {/* <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
         {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
           projectDetails.projectImagesUrl.map((item, index) => (
             <Image
@@ -121,7 +170,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
             N/A
           </TEXT>
         )}
-      </div>
+      </div> */}
       <div className="mt-3" data-testid="mobile_about_client">
         <TEXT textColor="#123456" fontSize="20px" fontWeight="600">
           About client

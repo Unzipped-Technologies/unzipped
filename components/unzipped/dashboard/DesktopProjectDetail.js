@@ -247,7 +247,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       </TEXT>
 
                       <TEXT padding="20px 0px 20px 0px" fontWeight="bolder" fontSize="18px" lineHeight="23.44px">
-                        Project Image
+                        Project {projectDetails?.projectImagesUrl?.length > 0 ? `Images` : `Image`}
                       </TEXT>
                       <div
                         style={{
@@ -259,9 +259,9 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           gap: '10px'
                         }}>
                         <Carousel
+                          autoPlay={false}
+                          fullHeightHover={false}
                           NavButton={({ onClick, className, style, next, prev }) => {
-                            // Other logic
-
                             return (
                               <>
                                 <button
@@ -279,36 +279,27 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                             projectDetails?.projectImagesUrl?.length > 0 &&
                             projectDetails.projectImagesUrl.map((item, i) => {
                               return (
-                                <div key={i}>
-                                  {/* <div className="card-container-C">
-                                    <div className="card-item-c">
-                                      <div className=" card-avatar">
-                                        <div className="img-container-1 "> */}
-                                  <img alt="..." style={{ width: '100%' }} src={item.url}></img>
-                                  {/* </div>
-                                      </div>
-                                    </div>
-                                  </div> */}
+                                <div
+                                  key={i}
+                                  style={{
+                                    height: '200px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    overflow: 'hidden'
+                                  }}>
+                                  <img
+                                    alt="..."
+                                    style={{
+                                      width: '100%',
+                                      height: '100%',
+                                      objectFit: 'cover'
+                                    }}
+                                    src={item.url}></img>
                                 </div>
                               )
                             })}
                         </Carousel>
-                        {/* {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
-                          projectDetails.projectImagesUrl.map((item, index) => (
-                            <Image
-                              src={item.url}
-                              id={item?._id}
-                              alt="project image"
-                              width={'100%'}
-                              height={'150px'}
-                              key={item?._id ?? index}
-                            />
-                          ))
-                        ) : (
-                          <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
-                            N/A
-                          </TEXT>
-                        )} */}
                       </div>
                     </ProjectDetail>
                   </div>
