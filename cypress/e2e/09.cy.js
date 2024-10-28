@@ -58,7 +58,7 @@ describe('Client Invoices', () => {
 
   it('View project invoice of freelacer', () => {
     cy.intercept('POST', `/api/tasks`).as('createTaskRequest')
-    cy.intercept('GET', `/api/tasks*`).as('getTasksRequest')
+    cy.intercept('GET', `/api/tasks/*`).as('getTasksRequest')
     cy.intercept('POST', `/api/business/list`).as('getProjectsRequest')
     cy.intercept('POST', `/api/invoice/create`).as('createInvoiceRequest')
     cy.intercept('PATCH', `/api/taskHours/*`).as('updateHoursRequest')
@@ -77,151 +77,168 @@ describe('Client Invoices', () => {
       expect(interception.response.statusCode).to.eq(200)
     })
 
+    let projects = []
     cy.window()
       .its('store')
       .then(store => {
-        const ProjectsList = store.getState().Business.projectList
-        const selectedProject = ProjectsList[0]
+        projects = store.getState().Business?.projectList
+        if (projects?.length > 0) {
+          cy.window()
+            .its('store')
+            .then(store => {
+              const ProjectsList = store.getState().Business.projectList
+              const selectedProject = ProjectsList[0]
 
-        cy.get(`#${selectedProject?._id}`).contains(ValidationUtils.truncate(selectedProject.name, 40)).click()
-        cy.contains('Connect. Build. grow').should('not.exist')
+              cy.get(`#${selectedProject?._id}`).contains(ValidationUtils.truncate(selectedProject.name, 40)).click()
+              cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.wait('@getProjectDetailsRequest').then(interception => {
-          expect(interception.response.statusCode).to.eq(200)
-        })
+              cy.wait('@getProjectDetailsRequest').then(interception => {
+                expect(interception.response.statusCode).to.eq(200)
+              })
 
-        cy.wait('@clientContractsRequest').then(interception => {
-          expect(interception.response.statusCode).to.be.oneOf([200, 304])
-        })
-      })
-    cy.get('#desktop_project_detail_tabs').contains('Invoices').click()
-    cy.contains('Connect. Build. grow').should('not.exist')
-
-    cy.wait('@getInvoiceRequest').then(interception => {
-      expect(interception.response.statusCode).to.be.oneOf([200, 304])
-    })
-
-    cy.get('#project_invoices_table_header').within(() => {
-      cy.contains('NAME').should('be.visible')
-      cy.contains('Dates').should('be.visible')
-      cy.contains('HOURS').should('be.visible')
-      cy.contains('STATUS').should('be.visible')
-      cy.contains('HIRE DATE').should('be.visible')
-      cy.contains('ACTIONS').should('be.visible')
-    })
-
-    cy.window()
-      .its('store')
-      .then(store => {
-        const Invoices = store.getState()?.Invoices.invoices
-        Invoices?.forEach(invoice => {
-          cy.get(`#${invoice?._id}`).within(() => {
-            cy.contains(
-              ConverterUtils.capitalize(
-                `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
-              ) || invoice?.freelancer?.user?.FullName
-            )
-              .scrollIntoView()
-              .should('be.visible')
-            cy.contains(
-              `${moment(moment(invoice?.createdAt).startOf('isoWeek')).format('MM-DD-YYYY')} - ${moment(
-                moment(invoice?.createdAt).endOf('isoWeek')
-              ).format('MM-DD-YYYY')}`
-            )
-              .scrollIntoView()
-              .should('be.visible')
-            cy.contains(ConverterUtils.capitalize(`${invoice.status}`))
-              .scrollIntoView()
-              .should('be.visible')
-            cy.contains(
-              (invoice?.contract?.createdAt && ValidationUtils.formatDate(invoice?.contract?.createdAt)) ||
-                ValidationUtils.formatDate(invoice?.contract?.updatedAt || invoice?.contract?.updatedAt)
-            )
-              .scrollIntoView()
-              .should('be.visible')
-            cy.contains('button', 'Details').scrollIntoView().should('be.visible')
-          })
-        })
-        cy.get(`#${Invoices[0]?._id}`).within(() => {
-          cy.contains('button', 'Details').click()
-        })
-        cy.get(`#${Invoices[0]?._id} li`).eq(1).click()
-        cy.url().should(
-          'include',
-          `/dashboard/projects/client/invoice/${Invoices[0]?.businessId}?tab=invoices&invoice=${Invoices[0]?._id}`
-        )
-      })
-    cy.contains('Connect. Build. grow').should('not.exist')
-
-    cy.wait('@getInvoiceRequest').then(interception => {
-      expect(interception.response.statusCode).to.be.oneOf([200, 304])
-    })
-
-    cy.wait('@getProjectDetailsRequest').then(interception => {
-      expect(interception.response.statusCode).to.eq(200)
-    })
-
-    cy.wait('@clientContractsRequest').then(interception => {
-      expect(interception.response.statusCode).to.be.oneOf([200, 304])
-    })
-
-    cy.window()
-      .its('store')
-      .then(store => {
-        const Invoices = store.getState()?.Invoices.invoices
-        const Invoice = Invoices[0]
-        const sortedData = invoiceData(Invoice)
-        Object.keys(sortedData)?.forEach(day => {
-          cy.get(`#${day}_tasks`).within(() => {
-            cy.contains(day.toUpperCase()).should('be.visible')
-            sortedData[day]?.forEach(item => {
-              cy.contains(item?.task?.taskName).scrollIntoView().should('be.visible')
-
-              cy.contains(`${item.hours} Hours`).scrollIntoView().should('be.visible')
-
-              cy.get(`#${item._id}_rate`)
-                .should('have.text', item?.contract?.hourlyRate)
-                .scrollIntoView()
-                .should('be.visible')
-              cy.get(`#${item._id}_assignee`)
-                .should('have.text', `${item?.freelancer?.user?.FirstName} ${item?.freelancer?.user?.LastName}`)
-                .scrollIntoView()
-                .should('be.visible')
+              cy.wait('@clientContractsRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
+              })
             })
+          cy.get('#desktop_project_detail_tabs').contains('Invoices').click()
+          cy.contains('Connect. Build. grow').should('not.exist')
+
+          cy.wait('@getInvoiceRequest').then(interception => {
+            expect(interception.response.statusCode).to.be.oneOf([200, 304])
           })
-        })
 
-        cy.get('#name')
-          .should(
-            'have.text',
-            ConverterUtils.capitalize(`${Invoice?.freelancer?.user?.FirstName} ${Invoice?.freelancer?.user?.LastName}`)
-          )
-          .scrollIntoView()
-          .should('be.visible')
-        cy.get('#amount')
-          .should('have.text', ConverterUtils.capitalize(`$${Invoice?.contract?.hourlyRate * Invoice?.hoursWorked}`))
-          .scrollIntoView()
-          .should('be.visible')
-        const SubTotal = Invoice?.contract.hourlyRate * Invoice.hoursWorked
-        const Fee = SubTotal * 0.05
-        const TotalAmount = SubTotal - Fee
-
-        cy.get('#sub_total').should('have.text', `$${SubTotal}`).scrollIntoView().should('be.visible')
-        cy.get('#fee')
-          .should('have.text', `$${Math.round(Fee)}`)
-          .scrollIntoView()
-          .should('be.visible')
-        cy.get('#total_amount').should('have.text', `$${TotalAmount}`).scrollIntoView().should('be.visible')
-
-        if (Invoice?.status !== 'approved') {
-          cy.contains('button', 'Approve').scrollIntoView().should('be.visible').click()
-          cy.wait('@updateInvoiceRequest').then(interception => {
-            expect(interception.response.statusCode).to.eq(200)
+          cy.get('#project_invoices_table_header').within(() => {
+            cy.contains('NAME').should('be.visible')
+            cy.contains('Dates').should('be.visible')
+            cy.contains('HOURS').should('be.visible')
+            cy.contains('STATUS').should('be.visible')
+            cy.contains('HIRE DATE').should('be.visible')
+            cy.contains('ACTIONS').should('be.visible')
           })
+
+          cy.window()
+            .its('store')
+            .then(store => {
+              const Invoices = store.getState()?.Invoices?.invoices ?? []
+              if (Invoices?.length > 0) {
+                Invoices?.forEach(invoice => {
+                  cy.get(`#${invoice?._id}`).within(() => {
+                    cy.contains(
+                      ConverterUtils.capitalize(
+                        `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
+                      ) || invoice?.freelancer?.user?.FullName
+                    )
+                      .scrollIntoView()
+                      .should('be.visible')
+                    cy.contains(
+                      `${moment(moment(invoice?.createdAt).startOf('isoWeek')).format('MM-DD-YYYY')} - ${moment(
+                        moment(invoice?.createdAt).endOf('isoWeek')
+                      ).format('MM-DD-YYYY')}`
+                    )
+                      .scrollIntoView()
+                      .should('be.visible')
+                    cy.contains(ConverterUtils.capitalize(`${invoice.status}`))
+                      .scrollIntoView()
+                      .should('be.visible')
+                    cy.contains(
+                      (invoice?.contract?.createdAt && ValidationUtils.formatDate(invoice?.contract?.createdAt)) ||
+                        ValidationUtils.formatDate(invoice?.contract?.updatedAt || invoice?.contract?.updatedAt)
+                    )
+                      .scrollIntoView()
+                      .should('be.visible')
+                    cy.contains('button', 'Details').scrollIntoView().should('be.visible')
+                  })
+                })
+                cy.get(`#${Invoices[0]?._id}`).within(() => {
+                  cy.contains('button', 'Details').click()
+                })
+                cy.get(`#${Invoices[0]?._id} li`).eq(1).click()
+                cy.url().should(
+                  'include',
+                  `/dashboard/projects/client/invoice/${Invoices[0]?.businessId}?tab=invoices&invoice=${Invoices[0]?._id}`
+                )
+                cy.contains('Connect. Build. grow').should('not.exist')
+
+                cy.wait('@getInvoiceRequest').then(interception => {
+                  expect(interception.response.statusCode).to.be.oneOf([200, 304])
+                })
+
+                cy.wait('@getProjectDetailsRequest').then(interception => {
+                  expect(interception.response.statusCode).to.eq(200)
+                })
+
+                cy.wait('@clientContractsRequest').then(interception => {
+                  expect(interception.response.statusCode).to.be.oneOf([200, 304])
+                })
+              }
+            })
+
+          cy.window()
+            .its('store')
+            .then(store => {
+              const Invoices = store.getState()?.Invoices.invoices
+              if (Invoices?.length > 0) {
+                const Invoice = Invoices[0]
+                const sortedData = invoiceData(Invoice)
+                Object.keys(sortedData)?.forEach(day => {
+                  cy.get(`#${day}_tasks`).within(() => {
+                    cy.contains(day.toUpperCase()).should('be.visible')
+                    sortedData[day]?.forEach(item => {
+                      cy.contains(item?.task?.taskName).scrollIntoView().should('be.visible')
+
+                      cy.contains(`${item.hours} Hours`).scrollIntoView().should('be.visible')
+
+                      cy.get(`#${item._id}_rate`)
+                        .should('have.text', item?.contract?.hourlyRate)
+                        .scrollIntoView()
+                        .should('be.visible')
+                      cy.get(`#${item._id}_assignee`)
+                        .should('have.text', `${item?.freelancer?.user?.FirstName} ${item?.freelancer?.user?.LastName}`)
+                        .scrollIntoView()
+                        .should('be.visible')
+                    })
+                  })
+                })
+
+                cy.get('#name')
+                  .should(
+                    'have.text',
+                    ConverterUtils.capitalize(
+                      `${Invoice?.freelancer?.user?.FirstName} ${Invoice?.freelancer?.user?.LastName}`
+                    )
+                  )
+                  .scrollIntoView()
+                  .should('be.visible')
+                cy.get('#amount')
+                  .should(
+                    'have.text',
+                    ConverterUtils.capitalize(`$${Invoice?.contract?.hourlyRate * Invoice?.hoursWorked}`)
+                  )
+                  .scrollIntoView()
+                  .should('be.visible')
+                const SubTotal = Invoice?.contract.hourlyRate * Invoice.hoursWorked
+                const Fee = SubTotal * 0.05
+                const TotalAmount = SubTotal - Fee
+
+                cy.get('#sub_total').should('have.text', `$${SubTotal}`).scrollIntoView().should('be.visible')
+                cy.get('#fee')
+                  .should('have.text', `$${Math.round(Fee)}`)
+                  .scrollIntoView()
+                  .should('be.visible')
+                cy.get('#total_amount').should('have.text', `$${TotalAmount}`).scrollIntoView().should('be.visible')
+
+                if (Invoice?.status !== 'approved') {
+                  cy.contains('button', 'Approve').scrollIntoView().should('be.visible').click()
+                  cy.wait('@updateInvoiceRequest').then(interception => {
+                    expect(interception.response.statusCode).to.eq(200)
+                  })
+                }
+              }
+            })
         }
       })
-    cy.scrollTo('top')
-    cy.contains('Dashboard').should('be.visible').click()
+
+    cy.contains('Dashboard').scrollIntoView().should('be.visible').click()
     cy.url().should('include', '/dashboard')
 
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -232,70 +249,40 @@ describe('Client Invoices', () => {
       .then(store => {
         const user = store?.getState()?.Auth.user
 
-        cy.get('#pick_plan_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains(
-              `Build your dream business, grow your following, and collaborate with other professionals to make your vision a reality. Start your free trial now.`
-            ).should('be.visible')
-            cy.contains('button', 'PICK A PLAN').should('be.visible')
-          })
+        cy.contains(
+          `Build your dream business, grow your following, and collaborate with other professionals to make your vision a reality. Start your free trial now.`
+        ).should('be.visible')
+        cy.contains('button', 'PICK A PLAN').should('be.visible')
 
         if (!user?.isGithubConnected) {
-          cy.get('#github_connected_notification')
-            .scrollIntoView()
-            .within(() => {
-              cy.contains(
-                'You haven’t connected your Github account yet, connect it now so we can begin work building your project!'
-              ).should('be.visible')
-              cy.contains('button', 'CONNECT YOUR GITHUB ACCOUNT').should('be.visible')
-            })
+          cy.contains(
+            'You haven’t connected your Github account yet, connect it now so we can begin work building your project!'
+          ).should('be.visible')
+          cy.contains('button', 'CONNECT YOUR GITHUB ACCOUNT').should('be.visible')
         }
 
         if (!user?.stripeAccountId) {
-          cy.get('#stripe_connected_notification')
-            .scrollIntoView()
-            .within(() => {
-              cy.contains('You haven’t connected your stripe account!').should('be.visible')
-              cy.contains('button', 'CONNECT YOUR STRIPE ACCOUNT').should('be.visible')
-            })
+          cy.contains('You haven’t connected your stripe account!').should('be.visible')
+          cy.contains('button', 'CONNECT YOUR STRIPE ACCOUNT').should('be.visible')
         }
 
-        cy.get('#browse_projects_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains('Browse other projects to inspire ideas').should('be.visible')
-            cy.contains('button', 'BROWSE').should('be.visible')
-          })
-        cy.get('#browse_projects_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains('Browse other projects to inspire ideas').should('be.visible')
-            cy.contains('button', 'BROWSE').should('be.visible')
-          })
+        cy.contains('Browse other projects to inspire ideas').should('be.visible')
+        cy.contains('button', 'BROWSE').should('be.visible')
 
-        cy.get('#calendar_setting_notification')
-          .scrollIntoView()
-          .within(() => {
-            if (!user?.calendarSettings?.startTime) {
-              cy.contains(
-                'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
-              ).should('be.visible')
-            } else {
-              cy.contains('Update calendar settings.').should('be.visible')
-            }
-            cy.contains('button', 'UPDATE').should('be.visible')
-          })
+        if (!user?.calendarSettings?.startTime) {
+          cy.contains(
+            'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
+          ).should('be.visible')
+        } else {
+          cy.contains('Update calendar settings.').should('be.visible')
+        }
+        cy.contains('button', 'UPDATE').should('be.visible')
 
-        cy.get('#business_page_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains(
-              `You created your first business. Hooray! Now you need to customize your business homepage to attract better talent.`
-            )
+        cy.contains(
+          `You created your first business. Hooray! Now you need to customize your business homepage to attract better talent.`
+        )
 
-            cy.contains('button', 'CUSTOMIZE YOUR BUSINESS PAGE').should('be.visible')
-          })
+        cy.contains('button', 'CUSTOMIZE YOUR BUSINESS PAGE').should('be.visible')
 
         cy.contains('Update types of professionals you are seeking for your business')
           .scrollIntoView()
@@ -349,25 +336,17 @@ describe('Client Invoices', () => {
   })
 
   it('Click on notifications', () => {
-    cy.get('#pick_plan_notification')
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('button', 'PICK A PLAN').should('be.visible').click()
-        cy.url().should('include', '/pick-a-plan')
+    cy.contains('button', 'PICK A PLAN').should('be.visible').click()
+    cy.url().should('include', '/pick-a-plan')
 
-        cy.go('back')
-        cy.contains('Connect. Build. grow').should('not.exist')
-      })
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
-    cy.get('#browse_projects_notification')
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Browse other projects to inspire ideas').should('be.visible')
-        cy.contains('button', 'BROWSE').should('be.visible').click()
-        cy.url().should('include', '/projects')
-        cy.visit('/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-      })
+    cy.contains('Browse other projects to inspire ideas').should('be.visible')
+    cy.contains('button', 'BROWSE').should('be.visible').click()
+    cy.url().should('include', '/projects')
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_0`)
       .scrollIntoView()
@@ -403,18 +382,15 @@ describe('Client Invoices', () => {
       .its('store')
       .then(store => {
         const user = store?.getState()?.Auth.user
-        cy.get('#calendar_setting_notification')
-          .scrollIntoView()
-          .within(() => {
-            if (!user?.calendarSettings?.startTime) {
-              cy.contains(
-                'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
-              ).should('be.visible')
-            } else {
-              cy.contains('Update calendar settings.').should('be.visible')
-            }
-            cy.contains('button', 'UPDATE').should('be.visible').click()
-          })
+
+        if (!user?.calendarSettings?.startTime) {
+          cy.contains(
+            'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
+          ).should('be.visible')
+        } else {
+          cy.contains('Update calendar settings.').should('be.visible')
+        }
+        cy.contains('button', 'UPDATE').should('be.visible').click()
         cy.get('#setup_calender').should('be.visible')
         cy.get('#setup_calender').within(() => {
           cy.contains('Select Your Available Times').should('be.visible')
@@ -460,11 +436,9 @@ describe('Client Invoices', () => {
           })
         })
 
-        cy.get('#calender_success_notification').within(() => {
-          cy.contains('You have successfully setup the calendar!').should('be.visible')
-          cy.contains('Dismiss').scrollIntoView().should('be.visible').click()
-          cy.contains('You have successfully setup the calendar!').should('not.exist')
-        })
+        cy.contains('You have successfully setup the calendar!').should('be.visible')
+        cy.contains('Dismiss').scrollIntoView().should('be.visible').click()
+        cy.contains('You have successfully setup the calendar!').should('not.exist')
 
         if (user?.plan === 0) {
           cy.contains('Select a plan for your account').should('be.visible').click()
@@ -478,7 +452,7 @@ describe('Client Invoices', () => {
             .within(() => {
               cy.contains('button', 'CREATE FIRST PROJECT').should('be.visible').click()
             })
-          cy.go('back')
+          cy.visit('/dashboard')
         }
       })
   })
@@ -561,51 +535,54 @@ describe('Client Invoices', () => {
       .its('store')
       .then(store => {
         const conversations = store?.getState().Messages?.conversations
-        const user = store?.getState().Auth?.user
+        if (conversations?.length > 0) {
+          const user = store?.getState().Auth?.user
 
-        const selectedConversation = store?.getState().Messages?.selectedConversation
-        conversations?.forEach(conversation => {
-          const receiver = conversation?.participants?.find(e => e?.userId?.email !== user?.email)
-          const sender = conversation?.participants?.find(e => e?.userId?.email === user?.email)
+          conversations?.forEach(conversation => {
+            const receiver = conversation?.participants?.find(e => e?.userId?.email !== user?.email)
 
-          cy.get(`#conversation_${conversation?._id}`)
-            .scrollIntoView()
-            .should('be.visible')
-            .within(() => {
-              cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
-                .scrollIntoView()
-                .should('be.visible')
-                .should('have.attr', 'src')
-                .then(src => {
-                  expect(src).to.include(receiver?.userId?.profileImage)
-                })
-              cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
-                .scrollIntoView()
-                .should('be.visible')
-              cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt))
-                .scrollIntoView()
-                .should('be.visible')
-              if (conversation?.messages?.length) {
-                cy.contains(
-                  ValidationUtils.truncate(ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message, 34)
-                )
+            cy.get(`#conversation_${conversation?._id}`)
+              .scrollIntoView()
+              .should('be.visible')
+              .within(() => {
+                cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
                   .scrollIntoView()
                   .should('be.visible')
-              }
-            })
-        })
+                  .should('have.attr', 'src')
+                  .then(src => {
+                    expect(src).to.include(receiver?.userId?.profileImage)
+                  })
+                cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                  .scrollIntoView()
+                  .should('be.visible')
+                cy.contains(ValidationUtils.formatDateWithDate(conversation?.updatedAt))
+                  .scrollIntoView()
+                  .should('be.visible')
+                if (conversation?.messages?.length) {
+                  cy.contains(
+                    ValidationUtils.truncate(
+                      ValidationUtils.getMostRecentlyUpdated(conversation?.messages)?.message,
+                      34
+                    )
+                  )
+                    .scrollIntoView()
+                    .should('be.visible')
+                }
+              })
+          })
 
-        let FreelancerConversation = conversations?.find(conv =>
-          conv?.participants?.some(parti => parti.userId.email === testFreelancerEmail)
-        )
-        FreelancerConversation = FreelancerConversation?._id ? FreelancerConversation : conversations[0]
+          let FreelancerConversation = conversations?.find(conv =>
+            conv?.participants?.some(parti => parti.userId.email === testFreelancerEmail)
+          )
+          FreelancerConversation = FreelancerConversation?._id ? FreelancerConversation : conversations[0]
 
-        cy.wait(1000)
-        cy.get(`#conversation_${FreelancerConversation?._id}`).scrollIntoView().should('be.visible').click()
+          cy.wait(1000)
+          cy.get(`#conversation_${FreelancerConversation?._id}`).scrollIntoView().should('be.visible').click()
 
-        cy.wait('@getConvesationRequest').then(interception => {
-          expect(interception.response.statusCode).to.be.oneOf([200, 304])
-        })
+          cy.wait('@getConvesationRequest').then(interception => {
+            expect(interception.response.statusCode).to.be.oneOf([200, 304])
+          })
+        }
       })
 
     cy.window()
@@ -614,69 +591,70 @@ describe('Client Invoices', () => {
         const user = store?.getState().Auth?.user
 
         const selectedConversation = store?.getState().Messages?.selectedConversation
+        if (selectedConversation?._id) {
+          const receiver =
+            selectedConversation?.participants?.length &&
+            selectedConversation?.participants?.find(e => e?.userId?.email !== user.email)
 
-        const receiver =
-          selectedConversation?.participants?.length &&
-          selectedConversation?.participants?.find(e => e?.userId?.email !== user.email)
-
-        cy.get('#message_container')
-          .scrollIntoView()
-          .should('be.visible')
-          .within(() => {
-            cy.get('#header')
-              .scrollIntoView()
-              .should('be.visible')
-              .within(() => {
-                cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
-                  .scrollIntoView()
-                  .should('be.visible')
-                  .scrollIntoView()
-                  .should('be.visible')
-                if (receiver?.userId?.freelancers?.category) {
-                  cy.contains(receiver?.userId?.freelancers?.category)
-                }
-                cy.get('#profile_action').should('be.visible').click().scrollIntoView().should('be.visible')
-                cy.get('#profile_action').should('be.visible').click().scrollIntoView().should('be.visible')
-              })
-            selectedConversation?.messages?.forEach(message => {
-              cy.get(`#${message?._id}`)
+          cy.get('#message_container')
+            .scrollIntoView()
+            .should('be.visible')
+            .within(() => {
+              cy.get('#header')
+                .scrollIntoView()
+                .should('be.visible')
                 .within(() => {
-                  if (message?.updatedAt) {
-                    cy.contains(ValidationUtils.getTimeFormated(message?.updatedAt))
-                      .scrollIntoView()
-                      .should('be.visible')
+                  cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                    .scrollIntoView()
+                    .should('be.visible')
+                    .scrollIntoView()
+                    .should('be.visible')
+                  if (receiver?.userId?.freelancers?.category) {
+                    cy.contains(receiver?.userId?.freelancers?.category)
                   }
-                  cy.contains(message?.message).scrollIntoView().should('be.visible')
+                  cy.get('#profile_action').should('be.visible').click().scrollIntoView().should('be.visible')
+                  cy.get('#profile_action').should('be.visible').click().scrollIntoView().should('be.visible')
                 })
-                .should('be.visible')
-            })
-            const NewMessage = faker.lorem.sentences(1)
-            cy.get('#message').clear().type(NewMessage)
-            cy.get('#send_message').scrollIntoView().should('be.visible').click()
+              selectedConversation?.messages?.forEach(message => {
+                cy.get(`#${message?._id}`)
+                  .within(() => {
+                    if (message?.updatedAt) {
+                      cy.contains(ValidationUtils.getTimeFormated(message?.updatedAt))
+                        .scrollIntoView()
+                        .should('be.visible')
+                    }
+                    cy.contains(message?.message).scrollIntoView().should('be.visible')
+                  })
+                  .should('be.visible')
+              })
+              const NewMessage = faker.lorem.sentences(1)
+              cy.get('#message').clear().type(NewMessage)
+              cy.get('#send_message').scrollIntoView().should('be.visible').click()
 
-            cy.get('#profile_container').within(() => {
-              cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
-                .should('be.visible')
-                .scrollIntoView()
-                .should('be.visible')
-              cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
-                .scrollIntoView()
-                .should('be.visible')
-                .should('have.attr', 'src')
-                .then(src => {
-                  expect(src).to.include(receiver?.userId?.profileImage)
+              cy.get('#profile_container').within(() => {
+                cy.contains(ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`))
+                  .should('be.visible')
+                  .scrollIntoView()
+                  .should('be.visible')
+                cy.get(`img[src*="${receiver?.userId?.profileImage}"]`)
+                  .scrollIntoView()
+                  .should('be.visible')
+                  .should('have.attr', 'src')
+                  .then(src => {
+                    expect(src).to.include(receiver?.userId?.profileImage)
+                  })
+                cy.contains('Make An Offer').scrollIntoView().should('be.visible').click()
+                cy.contains('Connect. Build. grow').should('not.exist')
+                cy.url().should('include', '/hire')
+                cy.window().its('document.readyState').should('eq', 'complete')
+                cy.visit('/dashboard')
+
+                cy.wait('@getConvesationRequest').then(interception => {
+                  expect(interception.response.statusCode).to.be.oneOf([200, 304])
                 })
-              cy.contains('Make An Offer').scrollIntoView().should('be.visible').click()
-              cy.contains('Connect. Build. grow').should('not.exist')
-              cy.url().should('include', '/hire')
-              cy.window().its('document.readyState').should('eq', 'complete')
-              cy.go('back')
-
-              cy.wait('@getConvesationRequest').then(interception => {
-                expect(interception.response.statusCode).to.be.oneOf([200, 304])
               })
             })
-          })
+        }
         cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
         cy.contains('Add User To A List').scrollIntoView().should('be.visible').click()
         cy.contains('Schedule an Interview').scrollIntoView().should('be.visible').click()

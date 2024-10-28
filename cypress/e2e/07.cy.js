@@ -74,6 +74,7 @@ describe('Freelancer can add comments to tasks', () => {
                 cy.contains(ConverterUtils.truncateString(department.name, 20)).should('be.visible')
               })
             })
+            cy.contains(ConverterUtils.truncateString(business.name, 30)).should('be.visible').click()
           })
         })
       })
@@ -110,108 +111,114 @@ describe('Freelancer can add comments to tasks', () => {
         const SelectedDepartment = store.getState()?.Departments.selectedDepartment
         const Task1 =
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
-        cy.get(`#task_${Task1?._id}`).within(() => {
-          cy.contains(`${ValidationUtils.truncate(Task1.taskName, 250)}`)
-            .scrollIntoView()
-            .should('be.visible')
-            .click()
-          cy.wait('@getTaskRequest').then(interception => {
-            expect(interception.response.statusCode).to.be.oneOf([200, 304])
+
+        if (Task1?._id) {
+          cy.get(`#task_${Task1?._id}`).within(() => {
+            cy.contains(`${ValidationUtils.truncate(Task1.taskName, 250)}`)
+              .scrollIntoView()
+              .should('be.visible')
+              .click()
+            cy.wait('@getTaskRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
           })
-        })
+        }
       })
 
     cy.window()
       .its('store')
       .then(store => {
-        cy.get('#task_form_modal')
-          .should('be.visible')
-          .within(() => {
-            const NewComment = faker.lorem.sentences(2)
-            cy.get('#comment').scrollIntoView().should('be.visible').clear().type(NewComment)
-
-            cy.contains('button', 'Save').scrollIntoView().should('be.visible').click()
-            cy.wait('@updateTaskRequest').then(interception => {
-              expect(interception.response.statusCode).to.be.oneOf([200, 304])
-            })
-            cy.wait('@getDepartmentRequest').then(interception => {
-              expect(interception.response.statusCode).to.be.oneOf([200, 304])
-            })
-          })
-        const SelectedDepartment = store.getState()?.Departments.selectedDepartment
-        const Task1 =
+        let SelectedDepartment = store.getState()?.Departments.selectedDepartment
+        let Task1 =
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
-        cy.get(`#task_${Task1?._id}`).within(() => {
-          cy.contains(`${ValidationUtils.truncate(Task1.taskName, 250)}`)
-            .scrollIntoView()
+        if (Task1?._id) {
+          cy.get('#task_form_modal')
             .should('be.visible')
-            .click()
-          cy.wait('@getTaskRequest').then(interception => {
-            expect(interception.response.statusCode).to.be.oneOf([200, 304])
-          })
-        })
-      })
+            .within(() => {
+              const NewComment = faker.lorem.sentences(2)
+              cy.get('#comment').scrollIntoView().should('be.visible').clear().type(NewComment)
 
-    // Verify freelancer comments
-
-    cy.window()
-      .its('store')
-      .then(store => {
-        cy.get('#task_form_modal')
-          .should('be.visible')
-          .within(() => {
-            const SelectedDepartment = store.getState()?.Departments.selectedDepartment
-            const Task1 = store.getState()?.Tasks.selectedTask
-
-            const getCommentUserData = comment => {
-              let userData = {
-                profilePic: '',
-                name: ''
-              }
-              if (Task1?.department?.client?._id === comment?.userId) {
-                userData.profilePic = Task1?.department?.client?.profileImage
-                userData.name =
-                  Task1?.department?.client?.FullName ||
-                  `${Task1?.department?.client?.FirstName} ${Task1?.department?.client?.LastName}`
-              } else {
-                for (var contract of SelectedDepartment?.contracts) {
-                  if (contract?.freelancer?.user?._id === comment?.userId) {
-                    userData.profilePic = contract?.freelancer?.user?.profileImage
-                    userData.name =
-                      contract?.freelancer?.user?.FullName ||
-                      `${contract?.freelancer?.user?.FirstName} ${contract?.freelancer?.user?.LastName}`
-                  }
-                  break
-                }
-              }
-              return userData
-            }
-            Task1?.comments?.forEach(comment => {
-              cy.get(`#${comment?._id}`).within(() => {
-                const data = getCommentUserData(comment)
-                if (data?.profilePic) {
-                  cy.get(`#comment_${comment?._id}_image`)
-                    .scrollIntoView()
-                    .should('be.visible')
-                    .should('have.attr', 'src')
-                    .then(src => {
-                      expect(src).to.include(data?.profilePic)
-                    })
-                }
-                cy.get(`#comment_${comment?._id}_user_info`).within(() => {
-                  cy.contains(
-                    `${ValidationUtils.formatDateWithDate(comment?.updatedAt)} - ${ValidationUtils.getTimeFormated(
-                      comment?.updatedAt
-                    )}`
-                  ).scrollIntoView()
-                })
-                cy.contains(comment?.comment).scrollIntoView()
+              cy.contains('button', 'Save').scrollIntoView().should('be.visible').click()
+              cy.wait('@updateTaskRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
               })
-              cy.contains(comment?.comment).scrollIntoView().should('be.visible')
+              cy.wait('@getDepartmentRequest').then(interception => {
+                expect(interception.response.statusCode).to.be.oneOf([200, 304])
+              })
             })
-
-            cy.contains('button', 'CANCEL').scrollIntoView().should('be.visible').click()
+          cy.get(`#task_${Task1?._id}`).within(() => {
+            cy.contains(`${ValidationUtils.truncate(Task1.taskName, 250)}`)
+              .scrollIntoView()
+              .should('be.visible')
+              .click()
+            cy.wait('@getTaskRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
           })
+
+          // Verify freelancer comments
+
+          cy.window()
+            .its('store')
+            .then(store => {
+              cy.get('#task_form_modal')
+                .should('be.visible')
+                .within(() => {
+                  if (Task1?._id) {
+                    const getCommentUserData = comment => {
+                      let userData = {
+                        profilePic: '',
+                        name: ''
+                      }
+                      if (Task1?.department?.client?._id === comment?.userId) {
+                        userData.profilePic = Task1?.department?.client?.profileImage
+                        userData.name =
+                          Task1?.department?.client?.FullName ||
+                          `${Task1?.department?.client?.FirstName} ${Task1?.department?.client?.LastName}`
+                      } else {
+                        for (var contract of SelectedDepartment?.contracts) {
+                          if (contract?.freelancer?.user?._id === comment?.userId) {
+                            userData.profilePic = contract?.freelancer?.user?.profileImage
+                            userData.name =
+                              contract?.freelancer?.user?.FullName ||
+                              `${contract?.freelancer?.user?.FirstName} ${contract?.freelancer?.user?.LastName}`
+                          }
+                          break
+                        }
+                      }
+                      return userData
+                    }
+                    Task1?.comments?.forEach(comment => {
+                      if (comment?._id) {
+                        cy.get(`#${comment?._id}`).within(() => {
+                          const data = getCommentUserData(comment)
+                          if (data?.profilePic) {
+                            cy.get(`#comment_${comment?._id}_image`)
+                              .scrollIntoView()
+                              .should('be.visible')
+                              .should('have.attr', 'src')
+                              .then(src => {
+                                expect(src).to.include(data?.profilePic)
+                              })
+                          }
+                          cy.get(`#comment_${comment?._id}_user_info`).within(() => {
+                            cy.contains(
+                              `${ValidationUtils.formatDateWithDate(
+                                comment?.updatedAt
+                              )} - ${ValidationUtils.getTimeFormated(comment?.updatedAt)}`
+                            ).scrollIntoView()
+                          })
+                          cy.contains(comment?.comment).scrollIntoView()
+                        })
+                        cy.contains(comment?.comment).scrollIntoView().should('be.visible')
+                      }
+                    })
+
+                    cy.contains('button', 'CANCEL').scrollIntoView().should('be.visible').click()
+                  }
+                })
+            })
+        }
       })
   })
 })

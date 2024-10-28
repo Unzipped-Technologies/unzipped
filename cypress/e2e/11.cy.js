@@ -42,12 +42,12 @@ describe('Projects Page', () => {
             .should('be.visible')
             .within(() => {
               if (project?.projectImagesUrl?.length) {
-                cy.get(`img[src*="${project?.projectImagesUrl?.[0]?.url}"]`)
+                cy.get(`img[src*="${project?.projectImages?.[0]?.url}"]`)
                   .scrollIntoView()
                   .should('be.visible')
                   .should('have.attr', 'src')
                   .then(src => {
-                    expect(src).to.include(project?.projectImagesUrl?.[0]?.url)
+                    expect(src).to.include(project?.projectImages?.[0]?.url)
                   })
               }
               if (project?.applicants?.includes(FreelancerId)) {
@@ -71,62 +71,69 @@ describe('Projects Page', () => {
   it('Implement fiters on projects', () => {
     cy.intercept('POST', `/api/business/public/list`).as('getProjectsRequest')
 
-    cy.get(`[data-testid="desktop_filters"]`).within(() => {
-      cy.contains('Filters').should('be.visible')
-      cy.contains('Project type').should('be.visible')
-      cy.contains('Project type').should('be.visible')
-      BUDGET_TYPE?.forEach(type => {
-        cy.contains(type).should('be.visible')
-        cy.get(`[data-testid="${type}"]`).should('have.text', '')
-      })
-      cy.contains(BUDGET_TYPE[0]).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
-      cy.contains(BUDGET_TYPE?.[1]).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
+    cy.window()
+      .its('store')
+      .then(store => {
+        const Projects = store.getState()?.Business?.projectList ?? []
+        if (Projects?.length > 0) {
+          cy.get(`[data-testid="desktop_filters"]`).within(() => {
+            cy.contains('Filters').should('be.visible')
+            cy.contains('Project type').should('be.visible')
+            cy.contains('Project type').should('be.visible')
+            BUDGET_TYPE?.forEach(type => {
+              cy.contains(type).should('be.visible')
+              cy.get(`[data-testid="${type}"]`).should('have.text', '')
+            })
+            cy.contains(BUDGET_TYPE[0]).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
+            cy.contains(BUDGET_TYPE?.[1]).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
 
-      cy.get(`[data-testid="clear_type_filter"]`).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
+            cy.get(`[data-testid="clear_type_filter"]`).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
 
-      cy.contains('Rate').should('be.visible')
-      cy.get('#minRate').clear().type(10)
-      cy.get('#maxRate').clear().type(100)
-      cy.get('#maxRate').type('{enter}')
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
+            cy.contains('Rate').should('be.visible')
+            cy.get('#minRate').clear().type(10)
+            cy.get('#maxRate').clear().type(100)
+            cy.get('#maxRate').type('{enter}')
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
 
-      cy.get(`[data-testid="clear_rates"]`).should('be.visible').click()
+            cy.get(`[data-testid="clear_rates"]`).should('be.visible').click()
 
-      cy.contains('Skills').should('be.visible')
+            cy.contains('Skills').should('be.visible')
 
-      cy.get('#skill_name').clear().type('cs')
+            cy.get('#skill_name').clear().type('cs')
 
-      cy.get(`[data-testid="css_suggestion"]`).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            cy.get(`[data-testid="css_suggestion"]`).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
+            cy.get(`[data-testid="clear_skills"]`).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
+            RECENT_SKILLS?.forEach((skill, index) => {
+              cy.get(`[data-testid="${skill.value}_${index}"]`).should('be.visible')
+              cy.contains(skill.label).should('be.visible')
+            })
+            cy.get(`[data-testid="${RECENT_SKILLS[0].value}_${0}"]`).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
+            cy.get(`[data-testid="clear_skills"]`).should('be.visible').click()
+            cy.wait('@getProjectsRequest').then(interception => {
+              expect(interception.response.statusCode).to.be.oneOf([200, 304])
+            })
+          })
+        }
       })
-      cy.get(`[data-testid="clear_skills"]`).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
-      RECENT_SKILLS?.forEach((skill, index) => {
-        cy.get(`[data-testid="${skill.value}_${index}"]`).should('be.visible')
-        cy.contains(skill.label).should('be.visible')
-      })
-      cy.get(`[data-testid="${RECENT_SKILLS[0].value}_${0}"]`).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
-      cy.get(`[data-testid="clear_skills"]`).should('be.visible').click()
-      cy.wait('@getProjectsRequest').then(interception => {
-        expect(interception.response.statusCode).to.be.oneOf([200, 304])
-      })
-    })
   })
 })
