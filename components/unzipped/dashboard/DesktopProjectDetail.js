@@ -10,6 +10,7 @@ import { MdCreditCard } from 'react-icons/md'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
 import { useRouter } from 'next/router'
+import Carousel from 'react-material-ui-carousel'
 
 import { Image } from '../../ui'
 import Badge from '../../ui/Badge'
@@ -248,8 +249,51 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       <TEXT padding="20px 0px 20px 0px" fontWeight="bolder" fontSize="18px" lineHeight="23.44px">
                         Project Image
                       </TEXT>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
-                        {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-around',
+                          width: '50%',
+                          margin: 'auto',
+                          gap: '10px'
+                        }}>
+                        <Carousel
+                          NavButton={({ onClick, className, style, next, prev }) => {
+                            // Other logic
+
+                            return (
+                              <>
+                                <button
+                                  onClick={onClick}
+                                  className="Carousel-button"
+                                  style={style}
+                                  aria-label="navigate">
+                                  {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                                  {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                                </button>
+                              </>
+                            )
+                          }}>
+                          {projectDetails &&
+                            projectDetails?.projectImagesUrl?.length > 0 &&
+                            projectDetails.projectImagesUrl.map((item, i) => {
+                              return (
+                                <div key={i}>
+                                  {/* <div className="card-container-C">
+                                    <div className="card-item-c">
+                                      <div className=" card-avatar">
+                                        <div className="img-container-1 "> */}
+                                  <img alt="..." style={{ width: '100%' }} src={item.url}></img>
+                                  {/* </div>
+                                      </div>
+                                    </div>
+                                  </div> */}
+                                </div>
+                              )
+                            })}
+                        </Carousel>
+                        {/* {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
                           projectDetails.projectImagesUrl.map((item, index) => (
                             <Image
                               src={item.url}
@@ -264,7 +308,7 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                           <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
                             N/A
                           </TEXT>
-                        )}
+                        )} */}
                       </div>
                     </ProjectDetail>
                   </div>
