@@ -274,6 +274,37 @@ router.delete(
     }
   }
 )
+router.get(
+  '/address/:userId',
+  requireLogin,
+  async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const address = await businessHelper.getBusinessAddressByUserId(userId);
+      if (!address) throw Error('Business address not found');
+      res.json(address);
+    } catch (e) {
+      res.status(400).json({ msg: e.message });
+    }
+  }
+);
+
+
+router.patch(
+  '/address/:userId',
+  requireLogin,
+  async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const addressData = req.body;
+      const updatedAddress = await businessHelper.updateBusinessAddressByUserId(userId, addressData);
+      if (!updatedAddress) throw Error('Failed to update business address');
+      res.json(updatedAddress);
+    } catch (e) {
+      res.status(400).json({ msg: e.message });
+    }
+  }
+);
 
 
 module.exports = router

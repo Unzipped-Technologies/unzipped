@@ -186,24 +186,24 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             name: { $regex: regexQuery },
             ...(filter?.skill?.length > 0
               ? {
-                  requiredSkills: {
-                    $elemMatch: {
-                      $regex: new RegExp(regexPattern, 'i')
-                    }
+                requiredSkills: {
+                  $elemMatch: {
+                    $regex: new RegExp(regexPattern, 'i')
                   }
                 }
+              }
               : {}),
             ...(filter?.projectBudgetType && {
               projectBudgetType: { $regex: regexType }
             }),
             ...(filter?.minRate &&
               +filter?.minRate > 0 && {
-                budget: { $gte: +filter?.minRate }
-              }),
+              budget: { $gte: +filter?.minRate }
+            }),
             ...(filter?.maxRate &&
               +filter?.maxRate > 0 && {
-                budget: { $lte: +filter?.maxRate }
-              }),
+              budget: { $lte: +filter?.maxRate }
+            }),
             ...filters
           }
         },
@@ -235,7 +235,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             goals: 1,
             requiredSkills: 1,
             projectBudgetType: 1,
-            isArchived:1
+            isArchived: 1
           }
         },
         {
@@ -657,8 +657,42 @@ const constructBoardObject = arr => {
   })
   return resultObject
 }
+const getBusinessAddressByUserId = async (userId) => {
+  try {
+    const address = await business.findOne({ userId }).select(
+      'businessAddressLineOne businessAddressLineTwo businessCountry businessCity businessState businessZip businessPhone'
+    );
+    return address;
+  } catch (error) {
+    console.error('Error retrieving business address by user ID:', error);
+    throw error;
+  }
+};
+const updateBusinessAddressByUserId = async (userId, addressData) => {
+  try {
+    const updatedAddress = await business.findOneAndUpdate(
+      { userId },
+      {
+        businessAddressLineOne: addressData.businessAddressLineOne,
+        businessAddressLineTwo: addressData.businessAddressLineTwo,
+        businessCountry: addressData.businessCountry,
+        businessCity: addressData.businessCity,
+        businessState: addressData.businessState,
+        businessZip: addressData.businessZip,
+        businessPhone: addressData.businessPhone,
+      },
+      { new: true, fields: 'businessAddressLineOne businessAddressLineTwo businessCountry businessCity businessState businessZip businessPhone' }
+    );
+    return updatedAddress;
+  } catch (error) {
+    console.error('Error updating business address by user ID:', error);
+    throw error;
+  }
+};
 
 module.exports = {
+  getBusinessAddressByUserId,
+  updateBusinessAddressByUserId,
   createBusiness,
   listBusinesses,
   getBusinessById,

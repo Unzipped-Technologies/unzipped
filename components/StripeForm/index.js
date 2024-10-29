@@ -3,6 +3,9 @@ import styled from 'styled-components'
 import 'simplebar/dist/simplebar.min.css'
 import { loadStripe } from '@stripe/stripe-js'
 import { CircularProgress } from '@material-ui/core'
+import { useSelector } from 'react-redux';
+import { updateSubscriptionForm } from '../../redux/Auth/actions'
+import { useDispatch } from 'react-redux';
 
 import Button from '../ui/Button'
 import FormField from '../ui/FormField'
@@ -103,7 +106,7 @@ const ButtonTwo = styled.button`
 const PaymentMethod = props => {
   const stripe = loadStripe(
     // `${process.env.STRIPE_PUBLISHABLE_KEY}`
-    'pk_test_51M4xI7HVpfsarZmBjdvRszIxG3sAlt3nG0ewT8GKm3nveinFofkmwQPwsw50xvuJMIMZ6yFnhuCDg5hSsynmKdxw00ZGY72yog'
+    'pk_test_51N8neBKbRhZhJxMgyOpWY0pyTFdJ9rb9mIIgjor3IaCfRwU5IGCP00Q9aWH629MCbML22vJg7AVOE3Etm9vk4lUs00cMojHSRC'
   )
   return (
     <Elements stripe={stripe}>
@@ -116,7 +119,10 @@ const PaymentForm = ({ form, user, updateSubscription, onClick, loading, address
   const [isUpdated, setIsUpdated] = useState(false)
   const [isError, setIsError] = useState(null)
   const stripe = useStripe()
+  const userInfo = useSelector(state => state.Auth?.user);
+  const token = useSelector(state => state.Auth.token);
   const elements = useElements()
+  const dispatch = useDispatch();
 
   const [openAddress, setOpenAddress] = useState(false)
   const [isSmallWindow, setIsSmallWindow] = useState(false)
@@ -138,65 +144,73 @@ const PaymentForm = ({ form, user, updateSubscription, onClick, loading, address
     })
   }
 
+  const validateAddressDetails = (details) => {
+    for (const [key, value] of Object.entries(details)) {
+      if (!value) {
+        return { valid: false, field: key };
+      }
+    }
+    return { valid: true };
+  };
+
   const PaymentFormUpdate = () => {
     onClick && onClick()
     setIsUpdated(true)
   }
 
-  const handleSubmit = async event => {
-    // Block native form submission.
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    if (!stripe || !elements) {
-      // Stripe.js has not loaded yet. Make sure to disable
-      // form submission until Stripe.js has loaded.
-      return
-    }
+    if (!stripe || !elements) return;
 
     try {
-      const name = `${document.getElementById('name').value} `
-      const line1 = document.getElementById('addressLineOne').value
-      const line2 = document.getElementById('addressLineTwo').value
-      const city = document.getElementById('city').value
-      const state = document.getElementById('state').value
-      const postal_code = document.getElementById('zipCode').value
-      // Get a reference to a mounted CardElement. Elements knows how
-      // to find your CardElement because there can only ever be one of
-      // each type of element.
-      const cardElement = elements.getElement(CardNumberElement)
+      const stripeFlag = validateAddressDetails(cardDetails);
+      if (!stripeFlag.valid) {
+        console.log('All fields are required', stripeFlag);
+        return;
+      }
 
-      // Use your card Element with other Stripe.js APIs
+      const cardElement = elements.getElement(CardNumberElement);
+
+
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
         billing_details: {
-          name,
-          email: user?.email,
+          name: cardDetails.name,
+          email: userInfo?.email,
           address: {
-            line1,
-            line2,
-            city,
-            state,
-            postal_code
+            line1: cardDetails.lineOne,
+            line2: cardDetails.lineTwo,
+            city: cardDetails.city,
+            state: cardDetails.state,
+            postal_code: cardDetails.zip,
+            country: cardDetails.country,
           }
         }
-      })
-      PaymentFormUpdate()
+      });
+
       if (error) {
-        setIsError(error?.message)
-      } else {
-        updateSubscription({
-          paymentMethod: {
-            ...form?.paymentMethod,
-            card: {
-              ...paymentMethod
-            }
-          }
-        })
+        setIsError(error.message);
+        return;
       }
+
+      const body = JSON.stringify({
+        paymentMethod: {
+          ...form?.paymentMethod,
+          card: paymentMethod
+        },
+        userId: userInfo?._id,
+        token
+      });
+
+
+      dispatch(updateSubscriptionForm(body));
+      PaymentFormUpdate();
+
     } catch (e) {
-      console.log(e)
+      console.error('Error on handle__submit__form:', e.message);
     }
-  }
+  };
 
   useEffect(() => {
     if (width <= 680) {
@@ -349,7 +363,7 @@ const PaymentForm = ({ form, user, updateSubscription, onClick, loading, address
                   margin
                   fontSize="16px"
                   noMargin
-                  width="100%"
+                  width="70%"
                   id="zipCode"
                   zIndexUnset
                   onChange={e => updateForm('zip', e.target.value)}
@@ -389,7 +403,7 @@ const PaymentForm = ({ form, user, updateSubscription, onClick, loading, address
             <AddressBox />
           )}
           {address ? <ButtonTwo onClick={() => setOpenAddress(true)}>update billing address</ButtonTwo> : <div></div>}
-          <Button type="submit" noBorder>
+          <Button type="button" onClick={(e) => handleSubmit(e)} noBorder>
             {loading ? (
               <Span data-testid="loading_spinner">
                 <CircularProgress size={18} />
@@ -403,5 +417,4 @@ const PaymentForm = ({ form, user, updateSubscription, onClick, loading, address
     </Container>
   )
 }
-
 export default PaymentMethod

@@ -57,13 +57,26 @@ const ButtonTwo = styled.div`
   position: relative;
 `
 
+const StyledBadge = styled.span`
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #3a3a3a;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 60px;
+  margin-right: 10px;
+`;
+
 const FormCard = ({ image, title, children, badge, isSelected, first, onClick }) => {
   return (
     <Container first={first} data-testid="address_card">
       {badge && (
-        <Badge color="grey" data-testid="badge">
+        <StyledBadge data-testid="badge">
           {badge}
-        </Badge>
+        </StyledBadge>
       )}
       <Row>
         {image && <Image src={image} alt="address_card_image" />}

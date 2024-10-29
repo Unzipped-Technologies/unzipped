@@ -5,6 +5,12 @@ import {
   AUTH_ERROR,
   LOGIN_USER_SUCCESS,
   UPDATE_USER_SUCCESS,
+  GET_ALL_CARDS_SUCCESS,
+  GET_ALL_CARDS_FAILED,
+  GET_BUSINESS_ADDRESS_SUCCESS,
+  GET_BUSINESS_ADDRESS_FAILED,
+  CREATE_BUSINESS_ADDRESS_SUCCESS,
+  CREATE_BUSINESS_ADDRESS_FAILED,
   LOGIN_USER_FAILED,
   LOGOUT_USER,
   CURRENT_USER,
@@ -84,15 +90,15 @@ const INIT_STATE = {
   subscriptionForm: {
     paymentFrequency: paymentFrequencyEnum.MONTHLY,
     stripeId: '',
-    BusinessAddressLineOne: '',
-    BusinessAddressLineTwo: '',
-    BusinessAddressLineCountry: '',
-    BusinessFirstName: '',
-    BusinessLastName: '',
-    BusinessAddressCity: '',
-    BusinessAddressState: '',
-    BusinessAddressZip: '',
-    BusinessAddressPhone: '',
+    businessAddress: {
+      BusinessAddressLineOne: '',
+      BusinessAddressLineTwo: '',
+      BusinessAddressCity: '',
+      BusinessAddressState: '',
+      BusinessAddressZip: '',
+      BusinessAddressCountry: '',
+      BusinessAddressPhone: ''
+    },
     paymentMethod: {
       BillingAddressLineOne: '',
       BillingAddressLineTwo: '',
@@ -261,12 +267,17 @@ const Auth = (state = INIT_STATE, action) => {
     case SELECT_A_PLAN:
       return { ...state, loading: false, ...action.payload }
     case UPDATE_SUBSCRIPTION_FORM:
-      const disabled = setDisabled({ ...state?.subscriptionForm, ...action.payload })
+      const updatedPaymentMethod = action.payload.paymentMethod || state.subscriptionForm.paymentMethod;
+      const disabled = setDisabled({ ...state.subscriptionForm, paymentMethod: updatedPaymentMethod });
       return {
         ...state,
         loading: false,
         disabled: disabled,
-        subscriptionForm: { ...state.subscriptionForm, ...action.payload }
+        subscriptionForm: {
+          ...state.subscriptionForm,
+          paymentMethod: updatedPaymentMethod,
+          ...action.payload
+        }
       }
     case SUBSCRIPTION_CREATED:
       return { ...state, loading: false, disabled: true }
@@ -374,6 +385,58 @@ const Auth = (state = INIT_STATE, action) => {
         ...state,
         calendarSuccess: null
       }
+
+      case GET_ALL_CARDS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          subscriptionForm: {
+            ...state.subscriptionForm,
+            paymentMethod: action.payload
+          },
+          error: { data: '' }
+        };
+      case GET_ALL_CARDS_FAILED:
+        return {
+          ...state,
+          loading: false,
+          error: { data: action.payload }
+        };
+  
+      case GET_BUSINESS_ADDRESS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          subscriptionForm: {
+            ...state.subscriptionForm,
+            businessAddress: action.payload
+          }
+        };
+  
+      case GET_BUSINESS_ADDRESS_FAILED:
+        return {
+          ...state,
+          loading: false,
+          error: { data: action.payload }
+        };
+  
+      case CREATE_BUSINESS_ADDRESS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          subscriptionForm: {
+            ...state.subscriptionForm,
+            businessAddress: action.payload
+          },
+          error: { data: '' }
+        };
+  
+      case CREATE_BUSINESS_ADDRESS_FAILED:
+        return {
+          ...state,
+          loading: false,
+          error: { data: action.payload }
+        };
     default:
       return state
   }

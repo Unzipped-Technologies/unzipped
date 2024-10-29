@@ -76,10 +76,25 @@ const ButtonTwo = styled.div`
   }
 `
 
+const CustomBadge = styled.div`
+  display: inline-block;
+  padding: 4px 12px; /* Adjust padding to better match the screenshot */
+  font-size: 12px;
+  font-weight: bold;
+  color: #3a3a3a; 
+  background-color: #f0f0f0; 
+  border-radius: 12px;
+  text-align: center;
+  min-width: 60px;
+  margin-right: 10px;
+  
+`;
+
+
 const FormCard = ({ image, title, children, badge, isSelected, first, onClick }) => {
   return (
     <Container first={first} data-testid="form_card">
-      {badge && <Badge color="grey">{badge}</Badge>}
+      {badge && <CustomBadge color="grey">{badge}</CustomBadge>}
       <Row>
         {image && <Image src={image} alt="form_card_image" />}
         <Title>{title}</Title>

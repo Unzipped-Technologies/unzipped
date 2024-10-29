@@ -166,122 +166,286 @@ const receiptMail = async (obj, user) => {
 }
 
 const createSubscription = async (req, obj, user) => {
-  // calculate date for free trial end
-  const trialEnd = new Date().setDate(new Date().getDate() + 7)
+  console.log("Starting createSubscription...");
 
-  // get users ip address
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null
-  const [existinguser, subscriptionType] = await Promise.all([
-    UserModel.findByIdAndUpdate(user, { $set: { ...obj } }).select('-password'),
-    ProductModel.findOne({ subscriptionType: obj.selectedPlan, paymentFrequency: obj.paymentFrequency })
-  ])
-  let customerId = existinguser.stripeId
+  // Calculate date for free trial end
+  const trialEnd = new Date().setDate(new Date().getDate() + 7);
+  console.log("Calculated trial end date:", trialEnd);
 
-  // if no customer Id then create customer
-  if (!existinguser.stripeId) {
-    const customer = await stripe.customers.create({
-      name: obj.paymentMethod.card.billing_details.name,
-      email: existinguser.email,
-      payment_method: obj.paymentMethod.card.id
-    })
-    customerId = customer.id
-    await UserModel.updateOne({ _id: user }, { $set: { stripeId: customer.id, isUserSubscribed: true } })
-  }
+  // Get user’s IP address
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+  console.log("User IP address:", ip);
 
-  // create user subscription, and a payment history entry
-  const [newSubscription] = await Promise.all([
-    stripe.subscriptions.create({
-      customer: customerId,
-      items: [{ price: subscriptionType?.stripePriceId }],
-      trial_end: new Date(trialEnd),
-      default_payment_method: obj.paymentMethod.card.id,
-      metadata: {
+  try {
+    const [existinguser, subscriptionType] = await Promise.all([
+      UserModel.findByIdAndUpdate(user, { $set: { stripeId: obj.stripeId, isUserSubscribed: obj.isUserSubscribed } }, { new: true }).select('-password'),
+      ProductModel.findOne({ subscriptionType: obj.selectedPlan, paymentFrequency: obj.paymentFrequency })
+    ]);
+    
+    if (!subscriptionType) {
+      throw new Error("Subscription type not found.");
+    }
+
+    let customerId = existinguser.stripeId;
+
+    // Check if primary payment method exists
+    const primaryPaymentMethod = obj.paymentMethod?.[0]?.paymentMethod;
+    if (!primaryPaymentMethod) {
+      throw new Error("Primary payment method not found.");
+    }
+
+    // Create new customer if no customer ID exists
+    if (!customerId) {
+      console.log("Customer ID not found, creating new customer...");
+      const customer = await stripe.customers.create({
+        name: primaryPaymentMethod?.billing_details?.name || 'User',
+        email: existinguser.email,
+        payment_method: primaryPaymentMethod?.id
+      });
+      console.log("Created new customer with ID:", customer.id);
+
+      customerId = customer.id;
+      await UserModel.updateOne({ _id: user }, { $set: { stripeId: customer.id, isUserSubscribed: true } });
+    } else {
+      console.log("Existing customer ID:", customerId);
+    }
+
+    // Create user subscription and payment history entry
+    console.log("Creating user subscription and payment history...");
+    const [newSubscription] = await Promise.all([
+      stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: subscriptionType.stripePriceId }],
+        trial_end: Math.floor(trialEnd / 1000),
+        default_payment_method: primaryPaymentMethod.id,
+        metadata: {
+          userId: user,
+          stripeId: customerId,
+          email: existinguser.email
+        }
+      }).catch(err => console.error("Error creating subscription:", err)),
+      SubscriptionModel.create({
+        ...obj,
         userId: user,
         stripeId: customerId,
-        email: existinguser.email
-      }
-    }),
-    SubscriptionModel.create({
-      ...obj,
-      userId: user,
-      stripeId: customerId,
-      plan: obj.selectedPlan,
-      isBusiness: true,
-      paymentMethod: {
-        card: obj.paymentMethod.card.card.brand,
-        stripeId: obj.paymentMethod.card.id,
-        lastFour: obj.paymentMethod.card.card.last4
-      }
-    }),
-    PaymentHistoryModel.create({
-      userId: user,
-      ipAddress: ip,
-      paymentStatus: paymentStatusEnum.INITIATED,
-      paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
-      paymentAmount: subscriptionType.price
-    })
-  ])
-  const [updateUserModel, updateSubscriptionModel] = await Promise.all([
-    UserModel.findByIdAndUpdate(user, {
-      $set: {
-        trialEndDate: new Date(trialEnd),
-        phoneNumber: obj.BusinessAddressPhone,
-        stripeSubscription: newSubscription.id
-      }
-    }),
-    SubscriptionModel.findOneAndUpdate(
-      { userId: user },
-      {
-        $set: {
-          product: await ProductModel.findOne({
-            subscriptionType: obj.selectedPlan,
-            paymentFrequency: obj.paymentFrequency
-          }),
-          payments: await PaymentHistoryModel.find({ userId: user })
+        plan: obj.selectedPlan,
+        isBusiness: true,
+        paymentMethod: {
+          card: primaryPaymentMethod.card?.brand,
+          stripeId: primaryPaymentMethod.id,
+          lastFour: primaryPaymentMethod.card?.last4
         }
-      }
-    )
-      .select('userId product payments plan')
-      .populate([
-        {
-          path: 'userId',
-          model: 'users',
-          select: 'FirstName LastName email isUserSubscribed '
-        },
-        {
-          path: 'payments',
-          model: 'PaymentHistories',
-          select: 'paymentAmount paymentDate '
-        }
-      ])
-  ])
+      }),
+      PaymentHistoryModel.create({
+        userId: user,
+        ipAddress: ip,
+        paymentStatus: paymentStatusEnum.INITIATED,
+        paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
+        paymentAmount: subscriptionType.price
+      })
+    ]);
 
-  if (updateSubscriptionModel?.isUserSubscribed) {
-    const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan)
-    const benefits = getBenefits(updateSubscriptionModel.plan)
-    const userMailOpts = {
-      to: updateSubscriptionModel.userId.email,
-      subject: `🎉 Subscription Payment Confirmation -  ${subscriptionName}`,
-      templateId: 'd-4592da9ad3494cdca58fe07dd28b9f42',
-      dynamicTemplateData: {
-        firstName: updateSubscriptionModel?.userId?.FirstName ?? '',
-        lastName: updateSubscriptionModel?.userId?.LastName ?? '',
-        subscriptionName: subscriptionName,
-        amount: updateSubscriptionModel?.payments?.paymentAmount || 'N/A',
-        subscriptionLink: `${keys.redirectDomain}/subscribe`,
-        viewSubscription: `${keys.redirectDomain}/subscribe`,
-        paymentDate: updateSubscriptionModel?.payments?.paymentDate || new Date(),
-        benefits: benefits || 'N/A',
-        viewSubscriptionLink: `${keys.redirectDomain}/subscribe`,
-        manageSubscriptionLink: `${keys.redirectDomain}/subscribe`,
-        price: updateSubscriptionModel?.payments?.paymentAmount || 'N/A',
-        currentYear: new Date().getFullYear()
-      }
+
+    const [updateUserModel, updateSubscriptionModel] = await Promise.all([
+      UserModel.findByIdAndUpdate(user, {
+        $set: {
+          trialEndDate: new Date(trialEnd),
+          phoneNumber: obj.businessAddress?.businessPhone,
+          stripeSubscription: newSubscription?.id
+        }
+      }),
+      SubscriptionModel.findOneAndUpdate(
+        { userId: user },
+        {
+          $set: {
+            product: subscriptionType,
+            payments: await PaymentHistoryModel.find({ userId: user })
+          }
+        }
+      ).select('userId product payments plan').populate([
+        { path: 'userId', model: 'users', select: 'FirstName LastName email isUserSubscribed' },
+        { path: 'payments', model: 'PaymentHistories', select: 'paymentAmount paymentDate' }
+      ])
+    ]);
+    if (updateSubscriptionModel?.isUserSubscribed ) {
+      const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan);
+      const benefits = getBenefits(updateSubscriptionModel.plan);
+      const userMailOpts = {
+        to: updateSubscriptionModel.userId.email,
+        subject: `🎉 Subscription Payment Confirmation - ${subscriptionName}`,
+        templateId: 'd-4592da9ad3494cdca58fe07dd28b9f42',
+        dynamicTemplateData: {
+          firstName: updateSubscriptionModel?.userId?.FirstName || '',
+          lastName: updateSubscriptionModel?.userId?.LastName || '',
+          subscriptionName,
+          amount: updateSubscriptionModel?.payments?.paymentAmount || 'N/A',
+          subscriptionLink: `${keys.redirectDomain}/subscribe`,
+          paymentDate: updateSubscriptionModel?.payments?.paymentDate || new Date(),
+          benefits: benefits || 'N/A',
+          price: updateSubscriptionModel?.payments?.paymentAmount || 'N/A',
+          currentYear: new Date().getFullYear()
+        }
+      };
+      console.log("Sending subscription confirmation email...");
+      await Mailer.sendInviteMail(userMailOpts);
+      console.log("Email sent successfully.");
     }
-    await Mailer.sendInviteMail(userMailOpts)
+
+    console.log("Subscription creation completed successfully.");
+    return 'success';
+
+  } catch (error) {
+    console.error("Error in createSubscription:", error);
+    throw error;
   }
-  return 'success'
-}
+};
+
+
+
+
+// const createSubscription = async (req, obj, user) => {
+//   // Calculate the date for the free trial end
+//   const trialEnd = new Date().setDate(new Date().getDate() + 7);
+
+//   // Get the user's IP address
+//   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+
+//   // Validate and filter out unnecessary fields from `obj` before updating the user
+//   const updatedUserData = {
+//     selectedPlan: obj.selectedPlan,
+//     paymentFrequency: obj.paymentFrequency,
+//     paymentMethod: obj.paymentMethod,
+//     businessAddress: obj.businessAddress,
+//   };
+
+//   // Find the existing user and product, using only necessary fields
+//   const [existinguser, subscriptionType] = await Promise.all([
+//     UserModel.findByIdAndUpdate(user, { $set: updatedUserData }).select('-password'),
+//     ProductModel.findOne({ subscriptionType: obj.selectedPlan, paymentFrequency: obj.paymentFrequency }),
+//   ]);
+
+//   let customerId = existinguser.stripeId;
+
+//   // If no customerId exists, create a new Stripe customer
+//   if (!existinguser.stripeId) {
+//     const customer = await stripe.customers.create({
+//       name: obj.paymentMethod.billing_details.name,
+//       email: existinguser.email,
+//       payment_method: obj.paymentMethod.id,
+//     });
+//     customerId = customer.id;
+
+//     // Update the user's stripeId and subscription status in the database
+//     await UserModel.updateOne(
+//       { _id: user },
+//       { $set: { stripeId: customer.id, isUserSubscribed: true } }
+//     );
+//   }
+
+//   // Create the subscription and a payment history entry
+//   const [newSubscription] = await Promise.all([
+//     stripe.subscriptions.create({
+//       customer: customerId,
+//       items: [{ price: subscriptionType?.stripePriceId }],
+//       trial_end: Math.floor(trialEnd / 1000), // Stripe requires a timestamp in seconds
+//       default_payment_method: obj.paymentMethod.id,
+//       metadata: {
+//         userId: user,
+//         stripeId: customerId,
+//         email: existinguser.email,
+//       },
+//     }),
+
+//     // Create a new subscription record in your database
+//     SubscriptionModel.create({
+//       userId: user,
+//       stripeId: customerId,
+//       plan: obj.selectedPlan,
+//       isBusiness: true,
+//       paymentFrequency: obj.paymentFrequency,
+//       paymentMethod: {
+//         card: obj.paymentMethod.card.brand,
+//         stripeId: obj.paymentMethod.id,
+//         lastFour: obj.paymentMethod.card.last4,
+//       },
+//       businessAddress: obj.businessAddress,
+//     }),
+
+//     // Create a payment history entry
+//     PaymentHistoryModel.create({
+//       userId: user,
+//       ipAddress: ip,
+//       paymentStatus: paymentStatusEnum.INITIATED,
+//       paymentType: paymentTypeEnum.SUBSCRIPTION_CHARGE,
+//       paymentAmount: subscriptionType.price,
+//     }),
+//   ]);
+
+//   // Update user and subscription information with new trial date and subscription ID
+//   const [updateUserModel, updateSubscriptionModel] = await Promise.all([
+//     UserModel.findByIdAndUpdate(user, {
+//       $set: {
+//         trialEndDate: new Date(trialEnd),
+//         phoneNumber: obj.businessAddress.BusinessAddressPhone,
+//         stripeSubscription: newSubscription.id,
+//       },
+//     }),
+
+//     // Update subscription information
+//     SubscriptionModel.findOneAndUpdate(
+//       { userId: user },
+//       {
+//         $set: {
+//           product: await ProductModel.findOne({
+//             subscriptionType: obj.selectedPlan,
+//             paymentFrequency: obj.paymentFrequency,
+//           }),
+//           payments: await PaymentHistoryModel.find({ userId: user }),
+//         },
+//       }
+//     )
+//       .select('userId product payments plan')
+//       .populate([
+//         {
+//           path: 'userId',
+//           model: 'users',
+//           select: 'FirstName LastName email isUserSubscribed',
+//         },
+//         {
+//           path: 'payments',
+//           model: 'PaymentHistories',
+//           select: 'paymentAmount paymentDate',
+//         },
+//       ]),
+//   ]);
+
+//   // Send subscription confirmation email if user is subscribed
+//   if (updateSubscriptionModel?.userId.isUserSubscribed) {
+//     const subscriptionName = getSubscriptionName(updateSubscriptionModel.plan);
+//     const benefits = getBenefits(updateSubscriptionModel.plan);
+//     const userMailOpts = {
+//       to: updateSubscriptionModel.userId.email,
+//       subject: `🎉 Subscription Payment Confirmation - ${subscriptionName}`,
+//       templateId: 'd-4592da9ad3494cdca58fe07dd28b9f42',
+//       dynamicTemplateData: {
+//         firstName: updateSubscriptionModel?.userId?.FirstName ?? '',
+//         lastName: updateSubscriptionModel?.userId?.LastName ?? '',
+//         subscriptionName: subscriptionName,
+//         amount: updateSubscriptionModel?.payments[0]?.paymentAmount || 'N/A',
+//         paymentDate: updateSubscriptionModel?.payments[0]?.paymentDate || new Date(),
+//         benefits: benefits || 'N/A',
+//         viewSubscriptionLink: `${keys.redirectDomain}/subscribe`,
+//         manageSubscriptionLink: `${keys.redirectDomain}/subscribe`,
+//         currentYear: new Date().getFullYear(),
+//       },
+//     };
+//     await Mailer.sendInviteMail(userMailOpts);
+//   }
+
+//   return 'success';
+// };
+
+
 
 const subscriptionPayment = async (obj, user) => {
   const [current_user, UserSubscription] = await Promise.all([
@@ -597,6 +761,49 @@ const createAccountOnboarding = async (type, userId) => {
 
   return account
 }
+
+const createCard = async (userId, cardDetails) => {
+
+  const existingCard = await PaymentMethodModel.findOne({ userId });
+
+ 
+  if (existingCard) {
+    existingCard.isPrimary = false;
+    await existingCard.save(); 
+  }
+
+
+  const newCard = new PaymentMethodModel({
+    userId,
+    isPrimary: true,
+    isActive: true, 
+    paymentMethod: cardDetails,
+  });
+
+  await newCard.save();
+
+  return newCard; 
+};
+
+
+
+
+
+const getAllCards = async (userId) => {
+  try {
+    const userPaymentData = await PaymentMethodModel.find({ userId });
+
+    if (!userPaymentData || userPaymentData.length === 0) {
+      throw new Error('No payment methods found for this user.');
+    }
+
+    return userPaymentData;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
 
 const retreiveAccountInfo = async id => {
   // Create a new Stripe Connected Account for the user
@@ -957,6 +1164,8 @@ const getBenefits = plan => {
 }
 
 module.exports = {
+  getAllCards,
+  createCard,
   stripePayment,
   createPromo,
   getPromo,

@@ -53,6 +53,19 @@ const SubscriptionCard = ({
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
+  const isButtonEnabled =
+    subscriptionForm?.paymentMethod &&
+    subscriptionForm?.businessAddress &&
+    selectedPlan;
+
+
+  if (!isButtonEnabled) {
+    console.log("Button disabled due to missing parameters:");
+    if (!subscriptionForm?.paymentMethod) console.log("Missing: paymentMethod");
+    if (!subscriptionForm?.businessAddress) console.log("Missing: businessAddress");
+    if (!selectedPlan) console.log("Missing: selectedPlan");
+  }
+
   return (
     <Container data-testid="receipt_card">
       <WhiteCard height={(selectedPlan + 1) * 50 + 450 + 'px'} padding="10px">
@@ -72,7 +85,7 @@ const SubscriptionCard = ({
         </span>
 
         <ButtonContainer>
-          <Button disabled={disabled} noBorder block type="black" onClick={() => submitSubscription()}>
+          <Button noBorder block type="black" onClick={() => submitSubscription()} disabled={!isButtonEnabled}>
             START PLAN
           </Button>
         </ButtonContainer>

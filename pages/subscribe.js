@@ -13,7 +13,9 @@ import PaymentMethod from '../components/StripeForm'
 import { stripeBrandsEnum, stripeLogoEnum } from '../server/enum/paymentEnum'
 import AddressCard from '../components/AddressCard'
 import Notification from '../components/unzipped/dashboard/MobileNotification'
-
+import { getAllCards } from '../redux/Auth/actions';
+import { getBusinessAddress } from '../redux/Auth/actions';
+import { useDispatch } from 'react-redux';
 //redux
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -83,16 +85,21 @@ const Subscribe = ({
   updateSubscriptionForm,
   token,
   getPaymentMethods,
-  paymentMethods
+  paymentMethods,
+  businessAddress
 }) => {
-  const isPrimaryPayment = paymentMethods.find(item => item.isPrimary && parseInt(item.paymentType, 10) === 0)
+  const primaryPayment = Array.isArray(paymentMethods)
+    ? paymentMethods.find(item => item.isPrimary)
+    : paymentMethods.isPrimary ? paymentMethods : null;
+
   const updatedDate = ValidationUtils.addDaysToDate(
     user?.updatedAt ? new Date(user?.updatedAt) : new Date(),
     trialLength
   )
   const [isSelected, setIsSelected] = useState(false)
+  const [isAddressFormOpen, setIsAddressFormOpen] = useState(false);
   const month = ValidationUtils.getMonthInText(updatedDate)
-  const access = token?.access_token || user.cookie
+  const dispatch = useDispatch()
   const dateCode = `${month} ${new Date(updatedDate).getDate()}, ${new Date(updatedDate).getFullYear()}`
   const updateSubscription = data => {
     updateSubscriptionForm({
@@ -116,13 +123,33 @@ const Subscribe = ({
           lastFour: form?.card?.card?.last4
         }
       },
-      access
+      token
+
     )
   }
 
   useEffect(() => {
-    getPaymentMethods(token)
-  }, [])
+    if (user?._id) {
+      dispatch(getBusinessAddress(user._id, token));
+    }
+  }, [user, dispatch]);
+
+  useEffect(() => {
+    console.log("Payment Methods:", paymentMethods);
+  }, [paymentMethods]);
+
+
+  useEffect(() => {
+    console.log("primary Methods:", primaryPayment);
+  }, [primaryPayment]);
+
+
+
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(getAllCards(user?._id));
+    }
+  }, [user?._id]);
 
   return (
     <Container data-testid="subscribe_page">
@@ -139,28 +166,44 @@ const Subscribe = ({
             subscriptionForm={subscriptionForm}
             updateSubscription={updateSubscription}
           />
-          <BusinessAddress
-            form={form}
-            planCost={planCost}
-            subscriptionForm={subscriptionForm}
-            updateSubscription={updateSubscription}
-          />
-          <AddressCard
-            onClick={() => setIsSelected('address')}
-            title={`Business Address`}
-            isSelected={isSelected === 'address'}
-            image="/img/Unzipped-Primary-Logo.png"
-            badge="Address">
-            Business Address
-          </AddressCard>
-          {isPrimaryPayment ? (
+
+          {businessAddress ? (
+            <AddressCard
+              onClick={() => setIsSelected('address')}
+              title={`Business Address`}
+              isSelected={isSelected === 'address'}
+              image="/img/Unzipped-Primary-Logo.png"
+              badge="Address">
+              <BusinessAddress
+                selectedBusiness={businessAddress}
+                form={form}
+                planCost={planCost}
+                subscriptionForm={subscriptionForm}
+                updateSubscription={updateSubscription}
+                user={user}
+              />
+            </AddressCard>
+          ) : (
+            <BusinessAddress
+              selectedBusiness={businessAddress}
+              form={form}
+              planCost={planCost}
+              subscriptionForm={subscriptionForm}
+              updateSubscription={updateSubscription}
+              user={user}
+            />
+          )}
+
+
+          {primaryPayment ? (
             <FormCard
               badge="Primary"
-              image={getCardLogoUrl(isPrimaryPayment?.card)}
-              onClick={() => setIsSelected('payment')}
-              title={`${isPrimaryPayment?.card?.toUpperCase()} **** **** ${isPrimaryPayment?.lastFour}`}
-              isSelected={isSelected === 'payment'}>
-              <PaymentMethod address={isPrimaryPayment?.address} />
+              image={getCardLogoUrl(primaryPayment?.paymentMethod?.card?.brand || 'unknown')}
+              onClick={() => setIsSelected('primary')}
+              title={`${primaryPayment?.paymentMethod?.card?.brand?.toUpperCase() || 'UNKNOWN'} **** **** ${primaryPayment?.paymentMethod?.card?.last4 || '****'}`}
+              isSelected={isSelected === 'primary'}
+            >
+              <PaymentMethod address={primaryPayment?.paymentMethod?.billing_details?.address} />
             </FormCard>
           ) : (
             <PaymentCreate
@@ -208,7 +251,8 @@ const mapStateToProps = state => {
     plans: state.Auth.plans,
     form: state.Auth.subscriptionForm,
     disabled: state.Auth?.disabled,
-    paymentMethods: state.Stripe.methods
+    businessAddress: state.Auth.subscriptionForm.businessAddress,
+    paymentMethods: state.Auth.subscriptionForm.paymentMethod || [],
   }
 }
 

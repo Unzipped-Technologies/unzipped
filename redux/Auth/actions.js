@@ -3,6 +3,12 @@ import {
   USER_LOADING,
   USER_LOADED,
   AUTH_ERROR,
+  GET_ALL_CARDS_SUCCESS,
+  GET_ALL_CARDS_FAILED,
+  GET_BUSINESS_ADDRESS_SUCCESS,
+  GET_BUSINESS_ADDRESS_FAILED,
+  CREATE_BUSINESS_ADDRESS_SUCCESS,
+  CREATE_BUSINESS_ADDRESS_FAILED,
   LOGIN_USER_SUCCESS,
   LOGIN_USER_FAILED,
   LOGOUT_USER,
@@ -92,12 +98,88 @@ export const selectAPlan = data => async dispatch => {
   })
 }
 
-export const updateSubscriptionForm = data => async dispatch => {
-  dispatch({
-    type: UPDATE_SUBSCRIPTION_FORM,
-    payload: data
-  })
+export const updateSubscriptionForm = (data, token) => async dispatch => {
+  dispatch(startLoading());
+
+  await axios
+    .post(`/api/auth/create-card`, data, tokenConfig(token))
+    .then(res => {
+      dispatch({
+        type: UPDATE_SUBSCRIPTION_FORM,
+        payload: { paymentMethod: res.data.paymentMethod, ...res.data }
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: AUTH_ERROR,
+        payload: err.response
+      });
+    });
+
+  dispatch(stopLoading());
+};
+
+
+
+export const getAllCards = (userId) => async (dispatch) => {
+  try {
+    const response = await axios.get(`/api/auth/get-cards/${userId}`);
+    dispatch({
+      type: GET_ALL_CARDS_SUCCESS, payload: response.data
+    });
+  }
+  catch (error) {
+    dispatch({
+      type: GET_ALL_CARDS_FAILED, payload: error.message
+    });
+  }
 }
+
+
+
+export const getBusinessAddress = (userId, token) => async dispatch => {
+  try {
+    const response = await axios.get(`/api/business/address/${userId}`, tokenConfig(token));
+    dispatch({
+      type: GET_BUSINESS_ADDRESS_SUCCESS,
+      payload: response.data
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_BUSINESS_ADDRESS_FAILED,
+      payload: error.response?.data || 'Failed to fetch business address'
+    });
+  }
+};
+
+
+
+export const createBusinessAddress = (userId, addressData, token) => async dispatch => {
+  try {
+    const response = await axios.patch(`/api/business/address/${userId}`, addressData, tokenConfig(token));
+    dispatch({
+      type: UPDATE_SUBSCRIPTION_FORM,
+      payload: response.data
+    });
+
+    return { status: response.status, data: response.data };
+
+  } catch (error) {
+    console.error("API Error:", error);
+    dispatch({
+      type: CREATE_BUSINESS_ADDRESS_FAILED,
+      payload: error.response?.data || 'Failed to create business address'
+    });
+    return { status: error.response?.status, data: error.response?.data || 'Failed to create business address' };
+  }
+};
+
+
+
+
+
+
+
 
 export const tokenSet = token => async dispatch => {
   await dispatch({
@@ -194,22 +276,22 @@ export const updateUser = (data, token) => async (dispatch, getState) => {
 
 export const getVerifyIdentityUrl =
   (accountId = null, token) =>
-  async (dispatch, getState) => {
-    await axios
-      .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(getState().Auth.token))
-      .then(res =>
-        dispatch({
-          type: INITIATE_VERIFY_IDENTITY,
-          payload: res.data
+    async (dispatch, getState) => {
+      await axios
+        .post(`/api/stripe/verify-identity`, { id: accountId }, tokenConfig(getState().Auth.token))
+        .then(res =>
+          dispatch({
+            type: INITIATE_VERIFY_IDENTITY,
+            payload: res.data
+          })
+        )
+        .catch(err => {
+          dispatch({
+            type: AUTH_ERROR,
+            payload: err.response.data
+          })
         })
-      )
-      .catch(err => {
-        dispatch({
-          type: AUTH_ERROR,
-          payload: err.response.data
-        })
-      })
-  }
+    }
 
 export const resendVerify = user => async (dispatch, getState) => {
   const data = await axios

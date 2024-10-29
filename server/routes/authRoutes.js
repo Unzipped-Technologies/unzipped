@@ -13,6 +13,7 @@ const contact = require('../../services/emailTemplates/contact')
 const API = require('../helpers/axios')
 const AuthService = require('../helpers/authentication')
 const messageHelper = require('../helpers/message')
+const billingHelper = require('../helpers/billingHelper')
 
 router.get(
   '/google',
@@ -212,6 +213,40 @@ router.post('/reset', async (req, res, next) => {
     res.send({ message: 'Check your email for instructions' })
   }
 })
+router.post('/create-card', async (req, res) => {
+  try {
+
+    console.log("Request Body:", req.body);
+
+    const userId = req.body.userId;
+    const cardDetails = req.body.paymentMethod?.card;
+
+    if (!userId || !cardDetails) {
+      return res.status(400).json({ error: 'Missing required fields: userId or cardDetails' });
+    }
+
+
+    const card = await billingHelper.createCard(userId, cardDetails);
+
+    res.status(200).json(card);
+  } catch (error) {
+
+    console.error("Error occurred:", error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
+router.get('/get-cards/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const cards = await billingHelper.getAllCards(userId);
+
+    res.status(200).json(cards);
+  } catch (error) {
+    console.error("Error occurred:", error.message);
+    res.status(404).json({ error: error.message });
+  }
+});
 
 router.post('/contact', async (req, res, next) => {
   const msg = {

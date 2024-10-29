@@ -7,6 +7,9 @@ import Button from '../ui/Button'
 import FormField from '../ui/FormField'
 import useWindowSize from '../ui/hooks/useWindowSize'
 import { DarkText, TitleText, WhiteCard, Absolute, Grid2, Grid3, TEXT } from './dashboard/style'
+import { useDispatch } from 'react-redux';
+import { createBusinessAddress } from '../../redux/Auth/actions';
+import { useSelector } from 'react-redux';
 
 const Container = styled.div`
   margin: 0px 0px 0px 0px;
@@ -26,7 +29,9 @@ const Span = styled.div`
 const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
   const { width } = useWindowSize()
   const isMobile = window.innerWidth > 680 ? false : true
-
+  const dispatch = useDispatch()
+  const userId = useSelector(state => state.Auth?.user?._id);
+  const token = useSelector(state => state.Auth?.token);
   const [isBusinessAddress, setIsBusinessAddress] = useState(false)
   const [isUpdated, setIsUpdated] = useState(false)
 
@@ -42,15 +47,12 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
     businessCity: '',
     businessState: '',
     businessZip: '',
-    businessPhone: '',
-    listId: ''
   })
 
   useEffect(() => {
     if (selectedBusiness?._id) {
       setBusinessAddress(prevState => ({
         ...prevState,
-        listId: selectedBusiness?._id,
         businessAddressLineOne: selectedBusiness?.businessAddressLineOne ?? '',
         businessAddressLineTwo: selectedBusiness?.businessAddressLineTwo ?? '',
         businessCountry: selectedBusiness?.businessCountry ?? '',
@@ -77,16 +79,23 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
   }
   const businessAddressUpdate = async () => {
     setIsLoading(true)
-    const response = onClick && (await onClick(address))
 
-    if (!response || response?.status !== 200) {
-      setError(response?.data?.msg ?? 'Something went wrong!')
-    } else {
-      setIsBusinessAddress(false)
-      setIsUpdated(true)
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 500)
+    try {
+      const response = await dispatch(createBusinessAddress(userId, address, token));
+
+      if (response && response.status === 200) {
+        setIsBusinessAddress(false);
+        setIsUpdated(true);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+      } else {
+        console.warn("Unexpected Response Format:", response);
+        setError(response?.data?.msg ?? 'Something went wrong!');
+      }
+    } catch (error) {
+      console.error("Error in businessAddressUpdate:", error);
+      setError("An unexpected error occurred.");
     }
   }
 

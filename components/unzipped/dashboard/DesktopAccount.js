@@ -11,7 +11,8 @@ import FormField from '../../ui/FormField'
 import { ValidationUtils } from '../../../utils'
 import { areObjectsEqual } from '../../../services/formHelper'
 import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
-
+import { getAllCards } from '../../../redux/Auth/actions';
+import { useDispatch } from 'react-redux';
 import {
   getPaymentMethods,
   getAccountOnboardingLink,
@@ -127,6 +128,7 @@ const DesktopAccount = ({
   url
 }) => {
   const router = useRouter()
+  const dispatch = useDispatch();
   const [initialUrl] = useState(url?.url)
   const initialState = {
     email: user?.email,
@@ -144,7 +146,10 @@ const DesktopAccount = ({
     taxId: business?.taxId
   }
 
-  const primaryPM = paymentMethods?.find(e => e.isPrimary)
+  const primaryPayment = Array.isArray(paymentMethods)
+    ? paymentMethods.find(item => item.isPrimary)
+    : paymentMethods.isPrimary ? paymentMethods : null;
+
 
   const [firstNameError, setFirstNameError] = useState('')
   const [lastNameError, setLastNameError] = useState('')
@@ -180,11 +185,9 @@ const DesktopAccount = ({
   }, [])
 
 
-  useEffect(()=>{
+  useEffect(() => {
     setUserData(initialState)
-  },[business])
-
-  
+  }, [business])
   useEffect(() => {
     const fetchBalanceData = async () => {
       getAccountBalance()
@@ -205,6 +208,14 @@ const DesktopAccount = ({
       router.push(url?.url)
     }
   }, [url])
+
+
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(getAllCards(user?._id));
+    }
+  }, [user?._id]);
+
 
   const enableEditing = (field, value) => {
     setMode({
@@ -332,8 +343,8 @@ const DesktopAccount = ({
           <Underline color="#333" />
           <Rows>
             <Item>
-              <img height={20} src={getCardLogoUrl(primaryPM?.card)} />
-              <Span>**** **** **** {primaryPM?.lastFour}</Span>
+              <img height={20} src={getCardLogoUrl(primaryPayment?.paymentMethod?.card?.brand)} />
+              <Span>**** **** **** {primaryPayment?.paymentMethod?.card?.last4}</Span>
             </Item>
             <a
               style={{ color: '#039be5', cursor: 'pointer' }}
@@ -882,7 +893,7 @@ const mapStateToProps = state => {
   return {
     token: state.Auth.token,
     user: state.Auth.user,
-    paymentMethods: state.Stripe.methods,
+    paymentMethods: state.Auth.subscriptionForm.paymentMethod || [],
     url: state.Stripe?.url,
     business: state.Business.details,
     stripeAccountId: state.Auth.user.stripeAccountId,
