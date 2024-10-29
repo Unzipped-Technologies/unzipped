@@ -40,7 +40,11 @@ describe('Freelancer can add comments to tasks', () => {
   beforeEach(() => {
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Verify business names and department names in tasklist page', () => {
     cy.intercept('POST', `/api/business/list`).as('getBusinessRequest')
     cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=false`).as('getBusinessEmpRequest')

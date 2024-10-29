@@ -49,7 +49,11 @@ describe('Client can view project  applications, add department, tags etc', () =
         const state = store.getState()
       })
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('View project detail,project applications, freelancer profile and verify freelancer data', () => {
     cy.intercept('POST', `/api/business/list`).as('getProjectsRequest')
 

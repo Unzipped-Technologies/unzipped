@@ -14,6 +14,11 @@ describe('Client Signup', () => {
   beforeEach(() => {
     cy.viewport(480, 896)
   })
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Click  on sigup and  verify links', () => {
     cy.get('#signup').within(() => {
       cy.contains('SIGN UP')

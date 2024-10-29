@@ -86,7 +86,7 @@ const Freelancers = ({
     skill: []
   })
   const [skip, setSkip] = useState(0)
-  const [take, setTake] = useState(10)
+  const [take, setTake] = useState('all')
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
@@ -144,7 +144,7 @@ const Freelancers = ({
     setIsVisible(entry.isIntersecting)
     if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
       if (take < totalCount) {
-        setTake(20)
+        setTake('all')
         setSkip(take)
       }
     }

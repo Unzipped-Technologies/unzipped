@@ -10,6 +10,11 @@ describe('Freelancer Signup', () => {
   beforeEach(() => {
     cy.viewport(480, 896)
   })
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Signup for Freelancer', () => {
     const email = faker.internet.email()
     const password = 'Hello@2024'

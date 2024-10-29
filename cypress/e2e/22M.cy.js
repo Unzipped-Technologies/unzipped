@@ -96,7 +96,11 @@ describe('Freelancer Invoice', () => {
     // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('View project and  add tasks to invoice', () => {
     // Intercept different requests
 

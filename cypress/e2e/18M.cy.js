@@ -46,7 +46,11 @@ describe('Apply for project', () => {
         reduxStore = store
       })
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Apply to a Project', () => {
     cy.intercept('POST', '/api/business/public/list').as('getProjectsRequest')
     cy.get('#mobile_menu_icon').should('be.visible').click()

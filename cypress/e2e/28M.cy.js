@@ -42,7 +42,11 @@ describe('Client Account Page', () => {
     // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Verify change email', () => {
     cy.intercept('GET', '/api/auth/current_user').as('getUserRequest')
 
