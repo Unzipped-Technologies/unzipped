@@ -102,7 +102,7 @@ const SingleWeekInvoiceView = ({
       await getInvoices({
         businessId: id,
         freelancerId: freelancerId,
-        limit: 25,
+        limit: 'all',
         page: 1
       })
     }
@@ -579,7 +579,7 @@ const SingleWeekInvoiceView = ({
                 await getInvoices({
                   businessId: id,
                   freelancerId: freelancerId,
-                  limit: 25,
+                  limit: 'all',
                   page: 1
                 })
               }}>

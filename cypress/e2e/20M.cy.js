@@ -253,14 +253,17 @@ describe('Client can create,edit tasks', () => {
             cy.get('#taskName').should('be.visible').clear().type(TaskName)
 
             cy.get('#assignee').scrollIntoView().should('be.visible').click()
-            // cy.get('#assignee').find('input').eq(0).should('exist').click().type('{downarrow}', { delay: 100 })
             SelectedDepartment?.contracts?.forEach(contract => {
               cy.contains(contract?.freelancer.user?.email).scrollIntoView().should('exist') // Ensure the option is visible
             })
-            cy.get('div[id^="react-select-"]')
-              .contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email)
-              .click()
-            cy.contains(SelectedDepartment?.contracts[0]?.freelancer.user?.email)
+            let assigneeEmail = ''
+            if (SelectedDepartment?.contracts?.length > 0) {
+              assigneeEmail = SelectedDepartment?.contracts[0]?.freelancer.user?.email
+            } else {
+              assigneeEmail = SelectedDepartment?.client?.email
+            }
+            cy.get('div[id^="react-select-"]').contains(assigneeEmail).click()
+            cy.contains(assigneeEmail)
 
             if (Task1?.tags?.length < 5) {
               cy.get('#tags-standard').should('be.visible').clear().type(TagNam1).type('{enter}', { delay: 100 })

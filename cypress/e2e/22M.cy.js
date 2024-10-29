@@ -324,15 +324,16 @@ describe('Freelancer Invoice', () => {
           })
         })
         const CurrentTask = SelectedInvoice?.tasks[SelectedInvoice?.tasks?.length - 1]
-        cy.get(`#${CurrentTask._id}_hours`).should('be.visible').scrollIntoView().click()
-        cy.get(`#${CurrentTask._id}_hours`)
+        cy.log('CurrentTask', CurrentTask)
+        cy.get(`#${CurrentTask?._id}_hours`).should('be.visible').scrollIntoView().click()
+        cy.get(`#${CurrentTask?._id}_hours`)
           .should('be.visible')
           .scrollIntoView()
-          .should('have.value', CurrentTask.hours)
+          .should('have.value', CurrentTask?.hours)
 
         // Add hours against task
-        cy.get(`#${CurrentTask._id}_hours`).should('be.visible').scrollIntoView().clear().type(3)
-        cy.get(`#${CurrentTask._id}_hours`)
+        cy.get(`#${CurrentTask?._id}_hours`).should('be.visible').scrollIntoView().clear().type(3)
+        cy.get(`#${CurrentTask?._id}_hours`)
           .should('be.visible')
           .scrollIntoView()
 
@@ -395,22 +396,8 @@ describe('Freelancer Invoice', () => {
       .its('store')
       .then(store => {
         reduxStore = store
-        const ProjectsList = store.getState().Business.projectList
 
-        let Business = null
-        let Department = null
-        for (var business of ProjectsList) {
-          let isMatch = false
-          for (var department of business.businessDepartments) {
-            if (!department?.isDeleted) {
-              Department = department
-              Business = business
-              isMatch = true
-              break
-            }
-          }
-          if (isMatch) break
-        }
+        let Business = store.getState().Business.projectList?.[0] ?? null
 
         cy.get(`#${Business._id}`).within(() => {
           cy.contains('Details').scrollIntoView().should('be.visible').click()
@@ -590,8 +577,8 @@ describe('Freelancer Invoice', () => {
 
     cy.contains('Get started').scrollIntoView().should('be.visible').click()
     cy.url().should('include', '/')
-    cy.contains('Connect. Build. grow').should('not.exist')
     cy.wait(500)
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.visit('/dashboard')
     cy.contains('Connect. Build. grow').should('not.exist')

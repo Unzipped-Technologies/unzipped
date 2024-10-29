@@ -61,7 +61,7 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
         businessId: id,
         _id: invoice,
         freelancerId: freelancer,
-        limit: 25,
+        limit: 'all',
         page: 1
       })
     }

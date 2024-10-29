@@ -118,7 +118,7 @@ describe('Freelancer can add comments to tasks', () => {
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
         cy.get(`#tag_${SelectedDepartment?.departmentTags[0]?._id}`).scrollIntoView().click({ force: true })
         cy.get(`#task_${Task1?._id}`).scrollIntoView().click({ force: true })
-        cy.url().should('include', `/dashboard/ticket/${Task1._id}`)
+        cy.url().should('include', `/dashboard/ticket/${Task1?._id}`)
       })
 
     cy.wait('@getTaskRequest').then(interception => {
@@ -153,7 +153,7 @@ describe('Freelancer can add comments to tasks', () => {
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
         cy.get(`#tag_${SelectedDepartment?.departmentTags[0]?._id}`).scrollIntoView().click({ force: true })
         cy.get(`#task_${Task1?._id}`).scrollIntoView().click({ force: true })
-        cy.url().should('include', `/dashboard/ticket/${Task1._id}`)
+        cy.url().should('include', `/dashboard/ticket/${Task1?._id}`)
       })
 
     // Verify freelancer comments

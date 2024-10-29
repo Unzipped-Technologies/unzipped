@@ -17,7 +17,8 @@
     "kill-server": "kill-port 3000",
     "test:run": "wait-on http://localhost:3000 && jest --coverage --detectOpenHandles",
     "test": "concurrently -k \"npm run start-server\" \"npm run test:run\" && npm run kill-server",
-    "test:cy": "npx cypress run --browser chrome --headed",
+    "test:cy-mobile": "npx cypress run --browser chrome --headed --spec cypress/e2e/*M.cy.js",
+    "test:cy": "npx cypress run --browser chrome --headed --spec cypress/e2e/*[!M]*.cy.js",
     "test:cy-open": "npx cypress open"
   },
   "dependencies": {
