@@ -98,6 +98,7 @@ describe('Freelancer Invoice', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

@@ -52,6 +52,7 @@ describe('Client Invoices', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

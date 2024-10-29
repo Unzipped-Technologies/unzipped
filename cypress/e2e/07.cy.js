@@ -36,6 +36,7 @@ describe('Freelancer can add comments to tasks', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

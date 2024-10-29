@@ -24,6 +24,8 @@ describe('Client Signup', () => {
     cy.visit('/')
   })
   after(() => {
+    cy.end()
+
     cy.clearCookies()
     cy.clearLocalStorage()
   })

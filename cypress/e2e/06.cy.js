@@ -37,6 +37,7 @@ describe('Client can create,edit tasks', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

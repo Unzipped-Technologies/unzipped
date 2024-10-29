@@ -28,6 +28,7 @@ describe('Freelancers Page', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

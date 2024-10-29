@@ -34,6 +34,7 @@ describe('Create Long term and short term projects.', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

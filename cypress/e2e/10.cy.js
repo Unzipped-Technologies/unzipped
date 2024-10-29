@@ -36,6 +36,7 @@ describe('Freelancer inbox', () => {
     })
   })
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

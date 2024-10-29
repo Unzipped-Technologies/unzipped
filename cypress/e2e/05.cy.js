@@ -38,6 +38,7 @@ describe('Client can view project  applications, add department, tags etc', () =
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

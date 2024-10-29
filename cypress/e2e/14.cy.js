@@ -39,6 +39,7 @@ describe('Client Account Page', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

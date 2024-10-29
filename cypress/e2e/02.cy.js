@@ -8,6 +8,7 @@ describe('Freelancer Signup', () => {
     cy.visit('/')
   })
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

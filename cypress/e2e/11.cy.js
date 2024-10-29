@@ -22,6 +22,7 @@ describe('Projects Page', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })

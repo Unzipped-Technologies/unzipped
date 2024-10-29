@@ -39,6 +39,7 @@ describe('Apply for project', () => {
   })
 
   after(() => {
+    cy.end()
     cy.clearCookies()
     cy.clearLocalStorage()
   })
