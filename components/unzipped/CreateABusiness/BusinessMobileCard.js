@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import CreateABusiness from '../CreateABusiness'
-import { Grid } from '../../unzipped/dashboard/style'
+import { Grid, TEXT } from '../../unzipped/dashboard/style'
 import OptionTileGroup from '../../ui/OptionTileGroup'
 import { FormField } from '../../ui'
 import { ContentContainer, ContainedSpan } from '../../../pages/create-your-business'
@@ -8,7 +8,7 @@ import ClearSharpIcon from '@material-ui/icons/ClearSharp'
 import Button from '../../ui/Button'
 import ReviewBusinessDetails from './ReviewBusinessDetails'
 import CharacterCounter from './CharacterCounter'
-import UploadImage from '../../../components/unzipped/image-upload/UploadImage';
+import UploadImage from '../../../components/unzipped/image-upload/UploadImage'
 
 const MAX_FLIMENAME_LENGTH = 40
 const projectTypeOptions = () => {
@@ -61,16 +61,15 @@ const GetCardMobile = ({
   handleGithub,
   files,
   setFiles,
-  projectFiles,
-
+  projectFiles
 }) => {
   const [isAlterable, setIsAlterable] = useState(false)
 
   useEffect(() => {
     if (files.length > 0) {
-      updateForm({ files });
+      updateForm({ files })
     }
-  }, [files]);
+  }, [files])
 
   const handleFileName = fileName => {
     if (fileName) {
@@ -115,6 +114,8 @@ const GetCardMobile = ({
       return (
         <CreateABusiness
           mobile
+          titleFontSize="15px"
+          lineHeight="17.58px"
           sub={`Are you looking to hire for a long term hire?`}
           onUpdate={updateForm}
           onBack={goBack}
@@ -246,7 +247,14 @@ const GetCardMobile = ({
                         onClick={() => handleCancelIcon('objectives', objectives, obj)}
                       />
                     </div>
-                    <span>{obj}</span>
+                    <TEXT
+                      fontWeight="500"
+                      fontSize="16px"
+                      lineHeight="20.5px"
+                      letterSpacing="0.4px"
+                      textColor="#000000">
+                      {obj}
+                    </TEXT>
                   </div>
                 ))}
               </ContentContainer>
@@ -391,7 +399,15 @@ const GetCardMobile = ({
                         onClick={() => handleCancelIcon('objectives', objectives, obj)}
                       />
                     </div>
-                    <span>{obj}</span>
+                    <TEXT
+                      fontWeight="500"
+                      fontSize="16px"
+                      lineHeight="24.5px"
+                      letterSpacing="0.4px"
+                      textAlign="center"
+                      textColor="#000000">
+                      {obj}
+                    </TEXT>
                   </div>
                 ))}
               </ContentContainer>
@@ -709,11 +725,18 @@ const GetCardMobile = ({
                     <ClearSharpIcon
                       id={`${question}_icon`}
                       data-testid={`${question}`}
-                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0 8px 2px' }}
+                      style={{ fontSize: '7px', color: 'white', backgroundColor: '#333', margin: '0px 5px 8px 2px' }}
                       onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
                     />
                   </div>
-                  <span>{question}</span>
+                  <TEXT
+                    fontWeight="400"
+                    fontSize="14px"
+                    lineHeight="16.41px"
+                    textColor="#000000"
+                    padding="2px 0px 0px 0px">
+                    {question}
+                  </TEXT>
                 </div>
               ))}
             </ContentContainer>
@@ -805,7 +828,9 @@ const GetCardMobile = ({
                       onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
                     />
                   </div>
-                  <span>{question}</span>
+                  <TEXT fontWeight="400" fontSize="14px" lineHeight="16.41px" textColor="#000000">
+                    {question}
+                  </TEXT>{' '}
                 </div>
               ))}
             </ContentContainer>
@@ -824,7 +849,6 @@ const GetCardMobile = ({
             onBack={() => goBack(stage - 1)}
             progress={stage}
             stage={stage}>
-
             <Button
               type="transparent"
               noUppercase
@@ -837,12 +861,7 @@ const GetCardMobile = ({
             </Button>
 
             <Grid margin={files?.length > 0 ? '0 0 30px 0' : '30px 0'}>
-              <UploadImage
-                setFiles={setFiles}
-                files={files}
-                projectFiles={projectFiles}
-                id="project_images"
-              />
+              <UploadImage setFiles={setFiles} files={files} projectFiles={projectFiles} id="project_images" />
             </Grid>
 
             {projectFiles?.length > 0 && (
@@ -850,8 +869,7 @@ const GetCardMobile = ({
                 {projectFiles.map((file, index) => (
                   <ContainedSpan
                     key={file?.name + '_' + index}
-                    style={{ marginRight: '10px', marginBottom: '10px', display: 'inline-block' }}
-                  >
+                    style={{ marginRight: '10px', marginBottom: '10px', display: 'inline-block' }}>
                     <ClearSharpIcon
                       data-testid={`${file.name}_icon`}
                       style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
@@ -864,7 +882,7 @@ const GetCardMobile = ({
             )}
           </CreateABusiness>
         </span>
-      );
+      )
 
     case 11:
       if (!isGithubConnected) {
@@ -891,7 +909,15 @@ const GetCardMobile = ({
       }
 
     case 12:
-      return <ReviewBusinessDetails isGithubConnected={isGithubConnected} stage={stage} isMobileViewActive={true} files={files} progress={stage}   />
+      return (
+        <ReviewBusinessDetails
+          isGithubConnected={isGithubConnected}
+          stage={stage}
+          isMobileViewActive={true}
+          files={files}
+          progress={stage}
+        />
+      )
     default:
       return <></>
   }
