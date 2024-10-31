@@ -25,6 +25,7 @@ import {
   updateChatStatus,
   handleUnreadMessages
 } from '../../../redux/actions'
+import MeetingTemplate from '../../../components/unzipped/MeetingTemplate'
 
 const Box = styled.div`
   @media (min-width: 680px) {
@@ -35,7 +36,7 @@ const Box = styled.div`
 export const Div = styled.div`
   width: 100%;
   z-index: 1;
-  height: ${({ isTyping }) => (isTyping ? '82vh' : '82vh')};
+  height: ${({ isTyping }) => (isTyping ? '85vh' : '85vh')};
   margin: ${({ margin }) => (margin ? margin : '10px 0px 0px 0px')};
   z-index: 1;
   overflow: scroll;
@@ -95,6 +96,7 @@ const Container = styled.div`
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
 `
 
+const DECLINE_MESSAGE_TEXT = 'has proposed some additional times:'
 const Chat = ({
   token,
   cookie,
@@ -135,8 +137,8 @@ const Chat = ({
     selectConversation(id, 10)
   }
 
-  useEffect(async () => {
-    if (id) await openConversation()
+  useEffect(() => {
+    if (id) openConversation()
     handleLastMessageScroll()
   }, [])
 
@@ -197,6 +199,7 @@ const Chat = ({
       if (scroll?.scrollTop + scroll.clientHeight >= scroll.scrollHeight) {
         setUnreadToZero(selectedConversationId, sender?.userId?._id)
       }
+      selectConversation(selectedConversationId, 10); 
     })
 
     return () => {
@@ -337,47 +340,64 @@ const Chat = ({
                 typing?.conversationId === selectedConversation?._id
               }>
               {messages?.map((e, index) => {
-                if (e?.sender === user._id) {
-                  return (
-                    <Container key={`message_${index}`} display="flex" justifyContent="flex-end" padding="10px">
-                      <Container width="auto" minWidth="auto" padding="5px 10px 10px 10px">
-                        <Container background="#007FED" borderRadius="8px 8px 0px 8px" padding="20px 20px 10px 20px">
-                          <DarkText small noMargin fontSize="16px" lineHeight="23px" color={'#fff'}>
-                            {e?.message}
-                          </DarkText>
-                        </Container>
-
-                        <DarkText noMargin color="black" fontSize="12px" topPadding="15px" right>
-                          {ValidationUtils.getTimeFormated(e?.updatedAt)}
-                        </DarkText>
-                      </Container>
-
-                      <Image src={sender?.userId?.profileImage} height="44px" width="44px" radius="15px" />
-                    </Container>
-                  )
-                } else {
+                const isSender = e?.sender === user._id;
                   return (
                     <Container
                       key={`message_${index}`}
                       display="flex"
-                      justifyContent="flex-start"
+                      justifyContent={isSender ? "flex-end" :"flex-start"}
                       margin="20px 0px 0px 0px"
                       padding="10px">
-                      <Image src={sender?.userId?.profileImage} height="44px" width="44px" radius="15px" />
-                      <Container width="auto" minWidth="auto" padding="5px 10px 10px 5px">
-                        <Container borderRadius="15px 15px 3px 15px">
-                          <DarkText small noMargin justify fontSize="16px" lineHeight="23px">
-                            {e?.message}
-                          </DarkText>
-                        </Container>
+                      <Image src={isSender ? sender?.userId?.profileImage : receiver?.userId?.profileImage} height="44px" width="44px" radius="15px" />
+                      <Container width="80%" minWidth="auto" padding="5px 10px 10px 5px">
+                        <Container borderRadius="15px 15px 3px 15px" padding="15px 15px" background={isSender ? '#007FED' : '#EDEDED'} 
+                         >
+                          <DarkText small noMargin justify style={{fontSize:'15px'}} lineHeight="23px" color={isSender ? '#fff' : '#333'}>
+                          {e?.message?.includes('http') ? (
+                              <>
+                                {e?.message.split(/(http.*)/)[0]}
+                                <span>
+                                  <a
+                                    href={e?.message.split(/(http.*)/)[1]}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: isSender ? '#fff' : '#007FED', textDecoration: 'underline' }}>
+                                    {e?.message.split(/(http.*)/)[1]}
+                                  </a>
+                                </span>
+                              </>
+                            ) : (
+                              e?.message
+                            )}
 
-                        <DarkText noMargin color="black" fontSize="12px" topPadding="10px" right>
-                          {ValidationUtils.getTimeFormated(e?.updatedAt)}
-                        </DarkText>
+                            {((e && e?.meetingId?.meetingStatus === 'DECLINE') ||
+                              (e?.message && e?.message?.includes(DECLINE_MESSAGE_TEXT))) && (
+                              <MeetingTemplate
+                                meeting={e?.meetingId}
+                                userDetails={sender?.userId}
+                                message={e}
+                                templateKey={e?.message && e?.message.includes(DECLINE_MESSAGE_TEXT) ? true : false}
+                              />
+                            )}
+                          </DarkText>
+                          
+                          {e && e?.meetingId?.meetingStatus === 'PENDING' && !isSender  && (
+                            <MeetingTemplate
+                              meeting={e?.meetingId}
+                              userDetails={sender?.userId}
+                              message={e}
+                              templateKey={e?.message}
+                            />
+                          )}
+                          
+                          <DarkText noMargin color={isSender ? '#fff' : '#333'} topMargin="5px"  lighter topPadding="10px" right style={{fontSize:'12px'}}>
+                            {ValidationUtils.getTimeFormated(e?.updatedAt)}
+                          </DarkText>
+                          
+                        </Container>
                       </Container>
                     </Container>
                   )
-                }
               })}
               <div ref={messagesEndRef} />
             </Div>
@@ -392,7 +412,7 @@ const Chat = ({
                   <span></span>
                 </TypingAnimation>
               )}
-            <Absolute bottom="19px" width="100%" right="0">
+            <Absolute bottom="45px" width="100%" right="0">
               <Message>
                 <FormField
                   value={form.message}

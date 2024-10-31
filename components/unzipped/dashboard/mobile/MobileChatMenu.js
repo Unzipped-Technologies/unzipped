@@ -94,7 +94,7 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
       </div>
       <div style={{ padding: '5px' }}>
         <div className="w-100">
-          {role === 2 || role === 0 ? (
+          {role !== 1 ? (
             <P
               fontSize="14px"
               fontWeight="600"
@@ -125,8 +125,7 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
               Apply for Position
             </P>
           )}
-          {role === 2 ||
-            (role === 0 && (
+          {role !== 1 && (
               <P
                 fontSize="14px"
                 fontWeight="600"
@@ -139,7 +138,7 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
                 onClick={handleScheduleInterviewModal}>
                 Schedule an Interview
               </P>
-            ))}
+            )}
           <div
             onClick={() => setOpenList(!openList)}
             className="d-flex justify-content-between align-items-center pt-4"
@@ -149,7 +148,6 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
               fontWeight="600"
               lineHeight="19.5px"
               color="#000000"
-              margin="0 0 0 5px"
               padding="0px 0px 0px 5px">
               Add User To A List
             </P>

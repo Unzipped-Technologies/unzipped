@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux'
 import ClearSharpIcon from '@material-ui/icons/ClearSharp';
 import { inboxAttachments, resetInboxAttachments } from '../../../unzipped/redux/Messages/actions'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import MeetingTemplate from './MeetingTemplate'
 
 const Right = styled.div`
   display: grid;
@@ -126,6 +127,8 @@ const ContainedSpan = styled.span`
   font-size: 14px;
 `;
 
+const DECLINE_MESSAGE_TEXT = 'has proposed some additional times:'
+
 const MessageContainer = ({
   data = {},
   userEmail,
@@ -201,6 +204,8 @@ const MessageContainer = ({
 
 
   useEffect(() => {
+    const sortedMessages = sortMessages(data?.messages || [])
+    setMessages(sortedMessages)
     socket.on('chat message', message => {
       handleUnreadCount(message);
       setMessages(prevMessages => [
@@ -228,8 +233,8 @@ const MessageContainer = ({
     return () => {
       socket.off('chat message');
     };
-  }, [socket, handleUnreadCount, setUnreadToZero, selectedConversationId]);
-
+  }, [socket, handleUnreadCount, setUnreadToZero, selectedConversationId, data]);
+  
 
   const handleLastMessageScroll = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -306,6 +311,10 @@ const MessageContainer = ({
       send()
     }
   }
+  
+  const sortMessages = messages => {
+    return messages.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt))
+  }
 
   return (
     <>
@@ -341,14 +350,67 @@ const MessageContainer = ({
                   {messages?.map((e, index) => {
                     const isSender = e?.sender === userId && e?._id;
                     return (
-                      <WhiteCard key={e?._id} autoFoucs half row borderColor="transparent" unset padding="10px" alignEnd={isSender} justifyEnd={isSender}>
-                        <WhiteCard background={isSender ? "#007FED" : "#EDEDED"} noMargin maxWidth="50%" width="436px" unset borderRadius="15px 15px 3px 15px" padding="15px 15px" style={{ color: isSender ? "#fff" : "#333" }}>
-                          <DarkText small noMargin color={isSender ? "#fff" : "#333"} >
-                            <span dangerouslySetInnerHTML={{ __html: e?.message }}></span>
+                      <WhiteCard
+                        key={e?._id}
+                        autoFoucs
+                        half
+                        row
+                        borderColor="transparent"
+                        unset
+                        padding="10px"
+                        alignEnd={isSender}
+                        justifyEnd={isSender}>
+                        <WhiteCard
+                          background={isSender ? '#007FED' : '#EDEDED'}
+                          noMargin
+                          maxWidth="50%"
+                          width="436px"
+                          unset
+                          borderRadius="15px 15px 3px 15px"
+                          padding="15px 15px"
+                          style={{ color: isSender ? '#fff' : '#333' }}>
+                          <DarkText small noMargin color={isSender ? '#fff' : '#333'}>
+                            {e?.message?.includes('http') ? (
+                              <>
+                                {e?.message.split(/(http.*)/)[0]}
+                                <span>
+                                  <a
+                                    href={e?.message.split(/(http.*)/)[1]}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: isSender ? '#fff' : '#007FED', textDecoration: 'underline' }}>
+                                    {e?.message.split(/(http.*)/)[1]}
+                                  </a>
+                                </span>
+                              </>
+                            ) : (
+                              e?.message
+                            )}
+
+                            {((e && e?.meetingId?.meetingStatus === 'DECLINE') ||
+                              (e?.message && e?.message?.includes(DECLINE_MESSAGE_TEXT))) && (
+                              <MeetingTemplate
+                                meeting={e?.meetingId}
+                                userDetails={sender?.userId}
+                                message={e}
+                                templateKey={e?.message && e?.message.includes(DECLINE_MESSAGE_TEXT) ? true : false}
+                              />
+                            )
+                            }
                           </DarkText>
+
+                          {e && e?.meetingId?.meetingStatus === 'PENDING' && !isSender && (
+                            <MeetingTemplate
+                              meeting={e?.meetingId}
+                              userDetails={sender?.userId}
+                              message={e}
+                              templateKey={e?.message}
+                            />
+                          )}
+
                           <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", padding: 10, width: "100%", marginRight: "12px" }}>
                             <div style={{ display: "block" }}>
-                              {e?.attachment.length > 0 && (<p style={{ display: "block", marginBlockStart: "1em", marginBlockEnd: "1em", marginInlineStart: "0px", marginInlineEnd: "0px" }}>Attachments:</p>)}
+                              {e?.attachment?.length > 0 && (<p style={{ display: "block", marginBlockStart: "1em", marginBlockEnd: "1em", marginInlineStart: "0px", marginInlineEnd: "0px" }}>Attachments:</p>)}
                             </div>
                             {e?.attachment?.map(att => (
                               <div style={{ display: "block" }} key={att.fileId}>

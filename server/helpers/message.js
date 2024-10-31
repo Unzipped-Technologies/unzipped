@@ -5,7 +5,16 @@ const mongoose = require('mongoose')
 const sendMessage = async (data, id) => {
   try {
     let conversationData = null
-    conversationData = await conversation.findById(data?.conversationId)
+    // conversationData = await conversation.findById(data?.conversationId)
+    const senderId = mongoose.Types.ObjectId(id);
+    const receiverId = mongoose.Types.ObjectId(data.receiver.userId);
+
+    conversationData = await conversation.findOne({
+      $and: [
+        { participants: { $elemMatch: { userId: senderId } } },
+        { participants: { $elemMatch: { userId: receiverId } } }
+      ]
+    });
 
     if (!data?.receiver?.userId) return undefined
 
@@ -28,7 +37,6 @@ const sendMessage = async (data, id) => {
     }
 
     await conversationData.save()
-
     return await conversation
       .findById(conversationData._id)
       .populate('messages')

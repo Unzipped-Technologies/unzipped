@@ -33,19 +33,26 @@ module.exports = createSocket = server => {
       }
       await MessageHelper.sendMessage(msgObj, params.senderId)
       socket.emit('refreshConversationList')
+      socket.broadcast.to(onlineUsers[params.receiverId]).emit('refreshConversationList')
     })
 
     socket.on('onMeetingAcceptOrDecline', async ({ meeting, meetingStatus: meetingStatus, message }) => {
       let msg = ''
+      const client = await UserModel.findById(meeting.senderId)
+      const isExistingMeetingRecord = await MeetingHelper.findMeetingById(meeting._id)
       if (meetingStatus === 'DECLINE') {
-        const user = await UserModel.findById(meeting.senderId)
-        const isExistingMeetingRecord = await MeetingHelper.findMeetingById(meeting._id)
+        const user = await UserModel.findById(meeting.receiverId)
         if (isExistingMeetingRecord?._doc.meetingStatus === 'DECLINE') {
           await MeetingHelper.updateMeeting({ _id: meeting._id, meetingStatus: 'REJECTED' })
-          msg = `You have declined meeting with ${user._doc.FirstName} ${user._doc.LastName}`
+          msg = `${user._doc.FirstName} ${user._doc.LastName} has declined meeting with you.`
         } else {
-          await MeetingHelper.updateMeeting({ _id: meeting._id, meetingStatus: meetingStatus })
-          msg = 'The freelancer has proposed some additional times:'
+          if (meeting.secondaryTimes.length > 0) {
+            await MeetingHelper.updateMeeting({ _id: meeting._id, meetingStatus: meetingStatus })
+            msg = `The ${client._doc.FirstName} ${client._doc.LastName} has proposed some additional times:`
+          } else {
+            await MeetingHelper.updateMeeting({ _id: meeting._id, meetingStatus: 'REJECTED' })
+            msg = ` ${user._doc.FirstName} ${user._doc.LastName} has declined meeting with you.`
+          }
         }
       }
       if (meetingStatus === 'ACCEPTED') {
@@ -69,7 +76,7 @@ module.exports = createSocket = server => {
           {
             attendees: [
               {
-                name: `${user._doc.FirstName || ''} ${user._doc.LastName || ''}`
+                name: `${user?._doc?.FirstName || ''} ${user?._doc?.LastName || ''}`
               }
             ],
             ttl: 36000
@@ -88,14 +95,34 @@ module.exports = createSocket = server => {
           }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
       }
 
+      if (
+        meetingStatus === 'DECLINE' &&
+        meeting.secondaryTimes.length > 0 &&
+        client._doc.role === 0 && isExistingMeetingRecord?._doc.meetingStatus !== 'DECLINE'
+      ) 
+      {
+        const msgObj = {
+          sender: meeting?.senderId,
+          meetingId: meeting?._id,
+          message: msg,
+          receiver: { userId: meeting?.receiverId },
+          conversationId: message?.conversationId,
+          updatedAt: message?.updatedAt
+        }
+        await MessageHelper.sendMessage(msgObj, meeting?.senderId)
+        socket.emit('chat message', msgObj)
+        return;
+      } 
       const msgObj = {
         sender: meeting.receiverId,
         meetingId: meeting._id,
         message: msg,
         receiver: { userId: meeting.senderId },
-        conversationId: message.conversationId
-      }
+        conversationId: message.conversationId,
+        updatedAt: message?.updatedAt
+      }        
       await MessageHelper.sendMessage(msgObj, meeting.receiverId)
+      socket.emit('chat message', msgObj)
     })
 
     socket.on('onProposedMeetingTime', async (params, updateMeetingStatus) => {
@@ -159,18 +186,20 @@ module.exports = createSocket = server => {
 
         msg = `${user?.FirstName || ''}   ${
           user?.LastName || ''
-        } has accepted your invitation for a meeting on ${getMonthByName(meeting.primaryTime.Date)} at ${
-          meeting.primaryTime.Time
-          }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
+        } has accepted your invitation for a meeting on ${getMonthByName(proposedMeetingTime.Date)} at ${
+          proposedMeetingTime.Time
+        }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
         const msgObj = {
-          sender: meeting.senderId,
+          sender: meeting.receiverId,
           meetingId: meeting._id,
           message: msg,
-          receiver: { userId: meeting.receiverId },
-          conversationId: message.conversationId
+          receiver: { userId: meeting.senderId },
+          conversationId: message.conversationId,
+          updatedAt: message?.updatedAt
         }
 
-        await MessageHelper.sendMessage(msgObj, meeting.senderId)
+        await MessageHelper.sendMessage(msgObj, meeting.receiverId)
+        socket.emit('chat message', msgObj)
       }
     })
 
