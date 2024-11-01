@@ -8,7 +8,7 @@ const FreelancerHelper = require('./../helpers/freelancer')
 const UserModel = require('./../models/User')
 const ZoomHelper = require('./../helpers/ZoomHelper')
 const FileModel = require('./../models/file')
-const CloudinaryManager = require('../../../unzipped/services/cloudinary')
+const CloudinaryManager = require('../../services/cloudinary') 
 
 module.exports = createSocket = server => {
   const io = socketIO(server, {
