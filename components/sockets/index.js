@@ -1,5 +1,5 @@
 import socketIOClient from 'socket.io-client'
 import keys from '../../config/keys'
-const socket = socketIOClient(keys.socketUrl)
+const socket = socketIOClient("https://staging.unzipped.io/")
 
 export default socket
