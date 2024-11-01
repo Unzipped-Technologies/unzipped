@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
 import router from 'next/router'
 import ScheduleMeetingModal from '../modals/scheduleMeeting'
+import Notification from '../animation/notifications'
 
 import IconComponent from '../ui/icons/IconComponent'
 import {
@@ -164,11 +165,6 @@ const ListModal = ({
             <CloseIcon />
           </IconButton>
           <div className="mx-2">
-            {error && (
-              <P color="red" fontSize="12px">
-                {error}
-              </P>
-            )}
             {role !== 1 && (
               <P
                 padding="25px 0 18px 0"
@@ -285,6 +281,7 @@ const ListModal = ({
           setScheduleInterviewModal={setScheduleInterviewModal}
         />
       )}
+      <Notification error={error} />
     </>
   )
 }
