@@ -41,7 +41,7 @@ module.exports = {
     process.env.NEXT_PUBLIC_ENV == 'local'
       ? 'http://localhost:3000/api/auth/github'
       : 'https://staging.unzipped.io/api/auth/github',
-  socketUrl: "https://staging.unzipped.io/", //process.env.ENV == 'local' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SOCKET_URL,
+  socketUrl: process.env.ENV == 'local' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SOCKET_URL,
   supportEmail: 'jason+support@unzipped.io',
   supportAccountPassword: 'Myfirst1',
   supportFirstName: 'Unzipped',
