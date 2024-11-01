@@ -205,6 +205,40 @@ describe('Client Account Page', () => {
         })
       })
   })
+
+  it('Change profile image', () => {
+    cy.intercept('POST', '/api/user/upload-profile-image').as('updateProfileImageRequest')
+
+    cy.window()
+      .its('store')
+      .then(store => {
+        const user = store.getState()?.Auth?.user
+
+        if (user?.profileImage) {
+          cy.get('[data-testid="user_profile_image"]')
+            .should('be.visible')
+            .should('have.attr', 'src')
+            .and('include', user.profileImage)
+        }
+
+        cy.contains('Settings').should('be.visible').click()
+
+        cy.get('#update_picture').should('be.visible').click()
+
+        cy.get(`#profile_image_modal`).should('be.visible')
+
+        cy.contains('button', 'Upload').should('be.disabled')
+
+        cy.get('input[type="file"]').attachFile('image.png')
+
+        cy.contains('button', 'Upload').should('be.visible').click()
+
+        cy.wait('@updateProfileImageRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
+      })
+  })
+
   it('Test logout functionality', () => {
     cy.intercept('GET', '/api/auth/logout').as('logOutRequest')
 
