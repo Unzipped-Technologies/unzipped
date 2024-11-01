@@ -4,13 +4,13 @@ import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 import { connect, useDispatch } from 'react-redux'
 import UpdateUserIcon from '../../icons/updateUser'
 import { useRouter } from 'next/router'
-import Dropzone from 'react-dropzone'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { accountVerificationEnum } from '../../../server/enum/accountTypeEnum'
 import { getVerifyIdentityUrl } from '../../../redux/actions'
 import { VerifyUserIcon } from '../../icons'
 import { bindActionCreators } from 'redux'
+import UpdateProfileImage from './UpdateProfileImage'
 
 const Container = styled.div`
   display: flex;
@@ -72,7 +72,7 @@ const Text = styled.p`
   font-style: normal;
   font-weight: 400;
   color: ${({ color }) => (color ? color : '#000')};
-  margin:  4px;
+  margin: 4px;
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '40px')};
 `
 
@@ -89,15 +89,18 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
+
 const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerifyIdentityUrl }) => {
+  const dispatch = useDispatch()
+
   const { user } = useSelector(state => state.Auth)
 
-  const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
   const [trackProgress, setTrackProgress] = useState(0)
   const [hasUserInfo, setHasUserInfo] = useState(false)
-  const dropzoneRef = useRef(null)
+  const [image, setImage] = useState(null)
+  const [isOpen, setOpen] = useState(false)
+
   const [initialUrl] = useState(url)
-  const dispatch = useDispatch()
   const hideAlert = () => {
     success && hideSuccessAlert()
     passwordChanged && hidePasswordAlert()
@@ -135,7 +138,6 @@ const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerif
   }, [url, router])
 
   const completeSetup = () => {
-
     const selectPlanActionItem = document.querySelector('.select-a-plan')
     if (selectPlanActionItem) {
       selectPlanActionItem.click()
@@ -160,10 +162,8 @@ const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerif
     }
   }
   const verifyIdentity = () => {
-    getVerifyIdentityUrl(user?._id, token);
-  };
-
-
+    getVerifyIdentityUrl(user?._id, token)
+  }
 
   useEffect(() => {
     if (user?.role != '0' && user?.FirstName && user?.AddressCity) {
@@ -184,7 +184,7 @@ const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerif
         incrementalProgress += 25
       }
       if (user?.isIdentityVerified === 'SUCCESS') {
-        incrementalProgress += 25;
+        incrementalProgress += 25
       }
       if (user?.plan > 0) {
         incrementalProgress += 25
@@ -193,16 +193,13 @@ const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerif
       setTrackProgress(incrementalProgress)
     }
   }, [user])
-  const openDropzone = () => {
-    dropzoneRef.current && dropzoneRef.current.open()
+
+  const handleOpen = () => {
+    setOpen(true)
   }
 
-  const closeDropzone = () => {
-    setIsDropzoneVisible(false)
-  }
-
-  const handleDrop = acceptedFiles => {
-    closeDropzone()
+  const handleClose = () => {
+    setOpen(false)
   }
 
   const router = useRouter()
@@ -310,15 +307,8 @@ const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerif
             />
 
             <AccountSetup>
-              <Text onClick={openDropzone}>Upload a profile picture</Text>
+              <Text onClick={handleOpen}>Upload a profile picture</Text>
             </AccountSetup>
-            <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true}>
-              {({ getRootProps, getInputProps }) => (
-                <div className="dropzone" {...getRootProps()} data-testid="dropzone">
-                  <input {...getInputProps()} />
-                </div>
-              )}
-            </Dropzone>
           </AccountSetupContainer>
         )}
 
@@ -342,6 +332,7 @@ const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerif
           </AccountSetup>
         </AccountSetupContainer>
       </Container>
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </ContainerAccount>
   )
 }
