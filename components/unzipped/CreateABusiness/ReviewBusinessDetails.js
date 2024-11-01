@@ -23,6 +23,7 @@ import {
 import Button from '../../ui/Button'
 import { createBusiness, updateBusinessForm, updateWizardSubmission } from '../../../redux/actions'
 import { DarkText, Absolute, WhiteCard, Dismiss } from './../../../components/unzipped/dashboard/style'
+import Carousel from 'react-material-ui-carousel'
 
 import { useRouter } from 'next/router'
 
@@ -408,9 +409,58 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             )}
           {FILES_ARRAY && FILES_ARRAY.length > 0 && (
             <div
-              style={{ marginTop: 30, display: 'flex', width: '100%', flexDirection: 'column', gap: '10px' }}
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-around',
+                width: '50%',
+                margin: '30px auto 0px auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+              }}
               id="project_images">
-              {FILES_ARRAY?.map((file, index) => (
+              <Carousel
+                autoPlay={false}
+                fullHeightHover={false}
+                NavButton={({ onClick, className, style, next, prev }) => {
+                  return (
+                    <>
+                      <button onClick={onClick} className="Carousel-button" style={style} aria-label="navigate">
+                        {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                        {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                      </button>
+                    </>
+                  )
+                }}>
+                {FILES_ARRAY &&
+                  FILES_ARRAY?.length > 0 &&
+                  FILES_ARRAY.map((file, i) => {
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          height: '200px',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          overflow: 'hidden'
+                        }}>
+                        {file instanceof File && (
+                          <img
+                            alt="..."
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            src={URL.createObjectURL(file)}></img>
+                        )}
+                      </div>
+                    )
+                  })}
+              </Carousel>
+              {/* {FILES_ARRAY?.map((file, index) => (
                 <span key={index}>
                   {file instanceof File && (
                     <img
@@ -423,7 +473,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
                     />
                   )}
                 </span>
-              ))}
+              ))} */}
             </div>
           )}
         </ReviewSectionStyled>

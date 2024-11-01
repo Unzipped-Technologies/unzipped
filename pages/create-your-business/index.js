@@ -99,7 +99,8 @@ const CreateBusiness = ({
   userDetails,
   projectFiles,
   businessForm,
-  accessToken
+  accessToken,
+  wizardSubmission
 }) => {
   const router = useRouter()
 
@@ -134,13 +135,15 @@ const CreateBusiness = ({
   }, [width])
 
   const submitForm = step => {
-    const isInputValNotValid = handleValidation(step)
-    if (isInputValNotValid) return
-    dispatch(businessFieldsValidation(false))
+    if (!wizardSubmission?.isSuccessfull) {
+      const isInputValNotValid = handleValidation(step)
+      if (isInputValNotValid) return
+      dispatch(businessFieldsValidation(false))
 
-    updateBusinessForm({
-      stage: step + 1
-    })
+      updateBusinessForm({
+        stage: step + 1
+      })
+    }
   }
   function handleGithub() {
     router.push(`https://github.com/login/oauth/authorize?client_id=${nextPublicGithubClientId}&scope=user:email`)
@@ -313,7 +316,8 @@ const mapStateToProps = state => {
     stage: state.Business?.businessForm.stage,
     accessToken: state.Auth.token,
     userDetails: state.Auth.user,
-    projectFiles: state.Business?.files
+    projectFiles: state.Business?.files,
+    wizardSubmission: state.Business?.wizardSubmission
   }
 }
 

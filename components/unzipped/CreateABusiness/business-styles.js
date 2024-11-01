@@ -28,6 +28,8 @@ const ParagraphStyled = styled.p`
   display: flex;
   width: 100%;
   gap: 10px;
+  overflow-wrap: anywhere;
+
   align-items: center;
   font-family: ${({ fontFamily }) => (fontFamily ? fontFamily : 'Roboto')};
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '14px')};
