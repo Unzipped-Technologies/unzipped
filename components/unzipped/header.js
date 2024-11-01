@@ -516,6 +516,7 @@ const Nav = ({
             alt="profile pic"
             radius="50%"
             width="48px"
+            height="48px"
             onClick={() => setDropdowns('profile')}
             onMouseEnter={() => setDropdowns('profile')}
           />
@@ -669,7 +670,7 @@ const Nav = ({
                   marginLeft: 10,
                   fontSize: 18,
                   fontWeight: 600,
-                  letterSpacing: '0.85px',
+                  letterSpacing: '0.85px'
                 }}>
                 Lists
               </span>
@@ -694,7 +695,7 @@ const Nav = ({
                 marginLeft: 10,
                 fontSize: 18,
                 fontWeight: 600,
-                letterSpacing: '0.85px',
+                letterSpacing: '0.85px'
               }}>
               {listName ? listName : ''}
             </span>
