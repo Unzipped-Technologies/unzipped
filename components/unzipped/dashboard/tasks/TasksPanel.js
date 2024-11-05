@@ -70,6 +70,7 @@ const TasksPanel = ({
   }, [departmentData])
 
   const handleOnDragEnd = async result => {
+    console.log('result', result)
     if (!result.destination) return
     const { source, destination } = result
     const allStories = []
@@ -79,9 +80,9 @@ const TasksPanel = ({
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
       const destItems = destColumn?.tasks || []
-      const sourcedObj = sourceItems[source.index];
-      sourcedObj.status = destColumn?.tagName;
-      let ticketStatus = sourcedObj.status;
+      const sourcedObj = sourceItems[source.index]
+      sourcedObj.status = destColumn?.tagName
+      let ticketStatus = sourcedObj.status
 
       dispatch(updateStatusOnDrag(sourcedObj._id, { status: ticketStatus }))
       const [removed] = sourceItems.splice(source.index, 1)
@@ -153,7 +154,7 @@ const TasksPanel = ({
   }
 
   const handleDepartmentDel = async () => {
-    const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {};
+    const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {}
     dispatch(deleteDepartment(departmentData?._id))
     setSelectedDepartment(departmentObj)
     await getProjectsList({
@@ -204,6 +205,7 @@ const TasksPanel = ({
               className="bg-transparent text-dark"
               popoutWidth="200px"
               dropDownRight="-130px"
+              id="department_actions"
               noBorder
               block
               fontSize="13px"
@@ -235,6 +237,7 @@ const TasksPanel = ({
           <DIV width="72px" margin="0px 20px 0px 80px" display="flex" justifyContent="center">
             <Button
               block
+              id="add_tag_button"
               buttonHeight="27px"
               extraTall
               colors={{
@@ -264,7 +267,7 @@ const TasksPanel = ({
             {selectedDepartment?._id && departmentData?.departmentTags?.length ? (
               departmentData?.departmentTags.map(tag => {
                 return (
-                  <DIV key={tag._id}>
+                  <DIV key={tag._id} id={`tag_${tag._id}`}>
                     <Droppable droppableId={tag._id} type="COLUMN" direction="vertical" key="droppable">
                       {(provided, snapshot) => (
                         <DIV
@@ -276,6 +279,7 @@ const TasksPanel = ({
                           borderRadius="4px"
                           width="100%">
                           <DIV
+                            id={`tag_header_${tag?._id}`}
                             width="100%"
                             padding="10px"
                             borderRadius="0px"
@@ -302,7 +306,7 @@ const TasksPanel = ({
                           {tag?.tasks?.length
                             ? tag?.tasks.map((task, index) => {
                                 return (
-                                  <DIV key={task._id}>
+                                  <DIV key={task._id} id={`task_${task._id}`}>
                                     <Draggable key={task._id} draggableId={task._id} index={index}>
                                       {(provided, snapshot) => (
                                         <DIV

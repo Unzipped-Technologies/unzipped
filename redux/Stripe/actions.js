@@ -36,7 +36,7 @@ export const createStripeCustomerAndSetupIntent = (data, token) => async (dispat
 export const createPaymentMethod = (data, token) => async (dispatch, getState) => {
   dispatch(startLoading())
   await axios
-    .post(`/api/contract/create-payment-method`, data, tokenConfig(token))
+    .post(`/api/contract/create-payment-method`, data, tokenConfig(getState()?.Auth.token))
     .then(res => {
       dispatch({
         type: CREATE_PAYMENT_METHOD,

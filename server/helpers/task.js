@@ -113,6 +113,7 @@ const createManyTask = async (tasks, freelancerId = null) => {
 const getAllTasks = async query => {
   try {
     const filter = pick(query, ['businessId', 'ticketCode', 'taskName', 'assignee', 'departmentId'])
+    filter.businessId = mongoose.Types.ObjectId(filter.businessId)
     const options = pick(query, ['limit', 'page', 'count'])
     let result = {}
     const total = await countTasks(filter)
@@ -165,7 +166,7 @@ const getAllTasks = async query => {
           pipeline: [
             {
               $match: {
-                $expr: { $eq: ['$_id', '$$assignee'] }
+                $expr: { $eq: ['$_id', { $toObjectId: '$$assignee' }] }
               }
             },
             {
@@ -564,33 +565,26 @@ const removeCommentFromTask = async commentId => {
 }
 
 const updateTaskStatusOnDrag = async (taskId, data) => {
-  const ticketEntity = await TaskModel.findById(taskId);
+  const ticketEntity = await TaskModel.findById(taskId)
 
-  if (Object.keys(data).length === 1 &&
-    data?.hasOwnProperty("assignee")) {
-
-    const taskResult = await  handleTaskAssignees(taskId, data);
+  if (Object.keys(data).length === 1 && data?.hasOwnProperty('assignee')) {
+    const taskResult = await handleTaskAssignees(taskId, data)
     return taskResult
-
   }
-  
+
   if (ticketEntity) {
-    const tagEntities = await TagModel.find(
-      {
-        departmentId: ticketEntity.departmentId,
-      }
-    );
+    const tagEntities = await TagModel.find({
+      departmentId: ticketEntity.departmentId
+    })
     if (tagEntities.length > 0) {
-      const filteredTag = tagEntities.filter(tag => tag.tagName.trim().replace(' ', '')
-        .toLowerCase()
-        .includes(data.status.trim().replace(' ', '')
-          .toLowerCase())
-      );
+      const filteredTag = tagEntities.filter(tag =>
+        tag.tagName.trim().replace(' ', '').toLowerCase().includes(data.status.trim().replace(' ', '').toLowerCase())
+      )
       if (filteredTag.length === 0) {
-        return false;
+        return false
       }
-      data.tag = filteredTag[0]._id;
-      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } }, { new: true });
+      data.tag = filteredTag[0]._id
+      const result = await TaskModel.findByIdAndUpdate(taskId, { $set: { ...data } }, { new: true })
       return result
     }
   }
@@ -598,30 +592,24 @@ const updateTaskStatusOnDrag = async (taskId, data) => {
 
 const verifyTasks = async (taskId, data) => {
   try {
-    const ticketEntity = await TaskModel.findById(taskId);
+    const ticketEntity = await TaskModel.findById(taskId)
     if (ticketEntity) {
-      const tagEntities = await TagModel.find(
-        {
-          departmentId: ticketEntity.departmentId,
-        }
-      );
+      const tagEntities = await TagModel.find({
+        departmentId: ticketEntity.departmentId
+      })
       if (tagEntities.length > 0) {
-        const filteredTag = tagEntities.filter(tag => tag.tagName.trim().replace(' ', '')
-          .toLowerCase()
-          .includes(data.trim().replace(' ', '')
-            .toLowerCase())
-        );
+        const filteredTag = tagEntities.filter(tag =>
+          tag.tagName.trim().replace(' ', '').toLowerCase().includes(data.trim().replace(' ', '').toLowerCase())
+        )
         if (filteredTag.length === 0) {
-          return false;
+          return false
         }
-        return true;
+        return true
       }
     }
   } catch (error) {
     console.log('error on ticket', error?.message)
-
   }
-
 }
 
 const handleTaskAssignees = async (task, data) => {

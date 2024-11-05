@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 const Invoice = require('../models/Invoice')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
-const PaymentHistoriesModel = require('../models/PaymentHistory');
-const BusinessModel = require('../models/Business');
-const ContractModel = require('../models/Contract');
-const Mailer = require('../../services/Mailer');
-const keys = require('../../config/keys');
+const PaymentHistoriesModel = require('../models/PaymentHistory')
+const BusinessModel = require('../models/Business')
+const ContractModel = require('../models/Contract')
+const Mailer = require('../../services/Mailer')
+const keys = require('../../config/keys')
 
 const createInvoice = async data => {
   try {
@@ -83,6 +83,11 @@ const getAllInvoices = async query => {
           tasks: 1,
           createdAt: 1,
           updatedAt: 1
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
         }
       },
       {
@@ -281,7 +286,7 @@ const updateInvoice = async (id, data) => {
   try {
     const updatedInvoice = await Invoice.findByIdAndUpdate(id, { $set: data }, { new: true })
     if (updatedInvoice && (updatedInvoice.status === 'paid' || updatedInvoice.status === 'approved')) {
-      await notifyUpdateInvoices(updatedInvoice);
+      await notifyUpdateInvoices(updatedInvoice)
     }
 
     return updatedInvoice
@@ -290,15 +295,13 @@ const updateInvoice = async (id, data) => {
   }
 }
 
-
-const notifyUpdateInvoices = async (updatedInvoice) => {
-
+const notifyUpdateInvoices = async updatedInvoice => {
   const invoiceRecord = await Invoice.findById({ _id: updatedInvoice._id })
     .populate([
       {
         path: 'clientId',
         model: 'users',
-        select: 'FirstName LastName email',
+        select: 'FirstName LastName email'
       },
       {
         path: 'freelancerId',
@@ -313,8 +316,7 @@ const notifyUpdateInvoices = async (updatedInvoice) => {
         path: 'businessId',
         model: 'businesses',
         select: 'name employees',
-        populate:
-        {
+        populate: {
           path: 'employees',
           model: 'contracts',
           select: 'freelancerId',
@@ -325,90 +327,89 @@ const notifyUpdateInvoices = async (updatedInvoice) => {
             populate: {
               path: 'userId',
               model: 'users',
-              select: 'FirstName LastName email _id profileImage ',
+              select: 'FirstName LastName email _id profileImage '
             }
           }
         }
-
       }
-    ]).select('clientId businessId status hoursWorked createdAt');
+    ])
+    .select('clientId businessId status hoursWorked createdAt')
 
   const paymentSummary = await PaymentHistoriesModel.find({ invoiceId: updatedInvoice._id })
-    .select('invoiceId userId paymentAmount paymentDate').populate([
+    .select('invoiceId userId paymentAmount paymentDate')
+    .populate([
       {
         path: 'userId',
         model: 'users',
-        select: 'FirstName LastName',
-      }, {
+        select: 'FirstName LastName'
+      },
+      {
         path: 'invoiceId',
         model: 'invoices',
-        select: 'hoursWorked',
+        select: 'hoursWorked'
       }
-    ]);
-
+    ])
 
   const paymentDetails = []
   const activeTeamMembers = []
 
   if (paymentSummary) {
-    paymentSummary.forEach((item) => {
+    paymentSummary.forEach(item => {
       paymentDetails.push({
         name: item.userId.FirstName + ' ' + item.userId.LastName,
         hoursWorked: item.invoiceId.hoursWorked,
-        paymentAmount: item.paymentAmount,
-      });
-    });
+        paymentAmount: item.paymentAmount
+      })
+    })
   }
 
   if (invoiceRecord) {
     activeTeamMembers.push({
       name: invoiceRecord.freelancerId.userId.FirstName + ' ' + invoiceRecord.freelancerId.userId.LastName,
-      status: invoiceRecord.status,
-
-    });
+      status: invoiceRecord.status
+    })
   }
 
   await notifyEmails(invoiceRecord, paymentDetails, activeTeamMembers, paymentSummary)
-
 }
 
 const notifyEmails = async (invoiceRecord, paymentDetails, activeTeamMembers, paymentSummary) => {
-  const freelancerHourlyRate = await ContractModel.find({ businessId: invoiceRecord.businessId, freelancerId: invoiceRecord.freelancerId }).select('hourlyRate')
-  const paymentAmount = (invoiceRecord?.hoursWorked ?? 0) * (freelancerHourlyRate[0]?.hourlyRate ?? 0);
+  const freelancerHourlyRate = await ContractModel.find({
+    businessId: invoiceRecord.businessId,
+    freelancerId: invoiceRecord.freelancerId
+  }).select('hourlyRate')
+  const paymentAmount = (invoiceRecord?.hoursWorked ?? 0) * (freelancerHourlyRate[0]?.hourlyRate ?? 0)
 
   const clientMailOpts = {
     to: invoiceRecord?.clientId?.email,
     subject: `✔️ Weekly Invoice Payment Summary for ${invoiceRecord?.businessId?.name}`,
-    templateId: "d-84b47273c99842ee8f43f85db0c48dc0",
+    templateId: 'd-84b47273c99842ee8f43f85db0c48dc0',
     dynamicTemplateData: {
       dashboardLink: `${keys.redirectDomain}/dashboard`,
-      invoiceLink: "",
+      invoiceLink: '',
       firstName: invoiceRecord?.clientId?.FirstName ?? '',
       lastName: invoiceRecord?.clientId?.LastName ?? '',
       projectName: invoiceRecord?.businessId?.name ?? '',
       paymentSummary: paymentDetails,
-      activeTeamMembers: activeTeamMembers,
-
+      activeTeamMembers: activeTeamMembers
     }
   }
 
   const freelancerMailOpts = {
     to: invoiceRecord.freelancerId.userId.email,
-    templateId: "d-ce3fe25352034b8694a5ecb6902a1b6f",
+    templateId: 'd-ce3fe25352034b8694a5ecb6902a1b6f',
     dynamicTemplateData: {
       withdrawWikiLink: '',
       invoiceId: invoiceRecord._id ?? '',
       projectName: invoiceRecord?.businessId?.name ?? '',
-      amount: paymentAmount, 
+      amount: paymentAmount,
       paymentDate: invoiceRecord?.createdAt ?? new Date.now(),
       profileLink: `${keys.redirectDomain}/freelancers/${invoiceRecord.freelancerId._id}`,
       currentYear: new Date().getFullYear()
-
     }
   }
-   await Mailer.sendInviteMail(clientMailOpts)
-   await Mailer.sendInviteMail(freelancerMailOpts)
-
+  await Mailer.sendInviteMail(clientMailOpts)
+  await Mailer.sendInviteMail(freelancerMailOpts)
 }
 const addInvoiceTasks = async (invoiceId, data) => {
   try {

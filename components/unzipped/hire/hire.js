@@ -400,13 +400,8 @@ const HireComp = ({
           {errors.hoursLimit && <Error>{errors.hoursLimit}</Error>}
         </ContentContainer>
         <ButtonContainer>
-          <HireButton>
-            <ButtonText
-              onClick={() => {
-                hireFreelancr()
-              }}>
-              Hire {name ? name : ''}
-            </ButtonText>
+          <HireButton onClick={hireFreelancr}>
+            <ButtonText>Hire {name ? name : ''}</ButtonText>
           </HireButton>
         </ButtonContainer>
       </HireInputContainer>

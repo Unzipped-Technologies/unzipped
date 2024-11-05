@@ -8,12 +8,12 @@ const FreelancerHelper = require('./../helpers/freelancer')
 const UserModel = require('./../models/User')
 const ZoomHelper = require('./../helpers/ZoomHelper')
 const FileModel = require('./../models/file')
-const CloudinaryManager = require('../../../unzipped/services/cloudinary')
+const CloudinaryManager = require('../../services/cloudinary') 
 
 module.exports = createSocket = server => {
   const io = socketIO(server, {
     maxHttpBufferSize: 1e9
-  });
+  })
   const onlineUsers = {}
 
   io.on('connection', socket => {
@@ -24,7 +24,7 @@ module.exports = createSocket = server => {
         user._doc.LastName
       } is trying to schedule a meeting with you for ${getMonthByName(params.primaryTime.Date)} at ${
         params.primaryTime.Time
-        }. Please review if this time will work for you, and approve.`
+      }. Please review if this time will work for you, and approve.`
       const msgObj = {
         sender: params.senderId,
         meetingId: meetingCreated._id,
@@ -92,7 +92,7 @@ module.exports = createSocket = server => {
           user._doc.LastName || ''
         } has accepted your invitation for a meeting on ${getMonthByName(meeting.primaryTime.Date)} at ${
           meeting.primaryTime.Time
-          }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
+        }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
       }
 
       if (
@@ -244,41 +244,43 @@ module.exports = createSocket = server => {
         const headers = {
           access_token: message?.access
         }
-        const filesArray = [];
-        for (const file of message.attachment) {
-          const uploadFileResp = await CloudinaryManager.uploader.upload(file.file, {
-            filename_override: file.name,
-            folder: message?.sender?.userId,
-            resource_type: file.type.startsWith('image') ? 'image' : 'auto',
-          });
+        const filesArray = []
+        if (message?.attachment?.length) {
+          for (const file of message.attachment) {
+            const uploadFileResp = await CloudinaryManager.uploader.upload(file.file, {
+              filename_override: file.name,
+              folder: message?.sender?.userId,
+              resource_type: file.type.startsWith('image') ? 'image' : 'auto'
+            })
 
-          const newFile = await FileModel.create({
-            name: uploadFileResp.original_filename,
-            size: uploadFileResp.bytes,
-            url: uploadFileResp.secure_url,
-            cloudinaryId: uploadFileResp.public_id,
-            userId: message?.sender?.userId,
-            resource_type: uploadFileResp.resource_type,
-            format: uploadFileResp.format,
-            width: uploadFileResp.width,
-            height: uploadFileResp.height
-          });
+            const newFile = await FileModel.create({
+              name: uploadFileResp.original_filename,
+              size: uploadFileResp.bytes,
+              url: uploadFileResp.secure_url,
+              cloudinaryId: uploadFileResp.public_id,
+              userId: message?.sender?.userId,
+              resource_type: uploadFileResp.resource_type,
+              format: uploadFileResp.format,
+              width: uploadFileResp.width,
+              height: uploadFileResp.height
+            })
 
-          const user = await UserModel.findById(message?.sender?.userId).select('files');
-          if (user) {
-            user.files.push(newFile._id);
-            await user.save();
-          }
-          if (newFile) {
-            filesArray.push({
-              fileId: newFile._id,
-              name: newFile.name,
-              url: newFile.url,
-              resourceType: newFile.resource_type,
-              format: newFile.format,
-              width: newFile.width,
-              height: newFile.height,
-            });
+            const user = await UserModel.findById(message?.sender?.userId).select('files')
+            if (user) {
+              user.files.push(newFile._id)
+              await user.save()
+            }
+            if (newFile) {
+              filesArray.push({
+                fileId: newFile._id,
+                name: newFile.name,
+                url: newFile.url,
+                resourceType: newFile.resource_type,
+                format: newFile.format,
+                width: newFile.width,
+                height: newFile.height
+              })
+            }
           }
         }
 
@@ -287,32 +289,15 @@ module.exports = createSocket = server => {
           ...messageObj,
           unreadCount: 1
         }
+
         socket.broadcast.to(onlineUsers[message?.receiver?.userId]).emit('chat message', conversation)
         socket.emit('chat message', conversation)
         await axios.post(`${keys.redirectDomain}/api/message/send`, messageObj, { headers })
-        await conversations.findOneAndUpdate(
-          { _id: conversation.conversationId },
-          {
-            $inc: {
-              'participants.$[elem1].unreadCount': 1 // Increment receiver's unreadCount
-            },
-            $set: {
-              'participants.$[elem2].unreadCount': 0 // Set sender's unreadCount to 0
-            }
-          },
-          {
-            arrayFilters: [
-              { 'elem1.userId': conversation.receiver.userId },
-              { 'elem2.userId': conversation.sender.userId }
-            ],
-            new: true
-          }
-        )
       } catch (error) {
         socket.emit('chat message', error)
       }
     })
-  
+
     socket.on('typing', message => {
       io.emit('typing', message)
     })
@@ -344,7 +329,6 @@ module.exports = createSocket = server => {
 
     socket.on('dislike', async payload => {
       const response = await FreelancerHelper.handleDisLike(payload)
-      console.log('onlineUsers', onlineUsers)
       // socket.broadcast.to(onlineUsers[payload?.userId]).emit('dislike', response)
 
       io.emit('dislike', response)

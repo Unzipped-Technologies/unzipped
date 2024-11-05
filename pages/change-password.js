@@ -64,7 +64,7 @@ const Reset = ({ changePassword, accessToken }) => {
     if (response?.status === 200) {
       router.push('/dashboard')
     } else {
-      setPasswordError(response?.data?.message ?? 'Something went wrong')
+      setPasswordError(response?.data?.message)
     }
   }
 

@@ -83,7 +83,8 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
       style={{
         overflow: 'auto',
         width: '333px'
-      }}>
+      }}
+      id="profile_container">
       <WhiteCard padding="10px 10px" noMargin style={{ height: '100%' }}>
         <Image
           src={data?.userId?.profileImage}
@@ -221,10 +222,12 @@ const ProfileContainer = ({ data, isArchived, isMute, handleChatArchive, handleC
           toggled={isArchived}
           handleSetToggle={handleArchive}
           title="Archive"
+          id="archive_chat"
           sideText="Hide chat from your active list."
         />
         <Toggle
           toggled={isMute}
+          id="mute"
           handleSetToggle={handleMute}
           title="Mute"
           sideText="Turn off this chat's notifications."

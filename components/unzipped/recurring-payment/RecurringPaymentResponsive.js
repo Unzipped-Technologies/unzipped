@@ -25,6 +25,8 @@ import TableRow from '@material-ui/core/TableRow'
 import BusinessAddress from '../businessAddress'
 import PaymentMethod from '../paymentMethod'
 import BackIcon from '../../ui/icons/back'
+import { ValidationUtils } from '../../../utils'
+import { Error } from '../hire/hire'
 
 const NotificationResp = styled.div`
   width: 100%;
@@ -102,7 +104,17 @@ const RecurringPaymentSmHeader = styled.div`
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
   padding: 10px;
 `
-const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
+const RecurringPaymentResponsive = ({
+  contracts = [],
+  paymentDate,
+  plan,
+  unpaidInvoices = [],
+  selectedBusiness,
+  onClick,
+  onAddressUpdate,
+  onSubmitPaymentMethod,
+  contractError
+}) => {
   const currentEmployeeData = [
     {
       id: 1,
@@ -119,8 +131,57 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
       currentBalance: 300
     }
   ]
+
+  const calcTotalPotentialCost = () => {
+    let total = 0
+    contracts?.forEach(item => {
+      if (item.hourlyRate && item.hoursLimit) {
+        total += item.hourlyRate * item.hoursLimit
+      }
+    })
+    return total
+  }
+
+  const getNextBillingDate = dateStartedSubscription => {
+    // Parse the date the subscription started
+    const startDate = new Date(dateStartedSubscription)
+    const billingDay = startDate.getDate()
+
+    // Get the current date
+    const currentDate = new Date()
+
+    // Determine if the billing day for the current month has passed or is today
+    let nextBillingDate
+    if (currentDate.getDate() >= billingDay) {
+      // If today is past the billing day, or is the billing day, move to next month
+      if (currentDate.getMonth() === 11) {
+        // December
+        nextBillingDate = new Date(currentDate.getFullYear() + 1, 0, billingDay)
+      } else {
+        nextBillingDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, billingDay)
+      }
+    } else {
+      // If today is before the billing day, keep the current month
+      nextBillingDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), billingDay)
+    }
+
+    // Format the date as "MonthName Day, Year"
+    const options = { year: 'numeric', month: 'long', day: 'numeric' }
+    return nextBillingDate.toLocaleDateString('en-US', options)
+  }
+
+  const calcAmtOwed = data => {
+    let amount = 0
+    unpaidInvoices?.forEach(item => {
+      if (item.freelancerId === data.freelancerId._id) {
+        amount += item.hourlyRate * item.hoursWorked
+      }
+    })
+    return amount
+  }
+
   return (
-    <NotificationResp>
+    <NotificationResp id="employee_card">
       <RecurringPaymentSmHeader>
         <BackIcon color="#000" />
         <NotificationText fontSize="16px" fontWeight="500" width="100%" marginLeft="20px">
@@ -129,7 +190,6 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
       </RecurringPaymentSmHeader>
       <NotificationContainer style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px' }}>
         <div style={{ marginBottom: '15px' }}>
-          {' '}
           <InfoIcon />
         </div>
         <NotificationText>
@@ -156,12 +216,13 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
           </div>
           <div>
             <NotificationText
+              id="charged_amount"
               fontSize="20px"
               fontWeight="500"
               textTransform="uppercase"
               width="138px"
               textAlign="center">
-              $6100.00 USD
+              ${calcTotalPotentialCost().toLocaleString()}.00 USD
             </NotificationText>
           </div>
           <div>
@@ -182,14 +243,24 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
             </TableRowStyled>
           </TableHead>
           <TableBody>
-            {currentEmployeeData &&
-              currentEmployeeData.map((item, index) => (
-                <TableRowStyled style={{ borderBottom: 'none' }} key={item.id}>
-                  <TableCellStyled>{item.name}</TableCellStyled>
-                  <TableCellStyled>{item.rate}</TableCellStyled>
-                  <TableCellStyled>{item.hoursLimit}</TableCellStyled>
-                </TableRowStyled>
-              ))}
+            {contracts &&
+              contracts?.length > 0 &&
+              contracts.map((item, index) => {
+                return (
+                  <TableRowStyled style={{ borderBottom: 'none' }} key={item.id} id={'contract_' + item?._id}>
+                    <TableCellStyled>
+                      {ValidationUtils.truncate(
+                        ValidationUtils._toUpper(
+                          `${item?.freelancerId?.userId?.FirstName} ${item?.freelancerId?.userId?.LastName}`
+                        ),
+                        15
+                      )}
+                    </TableCellStyled>
+                    <TableCellStyled className="text-center">$ {item?.hourlyRate ?? 0}.00</TableCellStyled>
+                    <TableCellStyled className="text-center">{item?.hoursLimit ?? 0}</TableCellStyled>
+                  </TableRowStyled>
+                )
+              })}
           </TableBody>
         </Table>
       </div>
@@ -201,8 +272,15 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
       </div>
 
       <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-        <BusinessAddress onClick={onClick} selectedBusiness={selectedBusiness} />
-        <PaymentMethod form={null} user={null} planCost={'1212'} subscriptionForm={{}} updateSubscription={null} />
+        <BusinessAddress onClick={onAddressUpdate} selectedBusiness={selectedBusiness} />
+        <PaymentMethod
+          onClick={onSubmitPaymentMethod}
+          form={null}
+          user={null}
+          planCost={'1212'}
+          subscriptionForm={{}}
+          updateSubscription={null}
+        />
       </div>
 
       <PaymentDetailContainer>
@@ -210,7 +288,8 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
           <PaymentDetailHeading>Recurring Payment</PaymentDetailHeading>
           <TextStyledSubHeader>**You will still get a chance to review invoices each week</TextStyledSubHeader>
           <PaymentHeaderDescription>
-            You will be charged up to $6,100 USD at 11:59 PM for hours invoiced from previous week.
+            You will be charged up to ${calcTotalPotentialCost().toLocaleString()}.00 USD at 11:59 PM for hours invoiced
+            from previous week.
           </PaymentHeaderDescription>
           <PaymentDivider />
           <SpanText>Payment Details</SpanText>
@@ -270,7 +349,8 @@ const RecurringPaymentResponsive = ({ selectedBusiness, onClick }) => {
           </div>
         </div>
         <UpdatePaymentButtonContainer>
-          <UpdatePaymentButton>update payment terms</UpdatePaymentButton>
+          <UpdatePaymentButton onClick={onClick}>update payment terms</UpdatePaymentButton>
+          {contractError && <Error>{contractError}</Error>}
         </UpdatePaymentButtonContainer>
         <PaymentDetailNote>
           <ConfirmationText>

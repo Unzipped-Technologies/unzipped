@@ -76,6 +76,7 @@ const UploadImage = ({ setFiles, files, projectFiles, id }) => {
     <>
       <ImageWrapper
         data-testid={id ?? 'upload_images'}
+        id={id ?? 'upload_images'}
         display="flex"
         width="100%"
         borderRadius="10px"

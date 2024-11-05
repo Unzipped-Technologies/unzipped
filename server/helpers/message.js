@@ -18,7 +18,7 @@ const sendMessage = async (data, id) => {
 
     if (!data?.receiver?.userId) return undefined
 
-    if (!conversationData) {
+    if (!conversationData?._id) {
       conversationData = await conversation.create({
         participants: [{ ...data.sender, userId: id }, { ...data.receiver }]
       })
@@ -30,10 +30,29 @@ const sendMessage = async (data, id) => {
       conversationId: conversationData._id,
       ...(data?.meetingId && { meetingId: data?.meetingId })
     })
+
     if (conversationData?.messages?.length) {
       conversationData.messages.push(newMessage?._id)
     } else {
       conversationData['messages'] = [newMessage?._id]
+    }
+
+    // Find the receiver and sender in the participants array
+    const receiverParticipant = conversationData.participants.find(
+      participant => participant.userId?.toString() === data.receiver.userId
+    )
+    const senderParticipant = conversationData.participants.find(
+      participant => participant.userId?.toString() === data.sender.userId
+    )
+
+    // Increment the receiver's unreadCount
+    if (receiverParticipant) {
+      receiverParticipant.unreadCount = (receiverParticipant.unreadCount || 0) + 1 // Increment unreadCount for receiver
+    }
+
+    // Set the sender's unreadCount to 0
+    if (senderParticipant) {
+      senderParticipant.unreadCount = 0 // Reset unreadCount for sender
     }
 
     await conversationData.save()

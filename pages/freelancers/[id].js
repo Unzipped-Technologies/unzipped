@@ -11,6 +11,7 @@ import ProfileCard from '../../components/unzipped/ProfileCard'
 import ProjectsCard from '../../components/unzipped/ProjectsCard'
 import MobileProfileCard from '../../components/unzipped/MobileProfileCard'
 import MobileProfileCardOptions from '../../components/unzipped/MobileProfileCardOptions'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 
 const Container = styled.div`
   display: flex;
@@ -70,7 +71,7 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
       isEmailVerified: selectedFreelancer?.userId?.isEmailVerified,
       isPhoneVerified: selectedFreelancer?.userId?.isPhoneVerified,
       isIdentityVerified: selectedFreelancer?.userId?.isIdentityVerified,
-      userId:selectedFreelancer?.userId?._id
+      userId: selectedFreelancer?.userId?._id
     })
   }, [selectedFreelancer])
 
@@ -113,8 +114,9 @@ const Profile = ({ selectedFreelancer, getFreelancerById, role, freelancerId, us
                 role={role}
               />
             ) : (
-              <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} />
+              <MobileProfileCardOptions handleProfilePage={handleValueFromChild} freelancerId={id} userId={userId} user={userData} />
             )}
+            <MobileFreelancerFooter />
           </MobileContainer>
         )}
       </>

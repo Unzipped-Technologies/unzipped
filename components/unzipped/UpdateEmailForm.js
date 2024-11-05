@@ -78,10 +78,16 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
     currentEmail: email,
     email: ''
   })
-
   useEffect(() => {
     setEmailError(error)
   }, [error])
+
+  useEffect(() => {
+    setUserData({
+      ...userData,
+      currentEmail: email
+    })
+  }, [email])
 
   const updateForm = (type, data) => {
     setUserData({
@@ -133,6 +139,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
             placeholder="Current Email"
             borderRadius="10px"
             name="currentEmail"
+            id="currentEmail"
             width="100%"
             zIndexUnset
             error={currentEmailError}
@@ -145,6 +152,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, email, error }) => {
             placeholder="New Email"
             borderRadius="10px"
             name="email"
+            id="email"
             width="100%"
             zIndexUnset
             error={emailError}

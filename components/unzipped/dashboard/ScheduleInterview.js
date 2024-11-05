@@ -16,7 +16,7 @@ const ScheduleInterview = () => {
 
   return (
     <>
-      <ScheduleInterviewContainer data-testid="calendar_setting_notification">
+      <ScheduleInterviewContainer data-testid="calendar_setting_notification" id="calendar_setting_notification">
         <CalanderParagraphStyled noMargin isMobile={isMobile}>
           {!calendarSettings?.startTime
             ? 'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'

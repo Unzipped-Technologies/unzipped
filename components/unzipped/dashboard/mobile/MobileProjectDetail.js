@@ -49,7 +49,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
           Project Length:
         </TEXT>
         <TEXT padding="0px 0px 0px 10px" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
-          {projectDetails?.projectType || '-'}
+          {projectDetails?.projectType || 'N/A'}
         </TEXT>
       </div>
       <TEXT margin="10px 0px 0px 0px" fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
@@ -62,7 +62,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
         fontSize="16px"
         lineHeight="18.75px"
         color="#12151B">
-        {projectDetails?.description || '-'}
+        {projectDetails?.challenge || projectDetails?.role || 'N/A'}
       </TEXT>
       <TEXT margin="10px 0px 0px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="23px" color=" #12151B">
         Requirements
@@ -70,30 +70,30 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
       <ProjectRequirements>
         {projectDetails?.objectives?.length
           ? projectDetails?.objectives?.map((objective, index) => (
-              <li key={`${objective}_${index}`}>
-                <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
-                  {objective}
-                </TEXT>{' '}
-              </li>
-            ))
-          : '-'}
+            <li key={`${objective}_${index}`}>
+              <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
+                {objective}
+              </TEXT>{' '}
+            </li>
+          ))
+          : 'N/A'}
       </ProjectRequirements>
       <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
         Skills Required
       </TEXT>{' '}
       {projectDetails?.requiredSkills?.length
         ? projectDetails?.requiredSkills?.map((skill, index) => {
-            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
-          })
-        : '-'}
+          return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+        })
+        : 'N/A'}
       <TEXT fontSize="13px" padding="5px 0px 0px 0px">
-        Project ID: {projectDetails?._id || 'N / A'}
+        Project ID: {projectDetails?._id || 'N/A'}
       </TEXT>
       <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
         Project Goals
       </TEXT>{' '}
       <TEXT textAlign="justify" fontWeight="300" fontSize="16px" lineHeight="18.75px" color="#12151B">
-        {projectDetails?.goals || '-'}
+        {projectDetails?.goals || 'N/A'}
       </TEXT>
       <TEXT margin="10px 0px 10px 0px" noMargin fontSize="16px" fontWeight="bold" lineHeight="18.75px" color=" #12151B">
         Project Image
@@ -118,7 +118,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
             fontSize="16px"
             lineHeight="18.75px"
             color="#12151B">
-            -
+            N/A
           </TEXT>
         )}
       </div>
@@ -130,13 +130,13 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
           <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
             <MdLocationOn style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
             <TEXT textColor="#123456" fontSize="18px" fontWeight="500" lineHeight="18.75px" padding="3px 0px 0px 5px">
-              {projectDetails?.businessCity || '-'}
+              {projectDetails?.businessCity || 'N/A'}
             </TEXT>
           </DIV>
           <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
             <MdFlag style={{ marginTop: '4px', fontSize: '24px' }} />{' '}
             <TEXT textColor="#123456" fontSize="18px" fontWeight="500" lineHeight="18.75px" padding="5px 0px 0px 5px">
-              {projectDetails?.businessCountry || '-'}
+              {projectDetails?.businessCountry || 'N/A'}
             </TEXT>
           </DIV>
           <DIV display="flex" flexDirection="column" margin="10px 0px 0px 0px">
@@ -191,7 +191,7 @@ const MobileProjectDetail = ({ projectDetails, isClientPaymentVerified, clientBu
           </DIV>
         </DIV>
       </div>
-      <MobileFreelancerFooter />
+      <MobileFreelancerFooter defaultSelected="Projects" />
     </MobileView>
   )
 }

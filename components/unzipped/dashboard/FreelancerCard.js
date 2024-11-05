@@ -101,16 +101,18 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
         <TEXT textColor="#0057FF" onClick={redirectToProfile}>
           {user.name}
         </TEXT>
-        <TEXT margin="0px">{user.type}</TEXT>
+        <TEXT margin="0px" id="freelancer_type">
+          {user.type}
+        </TEXT>
         {user?.country ? <DarkText half>{user.country}</DarkText> : <DarkText half>-</DarkText>}
         {includeRate && (
           <Flex>
             {user?.rate > 0 ? (
-              <DarkText small half>
+              <DarkText small half id="rate">
                 <DarkSpan large>${user?.rate}</DarkSpan> / hour
               </DarkText>
             ) : (
-              <DarkText small half>
+              <DarkText small half id="rate">
                 Negotiable
               </DarkText>
             )}
@@ -128,7 +130,7 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           <DarkText topMargin="10px" width="100%">
             <b
               style={{
-                fontSize: '11px',
+                fontSize: '16px',
                 fontWeight: '800',
                 paddingRight: '5px',
                 lineHeight: '21px'
@@ -151,7 +153,10 @@ const FreelancerCard = ({ user, includeRate, width, filter, userId }) => {
           View Profile
         </Button>
         {userId && userId !== user.userId && (
-          <ButtonTwo onClick={handlOpen} data-testid={`open_${userId}_list_modal`}>
+          <ButtonTwo
+            onClick={handlOpen}
+            data-testid={`open_${userId}_list_modal`}
+            id={`open_${user.userId}_list_modal`}>
             <Icon name="actionIcon" color="#333" />
           </ButtonTwo>
         )}

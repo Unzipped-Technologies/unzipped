@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
 import BackHeader from './BackHeader'
@@ -77,6 +77,7 @@ const ButtonContainer = styled.div`
 const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
   const isMobile = window.innerWidth >= 680 ? false : true
 
+  const [passwordError, setPasswordError] = useState('')
   const [currentPasswordError, setcurrentPasswordError] = useState('')
   const [newPasswordError, setNewPasswordError] = useState('')
   const [confirmPasswordError, setconfirmPasswordError] = useState('')
@@ -85,6 +86,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
     newPassword: '',
     confirmNewPassword: ''
   })
+
+  useEffect(() => {
+    setPasswordError(error)
+  }, [error])
 
   const updateForm = (type, data) => {
     setUserData({
@@ -106,7 +111,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
   const validatePassword = () => {
     const isValid = ValidationUtils._strongPasswordValidation(userData.newPassword)
     if (!isValid && userData.newPassword) {
-      setNewPasswordError('Password must contain numbers, 1 capital letter and 1 special character!')
+      setNewPasswordError('Password must be 8+ characters including numbers, 1 capital letter and 1 special character.')
     } else {
       setNewPasswordError('')
     }
@@ -140,6 +145,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             placeholder="Current Password"
             borderRadius="10px"
             name="password"
+            id="password"
             width="100%"
             zIndexUnset
             error={currentPasswordError}
@@ -175,6 +181,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             placeholder="New Password"
             borderRadius="10px"
             name="newPassword"
+            id="newPassword"
             width="100%"
             zIndexUnset
             error={newPasswordError}
@@ -190,6 +197,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             placeholder="Confirm Password"
             borderRadius="10px"
             name="confirmNewPassword"
+            id="confirmNewPassword"
             width="100%"
             zIndexUnset
             error={confirmPasswordError}
@@ -203,8 +211,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             value={userData.confirmNewPassword}>
             Confirm Password
           </FormField>
-          {error && <p className="red-text"> {error}</p>}
-
+          {passwordError && <p className="red-text"> {passwordError}</p>}
           <ButtonContainer mobile={isMobile}>
             <ButtonBack type="button" onClick={onBack} data-testid="cancel_password_changes">
               Cancel

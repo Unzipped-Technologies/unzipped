@@ -138,8 +138,11 @@ const Chat = ({
   }
 
   useEffect(() => {
-    if (id) openConversation()
-    handleLastMessageScroll()
+    const fetchData = () => {
+      id && openConversation()
+      handleLastMessageScroll()
+    }
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -158,7 +161,7 @@ const Chat = ({
   // Sockets
 
   useEffect(() => {
-    if(!token) {
+    if (!token) {
       router.push('/login')
     }
   }, [])
@@ -313,7 +316,7 @@ const Chat = ({
       {showSubMenu ? (
         <MobileChatMenu
           handleFilterOpenClose={closeMenu}
-          role={user}
+          role={user?.role}
           isArchived={selectedConversation?.isArchived}
           isMute={selectedConversation?.isMute}
           handleChatArchive={handleArchive}
@@ -323,11 +326,11 @@ const Chat = ({
       ) : (
         <>
           <BackHeader title="Messages">
-            <span onClick={openMenu}>
+            <span onClick={openMenu} id="header_action">
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </span>
           </BackHeader>
-          <WhiteCard noMargin height="100%" style={{ position: 'static' }}>
+          <WhiteCard noMargin height="100%" style={{ position: 'static' }} id="message_container">
             <Div
               margin="0px 0px 0px 0px"
               onScroll={() => {
@@ -343,6 +346,7 @@ const Chat = ({
                 const isSender = e?.sender === user._id;
                   return (
                     <Container
+                      id={`message_${e?._id}`}
                       key={`message_${index}`}
                       display="flex"
                       justifyContent={isSender ? "flex-end" :"flex-start"}
@@ -430,6 +434,7 @@ const Chat = ({
                   }}
                   onBlur={handleBlurTyping}
                   message
+                  id="message"
                   placeholder="Type a message..."
                   width="100%"
                   border="1px solid #C4C4C4"
@@ -438,7 +443,11 @@ const Chat = ({
                   autosize></FormField>
               </Message>
               <Absolute zIndex={10} width="26px" right="25px">
-                <Button type="transparent" disabled={!(form.message || form.attachment)} onClick={() => send()}>
+                <Button
+                  id="send_message"
+                  type="transparent"
+                  disabled={!(form.message || form.attachment)}
+                  onClick={() => send()}>
                   <Icon name="send" />
                 </Button>
               </Absolute>

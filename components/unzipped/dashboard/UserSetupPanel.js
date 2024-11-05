@@ -94,26 +94,27 @@ const Panel = ({ user, verifyIdentity }) => {
   const dropzoneRef = useRef(null)
 
   const completeSetup = () => {
-    const thirdActionItem = document.querySelector('.upload-profile-image')
-    if (thirdActionItem) {
-      thirdActionItem.click()
-      return
-    }
-    const firstActionItem = document.querySelector('.verify-identity')
-    if (firstActionItem) {
-      firstActionItem.click()
+
+    const selectPlanActionItem = document.querySelector('.select-a-plan')
+    if (selectPlanActionItem) {
+      selectPlanActionItem.click()
       return
     }
 
-    const fourthActionItem = document.querySelector('.select-a-plan')
-    if (fourthActionItem) {
-      fourthActionItem.click()
+    const profileImgActionItem = document.querySelector('.upload-profile-image')
+    if (profileImgActionItem) {
+      profileImgActionItem.click()
+      return
+    }
+    const verifyIdentityActionItem = document.querySelector('.verify-identity')
+    if (verifyIdentityActionItem) {
+      verifyIdentityActionItem.click()
       return
     }
 
-    const secondActionItem = document.querySelector('.update-account-details')
-    if (secondActionItem) {
-      secondActionItem.click()
+    const accountUpdateActionItem = document.querySelector('.update-account-details')
+    if (accountUpdateActionItem) {
+      accountUpdateActionItem.click()
       return
     }
   }
@@ -128,21 +129,24 @@ const Panel = ({ user, verifyIdentity }) => {
 
   useEffect(() => {
     if (user && trackProgress < 100) {
+      let incrementalProgress = 0
 
-      if (user?.role !== 0 && user?.FirstName && user?.AddressCity) {
-        setTrackProgress((prev) => prev + 25)
+      if (user?.FirstName && user?.AddressCity) {
+        incrementalProgress += 25
       }
       if (user?.profileImage) {
-        setTrackProgress((prev) => prev + 25)
+        incrementalProgress += 25
+      }
+      if (user?.isIdentityVerified === 'SUCCESS') {
+        incrementalProgress += 25;
       }
       if (user?.plan > 0) {
-        setTrackProgress((prev) => prev + 25)
+        incrementalProgress += 25
       }
-      if (user?.isIdentityVerified == 'SUCCESS') {
-        setTrackProgress((prev) => prev + 25)
-      }
+
+      setTrackProgress(incrementalProgress)
     }
-  }, [])
+  }, [user])
 
   const openDropzone = () => {
     dropzoneRef.current && dropzoneRef.current.open()
@@ -158,7 +162,7 @@ const Panel = ({ user, verifyIdentity }) => {
 
   const router = useRouter()
   return (
-    <Container data-testid="user_profile_panel">
+    <Container data-testid="user_profile_panel" id="user_profile_panel">
       <TitleText size={18}>Set up your account</TitleText>
       <ProgressBarContainer>
         <ProgressBarFiller percentage={trackProgress}>
@@ -184,14 +188,14 @@ const Panel = ({ user, verifyIdentity }) => {
             <Text
               className="update-account-details"
               onClick={() => {
-                router.push('/signup')
+                router.push('/dashboard/account')
               }}>
               Update account details
             </Text>
           </AccountSetup>
         </AccountSetupContainer>
       )}
-      {!user?.profileImage && (
+      {user?.profileImage === 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png' && (
         <AccountSetupContainer>
           <img
             style={{ borderRadius: '100%' }}

@@ -195,7 +195,7 @@ const FullScreenDropdown = ({ menuItems, onClose, isAuth = false, logoutUser, st
       <ItemContainer>
         {menuItems.map((item, index) => {
           return (
-            <Box key={item.name + index}>
+            <Box key={item.name + index} id={`mobile_menu_${index}`}>
               <Row onClick={() => setSelected(selected === item.name ? false : item.name)}>
                 <Title onClick={() => !item?.subItems && item?.link && linkPush(item.link)}>{item.name}</Title>
                 {item?.subItems && item?.subItems.length && (

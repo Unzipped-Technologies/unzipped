@@ -1,4 +1,4 @@
-import React, { useEffect , useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import Image from '../ui/Image'
@@ -155,7 +155,7 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
   console.log("Skills",user?.freelancerSkills)
 
   return (
-    <Container data-testid="desktop_profile_container">
+    <Container data-testid="desktop_profile_container" id="freelancer_profile">
       <ImageContainer>
         <Image src={user?.profileImage} alt="profile pic" width="218px" radius="15px" id="freelancer_profile_image" />
       </ImageContainer>
@@ -163,7 +163,7 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
         {user.FirstName !== undefined && user.LastName !== undefined && (
           <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
         )}
-        <div>
+        <div id="freelancer_skills">
           <DarkText noMargin padding="0px 0px 5px 0px">
             SKILLS
           </DarkText>
@@ -254,24 +254,29 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       </Content>
 
       <LikeBox>
-        <Button
-          block
-          width="36px"
-          type="button"
-          buttonHeight="36px"
-          fontSize="15px"
-          noBorder
-          onClick={e => {
-            handleClick(e)
-          }}>
-          CHECK AVAILABILITY
-        </Button>
+        {
+          role !== 1 && (
+            <Button
+              block
+              width="36px"
+              type="button"
+              buttonHeight="36px"
+              fontSize="15px"
+              noBorder
+              onClick={e => {
+                handleClick(e)
+              }}>
+              CHECK AVAILABILITY
+            </Button>
+          )
+        }
+
 
         {isOpen && (
-            <ListModal handleClose={handleCloseModal} open={isOpen} userId={userId} freelancerId={user?._id} user={user} />
-          )}
+          <ListModal handleClose={handleCloseModal} open={isOpen} userId={userId} freelancerId={user?._id} user={user} />
+        )}
 
-         {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 
+        {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 
            <Card
             sx={{
               minWidth: 275,

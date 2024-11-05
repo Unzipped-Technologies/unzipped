@@ -272,6 +272,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById }) => {
         </Title>
         <Tabs
           data-testid="desktop_project_detail_tabs"
+          id="desktop_project_detail_tabs"
           style={{
             width: '100%',
             height: '55px'

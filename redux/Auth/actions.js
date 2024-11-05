@@ -252,19 +252,21 @@ export const getCurrentUserData = () => async (dispatch, getState) => {
 export const loadUser = user => async (dispatch, getState) => {
   //User Loading
   dispatch({ type: USER_LOADING })
-  await axios
+  return await axios
     .post(`/api/auth/login`, user)
-    .then(res =>
+    .then(res => {
       dispatch({
         type: USER_LOADED,
         payload: res.data
       })
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: AUTH_ERROR,
         payload: err.response
       })
+      return err
     })
 }
 

@@ -45,6 +45,7 @@ const Extra = styled.div`
 
 const Scroll = styled(SimpleBar)`
   width: 100%;
+  padding-bottom: 100px;
   z-index: 1;
   .simplebar-track > .simplebar-scrollbar:before {
     background-color: ${() => theme.tint2};
@@ -58,6 +59,9 @@ const Scroll = styled(SimpleBar)`
   }
   .simplebar-placeholder {
     width: auto !important;
+    max-height: auto !important;
+    height: auto !important;
+    box-sizing: border-box !important;
   }
 `
 
@@ -116,7 +120,6 @@ const UsernameDiv = styled.div`
 
 const MobileInbox = ({ conversations, userId, userEmail, openConversation, handleUnreadCount }) => {
   const router = useRouter()
-
   const [conversation, setConversation] = useState(conversations)
   const [archivedChatsShow, setArchivedChatsShow] = useState(false)
 
@@ -170,12 +173,14 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
         padding="10px 5px"
         overflow="hidden"
         border="1px solid #d8d8d8"
+        id={`conversation_${_id}`}
         height="63px"
         justifyStart
         alignStart
         onClick={() => {
           router.push(`/dashboard/chat/${_id}`)
         }}>
+        {console.log('_id', _id)}
         <Span style={{ lineHeight: '16px' }}>
           <Image src={receiver?.userId?.profileImage} height="48px" width="48px" radius="22%" />
           <div
@@ -198,15 +203,7 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
                   {ConverterUtils.capitalize(`${ValidationUtils.getFullNameFromUser(receiver?.userId)}`)}
                 </DarkText>
               </DIV>
-              {/* <div
-                style={{
-                  color: '#000000',
-                  fontSize: '16px',
-                  fontWeight: '100',
-                  fontFamily: 'system-ui'
-                }}>
-                @{receiver.userId.email.split('@')[0]}
-              </div> */}
+
               <UsernameDiv>@{receiver.userId.email.split('@')[0]}</UsernameDiv>
               <div style={{ minWidth: '100px' }}>
                 <DarkText
@@ -243,12 +240,12 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
       })
 
   return (
-    <>
+    <div
+      style={{
+        height: '100vh'
+      }}>
       <BackHeader title="Messages">
-        <span
-          onClick={() => {
-            router.back()
-          }}>
+        <span onClick={() => {}}>
           <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
         </span>
       </BackHeader>
@@ -271,9 +268,8 @@ const MobileInbox = ({ conversations, userId, userEmail, openConversation, handl
           </div>
         )}
         {archivedChatsShow && <RenderConversations type="archived" />}
-        {/* <Extra></Extra> */}
       </Scroll>
-    </>
+    </div>
   )
 }
 

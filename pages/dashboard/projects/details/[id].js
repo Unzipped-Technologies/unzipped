@@ -71,6 +71,7 @@ const ProjectName = styled.div`
     width: 100%;
     justify-content: center;
     padding: 0px 0px 0px 15px;
+    overflow: scroll;
   }
 `
 
@@ -81,18 +82,18 @@ const ProjectSubHeading = styled(TEXT)`
 `
 
 const Tabs = styled.div`
-  border: 1px solid #5cb85c;
+  border: 1px solid #d8d8d8;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   border-bottom: 1px solid #bcc5d3;
   display: flex;
-  background: #5cb85c;
+  background: #d8d8d8;
   @media (max-width: 680px) {
     justify-content: space-around;
     display: flex;
     overflow-x: auto;
     margin-left: 10px;
-    background: #5cb85c;
+    background: #d8d8d8;
   }
 `
 
@@ -130,7 +131,7 @@ const TabButton = styled.button`
   ${({ active }) =>
     active &&
     css`
-      background: #04aa6d !important;
+      background: #818986 !important;
       color: #fff;
       font-weight: 600;
     `};
@@ -270,6 +271,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
 
         <Tabs
           data-testid="desktop_project_detail_tabs"
+          id="desktop_project_detail_tabs"
           style={{
             width: '100%',
             height: '55px'

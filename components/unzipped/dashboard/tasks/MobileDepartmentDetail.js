@@ -14,6 +14,8 @@ import MuiDialogContent from '@material-ui/core/DialogContent'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import AccordionActions from '@mui/material/AccordionActions';
+
 
 import Nav from '../../header'
 import { DarkText } from '../style'
@@ -28,6 +30,7 @@ import {
   resetStoryForm,
   reorderStories
 } from '../../../../redux/actions'
+import TagModal from '../TagModal'
 
 const Button = styled.button`
   width: 91px;
@@ -43,7 +46,7 @@ const Button = styled.button`
   text-transform: uppercase;
   flex-shrink: 0;
   border-radius: 5px;
-  background: #1976d2 !important;
+  background: #1976d2;
   outline: none !important;
   border: none !important;
   ${({ active }) =>
@@ -56,7 +59,7 @@ const Button = styled.button`
 
 const TaskDetailContainer = styled.div`
   width: 100%;
-  border: 2px solid #bbbbbb;
+  padding:15px;
 `
 
 // Define a styled AccordionDetails component
@@ -70,7 +73,7 @@ const CustomAccordionDetails = styled(AccordionDetails)`
 
 const Task = styled.div`
   border-bottom: 2px solid #bbbbbb;
-  padding: 0px 20px 10px 20px;
+  padding: 0px 12px 10px 12px;
   margin-bottom: 20px;
 `
 
@@ -120,19 +123,22 @@ const MobileTaskDetail = ({
   const { id } = router.query
   const classes = useStyles()
   const [open, setOpen] = useState(false)
-  const [expandedAccordian, setExpanded] = useState({})
-
+  const [isAccordianExpanded, setIsAccordianExpanded] = useState(false)
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false)
+  const [expandedAccordian, setExpandedAccordian] = useState({})
+  
   useEffect(() => {
     if (id) getDepartmentById(id)
   }, [id])
 
-  const handleOpen = () => {
+  const handleTaskForm = () => {
     resetStoryForm()
     updateCreateStoryForm({
       businessId: departmentData?.businessId,
       departmentId: departmentData?._id
     })
     setOpen(true)
+    setIsAccordianExpanded(false)
   }
 
   const handleClose = async () => {
@@ -142,10 +148,33 @@ const MobileTaskDetail = ({
   }
 
   const handleAccordionToggle = panel => {
-    setExpanded({
+    setExpandedAccordian({
       ...expandedAccordian,
       [panel]: !expandedAccordian[panel]
     })
+  }
+
+  const openTagModal = () => {
+    setIsTagModalOpen(true)
+    setIsAccordianExpanded(false)
+  }
+
+  const closeTagModal = () => {
+    setIsTagModalOpen(false)
+    if (departmentData?._id) getDepartmentById(departmentData._id)
+  }
+
+  const toggleDropdown = () => {
+    setIsAccordianExpanded(!isAccordianExpanded)
+  }
+
+  const handleAccordianOptChange = value => {
+    if (value == 'ADD TAGS') {
+      openTagModal()
+    }
+    if (value == 'ADD TASKS') {
+      handleTaskForm()
+    }
   }
 
   const handleOnDragEnd = async result => {
@@ -207,32 +236,59 @@ const MobileTaskDetail = ({
           router.back()
         }}
       />
-      {userRole === 0 && (
-        <div
-          style={{
-            margin: '10px',
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end'
-          }}>
-          <Button
-            mobile
-            disabled={false}
-            onClick={async () => {
-              handleOpen()
-            }}
-            type="black"
-            colors={{
-              text: '#FFF',
-              background: '#1976D2',
-              border: '1px',
-              wideBorder: '#1976D2',
-              paddingBottom: '30px'
-            }}>
-            <AiOutlinePlus style={{ fontSize: '20px', fontWeight: 'bold' }} /> Add
-          </Button>
-        </div>
-      )}
+      <div style={{
+        margin: '10px',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end'
+      }}>
+        {userRole === 0 && (
+          <Accordion style={{ width: '100%' }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              onClick={toggleDropdown}
+              style={{ fontWeight: "600", fontSize: "16px" }}
+            >
+              Select
+            </AccordionSummary>
+            <AccordionActions
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                padding: "4px",
+
+              }}
+            >
+              <Button
+                onClick={() => handleAccordianOptChange('ADD TAGS')}
+                style={{
+                  color: "#000",
+                  backgroundColor: "#fff",
+                  marginBottom: "6px",
+                  fontWeight: "500",
+                  fontSize: "14px"
+                }}
+              >
+                ADD TAGS
+              </Button>
+              <Button
+                onClick={() => handleAccordianOptChange('ADD TASKS')}
+                style={{
+                  color: "#000",
+                  background: "#fff",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  marginLeft: "0px",
+                }}
+              >
+                ADD TASKS
+              </Button>
+            </AccordionActions>
+          </Accordion>
+        )}
+      </div>
 
       <TaskDetailContainer>
         <DragDropContext onDragEnd={handleOnDragEnd} onDragStart={handleAccordionToggle}>
@@ -249,7 +305,7 @@ const MobileTaskDetail = ({
                 {departmentData?.departmentTags?.length
                   ? departmentData?.departmentTags.map(tag => {
                       return (
-                        <Accordion key={tag?._id} expanded={expandedAccordian[`${tag?.id}`]}>
+                        <Accordion key={tag?._id} id={`tag_${tag?._id}`} expanded={expandedAccordian[`${tag?.id}`]}>
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
@@ -273,6 +329,7 @@ const MobileTaskDetail = ({
                                     ? tag?.tasks.map((task, index) => {
                                         return (
                                           <Task
+                                            id={`task_${task?._id}`}
                                             key={task?._id}
                                             onClick={() => {
                                               router.push(`/dashboard/ticket/${task._id}`)
@@ -284,7 +341,7 @@ const MobileTaskDetail = ({
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}>
                                                   <DarkText>{task?.ticketCode}</DarkText>
-                                                  <DarkText topMargin="5px">{task?.description}</DarkText>
+                                                  <DarkText topMargin="5px">{task?.taskName}</DarkText>
                                                   <DarkText margin bold topMargin="10px">
                                                     <img
                                                       src={
@@ -355,6 +412,16 @@ const MobileTaskDetail = ({
           />
         </DialogContent>
       </MUIDialog>
+
+      {isTagModalOpen && (
+        <TagModal
+          open={isTagModalOpen}
+          onHide={() => {
+            closeTagModal()
+          }}
+        />
+      )}
+
     </>
   )
 }
@@ -362,7 +429,6 @@ const MobileTaskDetail = ({
 const mapStateToProps = state => {
   return {
     userRole: state.Auth.user?.role,
-
     departmentData: state.Departments.selectedDepartment,
     taskForm: state.Tasks.createStoryForm,
     currentDepartment: state.Tasks.currentDepartment
