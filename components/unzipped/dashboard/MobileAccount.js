@@ -8,6 +8,7 @@ import IconComponent from '../../ui/icons/IconComponent'
 import { logoutUser, getCurrentUserData } from '../../../redux/actions'
 import UpdateProfileModal from '../UpdateProfileModal'
 import BackHeader from '../BackHeader'
+import UpdateProfileImage from './UpdateProfileImage'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -40,6 +41,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
   const router = useRouter()
 
   const [isProfileModal, setIsProfileModal] = useState(false)
+  const [isOpen, setOpen] = useState(false)
 
   const [showSettings, setShowSettings] = useState(false)
 
@@ -70,6 +72,13 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
     setIsProfileModal(false)
   }
 
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
   return (
     <div className="mb-10 ">
       <BackHeader title="Account" />
@@ -83,7 +92,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
               className="border rounded"
               data-testid="user_profile_image"
             />
-            <div className="mx-2">
+            <div className="mx-2" style={{ overflow: 'scroll', width: '200px' }}>
               <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="17px">
                 {user?.FirstName + ' ' + user?.LastName}
               </P>
@@ -161,6 +170,14 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
                   Password *****
                 </P>
                 <Link href="/change-password">Update Password</Link>
+              </div>
+              <div className="d-flex align-items-center justify-content-between mt-3">
+                <P fontSize="16px" margin="5px 0px 0px 20px">
+                  Profile Picture
+                </P>
+                <P onClick={handleOpen} style={{ fontSize: '15px', color: '#0095dd' }} id="update_picture">
+                  Update
+                </P>
               </div>
               <div className="d-flex align-items-center justify-content-between mt-3">
                 <P fontSize="16px" margin="0px 0px 0px 20px">
@@ -253,6 +270,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
           }}
         />
       )}
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </div>
   )
 }

@@ -73,7 +73,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
   const { isExpanded } = useSelector(state => state.Freelancers)
 
   useEffect(() => {
-    getPublicProjectsList({ take, skip, filter })
+    getPublicProjectsList({ limit: take, skip, filter })
   }, [filter])
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
     if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
       if (take < totalCount) {
         const total = +take
-        setTake(20)
+        setTake('all')
         setSkip(total)
       }
     }
@@ -135,7 +135,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
       return '0 result'
     } else if (freelancerList?.length === 1) {
       return '1 result'
-    } else if (skip === 0) {
+    } else if (skip === 0 && freelancerList?.length > 1) {
       return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     }
   }
@@ -151,7 +151,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
     getPublicProjectsList({
       intersectionObserver,
       filter,
-      take,
+      limit: take,
       skip
     })
   }

@@ -10,7 +10,7 @@ describe('Client Account Page', () => {
     cy.clearLocalStorage()
 
     // Visit the login page
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -42,7 +42,11 @@ describe('Client Account Page', () => {
     // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Verify change email', () => {
     cy.intercept('GET', '/api/auth/current_user').as('getUserRequest')
 
@@ -96,7 +100,7 @@ describe('Client Account Page', () => {
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.get('#password').clear().clear().type(testClientPassword)
+        cy.get('#password').clear().clear().type('Hello@2024')
         cy.get('#password').blur()
 
         let NewPassword = faker.internet.password({ length: 5 })
@@ -201,6 +205,40 @@ describe('Client Account Page', () => {
         })
       })
   })
+
+  it('Change profile image', () => {
+    cy.intercept('POST', '/api/user/upload-profile-image').as('updateProfileImageRequest')
+
+    cy.window()
+      .its('store')
+      .then(store => {
+        const user = store.getState()?.Auth?.user
+
+        if (user?.profileImage) {
+          cy.get('[data-testid="user_profile_image"]')
+            .should('be.visible')
+            .should('have.attr', 'src')
+            .and('include', user.profileImage)
+        }
+
+        cy.contains('Settings').should('be.visible').click()
+
+        cy.get('#update_picture').should('be.visible').click()
+
+        cy.get(`#profile_image_modal`).should('be.visible')
+
+        cy.contains('button', 'Upload').should('be.disabled')
+
+        cy.get('input[type="file"]').attachFile('image.png')
+
+        cy.contains('button', 'Upload').should('be.visible').click()
+
+        cy.wait('@updateProfileImageRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
+      })
+  })
+
   it('Test logout functionality', () => {
     cy.intercept('GET', '/api/auth/logout').as('logOutRequest')
 

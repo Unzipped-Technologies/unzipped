@@ -1,7 +1,5 @@
 import { faker } from '@faker-js/faker'
 import { ValidationUtils } from '../../utils'
-import { ConverterUtils } from '../../utils'
-import { RECENT_SKILLS, SORT_OPTIONS } from '../../utils/constants'
 import { testFreelancerEmail, testFreelancerPassword } from '../../config/keys'
 
 describe('Freelancer Account Page', () => {
@@ -9,7 +7,9 @@ describe('Freelancer Account Page', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -21,9 +21,6 @@ describe('Freelancer Account Page', () => {
     cy.get('#email').clear().type(testFreelancerEmail)
     cy.get('#password').clear().type(testFreelancerPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -31,18 +28,26 @@ describe('Freelancer Account Page', () => {
     // Wait for the login request and verify success
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
+      cy.window().its('document.readyState').should('eq', 'complete')
+
       cy.url().should('include', '/dashboard')
     })
-    cy.visit('http://localhost:3000/dashboard/account')
+    cy.visit('/dashboard/account')
+    cy.window().its('document.readyState').should('eq', 'complete')
+
     cy.contains('Connect. Build. grow').should('not.exist')
+  })
+
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('Verify change email', () => {
     cy.window()
       .its('store')
       .then(store => {
-        const FreelancerList = store.getState()?.Freelancers?.freelancers
-        const TotalCount = store.getState()?.Freelancers?.totalCount
         const freelancerId = store.getState()?.Auth?.user?.freelancers?._id
         const user = store.getState()?.Auth?.user
         const NewEmail = faker.internet.email()
@@ -59,7 +64,10 @@ describe('Freelancer Account Page', () => {
         cy.wait('@getFreelancersRequest').then(interception => {
           expect(interception.response.statusCode).to.be.oneOf([200, 304])
         })
+        cy.window().its('document.readyState').should('eq', 'complete')
         cy.go('back')
+        cy.window().its('document.readyState').should('eq', 'complete')
+
         cy.get('#profile_data').within(() => {
           cy.contains(user.email).should('be.visible')
           cy.contains('Change email').should('be.visible').click()
@@ -80,6 +88,7 @@ describe('Freelancer Account Page', () => {
         cy.contains('Change Password').should('be.visible').click()
         cy.url().should('include', `/change-password`)
         cy.contains('Connect. Build. grow').should('not.exist')
+        cy.window().its('document.readyState').should('eq', 'complete')
 
         cy.get('#password').clear().clear().type('Hello@2024')
         cy.get('#password').blur()
@@ -102,7 +111,6 @@ describe('Freelancer Account Page', () => {
 
         cy.get('#confirmNewPassword').clear().type(NewPassword)
         cy.get('#confirmNewPassword').blur()
-        // cy.contains('Passwords do not match!').should('not.exist')
         cy.contains('button', 'Save').should('be.enabled')
         cy.go('back')
         cy.contains('Connect. Build. grow').should('not.exist')
@@ -110,6 +118,7 @@ describe('Freelancer Account Page', () => {
         cy.contains('Change number').should('be.visible').click()
         cy.url().should('include', `/change-phone`)
         cy.contains('Connect. Build. grow').should('not.exist')
+        cy.window().its('document.readyState').should('eq', 'complete')
 
         cy.get('#currentPhone').should('have.value', ValidationUtils._formatPhoneNumber(user?.phoneNumber) ?? '')
         cy.contains('button', 'Save').should('be.disabled')
@@ -137,7 +146,6 @@ describe('Freelancer Account Page', () => {
         let City = faker.location.city()
         let State = faker.location.state()
         let ZipCode = faker.location.zipCode()
-        let Country = faker.location.country()
 
         cy.get('#AddressLineOne').clear().type(AddressLineOne)
         cy.get('#AddressLineTwo').clear().type(AddressLineTwo)
@@ -151,6 +159,35 @@ describe('Freelancer Account Page', () => {
         cy.url().should('include', `/manage-payment-method`)
         cy.contains('Connect. Build. grow').should('not.exist')
         cy.go('back')
+      })
+  })
+  it('Change profile image', () => {
+    cy.intercept('POST', '/api/user/upload-profile-image').as('updateProfileImageRequest')
+
+    cy.window()
+      .its('store')
+      .then(store => {
+        const user = store.getState()?.Auth?.user
+
+        if (user?.profileImage) {
+          cy.get('#profile_image').should('be.visible').should('have.attr', 'src').and('include', user.profileImage)
+        }
+        cy.get('.bottom-overlay').invoke('css', 'opacity', '1').should('be.visible')
+
+        cy.wait(500)
+
+        cy.get(`#image_change_icon`).should('be.visible').click({ force: true })
+        cy.get(`#profile_image_modal`).should('be.visible')
+
+        cy.contains('button', 'Upload').should('be.disabled')
+
+        cy.get('input[type="file"]').attachFile('image.png')
+
+        cy.contains('button', 'Upload').should('be.visible').click()
+
+        cy.wait('@updateProfileImageRequest').then(interception => {
+          expect(interception.response.statusCode).to.be.oneOf([200, 304])
+        })
       })
   })
 })

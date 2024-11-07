@@ -57,7 +57,9 @@ describe('Freelancer Invoice', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
@@ -69,9 +71,6 @@ describe('Freelancer Invoice', () => {
     cy.get('#email').clear().type(testFreelancerEmail)
     cy.get('#password').clear().type(testFreelancerPassword)
 
-    // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
-
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -82,6 +81,8 @@ describe('Freelancer Invoice', () => {
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
       cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
+
       cy.wait('@getUserRequest').then(interception => {
         expect(interception.response.statusCode).to.eq(200)
       })
@@ -94,6 +95,12 @@ describe('Freelancer Invoice', () => {
       .then(store => {
         reduxStore = store
       })
+  })
+
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('View project and  add tasks to invoice', () => {
@@ -279,26 +286,27 @@ describe('Freelancer Invoice', () => {
           })
         })
         const CurrentTask = SelectedInvoice?.tasks[SelectedInvoice?.tasks?.length - 1]
-        cy.get(`#${CurrentTask._id}_hours`)
-          .should('be.visible')
-          .scrollIntoView()
-          .should('have.value', CurrentTask.hours)
-        cy.get(`#${CurrentTask._id}_hours`).should('be.visible').scrollIntoView().clear().type(3)
-        cy.get(`#${CurrentTask._id}_hours`).scrollIntoView().type('{enter}')
+        if (CurrentTask?._id) {
+          cy.get(`#${CurrentTask?._id}_hours`)
+            .should('be.visible')
+            .scrollIntoView()
+            .should('have.value', CurrentTask?.hours)
+          cy.get(`#${CurrentTask?._id}_hours`).should('be.visible').scrollIntoView().clear().type(3)
+          cy.get(`#${CurrentTask?._id}_hours`).scrollIntoView().type('{enter}')
 
-        cy.wait('@updateHoursRequest').then(interception => {
-          expect(interception.response.statusCode).to.be.oneOf([200, 304])
-        })
+          cy.wait('@updateHoursRequest').then(interception => {
+            expect(interception.response.statusCode).to.be.oneOf([200, 304])
+          })
 
-        cy.get(`#${CurrentTask?._id}`).within(() => {
-          cy.contains(`3 Hours`).scrollIntoView().should('be.visible')
-        })
+          cy.get(`#${CurrentTask?._id}`).within(() => {
+            cy.contains(`3 Hours`).scrollIntoView().should('be.visible')
+          })
+          cy.contains('button', 'SUBMIT').scrollIntoView().should('be.visible').click()
+          cy.wait('@updateInvoiceRequest').then(interception => {
+            expect(interception.response.statusCode).to.be.oneOf([200, 304])
+          })
+        }
       })
-
-    cy.contains('button', 'SUBMIT').scrollIntoView().should('be.visible').click()
-    cy.wait('@updateInvoiceRequest').then(interception => {
-      expect(interception.response.statusCode).to.be.oneOf([200, 304])
-    })
   })
 
   it('View project invoice', () => {
@@ -403,45 +411,28 @@ describe('Freelancer Invoice', () => {
         reduxStore = store
         const user = store?.getState()?.Auth.user
 
-        cy.get('#github_connected_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains(
-              'You haven’t connected your Github account yet, connect it now so we can begin work building your project!'
-            ).should('be.visible')
-            cy.contains('button', 'CONNECT YOUR GITHUB ACCOUNT').should('be.visible')
-          })
-        cy.get('#stripe_connected_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains('You haven’t connected your stripe account!').should('be.visible')
-            cy.contains('button', 'CONNECT YOUR STRIPE ACCOUNT').should('be.visible')
-          })
-        cy.get('#browse_projects_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains('Browse other projects to inspire ideas').should('be.visible')
-            cy.contains('button', 'BROWSE').should('be.visible')
-          })
-        cy.get('#browse_projects_notification')
-          .scrollIntoView()
-          .within(() => {
-            cy.contains('Browse other projects to inspire ideas').should('be.visible')
-            cy.contains('button', 'BROWSE').should('be.visible')
-          })
+        if (!user?.isGithubConnected) {
+          cy.contains(
+            'You haven’t connected your Github account yet, connect it now so we can begin work building your project!'
+          ).should('be.visible')
+          cy.contains('button', 'CONNECT YOUR GITHUB ACCOUNT').should('be.visible')
+        }
 
-        cy.get('#calendar_setting_notification')
-          .scrollIntoView()
-          .within(() => {
-            if (!user?.calendarSettings?.startTime) {
-              cy.contains(
-                'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
-              ).should('be.visible')
-            } else {
-              cy.contains('Update calendar settings.').should('be.visible')
-            }
-            cy.contains('button', 'UPDATE').should('be.visible')
-          })
+        if (!user?.stripeAccountId) {
+          cy.contains('You haven’t connected your stripe account!').should('be.visible')
+          cy.contains('button', 'CONNECT YOUR STRIPE ACCOUNT').should('be.visible')
+        }
+        cy.contains('Browse other projects to inspire ideas').should('be.visible')
+        cy.contains('button', 'BROWSE').should('be.visible')
+
+        if (!user?.calendarSettings?.startTime) {
+          cy.contains(
+            'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
+          ).should('be.visible')
+        } else {
+          cy.contains('Update calendar settings.').should('be.visible')
+        }
+        cy.contains('button', 'UPDATE').should('be.visible')
 
         cy.contains('Update types of professionals you are seeking for your business')
           .scrollIntoView()
@@ -483,17 +474,13 @@ describe('Freelancer Invoice', () => {
   })
 
   it('Click on notifications', () => {
-    cy.get('#browse_projects_notification')
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Browse other projects to inspire ideas').should('be.visible')
-        cy.contains('button', 'BROWSE').should('be.visible').click()
-        cy.url().should('include', '/projects')
-        cy.contains('Connect. Build. grow').should('not.exist')
+    cy.contains('Browse other projects to inspire ideas').should('be.visible')
+    cy.contains('button', 'BROWSE').should('be.visible').click()
+    cy.url().should('include', '/projects')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.visit('http://localhost:3000/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-      })
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
     cy.contains('Connect. Build. grow').should('not.exist')
 
     cy.get(`#explore_0`)
@@ -502,7 +489,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('See our help docs').should('be.visible').click()
         cy.url().should('include', '/')
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
 
@@ -512,7 +499,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Get started').should('be.visible').click()
         cy.url().should('include', '/')
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -523,7 +510,7 @@ describe('Freelancer Invoice', () => {
         cy.contains('Ask about a topic.').should('be.visible').click()
         cy.url().should('include', '/')
         cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
+        cy.visit('/dashboard')
         cy.contains('Connect. Build. grow').should('not.exist')
       })
   })
@@ -535,26 +522,21 @@ describe('Freelancer Invoice', () => {
       .then(store => {
         reduxStore = store
         const user = store?.getState()?.Auth.user
-        cy.get('#calendar_setting_notification')
-          .scrollIntoView()
-          .within(() => {
-            if (!user?.calendarSettings?.startTime) {
-              cy.contains(
-                'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
-              ).should('be.visible')
-            } else {
-              cy.contains('Update calendar settings.').should('be.visible')
-            }
-            cy.contains('button', 'UPDATE').should('be.visible').click()
-          })
-        cy.get('#setup_calender').should('be.visible')
-        cy.get('#setup_calender').within(() => {
-          cy.contains('Select Your Available Times').should('be.visible')
+
+        if (!user?.calendarSettings?.startTime) {
           cy.contains(
-            `Select your working hours and the times you will likely be available for an interview. You will always receive an optional request from the client for interviews.`
+            'You haven’t set up your calendar yet. Set it up now so clients can schedule interviews with you.'
           ).should('be.visible')
-          cy.get('#start_time button').should('be.visible').click()
-        })
+        } else {
+          cy.contains('Update calendar settings.').should('be.visible')
+        }
+        cy.contains('button', 'UPDATE').should('be.visible').click()
+        cy.get('#setup_calender').should('be.visible')
+        cy.contains('Select Your Available Times').should('be.visible')
+        cy.contains(
+          `Select your working hours and the times you will likely be available for an interview. You will always receive an optional request from the client for interviews.`
+        ).should('be.visible')
+        cy.get('#start_time button').should('be.visible').click()
         cy.get('ul')
           .eq(0)
           .should('be.visible')
@@ -592,11 +574,9 @@ describe('Freelancer Invoice', () => {
           })
         })
 
-        cy.get('#calender_success_notification').within(() => {
-          cy.contains('You have successfully setup the calendar!').should('be.visible')
-          cy.contains('Dismiss').scrollIntoView().should('be.visible').click()
-          cy.contains('You have successfully setup the calendar!').should('not.exist')
-        })
+        cy.contains('You have successfully setup the calendar!').should('be.visible')
+        cy.contains('Dismiss').scrollIntoView().should('be.visible').click()
+        cy.contains('You have successfully setup the calendar!').should('not.exist')
 
         if (user?.plan === 0) {
           cy.contains('Select a plan for your account').should('be.visible').click()

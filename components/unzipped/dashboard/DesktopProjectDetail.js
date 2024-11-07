@@ -10,6 +10,7 @@ import { MdCreditCard } from 'react-icons/md'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
 import { useRouter } from 'next/router'
+import Carousel from 'react-material-ui-carousel'
 
 import { Image } from '../../ui'
 import Badge from '../../ui/Badge'
@@ -246,25 +247,59 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       </TEXT>
 
                       <TEXT padding="20px 0px 20px 0px" fontWeight="bolder" fontSize="18px" lineHeight="23.44px">
-                        Project Image
+                        Project {projectDetails?.projectImagesUrl?.length > 0 ? `Images` : `Image`}
                       </TEXT>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
-                        {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
-                          projectDetails.projectImagesUrl.map((item, index) => (
-                            <Image
-                              src={item.url}
-                              id={item?._id}
-                              alt="project image"
-                              width={'100%'}
-                              height={'150px'}
-                              key={item?._id ?? index}
-                            />
-                          ))
-                        ) : (
-                          <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
-                            N/A
-                          </TEXT>
-                        )}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-around',
+                          width: '50%',
+                          margin: 'auto',
+                          gap: '10px'
+                        }}>
+                        <Carousel
+                          autoPlay={false}
+                          fullHeightHover={false}
+                          NavButton={({ onClick, className, style, next, prev }) => {
+                            return (
+                              <>
+                                <button
+                                  onClick={onClick}
+                                  className="Carousel-button"
+                                  style={style}
+                                  aria-label="navigate">
+                                  {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                                  {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                                </button>
+                              </>
+                            )
+                          }}>
+                          {projectDetails &&
+                            projectDetails?.projectImagesUrl?.length > 0 &&
+                            projectDetails.projectImagesUrl.map((item, i) => {
+                              return (
+                                <div
+                                  key={i}
+                                  style={{
+                                    height: '200px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    overflow: 'hidden'
+                                  }}>
+                                  <img
+                                    alt="..."
+                                    style={{
+                                      width: '100%',
+                                      height: '100%',
+                                      objectFit: 'cover'
+                                    }}
+                                    src={item.url}></img>
+                                </div>
+                              )
+                            })}
+                        </Carousel>
                       </div>
                     </ProjectDetail>
                   </div>

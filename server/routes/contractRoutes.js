@@ -125,6 +125,7 @@ router.post('/create-stripe-intent', requireLogin, async (req, res) => {
 
 router.post('/create-payment-method', requireLogin, async (req, res) => {
   try {
+    req.body['userId'] = req.user?.sub ?? ''
     const customer = await contractHelper.createPaymentMethod(req.body)
     if (customer?.savedPaymentMethod && customer?.savedThirdPartyApplication) {
       res.json({ msg: 'payment method created successfully' })

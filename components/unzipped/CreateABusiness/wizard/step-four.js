@@ -1,6 +1,6 @@
 import React from 'react'
 import CreateABusiness from '../../CreateABusiness'
-import { Grid } from '../../../../components/unzipped/dashboard/style'
+import { Grid, TEXT } from '../../../../components/unzipped/dashboard/style'
 import Button from '../../../../components/ui/Button'
 import { FormField } from '../../../ui'
 import { ContentContainer } from '../../../../pages/create-your-business'
@@ -70,7 +70,15 @@ const StepFourWizardFlow = ({
                     onClick={() => handleCancelIcon('objectives', objectives, obj)}
                   />
                 </div>
-                <span>{obj}</span>
+                <TEXT
+                  fontWeight="500"
+                  fontSize="16px"
+                  lineHeight="24.5px"
+                  letterSpacing="0.4px"
+                  textAlign="center"
+                  textColor="#000000">
+                  {obj}
+                </TEXT>
               </div>
             ))}
           </ContentContainer>

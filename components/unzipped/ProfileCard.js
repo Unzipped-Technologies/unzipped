@@ -63,7 +63,7 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
   const dispatch = useDispatch()
 
   const [anchorEl, setAnchorEl] = React.useState(null)
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
   const handleClick = event => {
     handleOpenModal()
     // setAnchorEl(anchorEl ? null : event.currentTarget)
@@ -144,15 +144,13 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
     }
   }
 
-
   const handleOpenModal = () => {
-    setIsOpen(true);
-  };
+    setIsOpen(true)
+  }
 
   const handleCloseModal = () => {
-    setIsOpen(false);
-  };
-  console.log("Skills",user?.freelancerSkills)
+    setIsOpen(false)
+  }
 
   return (
     <Container data-testid="desktop_profile_container" id="freelancer_profile">
@@ -254,26 +252,29 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       </Content>
 
       <LikeBox>
-        {
-          role !== 1 && (
-            <Button
-              block
-              width="36px"
-              type="button"
-              buttonHeight="36px"
-              fontSize="15px"
-              noBorder
-              onClick={e => {
-                handleClick(e)
-              }}>
-              CHECK AVAILABILITY
-            </Button>
-          )
-        }
-
+        {role !== 1 && (
+          <Button
+            block
+            width="36px"
+            type="button"
+            buttonHeight="36px"
+            fontSize="15px"
+            noBorder
+            onClick={e => {
+              handleClick(e)
+            }}>
+            CHECK AVAILABILITY
+          </Button>
+        )}
 
         {isOpen && (
-          <ListModal handleClose={handleCloseModal} open={isOpen} userId={userId} freelancerId={user?._id} user={user} />
+          <ListModal
+            handleClose={handleCloseModal}
+            open={isOpen}
+            userId={userId}
+            freelancerId={user?._id}
+            user={user}
+          />
         )}
 
         {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 

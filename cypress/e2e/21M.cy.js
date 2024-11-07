@@ -10,7 +10,7 @@ describe('Freelancer can add comments to tasks', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
@@ -40,7 +40,11 @@ describe('Freelancer can add comments to tasks', () => {
   beforeEach(() => {
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Verify business names and department names in tasklist page', () => {
     cy.intercept('POST', `/api/business/list`).as('getBusinessRequest')
     cy.intercept('GET', `/api/business/get-business-employees/*?isSelectedBusiness=false`).as('getBusinessEmpRequest')
@@ -48,7 +52,7 @@ describe('Freelancer can add comments to tasks', () => {
 
     cy.intercept('GET', `/api/department/*?isEditingDepartment=false`).as('getDepartmentRequest')
 
-    cy.visit('http://localhost:3000/dashboard/tasklist')
+    cy.visit('/dashboard/tasklist')
 
     cy.wait('@getBusinessEmpRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])
@@ -65,7 +69,7 @@ describe('Freelancer can add comments to tasks', () => {
         const BusinessList = store.getState()?.Business?.projectList
         BusinessList?.forEach((business, i) => {
           if (i !== 0) {
-            cy.contains(ConverterUtils.truncateString(business.name, 40))
+            cy.contains(ConverterUtils.truncateString(business.name, 30))
               .scrollIntoView()
               .should('be.visible')
               .click({ force: true })
@@ -118,7 +122,7 @@ describe('Freelancer can add comments to tasks', () => {
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
         cy.get(`#tag_${SelectedDepartment?.departmentTags[0]?._id}`).scrollIntoView().click({ force: true })
         cy.get(`#task_${Task1?._id}`).scrollIntoView().click({ force: true })
-        cy.url().should('include', `/dashboard/ticket/${Task1._id}`)
+        cy.url().should('include', `/dashboard/ticket/${Task1?._id}`)
       })
 
     cy.wait('@getTaskRequest').then(interception => {
@@ -153,7 +157,7 @@ describe('Freelancer can add comments to tasks', () => {
           SelectedDepartment?.departmentTags[0]?.tasks[SelectedDepartment?.departmentTags[0]?.tasks?.length - 1]
         cy.get(`#tag_${SelectedDepartment?.departmentTags[0]?._id}`).scrollIntoView().click({ force: true })
         cy.get(`#task_${Task1?._id}`).scrollIntoView().click({ force: true })
-        cy.url().should('include', `/dashboard/ticket/${Task1._id}`)
+        cy.url().should('include', `/dashboard/ticket/${Task1?._id}`)
       })
 
     // Verify freelancer comments

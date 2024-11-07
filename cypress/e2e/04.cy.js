@@ -8,11 +8,15 @@ describe('Apply for project', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
+    cy.window().its('document.readyState').should('eq', 'complete')
+
+    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Perform login steps
     cy.contains('Log In').click()
-    cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.window().its('document.readyState').should('eq', 'complete')
 
     cy.contains('CONTINUE WITH EMAIL').click()
 
@@ -21,29 +25,37 @@ describe('Apply for project', () => {
     cy.get('#password').clear().type(testFreelancerPassword)
 
     // Intercept the login request
-    cy.intercept('POST', '/api/auth/login').as('loginRequest')
 
     // Submit login form
     cy.contains('CONTINUE WITH EMAIL').click()
-    cy.contains('Connect. Build. grow', { timeout: 100000 }).should('not.exist')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     // Wait for the login request and verify success
     cy.wait('@loginRequest').then(interception => {
       expect(interception.response.statusCode).to.eq(200)
-      cy.url({ timeout: 60000 }).should('include', '/dashboard')
+      cy.url().should('include', '/dashboard')
+      cy.window().its('document.readyState').should('eq', 'complete')
     })
+  })
+
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('Apply to a Project', () => {
     cy.intercept('POST', '/api/business/public/list').as('getProjectsRequest')
-    cy.contains('Find a Project', { timeout: 6000 }).click({ force: true })
-    cy.contains('Browse Projects').click({ force: true })
+    cy.intercept('POST', '/api/projectApplication').as('applyProjectRequest')
+    cy.intercept('GET', `/api/auth/current_user`).as('getCurrentRequest')
 
-    cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
-    cy.url({ timeout: 60000 }).should('include', '/projects')
+    cy.visit('/projects')
+    cy.window().its('document.readyState').should('eq', 'complete')
+
+    cy.url().should('include', '/projects')
 
     // Submit login form
-    cy.contains('Connect. Build. grow', { timeout: 100000 }).should('not.exist')
+    cy.contains('Connect. Build. grow').should('not.exist')
 
     // Wait for the login request and verify success
     let ProjectsList = []
@@ -76,8 +88,9 @@ describe('Apply for project', () => {
       )?.[0]
       cy.get(`#${Project._id}`).contains(Project.name).click()
 
-      cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
-      cy.url({ timeout: 60000 }).should('include', `/projects/${Project._id}`)
+      cy.contains('Connect. Build. grow').should('not.exist')
+      cy.url().should('include', `/projects/${Project._id}`)
+      cy.window().its('document.readyState').should('eq', 'complete')
 
       cy.get('#desired_rate').type(20)
       const CoverLetter = faker.lorem.sentences(10)
@@ -88,7 +101,6 @@ describe('Apply for project', () => {
 
         cy.get(`#question_${index}`).type(Answer)
       })
-      cy.intercept('POST', '/api/projectApplication').as('applyProjectRequest')
 
       cy.get(`#project_apply_form`).contains('button', 'SUBMIT APPLICATION').should('be.visible').click()
 
@@ -96,10 +108,14 @@ describe('Apply for project', () => {
         expect(interception.response.statusCode).to.be.oneOf([200, 400])
       })
 
-      cy.contains('Connect. Build. grow', { timeout: 60000 }).should('not.exist')
-      cy.url({ timeout: 60000 }).should('include', `/dashboard`)
+      cy.contains('Connect. Build. grow').should('not.exist')
+      cy.wait('@getCurrentRequest').then(interception => {
+        expect(interception.response.statusCode).to.be.oneOf([200, 400])
+      })
+      cy.url().should('include', `/dashboard`)
+      cy.window().its('document.readyState').should('eq', 'complete')
 
-      cy.contains('You have successfully applied for project!', { timeout: 6000 }).should('be.visible')
+      cy.contains('You have successfully applied for project!').should('be.visible')
     })
   })
 })

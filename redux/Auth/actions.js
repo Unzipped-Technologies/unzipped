@@ -521,3 +521,23 @@ export const createCalendarSetting = data => async (dispatch, getState) => {
 
   dispatch(stopLoading())
 }
+
+export const updateProfileImage = data => async (dispatch, getState) => {
+  const response = await axios
+    .post(`/api/user/upload-profile-image`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+    .then(res => {
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: err.response
+      })
+      return err.response
+    })
+  return response
+}

@@ -177,7 +177,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
       const regexType = new RegExp(filter?.projectBudgetType, 'i')
 
       const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
-      const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
+      const limitStage = +limitValue > 0 ? { $limit: +limitValue } : { $limit: 20 } // Ensure limit is positive
       const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
       const regexPattern = regexPatterns?.join('|')
       const aggregationPipeline = [
@@ -235,7 +235,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             goals: 1,
             requiredSkills: 1,
             projectBudgetType: 1,
-            isArchived:1
+            isArchived: 1
           }
         },
         {

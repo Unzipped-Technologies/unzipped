@@ -81,4 +81,18 @@ const userSchema = new Schema(
   }
 )
 
+function cleanUpSpaces(str) {
+  return str.replace(/\s+/g, ' ').trim() // Replaces multiple spaces with a single space and trims
+}
+
+// Middleware to set FullName before saving
+userSchema.pre('save', function (next) {
+  // Concatenate FirstName and LastName into FullName
+  this.FirstName = cleanUpSpaces(this.FirstName)
+  this.LastName = cleanUpSpaces(this.LastName)
+
+  this.FullName = `${this.FirstName} ${this.LastName}`.trim()
+  next()
+})
+
 module.exports = mongoose.model('users', userSchema)

@@ -91,7 +91,6 @@ export const getBusinessDetails = userId => async (dispatch, getState) => {
     })
 }
 
-
 export const updateBusinessDetails = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
   await axios
@@ -109,7 +108,6 @@ export const updateBusinessDetails = data => async (dispatch, getState) => {
       })
     })
 }
-
 
 export const createBusiness =
   (data, isWizard = false) =>
@@ -129,8 +127,10 @@ export const createBusiness =
             payload: { projectName: res.data?.business?.name, isSuccessfull: true }
           })
         }
-        dispatch({ type: RESET_BUSINESS_FORM })
-                  dispatch({ type: RESET_PROJECT_FILES })
+        setTimeout(() => {
+          dispatch({ type: RESET_BUSINESS_FORM })
+          dispatch({ type: RESET_PROJECT_FILES })
+        }, 500)
       })
       .catch(err => {
         dispatch({

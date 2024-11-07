@@ -11,7 +11,7 @@ describe('Client can view project  applications, add department, tags etc', () =
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000') // Visit the login page
+    cy.visit('/') // Visit the login page
 
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
@@ -49,7 +49,11 @@ describe('Client can view project  applications, add department, tags etc', () =
         const state = store.getState()
       })
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('View project detail,project applications, freelancer profile and verify freelancer data', () => {
     cy.intercept('POST', `/api/business/list`).as('getProjectsRequest')
 

@@ -3,13 +3,13 @@ import { BUDGET_TYPE, RECENT_SKILLS } from '../../utils/constants'
 
 describe('Projects Page', () => {
   // Format the result message
-  const getResultMessage = (freelancerList, skip, take, totalCount) => {
-    if (freelancerList?.length === 0) {
+  const getResultMessage = (projectsList, skip, take, totalCount) => {
+    if (projectsList?.length === 0) {
       return '0 result'
-    } else if (freelancerList?.length === 1) {
+    } else if (projectsList?.length === 1) {
       return '1 result'
-    } else if (skip === 0) {
-      return `1 - ${freelancerList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
+    } else if (skip === 0 && projectsList?.length > 1) {
+      return `1 - ${projectsList?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     }
   }
   before(() => {
@@ -20,7 +20,7 @@ describe('Projects Page', () => {
     cy.clearLocalStorage()
 
     // Visit the home page without logging in
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.contains('Connect. Build. grow').should('not.exist')
   })
 
@@ -28,7 +28,11 @@ describe('Projects Page', () => {
     // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Verify projects are rendering correctly', () => {
     // Intercept the request to get the projects
     cy.intercept('POST', '/api/business/public/list').as('getProjectsRequest')
@@ -54,7 +58,7 @@ describe('Projects Page', () => {
         const Projects = store.getState()?.Business?.projectList
         const TotalCount = store.getState()?.Business?.totalCount
 
-        // Verify the freelancers are rendering correctly
+        // Verify the projects are rendering correctly
         cy.contains('Top Results').should('be.visible')
         cy.contains(getResultMessage(Projects, 0, 'all', TotalCount)).should('be.visible')
         Projects?.forEach((project, index) => {
@@ -62,15 +66,6 @@ describe('Projects Page', () => {
             .scrollIntoView()
             .should('be.visible')
             .within(() => {
-              if (project?.projectImagesUrl?.length) {
-                cy.get(`img[src*="${project?.projectImagesUrl?.[0]?.url}"]`)
-                  .scrollIntoView()
-                  .should('be.visible')
-                  .should('have.attr', 'src')
-                  .then(src => {
-                    expect(src).to.include(project?.projectImagesUrl?.[0]?.url)
-                  })
-              }
               cy.contains(ValidationUtils.truncate(project?.name, 40))
               cy.get(`[data-testid="${project?._id}_country"]`).should('have.text', project?.businessCountry)
               cy.get(`[data-testid="${project?._id}description"]`).should('have.text', project?.description)

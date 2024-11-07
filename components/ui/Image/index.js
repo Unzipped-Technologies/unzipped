@@ -15,7 +15,7 @@ const Container = styled.div`
 
 const Img = styled.img`
   width: 100%;
-  height: ${({ height }) => (height ? height : 'auto')};
+  height: 100%;
   border-radius: ${({ radius }) => (radius ? radius : '0px')};
 `
 
