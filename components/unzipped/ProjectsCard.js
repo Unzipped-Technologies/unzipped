@@ -53,6 +53,7 @@ export const P = styled.p`
   border: ${({ border }) => (border ? border : '')};
   white-space: pre-line;
   word-wrap: break-word;
+  overflow-wrap: anywhere;
 `
 export const OtherInformationCard = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;

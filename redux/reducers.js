@@ -36,8 +36,7 @@ const rootReducer = combineReducers({
   Tags,
   TaskHours,
   Tasks,
-  Lists,
-  CalenderSetting
+  Lists
 })
 
 export default rootReducer

@@ -7,7 +7,6 @@ import { CONTRACTS } from './Contracts'
 import { FREELANCER, FREELCANCERS_LIST } from './Freelancer'
 import { LIST_ENTRIES, USER_LIST_ENTRIES, INVITES_LIST, USER_LIST, CURRENT_USER_LISTS } from './ListEntries'
 import { PROJECT_APPLICATIONS } from './ProjectApplications'
-import { CALENDAR_SETTINGS } from './CalendarSettings'
 import { PLANS } from './Plans'
 export let defaultInitialState = {
   Auth: {
@@ -402,12 +401,6 @@ export let defaultInitialState = {
     freelancers: [...FREELCANCERS_LIST],
     totalCount: FREELCANCERS_LIST.length,
     selectedFreelancer: { ...FREELANCER }
-  },
-  CalenderSetting: {
-    calenderSetting: { ...CALENDAR_SETTINGS },
-    success: null,
-    loading: false,
-    error: null
   },
   Lists: {
     invitesList: [...INVITES_LIST],

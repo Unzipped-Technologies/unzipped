@@ -20,7 +20,6 @@ import {
 import { getPublicProjectsList, getBusinessById } from '../../../redux/Business/actions'
 import { createProjectApplication } from '../../../redux/ProjectApplications/actions'
 import { getFreelancerSkillsList } from '../../../redux/FreelancerSkills/actions'
-import { createCalenderSetting } from '../../../redux/CalenderSetting/CalenderSettingAction'
 import { verifyUserStripeAccount } from '../../../redux/Stripe/actions'
 import { countClientContracts } from '../../../redux/Contract/actions'
 
@@ -51,11 +50,6 @@ jest.mock('../../../redux/Stripe/actions', () => ({
   verifyUserStripeAccount: jest.fn()
 }))
 
-jest.mock('../../../redux/CalenderSetting/CalenderSettingAction', () => ({
-  ...jest.requireActual('../../../redux/CalenderSetting/CalenderSettingAction'),
-  createCalenderSetting: jest.fn()
-}))
-
 jest.mock('../../../redux/ProjectApplications/actions', () => ({
   ...jest.requireActual('../../../redux/ProjectApplications/actions'),
   createProjectApplication: jest.fn()
@@ -77,7 +71,8 @@ jest.mock('../../../redux/Auth/actions', () => ({
   resetRegisterForm: jest.fn(),
   getVerifyIdentityUrl: jest.fn(),
   getCurrentUserData: jest.fn(),
-  changePassword: jest.fn()
+  changePassword: jest.fn(),
+  createCalendarSetting: jest.fn()
 }))
 
 describe('DesktopAccount Component', () => {
@@ -85,7 +80,7 @@ describe('DesktopAccount Component', () => {
 
   beforeEach(() => {
     initialState.Auth.user = _.cloneDeep(CLIENT_AUTH)
-    initialState.CalenderSetting.calenderSetting = _.cloneDeep(CALENDAR_SETTINGS)
+    initialState.Auth.user.calendarSetting = _.cloneDeep(CALENDAR_SETTINGS)
     initialState.Auth.passwordChanged = false
     initialState.ProjectApplications.success = false
     initialState.CalenderSetting.success = null
@@ -101,7 +96,7 @@ describe('DesktopAccount Component', () => {
       }
     })
 
-    createCalenderSetting.mockReturnValue(() => {
+    createCalendarSetting.mockReturnValue(() => {
       return {
         status: 200,
         data: {
@@ -327,7 +322,7 @@ describe('DesktopAccount Component', () => {
   })
 
   it('renders Dashboard index page and verify calendar setting notification', async () => {
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calendarSetting = null
     renderWithRedux(<Dashboard />, { initialState })
 
     const DesktopNotificationContainer = screen.getByTestId('desktop_notification_panel')
@@ -516,7 +511,7 @@ describe('DesktopAccount Component', () => {
   })
 
   it('renders Dashboard index page and add calendar setting with success response', async () => {
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calendarSetting = null
     renderWithRedux(<Dashboard />, { initialState })
 
     const DesktopNotificationContainer = screen.getByTestId('desktop_notification_panel')
@@ -572,12 +567,12 @@ describe('DesktopAccount Component', () => {
   })
 
   it('renders Dashboard index page and add calendar setting with error response', async () => {
-    createCalenderSetting.mockReturnValue(() => {
+    createCalendarSetting.mockReturnValue(() => {
       return {
         status: 500
       }
     })
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calendarSetting = null
     renderWithRedux(<Dashboard />, { initialState })
 
     const DesktopNotificationContainer = screen.getByTestId('desktop_notification_panel')
@@ -969,7 +964,7 @@ describe('DesktopAccount Component', () => {
   })
 
   it('renders Dashboard index page and verify calendar setting notification', async () => {
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calendarSetting = null
     renderWithRedux(<Dashboard />, { initialState })
 
     const DesktopNotificationContainer = screen.getByTestId('mobile_notification_panel')
@@ -1165,7 +1160,7 @@ describe('DesktopAccount Component', () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calendarSetting = null
     renderWithRedux(<Dashboard />, { initialState })
 
     const DesktopNotificationContainer = screen.getByTestId('mobile_notification_panel')
@@ -1224,12 +1219,12 @@ describe('DesktopAccount Component', () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
-    createCalenderSetting.mockReturnValue(() => {
+    createCalendarSetting.mockReturnValue(() => {
       return {
         status: 500
       }
     })
-    initialState.CalenderSetting.calenderSetting = null
+    initialState.Auth.user.calendarSetting = null
     renderWithRedux(<Dashboard />, { initialState })
 
     const DesktopNotificationContainer = screen.getByTestId('mobile_notification_panel')

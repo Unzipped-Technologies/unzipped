@@ -40,7 +40,8 @@ const GetCardDesktop = ({
   handleGithub,
   isSubmitted,
   setIsSubmitted,
-  projectFiles
+  projectFiles,
+  _id
 }) => {
   switch (stage) {
     case 1:
@@ -221,7 +222,7 @@ const GetCardDesktop = ({
     case 12:
       return (
         <>
-          <ReviewBusinessDetails files={projectFiles} isGithubConnected={isGithubConnected} stage={stage} />
+          <ReviewBusinessDetails files={projectFiles} isGithubConnected={isGithubConnected} stage={stage} _id={_id} />
         </>
       )
 

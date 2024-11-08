@@ -27,15 +27,24 @@ router.post(
   }
 )
 
-router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateBusiness'), async (req, res) => {
-  try {
-    const existingBusiness = await businessHelper.updateBusiness(req.body)
-    if (!existingBusiness) throw Error('business does not exist')
-    res.json(existingBusiness)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
+router.post(
+  '/update',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateBusiness'),
+  upload.array('images', 3),
+  async (req, res) => {
+    try {
+      const businessDetails = JSON.parse(req.body?.projectDetails)
+
+      const existingBusiness = await businessHelper.updateBusiness(businessDetails, req.user.sub, req.files)
+      console.log('existingBusiness', existingBusiness)
+      if (!existingBusiness) throw Error('business does not exist')
+      res.json(existingBusiness)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
   }
-})
+)
 
 router.post(
   '/user/update',
@@ -261,5 +270,20 @@ router.delete('/delete-business-records/:businessId', async (req, res) => {
     res.status(400).json({ msg: e.message })
   }
 })
+
+router.delete(
+  '/:businessId/delete-image/:imageId',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateBusiness'),
+  async (req, res) => {
+    try {
+      const tasks = await businessHelper.deleteBusinessImage(req.params?.businessId, req.params?.imageId, req.user.sub)
+      if (!tasks) throw Error('Failed to delete business image')
+      res.json(tasks)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
 
 module.exports = router

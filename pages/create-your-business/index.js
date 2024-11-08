@@ -247,6 +247,7 @@ const CreateBusiness = ({
               isSubmitted={isSubmitted}
               setIsSubmitted={setIsSubmitted}
               projectFiles={projectFiles}
+              _id={businessForm?._id}
             />
           </DesktopBox>
         )}
@@ -282,6 +283,7 @@ const CreateBusiness = ({
               files={files}
               setFiles={setFiles}
               projectFiles={projectFiles}
+              _id={businessForm?._id}
             />
             <MobileFreelancerFooter defaultSelected="Create" />
           </MobileBox>

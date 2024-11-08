@@ -21,7 +21,7 @@ import {
   GITHUB_INFO_LABEL
 } from '../../../constants/application-constants'
 import Button from '../../ui/Button'
-import { createBusiness, updateBusinessForm, updateWizardSubmission } from '../../../redux/actions'
+import { createBusiness, updateBusinessForm, updateWizardSubmission, updateBusiness } from '../../../redux/actions'
 import { DarkText, Absolute, WhiteCard, Dismiss } from './../../../components/unzipped/dashboard/style'
 import Carousel from 'react-material-ui-carousel'
 
@@ -53,7 +53,7 @@ const renderSectionContent = (
   )
 }
 
-const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewActive = false }) => {
+const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewActive = false, _id }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const businessForm = useSelector(state => state.Business.businessForm)
@@ -81,7 +81,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
       })
     )
   }
-  const handleSubmitProject = () => {
+  const handleSubmitProject = async () => {
     setIsFormSubmitted(true)
     const formData = new FormData()
     if (files?.length > 0) {
@@ -102,11 +102,19 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
         goals: businessForm.goals,
         companyBackground: businessForm.companyBackground,
         budgetRange: businessForm.budgetRange,
-        questionsToAsk: businessForm.questionsToAsk
+        questionsToAsk: businessForm.questionsToAsk,
+        ...(_id && { listId: _id })
       })
     )
 
-    dispatch(createBusiness(formData, true))
+    if (_id) {
+      const response = await dispatch(updateBusiness(formData, true))
+      if (response?.status === 200) {
+        router.back()
+      }
+    } else {
+      dispatch(createBusiness(formData, true))
+    }
   }
 
   const handleNotificationDismissal = () => {
@@ -460,20 +468,6 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
                     )
                   })}
               </Carousel>
-              {/* {FILES_ARRAY?.map((file, index) => (
-                <span key={index}>
-                  {file instanceof File && (
-                    <img
-                      data-testid={`${file.name}_${index}`}
-                      src={URL.createObjectURL(file)}
-                      width={'100%'}
-                      height={'200px'}
-                      style={{ objectFit: 'cover', display: 'inline-block' }}
-                      key={index}
-                    />
-                  )}
-                </span>
-              ))} */}
             </div>
           )}
         </ReviewSectionStyled>
@@ -508,7 +502,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
         </div>
         <div>
           <Button onClick={handleSubmitProject} width="150px" extraWide={true} oval type="black">
-            CREATE PROJECT
+            {_id ? 'Update' : 'CREATE PROJECT'}
           </Button>
         </div>
       </ReviewSubmitSection>
