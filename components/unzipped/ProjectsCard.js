@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { AiOutlinePlusCircle, AiOutlineCloseCircle } from 'react-icons/ai'
 import { FaPen, FaTrashAlt } from 'react-icons/fa'
@@ -7,7 +7,6 @@ import { useRouter } from 'next/router'
 
 import Button from '../ui/Button'
 import { FormField } from '../ui'
-
 
 import { deleteEducation, deleteShowCaseProject } from '../../redux/Freelancers/actions'
 import { Badge } from '../ui'
@@ -52,6 +51,8 @@ export const P = styled.p`
   border-radius: ${({ radius }) => (radius ? radius : '')};
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   border: ${({ border }) => (border ? border : '')};
+  white-space: pre-line;
+  word-wrap: break-word;
 `
 export const OtherInformationCard = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -69,9 +70,19 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
   const [openProjectModel, setProjectModal] = useState(false)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
+  const [expandedStates, setExpandedStates] = useState(false)
+  const [projectId, setProjectId] = useState(null)
+  const [isSmallText, setIsSmallText] = useState(false)
+  const [isTextHidden, setIsTextHidden] = useState(false)
   const [selectedEducation, setEducation] = useState({})
   const [selectedProject, setProject] = useState({})
-  const FREELANCER_SKILLS = ['React', 'Node', 'TypeScript', 'Nest.js', 'Next.js'];
+  const FREELANCER_SKILLS = ['React', 'Node', 'TypeScript', 'Nest.js', 'Next.js']
+
+  useEffect(() => {
+    // setIsSmallText(project?.challenge?.length > 240 || project?.goals.length > 240 ? true : false)
+    setIsTextHidden(true)
+  }, [user])
+
   const handleOpen = () => {
     setOpen(true)
   }
@@ -164,6 +175,51 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                     ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
                     : ''}
                 </div>
+
+                <div style={{ width: '100%', display: 'flex' }}>
+                  {project?.challenge ||
+                    (project?.goals && (
+                      <div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word'
+                          }}>
+                          <P>
+                            {projectId === project?._id ? (
+                              <span>{project?.challenge || project?.goals}</span>
+                            ) : (
+                              <span>{project?.challenge?.substring(0, 240) || project?.goals?.substring(0, 240)}</span>
+                            )}
+
+                            {projectId !== project?._id && (
+                              <span
+                                onClick={() => {
+                                  setExpandedStates(!expandedStates)
+                                  setIsTextHidden(!isTextHidden)
+                                  setProjectId(project?._id)
+                                }}>
+                                Read More
+                              </span>
+                            )}
+                            {projectId === project?._id && (
+                              <span
+                                onClick={() => {
+                                  setExpandedStates(!expandedStates)
+                                  setIsTextHidden(!isTextHidden)
+                                  setProjectId(null)
+                                }}>
+                                Read Less
+                              </span>
+                            )}
+                          </P>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
                 <div
                   style={{
                     display: 'flex',
@@ -172,7 +228,6 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                     maxWidth: '100%',
                     height: 'fit-content',
                     borderRadius: '10px'
-                    // overflow: 'scroll'
                   }}>
                   {project?.images?.length
                     ? project?.images?.map((image, i) => (
@@ -222,39 +277,35 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
             Browse Similar Freelancers
           </P>
           <div style={{ gap: '6px', display: 'flex', padding: '20px 10px', flexWrap: 'wrap' }}>
-            {uniqueSkills?.length && uniqueSkills[0] !== undefined ? (
-              uniqueSkills?.map((skill, index) => (
-                <P
-                  border="1px solid #666666"
-                  fontSize="14px"
-                  margin="0"
-                  radius="4px"
-                  padding="5px 10px"
-                  clickable
-                  onClick={() => handleSkillClick(skill)}
-                  style={{ cursor: 'pointer' }}
-                  key={`${skill}_${index}_sim`}
-                >
-                  {ConverterUtils.capitalize(`${skill} `)}
-                </P>
-              ))
-            ) : (
-              FREELANCER_SKILLS.map((skill, index) => (
-                <P
-                  key={`${skill}_${index}_default`}
-                  style={{ cursor: 'pointer' }}
-                  border="1px solid #666666"
-                  fontSize="14px"
-                  margin="0"
-                  radius="4px"
-                  padding="5px 10px"
-                  clickable
-                  onClick={() => handleSkillClick(skill)}
-                >
-                  {skill}
-                </P>
-              ))
-            )}
+            {uniqueSkills?.length && uniqueSkills[0] !== undefined
+              ? uniqueSkills?.map((skill, index) => (
+                  <P
+                    border="1px solid #666666"
+                    fontSize="14px"
+                    margin="0"
+                    radius="4px"
+                    padding="5px 10px"
+                    clickable
+                    onClick={() => handleSkillClick(skill)}
+                    style={{ cursor: 'pointer' }}
+                    key={`${skill}_${index}_sim`}>
+                    {ConverterUtils.capitalize(`${skill} `)}
+                  </P>
+                ))
+              : FREELANCER_SKILLS.map((skill, index) => (
+                  <P
+                    key={`${skill}_${index}_default`}
+                    style={{ cursor: 'pointer' }}
+                    border="1px solid #666666"
+                    fontSize="14px"
+                    margin="0"
+                    radius="4px"
+                    padding="5px 10px"
+                    clickable
+                    onClick={() => handleSkillClick(skill)}>
+                    {skill}
+                  </P>
+                ))}
           </div>
         </OtherInformationCard>
         <OtherInformationCard>
@@ -280,46 +331,46 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
           </div>
           {user?.education?.length
             ? user.education.map(education => (
-              <div key={education?._id}>
-                <div className="d-flex justify-content-between">
-                  <P padding="0 10px" fontWeight="500">
-                    {education?.title}
-                  </P>
-                  {user?.role === 1 && freelancerId === user?._id && (
-                    <div className="d-flex justify-content-between mt-2">
-                      <FaPen
-                        style={{
-                          fontSize: '14px',
-                          marginRight: '20px',
-                          color: '#2F76FF'
-                        }}
-                        onClick={() => {
-                          setEducation(education)
-                          handleOpen()
-                        }}
-                      />
+                <div key={education?._id}>
+                  <div className="d-flex justify-content-between">
+                    <P padding="0 10px" fontWeight="500">
+                      {education?.title}
+                    </P>
+                    {user?.role === 1 && freelancerId === user?._id && (
+                      <div className="d-flex justify-content-between mt-2">
+                        <FaPen
+                          style={{
+                            fontSize: '14px',
+                            marginRight: '20px',
+                            color: '#2F76FF'
+                          }}
+                          onClick={() => {
+                            setEducation(education)
+                            handleOpen()
+                          }}
+                        />
 
-                      <FaTrashAlt
-                        style={{
-                          fontSize: '14px',
-                          marginRight: '20px',
-                          color: '#2F76FF'
-                        }}
-                        onClick={() => {
-                          handleEducationDelete(education?._id)
-                        }}
-                      />
-                    </div>
-                  )}
+                        <FaTrashAlt
+                          style={{
+                            fontSize: '14px',
+                            marginRight: '20px',
+                            color: '#2F76FF'
+                          }}
+                          onClick={() => {
+                            handleEducationDelete(education?._id)
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <P padding="0 10px" margin="0">
+                    {education?.institute}
+                  </P>
+                  <P padding="0 10px">
+                    {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
+                  </P>
                 </div>
-                <P padding="0 10px" margin="0">
-                  {education?.institute}
-                </P>
-                <P padding="0 10px">
-                  {education?.startYear} - {education?.endYear} ({+education?.endYear - +education?.startYear} years)
-                </P>
-              </div>
-            ))
+              ))
             : ''}
         </OtherInformationCard>
         <OtherInformationCard>

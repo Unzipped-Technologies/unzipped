@@ -339,6 +339,27 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
         },
 
         {
+          $lookup: {
+            from: 'file',
+            let: { projectImagesUrl: '$projectImagesUrl' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $in: ['$_id', '$$projectImagesUrl'] }]
+                  }
+                }
+              },
+              {
+                $project: {
+                  url: 1
+                }
+              }
+            ],
+            as: 'projectImagesUrl'
+          }
+        },
+        {
           $facet: {
             limitedRecords: [
               {

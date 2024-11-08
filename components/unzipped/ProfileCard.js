@@ -161,18 +161,20 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
         {user.FirstName !== undefined && user.LastName !== undefined && (
           <TitleText title="true">{ConverterUtils.capitalize(`${user?.FirstName} ${user?.LastName}`)}</TitleText>
         )}
-        <div id="freelancer_skills">
-          <DarkText noMargin padding="0px 0px 5px 0px">
-            SKILLS
-          </DarkText>
-          {user?.freelancerSkills?.length > 0
-            ? user?.freelancerSkills.map(item => (
-                <Badge className="overflow-hidden" key={item._id}>
-                  <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
-                </Badge>
-              ))
-            : '-'}
-        </div>
+        {role === 1 && (
+          <div id="freelancer_skills">
+            <DarkText noMargin padding="0px 0px 5px 0px">
+              SKILLS
+            </DarkText>
+            {user?.freelancerSkills?.length > 0
+              ? user?.freelancerSkills.map(item => (
+                  <Badge className="overflow-hidden" key={item._id}>
+                    <span data-testid={ConverterUtils.convertText(item?.skill)}>{item?.skill}</span>
+                  </Badge>
+                ))
+              : '-'}
+          </div>
+        )}
 
         <Underline style={{ width: '300px' }} margin="35px 0px 10px 0px" />
         <Box>
@@ -203,11 +205,13 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
                   <Span style={{ marginLeft: '20px' }}>{dateCode}</Span>
                 )}
               </TextBox>
-              <TextBox>
-                <Span bold>SALARY</Span>
-                {'     '}
-                <Span>{user.rate > 0 ? `  $${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
-              </TextBox>
+              {role === 1 && (
+                <TextBox>
+                  <Span bold>SALARY</Span>
+                  {'     '}
+                  <Span>{user.rate > 0 ? `  $${user?.rate.toFixed(2)} / HOUR` : 'Negotiable'}</Span>
+                </TextBox>
+              )}
 
               <TextBox>
                 <Span bold>EQUITY</Span> <Span>{user?.isAcceptEquity ? 'YES' : 'NO'}</Span>
@@ -252,7 +256,7 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
       </Content>
 
       <LikeBox>
-        {role !== 1 && (
+        {role !== 1 && selectedFreelancer?._id && (
           <Button
             block
             width="36px"
@@ -277,51 +281,22 @@ const ProfileCard = ({ user, userId, selectedFreelancer, role }) => {
           />
         )}
 
-        {/* <Popper id={id} open={open} anchorEl={anchorEl} placement={'left'}> 
-           <Card
-            sx={{
-              minWidth: 275,
-              borderRadius: 3,
-              boxShadow: '0px 10px 30px rgba(0,0,0,0.1)',
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.05)'
-              }
-            }}>
-            <CardContent
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                backgroundColor: '#ffffff'
-              }}>
-              <AccessTimeIcon sx={{ fontSize: 40, color: '#1976d2', marginBottom: '10px' }} />
-              <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#333', marginBottom: '5px' }}>
-                {`${ConverterUtils.formatTimeFromDate(
-                  user?.calendarSettings?.startTime
-                )} - ${ConverterUtils.formatTimeFromDate(user?.calendarSettings?.endTime)}`}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '14px' }}>
-                Available Time Slot
-              </Typography>
-            </CardContent>
-          </Card> 
-         </Popper>  */}
-        <Likes>
-          <div className="inline-flex flex-direction-column">
-            <span onClick={handleLike}>
-              <Icon name="thumbsUp" />
-            </span>
-            <div>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-          </div>
-          <div className="inline-flex flex-direction-column">
-            <span onClick={handleDisLike}>
-              <Icon name="thumbsDown" />
-            </span>
-            <div>{user?.dislikeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-          </div>
-        </Likes>
+        {selectedFreelancer?._id && (
+          <Likes>
+            <div className="inline-flex flex-direction-column">
+              <span onClick={handleLike}>
+                <Icon name="thumbsUp" />
+              </span>
+              <div>{user?.likeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+            </div>
+            <div className="inline-flex flex-direction-column">
+              <span onClick={handleDisLike}>
+                <Icon name="thumbsDown" />
+              </span>
+              <div>{user?.dislikeTotal?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+            </div>
+          </Likes>
+        )}
       </LikeBox>
     </Container>
   )
