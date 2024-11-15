@@ -591,8 +591,6 @@ const updateProfileImage = async (user, files) => {
     isLocalDeleted = await CloudinaryUploadHelper.deletedLocalFile(file?._id)
     isDeleted = await CloudinaryUploadHelper.deleteFile(file?.cloudinaryId)
   }
-  console.log('isDeleted', isDeleted)
-  console.log('isLocalDeleted', isLocalDeleted)
   if (!file || (isDeleted?.result === 'ok' && isLocalDeleted?._id)) {
     const uploadResult = await CloudinaryUploadHelper.createFile(files, user?.sub)
     if (uploadResult && uploadResult.length > 0 && uploadResult[0].url) {

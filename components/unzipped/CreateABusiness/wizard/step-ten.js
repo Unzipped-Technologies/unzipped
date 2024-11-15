@@ -55,16 +55,19 @@ const StepTenWizardFlow = ({
       </Grid>
       {projectFiles?.length > 0 && (
         <ContentContainer padding="20px 5px 20px 10px ">
-          {projectFiles?.map((file, index) => (
-            <ContainedSpan key={file?.name + '_' + index}>
-              <ClearSharpIcon
-                data-testid={`${file.name}_icon`}
-                style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
-                onClick={() => handleCancelIcon(`files:${index}`)}
-              />
-              {handleFileName(file.name)}
-            </ContainedSpan>
-          ))}
+          {projectFiles?.map(
+            (file, index) =>
+              file instanceof File && (
+                <ContainedSpan key={file?.name + '_' + index}>
+                  <ClearSharpIcon
+                    data-testid={`${file?.name}_icon`}
+                    style={{ fontSize: '7px', color: 'white', background: '#333', margin: '0 5px 2px' }}
+                    onClick={() => handleCancelIcon(`files:${index}`)}
+                  />
+                  {handleFileName(file.name)}
+                </ContainedSpan>
+              )
+          )}
         </ContentContainer>
       )}
     </CreateABusiness>
