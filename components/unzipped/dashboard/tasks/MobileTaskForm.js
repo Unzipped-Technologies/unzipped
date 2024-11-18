@@ -412,12 +412,10 @@ const MobileTaskForm = ({
       setInputValue('')
     }
   }
+
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
-      updateForm('tags', [])
-      setEditSelectedTags(
-        editSelectedTags?.length ? [...editSelectedTags, editInputValue.trim()] : [editInputValue.trim()]
-      )
+      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
       setEditInputValue('')
     }
   }
@@ -436,7 +434,7 @@ const MobileTaskForm = ({
   useEffect(() => {
     if (router.pathname.includes('ticket')) {
       restTagsList()
-      updateForm('tags', taskForm?.tags?.length ? [...taskForm?.tags, ...editSelectedTags] : [...editSelectedTags])
+      updateForm('tags',editSelectedTags)
     }
   }, [editSelectedTags])
 
@@ -908,7 +906,7 @@ const MobileTaskForm = ({
           fontWeight="500"
           width="100px !important"
           padding="10px 0px 0px 0px">
-          Description: {selectedTags?.length}
+          Description:
         </TEXT>
       </div>
 
@@ -1009,7 +1007,7 @@ const MobileTaskForm = ({
               lineHeight="21.09px"
               fontWeight="500"
               margin="10px 0px 10px 0px"
-              width="90px">
+              width="95px">
               Discussion:
             </TEXT>
             <FormField

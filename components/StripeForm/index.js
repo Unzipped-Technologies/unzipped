@@ -57,10 +57,13 @@ const Grid3 = styled.div`
   display: flex;
   flex-flow: row;
   width: 100%;
+  gap: 10px; 
+  flex-wrap: wrap;
 `
 
 const FormItemWrapper = styled.div`
-  margin-right: 13px;
+  flex: 1; 
+  min-width: 0;
   ${({ width }) => width}
 `
 
@@ -389,7 +392,7 @@ const PaymentForm = ({ form, user, updateSubscription, onClick, loading, address
             <AddressBox />
           )}
           {address ? <ButtonTwo onClick={() => setOpenAddress(true)}>update billing address</ButtonTwo> : <div></div>}
-          <Button type="submit" noBorder>
+          <Button type="submit" noBorder width="115px">
             {loading ? (
               <Span data-testid="loading_spinner">
                 <CircularProgress size={18} />

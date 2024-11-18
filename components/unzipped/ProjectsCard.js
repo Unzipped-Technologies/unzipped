@@ -352,7 +352,8 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
             <div
               style={{
                 height: '200px',
-                overflow: 'scroll'
+                overflowY: 'scroll',
+                margin: '5px',
               }}>
               {user.freelancerSkills.map((skill, index) => (
                 <div

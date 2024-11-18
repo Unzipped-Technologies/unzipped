@@ -247,7 +247,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
                 }}
                 value={selectedWeek}>
                 {weekOptions.map((week, index) => (
-                  <option key={index} value={index} style={{ fontSize: '4px' }}>
+                  <option key={index} value={index} style={{ fontSize: '9px' }}>
                     Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
                   </option>
                 ))}

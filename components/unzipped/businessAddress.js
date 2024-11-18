@@ -13,7 +13,7 @@ const Container = styled.div`
 `
 
 const ButtonContainer = styled.div`
-  width: 100%;
+  width: ${({ width }) => (width ? width : '90%')};
   display: flex;
   padding: 30px 0px;
   justify-content: flex-end;
@@ -102,10 +102,10 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
     <Container>
       {isBusinessAddress ? (
         <WhiteCard height="650px" padding="0px" data-testid="business_address" id="business_address">
-          <TitleText size="22px" paddingTop={isMobile ? '10px' : '20px'} paddingLeft={isMobile ? '10px' : '0px'}>
+          <TitleText size={isMobile ? "16px" : "22px"} paddingTop={isMobile ? '10px' : '20px'} paddingLeft={isMobile ? '10px' : '0px'} marginLeft={isMobile? '15px': '20px'}>
             Business Address
           </TitleText>
-          <DarkText>Used on customer order confirmations and your Unzipped bill.</DarkText>
+          <DarkText fontSize={isMobile ? "13px" : "16px"} marginLeft={isMobile? '20px': '20px'}>Used on customer order confirmations and your Unzipped bill.</DarkText>
 
           <form style={{ padding: '20px' }}>
             {error && (
@@ -120,7 +120,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
               margin="0px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
-              width={isSmallWindow ? '100%' : '90%'}
+              width={isSmallWindow ? '100%' : '95%'}
               placeholder={'COUNTRY/REGION'}
               onChange={e => updateField('businessCountry', e.target.value)}
               value={address.businessCountry}>
@@ -135,7 +135,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
-                width={isSmallWindow ? '100%' : '80%'}
+                width={isSmallWindow ? '100%' : '90%'}
                 placeholder={'First Name'}
                 onChange={e => updateField('businessFirstName', e.target.value)}
                 value={address.businessFirstName}>
@@ -148,7 +148,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
-                width={isSmallWindow ? '100%' : '80%'}
+                width={isSmallWindow ? '100%' : '90%'}
                 placeholder={'Last Name'}
                 onChange={e => updateField('businessLastName', e.target.value)}
                 value={address.businessLastName}>
@@ -162,7 +162,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
               margin="0px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
-              width={isSmallWindow ? '100%' : '90%'}
+              width={isSmallWindow ? '100%' : '95%'}
               placeholder={'Address'}
               onChange={e => updateField('businessAddressLineOne', e.target.value)}
               value={address.businessAddressLineOne}>
@@ -175,13 +175,13 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
               margin="10px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
-              width={isSmallWindow ? '100%' : '90%'}
+              width={isSmallWindow ? '100%' : '95%'}
               placeholder={'Appartment, suite, etc.'}
               onChange={e => updateField('businessAddressLineTwo', e.target.value)}
               value={address.businessAddressLineTwo}>
               APPARTMENT, SUITE, ETC.
             </FormField>
-            <Grid3 margin="0px 10px 10px 0px" block>
+            <Grid3 margin="0px 20px 10px 0px" block grid="175px 175px 175px">
               <FormField
                 id="businessCity"
                 fieldType="input"
@@ -189,7 +189,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
-                width={isSmallWindow ? '100%' : '70%'}
+                width={isSmallWindow ? '100%' : '95%'}
                 placeholder={'City'}
                 onChange={e => updateField('businessCity', e.target.value)}
                 value={address.businessCity}>
@@ -202,7 +202,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
                 margin="10px 0px 0px 0px"
                 style={{ height: '29px' }}
                 border="1px solid #000000"
-                width={isSmallWindow ? '100%' : '70%'}
+                width={isSmallWindow ? '100%' : '95%'}
                 placeholder={'State'}
                 onChange={e => updateField('businessState', e.target.value)}
                 value={address.businessState}>
@@ -216,7 +216,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
                 style={{ height: '29px' }}
                 border="1px solid #000000"
                 placeholder={'Zip Code'}
-                width={isSmallWindow ? '100%' : '65%'}
+                width={isSmallWindow ? '100%' : '95%'}
                 onChange={e => updateField('businessZip', e.target.value)}
                 value={address.businessZip}>
                 ZIP CODE
@@ -229,13 +229,13 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
               margin="0px 0px 0px 0px"
               style={{ height: '29px' }}
               border="1px solid #000000"
-              width={isSmallWindow ? '100%' : '90%'}
+              width={isSmallWindow ? '100%' : '95%'}
               placeholder={'Phone'}
               onChange={e => updateField('businessPhone', e.target.value)}
               value={address.businessPhone}>
               PHONE
             </FormField>
-            <ButtonContainer>
+            <ButtonContainer width={isMobile ? "100%" : "90%"}> 
               <Button noBorder onClick={businessAddressUpdate}>
                 SAVE ADDRESS
               </Button>
@@ -247,7 +247,7 @@ const BusinessAddress = ({ selectedBusiness = null, onClick }) => {
           onClick={() => {
             setIsBusinessAddress(true)
           }}>
-          <TitleText size="22px" paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
+          <TitleText size={isMobile ? "18px" : "22px"} paddingTop={isMobile ? '15px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
             Business address
           </TitleText>
           <Absolute top={!isLoading ? '12px' : '18px'}>

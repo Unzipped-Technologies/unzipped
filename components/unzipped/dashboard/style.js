@@ -76,7 +76,7 @@ const DarkText = styled.div`
   font-weight: ${({ bold, lighter }) => (bold ? '600' : lighter ? '300' : '400')};
   font-size: ${({ small, fontSize }) => (small ? '14px' : fontSize ? fontSize : '16px')};
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
-  line-height: ${({ lineHeight, fontSize }) => (lineHeight ? lineHeight : fontSize ? fontSize : '24px')};
+  line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '24px')};
   letter-spacing: 0.15008px;
   margin-top: ${({ topMargin }) => (topMargin ? topMargin : '0px')};
   margin-bottom: ${({ noMargin, marginLarge, half, bottomMargin }) =>
@@ -114,8 +114,8 @@ const DarkText = styled.div`
 
   @media screen and (max-width: 600px) {
     padding-left: ${({ paddingLeft }) => (paddingLeft ? paddingLeft : '0px')};
-    margin-left: 10px;
-    font-size: 16px;
+    margin-left: ${({ marginLeft }) => (marginLeft ? marginLeft : '10px')};
+    font-size: ${({ fontSize }) => (fontSize ? fontSize : '16px')};
     line-height: '18px';
   }
 
