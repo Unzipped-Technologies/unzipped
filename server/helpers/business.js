@@ -11,6 +11,7 @@ const Contracts = require('../models/Contract')
 const Freelancer = require('../models/Freelancer')
 const TaskHours = require('../models/TaskHours')
 const questionHelper = require('./questions')
+const QuestionsModel = require('../models/Question')
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 const CloudinaryUploadHelper = require('./file')
 const businessDetail = require('../models/BusinessDetails')
@@ -69,8 +70,72 @@ const createBusiness = async (data, id, files = []) => {
   return { msg: 'business created successfully', business: newBusiness }
 }
 
-const updateBusiness = async data => {
-  return await business.findByIdAndUpdate(data.listId, { $set: { ...data } }).populate('userId')
+const updateBusiness = async (data, id, files = []) => {
+  try {
+    const businessData = await business.findById(data?.listId).populate('questionsToAsk')
+    if (!businessData) throw Error('Business not found')
+    let cloudinaryIds = []
+    if (files?.length) {
+      const uploadResult = await CloudinaryUploadHelper.createFile(files, id)
+      if (uploadResult && uploadResult.length > 0) {
+        cloudinaryIds = uploadResult.map(elem => elem._id)
+        businessData['projectImagesUrl'] = [...businessData?.projectImagesUrl, ...cloudinaryIds]
+      }
+    }
+
+    let questions = []
+    if (data?.questionsToAsk?.length) {
+      const dataQuestions = data?.questionsToAsk || []
+      const businessQuestions = businessData?.questionsToAsk || []
+
+      const unmatchedIds = businessQuestions
+        .filter(businessQuestion => !dataQuestions.includes(businessQuestion.question))
+        .map(businessQuestion => businessQuestion._id)
+
+      let matchedIds = []
+      if (unmatchedIds.length > 0) {
+        matchedIds = businessData.questionsToAsk
+          .filter(businessQuestion => !unmatchedIds.includes(businessQuestion._id))
+          .map(businessQuestion => businessQuestion._id)
+      } else {
+        matchedIds = businessData?.questionsToAsk.map(elem => elem._id)
+      }
+
+      const businessQuestionsText = businessQuestions.map(q => q.question)
+
+      const newQuestions = dataQuestions.filter(question => !businessQuestionsText.includes(question))
+
+      if (unmatchedIds.length > 0) {
+        const deleteQuestions = await QuestionsModel.deleteMany({ _id: { $in: unmatchedIds } })
+        if (deleteQuestions?.deletedCount !== unmatchedIds.length) throw Error('Could not update business')
+      }
+      if (newQuestions.length > 0 || matchedIds.length > 0) {
+        if (newQuestions.length > 0) {
+          let businessQuestions = []
+          for (var question of newQuestions) {
+            businessQuestions.push({
+              businessId: data?.listId,
+              userId: id,
+              question: question,
+              answers: []
+            })
+          }
+          questions = await questionHelper.createManyQuestion(businessQuestions)
+
+          questions = questions?.map(question => question._id)
+        }
+        businessData['questionsToAsk'] = [...matchedIds, ...questions]
+      } else {
+        businessData['questionsToAsk'] = []
+      }
+    }
+
+    return await businessData.save()
+
+    // return await business.findByIdAndUpdate(data?.listId, { $set: { ...data } }).populate('userId')
+  } catch (error) {
+    throw Error(`Could not update business, error: ${error}`)
+  }
 }
 
 const deleteBusiness = async (businessId, userId) => {
@@ -177,7 +242,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
       const regexType = new RegExp(filter?.projectBudgetType, 'i')
 
       const limitValue = limit === 'all' ? await countBusiness(filters) : Number(limit)
-      const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 } // Ensure limit is positive
+      const limitStage = +limitValue > 0 ? { $limit: +limitValue } : { $limit: 20 } // Ensure limit is positive
       const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
       const regexPattern = regexPatterns?.join('|')
       const aggregationPipeline = [
@@ -235,7 +300,7 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
             goals: 1,
             requiredSkills: 1,
             projectBudgetType: 1,
-            isArchived:1
+            isArchived: 1
           }
         },
         {
@@ -338,6 +403,27 @@ const listBusinesses = async ({ filter, limit = 20, skip = 0 }) => {
           }
         },
 
+        {
+          $lookup: {
+            from: 'file',
+            let: { projectImagesUrl: '$projectImagesUrl' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $in: ['$_id', '$$projectImagesUrl'] }]
+                  }
+                }
+              },
+              {
+                $project: {
+                  url: 1
+                }
+              }
+            ],
+            as: 'projectImagesUrl'
+          }
+        },
         {
           $facet: {
             limitedRecords: [
@@ -659,6 +745,24 @@ const constructBoardObject = arr => {
   return resultObject
 }
 
+const deleteBusinessImage = async (businessId, imageId, userId) => {
+  try {
+    const businessData = await business.findOne({ _id: businessId })
+    if (businessData?.userId?.toString() !== userId) throw Error('You are not authorized to view this business')
+    if (!businessData?.projectImagesUrl?.includes(imageId))
+      throw Error('Selected image does not exist in this business')
+
+    const isLocalDeleted = await CloudinaryUploadHelper.deletedLocalFile(imageId)
+    const isDeleted = await CloudinaryUploadHelper.deleteFile(isLocalDeleted?.cloudinaryId)
+
+    businessData['projectImagesUrl'] = businessData?.projectImagesUrl.filter(image => image?.toString() !== imageId)
+    await businessData.save()
+    return businessData
+  } catch (e) {
+    throw Error(`Could not delete business image, error: ${e}`)
+  }
+}
+
 module.exports = {
   createBusiness,
   listBusinesses,
@@ -675,5 +779,6 @@ module.exports = {
   getBusinessDetailsByUserId,
   getBusinessCreatedByUser,
   getBusinessEmployees,
-  fetchAllBizTasks
+  fetchAllBizTasks,
+  deleteBusinessImage
 }

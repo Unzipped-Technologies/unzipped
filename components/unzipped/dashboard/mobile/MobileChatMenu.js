@@ -140,7 +140,6 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
               Apply for Position
             </P>
           )}
-
           <div
             onClick={() => setOpenList(!openList)}
             className="d-flex justify-content-between align-items-center pt-4"
@@ -150,7 +149,6 @@ function MobileChatMenu({ data, handleFilterOpenClose, role, isArchived, isMute,
               fontWeight="600"
               lineHeight="19.5px"
               color="#000000"
-              margin="0 0 0 5px"
               padding="0px 0px 0px 5px">
               Add User To A List
             </P>

@@ -17,7 +17,7 @@ jest.mock('next/router', () => ({
 
 let store, state
 
-let newPhone = '(123) 456-7892'
+let newPhone = '(123) 456-7878'
 
 describe('ChangePhone Component', () => {
   let mockRouterPush, mockRouterBack
@@ -91,7 +91,7 @@ describe('ChangePhone Component', () => {
 
     fireEvent.click(phoneElement)
     fireEvent.change(phoneElement, {
-      target: { value: '1111111' }
+      target: { value: '(111) 1' }
     })
     fireEvent.blur(phoneElement)
 
@@ -197,9 +197,11 @@ describe('ChangePhone Component', () => {
 
     fireEvent.click(phoneElement)
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 123-431121111111111' }
+      target: { value: '(123) 12' }
     })
-    expect(phoneElement.value).toBe('(123) 123-431121111111111')
+    fireEvent.blur(phoneElement)
+
+    expect(phoneElement.value).toBe('(123) 12')
 
     fireEvent.submit(screen.getByTestId('change_phone_form'))
     await waitFor(() => {
@@ -237,9 +239,9 @@ describe('ChangePhone Component', () => {
 
     fireEvent.click(phoneElement)
     fireEvent.change(phoneElement, {
-      target: { value: '(123) 123-431121111111111' }
+      target: { value: '(123) 123-4311' }
     })
-    expect(phoneElement.value).toBe('(123) 123-431121111111111')
+    expect(phoneElement.value).toBe('(123) 123-4311')
 
     await act(async () => {
       await store.dispatch({

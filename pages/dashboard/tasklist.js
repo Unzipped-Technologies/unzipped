@@ -10,6 +10,7 @@ import { getProjectsList, setDepartment, getBusinessEmployees } from '../../redu
 import TasksPanel from '../../components/unzipped/dashboard/tasks/TasksPanel'
 import ProjectsPanel from '../../components/unzipped/dashboard/tasks/ProjectsPanel'
 import ProjectKanbanBoard from '../../components/unzipped/dashboard/Kanban/KanbanContainer'
+import MobileFreelancerFooter from '../../components/unzipped/MobileFreelancerFooter'
 
 const Container = styled.div`
   overflow: overlay;
@@ -117,11 +118,11 @@ const Tasklist = ({
 
   const handleFullScreenView = () => {
     setIsFullScreen(!isFullScreen)
-    if(businesses){
-      setCurrentBusiness(businesses?.[0]?._id );
+    if (businesses) {
+      setCurrentBusiness(businesses?.[0]?._id)
       setSelectedDepartment(businesses?.businessDepartments?.[0])
     }
-    setShowBusinessMenu('');
+    setShowBusinessMenu('')
   }
 
   return (
@@ -181,7 +182,12 @@ const Tasklist = ({
                 setShowBusinessMenu={setShowBusinessMenu}
               />
               {window.innerWidth > 600 && (
-                <TasksPanel selectedDepartment={selectedDepartment} currentBusiness={currentBusiness} isEditable={isEditable} setSelectedDepartment={setSelectedDepartment} />
+                <TasksPanel
+                  selectedDepartment={selectedDepartment}
+                  currentBusiness={currentBusiness}
+                  isEditable={isEditable}
+                  setSelectedDepartment={setSelectedDepartment}
+                />
               )}
             </Container>
           ) : (
@@ -189,6 +195,7 @@ const Tasklist = ({
           )}
         </>
       )}
+      {window.innerWidth <= 600 && <MobileFreelancerFooter />}
     </>
   )
 }

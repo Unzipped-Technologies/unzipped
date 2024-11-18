@@ -91,7 +91,6 @@ export const getBusinessDetails = userId => async (dispatch, getState) => {
     })
 }
 
-
 export const updateBusinessDetails = data => async (dispatch, getState) => {
   dispatch({ type: LOAD_STATE })
   await axios
@@ -109,7 +108,6 @@ export const updateBusinessDetails = data => async (dispatch, getState) => {
       })
     })
 }
-
 
 export const createBusiness =
   (data, isWizard = false) =>
@@ -129,8 +127,10 @@ export const createBusiness =
             payload: { projectName: res.data?.business?.name, isSuccessfull: true }
           })
         }
-        dispatch({ type: RESET_BUSINESS_FORM })
-                  dispatch({ type: RESET_PROJECT_FILES })
+        setTimeout(() => {
+          dispatch({ type: RESET_BUSINESS_FORM })
+          dispatch({ type: RESET_PROJECT_FILES })
+        }, 500)
       })
       .catch(err => {
         dispatch({
@@ -147,27 +147,47 @@ export const createBusiness =
     dispatch(stopLoading())
   }
 
-export const updateBusiness = data => async (dispatch, getState) => {
-  dispatch({ type: LOAD_STATE })
-  const response = await axios
-    .post(`/api/business/update`, data, tokenConfig(getState()?.Auth.token))
-    .then(res => {
-      dispatch({
-        type: UPDATE_BUSINESS,
-        payload: res.data
+export const updateBusiness =
+  (data, isWizard = false) =>
+  async (dispatch, getState) => {
+    dispatch({ type: LOAD_STATE })
+    dispatch(startLoading())
+
+    const response = await axios
+      .post(`/api/business/update`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+      .then(res => {
+        dispatch({
+          type: UPDATE_BUSINESS,
+          payload: res.data
+        })
+        if (isWizard) {
+          dispatch({
+            type: SUBMIT_PROJECT_WIZARD_DETAILS_SUCCESS,
+            payload: { projectName: res.data?.business?.name, isSuccessfull: true }
+          })
+        }
+        setTimeout(() => {
+          dispatch({ type: RESET_BUSINESS_FORM })
+          dispatch({ type: RESET_PROJECT_FILES })
+        }, 500)
+        return res
       })
-      return res
-    })
-    .catch(err => {
-      dispatch({
-        type: BUSINESS_ERROR,
-        payload: err.response ?? 'Something went wrong!'
+      .catch(err => {
+        dispatch({
+          type: BUSINESS_ERROR,
+          payload: err.response ?? 'Something went wrong!'
+        })
+        if (isWizard) {
+          dispatch({
+            type: SUBMIT_PROJECT_WIZARD_DETAILS_ERROR,
+            payload: { error: 'Failed', isSuccessfull: false, projectName: '' }
+          })
+        }
+        return err?.response ?? 'Something went wrong!'
       })
-      return err?.response ?? 'Something went wrong!'
-    })
-  dispatch(stopLoading())
-  return response
-}
+    dispatch(stopLoading())
+    return response
+  }
 
 export const nullBusinessForm =
   (data = {}) =>
@@ -383,4 +403,19 @@ export const resetBusinessList = () => dispatch => {
   })
 
   dispatch(stopLoading())
+}
+
+export const deleteBusinessImage = (businessId, imageId) => async (dispatch, getState) => {
+  dispatch(startLoading())
+  try {
+    const response = await axios.delete(
+      `/api/business/${businessId}/delete-image/${imageId}`,
+      tokenConfig(getState()?.Auth.token)
+    )
+    return response
+  } catch (error) {
+    return error?.response ?? 'Something went wrong!'
+  } finally {
+    await dispatch(stopLoading())
+  }
 }

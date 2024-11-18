@@ -9,7 +9,7 @@ describe('Create Long term and short term projects.', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Log In').scrollIntoView().click()
     cy.contains('Connect. Build. grow').should('not.exist')
@@ -37,7 +37,11 @@ describe('Create Long term and short term projects.', () => {
   beforeEach(() => {
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Create A Short Term Project', () => {
     cy.get('#mobile_menu_icon').should('be.visible').click()
     cy.contains('button', 'Start A Project').scrollIntoView().click()

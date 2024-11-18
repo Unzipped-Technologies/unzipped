@@ -67,7 +67,6 @@ const getAllInvoices = async query => {
 
     const page = currentPage(query)
     const skip = (page - 1) * limit
-
     const aggregationPipeline = [
       {
         $match: { ...filter }
@@ -93,7 +92,7 @@ const getAllInvoices = async query => {
       {
         $lookup: {
           from: 'businesses',
-          let: { businessId: '$businessId' },
+          let: { businessId: { $toObjectId: '$businessId' } },
           pipeline: [
             {
               $match: {
@@ -115,7 +114,7 @@ const getAllInvoices = async query => {
       {
         $lookup: {
           from: 'freelancers',
-          let: { freelancerId: '$freelancerId' },
+          let: { freelancerId: { $toObjectId: '$freelancerId' } },
           pipeline: [
             {
               $match: {
@@ -162,7 +161,11 @@ const getAllInvoices = async query => {
       {
         $lookup: {
           from: 'contracts',
-          let: { clientId: '$clientId', freelancerId: '$freelancerId', businessId: '$businessId' },
+          let: {
+            clientId: { $toObjectId: '$clientId' },
+            freelancerId: { $toObjectId: '$freelancerId' },
+            businessId: { $toObjectId: '$businessId' }
+          },
           pipeline: [
             {
               $match: {

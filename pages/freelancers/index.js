@@ -75,7 +75,7 @@ const Freelancers = ({
   const containerRef = useRef(null)
   const router = useRouter()
   const { project } = router.query
-  const { skill } = router.query;
+  const { skill } = router.query
 
   const [filter, setFilter] = useState({
     businessId: project,
@@ -86,7 +86,7 @@ const Freelancers = ({
     skill: []
   })
   const [skip, setSkip] = useState(0)
-  const [take, setTake] = useState(10)
+  const [take, setTake] = useState('all')
   const [isVisible, setIsVisible] = useState(false)
   const [filterOpenClose, setFilterOpenClose] = useState(false)
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
@@ -95,15 +95,14 @@ const Freelancers = ({
   const userId = useSelector(state => state.Auth?.user?._id)
   const createdInvitation = useSelector(state => state.FreelancerSkills?.createdInvitation)
 
-
   useEffect(() => {
     if (skill) {
       setFilter(prevFilter => ({
         ...prevFilter,
         skill: Array.isArray(skill) ? skill : [skill]
-      }));
+      }))
     }
-  }, [skill]);
+  }, [skill])
 
   const debouncedSearch = useRef(
     _.debounce(filter => {
@@ -145,7 +144,7 @@ const Freelancers = ({
     setIsVisible(entry.isIntersecting)
     if (entry.isIntersecting && entry.isIntersecting !== isVisible) {
       if (take < totalCount) {
-        setTake(20)
+        setTake('all')
         setSkip(take)
       }
     }
@@ -164,7 +163,7 @@ const Freelancers = ({
       return '0 result'
     } else if (allFreelancers?.length === 1) {
       return '1 result'
-    } else if (skip === 0) {
+    } else if (skip === 0 && +allFreelancers?.length > 1) {
       return `1 - ${allFreelancers?.length} ${totalCount > take ? `of ${totalCount} results` : `results`}`
     }
   }
@@ -180,7 +179,8 @@ const Freelancers = ({
       skills: item?.freelancerSkills || [],
       cover:
         item?.cover ||
-        `I have been a ${item?.category || 'developer'} for over ${(item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
+        `I have been a ${item?.category || 'developer'} for over ${
+          (item?.freelancerSkills && item?.freelancerSkills[0]?.yearsExperience) || 1
         } years. schedule a meeting to check if I'm a good fit for your business.`,
       profilePic:
         item?.user?.profileImage || 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png',
@@ -203,22 +203,6 @@ const Freelancers = ({
         }
       } else {
         updatedFilter[field] = value
-      }
-
-      if (value === '' || (Array.isArray(value) && value.length === 0)) {
-        const { [field]: removed, ...restQuery } = router.query;
-        router.push({
-          pathname: router.pathname,
-          query: restQuery
-        });
-      } else {
-        router.push({
-          pathname: router.pathname,
-          query: {
-            ...router.query,
-            [field]: value
-          }
-        });
       }
 
       return updatedFilter
@@ -270,7 +254,7 @@ const Freelancers = ({
               <MobileDisplayBox>
                 <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '30px' }}>
                   <b style={{ paddingRight: '20px' }}>Top Results</b>
-                  <small>{getResultMessage(freelancerList, skip, take, totalCount)}</small>
+                  <small>{getResultMessage(freelancerList, 0, take, totalCount)}</small>
                 </div>
                 <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
               </MobileDisplayBox>
@@ -302,7 +286,7 @@ const Freelancers = ({
                     <h5 className="px-4">
                       <b>Top Results</b>
                     </h5>
-                    <h6>{getResultMessage(freelancerList, skip, take, totalCount)}</h6>
+                    <h6>{getResultMessage(freelancerList, 0, take, totalCount)}</h6>
                   </div>
                   {loading ? (
                     <DarkText
@@ -310,8 +294,7 @@ const Freelancers = ({
                       padding="20px 40px"
                       backgroundColor="white"
                       width="-webkit-fill-available"
-                      className="px-4"
-                    >
+                      className="px-4">
                       Loading...
                     </DarkText>
                   ) : (
@@ -321,8 +304,7 @@ const Freelancers = ({
                         padding="20px 40px"
                         backgroundColor="white"
                         width="-webkit-fill-available"
-                        className="px-4"
-                      >
+                        className="px-4">
                         No freelancers found for this search
                       </DarkText>
                     )

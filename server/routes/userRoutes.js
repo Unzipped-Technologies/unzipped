@@ -9,6 +9,8 @@ const Mailer = require('../../services/Mailer')
 const keys = require('../../config/keys')
 const { _isValidPhoneNumber } = require('../utils/validations')
 
+const upload = require('../middlewares/multer')
+
 sgMail.setApiKey(keys.sendGridKey)
 
 router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllUsers'), async (req, res) => {
@@ -207,4 +209,25 @@ router.post(
     }
   }
 )
+
+router.post(
+  '/upload-profile-image',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateCurrentUsers'),
+  upload.array('image', 1),
+
+  async (req, res) => {
+    try {
+      console.log('req.user', req.user)
+      const response = await userHelper.updateProfileImage(req.user, req.files)
+
+      if (!response) throw Error('Profile image not uploaded')
+
+      res.json(response)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
 module.exports = router

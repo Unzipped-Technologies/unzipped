@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { TitleText, DarkText, Absolute, WhiteCard } from './style'
-import Link from 'next/link'
-import ProgressBar from '../../ui/ProgressBar'
+import { TitleText } from './style'
 import UpdateUserIcon from '../../icons/updateUser'
 import { VerifyUserIcon } from '../../icons'
 import { accountVerificationEnum } from '../../../server/enum/accountTypeEnum'
-// import UserInstallmentPlanIcon from '../../icons/userInstallmentPlan'
 import { useRouter } from 'next/router'
-import Dropzone from 'react-dropzone'
 import { useState, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import UpdateProfileImage from './UpdateProfileImage'
 
 const Container = styled.div`
   position: relative;
@@ -58,11 +54,6 @@ const AccountSetup = styled.div`
   display: flex;
 `
 
-const AccountIcon = styled.div`
-  width: 25px;
-  display: flex;
-`
-
 const Text = styled.p`
   font-family: Arial;
   font-size: 16px;
@@ -87,14 +78,14 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
+
 const Panel = ({ user, verifyIdentity }) => {
-  const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
   const [trackProgress, setTrackProgress] = useState(0)
+  const [isOpen, setOpen] = useState(false)
+
   const [hasUserInfo, setHasUserInfo] = useState(false)
-  const dropzoneRef = useRef(null)
 
   const completeSetup = () => {
-
     const selectPlanActionItem = document.querySelector('.select-a-plan')
     if (selectPlanActionItem) {
       selectPlanActionItem.click()
@@ -138,7 +129,7 @@ const Panel = ({ user, verifyIdentity }) => {
         incrementalProgress += 25
       }
       if (user?.isIdentityVerified === 'SUCCESS') {
-        incrementalProgress += 25;
+        incrementalProgress += 25
       }
       if (user?.plan > 0) {
         incrementalProgress += 25
@@ -148,16 +139,12 @@ const Panel = ({ user, verifyIdentity }) => {
     }
   }, [user])
 
-  const openDropzone = () => {
-    dropzoneRef.current && dropzoneRef.current.open()
+  const handleOpen = () => {
+    setOpen(true)
   }
 
-  const closeDropzone = () => {
-    setIsDropzoneVisible(false)
-  }
-
-  const handleDrop = acceptedFiles => {
-    closeDropzone()
+  const handleClose = () => {
+    setOpen(false)
   }
 
   const router = useRouter()
@@ -195,7 +182,8 @@ const Panel = ({ user, verifyIdentity }) => {
           </AccountSetup>
         </AccountSetupContainer>
       )}
-      {user?.profileImage === 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png' && (
+      {(!user?.profileImage ||
+        user?.profileImage === 'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png') && (
         <AccountSetupContainer>
           <img
             style={{ borderRadius: '100%' }}
@@ -206,17 +194,10 @@ const Panel = ({ user, verifyIdentity }) => {
           />
 
           <AccountSetup>
-            <Text className="upload-profile-image" onClick={openDropzone}>
+            <Text className="upload-profile-image" onClick={handleOpen}>
               Upload a profile picture
             </Text>
           </AccountSetup>
-          <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true}>
-            {({ getRootProps, getInputProps }) => (
-              <div className="dropzone" {...getRootProps()} data-testid="dropzone">
-                <input {...getInputProps()} />
-              </div>
-            )}
-          </Dropzone>
         </AccountSetupContainer>
       )}
 
@@ -240,6 +221,8 @@ const Panel = ({ user, verifyIdentity }) => {
           <CompleteSetupButton onClick={completeSetup}>Complete Setup</CompleteSetupButton>
         </AccountSetup>
       </AccountSetupContainer>
+
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </Container>
   )
 }

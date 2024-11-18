@@ -38,7 +38,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
     <Container includeRate={includeRate} data-testid={project?._id} id={project?._id}>
       <Left>
         <Image
-          src={project?.projectImagesUrl?.[0]?.url}
+          src={project?.projectImages?.[0]?.url}
           alt={project?.name + ' profile'}
           height="102px"
           width="102px"

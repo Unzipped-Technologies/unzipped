@@ -11,7 +11,7 @@ describe('Freelancer inbox', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     // Click on the menu icon to visit the login page
     cy.get('#mobile_menu_icon').should('be.visible').click()
@@ -44,13 +44,17 @@ describe('Freelancer inbox', () => {
     // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('Send message to client', () => {
     // Intercept the request to get conversation messages
     cy.intercept('GET', `/api/message/*`).as('getConvesationRequest')
 
     // Visit the inbox page
-    cy.visit('http://localhost:3000/dashboard/inbox')
+    cy.visit('/dashboard/inbox')
 
     cy.wait('@getConvesationRequest').then(interception => {
       expect(interception.response.statusCode).to.be.oneOf([200, 304])

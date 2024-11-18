@@ -1,20 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { AiOutlineClose } from 'react-icons/ai'
 import styled, { css } from 'styled-components'
 
-import Icon from '../../../ui/Icon'
 import Image from '../../../ui/Image'
-import Badge from '../../../ui/Badge'
 import Chat from '../../../icons/chat'
-import Plus from '../../../icons/plus'
 import { FormField } from '../../../ui'
 import ManIcon from '../../../icons/man'
 import EditIcon from '../../../icons/edit'
-import { ValidationUtils, ConverterUtils } from '../../../../utils'
+import { ValidationUtils } from '../../../../utils'
 import { DarkText, WhiteCard, Span, Grid2, TEXT, DIV } from '../style'
-import { TASK_PRIORITY, TASK_STATUS } from '../../../../utils/constants'
 import {
   updateCreateStoryForm,
   createTask,
@@ -29,7 +24,6 @@ import SaveIcon from '@mui/icons-material/Save'
 import { useRouter } from 'next/router'
 
 const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
-const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing']
 
 const Button = styled.button`
   text-align: center;
@@ -64,14 +58,6 @@ const TaskFormContainer = styled.div`
   padding: 30px;
 `
 
-const Task = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`
-
 const MobileTaskForm = ({
   isCreating = false,
   departmentData,
@@ -97,7 +83,6 @@ const MobileTaskForm = ({
   const [disableBtn, setButtonDisable] = useState(true)
   const router = useRouter()
   const [commentId, setCommentId] = useState('')
-  const [tag, setTag] = useState('')
   const [error, setError] = useState('')
   const [ticketStatus, setTicketStatus] = useState('')
   useEffect(() => {
@@ -110,12 +95,9 @@ const MobileTaskForm = ({
     img: '',
     taskId: taskDetail?._id
   })
-  const [selectedTags, setSelectedTags] = useState([])
-  const [inputValue, setInputValue] = useState('')
 
   const [editSelectedTags, setEditSelectedTags] = useState([])
   const [editInputValue, setEditInputValue] = useState('')
-  const [inputStatus, setInputStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
   const statusList =
     departmentData?.departmentTags?.length > 0 ? departmentData.departmentTags.map(tag => tag.tagName) : []
@@ -265,11 +247,10 @@ const MobileTaskForm = ({
         businessId: taskDetail?.businessId || departmentData?.businessId,
         departmentId: taskDetail?.departmentId || departmentData?.departmentId,
         assignee: taskDetail?.assignee,
-        tags: taskDetail?.tags,
+        tags: [],
         tag: taskDetail?.tag,
         ticketCode: taskDetail?.ticketCode
       })
-      setSelectedTags(taskDetail?.tags)
     }
   }, [taskDetail])
 
@@ -280,7 +261,6 @@ const MobileTaskForm = ({
   }, [taskDetail])
 
   useEffect(() => {
-    setInputStatus(taskDetail?.status)
     setTaskPriority(taskDetail?.priority)
   }, [taskDetail])
 
@@ -340,7 +320,6 @@ const MobileTaskForm = ({
           comments: comments
         })
       }
-
       if (isCreating) {
         const response = await createTask(taskForm)
         if (response?.status === 200) {
@@ -351,7 +330,6 @@ const MobileTaskForm = ({
         }
       } else {
         const response = await updateTask(taskDetail?._id, taskForm)
-
         if (response?.status === 200) {
           resetState()
           onCancel && onCancel()
@@ -370,13 +348,6 @@ const MobileTaskForm = ({
       img: '',
       taskId: taskDetail?._id
     })
-  }
-
-  const removeTag = async tagName => {
-    let filteredTags = taskForm?.tags.filter(tag => tag !== tagName)
-    updateForm('tags', filteredTags)
-    taskDetail.tags = filteredTags
-    if (taskDetail?._id && taskDetail.tags?.includes(tagName)) await updateTask(taskDetail?._id, taskDetail)
   }
 
   const validateForm = () => {
@@ -754,148 +725,74 @@ const MobileTaskForm = ({
           display: 'flex',
           alignItems: 'center'
         }}>
-        {!editMode?.tag && userRole !== 1 && (
-          <Autocomplete
-            multiple
-            id="tags-standard"
-            value={editSelectedTags}
-            onChange={(event, newValue) => setEditSelectedTags(newValue)}
-            inputValue={editInputValue}
-            onInputChange={handleEditInputChange}
-            options={editSelectedTags}
-            getOptionLabel={option => option}
-            sx={{
-              width: 300,
-              '& .Mui-focused': {
-                border: '0px !important'
+        <Autocomplete
+          multiple
+          disabled={userRole === 1}
+          id="tags-standard"
+          value={editSelectedTags}
+          onChange={(event, newValue) => setEditSelectedTags(newValue)}
+          inputValue={editInputValue}
+          onInputChange={handleEditInputChange}
+          options={editSelectedTags}
+          getOptionLabel={option => option}
+          sx={{
+            width: 300,
+            '& .Mui-focused': {
+              border: '0px !important'
+            },
+            '& .Mui-focused:after': {
+              border: '0px !important'
+            },
+            '& .MuiInputBase-root': {
+              maxHeight: 200,
+              overflowY: 'scroll',
+              overflowX: 'hidden',
+              '::-webkit-scrollbar': {
+                width: 5,
+                height: 0
               },
-              '& .Mui-focused:after': {
-                border: '0px !important'
-              },
-              '& .MuiInputBase-root': {
-                maxHeight: 200,
-                overflowY: 'scroll',
-                overflowX: 'hidden',
-                '::-webkit-scrollbar': {
-                  width: 5,
-                  height: 0
-                },
 
-                '::-webkit-scrollbar-track': {
-                  background: 'transparent'
-                },
+              '::-webkit-scrollbar-track': {
+                background: 'transparent'
+              },
 
-                '::-webkit-scrollbar-thumb': {
-                  background: 'transparent'
-                }
-              },
-              '& input': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& input:focus': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& .MuiAutocomplete-root': {
-                borderRadius: '8px !important',
-                padding: '10px !important',
-                border: '1px solid purple !important'
-              },
-              '& .MuiInputBase-root-MuiInput-root:after': {
-                border: '0px !important',
-                width: '100%'
+              '::-webkit-scrollbar-thumb': {
+                background: 'transparent'
               }
-            }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="standard"
-                placeholder="Tags"
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && editSelectedTags?.length < 5) {
-                    e.preventDefault()
-                    handleEditInputTags()
-                  }
-                }}
-              />
-            )}
-            noOptionsText="Add Tag"
-          />
-        )}
-        {editMode?.tag && (
-          <Autocomplete
-            multiple
-            id="tags-standard"
-            value={selectedTags}
-            onChange={(event, newValue) => setSelectedTags(newValue)}
-            inputValue={inputValue}
-            onInputChange={handleInputChange}
-            options={selectedTags}
-            getOptionLabel={option => option}
-            sx={{
-              width: 300,
-              '& .Mui-focused': {
-                border: '0px !important'
-              },
-              '& .Mui-focused:after': {
-                border: '0px !important'
-              },
-              '& .MuiInputBase-root': {
-                maxHeight: 200,
-                overflowY: 'scroll',
-                overflowX: 'hidden',
-                '::-webkit-scrollbar': {
-                  width: 5,
-                  height: 0
-                },
-
-                '::-webkit-scrollbar-track': {
-                  background: 'transparent'
-                },
-
-                '::-webkit-scrollbar-thumb': {
-                  background: 'transparent'
+            },
+            '& input': {
+              border: '0px !important',
+              boxShadow: 'none !important'
+            },
+            '& input:focus': {
+              border: '0px !important',
+              boxShadow: 'none !important'
+            },
+            '& .MuiAutocomplete-root': {
+              borderRadius: '8px !important',
+              padding: '10px !important',
+              border: '1px solid purple !important'
+            },
+            '& .MuiInputBase-root-MuiInput-root:after': {
+              border: '0px !important',
+              width: '100%'
+            }
+          }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              placeholder="Tags"
+              onKeyDown={e => {
+                if (e.key === 'Enter' && editSelectedTags?.length < 6) {
+                  e.preventDefault()
+                  handleEditInputTags()
                 }
-              },
-              '& input': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& input:focus': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& .MuiAutocomplete-root': {
-                borderRadius: '8px !important',
-                padding: '10px !important',
-                border: '1px solid purple !important'
-              },
-              '& .MuiInputBase-root-MuiInput-root:after': {
-                border: '0px !important',
-                width: '100%'
-              }
-            }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="standard"
-                inputProps={{
-                  ...params.inputProps,
-                  maxLength: 10
-                }}
-                placeholder="Tags"
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && selectedTags?.length < 5) {
-                    e.preventDefault()
-                    handleAddTag()
-                  }
-                }}
-              />
-            )}
-            noOptionsText="Add Tag"
-          />
-        )}
+              }}
+            />
+          )}
+          noOptionsText="Add Tag"
+        />
       </div>
 
       <div>

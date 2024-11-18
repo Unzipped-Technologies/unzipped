@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { MdFlag } from 'react-icons/md'
 import { MdPerson } from 'react-icons/md'
@@ -10,6 +10,9 @@ import { MdCreditCard } from 'react-icons/md'
 import { MdDesktopWindows } from 'react-icons/md'
 import { MdMonetizationOn } from 'react-icons/md'
 import { useRouter } from 'next/router'
+import Carousel from 'react-material-ui-carousel'
+import Button from '../../ui/Button'
+import { AiOutlineCloseCircle } from 'react-icons/ai'
 
 import { Image } from '../../ui'
 import Badge from '../../ui/Badge'
@@ -17,7 +20,15 @@ import Loading from '../../loading'
 import { TEXT, DIV } from './style'
 import { ConverterUtils } from '../../../utils'
 import MobileProjectDetail from './mobile/MobileProjectDetail'
-import { verifyUserStripeAccount, countClientContracts } from '../../../redux/actions'
+import {
+  verifyUserStripeAccount,
+  countClientContracts,
+  createBusiness,
+  updateBusinessForm,
+  updateWizardSubmission,
+  deleteBusinessImage,
+  getBusinessById
+} from '../../../redux/actions'
 
 const Desktop = styled(DIV)`
   min-width: 82%;
@@ -73,7 +84,17 @@ const AboutClient = styled.div`
   }
 `
 
-const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount, countClientContracts }) => {
+const DesktopProjectDetail = ({
+  projectDetails,
+  loading,
+  role,
+  verifyUserStripeAccount,
+  countClientContracts,
+  updateBusinessForm,
+  deleteBusinessImage,
+  getBusinessById
+}) => {
+  const dispatch = useDispatch()
   const router = useRouter()
   const { id } = router.query
   const [isClientPaymentVerified, setVerified] = useState(false)
@@ -106,6 +127,35 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
       setBusinessCount(0)
     }
   }
+
+  const setBusinessDetail = () => {
+    dispatch({
+      type: 'RESET_PROJECT_FILES'
+    })
+    updateBusinessForm({
+      projectType: projectDetails.projectType,
+      name: projectDetails.name,
+      challenge: projectDetails.challenge,
+      role: projectDetails.role,
+      objectives: projectDetails.objectives,
+      teamDynamics: projectDetails.teamDynamics,
+      requiredSkills: projectDetails.requiredSkills,
+      goals: projectDetails.goals,
+      companyBackground: projectDetails.companyBackground,
+      budgetRange: projectDetails.budgetRange,
+      questionsToAsk: projectDetails.questionsToAsk.map(question => question.question),
+      _id: projectDetails._id,
+      stage: 1
+    })
+    router.push('/create-your-business')
+  }
+  const deleteImage = async (projectId, imageId) => {
+    const response = await deleteBusinessImage(projectId, imageId)
+    console.log('response', response)
+    if (response?.status === 200) {
+      await getBusinessById(projectId)
+    }
+  }
   return (
     <>
       {!loading ? (
@@ -116,6 +166,33 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                 <Desktop data-testid="desktop_project_detail">
                   <div style={{ width: '70%' }}>
                     <ProjectDetail>
+                      <DIV
+                        display="flex"
+                        margin="15px -50px 0px 0px"
+                        overflow="hidden"
+                        alignItems="flex-end"
+                        justifyContent="flex-end">
+                        {role === 0 && (
+                          <Button
+                            width="58.25px"
+                            extraWide
+                            margin="0px 37px 0px 20px"
+                            contentMargin="0px !important"
+                            type="black"
+                            buttonHeight="25px"
+                            fontSize="15px"
+                            colors={{
+                              text: '#FFF',
+                              background: '#1976D2',
+                              border: '1px',
+                              wideBorder: '#1976D2',
+                              borderRadius: '8px'
+                            }}
+                            onClick={setBusinessDetail}>
+                            Edit
+                          </Button>
+                        )}
+                      </DIV>
                       <DIV
                         display="flex"
                         justifyContent="space-between"
@@ -246,25 +323,77 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                       </TEXT>
 
                       <TEXT padding="20px 0px 20px 0px" fontWeight="bolder" fontSize="18px" lineHeight="23.44px">
-                        Project Image
+                        Project {projectDetails?.projectImagesUrl?.length > 0 ? `Images` : `Image`}
                       </TEXT>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '10px' }}>
-                        {projectDetails && projectDetails?.projectImagesUrl?.length > 0 ? (
-                          projectDetails.projectImagesUrl.map((item, index) => (
-                            <Image
-                              src={item.url}
-                              id={item?._id}
-                              alt="project image"
-                              width={'100%'}
-                              height={'150px'}
-                              key={item?._id ?? index}
-                            />
-                          ))
-                        ) : (
-                          <TEXT fontWeight="200" fontSize="18px" lineHeight="25.78px" textColor="#444444">
-                            N/A
-                          </TEXT>
-                        )}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-around',
+                          width: '50%',
+                          margin: 'auto',
+                          gap: '10px'
+                        }}>
+                        <Carousel
+                          autoPlay={false}
+                          fullHeightHover={false}
+                          navButtonsAlwaysVisible
+                          duration={100}
+                          NavButton={({ onClick, className, style, next, prev }) => {
+                            return (
+                              <>
+                                <button
+                                  onClick={onClick}
+                                  className="Carousel-button"
+                                  style={style}
+                                  aria-label="navigate">
+                                  {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                                  {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                                </button>
+                              </>
+                            )
+                          }}>
+                          {projectDetails &&
+                            projectDetails?.projectImagesUrl?.length > 0 &&
+                            projectDetails.projectImagesUrl.map((item, i) => {
+                              return (
+                                <div
+                                  key={i}
+                                  style={{
+                                    height: '200px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    overflow: 'hidden'
+                                  }}>
+                                  {role !== 1 && (
+                                    <AiOutlineCloseCircle
+                                      style={{
+                                        width: '20px',
+                                        height: '20px',
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        cursor: 'pointer',
+                                        color: 'red',
+                                        outlineColor: 'black'
+                                      }}
+                                      onClick={() => deleteImage(projectDetails._id, item._id)}
+                                    />
+                                  )}
+
+                                  <img
+                                    alt="..."
+                                    style={{
+                                      width: '100%',
+                                      height: '100%',
+                                      objectFit: 'cover'
+                                    }}
+                                    src={item.url}></img>
+                                </div>
+                              )
+                            })}
+                        </Carousel>
                       </div>
                     </ProjectDetail>
                   </div>
@@ -381,6 +510,9 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
                   projectDetails={projectDetails}
                   isClientPaymentVerified={isClientPaymentVerified}
                   clientBusinessCount={clientBusinessCount}
+                  role={role}
+                  setBusinessDetail={setBusinessDetail}
+                  deleteImage={deleteImage}
                 />
               )}
             </>
@@ -396,13 +528,18 @@ const DesktopProjectDetail = ({ projectDetails, loading, verifyUserStripeAccount
 }
 
 const mapStateToProps = state => {
-  return {}
+  return {
+    role: state.Auth.user.role
+  }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     verifyUserStripeAccount: bindActionCreators(verifyUserStripeAccount, dispatch),
-    countClientContracts: bindActionCreators(countClientContracts, dispatch)
+    countClientContracts: bindActionCreators(countClientContracts, dispatch),
+    updateBusinessForm: bindActionCreators(updateBusinessForm, dispatch),
+    deleteBusinessImage: bindActionCreators(deleteBusinessImage, dispatch),
+    getBusinessById: bindActionCreators(getBusinessById, dispatch)
   }
 }
 

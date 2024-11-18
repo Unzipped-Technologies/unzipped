@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
+import { AiOutlineCamera } from 'react-icons/ai'
 
 import { Underline } from './style'
-import BackHeader from '../BackHeader'
 import FormField from '../../ui/FormField'
 import { ValidationUtils } from '../../../utils'
 import { areObjectsEqual } from '../../../services/formHelper'
 import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
+import UpdateProfileImage from './UpdateProfileImage'
 
 import {
   getPaymentMethods,
@@ -107,6 +107,44 @@ const SubTitle = styled.div`
   color: #121530;
 `
 
+const ImageContainer = styled.div`
+  display: flex;
+  justify-self: center;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+
+  &:hover .bottom-overlay {
+    opacity: 0.5;
+    background-color: black;
+  }
+`
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+`
+
+const Overlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%; /* Adjust this for overlay height */
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  opacity: 0;
+  cursor: pointer;
+  color: white;
+  padding-bottom: 10px;
+  pointer-events: none;
+`
+
 const getCardLogoUrl = cardType => {
   const brand = Object.keys(stripeBrandsEnum).find(key => stripeBrandsEnum[key] === cardType)
   return stripeLogoEnum[brand]
@@ -147,6 +185,7 @@ const DesktopAccount = ({
 
   const primaryPM = paymentMethods?.find(e => e.isPrimary)
 
+  const [isOpen, setOpen] = useState(false)
   const [firstNameError, setFirstNameError] = useState('')
   const [lastNameError, setLastNameError] = useState('')
   const [addressLineOneError, setAddressLineOneError] = useState('')
@@ -181,12 +220,10 @@ const DesktopAccount = ({
     fetchData()
   }, [router])
 
-
-  useEffect(()=>{
+  useEffect(() => {
     setUserData(initialState)
-  },[business])
+  }, [business])
 
-  
   useEffect(() => {
     const initialState = {
       email: user?.email,
@@ -299,17 +336,38 @@ const DesktopAccount = ({
     }
   }
 
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
   return (
     <Shell>
-      <BackHeader title="Account" />
       <Container id="profile_data">
         <LeftOne>
           <TitleOne>Membership & Billing</TitleOne>
+          <ImageContainer id="profile_image_container">
+            <ProfileImage
+              src={
+                user?.profileImage ??
+                'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+              }
+              alt="Profile"
+              id="profile_image"
+            />
+            <Overlay className="bottom-overlay">
+              <AiOutlineCamera size={30} onClick={handleOpen} id="image_change_icon" />
+            </Overlay>
+          </ImageContainer>
           <ButtonOne
             data-testid={'view_profile'}
             onClick={() => {
               if (user?.role === 1) {
                 router.push(`/freelancers/${user.freelancers?._id}`)
+              } else if (user?.role === 0) {
+                router.push(`/client/${user?._id}`)
               }
             }}>
             View Profile
@@ -892,6 +950,7 @@ const DesktopAccount = ({
         </Rows>
       </Container>
       <Container border></Container>
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </Shell>
   )
 }

@@ -59,18 +59,33 @@ const addListItemToList = async (data, listId) => {
 const addListEntriesToList = async (data, listId) => {
   try {
     const updateList = await list.findById(listId)
-    const newEntry = await ListEntriesModel.create({
-      ...data
-    })
-    if (updateList?.listEntries?.length) {
-      updateList.listEntries.push(newEntry?._id)
-    } else {
-      updateList.listEntries = [newEntry?._id]
+
+    const filter = {
+      userId: data.userId,
+      freelancerId: data.freelancerId,
+      listId: data?.listId
     }
-    await updateList.save()
-    return updateList
+
+    const isListExist = await ListEntriesModel.findOne({
+      ...filter
+    })
+
+    if (isListExist?._id) {
+      throw new Error(`Freelancer already added in list!`)
+    } else {
+      const newEntry = await ListEntriesModel.create({
+        ...data
+      })
+      if (updateList?.listEntries?.length) {
+        updateList.listEntries.push(newEntry?._id)
+      } else {
+        updateList.listEntries = [newEntry?._id]
+      }
+      await updateList.save()
+      return updateList
+    }
   } catch (e) {
-    throw Error(`Something went wrong ${e}`)
+    throw Error(e ? e : `Something went wrong ${e}`)
   }
 }
 

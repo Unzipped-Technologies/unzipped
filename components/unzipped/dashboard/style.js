@@ -63,9 +63,10 @@ const HeadingText = styled.div`
   display: ${({ doubleScreenBottom }) => (doubleScreenBottom ? 'none' : 'block')};
   font-family: 'Roboto';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 16px;
-  color: #000;
+  line-height: 18.75px;
+  color: #000000;
 `
 
 const DarkText = styled.div`

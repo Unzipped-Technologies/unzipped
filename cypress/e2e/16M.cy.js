@@ -5,10 +5,15 @@ describe('Freelancer Signup', () => {
     cy.viewport(480, 896)
     cy.clearCookies()
     cy.clearLocalStorage()
-    cy.visit('http://localhost:3000/register')
+    cy.visit('/register')
   })
   beforeEach(() => {
     cy.viewport(480, 896)
+  })
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
   })
   it('Signup for Freelancer', () => {
     const email = faker.internet.email()
@@ -40,14 +45,13 @@ describe('Freelancer Signup', () => {
         expect(interception.response.statusCode).to.eq(200)
         cy.url().should('include', '/verify-email')
         cy.intercept('GET', `/api/auth/verify/${interception.response?.body?._id}`).as('verifyEmailRequest')
-        cy.visit(`http://localhost:3000/verified/${interception.response?.body?._id}`)
+        cy.visit(`/verified/${interception.response?.body?._id}`)
         cy.wait('@verifyEmailRequest').then(res => {
           expect(res.response.statusCode).to.eq(200)
           expect(res.response.body.message).to.eq('SUCCESS')
         })
       })
     })
-    cy.wait(15000)
     cy.url().should('include', '/update-account-profile')
 
     cy.contains('button', 'Cancel').should('be.visible').click()

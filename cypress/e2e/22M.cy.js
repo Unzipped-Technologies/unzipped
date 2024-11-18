@@ -58,7 +58,7 @@ describe('Freelancer Invoice', () => {
     cy.clearCookies()
     cy.clearLocalStorage()
 
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
 
     // Clear cookies and local storage before start theses test cases
     cy.get('#mobile_menu_icon').should('be.visible').click()
@@ -96,7 +96,11 @@ describe('Freelancer Invoice', () => {
     // Set the viewport to 480px x 896px for each test case
     cy.viewport(480, 896)
   })
-
+  after(() => {
+    cy.end()
+    cy.clearCookies()
+    cy.clearLocalStorage()
+  })
   it('View project and  add tasks to invoice', () => {
     // Intercept different requests
 
@@ -205,7 +209,7 @@ describe('Freelancer Invoice', () => {
         })
       })
     // Click on add task button to add task for Monday Tasks
-    cy.contains('Monday').scrollIntoView().should('be.visible').click()
+    cy.get(`#Monday_header`).scrollIntoView().should('be.visible').click()
     cy.get('[data-testid="Monday_add_task_icon"]').scrollIntoView().should('be.visible').click()
     cy.get(`[data-testid="mobile_add_tasks"]`)
       .scrollIntoView()
@@ -324,15 +328,16 @@ describe('Freelancer Invoice', () => {
           })
         })
         const CurrentTask = SelectedInvoice?.tasks[SelectedInvoice?.tasks?.length - 1]
-        cy.get(`#${CurrentTask._id}_hours`).should('be.visible').scrollIntoView().click()
-        cy.get(`#${CurrentTask._id}_hours`)
+        cy.log('CurrentTask', CurrentTask)
+        cy.get(`#${CurrentTask?._id}_hours`).should('be.visible').scrollIntoView().click()
+        cy.get(`#${CurrentTask?._id}_hours`)
           .should('be.visible')
           .scrollIntoView()
-          .should('have.value', CurrentTask.hours)
+          .should('have.value', CurrentTask?.hours)
 
         // Add hours against task
-        cy.get(`#${CurrentTask._id}_hours`).should('be.visible').scrollIntoView().clear().type(3)
-        cy.get(`#${CurrentTask._id}_hours`)
+        cy.get(`#${CurrentTask?._id}_hours`).should('be.visible').scrollIntoView().clear().type(3)
+        cy.get(`#${CurrentTask?._id}_hours`)
           .should('be.visible')
           .scrollIntoView()
 
@@ -395,22 +400,8 @@ describe('Freelancer Invoice', () => {
       .its('store')
       .then(store => {
         reduxStore = store
-        const ProjectsList = store.getState().Business.projectList
 
-        let Business = null
-        let Department = null
-        for (var business of ProjectsList) {
-          let isMatch = false
-          for (var department of business.businessDepartments) {
-            if (!department?.isDeleted) {
-              Department = department
-              Business = business
-              isMatch = true
-              break
-            }
-          }
-          if (isMatch) break
-        }
+        let Business = store.getState().Business.projectList?.[0] ?? null
 
         cy.get(`#${Business._id}`).within(() => {
           cy.contains('Details').scrollIntoView().should('be.visible').click()
@@ -567,59 +558,45 @@ describe('Freelancer Invoice', () => {
 
   it('Click on notifications', () => {
     // Click on browse projects notification
-    cy.get('[data-testid="browse_projects_notification"]')
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Browse other projects to inspire ideas').scrollIntoView().should('be.visible')
-        cy.contains('button', 'BROWSE').scrollIntoView().should('be.visible').click()
-        cy.contains('Connect. Build. grow').should('not.exist')
 
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.visit('http://localhost:3000/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
-
-    // Click on explore notification
-    cy.get(`#explore_0`)
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('See our help docs').scrollIntoView().should('be.visible').click()
-        cy.url().should('include', '/')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.window().its('document.readyState').should('eq', 'complete')
-
-        cy.visit('http://localhost:3000/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
-
-    cy.get(`#explore_1`)
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Get started').should('be.visible').click()
-        cy.url().should('include', '/')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.wait(500)
-
-        cy.visit('http://localhost:3000/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
+    cy.contains('Browse other projects to inspire ideas').scrollIntoView().should('be.visible')
+    cy.contains('button', 'BROWSE').scrollIntoView().should('be.visible').click()
     cy.contains('Connect. Build. grow').should('not.exist')
 
-    cy.get(`#explore_3`)
-      .scrollIntoView()
-      .within(() => {
-        cy.contains('Ask about a topic.').should('be.visible').click()
-        cy.url().should('include', '/')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.wait(500)
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
 
-        cy.visit('http://localhost:3000/dashboard')
-        cy.contains('Connect. Build. grow').should('not.exist')
-        cy.url().should('include', '/dashboard')
-      })
+    // Click on explore notification
+
+    cy.contains('See our help docs').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', '/')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.window().its('document.readyState').should('eq', 'complete')
+
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
+
+    cy.contains('Get started').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', '/')
+    cy.wait(500)
+    cy.contains('Connect. Build. grow').should('not.exist')
+
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+
+    cy.contains('Ask about a topic.').scrollIntoView().should('be.visible').click()
+    cy.url().should('include', '/')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.wait(500)
+
+    cy.visit('/dashboard')
+    cy.contains('Connect. Build. grow').should('not.exist')
+    cy.url().should('include', '/dashboard')
   })
   it('Update calendar settings', () => {
     // Intercept the requests to create calendar settings
@@ -631,7 +608,7 @@ describe('Freelancer Invoice', () => {
         reduxStore = store
         const user = store?.getState()?.Auth.user
         cy.get('[data-testid="calendar_setting_notification"]')
-          .scrollIntoView()
+          .should('be.visible')
           .within(() => {
             if (!user?.calendarSettings?.startTime) {
               cy.contains(

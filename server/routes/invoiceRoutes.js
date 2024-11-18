@@ -35,6 +35,7 @@ router.get('/', requireLogin, permissionCheckHelper.hasPermission('invoice'), as
     } else if (userInfo.role === 2) {
       req.query['clientId'] = req.query['clientId'] || userInfo._id
     }
+
     const invoices = await invoiceHelper.getAllInvoices(req.query)
     res.json(invoices)
   } catch (e) {
