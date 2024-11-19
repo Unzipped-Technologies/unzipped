@@ -14,7 +14,7 @@ const Container = styled.div`
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
-  padding: 30px 0px;
+  padding: ${({ padding }) => (padding ? padding : '30px 0px')};
   justify-content: flex-end;
 `
 
@@ -83,11 +83,11 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription }
   return (
     <Container>
       {isBillingCycle ? (
-        <WhiteCard height="437px">
-          <TitleText size="22px" paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
+        <WhiteCard height="437px" padding={isMobile ? "10px" : '20px 20px'}>
+          <TitleText size={isMobile ? "16px" : "22px"} paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
             Billing cycle
           </TitleText>
-          <DarkText padding="0px 10px 0px 0px">
+          <DarkText fontSize={isMobile ? "12px" : "16px"} padding="0px 10px 0px 0px">
             Chose how often you’d like to be billed. You can cancel anytime.
           </DarkText>
           {cards.map((item, index) => (
@@ -106,10 +106,10 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription }
                   onClick={() => item.onChange({ paymentFrequency: item.id })}
                 />
               </Absolute>
-              <TitleText noMargin small>
+              <TitleText noMargin size={isMobile ? "14px" : "16px"}>
                 {item.name}
               </TitleText>
-              <DarkText noMargin small>
+              <DarkText noMargin  fontSize={isMobile ? "12px" : "16px"} marginLeft="0px" >
                 {item.text}
               </DarkText>
               {item.save && (
@@ -119,7 +119,7 @@ const SubscriptionCard = ({ planCost = 0, subscriptionForm, updateSubscription }
               )}
             </WhiteCard>
           ))}
-          <ButtonContainer>
+          <ButtonContainer padding={isMobile ? "25px 0px" : "30px 0px"}>
             <Button noBorder onClick={billingCycleUpdate}>
               CONFIRM BILLING CYCLE
             </Button>

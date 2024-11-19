@@ -23,7 +23,7 @@ const Container = styled.div`
 `
 
 const ButtonContainer = styled.div`
-  width: 100%;
+  width: ${({ width }) => (width ? width : '90%')};
   display: flex;
   padding: 30px 0px;
   justify-content: flex-end;
@@ -175,11 +175,13 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
     <Container data-testid="payment_method_form" id="payment_method_form">
       {isPaymentForm ? (
         <WhiteCard overflow="hidden" height={!isError ? '725px' : '775px'}>
-          <SimpleBar style={{ maxHeight: !isError ? 725 : 775, width: '100%' }}>
-            <TitleText size="22px" paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
+          <SimpleBar style={{ maxHeight: (!isError && !isSmallWindow) ? '725px' : 'auto',width: '100%'}}>
+            <TitleText size={isMobile ? "16px" : "22px"} paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '20px' : '0px'} 
+              marginTop={isMobile ? '10px' : '0px'}>
               Payment Method
             </TitleText>
-            <DarkText>Your subscription will be paid using your primary payment method.</DarkText>
+            <DarkText marginLeft = {isMobile ? '20px' : '0px'} marginRight = {isMobile ? '10px' : '0px'} fontSize={isMobile ? "13px" : "16px"} >
+              Your subscription will be paid using your primary payment method.</DarkText>
             <form onSubmit={handleSubmit} style={{ padding: isSmallWindow ? '20px' : '0px' }}>
               {isError && <DarkText error>{isError}</DarkText>}
               <FormLabel>CARD NUMBER</FormLabel>
@@ -268,7 +270,7 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
                 value={data.country}>
                 COUNTRY/REGION
               </FormField>
-              <Grid2 margin="0px 0px 20px 0px" block>
+              <Grid2 margin="0px 0px 10px 0px" block>
                 <FormField
                   fieldType="input"
                   margin="10px 0px 0px 0px"
@@ -325,8 +327,8 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
                 onChange={e => updateField('addressLineTwo', e.target.value)}
                 value={data.addressLineTwo}>
                 APPARTMENT, SUITE, ETC.
-              </FormField>
-              <Grid3 margin="0px" block>
+              </FormField>         
+              <Grid3 margin="0px" block grid="181px 181px 181px">
                 <FormField
                   fieldType="input"
                   margin="10px 0px 0px 0px"
@@ -361,7 +363,7 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
                   placeholder={'ZIP CODE'}
                   fontSize="12px"
                   required
-                  width={isSmallWindow ? '100%' : '70%'}
+                  width={isSmallWindow ? '100%' : '90%'}
                   id="zipCode"
                   border="1px solid #000000"
                   style={{ height: '29px' }}
@@ -370,7 +372,7 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
                   ZIP CODE
                 </FormField>
               </Grid3>
-              <ButtonContainer>
+              <ButtonContainer width={isSmallWindow ? "100%" : "90%"}>
                 <Button submit noBorder>
                   {loading ? (
                     <Span data-testid="loading_spinner" id="loading_spinner">
@@ -390,7 +392,7 @@ const PaymentForm = ({ user, onClick, loading, selectedBusiness }) => {
             setIsUpdated(false)
             setIsPaymentForm(true)
           }}>
-          <TitleText size="22px" paddingTop={isMobile ? '10px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
+          <TitleText size={isMobile ? "18px" : "22px"} paddingTop={isMobile ? '15px' : '0px'} paddingLeft={isMobile ? '10px' : '0px'}>
             Payment Method
           </TitleText>
           <Absolute top={!isLoading ? '12px' : '18px'}>

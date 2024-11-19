@@ -29,12 +29,12 @@ const Container = styled.div`
 `
 
 const Content = styled.div`
-  width: 67%;
+  width: 935px;
   margin: 0px auto;
-  margin: 30px;
+  margin: 30px 0px 30px 7px;
   @media screen and (max-width: 600px) {
-    width: 100%;
-    margin: 0px;
+    width: auto;
+    margin: 15px 15px 15px 15px;
   }
 `
 
@@ -43,7 +43,7 @@ const Cards = styled.div`
   grid-template-columns: 2fr 1fr;
   width: 953px;
   @media screen and (max-width: 600px) {
-    width: 100%;
+    width: 95%;
     grid-template-columns: 1fr;
   }
 `
@@ -86,6 +86,7 @@ const Subscribe = ({
   paymentMethods,
   updateBusiness
 }) => {
+  const isMobile = window.innerWidth >= 680 ? false : true
   const isPrimaryPayment = paymentMethods.find(item => item.isPrimary && parseInt(item.paymentType, 10) === 0)
   const updatedDate = ValidationUtils.addDaysToDate(
     user?.updatedAt ? new Date(user?.updatedAt) : new Date(),
@@ -129,7 +130,7 @@ const Subscribe = ({
 
   return (
     <Container data-testid="subscribe_page">
-      <BackHeader title={`Confirm ${getSubscriptionName(selectedPlan)} Plan`} bold size="20px" />
+      <BackHeader title={`Confirm ${getSubscriptionName(selectedPlan)} Plan`} bold size={isMobile ? "16px" : "20px"} />
       <Content>
         <Notification type="blue" noButton>
           We won’t charge you until your free trial ends on {dateCode}.

@@ -66,7 +66,7 @@ const RowTitle = styled.div`
     }
     @media(max-width: 442px) {
         min-width: ${({ smallMobile }) => smallMobile ? '0px' : '116px'};
-        width: ${({ smallMobile }) => smallMobile ? '75px' : '116px'};
+        width: ${({ smallMobile }) => smallMobile ? '125px' : '116px'};
     }
     @media(max-width: 400px) {
         min-width: ${({ smallMobile }) => smallMobile ? '0px' : '101px'};
@@ -80,6 +80,7 @@ const RowItem = styled.div`
     @media(max-width: 600px) {
         text-align: center;
         min-width: 116px;
+        font-size: 14px;
     }
     @media(max-width: 495px) {
         min-width: ${({ smallMobile }) => smallMobile ? '90px' : '116px'};
@@ -97,10 +98,19 @@ const Title = styled.div`
     font-size: 20px;
     font-weight: 600;
     padding: 10px 15px;
+
+    @media(max-width: 600px) {
+    font-size: 16px;
+    }
 `;
 const SubTitle = styled.div`
     font-size: 14px;
     padding: 0px 0px;
+
+    @media(max-width: 600px) {
+    font-size: 10px;
+    font-weigth: 600;
+    }
 `;
 
 const Row = styled.div`
@@ -111,7 +121,8 @@ const Row = styled.div`
     padding: ${({ padding }) => padding ? padding : '4px 0px'};
     @media(max-width: 600px) {
         max-width: 100%;
-        padding: 10px;
+        padding: ${({ padding }) => padding ? padding : '10px'};
+        align-self: end;
     }
 `;
 
@@ -120,13 +131,17 @@ const RightTitle = styled.div`
     font-weight: 600;
     text-align: center;
     line-height: 18px;
+
+    @media(max-width: 600px) {
+        font-size: 12px;
+    }
 `;
 const CostPanel = styled.div`
     font-size: 22px;
     font-weight: 600;
     text-align: center;
     @media(max-width: 550px) {
-        font-size: 18px;
+        font-size: 14px;
     }
 `;
 
@@ -143,6 +158,11 @@ const Form = styled.form`
     flex-flow: column;
     gap: 15px;
     padding: 10px 15px;
+
+    @media(max-width: 600px) {
+        gap: 10px;
+        padding: 0px 10px;
+    }
 `;
 
 const ClearMobile = styled.span`
@@ -166,6 +186,11 @@ const Button = styled.button`
         opacity: 0.5;
         background: #D8D8D8;
     }
+
+    @media(max-width: 600px) {
+        width: 95%;
+        font-size: 14px;
+    }
 `;
 
 const RightBoxMobile = styled.div`
@@ -174,6 +199,8 @@ const RightBoxMobile = styled.div`
     @media screen and (max-width: 600px) {
         display: flex;
         flex-direction: column;
+        align-items: end;
+        margin-right: 10px;
     }
 `;
 
@@ -189,6 +216,7 @@ const ButtonBoxMobile = styled.div`
     }
 `;
 const WithdrawalCard = ({ onSubmit, balance, isBank }) => {
+    const isMobile = window.innerWidth <= 600 ? true : false;
     const [formDetails, setFormDetails] = useState({
         country: { label: 'United States', value: 1 },
         type: { label: 'Express Withdrawal', value: 0 },
@@ -233,9 +261,9 @@ const WithdrawalCard = ({ onSubmit, balance, isBank }) => {
                     <RightTitle>You can withdraw  up to</RightTitle>
                     <CostPanel>$ {balance && balance?.instant_available ? ((balance?.instant_available[0]?.amount / 100).toFixed(2).toLocaleString()) : 0} USD</CostPanel>
                     <SubText>Note: refer to table for fees that may apply</SubText>
-                    <Row>
+                    <Row padding="0px">
                         <LeftTwo>
-                            <RowTitle>Remaining Balance</RowTitle>
+                            <RowTitle smallMobile>Remaining Balance</RowTitle>
                             <RowItem>${balance && balance?.instant_available ? (((balance?.instant_available[0]?.amount / 100) - (formDetails.amount || 0)).toFixed(2)) : 0}</RowItem>
                         </LeftTwo>
                     </Row>
@@ -244,7 +272,7 @@ const WithdrawalCard = ({ onSubmit, balance, isBank }) => {
                     <FormField
                         fieldType="select"
                         margin
-                        fontSize='18px'
+                        fontSize={isMobile ? '12px': '18px'}
                         options={[{ label: 'United States', value: 1 }]}
                         noMargin
                         width="100%"
@@ -260,7 +288,7 @@ const WithdrawalCard = ({ onSubmit, balance, isBank }) => {
                         <FormField
                             fieldType="input"
                             margin
-                            fontSize='18px'
+                            fontSize={isMobile ? '12px': '18px'}
                             noMargin
                             width="100%"
                             id="amount"
@@ -275,7 +303,7 @@ const WithdrawalCard = ({ onSubmit, balance, isBank }) => {
                     <FormField
                         fieldType="select"
                         margin
-                        fontSize='18px'
+                        fontSize={isMobile ? '12px': '18px'}
                         options={[
                             { label: 'Express Withdrawal', value: 0 },
                             { label: 'Payoneer', value: 1 },

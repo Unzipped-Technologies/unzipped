@@ -161,12 +161,12 @@ const MobileProjectHires = ({ data = [] }) => {
         ) : (
           <div
             style={{
-              marginLeft: '50%',
+              marginLeft: '13%',
               textAlign: 'center',
               paddingTop: '40px',
               paddingBottom: '40px'
             }}>
-            <p>-</p>
+            <p>Hire someone for this project to begin working!</p>
           </div>
         )}
       </ProjectsList>

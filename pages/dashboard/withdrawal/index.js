@@ -25,6 +25,11 @@ const Container = styled.div`
   width: 100%;
   justify-content: center;
   align-items: center;
+
+  @media screen and (max-width: 600px) {
+    width: 95%;
+    margin: 12px;
+  }
 `
 
 const Content = styled.div`
@@ -48,12 +53,19 @@ const Cards = styled.div`
     flex-direction: column-reverse;
     gap: 20px;
   }
+  @media (max-width: 600px) {
+    padding: 5px 10px;
+  }
 `
 
 const Left = styled.div`
   display: flex;
   flex-flow: column;
   margin: 0px 15px;
+
+  @media (max-width: 600px) {
+    margin: 0px;
+  }
 `
 
 const Withdrawal = ({
@@ -71,6 +83,7 @@ const Withdrawal = ({
   const [initialUrl] = useState(url?.url)
   const router = useRouter()
   const isPrimaryBank = false
+  const isMobile = window.innerWidth >= 680 ? false : true
 
   const handleResize = () => {
     let windowSize = window.innerWidth <= 600 ? '85px' : '76px'
@@ -129,7 +142,7 @@ const Withdrawal = ({
     <React.Fragment>
       <Nav token={token} marginBottom={windowSize} />
       <Container>
-        <BackHeader title={`Express withdrawal`} bold size="20px" />
+        <BackHeader title={`Express withdrawal`} bold size={isMobile ? "16px" : "20px"} />
         <Content>
           <Notification type="blue" noButton smallMargin>
             To comply with applicable regulatory requirements, we are required to collect physical address information

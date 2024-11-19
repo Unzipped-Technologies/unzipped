@@ -25,7 +25,7 @@ const Plans = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   justify-content: center;
-  margin: 50px 10%;
+  margin: 50px 19%;
   @media (max-width: 680px) {
     margin-top: 10px;
     grid-template-columns: 1fr;

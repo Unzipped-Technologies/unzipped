@@ -291,7 +291,7 @@ const SingleWeekInvoiceView = ({
                 lineHeight="14.5px"
                 letterSpacing="0.4px"
                 textTransform="capitalize"
-                width="10%"
+                width="25%"
                 padding="0px !important">
                 Hours
               </TEXT>

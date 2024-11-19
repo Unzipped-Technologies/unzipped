@@ -249,7 +249,7 @@ const ProjectsInvoices = ({ invoices, role, getInvoices, updateInvoice }) => {
       ) : (
         <div
           style={{
-            marginLeft: '50%',
+            marginLeft: '0%',
             textAlign: 'center',
             paddingTop: '40px',
             paddingBottom: '40px'
