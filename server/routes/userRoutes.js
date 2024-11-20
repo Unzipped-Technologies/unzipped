@@ -9,6 +9,8 @@ const Mailer = require('../../services/Mailer')
 const keys = require('../../config/keys')
 const { _isValidPhoneNumber } = require('../utils/validations')
 
+const upload = require('../middlewares/multer')
+
 sgMail.setApiKey(keys.sendGridKey)
 
 router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllUsers'), async (req, res) => {
@@ -22,15 +24,21 @@ router.post('/list', requireLogin, permissionCheckHelper.hasPermission('listAllU
   }
 })
 
-router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateCurrentUsers'), async (req, res) => {
-  try {
-    const updatedUser = await userHelper.updateUserByid(req.user.sub, req.body)
-    if (!updatedUser) throw new Error('user does not exist')
-    res.json(updatedUser)
-  } catch (e) {
-    res.status(400).json({ message: e?.message ?? 'Something went wrong' })
+router.post(
+  '/update',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateCurrentUsers'),
+  async (req, res, next) => {
+    try {
+      const updatedUser = await userHelper.updateUserByid(req.user.sub, req.body)
+      if (!updatedUser) throw new Error('user does not exist')
+
+      res.json({ ...updatedUser })
+    } catch (e) {
+      res.status(400).json({ msg: e?.message ?? 'Something went wrong' })
+    }
   }
-})
+)
 
 router.post(
   '/current/update',
@@ -166,7 +174,6 @@ router.patch(
       if (!userData) throw Error('user does not exist')
 
       const { currentPhone, phoneNumber } = req.body
-
       if (!userData?.phoneNumber && !_isValidPhoneNumber(phoneNumber)) {
         throw new Error(`Invalid phone number.`)
       } else if (currentPhone) {
@@ -202,4 +209,25 @@ router.post(
     }
   }
 )
+
+router.post(
+  '/upload-profile-image',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateCurrentUsers'),
+  upload.array('image', 1),
+
+  async (req, res) => {
+    try {
+      console.log('req.user', req.user)
+      const response = await userHelper.updateProfileImage(req.user, req.files)
+
+      if (!response) throw Error('Profile image not uploaded')
+
+      res.json(response)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
+  }
+)
+
 module.exports = router

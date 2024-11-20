@@ -27,15 +27,24 @@ router.post(
   }
 )
 
-router.post('/update', requireLogin, permissionCheckHelper.hasPermission('updateBusiness'), async (req, res) => {
-  try {
-    const existingBusiness = await businessHelper.updateBusiness(req.body)
-    if (!existingBusiness) throw Error('business does not exist')
-    res.json(existingBusiness)
-  } catch (e) {
-    res.status(400).json({ msg: e.message })
+router.post(
+  '/update',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateBusiness'),
+  upload.array('images', 3),
+  async (req, res) => {
+    try {
+      const businessDetails = JSON.parse(req.body?.projectDetails)
+
+      const existingBusiness = await businessHelper.updateBusiness(businessDetails, req.user.sub, req.files)
+      console.log('existingBusiness', existingBusiness)
+      if (!existingBusiness) throw Error('business does not exist')
+      res.json(existingBusiness)
+    } catch (e) {
+      res.status(400).json({ msg: e.message })
+    }
   }
-})
+)
 
 router.post(
   '/user/update',
@@ -217,57 +226,59 @@ router.post(
   }
 )
 
-router.get("/user-owned-business/:userId",
-  async (req, res) => {
-    try {
-      const businesses = await businessHelper
-        .getBusinessCreatedByUser(
-          req.params.userId
-        )
-      res.json(businesses)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
-  })
-
-router.get("/get-business-employees/:id",
-  async (req, res) => {
-    try {
-      const isSelectedBusiness = req.query?.isSelectedBusiness === 'true' ? true : false;
-      const businesses = await businessHelper
-        .getBusinessEmployees(
-          req.params.id,
-          isSelectedBusiness
-        )
-      res.json(businesses)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
-  })
-
-
-
-router.get(
-  '/fetch-all-biz-tasks/:businessId',
-  async (req, res) => {
-    try {
-      const params = (req.params.businessId == 'null') ? null : req.params.businessId
-      const tasks = await businessHelper.fetchAllBizTasks(params, req.query?.departmentId, req.query?.isDepartmentRelatedTasks, req.query?.userId)
-
-      res.json(tasks)
-    } catch (e) {
-      res.status(400).json({ msg: e.message })
-    }
+router.get('/user-owned-business/:userId', async (req, res) => {
+  try {
+    const businesses = await businessHelper.getBusinessCreatedByUser(req.params.userId)
+    res.json(businesses)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
   }
-)
+})
+
+router.get('/get-business-employees/:id', async (req, res) => {
+  try {
+    const isSelectedBusiness = req.query?.isSelectedBusiness === 'true' ? true : false
+    const businesses = await businessHelper.getBusinessEmployees(req.params.id, isSelectedBusiness)
+    res.json(businesses)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.get('/fetch-all-biz-tasks/:businessId', async (req, res) => {
+  try {
+    const params = req.params.businessId == 'null' ? null : req.params.businessId
+    const tasks = await businessHelper.fetchAllBizTasks(
+      params,
+      req.query?.departmentId,
+      req.query?.isDepartmentRelatedTasks,
+      req.query?.userId
+    )
+
+    res.json(tasks)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
+
+router.delete('/delete-business-records/:businessId', async (req, res) => {
+  try {
+    const tasks = await businessHelper.deleteBusiness(req.params?.businessId)
+    if (!tasks) throw Error('Failed to delete business departments')
+    res.json(tasks)
+  } catch (e) {
+    res.status(400).json({ msg: e.message })
+  }
+})
 
 router.delete(
-  '/delete-business-records/:businessId',
+  '/:businessId/delete-image/:imageId',
+  requireLogin,
+  permissionCheckHelper.hasPermission('updateBusiness'),
   async (req, res) => {
     try {
-
-      const tasks = await businessHelper.deleteBusiness(req.params?.businessId)
-      if (!tasks) throw Error('Failed to delete business departments')
+      const tasks = await businessHelper.deleteBusinessImage(req.params?.businessId, req.params?.imageId, req.user.sub)
+      if (!tasks) throw Error('Failed to delete business image')
       res.json(tasks)
     } catch (e) {
       res.status(400).json({ msg: e.message })
@@ -305,6 +316,5 @@ router.patch(
     }
   }
 );
-
 
 module.exports = router

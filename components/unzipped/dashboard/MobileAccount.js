@@ -4,10 +4,11 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
-
 import IconComponent from '../../ui/icons/IconComponent'
 import { logoutUser, getCurrentUserData } from '../../../redux/actions'
 import UpdateProfileModal from '../UpdateProfileModal'
+import BackHeader from '../BackHeader'
+import UpdateProfileImage from './UpdateProfileImage'
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -19,7 +20,7 @@ const P = styled.p`
   text-align: ${({ align }) => (align ? align : '')};
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   right: ${({ right }) => (right ? right : '')};
-  white-space: pre-line;
+  white-space: nowrap;
   word-wrap: break-word;
 `
 
@@ -39,9 +40,10 @@ const Like = styled.div`
 const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
   const router = useRouter()
 
-  const [showSettings, setShowSettings] = useState(false)
-  const [isProfileModal, setIsProfileModal] = useState(false);
+  const [isProfileModal, setIsProfileModal] = useState(false)
+  const [isOpen, setOpen] = useState(false)
 
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,12 +72,16 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
     setIsProfileModal(false)
   }
 
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
   return (
-    <div className="mb-10">
-      <P margin="0" padding="0 0 0 15px" fontSize="20px" fontWeight={500}>
-        Account
-      </P>
-      <hr />
+    <div className="mb-10 ">
+      <BackHeader title="Account" />
       <Container>
         <div className="d-flex px-3 pb-4 pt-3 mb-6 justify-content-between">
           <div className="d-flex">
@@ -86,9 +92,9 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
               className="border rounded"
               data-testid="user_profile_image"
             />
-            <div className="mx-2">
+            <div className="mx-2" style={{ overflow: 'scroll', width: '160px' }}>
               <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="17px">
-              {user?.FirstName + ' ' + user?.LastName}
+                {user?.FirstName + ' ' + user?.LastName}
               </P>
               <P margin="0" padding="0 0 5px 0" fontSize="16px">
                 {user?.freelancers?.category || 'N/A'}
@@ -99,8 +105,6 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
             onClick={() => {
               if (user?.role === 1) {
                 linkPush(`/freelancers/${user.freelancers?._id}`)
-              } else {
-                linkPush(`/client/${user._id}`)
               }
             }}>
             <P margin="0" padding="0 0 5px 0" color="#1E70E0" fontSize="18px">
@@ -129,7 +133,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
         <div className="mb-4 px-3  py-1">
           <div
             data-testid="show_setting_container"
-            className="d-flex align-items-center justify-content-between"
+            className="d-flex align-items-center justify-content-between mb-4 py-1"
             onClick={() => {
               setShowSettings(!showSettings)
             }}>
@@ -168,13 +172,25 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
                 <Link href="/change-password">Update Password</Link>
               </div>
               <div className="d-flex align-items-center justify-content-between mt-3">
+                <P fontSize="16px" margin="5px 0px 0px 20px">
+                  Profile Picture
+                </P>
+                <P onClick={handleOpen} style={{ fontSize: '15px', color: '#0095dd' }} id="update_picture">
+                  Update
+                </P>
+              </div>
+              <div className="d-flex align-items-center justify-content-between mt-3">
                 <P fontSize="16px" margin="0px 0px 0px 20px">
                   Profile
                 </P>
-                <P style={{fontSize:"15px",color:"#0095dd"}} onClick={() => {
-                  handleOpenProfileModal()
-                }}>
-                  Update</P>
+                <P
+                  id="update_profile"
+                  style={{ fontSize: '15px', color: '#0095dd' }}
+                  onClick={() => {
+                    handleOpenProfileModal()
+                  }}>
+                  Update
+                </P>
               </div>
             </>
           )}
@@ -246,11 +262,15 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
         </div>
       </Container>
 
-      {isProfileModal && (<UpdateProfileModal
-        open={isProfileModal}
-        onHide={() => {
-          handleCloseProfileModal()
-        }} />)}
+      {isProfileModal && (
+        <UpdateProfileModal
+          open={isProfileModal}
+          onHide={() => {
+            handleCloseProfileModal()
+          }}
+        />
+      )}
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </div>
   )
 }
@@ -258,7 +278,8 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
 const mapStateToProps = state => {
   return {
     user: state.Auth.user,
-    balance: state.Stripe?.balance
+    balance: state.Stripe?.balance,
+    business: state.Business.details
   }
 }
 

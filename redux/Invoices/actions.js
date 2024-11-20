@@ -33,7 +33,7 @@ export const createInvoice = data => async (dispatch, getState) => {
 }
 
 export const getInvoices =
-  ({ businessId = '', freelancerId = '', _id = '', limit = 25, page = 1 }) =>
+  ({ businessId = '', freelancerId = '', _id = '', limit = 'all', page = 1 }) =>
   async (dispatch, getState) => {
     dispatch(startLoading())
     let params = {

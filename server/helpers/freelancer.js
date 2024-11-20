@@ -57,7 +57,9 @@ const getAllFreelancers = async ({ filter, sort }, limit = 20, skip = 0) => {
       await UserModel.collection.createIndex({ freelancerSkills: 1 })
     }
 
-    const regexPatterns = filter?.skill?.map(skill => `.*${skill}.*`)
+    const regexPatterns = Array.isArray(filter?.skill)
+      ? filter?.skill?.map(skill => `.*${skill}.*`)
+      : [`.*${filter?.skill}.*`]
     const regexPattern = regexPatterns?.join('|')
     const limitValue = limit === 'all' ? await countFreelancers(filter) : Number(limit)
     const limitStage = limitValue > 0 ? { $limit: limitValue } : { $limit: 20 }
@@ -426,12 +428,16 @@ const deleteProjectImage = async (projectId, imageId, freelancerId) => {
 }
 
 const createFreelancerInvite = async params => {
+  const isInvited = await InviteModel.findOne({ freelancer: params?.freelancer, business: params?.business })
+  if (isInvited?._id) {
+    throw new Error(`Freelancer already invited to this project!`)
+  }
   const createInvite = await InviteModel.create(params)
   const updateFreelancer = await FreelancerModel.findByIdAndUpdate(
     params.freelancer,
     {
       $set: {
-        invites: createInvite._doc._id
+        invites: createInvite._id
       }
     },
     { new: true }
@@ -470,9 +476,24 @@ const createFreelancerInvite = async params => {
   } else {
     ListEntry.listId = listData?._id
 
-    const listEntry = await listEntriesHelper.createListEntries(ListEntry)
-    listData['listEntries'] = [...listData['listEntries'], listEntry?._id]
-    await listData.save()
+    const filter = {
+      userId: mongoose.Types.ObjectId(params.userInvited),
+      freelancerId: mongoose.Types.ObjectId(params.freelancer),
+      listId: mongoose.Types.ObjectId(listData?._id)
+    }
+
+    if (params.business) {
+      filter['businessId'] = mongoose.Types.ObjectId(params.business)
+    }
+
+    const isListExist = await listEntriesHelper.getSingleListEntry({
+      ...filter
+    })
+    if (!isListExist?._id) {
+      const listEntry = await listEntriesHelper.createListEntries(ListEntry)
+      listData['listEntries'] = [...listData['listEntries'], listEntry?._id]
+      await listData.save()
+    }
   }
 
   return updateFreelancer

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import CreateABusiness from '..'
-import { Grid } from '../../dashboard/style'
+import { Grid, TEXT } from '../../dashboard/style'
 import { FormField } from '../../../ui'
 import Button from '../../../ui/Button'
 import { ContentContainer } from '../../../../pages/create-your-business'
@@ -118,7 +118,15 @@ const StepNineWizardFlow = ({
                 onClick={() => handleCancelIcon('questionsToAsk', questionsToAsk, question)}
               />
             </div>
-            <span>{question}</span>
+            <TEXT
+              fontWeight="500"
+              fontSize="16px"
+              lineHeight="24.5px"
+              letterSpacing="0.4px"
+              textAlign="center"
+              textColor="#000000">
+              {question}
+            </TEXT>
           </div>
         ))}
       </ContentContainer>

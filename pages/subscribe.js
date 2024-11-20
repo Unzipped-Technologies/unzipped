@@ -86,7 +86,8 @@ const Subscribe = ({
   token,
   getPaymentMethods,
   paymentMethods,
-  businessAddress
+  businessAddress,
+  updateBusiness
 }) => {
   const primaryPayment = Array.isArray(paymentMethods)
     ? paymentMethods.find(item => item.isPrimary)
@@ -151,6 +152,8 @@ const Subscribe = ({
     }
   }, [user?._id]);
 
+  const updateBusinessAddress = async data => {}
+
   return (
     <Container data-testid="subscribe_page">
       <BackHeader title={`Confirm ${getSubscriptionName(selectedPlan)} Plan`} bold size="20px" />
@@ -211,7 +214,20 @@ const Subscribe = ({
               user={user}
               planCost={planCost}
               subscriptionForm={subscriptionForm}
-              updateSubscription={updateSubscription}
+              onClick={data => {
+                const paymentMethod = {
+                  BillingAddressLineOne: data.address.addressLineOne,
+                  BillingAddressLineTwo: data.address.addressLineTwo,
+                  BillingAddressLineCountry: data.address.country,
+                  BillingFirstName: data.address.firstName,
+                  BillingLastName: data.address.lastName,
+                  BillingAddressCity: data.address.city,
+                  BillingAddressState: data.address.state,
+                  BillingAddressZip: data.address.zipCode,
+                  card: data?.paymentMethod
+                }
+                updateSubscription({ paymentMethod: paymentMethod })
+              }}
             />
           )}
         </Left>

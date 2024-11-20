@@ -61,7 +61,7 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
         businessId: id,
         _id: invoice,
         freelancerId: freelancer,
-        limit: 25,
+        limit: 'all',
         page: 1
       })
     }
@@ -148,13 +148,14 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                         key={invoice._id}
                         data-testid={`${invoice?.freelancer?._id}_invoice`}>
                         <TEXT
-                          whiteSpace="normal"
                           fontSize="14px"
                           lineHeight="20.5px"
                           letterSpacing="0.4px"
                           textTransform="uppercase"
                           padding="0px !important"
                           width="90%"
+                          whiteSpace="nowrap"
+                          overflow="scroll"
                           wordBreak="break-word">
                           {ConverterUtils.capitalize(
                             `${invoice?.freelancer?.user?.FirstName} ${invoice?.freelancer?.user?.LastName}`
@@ -208,10 +209,10 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                   textTransform="uppercase"
                   padding="0px 0px 0px 10px"
                   whiteSpace="pre-line"
-                  overflow="hidden"
+                  overflow="scroll"
                   wordWrap="break-word"
                   margin="0px !important">
-                  {filteredData?.map(invoice => invoice.hoursWorked).reduce((acc, hours) => acc + hours, 0) || 0} Hours
+                  {filteredData?.map(invoice => invoice.hoursWorked).reduce((acc, hours) => acc + hours, 0) || 0}
                 </TEXT>
               </DIV>
               <DIV display="flex">
@@ -221,7 +222,7 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                   lineHeight="24.5px" /* 175% */
                   letterSpacing="0.4px"
                   textTransform="uppercase"
-                  overflow="visible"
+                  overflow="scroll"
                   whiteSpace="nowrap"
                   textOverflow="ellipsis"
                   width="50px"
@@ -236,7 +237,8 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                   textTransform="uppercase"
                   padding="0px 0px 0px 10px"
                   whiteSpace="pre-line"
-                  overflow="hidden"
+                  overflow="scroll"
+                  id="fee"
                   wordWrap="break-word"
                   margin="0px !important">
                   ${fee}
@@ -249,7 +251,7 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                   lineHeight="24.5px" /* 175% */
                   letterSpacing="0.4px"
                   textTransform="uppercase"
-                  overflow="visible"
+                  overflow="scroll"
                   whiteSpace="nowrap"
                   textOverflow="ellipsis"
                   width="50px"
@@ -258,6 +260,7 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                 </TEXT>
                 <TEXT
                   textColor="#000"
+                  id="total"
                   fontSize="14px"
                   lineHeight="24.5px" /* 175% */
                   letterSpacing="0.4px"
@@ -296,6 +299,7 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                           background="#fff"
                           borderBottom="1px solid rgba(0, 0, 0, 0.25)"
                           boxShadow="0px 1px 1px 0px rgba(0, 0, 0, 0.25)"
+                          id={task._id}
                           key={task._id}>
                           <TaskIcon color={task.task?.status === 'Done' ? '#5dc26a' : '#D8D8D8'}>
                             <MdCheckCircle />
@@ -307,6 +311,8 @@ const ClientInvoices = ({ weekOptions, selectedWeek, getInvoices, invoices }) =>
                             letterSpacing="0.4px"
                             textTransform="capitalize"
                             padding="15px 0px 0px 10px"
+                            whiteSpace="nowrap"
+                            overflow="scroll"
                             width="167px">
                             {task.task?.taskName}
                           </TEXT>

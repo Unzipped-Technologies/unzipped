@@ -10,7 +10,7 @@ import {
   Items
 } from './business-styles'
 import ReviewHeaderSection from './ReviewHeaderSection'
-import {ValidationUtils} from '../../../utils'
+import { ValidationUtils } from '../../../utils'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   BUSINESS_LABEL,
@@ -21,8 +21,9 @@ import {
   GITHUB_INFO_LABEL
 } from '../../../constants/application-constants'
 import Button from '../../ui/Button'
-import { createBusiness, updateBusinessForm, updateWizardSubmission } from '../../../redux/actions'
+import { createBusiness, updateBusinessForm, updateWizardSubmission, updateBusiness } from '../../../redux/actions'
 import { DarkText, Absolute, WhiteCard, Dismiss } from './../../../components/unzipped/dashboard/style'
+import Carousel from 'react-material-ui-carousel'
 
 import { useRouter } from 'next/router'
 
@@ -30,28 +31,29 @@ const renderSectionContent = (
   fontWeight,
   fontSize,
   label,
-  textStyle,
   marginBottom,
   padding = '0px',
-  letterSpacing = '0.5px'
+  letterSpacing = '0.5px',
+  color = '#000000',
+  lineHeight = '24.5px'
 ) => {
   return (
     <ParagraphStyled
       fontFamily={'Roboto'}
       fontSize={fontSize}
       fontWeight={fontWeight}
-      lineHeight={'23px'}
+      lineHeight={lineHeight}
       letterSpacing={letterSpacing}
       textAlign={'left'}
-      textStyle={textStyle}
       marginBottom={marginBottom}
+      color={color}
       padding={padding}>
       {label}
     </ParagraphStyled>
   )
 }
 
-const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewActive = false }) => {
+const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewActive = false, _id }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const businessForm = useSelector(state => state.Business.businessForm)
@@ -79,7 +81,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
       })
     )
   }
-  const handleSubmitProject = () => {
+  const handleSubmitProject = async () => {
     setIsFormSubmitted(true)
     const formData = new FormData()
     if (files?.length > 0) {
@@ -100,11 +102,19 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
         goals: businessForm.goals,
         companyBackground: businessForm.companyBackground,
         budgetRange: businessForm.budgetRange,
-        questionsToAsk: businessForm.questionsToAsk
+        questionsToAsk: businessForm.questionsToAsk,
+        ...(_id && { listId: _id })
       })
     )
 
-    dispatch(createBusiness(formData, true))
+    if (_id) {
+      const response = await dispatch(updateBusiness(formData, true))
+      if (response?.status === 200) {
+        router.back()
+      }
+    } else {
+      dispatch(createBusiness(formData, true))
+    }
   }
 
   const handleNotificationDismissal = () => {
@@ -134,7 +144,16 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             </Absolute>
           </WhiteCard>
         )}
-        {renderSectionContent(400, FONT_SIZE, REVIEW_SECTION_LABEL, '', '', '5px')}
+        {renderSectionContent(
+          400,
+          isMobileViewActive ? '16px' : '24px',
+          REVIEW_SECTION_LABEL,
+          '',
+          '5px',
+          '',
+          '',
+          isMobileViewActive ? '18.75px' : '24.5px'
+        )}
         <ReviewSectionStyled id="project_detail">
           <ReviewHeaderSection
             label={BUSINESS_LABEL.project.details}
@@ -143,12 +162,65 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             isMobileViewActive={isMobileViewActive}
           />
           <Items>
-            {renderSectionContent(600, '18px', BUSINESS_LABEL.project.name, '', '15px')}
-            {renderSectionContent(400, '18px', businessForm?.name, '', '15px', '', '1.3px')}
-            {renderSectionContent(600, '18px', BUSINESS_LABEL.project.length, '', '15px')}
-            {renderSectionContent(400, '18px', businessForm?.projectType, '', '15px', '', '1.3px')}
-            {renderSectionContent(600, '18px', BUSINESS_LABEL.project.description, '', '15px')}
-            {renderSectionContent(400, '18px', businessForm?.challenge || businessForm?.role, '', '15px', '', '1.3px')}
+            {renderSectionContent(
+              500,
+              isMobileViewActive ? '16px' : '20px',
+              BUSINESS_LABEL.project.name,
+              '15px',
+              '',
+              '0.15',
+              '',
+              '23px'
+            )}
+            {renderSectionContent(
+              400,
+              isMobileViewActive ? '16px' : '20px',
+              businessForm?.name,
+              '15px',
+              '',
+              '0.4px',
+              '#444444',
+              '24.5px'
+            )}
+            {renderSectionContent(
+              500,
+              isMobileViewActive ? '16px' : '20px',
+              BUSINESS_LABEL.project.length,
+              '15px',
+              '0.15px',
+              '',
+              '23px'
+            )}
+            {renderSectionContent(
+              400,
+              isMobileViewActive ? '16px' : '20px',
+              businessForm?.projectType,
+              '15px',
+              '',
+              '0.4px',
+              '#444444',
+              '24.5px'
+            )}
+            {renderSectionContent(
+              500,
+              isMobileViewActive ? '16px' : '20px',
+              BUSINESS_LABEL.project.description,
+              '15px',
+              '',
+              '0.15',
+              '',
+              '23px'
+            )}
+            {renderSectionContent(
+              400,
+              isMobileViewActive ? '16px' : '20px',
+              businessForm?.challenge || businessForm?.role,
+              '15px',
+              '',
+              '1.3px',
+              '#444444',
+              '24.5px'
+            )}
           </Items>
         </ReviewSectionStyled>
         <ReviewSectionStyled id="project_requirements">
@@ -160,7 +232,16 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
           />
           <div style={{ marginTop: 0, display: 'flex', flexDirection: 'column' }}>
             <div style={{ marginTop: '20px' }}>
-              {renderSectionContent(600, isMobileViewActive ? '18px' : '18px', 'Skills', null, '40px')}
+              {renderSectionContent(
+                500,
+                isMobileViewActive ? '16px' : '20px',
+                'Skills',
+                null,
+                '10px',
+                '0.15px',
+                '',
+                '23px'
+              )}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%', gap: '8px' }} id="required_skills">
               {businessForm?.requiredSkills?.map((skill, index) => (
@@ -178,8 +259,26 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
               isMobileViewActive={isMobileViewActive}
             />
             <Items>
-              {renderSectionContent(600, '18px', TEAM_DYNAMICS_LABEL, '', '15px')}
-              {renderSectionContent(400, '18px', businessForm?.teamDynamics, '', '15px', '', '1.3px')}
+              {renderSectionContent(
+                500,
+                isMobileViewActive ? '14px' : '18px',
+                TEAM_DYNAMICS_LABEL,
+                '15px',
+                '',
+                '',
+                '#333333',
+                '21.09px'
+              )}
+              {renderSectionContent(
+                400,
+                isMobileViewActive ? '16px' : '20px',
+                businessForm?.teamDynamics,
+                '15px',
+                '',
+                '0.4px',
+                '#444444',
+                '24.5px'
+              )}
             </Items>
           </ReviewSectionStyled>
         )}
@@ -192,8 +291,26 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
               isMobileViewActive={isMobileViewActive}
             />
             <Items>
-              {renderSectionContent(600, '18px', PROJECT_GOALS_LABEL, '', '15px')}
-              {renderSectionContent(400, '18px', businessForm?.goals, '', '15px', '', '1.3px')}
+              {renderSectionContent(
+                500,
+                isMobileViewActive ? '14px' : '18px',
+                PROJECT_GOALS_LABEL,
+                '15px',
+                '',
+                '0.15px',
+                '#333333',
+                isMobileViewActive ? '16.41px' : '21.09px'
+              )}
+              {renderSectionContent(
+                400,
+                isMobileViewActive ? '16px' : '20px',
+                businessForm?.goals,
+                '15px',
+                '',
+                '0.4px',
+                '#444444',
+                '24.5px'
+              )}
             </Items>
           </ReviewSectionStyled>
         )}
@@ -206,8 +323,26 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
               isMobileViewActive={isMobileViewActive}
             />
             <Items>
-              {renderSectionContent(600, '18px', COMPANY_BACKGROUND_LABEL)}
-              {renderSectionContent(400, '18px', businessForm?.companyBackground, '', '15px', '', '1.3px')}
+              {renderSectionContent(
+                500,
+                isMobileViewActive ? '16px' : '18px',
+                COMPANY_BACKGROUND_LABEL,
+                '',
+                '',
+                '',
+                '#333333',
+                isMobileViewActive ? '18.75px' : '21.09px'
+              )}
+              {renderSectionContent(
+                400,
+                isMobileViewActive ? '16px' : '20px',
+                businessForm?.companyBackground,
+                '15px',
+                '',
+                '0.4px',
+                '#444444',
+                '24.5px'
+              )}
             </Items>
           </ReviewSectionStyled>
         )}
@@ -219,40 +354,120 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
             isMobileViewActive={isMobileViewActive}
           />
           <Items id="budget">
-            {renderSectionContent(600, '18px', BUSINESS_LABEL.project.budget)}
-            {renderSectionContent(400, '18px', `${businessForm?.budgetRange}`)}
+            {renderSectionContent(
+              500,
+              isMobileViewActive ? '16px' : '20px',
+              BUSINESS_LABEL.project.budget,
+              '',
+              '',
+              '',
+              '#333333',
+              isMobileViewActive ? '18.75px' : '23.44px'
+            )}
+            {renderSectionContent(
+              400,
+              isMobileViewActive ? '16px' : '20px',
+              `${businessForm?.budgetRange}`,
+              '',
+              '',
+              '0.4px',
+              '#444444',
+              '24.5px'
+            )}
           </Items>
           <Items id="interview_questions">
-            {renderSectionContent(600, '18px', 'Interview Questions')}
+            {renderSectionContent(
+              500,
+              isMobileViewActive ? '16px' : '20px',
+              'Interview Questions',
+              '',
+              '',
+              '',
+              '#333333',
+              isMobileViewActive ? '18.75px' : '23.44px'
+            )}
             <ol id="questions">
               {businessForm?.questionsToAsk?.map((question, index) => (
                 <li key={index} id={question}>
-                  {renderSectionContent(400, '18px', `${question} ${question?.slice(-1) !== "?" ? '?':''}`, '', '10px', '', '1.3px')}
+                  {renderSectionContent(
+                    400,
+                    isMobileViewActive ? '16px' : '20px',
+                    `${question} ${question?.slice(-1) !== '?' ? '?' : ''}`,
+                    '10px',
+                    '',
+                    '0.4px',
+                    '#444444',
+                    '24.5px'
+                  )}
                 </li>
               ))}
             </ol>
           </Items>
           {FILES_ARRAY &&
             FILES_ARRAY.length > 0 &&
-            renderSectionContent(600, FONT_SIZE, BUSINESS_LABEL.project.projectImage)}
+            renderSectionContent(
+              500,
+              FONT_SIZE,
+              BUSINESS_LABEL.project.projectImage,
+              '',
+              '',
+              '',
+              '#333333',
+              isMobileViewActive ? '18.75px' : '23.44px'
+            )}
           {FILES_ARRAY && FILES_ARRAY.length > 0 && (
             <div
-              style={{ marginTop: 30, display: 'flex', width: '100%', flexDirection: 'column', gap: '10px' }}
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-around',
+                width: '50%',
+                margin: '30px auto 0px auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+              }}
               id="project_images">
-              {FILES_ARRAY?.map((file, index) => (
-                <span key={index}>
-                  {file instanceof File && (
-                    <img
-                      data-testid={`${file.name}_${index}`}
-                      src={URL.createObjectURL(file)}
-                      width={'100%'}
-                      height={'200px'}
-                      style={{ objectFit: 'cover', display: 'inline-block' }}
-                      key={index}
-                    />
-                  )}
-                </span>
-              ))}
+              <Carousel
+                autoPlay={false}
+                fullHeightHover={false}
+                NavButton={({ onClick, className, style, next, prev }) => {
+                  return (
+                    <>
+                      <button onClick={onClick} className="Carousel-button" style={style} aria-label="navigate">
+                        {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                        {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                      </button>
+                    </>
+                  )
+                }}>
+                {FILES_ARRAY &&
+                  FILES_ARRAY?.length > 0 &&
+                  FILES_ARRAY.map((file, i) => {
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          height: '200px',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          overflow: 'hidden'
+                        }}>
+                        {file instanceof File && (
+                          <img
+                            alt="..."
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            src={URL.createObjectURL(file)}></img>
+                        )}
+                      </div>
+                    )
+                  })}
+              </Carousel>
             </div>
           )}
         </ReviewSectionStyled>
@@ -265,7 +480,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
               step={0}
               isMobileViewActive={isMobileViewActive}
             />
-            <div style={{ marginTop: '20px' }}>{renderSectionContent(600, FONT_SIZE, `Profile Details`)}</div>
+            <div style={{ marginTop: '20px' }}>{renderSectionContent(500, FONT_SIZE, `Profile Details`)}</div>
             <div style={{ marginTop: 30, display: 'inline-flex', gap: '20px' }}>
               <img
                 src={`${githubInfo?.avatarUrl}`}
@@ -274,7 +489,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
                 height={'40px'}
                 style={{ borderRadius: '50px' }}
               />
-              {renderSectionContent(400, FONT_SIZE, `${githubInfo?.userName}`)}
+              {renderSectionContent(400, FONT_SIZE, `${githubInfo?.userName}`, '', '', '0.4px', '#444444', '24.5px')}
             </div>
           </ReviewSectionStyled>
         )}
@@ -287,7 +502,7 @@ const ReviewBusinessDetails = ({ files, isGithubConnected, stage, isMobileViewAc
         </div>
         <div>
           <Button onClick={handleSubmitProject} width="150px" extraWide={true} oval type="black">
-            CREATE PROJECT
+            {_id ? 'Update' : 'CREATE PROJECT'}
           </Button>
         </div>
       </ReviewSubmitSection>

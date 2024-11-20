@@ -23,7 +23,6 @@ const Desktop = styled.div`
   }
 `
 const MobileDisplayBox = styled.div`
-  margin-top: -40px;
   @media (min-width: 680px) {
     display: none;
   }

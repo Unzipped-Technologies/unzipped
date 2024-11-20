@@ -123,6 +123,7 @@ export default function ScheduleMeetingModal({
         open={scheduleInterviewModal}
         onClose={handleScheduleInterviewModal}
         aria-labelledby="meeting_modal_title"
+        id="schedule_meeting_modal"
         aria-describedby="meeting_modal_description">
         <Box
           sx={style}

@@ -479,6 +479,7 @@ const TaskForm = ({
               placeholder="Task Name"
               fieldType="input"
               name="taskName"
+              id="taskName"
               fontSize="14px"
               disableBorder={!editMode.taskName}
               disabled={userRole === 1}
@@ -510,7 +511,7 @@ const TaskForm = ({
               justifyContent="flex-end">
               <ManIcon width="16px" height="16px" viewBox="0 0 20 18" fill="#979797" />
             </DIV>
-            {editMode ? (
+            {editMode.assignee ? (
               <span style={{ width: '300px', height: '50px' }}>
                 <FormField
                   mobile
@@ -520,6 +521,7 @@ const TaskForm = ({
                   fieldType="searchField"
                   isSearchable={true}
                   name="assignee"
+                  id="assignee"
                   disabled={userRole === 1}
                   options={assigneeOptions}
                   placeholder="assignee"
@@ -547,7 +549,16 @@ const TaskForm = ({
                 />
               </span>
             ) : (
-              <DarkText fontSize="18px" color="grey" lineHeight="normal" topMargin="20px" marginRight="100px">
+              <DarkText
+                id="assignee"
+                onClick={() => {
+                  enableEditMode('assignee')
+                }}
+                fontSize="18px"
+                color="grey"
+                lineHeight="normal"
+                topMargin="20px"
+                marginRight="100px">
                 {assigneeOptions?.find(assignee => assignee.value === taskDetail?.assignee)?.label || 'assignee'}
               </DarkText>
             )}
@@ -742,46 +753,42 @@ const TaskForm = ({
               paddingRight="30px">
               Priority:
             </TitleText>
-            {editMode ? (
-              <>
-                <Autocomplete
-                  disablePortal
-                  value={
-                    selectedTaskId
-                      ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority)
-                      : taskForm?.priority
-                  }
-                  id="combo-box-demo"
-                  options={PRIORITY_OPTIONS_ARR}
-                  onChange={(event, value) => {
-                    updateForm('priority', value)
-                  }}
-                  sx={{
-                    width: 300,
-                    '& input': {
-                      bgcolor: 'background.paper',
-                      border: '0px !important',
-                      borderRadius: '0px !important',
-                      margin: '0px !important',
-                      padding: '0px !important',
-                      fontSize: '16px',
-                      boxShadow: 'none',
-                      height: '20px !important',
-                      boxShadow: 'none !important',
+            <>
+              <Autocomplete
+                disablePortal
+                value={
+                  selectedTaskId
+                    ? PRIORITY_OPTIONS_ARR.filter(elem => elem == taskDetail?.priority)
+                    : taskForm?.priority
+                }
+                id="priority_autocomplete"
+                options={PRIORITY_OPTIONS_ARR}
+                onChange={(event, value) => {
+                  updateForm('priority', value)
+                }}
+                sx={{
+                  width: 300,
+                  '& input': {
+                    bgcolor: 'background.paper',
+                    border: '0px !important',
+                    borderRadius: '0px !important',
+                    margin: '0px !important',
+                    padding: '0px !important',
+                    fontSize: '16px',
+                    boxShadow: 'none',
+                    height: '20px !important',
+                    boxShadow: 'none !important',
 
-                      color: theme => theme.palette.getContrastText(theme.palette.background.paper)
-                    },
-                    '& input:focus': {
-                      border: '0px !important'
-                    },
-                    '& svg': { display: 'none' }
-                  }}
-                  renderInput={params => <TextField {...params} />}
-                />
-              </>
-            ) : (
-              <></>
-            )}
+                    color: theme => theme.palette.getContrastText(theme.palette.background.paper)
+                  },
+                  '& input:focus': {
+                    border: '0px !important'
+                  },
+                  '& svg': { display: 'none' }
+                }}
+                renderInput={params => <TextField {...params} />}
+              />
+            </>
           </DIV>
           <DIV width="50%" display="flex" alignItems="center" padding="0px 0px 0px 90px">
             <TitleText color="grey" titleFontSize="16px" lineHeight="normal" light width="100px" paddingTop="15px">
@@ -794,6 +801,7 @@ const TaskForm = ({
               lineHeight="21.09px"
               color="#000000"
               name="storyPoints"
+              id="storyPoints"
               noMargin
               disableBorder={!editMode.storyPoints}
               disabled={userRole === 1}
@@ -835,7 +843,7 @@ const TaskForm = ({
                     : taskForm?.status
                 }
                 disablePortal
-                id="combo-box-demo"
+                id="status_autocomplete"
                 options={statusList}
                 onChange={(event, value) => {
                   const tag = departmentData?.departmentTags.find(item => item.tagName === value)
@@ -862,6 +870,9 @@ const TaskForm = ({
                   },
                   '& svg': { display: 'none' }
                 }}
+                onBlur={() => {
+                  validateForm()
+                }}
                 renderInput={params => <TextField {...params} />}
               />
             ) : (
@@ -883,6 +894,7 @@ const TaskForm = ({
               fontSize="14px"
               width="95%"
               name="description"
+              id="description"
               placeholder="Description"
               display="inline !important"
               borderRadius="5px"
@@ -899,6 +911,7 @@ const TaskForm = ({
               fontSize="18px"
               lineHeight="21.09px"
               color="#000000"
+              id="description"
               topMargin="10px"
               padding="0px 0px 0px 10px"
               onClick={() => {
@@ -917,6 +930,7 @@ const TaskForm = ({
               noMargin
               height="auto"
               name="comment"
+              id="comment"
               textarea
               width="95%"
               maxLength={'1000'}
@@ -940,6 +954,7 @@ const TaskForm = ({
                 borderRadius="4px"
                 unset
                 key={comment?._id}
+                id={comment?._id}
                 half
                 padding="10px"
                 width="95%"
@@ -955,7 +970,13 @@ const TaskForm = ({
                 <Grid2 block margin="0px">
                   <Span margin="0px 0px 10px 0px">
                     {userData?.profilePic && (
-                      <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
+                      <Image
+                        src={userData?.profilePic}
+                        width="24px"
+                        height="24px"
+                        radius="50%"
+                        id={`comment_${comment?._id}_image`}
+                      />
                     )}
                     <Span space>
                       <DarkText
@@ -964,12 +985,14 @@ const TaskForm = ({
                         color="#000000"
                         lineHeight="21.09px"
                         paddingLeft
+                        id={`comment_${comment?._id}_user_info`}
                         smallPadding="10px">
                         {userData?.name || ''}
                         <span
                           style={{ fontSize: '14px', color: '#9B9B9B', lineHeight: '16.41px', paddingLeft: '20px' }}>
-                          {ValidationUtils.formatDateWithDate(comment?.updatedAt)} -{' '}
-                          {ValidationUtils.getTimeFormated(comment?.updatedAt)}
+                          {`${ValidationUtils.formatDateWithDate(
+                            comment?.updatedAt
+                          )} - ${ValidationUtils.getTimeFormated(comment?.updatedAt)}`}
                         </span>
                       </DarkText>
                     </Span>
@@ -980,6 +1003,7 @@ const TaskForm = ({
                       display="flex"
                       justifyContent="flex-end"
                       gap="8px"
+                      id={`edit_${comment?._id}_comment`}
                       onClick={() => handleUserCommments(comment)}>
                       <EditIcon width="12px" height="12px" color="#585858" />
                       {isCommentEditable && commentId === comment?._id && (
@@ -1013,6 +1037,7 @@ const TaskForm = ({
                       placeholder="Leave a comment..."
                       noMargin
                       height="auto"
+                      id={`comment_${comment?._id}`}
                       textarea
                       maxLength={'1000'}
                       width="95%"

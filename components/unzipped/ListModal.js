@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
 import router from 'next/router'
 import ScheduleMeetingModal from '../modals/scheduleMeeting'
+import Notification from '../animation/notifications'
 
 import IconComponent from '../ui/icons/IconComponent'
 import {
@@ -143,6 +144,7 @@ const ListModal = ({
     <>
       <MUIDialog
         data-testid={`${userId}_list_modal`}
+        id={`${user?.userId}_list_modal`}
         onClose={handleClose}
         disableEscapeKeyDown
         open={open}
@@ -163,11 +165,6 @@ const ListModal = ({
             <CloseIcon />
           </IconButton>
           <div className="mx-2">
-            {error && (
-              <P color="red" fontSize="12px">
-                {error}
-              </P>
-            )}
             {role !== 1 && (
               <P
                 padding="25px 0 18px 0"
@@ -200,7 +197,9 @@ const ListModal = ({
               borderBottom="3px solid #EFF1F4"
               margin="0"
               fontWeight="600"
-              onClick={() => {
+              onClick={async () => {
+                await getFreelancerById(freelancerId)
+
                 sendMessage()
               }}>
               Send A Message
@@ -282,6 +281,7 @@ const ListModal = ({
           setScheduleInterviewModal={setScheduleInterviewModal}
         />
       )}
+      <Notification error={error} />
     </>
   )
 }

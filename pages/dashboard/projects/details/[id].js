@@ -48,7 +48,7 @@ const HeaderDetail = styled.header`
   @media (max-width: 680px) {
     width: 100%;
     top: 0;
-    padding-top: 0px !important;
+    padding: 0px !important;
   }
 `
 
@@ -71,6 +71,7 @@ const ProjectName = styled.div`
     width: 100%;
     justify-content: center;
     padding: 0px 0px 0px 15px;
+    overflow: scroll;
   }
 `
 
@@ -91,8 +92,9 @@ const Tabs = styled.div`
     justify-content: space-around;
     display: flex;
     overflow-x: auto;
-    margin-left: 10px;
     background: #d8d8d8;
+    overflow: scroll;
+    width: 100%;
   }
 `
 
@@ -260,7 +262,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
               color="#444"
               fontSize="24px"
               fontWeight="400"
-              lineHeight="24.5px" /* 102.083% */
+              lineHeight="24.5px"
               letterSpacing="0.4px"
               textTransform="uppercase">
               {ValidationUtils.truncate(projectDetails?.name, 150)}
@@ -270,6 +272,7 @@ const ProjectDetails = ({ projectDetails, getBusinessById, role, loading }) => {
 
         <Tabs
           data-testid="desktop_project_detail_tabs"
+          id="desktop_project_detail_tabs"
           style={{
             width: '100%',
             height: '55px'

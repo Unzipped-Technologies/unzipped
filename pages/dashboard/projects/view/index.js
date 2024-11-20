@@ -236,6 +236,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
                       return (
                         <DIV
                           key={business._id}
+                          id={business._id}
                           borderRadius="4px"
                           background="#fff"
                           margin="0px 0px 5px 0px"

@@ -119,7 +119,8 @@ const DefaultDisplay = styled.div`
 
 const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, role }) => {
   const router = useRouter()
-
+  const { id } = router.query
+  console.log('id', id)
   const redirectToProfile = freelancerId => {
     router.push(`/freelancers/${freelancerId}`)
   }

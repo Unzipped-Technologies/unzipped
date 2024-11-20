@@ -4,9 +4,13 @@ import { TitleText, DarkText, Absolute, WhiteCard, Dismiss } from './style'
 import { connect, useDispatch } from 'react-redux'
 import UpdateUserIcon from '../../icons/updateUser'
 import { useRouter } from 'next/router'
-import Dropzone from 'react-dropzone'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { accountVerificationEnum } from '../../../server/enum/accountTypeEnum'
+import { getVerifyIdentityUrl } from '../../../redux/actions'
+import { VerifyUserIcon } from '../../icons'
+import { bindActionCreators } from 'redux'
+import UpdateProfileImage from './UpdateProfileImage'
 
 const Container = styled.div`
   display: flex;
@@ -54,6 +58,7 @@ const AccountSetupContainer = styled.div`
   width: 100%;
   gap: 10px;
   margin-top: 20px;
+  align-items: center;
 `
 
 const AccountSetup = styled.div`
@@ -67,7 +72,7 @@ const Text = styled.p`
   font-style: normal;
   font-weight: 400;
   color: ${({ color }) => (color ? color : '#000')};
-  margin:  4px;
+  margin: 4px;
   line-height: ${({ lineHeight }) => (lineHeight ? lineHeight : '40px')};
 `
 
@@ -84,15 +89,18 @@ const CompleteSetupButton = styled.button`
   border-radius: 20px;
   background: #ff4081;
 `
-const Panel = ({ success, passwordChanged, calenderSuccess }) => {
-  const { user } = useSelector(state => state.Auth)
 
-  const [isDropzoneVisible, setIsDropzoneVisible] = useState(false)
-  const [trackProgress, setTrackProgress] = useState(0)
-  const [hasUserInfo, setHasUserInfo] = useState(false)
-  const dropzoneRef = useRef(null)
+const Panel = ({ success, passwordChanged, calenderSuccess, url, token, getVerifyIdentityUrl }) => {
   const dispatch = useDispatch()
 
+  const { user } = useSelector(state => state.Auth)
+
+  const [trackProgress, setTrackProgress] = useState(0)
+  const [hasUserInfo, setHasUserInfo] = useState(false)
+  const [image, setImage] = useState(null)
+  const [isOpen, setOpen] = useState(false)
+
+  const [initialUrl] = useState(url)
   const hideAlert = () => {
     success && hideSuccessAlert()
     passwordChanged && hidePasswordAlert()
@@ -124,6 +132,40 @@ const Panel = ({ success, passwordChanged, calenderSuccess }) => {
   }, 5000)
 
   useEffect(() => {
+    if (url && url !== initialUrl) {
+      window.open(url, '_blank')
+    }
+  }, [url, router])
+
+  const completeSetup = () => {
+    const selectPlanActionItem = document.querySelector('.select-a-plan')
+    if (selectPlanActionItem) {
+      selectPlanActionItem.click()
+      return
+    }
+
+    const profileImgActionItem = document.querySelector('.upload-profile-image')
+    if (profileImgActionItem) {
+      profileImgActionItem.click()
+      return
+    }
+    const verifyIdentityActionItem = document.querySelector('.verify-identity')
+    if (verifyIdentityActionItem) {
+      verifyIdentityActionItem.click()
+      return
+    }
+
+    const accountUpdateActionItem = document.querySelector('.update-account-details')
+    if (accountUpdateActionItem) {
+      accountUpdateActionItem.click()
+      return
+    }
+  }
+  const verifyIdentity = () => {
+    getVerifyIdentityUrl(user?._id, token)
+  }
+
+  useEffect(() => {
     if (user?.role != '0' && user?.FirstName && user?.AddressCity) {
       setHasUserInfo(true)
     } else {
@@ -135,30 +177,29 @@ const Panel = ({ success, passwordChanged, calenderSuccess }) => {
     if (user && trackProgress < 100) {
       let incrementalProgress = 0
 
-      if (user?.role != 0 && user?.FirstName && user?.AddressCity) {
+      if (user?.FirstName && user?.AddressCity) {
         incrementalProgress += 25
       }
       if (user?.profileImage) {
+        incrementalProgress += 25
+      }
+      if (user?.isIdentityVerified === 'SUCCESS') {
         incrementalProgress += 25
       }
       if (user?.plan > 0) {
         incrementalProgress += 25
       }
 
-      setTrackProgress(trackProgress + incrementalProgress)
+      setTrackProgress(incrementalProgress)
     }
   }, [user])
 
-  const openDropzone = () => {
-    dropzoneRef.current && dropzoneRef.current.open()
+  const handleOpen = () => {
+    setOpen(true)
   }
 
-  const closeDropzone = () => {
-    setIsDropzoneVisible(false)
-  }
-
-  const handleDrop = acceptedFiles => {
-    closeDropzone()
+  const handleClose = () => {
+    setOpen(false)
   }
 
   const router = useRouter()
@@ -230,13 +271,24 @@ const Panel = ({ success, passwordChanged, calenderSuccess }) => {
             </Text>
           </ProgressBarFiller>
         </ProgressBarContainer>
+
+        {user?.isIdentityVerified !== accountVerificationEnum.SUCCESS && (
+          <AccountSetupContainer>
+            <VerifyUserIcon />
+            <AccountSetup>
+              <Text className="verify-identity" onClick={verifyIdentity}>
+                Verify identity
+              </Text>
+            </AccountSetup>
+          </AccountSetupContainer>
+        )}
         {!hasUserInfo && (
           <AccountSetupContainer>
             <UpdateUserIcon />
             <AccountSetup>
               <Text
                 onClick={() => {
-                  router.push('/signup')
+                  router.push('/dashboard/account')
                 }}>
                 Update account details
               </Text>
@@ -255,15 +307,8 @@ const Panel = ({ success, passwordChanged, calenderSuccess }) => {
             />
 
             <AccountSetup>
-              <Text onClick={openDropzone}>Upload a profile picture</Text>
+              <Text onClick={handleOpen}>Upload a profile picture</Text>
             </AccountSetup>
-            <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true}>
-              {({ getRootProps, getInputProps }) => (
-                <div className="dropzone" {...getRootProps()} data-testid="dropzone">
-                  <input {...getInputProps()} />
-                </div>
-              )}
-            </Dropzone>
           </AccountSetupContainer>
         )}
 
@@ -283,10 +328,11 @@ const Panel = ({ success, passwordChanged, calenderSuccess }) => {
 
         <AccountSetupContainer>
           <AccountSetup>
-            <CompleteSetupButton>Complete Setup</CompleteSetupButton>
+            <CompleteSetupButton onClick={completeSetup}>Complete Setup</CompleteSetupButton>
           </AccountSetup>
         </AccountSetupContainer>
       </Container>
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </ContainerAccount>
   )
 }
@@ -295,12 +341,16 @@ const mapStateToProps = state => {
   return {
     calenderSuccess: state?.Auth?.calendarSuccess,
     success: state?.ProjectApplications?.success,
-    passwordChanged: state?.Auth?.passwordChanged
+    passwordChanged: state?.Auth?.passwordChanged,
+    url: state?.Auth?.verifyUrl,
+    token: state?.Auth?.token
   }
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    getVerifyIdentityUrl: bindActionCreators(getVerifyIdentityUrl, dispatch)
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Panel)

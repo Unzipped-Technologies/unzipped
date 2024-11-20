@@ -4,6 +4,7 @@ const ContractModel = require('../models/Contract')
 const ListEntriesModel = require('../models/ListEntries')
 const FreelancerModel = require('../models/Freelancer')
 const ListHelper = require('../helpers/list')
+const { filter } = require('lodash')
 
 const getAllListEntries = async (id, filters) => {
   let page = 1
@@ -187,6 +188,15 @@ const getUserListEntries = async ({ filter }) => {
   }
 }
 
+const getSingleListEntry = async filter => {
+  try {
+    const response = await ListEntriesModel.findOne({ ...filter })
+    return response
+  } catch (err) {
+    throw Error(`Could not find list entry, error: ${err}`)
+  }
+}
+
 module.exports = {
   createListEntries,
   deleteListEntry,
@@ -197,5 +207,6 @@ module.exports = {
   getAllteamMembers,
   getUserListEntries,
   getRecentlyViewedProfile,
-  createRecentlyViewdRecod
+  createRecentlyViewdRecod,
+  getSingleListEntry
 }

@@ -26,7 +26,8 @@ const CreateBusiness = ({
   hasNextButton = true,
   hasBackButton = true,
   mobile = false,
-  titleFontSize,
+  titleFontSize = '22px',
+  lineHeight = '25.78px',
   doubleScreenTop,
   doubleScreenBottom,
   title,
@@ -70,13 +71,20 @@ const CreateBusiness = ({
         {title ? (
           <TitleText
             mobile={mobile}
+            color="#222222"
             titleFontSize={titleFontSize}
+            lineHeight={lineHeight}
             noMargin={noTitle}
             marginTop={mobile ? '0px' : '40px'}>
             {title}
           </TitleText>
         ) : null}
-        <DarkText bottomMargin={mobile ? true : false} noMargin={noMargin}>
+        <DarkText
+          fontSize="16px"
+          color="#333333"
+          lineHeight="18.75px"
+          bottomMargin={mobile ? true : false}
+          noMargin={noMargin}>
           {sub}
         </DarkText>
         {children}

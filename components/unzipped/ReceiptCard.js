@@ -67,7 +67,7 @@ const SubscriptionCard = ({
   }
 
   return (
-    <Container data-testid="receipt_card">
+    <Container data-testid="receipt_card" id="receipt_card">
       <WhiteCard height={(selectedPlan + 1) * 50 + 450 + 'px'} padding="10px">
         <TitleText size="22px">{subscriptionName} Plan</TitleText>
         <DarkText>

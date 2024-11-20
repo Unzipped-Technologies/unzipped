@@ -160,7 +160,8 @@ const Dropdown = ({
         dashboard={dashboard}
         btnDropdown={btnDropdown}
         dropDownRight={dropDownRight}
-        data-testid="dropdown">
+        data-testid="dropdown"
+        id="dropdown">
         <DropdownList width={width} sidebar={sidebar} minWidth={minWidth}>
           <div ref={first10Ref}>
             <DropdownItems links={first10Items} width={width} minWidth={minWidth} />

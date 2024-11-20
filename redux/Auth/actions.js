@@ -334,19 +334,21 @@ export const getCurrentUserData = () => async (dispatch, getState) => {
 export const loadUser = user => async (dispatch, getState) => {
   //User Loading
   dispatch({ type: USER_LOADING })
-  await axios
+  return await axios
     .post(`/api/auth/login`, user)
-    .then(res =>
+    .then(res => {
       dispatch({
         type: USER_LOADED,
         payload: res.data
       })
-    )
+      return res
+    })
     .catch(err => {
       dispatch({
         type: AUTH_ERROR,
         payload: err.response
       })
+      return err
     })
 }
 
@@ -600,4 +602,24 @@ export const createCalendarSetting = data => async (dispatch, getState) => {
   }
 
   dispatch(stopLoading())
+}
+
+export const updateProfileImage = data => async (dispatch, getState) => {
+  const response = await axios
+    .post(`/api/user/upload-profile-image`, data, tokenConfig(getState()?.Auth.token, 'multipart'))
+    .then(res => {
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: res.data
+      })
+      return res
+    })
+    .catch(err => {
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: err.response
+      })
+      return err.response
+    })
+  return response
 }

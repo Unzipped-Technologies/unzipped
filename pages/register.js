@@ -137,9 +137,7 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
   useEffect(() => {
     if (isEmailSent) {
       setNotifications('Email sent successfully.')
-      setTimeout(() => {
-        router.push('/verify-email')
-      }, 2000)
+      router.push('/verify-email')
     } else {
       if (error) {
         setNotifications(error?.data)
@@ -215,7 +213,7 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
         <title>Unzipped | Register</title>
         <meta name="Unzipped | Register" content="Unzipped" />
       </Head>
-      <Container>
+      <Container id="signup">
         <Box>
           <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="50%" />
           <Sign textAlign="center" level={2} fontWeight={500}>
@@ -238,10 +236,10 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
               error={emailAlert}
               placeholder="Email"
               name="email"
+              id="email"
               type="email"
               fieldType="input"
               fontSize={'18px'}
-              // margin={'0px 0px 10px 0px'}
               onChange={e => {
                 updateUser('email', e?.target?.value?.toLowerCase())
               }}></FormField>
@@ -261,6 +259,7 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
               }
               placeholder="Password"
               name="password"
+              id="password"
               margin={'10px 0px 0px 0px'}
               type="password"
               fieldType="input"
@@ -270,7 +269,12 @@ const Register = ({ loading, isEmailSent, error, registerUser }) => {
                 updateUser('password', e?.target?.value)
               }}></FormField>
             <TextBox>
-              <Checkbox color="primary" checked={rememberMe} onClick={updateRememberMe} name="Remember Me"></Checkbox>
+              <Checkbox
+                id="remember_me"
+                color="primary"
+                checked={rememberMe}
+                onClick={updateRememberMe}
+                name="remember_me"></Checkbox>
               <Text>Remember Me</Text>
             </TextBox>
             <Button noBorder background="#1890FF" block type="submit" onClick={RegisterUsers}>

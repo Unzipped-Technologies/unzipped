@@ -207,13 +207,18 @@ const INIT_STATE = {
   thirdPartyDetails: {},
   userMailConfirmation: false,
   calendarError: null,
-  calendarSuccess: false
+  calendarSuccess: null
 }
 
 const Auth = (state = INIT_STATE, action) => {
   switch (action.type) {
     case USER_LOADING:
-      return { ...INIT_STATE, loading: true }
+      return {
+        ...INIT_STATE,
+        loading: true,
+        isAuthenticated: false,
+        token: ''
+      }
     case SET_LOADING:
       return { ...state, loading: true }
     case USER_CREDENTIALS:
@@ -231,11 +236,11 @@ const Auth = (state = INIT_STATE, action) => {
     case USER_LOADED:
       return {
         ...state,
-        email: action.payload.email,
+        email: action.payload?.email,
         isAuthenticated: true,
         loading: false,
         user: action.payload,
-        token: action.payload.cookie,
+        token: action.payload?.cookie,
         error: { data: '' }
       }
     case LOGIN_USER_SUCCESS:
@@ -244,6 +249,24 @@ const Auth = (state = INIT_STATE, action) => {
       return {
         ...state,
         user: { ...state.user, ...action.payload },
+        userForm: {
+          role: -1,
+          FirstName: '',
+          LastName: '',
+          phoneNumber: '',
+          AddressLineOne: '',
+          AddressLineTwo: '',
+          AddressLineCountry: '',
+          AddressState: '',
+          AddressZip: '',
+          AddressCity: '',
+          AddressCountry: '',
+          taxEIN: '',
+          socialSecurityNumber: '',
+          businessType: '',
+          stage: 1,
+          isAccountDetailCompleted: false
+        },
         loading: false,
         error: { data: '' }
       }

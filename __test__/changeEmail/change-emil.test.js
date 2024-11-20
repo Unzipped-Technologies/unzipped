@@ -1,28 +1,42 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { fireEvent, screen, waitFor, act } from '@testing-library/react'
+import { fireEvent, screen, waitFor, act, render } from '@testing-library/react'
+import { makeStore } from '../../redux/store'
+import { Provider } from 'react-redux'
 
 import ChangeEmail from '../../pages/change-email'
-import { initialState } from '../store/mockInitialState'
-import { renderWithRedux } from '../store/commonTestSetup'
-import { updateUserEmail } from '../../redux/Auth/actions'
-import UpdateKeyDataForm from '../../components/unzipped/UpdateEmailForm'
-
-jest.mock('axios')
+import { loadUser } from '../../redux/Auth/actions'
+import axios from 'axios'
+import keys from '../../config/keys'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }))
 
-jest.mock('../../redux/Auth/actions', () => ({
-  ...jest.requireActual('../../redux/Auth/actions'),
-  updateUserEmail: jest.fn()
-}))
+let store, state
+
+let newEmail = 'client1@gamail.com'
 
 describe('ChangeEmail Component', () => {
   let mockRouterPush, mockRouterBack
 
+  beforeAll(async () => {
+    axios.defaults.baseURL = 'http://localhost:3000'
+
+    // Initialize the store
+    store = makeStore({ isServer: false })
+    // Dispatch the loadUser action
+    await store.dispatch(
+      loadUser({
+        email: keys?.testClientEmail,
+        password: keys?.testClientPassword
+      })
+    )
+    state = store.getState()
+  })
+
   beforeEach(() => {
+    // store = makeStore({ isServer: false })
     mockRouterPush = jest.fn()
     mockRouterBack = jest.fn()
 
@@ -41,15 +55,20 @@ describe('ChangeEmail Component', () => {
   })
 
   it('renders ChangeEmail and verify sub header text', async () => {
-    renderWithRedux(<ChangeEmail />, { initialState })
-
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
     expect(screen.getByText('Change Email')).toBeInTheDocument()
   })
 
-  it('renders UpdateKeyDataForm and verfiy input fields render correctly', async () => {
-    renderWithRedux(<UpdateKeyDataForm email={initialState.Auth.user.email} onSubmit={data => {}} />, {
-      initialState
-    })
+  it('renders ChangeEmail and verfiy input fields render correctly', async () => {
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
 
     const saveEmailButton = screen.getByTestId('save_email_changes')
     expect(saveEmailButton).toBeDisabled()
@@ -60,24 +79,12 @@ describe('ChangeEmail Component', () => {
     expect(cancelEmailButton).toBeInTheDocument()
 
     const currentEmailElement = screen.getByTestId('currentEmail')
-    expect(currentEmailElement.value).toBe(initialState.Auth.user.email)
+    expect(currentEmailElement.value).toBe(state.Auth.user.email)
     expect(currentEmailElement).toBeDisabled()
 
     const emailElement = screen.getByTestId('email')
     expect(emailElement.value).toBe('')
     expect(emailElement).toBeEnabled()
-
-    fireEvent.click(emailElement)
-
-    fireEvent.change(emailElement, {
-      target: { value: 'new_email_user@gmail.com' }
-    })
-
-    fireEvent.blur(emailElement)
-
-    expect(emailElement.value).toBe('new_email_user@gmail.com')
-
-    fireEvent.click(saveEmailButton)
 
     fireEvent.click(emailElement)
 
@@ -91,25 +98,38 @@ describe('ChangeEmail Component', () => {
 
     fireEvent.click(emailElement)
     fireEvent.change(emailElement, {
-      target: { value: 'testUser@gmail.com' }
+      target: { value: state.Auth.user.email }
+    })
+    fireEvent.blur(emailElement)
+    expect(screen.getByText('Must not be that same as current email!')).toBeInTheDocument()
+
+    fireEvent.click(emailElement)
+    fireEvent.change(emailElement, {
+      target: { value: newEmail }
     })
 
     fireEvent.blur(emailElement)
-    expect(screen.getByText('Must not be that same as current email!')).toBeInTheDocument()
+
+    await act(async () => {
+      await fireEvent.submit(screen.getByTestId('change_email_form'))
+    })
   })
   it('renders ChangeEmail and MobileFreelancerFooter components when window width is < 680px', () => {
     global.innerWidth = 640
     global.dispatchEvent(new Event('resize'))
 
-    renderWithRedux(<ChangeEmail />, { initialState })
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
   })
 
   it('renders ChangeEmail Account and click on cancel button', async () => {
-    renderWithRedux(
-      <>
+    render(
+      <Provider store={store}>
         <ChangeEmail />
-      </>,
-      { initialState }
+      </Provider>
     )
     const cancelEmailButton = screen.getByTestId('cancel_email_changes')
 
@@ -119,98 +139,119 @@ describe('ChangeEmail Component', () => {
   })
 
   it('renders ChangeEmail and update email successfully', async () => {
-    updateUserEmail.mockReturnValue(() => {
-      return {
-        status: 200
-      }
-    })
+    const AuthState = store.getState().Auth
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
 
-    renderWithRedux(<ChangeEmail email={initialState.Auth.user.email} onSubmit={updateUserEmail} />, {
-      initialState
-    })
+    if (AuthState.isAuthenticated) {
+      const saveEmailButton = screen.getByTestId('save_email_changes')
+      expect(saveEmailButton).toBeDisabled()
+      expect(saveEmailButton).toBeInTheDocument()
 
-    const saveEmailButton = screen.getByTestId('save_email_changes')
-    expect(saveEmailButton).toBeDisabled()
-    expect(saveEmailButton).toBeInTheDocument()
+      const cancelEmailButton = screen.getByTestId('cancel_email_changes')
+      expect(cancelEmailButton).toBeEnabled()
+      expect(cancelEmailButton).toBeInTheDocument()
 
-    const cancelEmailButton = screen.getByTestId('cancel_email_changes')
-    expect(cancelEmailButton).toBeEnabled()
-    expect(cancelEmailButton).toBeInTheDocument()
+      const currentEmailElement = screen.getByTestId('currentEmail')
+      expect(currentEmailElement.value).toBe(AuthState.email)
+      expect(currentEmailElement).toBeDisabled()
 
-    const currentEmailElement = screen.getByTestId('currentEmail')
-    expect(currentEmailElement.value).toBe(initialState.Auth.user.email)
-    expect(currentEmailElement).toBeDisabled()
+      const emailElement = screen.getByTestId('email')
+      expect(emailElement.value).toBe('')
+      expect(emailElement).toBeEnabled()
 
-    const emailElement = screen.getByTestId('email')
-    expect(emailElement.value).toBe('')
-    expect(emailElement).toBeEnabled()
+      fireEvent.click(emailElement)
+      fireEvent.change(emailElement, {
+        target: { value: newEmail }
+      })
 
-    fireEvent.click(emailElement)
+      fireEvent.blur(emailElement)
 
-    fireEvent.change(emailElement, {
-      target: { value: 'new_email_user@gmail.com' }
-    })
-
-    fireEvent.blur(emailElement)
-
-    expect(emailElement.value).toBe('new_email_user@gmail.com')
-
-    fireEvent.click(saveEmailButton)
-
-    fireEvent.click(emailElement)
-
-    fireEvent.change(emailElement, {
-      target: { value: 'new_email_user' }
-    })
-
-    fireEvent.blur(emailElement)
-
-    expect(screen.getByText('Enter a valid email address!')).toBeInTheDocument()
-
-    fireEvent.click(emailElement)
-    fireEvent.change(emailElement, {
-      target: { value: 'testNewUser@gmail.com' }
-    })
-
-    fireEvent.blur(emailElement)
-    fireEvent.submit(screen.getByTestId('change_email_form'))
-    await waitFor(() => {
-      expect(mockRouterPush).toHaveBeenCalledWith('/dashboard/account')
-    })
+      fireEvent.click(saveEmailButton)
+      await act(async () => {
+        await fireEvent.submit(screen.getByTestId('change_email_form'))
+      })
+      await waitFor(async () => {
+        expect(mockRouterPush).toHaveBeenCalledWith('/dashboard/account')
+      })
+    } else {
+      throw new Error('Unauthenticated')
+    }
   })
 
   it('renders ChangeEmail and send error message', async () => {
-    updateUserEmail.mockReturnValue(() => {
-      return {
-        status: 400,
-        data: {
-          msg: 'Email not updated'
-        }
-      }
-    })
-
-    renderWithRedux(<ChangeEmail email={initialState.Auth.user.email} onSubmit={updateUserEmail} />, {
-      initialState
-    })
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
 
     await act(async () => {
       await fireEvent.submit(screen.getByTestId('change_email_form'))
     })
   })
 
-  it('renders ChangeEmail and send default error message', async () => {
-    updateUserEmail.mockReturnValue(() => {
-      return {
-        status: 400
-      }
-    })
+  it('renders ChangeEmail and update email successfully', async () => {
+    const AuthState = store.getState().Auth
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
 
-    renderWithRedux(<ChangeEmail onSubmit={updateUserEmail} />, {
-      initialState
-    })
+    if (AuthState.isAuthenticated) {
+      const saveEmailButton = screen.getByTestId('save_email_changes')
+      expect(saveEmailButton).toBeDisabled()
+      expect(saveEmailButton).toBeInTheDocument()
 
-    await act(async () => {
-      await fireEvent.submit(screen.getByTestId('change_email_form'))
+      const cancelEmailButton = screen.getByTestId('cancel_email_changes')
+      expect(cancelEmailButton).toBeEnabled()
+      expect(cancelEmailButton).toBeInTheDocument()
+
+      const currentEmailElement = screen.getByTestId('currentEmail')
+      expect(currentEmailElement.value).toBe(AuthState.email)
+      expect(currentEmailElement).toBeDisabled()
+
+      const emailElement = screen.getByTestId('email')
+      expect(emailElement.value).toBe('')
+      expect(emailElement).toBeEnabled()
+
+      fireEvent.click(emailElement)
+
+      fireEvent.change(emailElement, {
+        target: { value: 'client@gmail.com' }
+      })
+
+      await act(async () => {
+        await fireEvent.submit(screen.getByTestId('change_email_form'))
+      })
+      await waitFor(async () => {
+        expect(mockRouterPush).toHaveBeenCalledWith('/dashboard/account')
+      })
+    } else {
+      throw new Error('Unauthenticated')
+    }
+  })
+
+  it('renders ChangeEmail and verify sub header text', async () => {
+    const token = state.Auth.token
+    store.dispatch({
+      type: 'USER_LOADED',
+      payload: { ...state.Auth, token: null }
+    })
+    render(
+      <Provider store={store}>
+        <ChangeEmail />
+      </Provider>
+    )
+    expect(screen.getByText('Change Email')).toBeInTheDocument()
+
+    store.dispatch({
+      type: 'USER_LOADED',
+      payload: { ...state.Auth, token: token }
     })
   })
 })

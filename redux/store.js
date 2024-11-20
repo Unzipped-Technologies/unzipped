@@ -90,9 +90,14 @@ const makeStore = ({ isServer }) => {
 
     store.__persistor = persistStore(store) // This creates a persistor object & push that persisted object to .__persistor, so that we can avail the persistability feature
 
+    if (typeof window !== 'undefined') {
+      window.store = store
+    }
+
     return store
   }
 }
+export { makeStore }
 
 // Export the wrapper & wrap the pages/_app.js with this wrapper only
 export const wrapper = createWrapper(makeStore)

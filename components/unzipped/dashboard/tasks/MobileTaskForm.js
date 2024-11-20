@@ -1,20 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { AiOutlineClose } from 'react-icons/ai'
 import styled, { css } from 'styled-components'
 
-import Icon from '../../../ui/Icon'
 import Image from '../../../ui/Image'
-import Badge from '../../../ui/Badge'
 import Chat from '../../../icons/chat'
-import Plus from '../../../icons/plus'
 import { FormField } from '../../../ui'
 import ManIcon from '../../../icons/man'
 import EditIcon from '../../../icons/edit'
-import { ValidationUtils, ConverterUtils } from '../../../../utils'
+import { ValidationUtils } from '../../../../utils'
 import { DarkText, WhiteCard, Span, Grid2, TEXT, DIV } from '../style'
-import { TASK_PRIORITY, TASK_STATUS } from '../../../../utils/constants'
 import {
   updateCreateStoryForm,
   createTask,
@@ -29,7 +24,6 @@ import SaveIcon from '@mui/icons-material/Save'
 import { useRouter } from 'next/router'
 
 const PRIORITY_OPTIONS_ARR = ['lowest', 'low', 'medium', 'high', 'highest']
-const STATUS_OPTIONS_ARR = ['Todo', 'In progress', 'Done', 'Doing']
 
 const Button = styled.button`
   text-align: center;
@@ -64,14 +58,6 @@ const TaskFormContainer = styled.div`
   padding: 30px;
 `
 
-const Task = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`
-
 const MobileTaskForm = ({
   isCreating = false,
   departmentData,
@@ -97,7 +83,6 @@ const MobileTaskForm = ({
   const [disableBtn, setButtonDisable] = useState(true)
   const router = useRouter()
   const [commentId, setCommentId] = useState('')
-  const [tag, setTag] = useState('')
   const [error, setError] = useState('')
   const [ticketStatus, setTicketStatus] = useState('')
   useEffect(() => {
@@ -110,16 +95,12 @@ const MobileTaskForm = ({
     img: '',
     taskId: taskDetail?._id
   })
-  const [selectedTags, setSelectedTags] = useState([])
-  const [inputValue, setInputValue] = useState('')
 
   const [editSelectedTags, setEditSelectedTags] = useState([])
   const [editInputValue, setEditInputValue] = useState('')
-  const [inputStatus, setInputStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
-  const statusList = departmentData?.departmentTags?.length > 0
-  ? departmentData.departmentTags.map(tag => tag.tagName)
-  : []
+  const statusList =
+    departmentData?.departmentTags?.length > 0 ? departmentData.departmentTags.map(tag => tag.tagName) : []
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
@@ -162,7 +143,7 @@ const MobileTaskForm = ({
                   fontWeight: 500,
                   lineHeight: 'normal',
                   letterSpacing: '0.4px',
-                  paddingLeft:'12px',
+                  paddingLeft: '12px'
                 }}>
                 {contract?.freelancer?.user?.email}
               </div>
@@ -245,24 +226,6 @@ const MobileTaskForm = ({
     return assignee
   }, [departmentData])
 
-  const taskPriorityOptions = useMemo(() => {
-    return (
-      TASK_PRIORITY?.map(priority => ({
-        value: priority,
-        label: priority
-      })) || []
-    )
-  }, [])
-
-  const taskStatusOptions = useMemo(() => {
-    return (
-      statusList?.map(status => ({
-        value: status,
-        label: status
-      })) || []
-    )
-  }, [])
-
   useEffect(() => {
     if (isCreating) {
       setEditMode(Object.fromEntries(Object.keys(editMode).map(key => [key, true])))
@@ -284,7 +247,7 @@ const MobileTaskForm = ({
         businessId: taskDetail?.businessId || departmentData?.businessId,
         departmentId: taskDetail?.departmentId || departmentData?.departmentId,
         assignee: taskDetail?.assignee,
-        tags: taskDetail?.tags,
+        tags: [],
         tag: taskDetail?.tag,
         ticketCode: taskDetail?.ticketCode
       })
@@ -298,7 +261,6 @@ const MobileTaskForm = ({
   }, [taskDetail])
 
   useEffect(() => {
-    setInputStatus(taskDetail?.status)
     setTaskPriority(taskDetail?.priority)
   }, [taskDetail])
 
@@ -358,7 +320,6 @@ const MobileTaskForm = ({
           comments: comments
         })
       }
-
       if (isCreating) {
         const response = await createTask(taskForm)
         if (response?.status === 200) {
@@ -369,7 +330,6 @@ const MobileTaskForm = ({
         }
       } else {
         const response = await updateTask(taskDetail?._id, taskForm)
-
         if (response?.status === 200) {
           resetState()
           onCancel && onCancel()
@@ -390,13 +350,6 @@ const MobileTaskForm = ({
     })
   }
 
-  const removeTag = async tagName => {
-    let filteredTags = taskForm?.tags.filter(tag => tag !== tagName)
-    updateForm('tags', filteredTags)
-    taskDetail.tags = filteredTags
-    if (taskDetail?._id && taskDetail.tags?.includes(tagName)) await updateTask(taskDetail?._id, taskDetail)
-  }
-
   const validateForm = () => {
     if (!taskForm?.taskName) {
       setValidationErrors('Task Name is required.')
@@ -408,7 +361,7 @@ const MobileTaskForm = ({
       setValidationErrors('Priority are required.')
       return false
     } else if (!taskForm?.status) {
-      setValidationErrors('Status are required.')
+      setValidationErrors('Status is required.')
       return false
     }
     setValidationErrors('')
@@ -420,20 +373,10 @@ const MobileTaskForm = ({
     setError(error)
   }
 
-  const handleInputChange = (event, newInputValue) => {
-    setInputValue(newInputValue)
-  }
-
-  const handleAddTag = () => {
-    if (inputValue.trim() !== '' && !selectedTags.includes(inputValue)) {
-      setSelectedTags([...selectedTags, inputValue.trim()])
-      setInputValue('')
-    }
-  }
-
   const handleEditInputTags = () => {
     if (editInputValue.trim() !== '' && !editSelectedTags.includes(editInputValue)) {
-      setEditSelectedTags([...editSelectedTags, editInputValue.trim()])
+      const AllTags = editSelectedTags?.length ? [...editSelectedTags, editInputValue.trim()] : [editInputValue.trim()]
+      setEditSelectedTags(AllTags)
       setEditInputValue('')
     }
   }
@@ -444,27 +387,17 @@ const MobileTaskForm = ({
 
   useEffect(() => {
     restTagsList()
-    if (router.pathname.includes('department')) {
-      updateForm('tags',selectedTags)
-    }
-  }, [selectedTags])
-
-  useEffect(() => {
-    if (router.pathname.includes('ticket')) {
-      restTagsList()
-      updateForm('tags',editSelectedTags)
-    }
+    updateForm('tags', [...editSelectedTags])
   }, [editSelectedTags])
 
   useEffect(() => {
     if (router.pathname.includes('ticket') && taskDetail?.tags?.length > 0) {
-      
       setEditSelectedTags([...taskDetail?.tags])
     }
   }, [taskDetail?.tags])
 
   return (
-    <TaskFormContainer>
+    <TaskFormContainer id="task_form_modal">
       <div>
         {taskForm?.ticketCode && (
           <TEXT fontSize="18px" textColor="#0057FF" lineHeight="normal">
@@ -486,6 +419,7 @@ const MobileTaskForm = ({
               disableBorder={!editMode.taskName}
               disabled={userRole === 1}
               noMargin
+              id="taskName"
               width="100%"
               height="36px !important"
               onChange={e => updateForm('taskName', e?.target?.value)}
@@ -539,7 +473,8 @@ const MobileTaskForm = ({
             disabled={userRole === 1}
             fieldType="searchField"
             isSearchable={true}
-            name="select"
+            name="assignee"
+            id="assignee"
             options={assigneeOptions}
             fontSize="14px"
             width="100%"
@@ -555,34 +490,33 @@ const MobileTaskForm = ({
             }}
             onBlur={() => {
               if (taskForm?.assignee === 'unassigned') {
-                updateForm('assignee', departmentData?.client?._id);
+                updateForm('assignee', departmentData?.client?._id)
               }
               validateForm()
               enableEditMode('')
             }}
-
             styles={{
               option: (provided, state) => ({
                 ...provided,
                 backgroundColor: state.isSelected ? '#8CBAE8' : 'white',
                 color: state.isSelected ? '#000' : '#787878',
                 ':hover': {
-                  backgroundColor: 'lightblue', 
-                },    
+                  backgroundColor: 'lightblue'
+                }
               }),
-            
-              control: (provided) => ({
+
+              control: provided => ({
                 ...provided,
-                border: editMode ? 'none' : '1px solid #ccc', 
+                border: editMode ? 'none' : '1px solid #ccc',
                 '&:hover': {
                   border: 'none',
-                  borderRadius:'none'
-                },
-              }),
+                  borderRadius: 'none'
+                }
+              })
             }}
             components={{
-              DropdownIndicator: () => null, 
-              IndicatorSeparator: () => null, 
+              DropdownIndicator: () => null,
+              IndicatorSeparator: () => null
             }}
           />
         </div>
@@ -619,8 +553,7 @@ const MobileTaskForm = ({
           lineHeight="21.09px"
           fontWeight="500"
           width="65px"
-          margin="0px 0px 2px 0px"
-          >
+          margin="0px 0px 2px 0px">
           Priority:
         </TEXT>
       </div>
@@ -628,7 +561,7 @@ const MobileTaskForm = ({
         <Autocomplete
           value={taskPriority}
           disablePortal
-          id="combo-box-demo"
+          id="priority_autocomplete"
           options={PRIORITY_OPTIONS_ARR}
           onChange={(event, value) => {
             setTaskPriority(value)
@@ -660,7 +593,14 @@ const MobileTaskForm = ({
 
       <div>
         <div>
-          <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="80px" padding="10px 0px 0px 0px" margin="0px 0px 2px 0px ">
+          <TEXT
+            textColor="#000000"
+            fontSize="16px"
+            lineHeight="21.09px"
+            fontWeight="500"
+            width="80px"
+            padding="10px 0px 0px 0px"
+            margin="0px 0px 2px 0px ">
             Status:
           </TEXT>
         </div>
@@ -668,16 +608,19 @@ const MobileTaskForm = ({
 
       <div>
         <Autocomplete
-        value={ticketStatus}
-         disablePortal
-         id="combo-box-demo" 
+          value={ticketStatus}
+          disablePortal
+          id="status_autocomplete"
           options={statusList}
           onChange={(event, value) => {
-            const tag = departmentData?.departmentTags?.find(item => item.tagName === value);
+            const tag = departmentData?.departmentTags?.find(item => item.tagName === value)
             if (tag) {
-              updateForm('status', tag.tagName);
-              updateForm('tag', tag._id);
+              updateForm('status', tag.tagName)
+              updateForm('tag', tag._id)
             }
+          }}
+          onBlur={() => {
+            validateForm()
           }}
           sx={{
             width: '100%',
@@ -703,7 +646,14 @@ const MobileTaskForm = ({
         />
       </div>
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="120px !important" padding="10px 0px 0px 0px" margin="0px 0px 2px 0px ">
+        <TEXT
+          textColor="#000000"
+          fontSize="16px"
+          lineHeight="21.09px"
+          fontWeight="500"
+          width="120px !important"
+          padding="10px 0px 0px 0px"
+          margin="0px 0px 2px 0px ">
           Story Points:
         </TEXT>
       </div>
@@ -713,39 +663,41 @@ const MobileTaskForm = ({
           alignItems: 'center',
           justifyContent: 'flex-start'
         }}>
-        {editMode ? (
-          <FormField
-            zIndexUnset
-            fieldType="input"
-            disableBorder={!editMode.storyPoints}
-            borderRadius="0px"
-            border="1px solid #ccc"
-            margin="0px 0px 0px 0px !important"
-            fontSize="14px"
-            disabled={userRole === 1}
-            width="100%"
-            height="30px  !important"
-            onChange={e => updateForm('storyPoints', e?.target?.value)}
-            value={taskForm?.storyPoints}
-            clickType="storyPoints"
-            onUpdate={() => {}}
-            onClick={() => {
-              enableEditMode('storyPoints')
-            }}
-            onBlur={() => {
-              validateForm()
-              enableEditMode('')
-            }}
-            style={{ color: '#000000' }}
-          />
-        ) : (
-          <DarkText fontSize="18px" color="#000" lineHeight="normal" topMargin="10px" width="100px">
-            {taskForm?.storyPoints}
-          </DarkText>
-        )}
+        <FormField
+          zIndexUnset
+          fieldType="input"
+          disableBorder={!editMode.storyPoints}
+          borderRadius="0px"
+          border="1px solid #ccc"
+          margin="0px 0px 0px 0px !important"
+          fontSize="14px"
+          id="storyPoints"
+          disabled={userRole === 1}
+          width="100%"
+          height="30px  !important"
+          onChange={e => updateForm('storyPoints', e?.target?.value)}
+          value={taskForm?.storyPoints}
+          clickType="storyPoints"
+          onUpdate={() => {}}
+          onClick={() => {
+            enableEditMode('storyPoints')
+          }}
+          onBlur={() => {
+            validateForm()
+            enableEditMode('')
+          }}
+          style={{ color: '#000000' }}
+        />
       </div>
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="40px !important" padding="12px 0px 0px 0px" margin="0px 0px 2px 0px ">
+        <TEXT
+          textColor="#000000"
+          fontSize="16px"
+          lineHeight="21.09px"
+          fontWeight="500"
+          width="40px !important"
+          padding="12px 0px 0px 0px"
+          margin="0px 0px 2px 0px ">
           Tags:
         </TEXT>
       </div>
@@ -754,152 +706,84 @@ const MobileTaskForm = ({
           display: 'flex',
           alignItems: 'center'
         }}>
-        {!editMode?.tag && userRole !== 1 && (
-          <Autocomplete
-            multiple
-            id="tags-standard"
-            value={editSelectedTags}
-            onChange={(event, newValue) => setEditSelectedTags(newValue)}
-            inputValue={editInputValue}
-            onInputChange={handleEditInputChange}
-            options={editSelectedTags}
-            getOptionLabel={option => option}
-            sx={{
-              width: 300,
-              '& .Mui-focused': {
-                border: '0px !important'
+        <Autocomplete
+          multiple
+          disabled={userRole === 1}
+          id="tags-standard"
+          value={editSelectedTags}
+          onChange={(event, newValue) => setEditSelectedTags(newValue)}
+          inputValue={editInputValue}
+          onInputChange={handleEditInputChange}
+          options={editSelectedTags}
+          getOptionLabel={option => option}
+          sx={{
+            width: 300,
+            '& .Mui-focused': {
+              border: '0px !important'
+            },
+            '& .Mui-focused:after': {
+              border: '0px !important'
+            },
+            '& .MuiInputBase-root': {
+              maxHeight: 200,
+              overflowY: 'scroll',
+              overflowX: 'hidden',
+              '::-webkit-scrollbar': {
+                width: 5,
+                height: 0
               },
-              '& .Mui-focused:after': {
-                border: '0px !important'
-              },
-              '& .MuiInputBase-root': {
-                maxHeight: 200,
-                overflowY: 'scroll',
-                overflowX: 'hidden',
-                '::-webkit-scrollbar': {
-                  width: 5,
-                  height: 0
-                },
 
-                '::-webkit-scrollbar-track': {
-                  background: 'transparent'
-                },
+              '::-webkit-scrollbar-track': {
+                background: 'transparent'
+              },
 
-                '::-webkit-scrollbar-thumb': {
-                  background: 'transparent'
-                }
-              },
-              '& input': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& input:focus': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& .MuiAutocomplete-root': {
-                borderRadius: '8px !important',
-                padding: '10px !important',
-                border: '1px solid purple !important'
-              },
-              '& .MuiInputBase-root-MuiInput-root:after': {
-                border: '0px !important',
-                width: '100%'
+              '::-webkit-scrollbar-thumb': {
+                background: 'transparent'
               }
-            }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="standard"
-                placeholder="Tags"
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    handleEditInputTags()
-                  }
-                }}
-              />
-            )}
-            noOptionsText="Add Tag"
-          />
-        )}
-        {editMode?.tag && (
-          <Autocomplete
-            multiple
-            id="tags-standard"
-            value={selectedTags}
-            onChange={(event, newValue) => setSelectedTags(newValue)}
-            inputValue={inputValue}
-            onInputChange={handleInputChange}
-            options={selectedTags}
-            getOptionLabel={option => option}
-            sx={{
-              width: 300,
-              '& .Mui-focused': {
-                border: '0px !important'
-              },
-              '& .Mui-focused:after': {
-                border: '0px !important'
-              },
-              '& .MuiInputBase-root': {
-                maxHeight: 200,
-                overflowY: 'scroll',
-                overflowX: 'hidden',
-                '::-webkit-scrollbar': {
-                  width: 5,
-                  height: 0
-                },
-
-                '::-webkit-scrollbar-track': {
-                  background: 'transparent'
-                },
-
-                '::-webkit-scrollbar-thumb': {
-                  background: 'transparent'
+            },
+            '& input': {
+              border: '0px !important',
+              boxShadow: 'none !important'
+            },
+            '& input:focus': {
+              border: '0px !important',
+              boxShadow: 'none !important'
+            },
+            '& .MuiAutocomplete-root': {
+              borderRadius: '8px !important',
+              padding: '10px !important',
+              border: '1px solid purple !important'
+            },
+            '& .MuiInputBase-root-MuiInput-root:after': {
+              border: '0px !important',
+              width: '100%'
+            }
+          }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              placeholder="Tags"
+              onKeyDown={e => {
+                if (e.key === 'Enter' && editSelectedTags?.length < 6) {
+                  e.preventDefault()
+                  handleEditInputTags()
                 }
-              },
-              '& input': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& input:focus': {
-                border: '0px !important',
-                boxShadow: 'none !important'
-              },
-              '& .MuiAutocomplete-root': {
-                borderRadius: '8px !important',
-                padding: '10px !important',
-                border: '1px solid purple !important'
-              },
-              '& .MuiInputBase-root-MuiInput-root:after': {
-                border: '0px !important',
-                width: '100%'
-              }
-            }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="standard"
-                inputProps={{
-                  ...params.inputProps,
-                  maxLength: 10
-                }}
-                placeholder="Tags"
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    handleAddTag()
-                  }
-                }}
-              />
-            )}
-            noOptionsText="Add Tag"
-          />
-        )}
+              }}
+            />
+          )}
+          noOptionsText="Add Tag"
+        />
       </div>
 
       <div>
-        <TEXT textColor="#000000" fontSize="16px" lineHeight="21.09px" fontWeight="500" width="100px !important" padding="10px 0px 0px 0px">
+        <TEXT
+          textColor="#000000"
+          fontSize="16px"
+          lineHeight="21.09px"
+          fontWeight="500"
+          width="100px !important"
+          padding="10px 0px 0px 0px">
           Description:
         </TEXT>
       </div>
@@ -916,6 +800,7 @@ const MobileTaskForm = ({
             textarea
             margin={'2px 0px 0px 0px'}
             fontSize="14px"
+            id="description"
             borderColor="red"
             disableBorder={!editMode.description}
             disabled={userRole === 1}
@@ -1000,13 +885,14 @@ const MobileTaskForm = ({
               lineHeight="21.09px"
               fontWeight="500"
               margin="10px 0px 10px 0px"
-              width="70px">
+              width="120px">
               Discussion:
             </TEXT>
             <FormField
               fieldType="input"
               fontSize="14px"
               height="auto"
+              id="comment"
               textarea
               width="100%"
               maxLength={'1000'}
@@ -1027,6 +913,7 @@ const MobileTaskForm = ({
                 borderColor="1px solid #CED4DA"
                 borderRadius="4px"
                 unset
+                id={comment?._id}
                 key={comment?._id}
                 half
                 padding="10px">
@@ -1034,10 +921,21 @@ const MobileTaskForm = ({
                   <div className="d-flex">
                     <Span margin="0px 0px 10px 0px">
                       {userData?.profilePic && (
-                        <Image src={userData?.profilePic} width="24px" height="24px" radius="50%" />
+                        <Image
+                          src={userData?.profilePic}
+                          width="24px"
+                          height="24px"
+                          radius="50%"
+                          id={`comment_${comment?._id}_image`}
+                        />
                       )}
                       <Span space>
-                        <DarkText fontSize="18px" color="#000000" lineHeight="21.09px" noMargin>
+                        <DarkText
+                          id={`comment_${comment?._id}_user_info`}
+                          fontSize="18px"
+                          color="#000000"
+                          lineHeight="21.09px"
+                          noMargin>
                           {userData?.name || ''}
                           <span
                             style={{
@@ -1053,27 +951,28 @@ const MobileTaskForm = ({
                     </Span>
                     {comment?.userId === userId && (
                       <DIV
+                        id={`edit_${comment?._id}_comment`}
                         display="flex"
                         justifyContent="flex-end"
-                        gap = "5px"
+                        gap="5px"
                         onClick={() => {
                           setCommentId(comment?._id)
                         }}>
                         <EditIcon width="12px" height="12px" color="#585858" />
                         {commentId === comment?._id && (
-                        <SaveIcon
-                          sx={{
-                            width: '16px',
-                            height: '16px',
-                            color: '#585858'
-                          }}
-                          onClick={async e => {
-                            e?.preventDefault()
-                            await updateComment(taskDetail?._id, comment._id, comment)
-                            setCommentId('')
-                          }}
-                        />
-                      )}
+                          <SaveIcon
+                            sx={{
+                              width: '16px',
+                              height: '16px',
+                              color: '#585858'
+                            }}
+                            onClick={async e => {
+                              e?.preventDefault()
+                              await updateComment(taskDetail?._id, comment._id, comment)
+                              setCommentId('')
+                            }}
+                          />
+                        )}
                       </DIV>
                     )}
                   </div>
@@ -1085,6 +984,7 @@ const MobileTaskForm = ({
                     placeholder="Leave a comment..."
                     noMargin
                     height="auto"
+                    id={`comment_${comment?._id}`}
                     textarea
                     width="100%"
                     maxLength={'1000'}

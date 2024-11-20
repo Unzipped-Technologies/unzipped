@@ -18,6 +18,7 @@ const InviteModel = require('../models/Invited')
 const BusinessModel = require('../models/Business')
 const AuthService = require('./authentication')
 const Mailer = require('../../services/Mailer')
+const CloudinaryUploadHelper = require('./file')
 const BusinessDetailsModel = require('../models/BusinessDetails')
 // create user
 const createUser = async (data, hash) => {
@@ -89,11 +90,6 @@ const updateUserByid = async (id, data) => {
   try {
     const userData = await getSingleUser({ _id: id }, '-password')
 
-    if ((data?.role === 1 || data?.role === '1') && !userData?.freelancers) {
-      const freelancerData = new freelancer({ userId: userData?._id })
-      await freelancerData.save()
-      userData['freelancers'] = freelancerData._id
-    }
     for (var field in data) {
       userData[field] = data[field]
     }
@@ -587,6 +583,23 @@ const createCalendar = async (params, userId) => {
   return userData['calendarSettings']
 }
 
+const updateProfileImage = async (user, files) => {
+  const file = await CloudinaryUploadHelper.getFile({ url: user?.userInfo?.profileImage })
+  let isDeleted = null
+  let isLocalDeleted = null
+  if (file) {
+    isLocalDeleted = await CloudinaryUploadHelper.deletedLocalFile(file?._id)
+    isDeleted = await CloudinaryUploadHelper.deleteFile(file?.cloudinaryId)
+  }
+  if (!file || (isDeleted?.result === 'ok' && isLocalDeleted?._id)) {
+    const uploadResult = await CloudinaryUploadHelper.createFile(files, user?.sub)
+    if (uploadResult && uploadResult.length > 0 && uploadResult[0].url) {
+      return await User.findByIdAndUpdate(user?.sub, { $set: { profileImage: uploadResult[0].url } })
+    }
+  }
+  return null
+}
+
 module.exports = {
   changeEmail,
   createUser,
@@ -608,5 +621,6 @@ module.exports = {
   retrievePaymentMethods,
   registerUser,
   updateUser,
-  createCalendar
+  createCalendar,
+  updateProfileImage
 }

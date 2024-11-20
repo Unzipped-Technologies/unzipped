@@ -12,6 +12,7 @@ require('./models/User')
 require('../services/passport/passport')
 const http = require('http')
 const createSocket = require('./sockets/index.js')
+const cors = require('cors') // Import the cors middleware
 
 
 const PORT = process.env.PORT || 3000
@@ -49,15 +50,15 @@ app
       })
     }
 
-    // will check that webhook route is not processed as JSON. 
+    // will check that webhook route is not processed as JSON.
     // add any other routes to this that need that treatment.
     server.use((req, res, next) => {
       if (req.originalUrl === '/api/payment/webhook') {
-        next();
+        next()
       } else {
-        express.json()(req, res, next);
+        express.json()(req, res, next)
       }
-    });
+    })
     server.use(express.urlencoded({ extended: true }))
     server.use(
       cookieSession({
@@ -65,6 +66,7 @@ app
         keys: [keys.cookieKey]
       })
     )
+    server.use(cors())
 
     server.use(passport.initialize())
     server.use(passport.session())

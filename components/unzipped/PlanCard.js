@@ -25,7 +25,7 @@ const Span = styled.span`
 
 const PlanCard = ({ data, selectPlan }) => {
   return (
-    <Container data-testid={`${data?.id}_plans`}>
+    <Container data-testid={`${data?.id}_plans`} id={`${data?.id}_plans`}>
       <TitleText bold size="24px" data-testid="name">
         {data?.name}
       </TitleText>

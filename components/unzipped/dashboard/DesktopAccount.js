@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
+import { AiOutlineCamera } from 'react-icons/ai'
 
 import { Underline } from './style'
-import BackHeader from '../BackHeader'
 import FormField from '../../ui/FormField'
 import { ValidationUtils } from '../../../utils'
 import { areObjectsEqual } from '../../../services/formHelper'
 import { stripeBrandsEnum, stripeLogoEnum } from '../../../server/enum/paymentEnum'
 import { getAllCards } from '../../../redux/Auth/actions';
 import { useDispatch } from 'react-redux';
+import UpdateProfileImage from './UpdateProfileImage'
+
 import {
   getPaymentMethods,
   getAccountOnboardingLink,
@@ -108,6 +109,44 @@ const SubTitle = styled.div`
   color: #121530;
 `
 
+const ImageContainer = styled.div`
+  display: flex;
+  justify-self: center;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+
+  &:hover .bottom-overlay {
+    opacity: 0.5;
+    background-color: black;
+  }
+`
+
+const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+`
+
+const Overlay = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%; /* Adjust this for overlay height */
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  opacity: 0;
+  cursor: pointer;
+  color: white;
+  padding-bottom: 10px;
+  pointer-events: none;
+`
+
 const getCardLogoUrl = cardType => {
   const brand = Object.keys(stripeBrandsEnum).find(key => stripeBrandsEnum[key] === cardType)
   return stripeLogoEnum[brand]
@@ -130,11 +169,12 @@ const DesktopAccount = ({
   const router = useRouter()
   const dispatch = useDispatch();
   const [initialUrl] = useState(url?.url)
+
   const initialState = {
     email: user?.email,
     phoneNumber: user?.phoneNumber,
-    FirstName: user?.FirstName,
-    LastName: user?.LastName,
+    FirstName: user?.FirstName ?? '',
+    LastName: user?.LastName ?? '',
     AddressLineOne: user?.AddressLineOne,
     AddressLineTwo: user?.AddressLineTwo,
     AddressState: user?.AddressState ?? '',
@@ -151,6 +191,9 @@ const DesktopAccount = ({
     : paymentMethods.isPrimary ? paymentMethods : null;
 
 
+  const primaryPM = paymentMethods?.find(e => e.isPrimary)
+
+  const [isOpen, setOpen] = useState(false)
   const [firstNameError, setFirstNameError] = useState('')
   const [lastNameError, setLastNameError] = useState('')
   const [addressLineOneError, setAddressLineOneError] = useState('')
@@ -179,21 +222,42 @@ const DesktopAccount = ({
       await getCurrentUserData()
       await getPaymentMethods()
       await getBusinessDetails(undefined)
+      await getAccountBalance()
     }
 
     fetchData()
-  }, [])
+  }, [router])
 
 
   useEffect(() => {
     setUserData(initialState)
   }, [business])
-  useEffect(() => {
-    const fetchBalanceData = async () => {
-      getAccountBalance()
-    }
 
-    fetchBalanceData()
+  useEffect(() => {
+    setUserData(initialState)
+  }, [business])
+
+  useEffect(() => {
+    const initialState = {
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+      FirstName: user?.FirstName ?? '',
+      LastName: user?.LastName ?? '',
+      AddressLineOne: user?.AddressLineOne,
+      AddressLineTwo: user?.AddressLineTwo,
+      AddressState: user?.AddressState ?? '',
+      AddressCity: user?.AddressCity,
+      AddressZip: user?.AddressZip,
+      businessName: business?.name,
+      businessType: business?.type,
+      businessPhone: business?.businessPhone,
+      taxId: business?.taxId
+    }
+    setUserData({ ...initialState })
+    return () => { }
+  }, [user, business])
+
+  useEffect(() => {
     // Call getAccountBalance on component load
     // Set up an interval to call getAccountBalance every 5 minutes
     const intervalId = setInterval(() => {
@@ -265,7 +329,7 @@ const DesktopAccount = ({
   }
 
   const validateEin = ({ item, message }, setErrorMessage) => {
-    if (item === '') {
+    if (userData?.taxId === '') {
       setErrorMessage('This field is required!')
       return
     }
@@ -279,6 +343,7 @@ const DesktopAccount = ({
 
   const onSubmit = async () => {
     const response = await updateCurrentUser(userData)
+
     if (response?.status === 200) {
       setMode({
         ...editMode,
@@ -288,21 +353,42 @@ const DesktopAccount = ({
       })
       await router.push('/dashboard/account')
     } else {
-      setError(response?.data?.message ?? 'Something went wrong')
+      setError(response?.data?.msg)
     }
   }
 
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
   return (
     <Shell>
-      <BackHeader title="Account" />
       <Container id="profile_data">
         <LeftOne>
           <TitleOne>Membership & Billing</TitleOne>
+          <ImageContainer id="profile_image_container">
+            <ProfileImage
+              src={
+                user?.profileImage ??
+                'https://res.cloudinary.com/dghsmwkfq/image/upload/v1670086178/dinosaur_xzmzq3.png'
+              }
+              alt="Profile"
+              id="profile_image"
+            />
+            <Overlay className="bottom-overlay">
+              <AiOutlineCamera size={30} onClick={handleOpen} id="image_change_icon" />
+            </Overlay>
+          </ImageContainer>
           <ButtonOne
             data-testid={'view_profile'}
             onClick={() => {
               if (user?.role === 1) {
                 router.push(`/freelancers/${user.freelancers?._id}`)
+              } else if (user?.role === 0) {
+                router.push(`/client/${user?._id}`)
               }
             }}>
             View Profile
@@ -326,7 +412,7 @@ const DesktopAccount = ({
               onClick={() => {
                 router.push('/change-password')
               }}>
-              Change password
+              Change Password
             </a>
           </Rows>
           <Rows>
@@ -885,6 +971,7 @@ const DesktopAccount = ({
         </Rows>
       </Container>
       <Container border></Container>
+      {isOpen && <UpdateProfileImage isOpen={isOpen} user={user} handleClose={handleClose} />}
     </Shell>
   )
 }

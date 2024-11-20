@@ -35,8 +35,8 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
   const [userInput, setUserInput] = useState('')
 
   const [error, setError] = useState({ maxError: '', minError: '' })
-  const { skill } = router.query;
-  
+  const { skill } = router.query
+
   useEffect(() => {
     const updatedFilter = { ...filter }
     for (var field in updatedFilter) {
@@ -95,11 +95,11 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
 
   useEffect(() => {
     if (skill) {
-      setMobileFilters(({
+      setMobileFilters({
         skill: Array.isArray(skill) ? skill : [skill]
-      }));
+      })
     }
-  }, [skill]);
+  }, [skill])
 
   const handleSearhButton = () => {
     if (error?.maxError) {
@@ -127,23 +127,6 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
         }
       } else {
         updatedFilter[field] = value
-      }
-
-
-      if (value === '' || (Array.isArray(value) && value.length === 0)) {
-        const { [field]: removed, ...restQuery } = router.query;
-        router.push({
-          pathname: router.pathname,
-          query: restQuery
-        });
-      } else {
-        router.push({
-          pathname: router.pathname,
-          query: {
-            ...router.query,
-            [field]: value
-          }
-        });
       }
 
       return updatedFilter
@@ -190,6 +173,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
               </p>
             </div>
             <select
+              name="sort_options"
               className="mb-3"
               style={{ display: 'block', width: '100%', border: '1px solid', height: '37px' }}
               value={filters?.sort}
@@ -231,6 +215,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
                   }}
                   control={
                     <Checkbox
+                      data-testid={type}
                       checked={type === filters?.projectBudgetType}
                       inputProps={{ 'aria-label': 'controlled' }}
                       onChange={e => {
@@ -351,6 +336,7 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           <IconComponent name="footerSearch" width="24" height="20" viewBox="0 0 24 20" fill="black" />
           <input
             data-testid="skills"
+            id="skill_name"
             placeholder="Search Skills"
             style={{ margin: '0', border: '0', height: 'auto' }}
             type="text"
@@ -371,14 +357,14 @@ function MobileSearchFilter({ handleFilterOpenClose, filter, setFilters, filterT
           <ul>
             {suggestions?.map((skill, index) => (
               <li
-                data-testid={`${skill?.text}_suggestion`}
+                data-testid={`${skill?.value}_suggestion`}
                 key={index}
                 onClick={() => {
-                  handleSuggestionClick(skill?.text)
+                  handleSuggestionClick(skill)
                   setUserInput('')
                   setSuggestions([])
                 }}>
-                {skill?.text}
+                {skill?.label}
               </li>
             ))}
           </ul>
