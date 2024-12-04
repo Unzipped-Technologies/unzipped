@@ -2,6 +2,7 @@ const departmentHelper = require('./department')
 const tagHelper = require('./task')
 const TagModel = require('../models/tags')
 const DepartmentModel = require('../models/Department')
+const TaskModel = require('../models/Task')
 
 const { currentPage, pageLimit, pick } = require('../../utils/pagination')
 
@@ -12,6 +13,10 @@ const createTag = async data => {
     if (!departmentData) throw new Error(`Department not exist.`)
 
     // Create new tag
+    const tagExits = await TagModel.findOne({ tagName: data.tagName, departmentId: data.departmentId });
+    if (tagExits) {
+      throw Error(`Tag Name already Exists.`);
+    }
     const tagEntity = await TagModel.create(data)
     await DepartmentModel.findByIdAndUpdate({_id: data.departmentId}, {$push: { tags: tagEntity._id }})
     return { message: 'Tag created successfully.' }
@@ -113,7 +118,9 @@ const countTags = async filter => {
 const updateTag = async (data, tagId) => {
   try {
     //   Update the task against tagId and return updated document
-    return await TagModel.findByIdAndUpdate(tagId, { $set: { ...data } })
+    const updatedTag = await TagModel.findByIdAndUpdate(tagId, { $set: { ...data } },{ new: true })
+    await TaskModel.updateMany({ tag: tagId }, { $set: { status: data.tagName } });
+    return updatedTag
   } catch (err) {
     throw Error(`Could not update tag, error: ${err}`)
   }
@@ -140,7 +147,12 @@ const getTagById = async tagId => {
 
 const deleteTag = async tagId => {
   try {
-    return await TagModel.softDelete({ _id: tagId })
+    const deptId = await TagModel.findById(tagId).select('departmentId')
+    const todoTag = await TagModel.findOne({ tagName: 'To Do', departmentId: deptId.departmentId })
+    const deletedTag = await TagModel.findByIdAndDelete({ _id: tagId })
+    await TaskModel.updateMany({ tag: tagId }, { $set: { status: "To Do" ,tag: todoTag._id} });
+    await DepartmentModel.updateMany({ tags: tagId }, { $pull: { tags: tagId } });
+    return deletedTag
   } catch (e) {
     throw new Error(`Could not delete tag, error: ${e.message}`)
   }

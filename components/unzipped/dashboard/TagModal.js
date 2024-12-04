@@ -44,10 +44,12 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent)
 
-const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById }) => {
+const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, tagForm, getDepartmentById , departmentData}) => {
   const [isButtonEnabled, setIsButtonEnabled] = useState(true)
   const isMobileView = window.innerWidth <= 680
-
+  const [error,setError] = useState('')
+  const tagsList = departmentData?.departmentTags?.map(tag => tag.tagName)
+  
   useEffect(() => {
     updateCreateTagForm({
       departmentId: departmentId,
@@ -73,6 +75,11 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
 
   const onSubmit = async () => {
     if (!tagForm.tagName.trim()) return
+    if (tagsList.includes(tagForm.tagName)) {
+      setError("Tag name already exists");
+      return;
+    }
+    setError('');
     await createTag(tagForm)
     await getDepartmentById(departmentId)
     await onHide()
@@ -132,6 +139,20 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
                 Tag Name
               </FormField>
             </DIV>
+
+            {error && (
+              <DIV
+                style={{
+                  color: 'red',
+                  textAlign: 'left',
+                  fontSize: '12px',
+                  padding:'5px',
+                }}
+              >
+                {error}
+              </DIV>
+            )}
+
           </form>
 
           <DIV
@@ -201,7 +222,8 @@ const TagModal = ({ open, updateCreateTagForm, onHide, createTag, departmentId, 
 const mapStateToProps = state => {
   return {
     departmentId: state.Departments.selectedDepartment?._id,
-    tagForm: state.Tags.createTagForm
+    tagForm: state.Tags.createTagForm,
+    departmentData: state.Departments.selectedDepartment,
   }
 }
 
