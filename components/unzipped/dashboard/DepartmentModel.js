@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect ,useState} from 'react'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { connect,useDispatch,useSelector} from 'react-redux'
 import { Dialog } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import MuiDialogContent from '@material-ui/core/DialogContent'
@@ -15,7 +15,8 @@ import {
   resetDepartmentForm,
   createDepartment,
   getProjectsList,
-  updateDepartment
+  updateDepartment,
+  getBusinessById
 } from '../../../redux/actions'
 
 const MUIDialog = withStyles(theme => ({
@@ -31,7 +32,7 @@ const MUIDialog = withStyles(theme => ({
 const DialogContent = withStyles(theme => ({
   root: {
     margin: '0px !important',
-    paddingBottom: '60px'
+    paddingBottom: window.innerWidth < 680 ? '35px' : '60px',
   }
 }))(MuiDialogContent)
 
@@ -47,6 +48,16 @@ const DepartmentModel = ({
   isDepartmentEditMode,
   updateDepartment
 }) => {
+  const isMobile = window.innerWidth >= 680 ? false : true
+  const dispatch = useDispatch()
+  const selectedBusiness = useSelector(state => state.Business.selectedBusiness)
+  const departmentLists = selectedBusiness?.departments ? selectedBusiness?.departments?.map(dept => dept.name) : []
+  const [deptError,setDeptError] = useState('')
+
+  useEffect(() => {
+    dispatch(getBusinessById(departmentForm.businessId))
+  }, [departmentForm.businessId])
+
   useEffect(() => {
     updateDepartmentForm({
       businessId: currentBusinessId,
@@ -61,6 +72,11 @@ const DepartmentModel = ({
   }
 
   const onSubmit = async () => {
+
+    if(departmentLists.includes(departmentForm?.name)){
+      setDeptError('Department name already exists');
+      return;
+    }
     if (isDepartmentEditMode) {
       await updateDepartment({ name: departmentForm?.name }, selectedDepartment?._id, true)
     } else {
@@ -83,7 +99,7 @@ const DepartmentModel = ({
       <DialogContent dividers>
         <DIV flex="0 0 auto" boxSizing="border-box">
           <form>
-            <DIV display="flex" margin="5px 0px 0px 0px" alignItems="center">
+            <DIV display="block" margin="5px 0px 0px 0px" alignItems="center">
               <FormField
                 zIndexUnset
                 placeholder="Department Name"
@@ -103,9 +119,19 @@ const DepartmentModel = ({
                 onUpdate={() => {}}>
                 Name
               </FormField>
+              {deptError && (
+                <DIV  style={{
+                  color: 'red',
+                  textAlign: 'left',
+                  fontSize: '12px',
+                  padding:'5px',
+                  marginTop:'20px'
+                }}>{deptError}</DIV>
+              )}
             </DIV>
+
           </form>
-          <DIV width="100%" margin="70px 0px 0px 0px" display="flex" alignItems="flex-end" justifyContent="flex-end">
+          <DIV width="100%" margin={isMobile ? "50px 0px 0px 0px":"70px 0px 0px 0px"} display="flex" alignItems="flex-end" justifyContent="flex-end">
             <DIV>
               <Button
                 extraWid
@@ -127,12 +153,12 @@ const DepartmentModel = ({
 
               <Button
                 disabled={!departmentForm?.name}
-                onClick={async () => {
+                onClick={async () => { 
                   await onSubmit()
-                }}
+               }}
                 width="58.25px"
                 extraWide
-                margin="0px 0px 0px 20px"
+                margin={isMobile ? "0px 0px 0px 10px" : "0px 0px 0px 20px"}
                 contentMargin="0px !important"
                 type="black"
                 buttonHeight="25px"

@@ -138,14 +138,18 @@ const ViewProfileButton = styled.button`
 const MobileInvitesView = ({ projectDetails, invitesList }) => {
   const router = useRouter()
 
+  const filteredInvitesRecords =   invitesList[0]?.listEntries?.length
+  ? invitesList[0]?.listEntries?.filter(
+  (invitation) => invitation?.businessId?._id === projectDetails?._id) :[]
+
   const redirectToProfile = freelancerId => {
     router.push(`/freelancers/${freelancerId}`)
   }
   return (
     <>
       <div data-testid="mobile_invites">
-        {invitesList?.length && invitesList[0]?.listEntries?.length ? (
-          invitesList[0]?.listEntries.map(invitation => {
+        {filteredInvitesRecords?.length  ? (
+         filteredInvitesRecords.map(invitation => {
             return (
               <ApplicationView key={invitation._id} data-testid={`${invitation?._id}_invite`}>
                 <PersonalInfo>

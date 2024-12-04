@@ -6,6 +6,8 @@ const ListModel = require('../models/List')
 const ListEntriesModel = require('../models/ListEntries')
 const UserModel = require('../models/User');
 const FreelancerModel = require('../models/Freelancer');
+const TaskModel = require('../models/Task');
+const TagModel = require('../models/tags');
 
 const ThirdPartyApplications = require('../models/ThirdPartyApplications')
 const mongoose = require('mongoose')
@@ -567,6 +569,27 @@ const revokeAccess = async (contractId) => {
   );
 
   if (!contract) throw new Error('Contract not found');
+  await Business.updateMany({ employees: contractId }, { $pull: { employees: contractId } });
+  await Department.updateMany({ employees: contractId }, { $pull: { employees: contractId } });
+  const userData = await FreelancerModel.findById(contract?.freelancerId);
+  const user = await UserModel.findById(userData.userId);
+  const freelancerId = user._id.toString();
+  const clientId = contract?.userId?._id.toString();
+  const todoTag = await TagModel.findOne({ tagName: 'To Do', departmentId: contract?.departmentId });
+
+  await TaskModel.updateMany(
+    { 
+      departmentId: contract?.departmentId,
+      assignee: freelancerId
+    },
+    {
+      $set: {
+        assignee: clientId, 
+        status: 'To Do', 
+        tag: todoTag._id,
+      },
+    }
+  );
   await Contracts.findByIdAndDelete(contractId);
 
   await Mailer.sendInviteMail({

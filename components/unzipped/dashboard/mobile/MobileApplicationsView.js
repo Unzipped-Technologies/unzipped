@@ -277,7 +277,8 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
             display: 'flex',
             justifyContent: 'end',
             alignItems: 'center',
-            paddingTop: '15px'
+            paddingTop: '15px',
+            margin:'0px 0px 20px 0px'
           }}>
           <Button
             extraWid

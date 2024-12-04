@@ -120,7 +120,10 @@ const DefaultDisplay = styled.div`
 const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, role }) => {
   const router = useRouter()
   const { id } = router.query
-  console.log('id', id)
+  const filteredInvitesRecords =   invitesList[0]?.listEntries?.length
+    ? invitesList[0]?.listEntries?.filter(
+    (invitation) => invitation?.businessId?._id === projectDetails?._id) :[]
+
   const redirectToProfile = freelancerId => {
     router.push(`/freelancers/${freelancerId}`)
   }
@@ -144,8 +147,8 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
         <div
           data-testid="desktop_invites"
           style={{ width: '80%', margin: 'auto', marginTop: '8px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.4)' }}>
-          {invitesList?.length && invitesList[0]?.listEntries?.length ? (
-            invitesList[0]?.listEntries.map(invitation => {
+          {filteredInvitesRecords?.length ? (
+           filteredInvitesRecords?.map(invitation => {
               return (
                 <span key={invitation._id} data-testid={`${invitation?._id}_invite`}>
                   {role === 0 ? (

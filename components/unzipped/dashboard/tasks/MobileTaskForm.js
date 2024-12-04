@@ -363,6 +363,9 @@ const MobileTaskForm = ({
     } else if (!taskForm?.status) {
       setValidationErrors('Status is required.')
       return false
+    } else if (taskForm?.storyPoints < 0){
+      setValidationErrors('Story Points should not be a negative number.')
+      return false
     }
     setValidationErrors('')
     setButtonDisable(false)

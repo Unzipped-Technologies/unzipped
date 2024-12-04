@@ -447,7 +447,11 @@ const listDepartments = async query => {
 
 const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => {
   try {
-
+    const business = await departmentModel.findById(id).select('businessId')
+    const deptExits = await departmentModel.findOne({ name: data.name, businessId: business.businessId });
+    if (deptExits) {
+      throw Error(`Department Name already Exists.`);
+    }
     const updatedDepartment = await departmentModel.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
     if (isEditingDepartment) {
       const updatedResp = await getDepartmentById(id, filters);

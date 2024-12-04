@@ -234,6 +234,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
                   <DIV display="flex" flexDirection="column" flexFlow="column" data-testid="all_projects">
                     {businesses?.map((business, index) => {
                       return (
+                        !business.isArchived && (
                         <DIV
                           key={business._id}
                           id={business._id}
@@ -291,6 +292,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
                             </Button>
                           </Absolute>
                         </DIV>
+                        )
                       )
                     })}
                   </DIV>

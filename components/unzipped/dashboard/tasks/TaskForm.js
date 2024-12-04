@@ -280,6 +280,10 @@ const TaskForm = ({
       setValidationErrors('Status are required.')
       return false
     }
+    else if (taskForm?.storyPoints < 0) {
+      setValidationErrors('Story Points should not be a negative number.')
+      return false
+    }
     setValidationErrors('')
     setButtonDisable(false)
     return true
