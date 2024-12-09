@@ -61,7 +61,8 @@ const GetCardMobile = ({
   handleGithub,
   files,
   setFiles,
-  projectFiles
+  projectFiles,
+  _id
 }) => {
   const [isAlterable, setIsAlterable] = useState(false)
 
@@ -916,6 +917,7 @@ const GetCardMobile = ({
           isMobileViewActive={true}
           files={files}
           progress={stage}
+          _id={_id}
         />
       )
     default:

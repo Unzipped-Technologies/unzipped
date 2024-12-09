@@ -17,6 +17,7 @@ export const projectTypeOptions = () => {
 }
 
 const StepOneWizardFlow = ({ projectType, updateForm, submitForm, stage }) => {
+  console.log('projectType', projectType)
   return (
     <CreateABusiness
       title={`Are you looking to hire for a long term hire?`}

@@ -159,8 +159,9 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                       flexShrink="0"
                       background="rgba(240, 240, 240, 0)"
                       border="1px solid #d9d9d9"
-                      boxShadow="0px 4px 6px rgba(0, 0, 0, 0.4)"
-                      borderRadius="5px">
+                      boxShadow="0px 3px 4px rgba(0, 0, 0, 0.4)"
+                      borderRadius="5px"
+                      margin="0px 0px 10px 0px">
                       <DIV
                         display="flex"
                         flexDirection="row"
@@ -313,7 +314,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
                         {invitation?.freelancerId?.freelancerSkills?.length
                           ? invitation?.freelancerId?.freelancerSkills.map(skill => {
                               return (
-                                <Badge color="blue" key={skill._id}>
+                                <Badge  className="overflow-hidden" color="blue" key={skill._id}>
                                   {skill?.skill}
                                 </Badge>
                               )
@@ -332,7 +333,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
               )
             })
           ) : (
-            <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
+            <DIV display="flex" justifyContent="end" alignItems="end" padding="15px 0px 0px 0px">
               <Button
                 extraWid
                 type="outlineInverse"

@@ -20,7 +20,7 @@ const P = styled.p`
   text-align: ${({ align }) => (align ? align : '')};
   border-bottom: ${({ borderBottom }) => (borderBottom ? borderBottom : '')};
   right: ${({ right }) => (right ? right : '')};
-  white-space: pre-line;
+  white-space: nowrap;
   word-wrap: break-word;
 `
 
@@ -92,7 +92,7 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
               className="border rounded"
               data-testid="user_profile_image"
             />
-            <div className="mx-2" style={{ overflow: 'scroll', width: '200px' }}>
+            <div className="mx-2" style={{ overflow: 'scroll', width: '160px' }}>
               <P margin="0" padding="0 0 3px 0" fontWeight="500" fontSize="17px">
                 {user?.FirstName + ' ' + user?.LastName}
               </P>
