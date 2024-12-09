@@ -17,6 +17,7 @@ const Box = styled.div`
   display: flex;
   max-width: 650px;
   flex-flow: column;
+  padding: ${({ mobile }) => (mobile ? '5px' : '0px')};
 `
 
 const Form = styled.form`
@@ -29,7 +30,7 @@ const Form = styled.form`
 `
 
 const ButtonSubmit = styled.button`
-  width: 114px;
+ width: ${({ mobile }) => (mobile ? '100%' : '114px')};
   height: 45px;
   background: #1772eb;
   color: #fff;
@@ -37,7 +38,8 @@ const ButtonSubmit = styled.button`
   border: none;
   font-size: 16px;
   font-weight: 600;
-  margin-left: 15px;
+  margin-right: ${({ mobile }) => (mobile ? '0px' : '15px')};
+  border-radius: 4px;
   :disabled {
     cursor: default;
     opacity: 0.5;
@@ -46,7 +48,7 @@ const ButtonSubmit = styled.button`
 `
 
 const ButtonBack = styled.button`
-  width: 114px;
+ width: ${({ mobile }) => (mobile ? '100%' : '114px')};
   height: 45px;
   background: #ccc;
   color: #333;
@@ -54,7 +56,8 @@ const ButtonBack = styled.button`
   border: none;
   font-size: 16px;
   font-weight: 600;
-  margin-right: 15px;
+  margin-left: ${({ mobile }) => (mobile ? '0px' : '15px')};
+  border-radius: 4px;
   :disabled {
     cursor: default;
     opacity: 0.5;
@@ -63,11 +66,13 @@ const ButtonBack = styled.button`
 `
 
 const ButtonContainer = styled.div`
-  padding: 20px 0px;
+  padding:  ${({ mobile }) => (mobile ? '0px' : '20px 0px')};
   display: flex;
   justify-content: ${({ mobile }) => (mobile ? 'flex-end' : 'start')};
-  margin-top: ${({ mobile }) => (mobile ? '45%' : '0px')};
+  margin-top: ${({ mobile }) => (mobile ? '15px' : '0px')};
   margin-bottom: ${({ mobile }) => (mobile ? '30px' : '0px')};
+  flex-direction: ${({ mobile }) => (mobile ? 'column-reverse' : 'row-reverse')};
+  gap: ${({ mobile }) => (mobile ? '15px' : '0px')};
 `
 
 const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
@@ -179,11 +184,11 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
           e.preventDefault()
           onSubmit(userData)
         }}>
-        <Box>
+        <Box mobile={isMobile}>
           <FormField
             fieldType="input"
             placeholder="Current Phone"
-            borderRadius="10px"
+            borderRadius={isMobile ? "4px" : "5px"}
             name="currentPhone"
             id="currentPhone"
             width="100%"
@@ -196,7 +201,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
           <FormField
             fieldType="input"
             placeholder="phone"
-            borderRadius="10px"
+            borderRadius={isMobile ? "4px" : "5px"}
             name="phone"
             id="phone"
             width="100%"
@@ -212,10 +217,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, phone, error }) => {
           </FormField>
 
           <ButtonContainer mobile={isMobile}>
-            <ButtonBack type="button" onClick={onBack} data-testid="cancel_phone_changes">
+            <ButtonBack type="button" onClick={onBack} data-testid="cancel_phone_changes"  mobile={isMobile}>
               Cancel
             </ButtonBack>
-            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testid="save_phone_changes">
+            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testid="save_phone_changes"  mobile={isMobile}>
               Save
             </ButtonSubmit>
           </ButtonContainer>

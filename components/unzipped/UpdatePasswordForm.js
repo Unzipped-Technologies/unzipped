@@ -26,15 +26,16 @@ const Form = styled.form`
   gap: 15px;
   display: flex;
   flex-flow: column;
+  padding:${({ mobile }) => (mobile ? '10px' : '0px')};
 `
 
 const Title = styled.p`
-  font-size: 16px;
+  font-size: ${({ mobile }) => (mobile ? '14px' : '16px')};
   color: #333;
 `
 
 const ButtonSubmit = styled.button`
-  width: 95px;
+  width:${({ mobile }) => (mobile ? '100%' : '95px')};
   height: 45px;
   background: #1772eb;
   color: #fff;
@@ -42,7 +43,8 @@ const ButtonSubmit = styled.button`
   border: none;
   font-size: 16px;
   font-weight: 600;
-  margin-left: 15px;
+  margin-right:${({ mobile }) => (mobile ? '0px' : '15px')};
+  border-radius: 4px;
   :disabled {
     cursor: default;
     opacity: 0.5;
@@ -51,7 +53,7 @@ const ButtonSubmit = styled.button`
 `
 
 const ButtonBack = styled.button`
-  width: 114px;
+  width:${({ mobile }) => (mobile ? '100%' : '114px')};
   height: 45px;
   background: #ccc;
   color: #333;
@@ -59,7 +61,8 @@ const ButtonBack = styled.button`
   border: none;
   font-size: 16px;
   font-weight: 600;
-  margin-right: 15px;
+  margin-left: ${({ mobile }) => (mobile ? '0px' : '15px')};
+  border-radius: 4px;
   :disabled {
     cursor: default;
     opacity: 0.5;
@@ -71,7 +74,10 @@ const ButtonContainer = styled.div`
   padding: 0px 0px;
   display: flex;
   justify-content: ${({ mobile }) => (mobile ? 'flex-end' : 'start')};
-  margin-top: ${({ mobile }) => (mobile ? '0px !important' : '0px !important')};
+  margin-top: ${({ mobile }) => (mobile ? '12px !important' : '10px !important')};
+  flex-direction:${({ mobile }) => (mobile ? 'column-reverse' : 'row-reverse')};
+  gap: ${({ mobile }) => (mobile ? '15px' : '0px')};
+
 `
 
 const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
@@ -137,13 +143,13 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
           e?.preventDefault()
           onSubmit(userData)
         }}>
-        <Title>Protect your account with a unique password at least 6 characters long.</Title>
+        <Title mobile={isMobile}>Protect your account with a unique password at least 6 characters long.</Title>
         <Box>
           <FormField
             fieldType="input"
             type="password"
             placeholder="Current Password"
-            borderRadius="10px"
+            borderRadius={isMobile ? "4px" : "5px"}
             name="password"
             id="password"
             width="100%"
@@ -179,7 +185,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             fieldType="input"
             type="password"
             placeholder="New Password"
-            borderRadius="10px"
+            borderRadius={isMobile ? "4px" : "5px"}
             name="newPassword"
             id="newPassword"
             width="100%"
@@ -195,7 +201,7 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
             fieldType="input"
             type="password"
             placeholder="Confirm Password"
-            borderRadius="10px"
+            borderRadius={isMobile ? "4px" : "5px"}
             name="confirmNewPassword"
             id="confirmNewPassword"
             width="100%"
@@ -213,10 +219,10 @@ const UpdateKeyDataForm = ({ title, onBack, onSubmit, error }) => {
           </FormField>
           {passwordError && <p className="red-text"> {passwordError}</p>}
           <ButtonContainer mobile={isMobile}>
-            <ButtonBack type="button" onClick={onBack} data-testid="cancel_password_changes">
+            <ButtonBack type="button" onClick={onBack} data-testid="cancel_password_changes" mobile={isMobile}>
               Cancel
             </ButtonBack>
-            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testid="save_password_changes">
+            <ButtonSubmit type="submit" disabled={!isFormValid()} data-testid="save_password_changes" mobile={isMobile}>
               Save
             </ButtonSubmit>
           </ButtonContainer>

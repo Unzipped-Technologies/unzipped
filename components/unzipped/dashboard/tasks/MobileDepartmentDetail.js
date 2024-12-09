@@ -15,6 +15,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import AccordionActions from '@mui/material/AccordionActions';
+import Swal from 'sweetalert2'
 
 
 import Nav from '../../header'
@@ -29,9 +30,13 @@ import {
   addCommentToStory,
   resetStoryForm,
   reorderStories,
+  deleteDepartment,
   updateStatusOnDrag
 } from '../../../../redux/actions'
 import TagModal from '../TagModal'
+import UpdateTagModal from '../UpdateTagModal'
+import DepartmentModel from '../DepartmentModel'
+
 
 const Button = styled.button`
   width: 91px;
@@ -120,6 +125,7 @@ const MobileTaskDetail = ({
   userRole
 }) => {
   const router = useRouter()
+  
 
   const { id } = router.query
   const classes = useStyles()
@@ -127,8 +133,21 @@ const MobileTaskDetail = ({
   const [isAccordianExpanded, setIsAccordianExpanded] = useState(false)
   const [isTagModalOpen, setIsTagModalOpen] = useState(false)
   const [expandedAccordian, setExpandedAccordian] = useState({})
+  const [isUpdateTagModalOpen, setIsUpdateTagModalOpen] = useState(false)
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false)
+  const [isDepartmentEditMode, setIsDepartmentEditMode] = useState(false)
   const dispatch = useDispatch()
   
+  const tagsAction = [
+    { name : "ADD TAGS", action: () => handleAccordianOptChange('ADD TAGS')},
+    { name : "EDIT/DELETE TAGS", action : () => handleAccordianOptChange('EDIT/DEL TAGS')}
+  ]
+  
+  const departmentAction = [
+    { name : "Add Department", action: () => handleAccordianOptChange('Add Department')},
+    { name : "Edit Department", action : () => handleAccordianOptChange('Edit Department')},
+    { name : "Delete Department", action : () => handleDepartmentDel()}
+  ]
   useEffect(() => {
     if (id) getDepartmentById(id)
   }, [id])
@@ -166,8 +185,29 @@ const MobileTaskDetail = ({
     if (departmentData?._id) getDepartmentById(departmentData._id)
   }
 
+  const openUpdateTagModal = () => {
+    setIsUpdateTagModalOpen(true)
+    setIsAccordianExpanded(false)
+  }
+
+  const closeUpdateTagModal = () => {
+    setIsUpdateTagModalOpen(false)
+    if (departmentData?._id) getDepartmentById(departmentData._id)
+  }
+
+
   const toggleDropdown = () => {
     setIsAccordianExpanded(!isAccordianExpanded)
+  }
+
+  const openDepartmentModal = () => {
+    setIsDeptModalOpen(true)
+    setIsAccordianExpanded(false)
+  }
+
+  const closeDepartmentModal = () => {
+    setIsDeptModalOpen(false)
+    if (departmentData?._id) getDepartmentById(departmentData._id)
   }
 
   const handleAccordianOptChange = value => {
@@ -176,6 +216,16 @@ const MobileTaskDetail = ({
     }
     if (value == 'ADD TASKS') {
       handleTaskForm()
+    }
+    if(value == "EDIT/DEL TAGS"){
+      openUpdateTagModal()
+    }
+    if(value == "Add Department"){
+      openDepartmentModal()
+    }
+    if (value == 'Edit Department'){
+      setIsDepartmentEditMode(true)
+      openDepartmentModal()  
     }
   }
 
@@ -234,6 +284,23 @@ const MobileTaskDetail = ({
     }
   }
 
+  const handleDepartmentDel =  () => {
+     Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Delete'
+    }).then(result => {
+      if (result.isConfirmed) {
+        dispatch(deleteDepartment(departmentData?._id))
+      }
+      router.push(`/dashboard/tasklist`);
+    })
+  }
+
   const handleOnDragUpdate = (update) => {
     const { destination, source } = update;
     if (!destination || destination.droppableId === source.droppableId) return;
@@ -280,21 +347,64 @@ const MobileTaskDetail = ({
                 alignItems: "start",
                 marginBottom: "5px",
                 padding: "4px",
-
+                marginLeft :"0px"
               }}
             >
-              <Button
-                onClick={() => handleAccordianOptChange('ADD TAGS')}
-                style={{
-                  color: "#000",
-                  backgroundColor: "#fff",
-                  marginBottom: "6px",
-                  fontWeight: "500",
-                  fontSize: "14px"
-                }}
+             <Accordion  style={{ width: '100%'}}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                onClick={toggleDropdown}
+                style={{ fontWeight: "600", fontSize: "16px" }}
               >
-                ADD TAGS
-              </Button>
+                Tags Actions
+              </AccordionSummary>
+              <AccordionActions  
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                marginLeft: "5px"
+              }}>
+                {tagsAction.map((tag,key) => {
+                  return (
+                  <Button
+                  key={key}
+                  onClick={tag.action}
+                  style={{
+                    color: "#000",
+                    backgroundColor: "#fff",
+                    marginBottom: "6px",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                    width:"fit-content",
+                    marginLeft:"0px"
+                  }}
+                >
+                  {tag.name}
+                </Button>
+                  )
+                })}
+              </AccordionActions>
+              </Accordion>
+
+             <Accordion  style={{ width: '100%' ,marginLeft: "0px"}} >
+             <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                onClick={toggleDropdown}
+                style={{ fontWeight: "600", fontSize: "16px" }}
+              >
+                Task Actions
+              </AccordionSummary>
+              <AccordionActions  
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                padding: "4px",
+                marginLeft:"5px"
+              }}>
               <Button
                 onClick={() => handleAccordianOptChange('ADD TASKS')}
                 style={{
@@ -307,6 +417,45 @@ const MobileTaskDetail = ({
               >
                 ADD TASKS
               </Button>
+              </AccordionActions>
+             </Accordion >
+
+              <Accordion style={{ width: '100%', marginLeft: "0px" }} >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                onClick={toggleDropdown}
+                style={{ fontWeight: "600", fontSize: "16px" }}
+              >
+                Department Actions
+              </AccordionSummary>
+              <AccordionActions   
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                marginLeft: "5px",
+              }}>
+              {departmentAction.map((dept,key) => {
+                return (
+                <Button
+                key={key}
+                onClick={dept.action}
+                style={{
+                  color: "#000",
+                  background: "#fff",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  marginLeft: "0px",
+                  width:"fit-content"
+                }}
+              >
+                {dept.name}
+              </Button>
+                )} )}
+              </AccordionActions>
+              </Accordion>
+
             </AccordionActions>
           </Accordion>
         )}
@@ -445,6 +594,28 @@ const MobileTaskDetail = ({
         />
       )}
 
+    {isUpdateTagModalOpen && (
+        <UpdateTagModal
+          open={isUpdateTagModalOpen}
+          onHide={() => {
+            closeUpdateTagModal()
+          }}
+        />
+      )}
+
+      {
+        isDeptModalOpen && (
+        <DepartmentModel 
+          open={isDeptModalOpen}
+          currentBusinessId={departmentData?.businessId}
+          selectedDepartment={departmentData}
+          isDepartmentEditMode={isDepartmentEditMode}
+          onHide={() => {
+            closeDepartmentModal()
+          }}
+          />
+        )
+      }
     </>
   )
 }

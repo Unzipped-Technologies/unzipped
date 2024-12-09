@@ -24,6 +24,7 @@ import {
   deleteDepartment
 } from '../../../../redux/actions'
 import ProjectUsers from '../Kanban/ProjectusersDropdown'
+import UpdateTagModal from '../UpdateTagModal'
 
 const TasksPanel = ({
   getProjectsList,
@@ -43,6 +44,7 @@ const TasksPanel = ({
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [isDepartmentEditMode, setIsDepartmentEditMode] = React.useState(false)
   const [tagModal, setTagModal] = React.useState(false)
+  const [isEditTagModal,setIsEditTagModal] = useState(false)
   const [storyModal, setStoryModal] = React.useState(false)
   const [taskId, setTaskId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
@@ -54,9 +56,9 @@ const TasksPanel = ({
   }, [selectedDepartment, currentBusiness])
 
   const getStatusColor = task => {
-    if (task?.status.includes('inprogress')) {
+    if (task?.status?.includes('In Progress')) {
       return '#FFA500'
-    } else if (task?.status.includes('done')) {
+    } else if (task?.status?.includes('Done')) {
       return '#198754'
     } else {
       return '#D8D8D8'
@@ -153,6 +155,10 @@ const TasksPanel = ({
     })
   }
 
+  const closeUpdateTagModal = async () => {
+    setIsEditTagModal(false)
+  }
+
   const handleDepartmentDel = async () => {
     const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {}
     dispatch(deleteDepartment(departmentData?._id))
@@ -227,6 +233,12 @@ const TasksPanel = ({
                 {
                   text: 'Delete',
                   onClick: async () => await handleDepartmentDel()
+                },
+                {
+                  text: 'Edit & Delete Tags',
+                  onClick: () => {
+                    setIsEditTagModal(true)
+                  }
                 }
               ]}>
               <Icon name="actionIcon" color="#333" />
@@ -439,6 +451,15 @@ const TasksPanel = ({
           isDepartmentEditMode={isDepartmentEditMode}
           onHide={() => {
             closeDepartmentModal()
+          }}
+        />
+      )}
+
+    {isEditTagModal && (
+        <UpdateTagModal
+          open={isEditTagModal}
+          onHide={() => {
+            closeUpdateTagModal()
           }}
         />
       )}
