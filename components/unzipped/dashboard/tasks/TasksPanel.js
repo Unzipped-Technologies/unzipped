@@ -56,9 +56,9 @@ const TasksPanel = ({
   }, [selectedDepartment, currentBusiness])
 
   const getStatusColor = task => {
-    if (task?.status.includes('inprogress')) {
+    if (task?.status?.includes('In Progress')) {
       return '#FFA500'
-    } else if (task?.status.includes('done')) {
+    } else if (task?.status?.includes('Done')) {
       return '#198754'
     } else {
       return '#D8D8D8'
