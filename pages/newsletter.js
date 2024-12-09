@@ -116,14 +116,14 @@ const Left = styled.div`
         top: 35px;
     }
     @media(max-width: 950px) {
-        top: 0px;
+        top: 35px;
     }
-    @media(max-width: 421px) {
+    @media(max-width: 425px) {
         h1 {
             font-size: 26px;
             line-height: 30px;
             max-width: 315px;
-            margin: 10px 0 10px 0;
+            margin: 40px 0 10px 0;
         }
         p {
             margin-bottom: 0px;

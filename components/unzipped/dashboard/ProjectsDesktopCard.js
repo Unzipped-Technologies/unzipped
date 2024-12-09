@@ -78,7 +78,7 @@ const ProjectDesktopCard = ({ project, includeRate, freelancerId }) => {
         </div>
         <div data-testid={`required_skill`}>
           {project?.requiredSkills?.map(item => (
-            <Badge key={`${item}_desktop_card`}>{ValidationUtils.truncate(item, 10)}</Badge>
+            <Badge key={`${item}_desktop_card`} className="overflow-hidden">{ValidationUtils.truncate(item, 10)}</Badge>
           ))}
         </div>
       </Right>

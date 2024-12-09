@@ -7,6 +7,9 @@ const Container = styled.div`
     display: flex;
     flex-flow: column;
     align-items: center;
+    @media screen and (max-width: 600px) {
+        margin: 16px;
+    }
 `;
 
 const Title = styled.div`
@@ -14,6 +17,11 @@ const Title = styled.div`
     font-weight: 600;
     text-align: center;
     padding: 20px;
+    @media screen and (max-width: 600px) {
+        font-size: 16px;
+        padding: 15px;
+        margin-top: 20px;
+    }
 `;
 
 const TitleTwo = styled.div`
@@ -21,6 +29,10 @@ const TitleTwo = styled.div`
     font-weight: 600;
     text-align: center;
     padding: 30px;
+    @media screen and (max-width: 600px) {
+        font-size: 16px;
+        padding: 5px;
+    }
 `;
 
 const BulletContainer = styled.div`
@@ -31,12 +43,22 @@ const BulletContainer = styled.div`
     padding: 30px;
     border-top: 2px #CCCCCC solid;
     border-bottom: 2px #CCCCCC solid;
+    gap: 5px;
+    @media screen and (max-width: 600px) {
+        width: 405px;
+        margin: 16px;
+        gap: 8px;
+    }
 `;
 
 const BulltetItem = styled.div`
     display: flex;
     padding: 10px;
     align-items: center;
+    @media screen and (max-width: 600px) {
+        padding: 0px;
+        font-size: 14px;
+    }
 `;
 
 const Bullet = styled.div`
@@ -45,14 +67,24 @@ const Bullet = styled.div`
 
 const TermsOne = styled.div`
     padding: 25px 10px 5px 10px;
+    @media screen and (max-width: 600px) {
+        padding: 10px 10px 12px 10px;
+        font-size: 12px;
+    }
 `;
 
 const CheckContainer = styled.div`
     display: flex;
     align-items: center;
+    @media screen and (max-width: 600px) {
+        padding: 0px 15px 0px 13px;
+    }
 `;
 
 const TermsCheck = styled.div`
+    @media screen and (max-width: 600px) {
+        font-size: 12px;
+    }
 `;
 
 const Button = styled.button`
@@ -61,14 +93,23 @@ const Button = styled.button`
     height: 40px;
     outline: none;
     border: none;
-    background-color: #1976D2;
+    background-color: ${({ disabled }) => (disabled ? '#D8D8D8' : '#1976D2')};
     color: #fff;
     border-radius: 4px;
     font-size: 18px;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    opacity: ${({ disabled }) => (disabled ? 0.85 : 1)};
+
+    @media screen and (max-width: 600px) {
+       margin: 30px;
+       font-size: 14px;
+    }
+    
 `;
 
 const Notification = ({onSubmit}) => {
     const [check, setCheck] = useState(false)
+    const isMobile = window.innerWidth > 680 ? false : true
 
     const bulletData = [
         {
@@ -87,6 +128,7 @@ const Notification = ({onSubmit}) => {
     return (
         <Container>
             <BackHeader 
+                size={isMobile ? "14px": "18px"} 
                 title="Express withdrawal"
             />
             <Title>Transfer Money</Title>
@@ -105,7 +147,7 @@ const Notification = ({onSubmit}) => {
                 <Checkbox checked={check} onClick={() => setCheck(!check)}></Checkbox>
                 <TermsCheck>I accept the terms and conditions of the Transfers Agreement</TermsCheck>
             </CheckContainer>
-            <Button onClick={onSubmit}>Submit Application</Button>
+            <Button disabled={!check} onClick={onSubmit}>Submit Application</Button>
         </Container>
     )
 }
