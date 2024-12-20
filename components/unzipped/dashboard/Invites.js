@@ -146,7 +146,7 @@ const InvitesList = ({ projectDetails, invitesList, getInvitesLists, userId, rol
       {window?.innerWidth > 680 ? (
         <div
           data-testid="desktop_invites"
-          style={{ width: '80%', margin: 'auto', marginTop: '8px', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.4)' }}>
+          style={{ width: '80%', margin: 'auto', marginTop: '8px'}}>
           {filteredInvitesRecords?.length ? (
            filteredInvitesRecords?.map(invitation => {
               return (

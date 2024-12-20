@@ -138,7 +138,7 @@ const MobileListDetail = () => {
 
   return (
     <Container data-testid="mobile_list_detail">
-      <Nav isSubMenu marginBottom={'85px'} isLogoHidden={true} />
+      <Nav isSubMenu marginBottom={'85px'} isLogoHidden={true}  listName={selectedList?.name ?? 'Lists'}/>
 
       <div
         style={{
@@ -234,7 +234,8 @@ const MobileListDetail = () => {
         <Button
           noBorder
           oval
-          style={{ color: 'black' }}
+          style={{ color: '#fff' }}
+          margin='10px'
           onClick={() => {
             router.push('/freelancers')
           }}>

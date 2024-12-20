@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { connect,useDispatch } from 'react-redux'
 
 import theme from '../../../components/ui/theme'
 import Icon from '../../../components/ui/Icon'
@@ -23,9 +23,13 @@ import {
   getFreelancerById,
   createTempFile,
   updateChatStatus,
-  handleUnreadMessages
+  handleUnreadMessages,
+  inboxAttachments,
+  resetInboxAttachments
 } from '../../../redux/actions'
 import MeetingTemplate from '../../../components/unzipped/MeetingTemplate'
+import ClearSharpIcon from '@material-ui/icons/ClearSharp';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const Box = styled.div`
   @media (min-width: 680px) {
@@ -36,7 +40,7 @@ const Box = styled.div`
 export const Div = styled.div`
   width: 100%;
   z-index: 1;
-  height: ${({ isTyping }) => (isTyping ? '85vh' : '85vh')};
+  height: ${({ isTyping }) => (isTyping ? '85vh' : '88vh')};
   margin: ${({ margin }) => (margin ? margin : '10px 0px 0px 0px')};
   z-index: 1;
   overflow: scroll;
@@ -95,6 +99,27 @@ const Container = styled.div`
   box-shadow: ${({ boxShadow }) => (boxShadow ? boxShadow : 'none')};
   z-index: ${({ zIndex }) => (zIndex ? zIndex : 'auto')};
 `
+const AttachmentTag = styled.div`
+  display: inline-flex;
+  align-items: center;
+  background-color: ${theme.tint2};
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin: 5px 5px 0 0;
+  text-decoration: none;
+  font-size: 12px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${theme.primary};
+  }
+
+  svg {
+    margin-left: 5px;
+    fill: #fff;
+  }
+`
 
 const DECLINE_MESSAGE_TEXT = 'has proposed some additional times:'
 const Chat = ({
@@ -113,6 +138,7 @@ const Chat = ({
   const { id } = router.query
   const [typing, setTyping] = useState({})
   const access = token.access_token || cookie
+  const dispatch = useDispatch()
 
   const messagesEndRef = useRef()
   const [conversationId, setConversationId] = useState(selectedConversationId)
@@ -123,12 +149,13 @@ const Chat = ({
   const [fileUploadModal, setFileUploadModal] = useState(false)
   const [showSubMenu, setSubMenu] = useState(false)
   const [top, setTop] = useState()
+  const [attachmentsInfo, setAttachmentsInfo] = useState([])
 
   const [form, setForm] = useState({
     senderId: null,
     receiverId: null,
     message: '',
-    attachment: ''
+    attachment: []
   })
 
   const openConversation = () => {
@@ -185,7 +212,7 @@ const Chat = ({
         ...prevMessages,
         {
           message: message?.message,
-          attachment: '',
+          attachment: message?.attachment ?? [], 
           isAlert: false,
           isRead: false,
           isActive: true,
@@ -222,6 +249,10 @@ const Chat = ({
 
   // End Sockets
 
+    useEffect(() => {
+      dispatch(inboxAttachments(attachmentsInfo))
+    }, [attachmentsInfo])
+
   const setUnreadToZero = (conversationId, receiverId) => {
     socket.emit('chat unread', {
       conversationId: conversationId,
@@ -254,7 +285,7 @@ const Chat = ({
           userId: form.receiverId
         },
         message: form.message,
-        attachment: form.attachment,
+        attachment: attachmentsInfo,
         conversationId: selectedConversation._id || null,
         updatedAt: new Date().toISOString(),
         access
@@ -268,8 +299,10 @@ const Chat = ({
       setForm({
         ...form,
         message: '',
-        attachment: ''
+        attachment: []
       })
+      setAttachmentsInfo([])
+      dispatch(resetInboxAttachments())
     }
   }
 
@@ -311,6 +344,7 @@ const Chat = ({
   const handleMute = status => {
     updateChatStatus('isMute', status, selectedConversation._id, access)
   }
+
   return (
     <Box>
       {showSubMenu ? (
@@ -325,7 +359,7 @@ const Chat = ({
         />
       ) : (
         <>
-          <BackHeader title="Messages">
+          <BackHeader title={ValidationUtils.getFullNameFromUser(receiver?.userId) ?? "Messages"}>
             <span onClick={openMenu} id="header_action">
               <IconComponent name="navbarToggleIcon" width="39" height="39" viewBox="0 0 39 39" fill="#333333" />
             </span>
@@ -333,6 +367,7 @@ const Chat = ({
           <WhiteCard noMargin height="100%" style={{ position: 'static' }} id="message_container">
             <Div
               margin="0px 0px 0px 0px"
+              position="relative"
               onScroll={() => {
                 handleScroll()
               }}
@@ -393,6 +428,37 @@ const Chat = ({
                               templateKey={e?.message}
                             />
                           )}
+
+                          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", padding: 10, width: "100%", marginRight: "12px" }}>
+                            <div style={{ display: "block" , color: isSender ? '#fff' : '#000'}}>
+                              {e?.attachment?.length > 0 && (
+                              <p style={{ display: "block", marginBlockStart: "1em", marginBlockEnd: "1em",
+                                marginInlineStart: "0px", marginInlineEnd: "0px" }}>
+                                  Attachments:
+                              </p>)}
+                            </div>
+                            {e?.attachment?.length > 0 &&
+                              e?.attachment?.map(att => (
+                                <div style={{ display: 'block' , color: isSender ? '#fff' : '#000'}} key={att.fileId}>
+                                  <FiberManualRecordIcon style={{ height: '10px', width: '10px' }} />
+                                  <a
+                                    style={{
+                                      fontSize: '13px',
+                                      textDecoration: 'none',
+                                      letterSpacing: '1px',
+                                      paddingLeft: '5px',
+                                      fontWeight: '600',
+                                      color: isSender ? '#fff' : '#039be5'
+                                      
+                                    }}
+                                    href={att.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    {att.name}
+                                  </a>
+                                </div>
+                              ))}
+                          </div>
                           
                           <DarkText noMargin color={isSender ? '#fff' : '#333'} topMargin="5px"  lighter topPadding="10px" right style={{fontSize:'12px'}}>
                             {ValidationUtils.getTimeFormated(e?.updatedAt)}
@@ -408,7 +474,7 @@ const Chat = ({
             {typing?.isTyping &&
               typing?.receiverId === form.senderId &&
               typing?.conversationId === selectedConversation?._id && (
-                <TypingAnimation>
+                <TypingAnimation style = {{margin: "0px 0px 35px 0px"}}>
                   {typing?.name?.substring(0, 20)}
                   {'   '}
                   <span></span>
@@ -416,7 +482,7 @@ const Chat = ({
                   <span></span>
                 </TypingAnimation>
               )}
-            <Absolute bottom="45px" width="100%" right="0">
+            <Absolute bottom="0px" width="100%" right="0" position="relative">
               <Message>
                 <FormField
                   value={form.message}
@@ -457,8 +523,34 @@ const Chat = ({
                 </Button>
               </Absolute>
             </Absolute>
+            <Container margin="20px 0px 0px 0px">
+            {attachmentsInfo &&
+                    attachmentsInfo?.map((att, index) => (
+                      <>
+                        <AttachmentTag key={index}>
+                          <ClearSharpIcon
+                            data-testid={`${att.name}_icon`}
+                            style={{
+                              fontSize: '12px',
+                              color: 'white',
+                              background: '#333',
+                              borderRadius: '50%',
+                              marginRight: '5px',
+                              cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                              setAttachmentsInfo(prevAttachments => prevAttachments.filter((_, i) => i !== index))
+                            }}
+                          />
+                          {att.name}
+                        </AttachmentTag>
+                      </>
+              ))}
+              </Container>
             {fileUploadModal && (
-              <AttachmentModal setFileUploadModal={setFileUploadModal} createTempFile={createTempFile} />
+              <AttachmentModal setFileUploadModal={setFileUploadModal} createTempFile={createTempFile}    
+              setAttachmentsInfo={setAttachmentsInfo}
+              attachmentsInfo={attachmentsInfo} />
             )}
           </WhiteCard>
         </>

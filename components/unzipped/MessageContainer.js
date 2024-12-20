@@ -82,7 +82,7 @@ export const Div = styled.div`
 `
 
 const Spacer = styled.div`
-  height: 64px;
+  height: auto;
   width: 100%;
 `
 const AttachmentTag = styled.div`
@@ -224,7 +224,8 @@ const MessageContainer = ({
   }, [attachmentsInfo])
 
   const send = () => {
-    if (form.message || form.attachment.length) {
+
+    if (form.message || attachmentsInfo.length) {
       setForm({
         ...form,
         sender: { userId: form.senderId, isInitiated: true },
@@ -287,7 +288,7 @@ const MessageContainer = ({
   }
 
   const handleEnterKey = e => {
-    if (e.keyCode === 13 && form.message.length > 0) {
+    if (e.keyCode === 13 && (form.message.length > 0 || attachmentsInfo.length) ) {
       send()
     }
   }
@@ -395,7 +396,7 @@ const MessageContainer = ({
                             </div>
                             {e?.attachment?.length > 0 &&
                               e?.attachment?.map(att => (
-                                <div style={{ display: 'block' }} key={att.fileId}>
+                                <div style={{ display: 'block' , color: isSender ? '#fff' : '#000'}} key={att.fileId}>
                                   <FiberManualRecordIcon style={{ height: '10px', width: '10px' }} />
                                   <a
                                     style={{
@@ -403,7 +404,8 @@ const MessageContainer = ({
                                       textDecoration: 'none',
                                       letterSpacing: '1px',
                                       paddingLeft: '5px',
-                                      fontWeight: '600'
+                                      fontWeight: '600',
+                                      color: isSender ? '#fff' : '#039be5'
                                     }}
                                     href={att.url}
                                     target="_blank"
@@ -440,7 +442,7 @@ const MessageContainer = ({
                 </TypingAnimation>
               )}
 
-              <Absolute bottom="6px" width="95%" right="2.5%">
+              <Absolute bottom="6px" width="98%" right="0px" position="relative">
                 <Message style={{ paddingTop: form.attachment.length > 0 ? '0px' : '4px' }}>
                   <FormField
                     value={form.message}
@@ -490,7 +492,7 @@ const MessageContainer = ({
                 <Absolute zIndex={10} width="26px" right="25px" top={form.attachment.length > 0 ? '25px' : '0px'}>
                   <Button
                     id="send_message"
-                    disabled={!(form.message || form.attachment.length) || !selectedConversationId}
+                    disabled={!(form.message || attachmentsInfo.length) || !selectedConversationId}
                     type="transparent"
                     onClick={() => send()}>
                     <Icon name="send" />

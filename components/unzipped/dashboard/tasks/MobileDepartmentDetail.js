@@ -31,7 +31,8 @@ import {
   resetStoryForm,
   reorderStories,
   deleteDepartment,
-  updateStatusOnDrag
+  updateStatusOnDrag,
+  getProjectsList
 } from '../../../../redux/actions'
 import TagModal from '../TagModal'
 import UpdateTagModal from '../UpdateTagModal'
@@ -122,7 +123,9 @@ const MobileTaskDetail = ({
   resetStoryForm,
   updateCreateStoryForm,
   reorderStories,
-  userRole
+  userRole,
+  deleteDepartment,
+  getProjectsList
 }) => {
   const router = useRouter()
   
@@ -221,6 +224,7 @@ const MobileTaskDetail = ({
       openUpdateTagModal()
     }
     if(value == "Add Department"){
+      setIsDepartmentEditMode(false)
       openDepartmentModal()
     }
     if (value == 'Edit Department'){
@@ -293,9 +297,14 @@ const MobileTaskDetail = ({
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Delete'
-    }).then(result => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        dispatch(deleteDepartment(departmentData?._id))
+        await deleteDepartment(departmentData?._id)
+        await getProjectsList({
+          take: 'all',
+          skip: 0,
+          populate: false
+        })
       }
       router.push(`/dashboard/tasklist`);
     })
@@ -637,7 +646,9 @@ const mapDispatchToProps = dispatch => {
     updateTask: bindActionCreators(updateTask, dispatch),
     addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
     resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
-    reorderStories: bindActionCreators(reorderStories, dispatch)
+    reorderStories: bindActionCreators(reorderStories, dispatch),
+    deleteDepartment: bindActionCreators(deleteDepartment, dispatch),
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
   }
 }
 

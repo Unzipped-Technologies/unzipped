@@ -265,11 +265,11 @@ module.exports = createSocket = server => {
               height: uploadFileResp.height
             })
 
-            const user = await UserModel.findById(message?.sender?.userId).select('files')
-            if (user) {
-              user.files.push(newFile._id)
-              await user.save()
-            }
+            await UserModel.findOneAndUpdate(
+                { _id: message?.sender?.userId },
+                { $addToSet: { files:  newFile._id } },
+                { new: true }
+              )
             if (newFile) {
               filesArray.push({
                 fileId: newFile._id,

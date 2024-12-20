@@ -53,7 +53,7 @@ function MobileProjects({ lists, userId, getUserLists }) {
 
   return (
     <Container data-testid="view_all_lists">
-      <Nav isSubMenu marginBottom={'85px'} isLogoHidden={true} />
+      <Nav isSubMenu marginBottom={'85px'} isLogoHidden={true} listName="Lists" />
       <div className="d-flex px-4 py-2 me-2" style={{ gap: '15px', borderBottom: '3px solid #EFF1F4', width: '100%' }}>
         <TEXT
           fontSize="14px"
