@@ -3,7 +3,18 @@ const listItems = require('../models/ListItems')
 const ListEntriesModel = require('../models/ListEntries')
 const mongoose = require('mongoose')
 
+
+const isDuplicateList = async (data) => {
+  const listExists = await list.findOne({name: data.name, userId: data.userId});
+  if (listExists) {
+    throw Error(`List Name already Exist.`);
+  }
+  return listExists ? true : false;
+
+}
 const createLists = async data => {
+  const listExists = await isDuplicateList(data);
+
   return await list.create(data)
 }
 
@@ -19,6 +30,8 @@ const updateLists = async data => {
     name: data.name,
     ...(data.icon !== '' && { icon: data.icon })
   }
+  
+  const listExists = await isDuplicateList(data);
 
   return await list.findByIdAndUpdate(
     data.listId,

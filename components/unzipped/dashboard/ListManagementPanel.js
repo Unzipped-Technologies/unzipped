@@ -164,6 +164,9 @@ const ListManagementPanel = ({
     setListIcon('')
     setIsModalOpen && setIsModalOpen(false)
     setIsEditMode && setIsEditMode(false)
+    setIsIconDropdownOpen(false);
+    setIsIconSelected(false);
+
   }
   const [windowSize, setWindowsize] = useState('100%')
 

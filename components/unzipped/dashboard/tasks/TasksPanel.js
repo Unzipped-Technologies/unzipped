@@ -39,7 +39,8 @@ const TasksPanel = ({
   currentBusiness,
   isEditable,
   taskForm,
-  setSelectedDepartment
+  setSelectedDepartment,
+  deleteDepartment
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [isDepartmentEditMode, setIsDepartmentEditMode] = React.useState(false)
@@ -161,7 +162,7 @@ const TasksPanel = ({
 
   const handleDepartmentDel = async () => {
     const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {}
-    dispatch(deleteDepartment(departmentData?._id))
+    await deleteDepartment(departmentData?._id)
     setSelectedDepartment(departmentObj)
     await getProjectsList({
       take: 'all',
@@ -481,7 +482,8 @@ const mapDispatchToProps = dispatch => {
     getDepartmentById: bindActionCreators(getDepartmentById, dispatch),
     updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
     resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
-    reorderStories: bindActionCreators(reorderStories, dispatch)
+    reorderStories: bindActionCreators(reorderStories, dispatch),
+    deleteDepartment: bindActionCreators(deleteDepartment, dispatch)
   }
 }
 

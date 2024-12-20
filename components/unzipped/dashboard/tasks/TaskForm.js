@@ -80,6 +80,9 @@ const TaskForm = ({
   const [editInputValue, setEditInputValue] = useState('')
   const statusList = departmentData?.departmentTags?.map(tag => tag.tagName)
   const [isCommentEditable, setIsCommentEditable] = useState(false)
+  const filteredAssigneeList =  departmentData?.contracts?.length > 0 ? 
+  departmentData?.contracts?.filter(contract => contract.departmentId === departmentData._id) : []
+  
   useEffect(() => {
     setComments(taskDetail?.comments)
   }, [taskDetail])
@@ -114,7 +117,7 @@ const TaskForm = ({
   }, [taskDetail])
   const assigneeOptions = useMemo(() => {
     let assignee = []
-    assignee = departmentData?.contracts?.map(contract => ({
+    assignee = filteredAssigneeList?.map(contract => ({
       value: contract?.freelancer?.userId,
       label: (
         <div className="d-flex justify-content-start">

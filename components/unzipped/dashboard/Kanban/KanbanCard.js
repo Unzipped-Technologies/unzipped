@@ -98,7 +98,7 @@ const KanbanCard = ({ item, index }) => {
               <CardFooter>
                 <ProjectUsers
                   isEmailRequired={true}
-                  selectedDepartment={null}
+                  selectedDepartment={item?.departmentId}
                   assignee={item?.assignee}
                   task={item}
                 />
