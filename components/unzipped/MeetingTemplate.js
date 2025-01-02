@@ -280,7 +280,7 @@ const MeetingTemplate = ({ meeting, userDetails, message, templateKey }) => {
                   <ParagrapStyled style={{ color: '#000' }}> {getMonthAndDateFormatted(item.Date)} </ParagrapStyled>
                   <AdditionalMeetingTimeContainer>
                     <AdditionalMeetingTimeContent>
-                      <AdditionalTimeButton>{item.Time}</AdditionalTimeButton>
+                      <AdditionalTimeButton cursor='not-allowed !important'>{item.Time}</AdditionalTimeButton>
                     </AdditionalMeetingTimeContent>
                   </AdditionalMeetingTimeContainer>
                 </>
@@ -299,7 +299,7 @@ const MeetingTemplate = ({ meeting, userDetails, message, templateKey }) => {
                   <ParagrapStyled style={{ color: '#000' }}> {getMonthAndDateFormatted(item.Date)} </ParagrapStyled>
                   <AdditionalMeetingTimeContainer>
                     <AdditionalMeetingTimeContent>
-                                        <AdditionalTimeButton>
+                                        <AdditionalTimeButton cursor='not-allowed !important'>
                                             {item.Time}
                                         </AdditionalTimeButton>
                     </AdditionalMeetingTimeContent>

@@ -72,6 +72,8 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
   const [marginBottom, setMarginBottom] = useState(window.innerWidth < 680 ? '80px' : '70px')
   const { isExpanded } = useSelector(state => state.Freelancers)
 
+  const filteredProjects = projectList?.filter(project => !project.isArchived) || projectList
+  
   useEffect(() => {
     getPublicProjectsList({ limit: take, skip, filter })
   }, [filter])
@@ -181,7 +183,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
           <MobileDisplayBox>
             <div className="d-flex align-items-baseline p-2 bg-white" style={{ marginTop: '10px' }}>
               <b style={{ paddingRight: '20px' }}>Top Results</b>
-              <small>{getResultMessage(projectList, skip, take, totalCount)}</small>
+              <small>{getResultMessage(filteredProjects, skip, take, totalCount)}</small>
             </div>
             <div style={{ margin: '0 5px', border: '2px solid #EFF1F4' }}></div>
           </MobileDisplayBox>
@@ -204,20 +206,20 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
                   <h5 className="px-4">
                     <b>Top Results</b>
                   </h5>
-                  <h6>{getResultMessage(projectList, skip, take, totalCount)}</h6>
+                  <h6>{getResultMessage(filteredProjects, skip, take, totalCount)}</h6>
                 </div>
-                {projectList?.length === 0 && (
+                {(filteredProjects?.length === 0) && (
                   <DarkText fontSize="20px" padding="20px 40px" backgroundColor="white" width="-webkit-fill-available">
                     No Projects found for this search
                   </DarkText>
                 )}
-                {projectList?.map((project, index) => {
+                {filteredProjects?.map((project, index) => {
                   return (
                     <div key={`${project._id}_desktop`} id={`${project._id}_desktop`}>
                       <WhiteCard noMargin overlayDesktop cardHeightDesktop key={`${project._id}_listing`}>
                         <ProjectDesktopCard project={project} includeRate freelancerId={freelancerId} />
                       </WhiteCard>
-                      {index === projectList.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
+                      {index === filteredProjects.length - 1 && <div ref={containerRef} className="mb-2 p-2"></div>}
                     </div>
                   )
                 })}
@@ -227,7 +229,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
             )}
           </Box>
         )}
-        {projectList?.map((project, index) => {
+        {filteredProjects?.map((project, index) => {
           return (
             <div key={`${project._id}_mobile`} id={`${project._id}_mobile`}>
               {!filterOpenClose && window?.innerWidth <= 680 && (
@@ -235,7 +237,7 @@ const Projects = ({ projectList, totalCount, getPublicProjectsList, freelancerId
                   <MobileProjectCard project={project} includeRate />
                 </MobileDisplayBox>
               )}
-              {index === projectList.length - 1 && <div ref={containerRef} className="p-1"></div>}
+              {index === filteredProjects.length - 1 && <div ref={containerRef} className="p-1"></div>}
             </div>
           )
         })}
