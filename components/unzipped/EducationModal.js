@@ -27,7 +27,8 @@ const MUIDialog = withStyles(theme => ({
   paper: {
     width: 'auto',
     maxWidth: window.innerWidth > 680 ? '952px !important' : '100%',
-    height: '611px !important',
+    minHeight: '611px !important',
+    maxHeight: 'auto !important',
     borderRadius: '25px',
     margin: '0px !important',
     padding: '0px !important'
@@ -52,7 +53,10 @@ const MUIDialogActions = withStyles(theme => ({
   root: {
     display: 'flex',
     alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    margin:'13px',
+    gap: '5px'
+
   }
 }))(DialogActions)
 
@@ -284,7 +288,7 @@ const ProjectModal = ({
             </div>
           </DialogContent>
           <MUIDialogActions>
-            <Button oval type="outlineInverse2" width="220px !important" extraWide onClick={onHide}>
+            <Button oval type="outlineInverse2" width="120px !important" extraWide onClick={onHide}>
               Cancel
             </Button>
 

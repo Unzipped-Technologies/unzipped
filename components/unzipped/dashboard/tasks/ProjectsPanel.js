@@ -21,6 +21,8 @@ const ProjectsPanel = ({
   const isMobileView = window.innerWidth <= 680
 
   const businessState = useSelector(state => state.Business)
+  const filteredBusinesses = businesses.filter(business => !business.isArchived)
+  
   useEffect(() => {
     if (currentBusiness?.businessDepartments?.[0]?.businessId) {
       dispatch(getBusinessEmployees(currentBusiness.businessDepartments[0].businessId, true))
@@ -37,8 +39,8 @@ const ProjectsPanel = ({
         borderRadius="10px"
         overflow="hidden"
         overFlowX="hidden">
-        {businesses?.length
-          ? businesses.map(business => {
+        {filteredBusinesses?.length
+          ? filteredBusinesses.map(business => {
               return (
                 <div key={business._id} id={`business_${business._id}`}>
                   <DIV

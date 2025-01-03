@@ -23,7 +23,8 @@ const MUIDialog = withStyles(theme => ({
   paper: {
     width: 'auto',
     maxWidth: window.innerWidth > 680 ? '952px !important' : '100%',
-    height: '611px !important',
+    minHeight: '611px !important',
+    maxHeight: 'auto !important',
     borderRadius: '25px',
     margin: '0px !important',
     padding: '0px !important'
@@ -40,7 +41,8 @@ const DialogContent = withStyles(theme => ({
     border: '0px !important',
 
     marginLeft: window.innerWidth > 680 ? '98px !important' : '0px !important',
-    marginRight: window.innerWidth > 680 ? '98px !important' : '0px !important'
+    marginRight: window.innerWidth > 680 ? '98px !important' : '0px !important',
+    overflow: 'hidden'
   }
 }))(MuiDialogContent)
 
@@ -48,7 +50,10 @@ const MUIDialogActions = withStyles(theme => ({
   root: {
     display: 'flex',
     alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    margin:'0px 30px 45px 0px',
+    gap: '5px'
+
   }
 }))(DialogActions)
 
@@ -299,7 +304,7 @@ const ProjectModal = ({
         )
       case 3:
         return (
-          <div style={{ marginTop: files?.length ? '0px' : '70px', marginBottom: '20px' }}>
+          <div style={{ marginTop: files?.length ? '0px' : '10px', marginBottom: '20px' }}>
             <TitleText fontSize="16px" lineHeight="18.75px" color="#333333">
               Upload a photo here to represent your project. This will display in the projects section of your profile.
             </TitleText>
@@ -376,7 +381,7 @@ const ProjectModal = ({
           <MUIDialogActions>
             {stage > 1 ? (
               <>
-                <Button oval type="outlineInverse2" width="220px !important" extraWide onClick={goBack}>
+                <Button oval type="outlineInverse2" width="120px !important" extraWide onClick={goBack}>
                   BACK
                 </Button>
               </>

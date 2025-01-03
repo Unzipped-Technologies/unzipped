@@ -50,7 +50,9 @@ const MUIDialogActions = withStyles(theme => ({
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     marginLeft: window.innerWidth > 680 ? '20px !important' : '0px !important',
-    marginRight: window.innerWidth > 680 ? '20px !important' : '0px !important'
+    marginRight: window.innerWidth > 680 ? '20px !important' : '0px !important',
+    marginBottom: '45px',
+    gap: '5px'
   }
 }))(DialogActions)
 
@@ -114,13 +116,16 @@ const ProjectModal = ({
           aria-labelledby="story-preview-modal"
           aria-describedby="story-preview-modal-description">
           <DialogContent>
+            <div width="100%">
             <Image src="/img/Unzipped-Primary-Logo.png" alt="logo" width="200px" />
+            </div>
             <div className="mt-3 ">
               <TitleText fontWeight="500" lineHeight="25.78px" fontSize="18px">
                 Search skills or add your own
               </TitleText>
               <div className="mt-2">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' , gap: isMobile ? '15px' : '0px' , 
+                  flexDirection: isMobile ? 'column' : 'row'}}>
                   <Autocomplete
                     id="skills-standard"
                     value={RECENT_SKILLS.find(obj => obj.value === skill.skill) ?? { label: skill.skill }} // Updated: pass actual value, not a function
@@ -255,7 +260,7 @@ const ProjectModal = ({
                 <div className="mt-3">
                   {allSkills?.length > 0
                     ? allSkills.map((skill, index) => (
-                        <Badge key={`${skill?.skill}_${index}`}>
+                        <Badge key={`${skill?.skill}_${index}`} className = "overflow-hidden" >
                           <div className="d-flex" key={skill?.skill + '_' + index}>
                             <AiOutlineCloseCircle
                               onClick={() => {

@@ -30,6 +30,7 @@ export const P = styled.p`
 
 const OtherInformationBox = styled.div`
   width: 100%;
+  margin-bottom: 75px;
 `
 
 export const OtherInformationCard = styled.div`
@@ -289,6 +290,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
                   ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
                   : ''}
               </div>
+              { project?.images?.length > 0 && (
               <div style={{ padding: '0px 19px', display: 'flex' }}>
                 {project?.images?.[0] && (
                   <Image src={project?.images[0]?.url} width="70%" height="98px" radius="10px" alt={`Image 0`} />
@@ -310,6 +312,7 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
                   )}
                 </div>
               </div>
+              )}
             </ProjectCard>
           ))
         ) : (

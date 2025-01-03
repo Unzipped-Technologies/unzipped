@@ -33,7 +33,8 @@ const DashboardTable = ({
   loading
 }) => {
   const router = useRouter()
-
+  const filteredBusinesses = businesses.filter(business => !business.isArchived)
+  
   useEffect(() => {
     // Below we are only sending pagination data, Other data we are using from redux store.
     const fetchData = async () => {
@@ -153,9 +154,9 @@ const DashboardTable = ({
               </TableHeading>
             </tr>
           </thead>
-          {businesses?.length > 0 && (
+          {filteredBusinesses?.length > 0 && (
             <tbody data-testid="dashboard_projects_table_body">
-              {businesses?.map(row => (
+              {filteredBusinesses?.map(row => (
                 <tr key={row._id} data-testid={row?._id} id={row?._id}>
                   <TableData
                     fontSize="14px"
