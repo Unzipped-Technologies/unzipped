@@ -92,7 +92,9 @@ const UploadImage = ({ setFiles, files, projectFiles, id }) => {
         <ImageContainer>
           <UploadArrow />
           <ImageTextStyled>Upload Image (.png, .jpg, .gif)</ImageTextStyled>
-          <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true} multiple={true}>
+          <Dropzone ref={dropzoneRef} onDrop={handleDrop} noClick={true} multiple={true} accept= {{
+              'image/*': ['.jpeg', '.jpg', '.png' , '.gif'],
+           }}>
             {({ getRootProps, getInputProps }) => (
               <div className="dropzone" {...getRootProps()}>
                 <input {...getInputProps()} />

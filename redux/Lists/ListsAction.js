@@ -120,8 +120,9 @@ const addEntriesToList = (params, listId) => async (dispatch, getState) => {
       })
       return res
     })
-    .then(() => {
+    .then((res) => {
       dispatch(getCurrentUserList(params.userId))
+      return res
     })
     .catch(err => {
       dispatch({

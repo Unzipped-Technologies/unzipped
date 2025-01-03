@@ -57,7 +57,7 @@ module.exports = createSocket = server => {
       }
       if (meetingStatus === 'ACCEPTED') {
         const user = await UserModel.findById(meeting.receiverId)
-
+        const sender = await UserModel.findById(meeting.senderId)
         const zoomRecord = await ZoomHelper.createZoomMeeting(
           {
             topic: 'Scheduled Interview',
@@ -76,23 +76,35 @@ module.exports = createSocket = server => {
           {
             attendees: [
               {
-                name: `${user?._doc?.FirstName || ''} ${user?._doc?.LastName || ''}`
+                 name: `${user?._doc?.FirstName || ''} ${user?._doc?.LastName || ''}`
+              },
+              { 
+                name: `${sender?._doc?.FirstName || ''} ${sender?._doc?.LastName || ''}`
               }
             ],
             ttl: 36000
           }
         )
+        const senderJoiningUrl = zoomRecord?.zoomMeeting?.participants?.find(participant => 
+        participant.name === `${sender?._doc?.FirstName} ${sender?._doc?.LastName}`)
+        ?.join_url
+        const receiverJoiningUrl = zoomRecord?.zoomMeeting?.participants?.find(participant => 
+        participant.name === `${user?._doc?.FirstName} ${user?._doc?.LastName}`)
+        ?.join_url 
+
+        const zoomMeetingLink = senderJoiningUrl + ' ' + receiverJoiningUrl;
+
         await MeetingHelper.updateMeeting({
           _id: meeting._id,
           meetingStatus: meetingStatus,
-          zoomMeeting: zoomRecord?.zoomMeeting ?? null
+          zoomMeeting: zoomMeetingLink ?? null
         })
 
         msg = `${user._doc.FirstName || ''}   ${
           user._doc.LastName || ''
         } has accepted your invitation for a meeting on ${getMonthByName(meeting.primaryTime.Date)} at ${
           meeting.primaryTime.Time
-        }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
+        }. You can join the meeting at the link here:${senderJoiningUrl}  ${receiverJoiningUrl} `
       }
 
       if (
@@ -141,6 +153,8 @@ module.exports = createSocket = server => {
         updateMeetingStatus == 'ACCEPTED'
       ) {
         const user = await UserModel.findById(meeting.receiverId)
+        const sender = await UserModel.findById(meeting.senderId)
+
         let secondaryTimes = existingMeetingRecord._doc.secondaryTimes
 
         secondaryTimes[index]._doc.Date = existingMeetingRecord._doc.primaryTime.Date
@@ -165,11 +179,24 @@ module.exports = createSocket = server => {
             attendees: [
               {
                 name: `${user._doc.FirstName || ''} ${user._doc.LastName || ''}`
+              },
+              {
+                name: `${sender._doc.FirstName || ''} ${sender._doc.LastName || ''}`
               }
             ],
             ttl: 36000
           }
         )
+
+        
+        const senderJoiningUrl = zoomRecord?.zoomMeeting?.participants?.find(participant => 
+        participant.name === `${sender?._doc?.FirstName} ${sender?._doc?.LastName}`)
+        ?.join_url
+        const receiverJoiningUrl = zoomRecord?.zoomMeeting?.participants?.find(participant => 
+        participant.name === `${user?._doc?.FirstName} ${user?._doc?.LastName}`)
+        ?.join_url 
+
+        const zoomMeetingLink = senderJoiningUrl + '  ' + receiverJoiningUrl;
 
         let updateMeetingDetails = {
           _id: existingMeetingRecord._doc._id,
@@ -179,7 +206,7 @@ module.exports = createSocket = server => {
           },
           secondaryTimes: secondaryTimes,
           meetingStatus: 'ACCEPTED',
-          zoomMeeting: zoomRecord?.zoomMeeting ?? null
+          zoomMeeting: zoomMeetingLink ?? null          
         }
 
         await MeetingHelper.updateMeeting(updateMeetingDetails)
@@ -188,7 +215,7 @@ module.exports = createSocket = server => {
           user?.LastName || ''
         } has accepted your invitation for a meeting on ${getMonthByName(proposedMeetingTime.Date)} at ${
           proposedMeetingTime.Time
-        }. You can join the meeting at the link here: ${zoomRecord?.zoomMeeting?.zoomJoiningUrl}`
+        }. You can join the meeting at the link here: ${senderJoiningUrl}  ${receiverJoiningUrl}`
         const msgObj = {
           sender: meeting.receiverId,
           meetingId: meeting._id,
@@ -250,7 +277,8 @@ module.exports = createSocket = server => {
             const uploadFileResp = await CloudinaryManager.uploader.upload(file.file, {
               filename_override: file.name,
               folder: message?.sender?.userId,
-              resource_type: file.type.startsWith('image') ? 'image' : 'auto'
+              resource_type: file.type === 'application/pdf' ? 'raw' : 
+               file.type.startsWith('image') ? 'image' : 'auto'
             })
 
             const newFile = await FileModel.create({

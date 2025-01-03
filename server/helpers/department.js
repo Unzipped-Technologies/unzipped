@@ -448,6 +448,10 @@ const listDepartments = async query => {
 const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => {
   try {
     const business = await departmentModel.findById(id).select('businessId')
+    const defaultDept = await departmentModel.findOne({name: 'Management', businessId: business.businessId })
+    if (defaultDept._id == id){
+      throw Error(`You can't update default Management department.`)
+    }
     const deptExits = await departmentModel.findOne({ name: data.name, businessId: business.businessId });
     if (deptExits) {
       throw Error(`Department Name already Exists.`);

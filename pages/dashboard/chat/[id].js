@@ -379,6 +379,11 @@ const Chat = ({
               }>
               {messages?.map((e, index) => {
                 const isSender = e?.sender === user._id;
+                const urls = e?.message?.match(/https?:\/\/[^\s]+/g)
+                const clientURL = urls?.[0]
+                const userURL = urls?.[1]
+                const messageWithoutURLs = e?.message?.replace(/https?:\/\/[^\s]+/g, '').trim()
+
                   return (
                     <Container
                       id={`message_${e?._id}`}
@@ -392,22 +397,42 @@ const Chat = ({
                         <Container borderRadius="15px 15px 3px 15px" padding="15px 15px" background={isSender ? '#007FED' : '#EDEDED'} 
                          >
                           <DarkText small noMargin justify style={{fontSize:'15px'}} lineHeight="23px" color={isSender ? '#fff' : '#333'}>
-                          {e?.message?.includes('http') ? (
-                              <>
-                                {e?.message.split(/(http.*)/)[0]}
-                                <span>
-                                  <a
-                                    href={e?.message.split(/(http.*)/)[1]}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{ color: isSender ? '#fff' : '#007FED', textDecoration: 'underline' }}>
-                                    {e?.message.split(/(http.*)/)[1]}
-                                  </a>
-                                </span>
-                              </>
-                            ) : (
-                              e?.message
+                        
+                            {e?.message?.includes('http') ? (  
+                            <>
+                            <div style={{marginBottom:"10px"}}>{messageWithoutURLs}</div>
+                            {isSender && userURL && (
+                              <span>
+                                <a
+                                  href={userURL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: '#fff',
+                                    textDecoration: 'underline'
+                                  }}>
+                                  {userURL}
+                                </a>
+                              </span>
                             )}
+
+                            {!isSender && clientURL && (
+                              <span>
+                                <a
+                                  href={clientURL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: '#007FED',
+                                    textDecoration: 'underline'
+                                  }}>
+                                  {clientURL}
+                                </a>
+                              </span>
+                              
+                            )}
+                            </>
+                            ) : (e?.message)}
 
                             {((e && e?.meetingId?.meetingStatus === 'DECLINE') ||
                               (e?.message && e?.message?.includes(DECLINE_MESSAGE_TEXT))) && (
