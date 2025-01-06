@@ -97,6 +97,8 @@ const ProjectModal = ({
       return data.projectName && data.role
     } else if (stage === 2) {
       return data.skills?.length > 0
+    } else if (stage === 3) {
+      return files?.length > 0
     }
     return true
   }

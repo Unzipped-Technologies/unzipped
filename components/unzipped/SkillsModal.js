@@ -72,6 +72,7 @@ const ProjectModal = ({
   })
   const [newSkills, setNewSkills] = useState([])
   const [allSkills, setAllSkills] = useState([])
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     let skillsArray = []
@@ -82,7 +83,7 @@ const ProjectModal = ({
   const handleDelete = async data => {
     if (!data?._id) {
       const filteredSkills = newSkills?.filter(obj => obj.skill !== data?.skill)
-      setNewSkills(prevSkills => [...prevSkills, ...filteredSkills])
+      setNewSkills(filteredSkills)
     } else {
       const response = await deleteFreelancerSkill(data?._id)
       if (response?.status === 200) {
@@ -245,7 +246,9 @@ const ProjectModal = ({
                     type="purple"
                     buttonHeight="42px"
                     onClick={() => {
-                      if (!allSkills.includes(skill.skill)) {
+                      const isSkillExist = allSkills.some(obj => obj.skill === skill.skill)
+                      isSkillExist ? setIsError('Skill already exists') : setIsError(false)
+                      if (!isSkillExist){
                         setNewSkills(prevSkills => [
                           ...prevSkills,
                           { ...skill, yearsExperience: !skill.yearsExperience ? 0 : skill.yearsExperience }
@@ -256,6 +259,7 @@ const ProjectModal = ({
                     Add
                   </Button>
                 </div>
+                  {isError && <p style={{ color: 'red', marginTop: '10px' }}> {isError}</p>} 
 
                 <div className="mt-3">
                   {allSkills?.length > 0
