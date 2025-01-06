@@ -230,7 +230,7 @@ const ListManagementPanel = ({
 
                 <div style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
                   <div style={{ background: '' }}>
-                    <SelectIconLabel onClick={() => setIsIconDropdownOpen(true)}>select an icon</SelectIconLabel>
+                    <SelectIconLabel onClick={() => setIsIconDropdownOpen(!isIconDropdownOpen)}>select an icon</SelectIconLabel>
                   </div>
                   <div style={{ background: '', display: 'flex', flexDirection: 'column', alignItems: 'baseline' }}>
                     {listIcon && (

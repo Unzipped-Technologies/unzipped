@@ -104,11 +104,13 @@ const MobileTaskForm = ({
   const [taskPriority, setTaskPriority] = useState('')
   const statusList =
     departmentData?.departmentTags?.length > 0 ? departmentData.departmentTags.map(tag => tag.tagName) : []
+  const filteredAssigneeList =  departmentData?.contracts?.length > 0 ? 
+    departmentData?.contracts?.filter(contract => contract.departmentId === departmentData._id) : []
 
   const assigneeOptions = useMemo(() => {
     let assignee = []
     assignee =
-      departmentData?.contracts?.map(contract => ({
+        filteredAssigneeList?.map(contract => ({
         value: contract?.freelancer?.userId,
         label: (
           <div className="d-flex justify-content-start" style={{ overflow: 'scroll' }}>

@@ -38,7 +38,7 @@ const createMeetingAttendees = async ({ id }, meetingAttendees) => {
             return { isVerified: false, message }
         }
 
-        await axios.post(
+        const meetingInvitesList = await axios.post(
             `${process.env.ZOOM_BASE_URL}/meetings/${id}/invite_links`,
             meetingAttendees,
             {
@@ -47,6 +47,8 @@ const createMeetingAttendees = async ({ id }, meetingAttendees) => {
                     'Content-Type': 'application/json'
                 }
             });
+                      
+        return meetingInvitesList;
 
     } catch (error) {
         console.log('Error on creating meeting attendees', error)
@@ -76,12 +78,13 @@ const createZoomMeeting = async (meetingArgs, attendeesArgs) => {
         }
 
         const zoomRecordCreated = zoomAPIResp.data;
-        await createMeetingAttendees(zoomRecordCreated, attendeesArgs);
-
+        const meetingAttendees = await createMeetingAttendees(zoomRecordCreated, attendeesArgs);
+        const participants = meetingAttendees.data.attendees;
         let meetingObject = {
             zoomMeeting: {
                 zoomJoiningUrl: zoomRecordCreated.join_url,
                 zoomMeetingId: zoomRecordCreated.id,
+                participants: participants,
             }
         };
 
