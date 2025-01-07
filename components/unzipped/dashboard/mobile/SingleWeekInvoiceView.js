@@ -586,7 +586,7 @@ const SingleWeekInvoiceView = ({
               APPROVE
             </Button>
           </div>
-        ) : isCurrenWeek && selectedInvoice?.tasks?.length ? (
+        ) : isCurrenWeek && selectedInvoice?.tasks?.length && role === 1 ? (
           <Button
             background="#1976D2"
             noBorder

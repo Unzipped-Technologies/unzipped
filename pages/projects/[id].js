@@ -164,7 +164,7 @@ const ProjectDetail = ({
   const router = useRouter()
   const { id } = router.query
   const [selectedTab, setSelectedTab] = useState(0)
-
+  const [error,setError] = useState('')
   const handleClick = index => setSelectedTab(index)
 
   let projectTabs = [{ name: 'Details', index: 0 }]
@@ -178,6 +178,12 @@ const ProjectDetail = ({
   }, [id])
 
   const applyToProject = async data => {
+
+    if (data.rate === 0 || data.rate === '' || data.questions?.some(question => question.answer === '')) {
+        setError('Please fill all the required fields.')
+        return; 
+    }
+    setError('')
     await createProjectApplication({
       projectId: id,
       freelancerId: freelancerId,
@@ -220,7 +226,7 @@ const ProjectDetail = ({
           <>
             <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />
             {!projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
-              <ProjectApplyForm applyToProject={applyToProject} projectDetails={projectDetails} />
+              <ProjectApplyForm applyToProject={applyToProject} projectDetails={projectDetails} error = {error}/>             
             )}
           </>
         )}
