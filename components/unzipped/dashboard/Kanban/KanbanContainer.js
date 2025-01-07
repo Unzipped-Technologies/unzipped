@@ -149,7 +149,8 @@ const ProjectKanbanBoard = ({
   const [businessInfo, setBusinessInfo] = useState('')
   const [departmentFiltering, setDepartmentFiltering] = useState('')
   const { user: { _id } } = useSelector(state => state?.Auth)
-
+  const filteredBusinesses = businesses.filter(business => !business.isArchived)
+  
   useEffect(() => {
     if (isFullScreen) {
 
@@ -181,7 +182,7 @@ const ProjectKanbanBoard = ({
       if (businessInfo) {
         let _deptArr = []
         dispatch(getBusinessEmployees(businessInfo))
-        const _dpt = businesses.map(business => (
+        const _dpt = filteredBusinesses.map(business => (
           business.businessDepartments.map(dept => (
             {
               departmentId: dept._id,
@@ -296,7 +297,7 @@ const ProjectKanbanBoard = ({
               width: "20%"
             }}>
               <MyProjectsLists
-                businesses={businesses}
+                businesses={filteredBusinesses}
                 setBusinessInfo={setBusinessInfo}
                 backendCols={fullBoardViewTickets}
                 setBackendCols={setBackendCols}

@@ -240,6 +240,7 @@ const MobileInvitesView = ({ projectDetails, invitesList }) => {
               paddingTop: '200px'
             }}>
             <Button
+              disabled = {projectDetails?.isArchived}
               extraWid
               type="outlineInverse"
               buttonHeight="25px"

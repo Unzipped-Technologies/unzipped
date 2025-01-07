@@ -171,7 +171,7 @@ const ProjectImages = styled.div`
   margin-top: 10px;
 `
 
-const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
+const ProjectApplyForm = ({ applyToProject, projectDetails, error }) => {
   const [data, setData] = useState({
     coverLetter: '',
     rate: 0,
@@ -262,6 +262,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
             })
           : ''}
       </ApplySection>
+      {error && <p style={{ color: 'red', marginLeft: '10px' }}> {error}</p>} 
       <ShowCaseProjects>
         <ProjectContainer>
           <FieldHeading padding="20px 0px 10px 20px">

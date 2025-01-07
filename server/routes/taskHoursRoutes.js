@@ -39,7 +39,7 @@ router.patch('/:id', requireLogin, permissionCheckHelper.hasPermission('taskHour
     const { hours } = req.body
     const { id } = req.params
     if (!hours || hours < 1) throw Error('Task hours details cannot be empty!')
-    const taskHours = await taskHoursHelper.updateTaskHours(hours, id)
+    const taskHours = await taskHoursHelper.updateTaskHours(req.body, id)
     res.json(taskHours)
   } catch (e) {
     res.status(400).json({ msg: e.message })

@@ -10,6 +10,7 @@ import { ConverterUtils } from '../../../../utils'
 import MobileFreelancerFooter from '../../MobileFreelancerFooter'
 import VerticalDropdown from '../../../VerticalDropdown'
 import { TEXT, DIV } from '../style'
+import { useSelector } from 'react-redux'
 
 
 const Container = styled.div`
@@ -147,7 +148,8 @@ const ViewProfileButton = styled.button`
 const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSelectedFreelancer, width }) => {
   const router = useRouter()
   const { id } = router.query
-
+  const businessDetails = useSelector(state => state.Business.selectedBusiness)
+  
   const redirectToProfile = freelancerId => {
     router.push(`/freelancers/${freelancerId}`)
   }
@@ -281,6 +283,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
             margin:'0px 0px 20px 0px'
           }}>
           <Button
+            disabled={businessDetails?.isArchived}
             extraWid
             type="outlineInverse"
             buttonHeight="25px"

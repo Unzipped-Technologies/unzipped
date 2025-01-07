@@ -79,7 +79,8 @@ const updateBusiness = async (data, id, files = []) => {
       const uploadResult = await CloudinaryUploadHelper.createFile(files, id)
       if (uploadResult && uploadResult.length > 0) {
         cloudinaryIds = uploadResult.map(elem => elem._id)
-        businessData['projectImagesUrl'] = [...businessData?.projectImagesUrl, ...cloudinaryIds]
+        const combinedImages = [...businessData?.projectImagesUrl, ...cloudinaryIds];
+        businessData['projectImagesUrl'] = combinedImages.slice(-3)
       }
     }
 
@@ -702,9 +703,10 @@ const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTas
         ]
       }
     ])
-    .select('_id name')
+    .select('_id name isArchived')
+    const filteredList = list.filter(item => !item.isArchived)
 
-  return constructBoardObject(list)
+  return constructBoardObject(filteredList)
 }
 
 const normalizeStatus = status => {

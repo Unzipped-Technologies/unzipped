@@ -123,7 +123,7 @@ const countTaskHours = async filter => {
   }
 }
 
-const updateTaskHours = async (hours, _id) => {
+const updateTaskHours = async (data, _id) => {
   try {
     const { getInvoiceWithoutPopulate } = require('./invoice')
     const taskHourData = await getTaskHoursById(_id)
@@ -131,9 +131,10 @@ const updateTaskHours = async (hours, _id) => {
 
     const invoiceData = await getInvoiceWithoutPopulate({ tasks: { $in: [_id] } })
     if (!invoiceData) throw Error(`Invoice against task hour not found.`)
-    invoiceData.hoursWorked = +invoiceData?.hoursWorked + +hours
+    invoiceData.hoursWorked = +invoiceData?.hoursWorked + +data?.hours
 
-    taskHourData.hours = +hours
+    taskHourData.hours = +data.hours
+    taskHourData.updatedAt = data.updatedAt    
 
     await invoiceData.save()
     const result = await taskHourData.save()

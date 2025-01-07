@@ -333,7 +333,7 @@ const MessageContainer = ({
                     const urls = e?.message?.match(/https?:\/\/[^\s]+/g)
                     const clientURL = urls?.[0]
                     const userURL = urls?.[1]
-                    const messageWithoutURLs = e?.message?.replace(/https?:\/\/[^\s]+/g, '').trim()
+                    const messageWithoutURLs = e?.message?.split(/https?:\/\//i)[0].trim();
                     return (
                       <WhiteCard
                         id={e?._id}
