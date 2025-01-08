@@ -483,6 +483,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                       )}
                       freeSolo
                       autoComplete
+                      value={taskName}
                       onInputChange={e => {
                         setTaskName(e?.target.value)
                       }}
@@ -501,7 +502,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                   </label>
 
                   <Button
-                    width={`${window.innerWidth - 50}px !important`}
+                    width={`${window.innerWidth - 37}px !important`}
                     height="47px"
                     margin="10px 0px"
                     noBorder
@@ -557,16 +558,17 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                   </List>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', marginTop: '30px' }}>
-                  <Button width="63px" buttonHeight="25px" oval type="outlineInverse" onClick={onHide}>
+                  <Button width="90px" buttonHeight="37px" oval type="outlineInverse" onClick={onHide} fontSize='14px' >
                     BACK
                   </Button>
                   <Button
                     disabled={false}
                     onClick={addTasksToInvoice}
-                    width="63px"
-                    buttonHeight="25px"
+                    width="90px"
+                    buttonHeight="37px"
                     oval
                     type="black"
+                    fontSize='14px'
                     margin="0px 0px 0px 10px">
                     SAVE
                   </Button>
@@ -587,7 +589,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                 <TitleText mobile color="#000000" fontSize="16px" lineHeight="18.75px">
                   Create new tasks
                 </TitleText>
-                <TitleText color="#333333" paddingTop="10px" width="100%" fontSize="16px" lineHeight="18.75px" light>
+                <TitleText color="#333333" paddingTop="10px" width="100%" fontSize="14px" lineHeight="18.75px" light>
                   A few of the tasks you are adding are not assigned to you. Please add more details to create them.
                 </TitleText>
                 {newTasks?.length
@@ -619,7 +621,7 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                               fontSize="14px"
                               name={'story points' + taskIndex}
                               id={`story_points${taskIndex}`}
-                              width="90px"
+                              width="110px"
                               margin="0px 0px 0px 15px"
                               height="30px  !important"
                               borderRadius="4px"
@@ -709,8 +711,9 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
                   <Button
-                    width="63px"
-                    buttonHeight="25px"
+                    width="90px"
+                    buttonHeight="35px"
+                    fontSize="12px"
                     background="#FFFFFF"
                     colors={{
                       text: '#1976D2',
@@ -727,8 +730,9 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                       text: '#FFFFFF',
                       border: '#FFFFFF'
                     }}
-                    width="63px"
-                    buttonHeight="25px"
+                    width="105px"
+                    buttonHeight="35px"
+                    fontSize="12px"
                     margin="0px 0px 0px 20px">
                     ADD TASK(S)
                   </Button>
