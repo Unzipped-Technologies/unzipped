@@ -32,6 +32,10 @@ const createApplication = async params => {
         }
       }
     }
+   
+    data['userProjects'] = data?.projects ?? data?.projects?.map(project => {
+     return project._id
+    }) 
     const projectApplication = new ProjectApplications(data)
     const response = await projectApplication.save()
     if (projectData?.applicants) {

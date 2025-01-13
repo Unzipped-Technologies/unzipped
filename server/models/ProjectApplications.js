@@ -17,7 +17,8 @@ const projectApplicationSchema = new Schema(
     isHired: { type: Boolean, default: false },
     questions: [questionSchema],
     projectId: { type: Schema.Types.ObjectId, ref: 'businesses' },
-    freelancerId: { type: Schema.Types.ObjectId, ref: 'freelancers' }
+    freelancerId: { type: Schema.Types.ObjectId, ref: 'freelancers' },
+    userProjects: [{ type: Schema.Types.ObjectId, ref: 'projects' }]
   },
   {
     timestamps: true

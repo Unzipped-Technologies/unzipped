@@ -15,18 +15,18 @@ const educationSchema = new Schema(
   }
 )
 
-const projectsSchema = new Schema(
-  {
-    role: { type: String, required: true },
-    projectName: { type: String, required: true },
-    images: { type: [Schema.Types.ObjectId], ref: 'file', default: [] },
-    skills: { type: [String], default: [], required: true },
-    isActive: { type: Boolean, default: true }
-  },
-  {
-    timestamps: true
-  }
-)
+// const projectsSchema = new Schema(
+//   {
+//     role: { type: String, required: true },
+//     projectName: { type: String, required: true },
+//     images: { type: [Schema.Types.ObjectId], ref: 'file', default: [] },
+//     skills: { type: [String], default: [], required: true },
+//     isActive: { type: Boolean, default: true }
+//   },
+//   {
+//     timestamps: true
+//   }
+// )
 
 const skillsSchema = new Schema(
   {
@@ -59,7 +59,8 @@ const freelancerSchema = new Schema(
     likes: { type: [Schema.Types.ObjectId], ref: 'likeHistory' },
     dislikes: { type: [Schema.Types.ObjectId], ref: 'likeHistory' },
     education: { type: [educationSchema], default: [] },
-    projects: { type: [projectsSchema], default: [] }
+    // projects: { type: [projectsSchema], default: [] }
+    projects: { type: [Schema.Types.ObjectId], ref: 'projects'}
   },
   {
     timestamps: true

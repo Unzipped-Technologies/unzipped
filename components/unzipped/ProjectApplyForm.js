@@ -145,8 +145,9 @@ const Projects = styled.div`
   gap: 10;
   padding-bottom: 60px;
   @media (max-width: 680px) {
-    flex-direction: row;
+    flex-direction: column;
     gap: 10px;
+    margin: 10px;
   }
 `
 
@@ -303,7 +304,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
                         border: selectedProject === project._id  ? '1px solid #1976d2' : '1px solid #d9d9d9',
                         borderRadius: '4px',
                         padding: '10px',
-                        width: '30%',
+                        width: isMobile ? '100%' : '30%',
                         height: 'auto'
                       }}
                       onClick={() => handleProjects(project)}>
