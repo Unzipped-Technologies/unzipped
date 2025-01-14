@@ -211,7 +211,7 @@ const ProjectModal = ({
                       <div
                         key={`${skill}_${index}`}
                         style={{
-                          width: '66px',
+                          width: 'auto',
                           height: '25px',
                           borderRadius: '4px',
                           backgroundColor: '#D9D9D9',

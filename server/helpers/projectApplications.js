@@ -54,7 +54,7 @@ const createApplication = async params => {
       dynamicTemplateData: {
         firstName: updatedBusiness?.userId?.FirstName
           ? updatedBusiness.userId.FirstName
-          : updatedBusiness.userId.email.split('@')[0],
+          : updatedBusiness?.userId?.email?.split('@')[0],
         lastName: updatedBusiness?.userId?.LastName ? updatedBusiness.userId.LastName : '',
         reviewApplicationLink: `${keys.redirectDomain}/projects/${updatedBusiness._id}`,
         supportLink: `${keys.redirectDomain}/wiki/getting-started`,
@@ -156,7 +156,7 @@ const updateApplication = async (id, data) => {
 }
 const deleteApplication = async id => {
   try {
-    return await ProjectApplications.softDelete({ _id: id })
+    return await ProjectApplications.findByIdAndDelete({ _id: id })
   } catch (e) {
     throw new Error(`Could not delete application, error: ${e.message}`)
   }

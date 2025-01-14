@@ -5,6 +5,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MoreHorizSharpIcon from '@mui/icons-material/MoreHorizSharp'
 import { getFreelancerById } from '../../redux/Freelancers/actions'
+import { deleteProjectApplication} from '../../redux/ProjectApplications/actions'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 
@@ -24,9 +25,9 @@ const ICON_STYLES = {
   }
 }
 
-const DROPDOWN_LIST = ['Hire User', 'View Application', 'Dismiss Application']
+const DROPDOWN_LIST = ['Hire User', 'Dismiss Application']
 
-const VerticalDropdown = ({ freelancerId }) => {
+const VerticalDropdown = ({ freelancerId , applicationId }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -40,9 +41,12 @@ const VerticalDropdown = ({ freelancerId }) => {
           router.push(`/hire`)
         }
         break
-      case 'View Application':
-        break
+      // case 'View Application':
+      //   break
       case 'Dismiss Application':
+        {
+          dispatch(deleteProjectApplication(applicationId))
+        }
         break
       default:
         break

@@ -179,7 +179,7 @@ const MobileApplicationCard = ({ projectApplications, user, includeRate, clearSe
                         flexDirection="colummn"
                         justifyContent="space-between"
                         margin="0px">
-                        <VerticalDropdown freelancerId={application?.freelancerId?._id} />
+                        <VerticalDropdown freelancerId={application?.freelancerId?._id}  applicationId={application._id} />
                       </DIV>
                     </div>
                     <UserInfo>

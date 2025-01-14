@@ -77,7 +77,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                     boxShadow="0px 4px 6px rgba(0, 0, 0, 0.4)"
                     borderRadius="5px">
                     <DIV height="20px" display="flex" flexDirection="colummn" justifyContent="flex-end" margin="0px">
-                      <VerticalDropdown freelancerId={application?.freelancerId?._id} />
+                      <VerticalDropdown freelancerId={application?.freelancerId?._id} applicationId = {application._id} />
                     </DIV>
                     <DIV
                       display="flex"

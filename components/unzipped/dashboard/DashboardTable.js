@@ -107,7 +107,7 @@ const DashboardTable = ({
       return [
         {
           text: 'Log Time',
-          onClick: () => router.push(`projects/invoice/${item._id}`)
+          onClick: () => router.push(`projects/details/${item._id}?tab=invoices`)
         },
         {
           text: 'View Project',

@@ -103,7 +103,7 @@ export const deleteProjectApplication = applicationID => async (dispatch, getSta
   dispatch(startLoading())
 
   await axios
-    .patch(`/api/projectApplication/${applicationID}`, tokenConfig(getState()?.Auth.token))
+    .delete(`/api/projectApplication/${applicationID}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: DELETE_PROJECT_APPLICATION,
