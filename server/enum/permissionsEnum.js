@@ -181,6 +181,7 @@ const accountTypePermissions = Object.freeze({
     // project applications
     userPermissions.getApplicationById,
     userPermissions.getAllApplications,
+    userPermissions.deleteApplication,
 
     // questions
     userPermissions.createQuestion,

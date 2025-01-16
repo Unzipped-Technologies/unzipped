@@ -155,7 +155,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
       return [
         {
           text: 'Log Time',
-          onClick: () => router.push(`projects/invoice/${business._id}`)
+          onClick: () => router.push(`/dashboard/projects/details/${business._id}?tab=invoices`)
         },
         {
           text: 'View Project',

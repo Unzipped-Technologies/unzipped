@@ -94,12 +94,12 @@ const ProjectSubHeading = styled(TEXT)`
 `
 
 const Tabs = styled.div`
-  border: 1px solid #5cb85c;
+  border: 1px solid #d8d8d8;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   border-bottom: 1px solid #bcc5d3;
   display: flex;
-  background: #5cb85c;
+  background: #d8d8d8;
   width: 100%;
   height: 55px;
   @media (max-width: 680px) {
@@ -107,7 +107,7 @@ const Tabs = styled.div`
     display: flex;
     overflow-x: auto;
     margin-left: 10px;
-    background: #5cb85c;
+    background: #d8d8d8;
   }
 `
 
@@ -145,7 +145,7 @@ const TabButton = styled.button`
   ${({ active }) =>
     active &&
     css`
-      background: #04aa6d !important;
+      background: #818986 !important;
       color: #fff;
       font-weight: 600;
     `};
@@ -248,7 +248,7 @@ const FounderInvoice = ({ projectDetails, getBusinessById }) => {
                   }}
                   value={selectedWeek}>
                   {weekOptions.map((week, index) => (
-                    <option key={index} value={index} style={{ fontSize: '4px' }}>
+                    <option key={index} value={index} style={{ fontSize: '9px' }}>
                       Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
                     </option>
                   ))}

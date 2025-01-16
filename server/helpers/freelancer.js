@@ -7,6 +7,7 @@ const Mailer = require('../../services/Mailer')
 const keys = require('../../config/keys')
 const listHelper = require('./list')
 const listEntriesHelper = require('./listEntriesHelper')
+const ProjectModel = require('./project')
 const mongoose = require('mongoose')
 
 const getFreelancerById = async id => {
@@ -348,7 +349,7 @@ const createShowCaseProject = async (data, freelancerId, userId, files) => {
     const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
     if (!freelancerData) throw new Error('Invalid freelancer ID.')
 
-    if (freelancerData?.projects?.length >= 3) throw new Error('You can only create three projects.')
+    if (freelancerData?.projects?.length >= 3 && !data.projectId) throw new Error('You can only create three projects.')
 
     // upload file to cloudinary platform
     const uploadResult = await CloudinaryUploadHelper.createFile(files, userId)
@@ -357,26 +358,19 @@ const createShowCaseProject = async (data, freelancerId, userId, files) => {
       cloudinaryIds = uploadResult.map(elem => elem._id)
       data['images'] = cloudinaryIds
     }
-
-    if (freelancerData?.projects?.length) {
-      if (data?.projectId) {
-        const ProIndex = freelancerData?.projects.findIndex(project => project?._id?.toString() === data.projectId)
-        if (ProIndex !== -1 && freelancerData.projects[ProIndex]) {
-          delete data['projectId']
-          freelancerData.projects[ProIndex] = { ...data }
-        } else {
-          throw new Error('No Project found.')
-        }
-      } else {
-        freelancerData.projects = [...freelancerData.projects, data]
-      }
-    } else {
-      if (!data?.projectId) {
-        freelancerData['projects'] = [data]
-      }
+    
+    data['freelancerId'] = freelancerId
+    if(data?.projectId)
+    {
+      await ProjectModel.updateProject(data)   
     }
-    await freelancerData.save()
-
+    else {
+      const projects = await ProjectModel.createProject(data)
+      if(!freelancerData.projects.includes(projects._id)){ 
+        freelancerData.projects.push(projects._id)
+        await freelancerData.save()
+      } 
+    }
     return freelancerData
   } catch (e) {
     throw new Error(`Something went wrong: ${e.message}`)
@@ -387,7 +381,7 @@ const deleteShowCaseProject = async (freelancerId, projectId) => {
   try {
     const freelancerData = await getFreelancerWithoutPopulate({ _id: freelancerId })
     if (!freelancerData) throw Error(`Freelancer not found.`)
-
+    await ProjectModel.deleteProject(projectId)
     if (freelancerData?.projects?.length) {
       freelancerData.projects = freelancerData?.projects.filter(project => project?._id?.toString() !== projectId)
       await freelancerData.save()

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { SubmitButton, SubmitButtonContainer } from '../../pages/projects/[id]'
+import { useDispatch, useSelector } from 'react-redux'
+import { getFreelancerById } from '../../redux/actions'
+import Carousel from 'react-material-ui-carousel'
 
 const Container = styled.div`
   width: 57.5%;
@@ -143,6 +146,8 @@ const Projects = styled.div`
   padding-bottom: 60px;
   @media (max-width: 680px) {
     flex-direction: column;
+    gap: 10px;
+    margin: 10px;
   }
 `
 
@@ -168,15 +173,21 @@ const ProjectImages = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 25px;
 `
 
-const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
-  const [data, setData] = useState({
-    coverLetter: '',
-    rate: 0,
-    questions: []
-  })
+const ProjectApplyForm = ({ applyToProject, projectDetails , setData, data}) => {
+  const freelancer = useSelector(state => state.Freelancers.selectedFreelancer)
+  const user = useSelector(state => state.Auth.user)
+  const dispatch = useDispatch()
+  const [selectedProject,setSelectedProject] = useState(null)
+  const isMobile = window.innerWidth > 680 ? false : true
+
+  useEffect(() => {
+    dispatch(getFreelancerById(user?.freelancers?._id))
+  }, [])
+
+
 
   useEffect(() => {
     const questions = []
@@ -191,6 +202,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
       ...prevData,
       questions: questions
     }))
+    
   }, [projectDetails])
 
   const updateAnswer = (value, questionId) => {
@@ -198,6 +210,17 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
       ...prevState,
       questions: prevState.questions.map(q => (q.question === questionId ? { ...q, answer: value } : q))
     }))
+  }
+
+  const handleProjects = projectInfo => {
+    setSelectedProject(projectInfo._id)
+    const isProjectExist = data.projects.find(project => project._id === projectInfo._id)
+    if (!isProjectExist) {
+      setData(prevData => ({
+        ...prevData,
+        projects: [...prevData.projects, projectInfo]
+      }))
+    }
   }
 
   return (
@@ -264,73 +287,71 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
       </ApplySection>
       <ShowCaseProjects>
         <ProjectContainer>
-          <FieldHeading padding="20px 0px 10px 20px">
+          <FieldHeading padding= {isMobile ? "20px 0px 10px 10px" : "20px 0px 10px 20px"}>
             Would you like to highlight any of these projects to the client?
           </FieldHeading>
           <Projects>
-            <Project margin="0px 0px 0px 10px">
-              <FieldHeading fontSize="14px" color="#0057FF" fontWeight="500" textTransform="normal">
-                Create a Landing page for a react site
-              </FieldHeading>
-              <FieldHeading fontSize="14px" color="#000" fontWeight="400" textTransform="normal">
-                Full stack web developer
-              </FieldHeading>
-              <ProjectImages>
-                <img src="/img/projectImages.png" style={{ width: '70%', height: '90px' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '5px' }}>
-                  <img
-                    src="/img/projectImages.png"
-                    style={{ width: window.innerWidth >= 680 ? '100%' : '120%', height: '42.875px' }}
-                  />
-                  <img
-                    src="/img/projectImages.png"
-                    style={{ width: window.innerWidth >= 680 ? '100%' : '120%', height: '42.875px' }}
-                  />
-                </div>
-              </ProjectImages>
-            </Project>
-            <Project margin="0px 0px 0px 0px">
-              <FieldHeading fontSize="14px" color="#0057FF" fontWeight="500" textTransform="normal">
-                Create a Landing page for a react site
-              </FieldHeading>
-              <FieldHeading fontSize="14px" color="#000" fontWeight="400" textTransform="normal">
-                Full stack web developer
-              </FieldHeading>
-              <ProjectImages>
-                <img src="/img/projectImages.png" style={{ width: '70%', height: '90px' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '5px' }}>
-                  <img
-                    src="/img/projectImages.png"
-                    style={{ width: window.innerWidth >= 680 ? '100%' : '120%', height: '42.875px' }}
-                  />
-                  <img
-                    src="/img/projectImages.png"
-                    style={{ width: window.innerWidth >= 680 ? '100%' : '120%', height: '42.875px' }}
-                  />
-                </div>
-              </ProjectImages>
-            </Project>
-            <Project margin="0px 10px 0px 0px">
-              <FieldHeading fontSize="14px" color="#0057FF" fontWeight="500" textTransform="normal">
-                Create a Landing page for a react site
-              </FieldHeading>
-              <FieldHeading fontSize="14px" color="#000" fontWeight="400" textTransform="normal">
-                Full stack web developer
-              </FieldHeading>
-              <ProjectImages>
-                <img src="/img/projectImages.png" style={{ width: '70%', height: '90px' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '5px' }}>
-                  <img
-                    src="/img/projectImages.png"
-                    style={{ width: window.innerWidth >= 680 ? '100%' : '120%', height: '42.875px' }}
-                  />
-                  <img
-                    src="/img/projectImages.png"
-                    style={{ width: window.innerWidth >= 680 ? '100%' : '120%', height: '42.875px' }}
-                  />
-                </div>
-              </ProjectImages>
-            </Project>
+            {freelancer && freelancer.projects?.length > 0 ? (
+              freelancer?.projects?.map(project => {
+                if (project.images?.length > 0) {
+                  return (
+                    <div
+                      key={project._id}
+                      style={{
+                        border: selectedProject === project._id  ? '1px solid #1976d2' : '1px solid #d9d9d9',
+                        borderRadius: '4px',
+                        padding: '10px',
+                        width: isMobile ? '100%' : '30%',
+                        height: 'auto'
+                      }}
+                      onClick={() => handleProjects(project)}>
+                      <FieldHeading fontSize="14px" color="#0057FF" fontWeight="500" textTransform="normal">
+                        {project.projectName}
+                      </FieldHeading>
+                      <FieldHeading fontSize="14px" color="#000" fontWeight="400" textTransform="normal">
+                        {project.role}
+                      </FieldHeading>
+                      <Carousel
+                        autoPlay={false}
+                        fullHeightHover={false}
+                        navButtonsAlwaysVisible
+                        duration={100}
+                        NavButton={({ onClick, className, style, next, prev }) => {
+                          return (
+                            <>
+                              <button
+                                onClick={onClick}
+                                className="Carousel-button"
+                                style={style}
+                                aria-label="navigate">
+                                {next && <span className="fa fa-angle-right" id="fix-b-right" />}
+                                {prev && <span className="fa fa-angle-left" id="fix-b-left" />}
+                              </button>
+                            </>
+                          )
+                        }}>
+                        {project.images.map(image => (
+                          <ProjectImages key={image._id} margin="0px 0px 0px 10px">
+                            <img
+                              src={image.url}
+                              alt="Project"
+                              style={{
+                                width: window.innerWidth >= 680 ? '100%' : '120%',
+                                height: '60px',
+                                objectFit: 'contain'
+                              }}
+                            />
+                          </ProjectImages>
+                        ))}
+                        </Carousel>
+                      </div>
+                  )
+                }
+                return null
+              })
+            ) : (
+              <div>No projects found</div>
+            )}
           </Projects>
           <SubmitButtonContainer margin="0px 20px 0px 0px">
             <SubmitButton

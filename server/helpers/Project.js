@@ -20,7 +20,7 @@ const createProject = async project => {
 
 const updateProject = async project => {
   try {
-    const result = await ProjectModel.findByIdAndUpdate(project._id, { $set: { ...project } }, { new: true })
+    const result = await ProjectModel.findByIdAndUpdate(project.projectId, { $set: { ...project } }, { new: true })
     return result
   } catch (e) {
     throw Error(`Error: Failed to create project: ${e}`)
@@ -29,7 +29,7 @@ const updateProject = async project => {
 
 const deleteProject = async projectId => {
   try {
-    const result = await ProjectModel.softDelete({ _id: projectId })
+    const result = await ProjectModel.deleteOne({ _id: projectId })
     if (result) return { affected: 1, msg: 'Successfully deleted!' }
     return { affected: 0, msg: 'No record found!' }
   } catch (e) {

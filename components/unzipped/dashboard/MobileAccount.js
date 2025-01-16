@@ -9,6 +9,7 @@ import { logoutUser, getCurrentUserData } from '../../../redux/actions'
 import UpdateProfileModal from '../UpdateProfileModal'
 import BackHeader from '../BackHeader'
 import UpdateProfileImage from './UpdateProfileImage'
+import { RiBarChartBoxFill } from "react-icons/ri";
 
 const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -233,6 +234,21 @@ const MobileAccount = ({ logoutUser, user, balance, getCurrentUserData }) => {
           </div>
           <IconComponent name="rightArrow" width="9" height="14" viewBox="0 0 6 9" fill="black" />
         </div>
+        { user.role !== 0 && (
+            <div
+            onClick={() => linkPush('/dashboard/projects/view')}
+            className="d-flex align-items-center justify-content-between mb-4 px-3  py-1">
+            <div className="d-flex align-items-center">
+              <RiBarChartBoxFill  style={{ fontSize: '18px'}} />
+              <P margin="0" padding="0 0 0 12px" fontSize="20px">
+                View Invoices
+              </P>
+            </div>
+            <IconComponent name="rightArrow" width="9" height="14" viewBox="0 0 6 9" fill="black" />
+          </div>
+        )
+        }
+        
         <hr />
         <div
           onClick={() => linkPush('/dashboard/inbox')}

@@ -10,7 +10,7 @@ import { getUserListEntries } from '../../../redux/actions'
 
 const Box = styled.div`
   display: flex;
-  flex-flow: row;
+  flex-flow: column;
   justify-items: space-around;
   flex-shrink: 0;
   background: rgba(240, 240, 240, 0);
@@ -19,6 +19,7 @@ const Box = styled.div`
   margin: auto;
   border-radius: 5px;
   margin-top: 10px;
+  gap: 10px;
   @media (max-width: 680px) {
     display: none;
   }
