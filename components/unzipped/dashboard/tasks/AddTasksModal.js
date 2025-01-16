@@ -489,8 +489,10 @@ const AddTasksModal = ({ onHide, onAdd, open = false, loading, getTasks, busines
                       }}
                       inputValue={taskName}
                       onChange={(event, value) => {
+                      if(value?.label) {
                         addTasks(value?.label)
                         setTaskName(value?.label)
+                      }
                       }}
                       onKeyDown={e => {
                         setTaskName(e?.target.value)

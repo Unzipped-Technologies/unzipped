@@ -11,6 +11,9 @@ import IconComponent from '../ui/icons/IconComponent'
 import SkillsModal from './SkillsModal'
 import socket from '../../components/sockets/index'
 import { useDispatch } from 'react-redux'
+import { FaPen, FaTrashAlt } from 'react-icons/fa'
+import {deleteShowCaseProject,getFreelancerById } from '../../redux/Freelancers/actions'
+import ProjectModal from './ProjectModal'
 
 const FREELANCER_SKILLS = ['React', 'Node', 'TypeScript', 'Nest.js', 'Next.js'];
 
@@ -53,6 +56,8 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
   const [selected, setSelected] = useState(0)
   const [open, setOpen] = useState(false)
   const [openSkill, setSkillOpen] = useState(false)
+  const [selectedProject, setProject] = useState({})
+  const [openProjectModel, setProjectModal] = useState(false)
 
   useEffect(() => {
     socket.emit('userConnected', userId)
@@ -114,6 +119,10 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
     setOpen(false)
   }
 
+  const handleProjectOpen = () => setProjectModal(true)
+
+  const handleProjectClose = () => setProjectModal(false)
+
   const handleBrowseFreelancerSkills = skill => {
     router.push(`/freelancers?skill=${encodeURIComponent(skill)}`)
   }
@@ -133,6 +142,14 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
   function formatDate(inputDate) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' }
     return new Date(inputDate).toLocaleDateString(undefined, options)
+  }
+
+  const deleteProject = projectId => {
+
+    dispatch(deleteShowCaseProject(projectId))
+    dispatch(getFreelancerById(freelancerId))
+    setReFetch(true)
+    
   }
 
   return (
@@ -275,11 +292,38 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
         {user?.projects?.length ? (
           user?.projects?.map(project => (
             <ProjectCard key={project?._id} id={`project_${project?._id}`}>
+               <div className="d-flex justify-content-between">
               <P margin="0 0 5px" color="#0057FF" fontSize="16px" fontWeight="500">
                 {project?.projectName ?? 'Project Name'}
               </P>
+              {user?.role === 1 && freelancerId === user?._id && (
+                <div className="d-flex justify-content-between mt-2">
+                  <FaPen
+                    style={{
+                      fontSize: '14px',
+                      marginRight: '10px',
+                      color: '#2F76FF'
+                    }}
+                    onClick={() => {
+                      setProject(project)
+                      handleProjectOpen()
+                    }}
+                  />
+
+                  <FaTrashAlt
+                    style={{
+                      fontSize: '14px',
+                      color: '#2F76FF'
+                    }}
+                    onClick={() => {
+                      deleteProject(project?._id)
+                    }}
+                  />
+                </div>
+              )}
+              </div>
               <P margin="0 0 5px" fontSize="15px">
-                {user?.category}
+                {project?.role}
               </P>
               <P margin="0 0 14px" fontSize="14px" fontWeight="300">
                 {user?.AddressLineCountry || 'United States'}
@@ -453,6 +497,9 @@ function MobileProfileCard({ user, handleProfilePage, role, freelancerId, setReF
           </OtherInformationCard>
         </OtherInformationBox>
         {open && <EducationModal open={open} onHide={handleClose} />}
+        {openProjectModel && (
+          <ProjectModal open={openProjectModel} onHide={handleProjectClose} selectedProject={selectedProject} />
+        )}
       </div>
       {openSkill && (
         <SkillsModal

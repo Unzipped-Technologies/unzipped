@@ -5,6 +5,7 @@ const questions = require('./questions')
 const keys = require('../../config/keys')
 const Mailer = require('../../services/Mailer')
 const FreelancerModel = require('../models/Freelancer')
+const userHelper = require('./user')
 
 const createApplication = async params => {
   try {
@@ -48,14 +49,16 @@ const createApplication = async params => {
       applicants: projectData.applicants
     })
     if (!updatedBusiness) throw new Error('Could not update business')
+      
+    const userData = await userHelper.getUserById(updatedBusiness.userId)
     const mailOptions = {
-      to: updatedBusiness.userId.email,
+      to: userData.email,
       templateId: 'd-7a6cfc5885764014a2ef24371af0ef55',
       dynamicTemplateData: {
-        firstName: updatedBusiness?.userId?.FirstName
-          ? updatedBusiness.userId.FirstName
-          : updatedBusiness?.userId?.email?.split('@')[0],
-        lastName: updatedBusiness?.userId?.LastName ? updatedBusiness.userId.LastName : '',
+        firstName: userData?.FirstName
+          ? userData.FirstName
+          : userData?.email?.split('@')[0],
+        lastName: userData?.LastName ? userData.LastName : '',
         reviewApplicationLink: `${keys.redirectDomain}/projects/${updatedBusiness._id}`,
         supportLink: `${keys.redirectDomain}/wiki/getting-started`,
         projectName: updatedBusiness?.name

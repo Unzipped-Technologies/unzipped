@@ -164,6 +164,12 @@ const ProjectDetail = ({
   const router = useRouter()
   const { id } = router.query
   const [selectedTab, setSelectedTab] = useState(0)
+   const [data, setData] = useState({
+      coverLetter: '',
+      rate: 0,
+      questions: [],
+      projects: []
+  })
 
   const handleClick = index => setSelectedTab(index)
 
@@ -198,7 +204,7 @@ const ProjectDetail = ({
           <ProjectSubHeading overflow="hidden">{projectDetails?.name}</ProjectSubHeading>
           {window.innerWidth >= 680 && !projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
             <SubmitButtonContainer margin="0px 0px -30px 0px">
-              <SubmitButton onClick={applyToProject}>SUBMIT APPLICATION</SubmitButton>
+              <SubmitButton onClick={()=>{applyToProject(data)}}> SUBMIT APPLICATION</SubmitButton>
             </SubmitButtonContainer>
           )}
         </Header>
@@ -220,7 +226,7 @@ const ProjectDetail = ({
           <>
             <DesktopProjectDetail projectDetails={projectDetails} loading={loading} />
             {!projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
-              <ProjectApplyForm applyToProject={applyToProject} projectDetails={projectDetails} />
+              <ProjectApplyForm applyToProject={applyToProject} projectDetails={projectDetails} setData={setData} data={data}/>
             )}
           </>
         )}

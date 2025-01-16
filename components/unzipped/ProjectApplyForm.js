@@ -176,22 +176,18 @@ const ProjectImages = styled.div`
   margin-top: 25px;
 `
 
-const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
+const ProjectApplyForm = ({ applyToProject, projectDetails , setData, data}) => {
   const freelancer = useSelector(state => state.Freelancers.selectedFreelancer)
   const user = useSelector(state => state.Auth.user)
   const dispatch = useDispatch()
-  const [data, setData] = useState({
-    coverLetter: '',
-    rate: 0,
-    questions: [],
-    projects: []
-  })
   const [selectedProject,setSelectedProject] = useState(null)
   const isMobile = window.innerWidth > 680 ? false : true
 
   useEffect(() => {
     dispatch(getFreelancerById(user?.freelancers?._id))
   }, [])
+
+
 
   useEffect(() => {
     const questions = []
@@ -206,6 +202,7 @@ const ProjectApplyForm = ({ applyToProject, projectDetails }) => {
       ...prevData,
       questions: questions
     }))
+    
   }, [projectDetails])
 
   const updateAnswer = (value, questionId) => {
