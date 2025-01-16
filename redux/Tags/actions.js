@@ -86,7 +86,7 @@ export const updateTag = (tagID, data) => async (dispatch, getState) => {
   const formData = ConverterUtils.toFormData(data)
 
   await axios
-    .patch(`/api/tags/${tagID}`, formData, tokenConfig(getState()?.Auth.token))
+    .patch(`/api/tags/${tagID}`, data, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: UPDATE_TAG,
@@ -106,7 +106,7 @@ export const deleteTag = tagID => async (dispatch, getState) => {
   dispatch(startLoading())
 
   await axios
-    .patch(`/api/tags/${tagID}`, tokenConfig(getState()?.Auth.token))
+    .delete(`/api/tags/${tagID}`, tokenConfig(getState()?.Auth.token))
     .then(res =>
       dispatch({
         type: DELETE_TAG,

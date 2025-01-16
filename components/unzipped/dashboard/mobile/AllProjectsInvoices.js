@@ -72,7 +72,7 @@ const AllProjectsInvoices = ({ getInvoices }) => {
           }}
           value={selectedWeek}>
           {weekOptions.map((week, index) => (
-            <option key={index} value={index} style={{ fontSize: '4px' }}>
+            <option key={index} value={index} style={{ fontSize: '10px' }}>
               Week of {week.startOfWeek.toDateString()} - {week.endOfWeek.toDateString()}
             </option>
           ))}

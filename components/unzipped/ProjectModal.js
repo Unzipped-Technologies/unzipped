@@ -204,7 +204,7 @@ const ProjectModal = ({
       case 2:
         return (
           <div style={{ marginTop: '70px' }}>
-            <div className="d-flex flex-wrap overflow-scroll">
+            <div className="d-flex flex-wrap overflow-hidden">
               {data?.skills?.length
                 ? data?.skills?.map((skill, index) => {
                     return (
@@ -219,7 +219,7 @@ const ProjectModal = ({
                           flexDirection: 'row',
                           marginBottom: '20px',
                           marginLeft: '10px',
-                          overflow: 'scroll'
+                          overflow: 'hidden'
                         }}>
                         <span
                           data-testid={`delete_${skill}`}

@@ -22,6 +22,8 @@ import {
   setUserIdForChat,
   checkUserConversation
 } from '../../redux/actions'
+import { IconColors } from '../../utils/FontIcons'
+import IconSelector from './dashboard/IconSelector'
 
 export const P = styled.p`
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '')};
@@ -242,8 +244,16 @@ const ListModal = ({
                         onClick={() => {
                           addToList(list)
                         }}>
-                        <div>
-                          <img src="/img/heart.png" />
+                        <div className="d-flex">
+                          {list?.icon && (
+                            <IconSelector
+                              id={list?._id + '_icon'}
+                              icon={list.icon}
+                              size={24}
+                              style={{ color: IconColors[list?.icon] }}
+                              twoToneColor={IconColors[list?.icon]}
+                            />
+                          )}
                         </div>
                         <div>
                           <P fontSize="16px" margin="0">

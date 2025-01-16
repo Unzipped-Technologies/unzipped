@@ -57,7 +57,15 @@ const DashboardTable = ({
       confirmButtonText: 'Yes, close it!'
     }).then(async result => {
       if (result.isConfirmed) {
-        const response = await updateBusiness({ listId: projectID, isArchived: true })
+        const formData = new FormData()
+          formData.append(
+            'projectDetails',
+            JSON.stringify({
+              listId: projectID,
+              isArchived: true
+            })
+          )
+        const response = await updateBusiness(formData)
         if (response?.status === 200) {
           Swal.fire({
             title: 'Closed!',

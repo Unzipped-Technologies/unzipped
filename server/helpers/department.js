@@ -447,7 +447,15 @@ const listDepartments = async query => {
 
 const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => {
   try {
-
+    const business = await departmentModel.findById(id).select('businessId')
+    const defaultDept = await departmentModel.findOne({name: 'Management', businessId: business.businessId })
+    if (defaultDept._id == id){
+      throw Error(`You can't update default Management department.`)
+    }
+    const deptExits = await departmentModel.findOne({ name: data.name, businessId: business.businessId });
+    if (deptExits) {
+      throw Error(`Department Name already Exists.`);
+    }
     const updatedDepartment = await departmentModel.findByIdAndUpdate(id, { $set: { ...data } }, { new: true })
     if (isEditingDepartment) {
       const updatedResp = await getDepartmentById(id, filters);
@@ -462,8 +470,31 @@ const updateDepartment = async (id, data, isEditingDepartment, filters = {}) => 
 const deleteDepartment = async id => {
   try {
     // Here we also have to delete department from business, contract, parentDepartment, invoice, tags, task
+    const businessDetails = await business.findOne({ departments: id })
+    const defaultDept = await departmentModel.findOne({name: 'Management', businessId: businessDetails._id })
+    const tagObj = await tags.findOne({ tagName: 'To Do', departmentId: defaultDept._id })
+    const clientId = defaultDept.clientId.toString()
+
+    if (defaultDept._id == id) {
+      throw Error(`You can't delete default Management department.`)
+    }
     const deletedDepartment = await departmentModel.findByIdAndDelete({ _id: id })
     await business.updateMany({ departments: id }, { $pull: { departments: id } });
+    await TaskModel.updateMany(
+      { departmentId: id },
+      { $set: { departmentId: defaultDept._id, status: tagObj.tagName, tag: tagObj._id, assignee: clientId } },
+      { new: true }
+    );
+
+    const updatedTasks = await TaskModel.find({ departmentId: defaultDept._id }).select('_id');
+    await departmentModel.findOneAndUpdate(
+      { _id: defaultDept._id },
+      { $addToSet: { tasks:  updatedTasks } },
+      { new: true }
+    )
+  
+    await tags.deleteMany({ departmentId: id }); 
+    await contracts.deleteMany({ departmentId: id });
     return deletedDepartment
 
   } catch (e) {

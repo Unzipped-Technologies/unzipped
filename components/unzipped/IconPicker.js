@@ -65,10 +65,10 @@ const IconPicker = ({
             }}>
             {filteredIcons && filteredIcons.length > 0 ? (
               <>
-                <div style={{ width: '100%', height: '100%', overflowY: 'scroll', flexWrap: 'wrap', display: 'flex' }}>
+                <div style={{ width: '100%', height: '100%', flexWrap: 'wrap', display: 'flex' }}>
                   {filteredIcons.map((icon, index) => {
                     const Icon = Icons[icon]
-                    return (
+                    return Icon ? (
                       <div
                         key={icon}
                         style={{ fontSize: '28px', paddingLeft: '5px', color: '#1C1C1C' }}
@@ -81,6 +81,25 @@ const IconPicker = ({
                           }}
                         />
                       </div>
+                    ) : (
+                      <>
+                        {Object.keys(Icons).map((icon, index) => {
+                          const Icon = Icons[icon]
+                          return (
+                            <div
+                              key={icon}
+                              id={`icon_${index}`}
+                              style={{ fontSize: '30px', paddingLeft: '10px', color: IconColors[icon] }}>
+                              <Icon
+                                style={{ color: IconColors[icon] || '#1C1C1C' }}
+                                onClick={() => {
+                                  handleIconSelect(icon)
+                                }}
+                              />
+                            </div>
+                          )
+                        })}
+                      </>
                     )
                   })}
                 </div>

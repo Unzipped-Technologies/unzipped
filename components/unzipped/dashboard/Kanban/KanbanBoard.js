@@ -224,9 +224,9 @@ function KanbanBoard({
       sourcedObj.status = destColumn?.tagName;
       let ticketStatus = sourcedObj.status;
 
-      if (!ticketStatus.includes('In Progress')) {
-        ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
-      }
+      // if (!ticketStatus.includes('In Progress')) {
+      //   ticketStatus = ticketStatus.replace(/ (.)/g, (match, expr) => expr.toLowerCase());
+      // }     
 
       dispatch(
         updateStatusOnDrag(

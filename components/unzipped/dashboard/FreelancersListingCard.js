@@ -140,7 +140,7 @@ const FreelancerListingCard = ({ user, includeRate, width }) => {
             </DarkText>
           )}
         </div>
-        {user?.skills?.length > 0 && user.skills.map((item, index) => <Badge key={index}>{item}</Badge>)}
+        {user?.skills?.length > 0 && user.skills.map((item, index) => <Badge className="overflow-hidden" key={index}>{item}</Badge>)}
       </Right>
 
       <Absolute>

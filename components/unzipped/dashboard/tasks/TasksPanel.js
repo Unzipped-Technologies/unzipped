@@ -24,6 +24,7 @@ import {
   deleteDepartment
 } from '../../../../redux/actions'
 import ProjectUsers from '../Kanban/ProjectusersDropdown'
+import UpdateTagModal from '../UpdateTagModal'
 
 const TasksPanel = ({
   getProjectsList,
@@ -38,11 +39,13 @@ const TasksPanel = ({
   currentBusiness,
   isEditable,
   taskForm,
-  setSelectedDepartment
+  setSelectedDepartment,
+  deleteDepartment
 }) => {
   const [departmentModel, setDepartmentModel] = React.useState(false)
   const [isDepartmentEditMode, setIsDepartmentEditMode] = React.useState(false)
   const [tagModal, setTagModal] = React.useState(false)
+  const [isEditTagModal,setIsEditTagModal] = useState(false)
   const [storyModal, setStoryModal] = React.useState(false)
   const [taskId, setTaskId] = useState('')
   const [isEditing, setIsEditing] = useState(false)
@@ -54,9 +57,9 @@ const TasksPanel = ({
   }, [selectedDepartment, currentBusiness])
 
   const getStatusColor = task => {
-    if (task?.status.includes('inprogress')) {
+    if (task?.status?.includes('In Progress')) {
       return '#FFA500'
-    } else if (task?.status.includes('done')) {
+    } else if (task?.status?.includes('Done')) {
       return '#198754'
     } else {
       return '#D8D8D8'
@@ -153,9 +156,13 @@ const TasksPanel = ({
     })
   }
 
+  const closeUpdateTagModal = async () => {
+    setIsEditTagModal(false)
+  }
+
   const handleDepartmentDel = async () => {
     const departmentObj = currentBusiness?.businessDepartments?.[0] ?? {}
-    dispatch(deleteDepartment(departmentData?._id))
+    await deleteDepartment(departmentData?._id)
     setSelectedDepartment(departmentObj)
     await getProjectsList({
       take: 'all',
@@ -227,6 +234,12 @@ const TasksPanel = ({
                 {
                   text: 'Delete',
                   onClick: async () => await handleDepartmentDel()
+                },
+                {
+                  text: 'Edit & Delete Tags',
+                  onClick: () => {
+                    setIsEditTagModal(true)
+                  }
                 }
               ]}>
               <Icon name="actionIcon" color="#333" />
@@ -442,6 +455,15 @@ const TasksPanel = ({
           }}
         />
       )}
+
+    {isEditTagModal && (
+        <UpdateTagModal
+          open={isEditTagModal}
+          onHide={() => {
+            closeUpdateTagModal()
+          }}
+        />
+      )}
     </DIV>
   )
 }
@@ -460,7 +482,8 @@ const mapDispatchToProps = dispatch => {
     getDepartmentById: bindActionCreators(getDepartmentById, dispatch),
     updateCreateStoryForm: bindActionCreators(updateCreateStoryForm, dispatch),
     resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
-    reorderStories: bindActionCreators(reorderStories, dispatch)
+    reorderStories: bindActionCreators(reorderStories, dispatch),
+    deleteDepartment: bindActionCreators(deleteDepartment, dispatch)
   }
 }
 

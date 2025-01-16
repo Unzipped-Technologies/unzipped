@@ -104,7 +104,15 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
       confirmButtonText: 'Yes, close it!'
     }).then(async result => {
       if (result.isConfirmed) {
-        const response = await updateBusiness({ listId: projectID, isArchived: true })
+        const formData = new FormData()
+          formData.append(
+            'projectDetails',
+            JSON.stringify({
+              listId: projectID,
+              isArchived: true
+            })
+          )
+        const response = await updateBusiness(formData)
         if (response?.status === 200) {
           Swal.fire({
             title: 'Closed!',
@@ -234,6 +242,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
                   <DIV display="flex" flexDirection="column" flexFlow="column" data-testid="all_projects">
                     {businesses?.map((business, index) => {
                       return (
+                        !business.isArchived && (
                         <DIV
                           key={business._id}
                           id={business._id}
@@ -291,6 +300,7 @@ const AllProjects = ({ businesses = [], getProjectsList, role, freelancerId, upd
                             </Button>
                           </Absolute>
                         </DIV>
+                        )
                       )
                     })}
                   </DIV>

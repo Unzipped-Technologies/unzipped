@@ -53,14 +53,16 @@ const SubscriptionCard = ({
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
+  const isMobile = window.innerWidth >= 680 ? false : true
+
   return (
     <Container data-testid="receipt_card" id="receipt_card">
-      <WhiteCard height={(selectedPlan + 1) * 50 + 450 + 'px'} padding="10px">
-        <TitleText size="22px">{subscriptionName} Plan</TitleText>
-        <DarkText>
+      <WhiteCard height={(selectedPlan + 1) * 50 + 450 + 'px'} padding="17px">
+        <TitleText size={isMobile ? "16px" : "22px"}>{subscriptionName} Plan</TitleText>
+        <DarkText fontSize={isMobile ? "14px" : "16px"} marginLeft="0px">
           ${total} + tax every {calcPaymentFrequency(subscriptionForm?.paymentFrequency)}
         </DarkText>
-        <DarkText>
+        <DarkText fontSize={isMobile ? "14px" : "16px"} marginLeft="0px" >
           You will be charged ${total} + tax on {dateCode}, when your trial ends.
         </DarkText>
         <Underline color="#D8D8D8" width="100%" margin="5px 0px 20px 0px" />

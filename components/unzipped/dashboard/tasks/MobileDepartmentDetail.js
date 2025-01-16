@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import { connect,useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import { bindActionCreators } from 'redux'
 import { Dialog } from '@material-ui/core'
@@ -15,10 +15,11 @@ import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import AccordionActions from '@mui/material/AccordionActions';
+import Swal from 'sweetalert2'
 
 
 import Nav from '../../header'
-import { DarkText } from '../style'
+import { DarkText,WhiteCard } from '../style'
 import MobileTaskForm from './MobileTaskForm'
 import { ConverterUtils, ValidationUtils } from '../../../../utils'
 import {
@@ -28,9 +29,15 @@ import {
   updateTask,
   addCommentToStory,
   resetStoryForm,
-  reorderStories
+  reorderStories,
+  deleteDepartment,
+  updateStatusOnDrag,
+  getProjectsList
 } from '../../../../redux/actions'
 import TagModal from '../TagModal'
+import UpdateTagModal from '../UpdateTagModal'
+import DepartmentModel from '../DepartmentModel'
+
 
 const Button = styled.button`
   width: 91px;
@@ -59,7 +66,7 @@ const Button = styled.button`
 
 const TaskDetailContainer = styled.div`
   width: 100%;
-  padding:15px;
+  padding:15px 15px 70px 15px;
 `
 
 // Define a styled AccordionDetails component
@@ -116,9 +123,12 @@ const MobileTaskDetail = ({
   resetStoryForm,
   updateCreateStoryForm,
   reorderStories,
-  userRole
+  userRole,
+  deleteDepartment,
+  getProjectsList
 }) => {
   const router = useRouter()
+  
 
   const { id } = router.query
   const classes = useStyles()
@@ -126,7 +136,21 @@ const MobileTaskDetail = ({
   const [isAccordianExpanded, setIsAccordianExpanded] = useState(false)
   const [isTagModalOpen, setIsTagModalOpen] = useState(false)
   const [expandedAccordian, setExpandedAccordian] = useState({})
+  const [isUpdateTagModalOpen, setIsUpdateTagModalOpen] = useState(false)
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false)
+  const [isDepartmentEditMode, setIsDepartmentEditMode] = useState(false)
+  const dispatch = useDispatch()
   
+  const tagsAction = [
+    { name : "ADD TAGS", action: () => handleAccordianOptChange('ADD TAGS')},
+    { name : "EDIT/DELETE TAGS", action : () => handleAccordianOptChange('EDIT/DEL TAGS')}
+  ]
+  
+  const departmentAction = [
+    { name : "Add Department", action: () => handleAccordianOptChange('Add Department')},
+    { name : "Edit Department", action : () => handleAccordianOptChange('Edit Department')},
+    { name : "Delete Department", action : () => handleDepartmentDel()}
+  ]
   useEffect(() => {
     if (id) getDepartmentById(id)
   }, [id])
@@ -164,8 +188,29 @@ const MobileTaskDetail = ({
     if (departmentData?._id) getDepartmentById(departmentData._id)
   }
 
+  const openUpdateTagModal = () => {
+    setIsUpdateTagModalOpen(true)
+    setIsAccordianExpanded(false)
+  }
+
+  const closeUpdateTagModal = () => {
+    setIsUpdateTagModalOpen(false)
+    if (departmentData?._id) getDepartmentById(departmentData._id)
+  }
+
+
   const toggleDropdown = () => {
     setIsAccordianExpanded(!isAccordianExpanded)
+  }
+
+  const openDepartmentModal = () => {
+    setIsDeptModalOpen(true)
+    setIsAccordianExpanded(false)
+  }
+
+  const closeDepartmentModal = () => {
+    setIsDeptModalOpen(false)
+    if (departmentData?._id) getDepartmentById(departmentData._id)
   }
 
   const handleAccordianOptChange = value => {
@@ -175,18 +220,39 @@ const MobileTaskDetail = ({
     if (value == 'ADD TASKS') {
       handleTaskForm()
     }
+    if(value == "EDIT/DEL TAGS"){
+      openUpdateTagModal()
+    }
+    if(value == "Add Department"){
+      setIsDepartmentEditMode(false)
+      openDepartmentModal()
+    }
+    if (value == 'Edit Department'){
+      setIsDepartmentEditMode(true)
+      openDepartmentModal()  
+    }
   }
 
   const handleOnDragEnd = async result => {
     if (!result.destination) return
     const { source, destination } = result
-    handleAccordionToggle(destination?.droppableId)
+    setExpandedAccordian({}); 
+    if (source.droppableId !== destination.droppableId) {
+      setExpandedAccordian({
+        [destination.droppableId]: true,
+      });
+    }
     const allStories = []
     if (source.droppableId !== destination.droppableId) {
       const sourceColumn = departmentData?.departmentTags.find(e => source.droppableId === e._id)
       const destColumn = departmentData?.departmentTags.find(e => destination.droppableId === e._id)
       const sourceItems = sourceColumn.tasks
       const destItems = destColumn.tasks
+      const sourcedObj = sourceItems[source.index];
+      sourcedObj.status = destColumn?.tagName;
+      let ticketStatus = sourcedObj.status;
+      dispatch(updateStatusOnDrag(sourcedObj._id, { status: ticketStatus }))
+
       const [removed] = sourceItems.splice(source.index, 1)
       removed.tag = destColumn._id
       destItems.splice(destination.index, 0, removed).map((e, index) => {
@@ -221,6 +287,38 @@ const MobileTaskDetail = ({
       if (id) await getDepartmentById(id)
     }
   }
+
+  const handleDepartmentDel =  () => {
+     Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Delete'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteDepartment(departmentData?._id)
+        await getProjectsList({
+          take: 'all',
+          skip: 0,
+          populate: false
+        })
+      }
+      router.push(`/dashboard/tasklist`);
+    })
+  }
+
+  const handleOnDragUpdate = (update) => {
+    const { destination, source } = update;
+    if (!destination || destination.droppableId === source.droppableId) return;
+    setExpandedAccordian((prev) => ({
+      ...prev,
+      [destination.droppableId]: true
+    }));
+  };
+
 
   return (
     <>
@@ -258,21 +356,64 @@ const MobileTaskDetail = ({
                 alignItems: "start",
                 marginBottom: "5px",
                 padding: "4px",
-
+                marginLeft :"0px"
               }}
             >
-              <Button
-                onClick={() => handleAccordianOptChange('ADD TAGS')}
-                style={{
-                  color: "#000",
-                  backgroundColor: "#fff",
-                  marginBottom: "6px",
-                  fontWeight: "500",
-                  fontSize: "14px"
-                }}
+             <Accordion  style={{ width: '100%'}}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                onClick={toggleDropdown}
+                style={{ fontWeight: "600", fontSize: "16px" }}
               >
-                ADD TAGS
-              </Button>
+                Tags Actions
+              </AccordionSummary>
+              <AccordionActions  
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                marginLeft: "5px"
+              }}>
+                {tagsAction.map((tag,key) => {
+                  return (
+                  <Button
+                  key={key}
+                  onClick={tag.action}
+                  style={{
+                    color: "#000",
+                    backgroundColor: "#fff",
+                    marginBottom: "6px",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                    width:"fit-content",
+                    marginLeft:"0px"
+                  }}
+                >
+                  {tag.name}
+                </Button>
+                  )
+                })}
+              </AccordionActions>
+              </Accordion>
+
+             <Accordion  style={{ width: '100%' ,marginLeft: "0px"}} >
+             <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                onClick={toggleDropdown}
+                style={{ fontWeight: "600", fontSize: "16px" }}
+              >
+                Task Actions
+              </AccordionSummary>
+              <AccordionActions  
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                padding: "4px",
+                marginLeft:"5px"
+              }}>
               <Button
                 onClick={() => handleAccordianOptChange('ADD TASKS')}
                 style={{
@@ -285,27 +426,61 @@ const MobileTaskDetail = ({
               >
                 ADD TASKS
               </Button>
+              </AccordionActions>
+             </Accordion >
+
+              <Accordion style={{ width: '100%', marginLeft: "0px" }} >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                onClick={toggleDropdown}
+                style={{ fontWeight: "600", fontSize: "16px" }}
+              >
+                Department Actions
+              </AccordionSummary>
+              <AccordionActions   
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                marginBottom: "5px",
+                marginLeft: "5px",
+              }}>
+              {departmentAction.map((dept,key) => {
+                return (
+                <Button
+                key={key}
+                onClick={dept.action}
+                style={{
+                  color: "#000",
+                  background: "#fff",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  marginLeft: "0px",
+                  width:"fit-content"
+                }}
+              >
+                {dept.name}
+              </Button>
+                )} )}
+              </AccordionActions>
+              </Accordion>
+
             </AccordionActions>
           </Accordion>
         )}
       </div>
 
       <TaskDetailContainer>
-        <DragDropContext onDragEnd={handleOnDragEnd} onDragStart={handleAccordionToggle}>
-          <Droppable droppableId="droppable" type="COLUMN" direction="vertical" key="droppable">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                style={{
-                  background: snapshot.isDraggingOver ? 'lightblue' : 'white',
-                  padding: '1px 0px 0px 0px',
-                  borderRadius: '4px'
-                }}>
+        <DragDropContext onDragEnd={handleOnDragEnd} 
+         onDragUpdate={handleOnDragUpdate} >
+          <div>
                 {departmentData?.departmentTags?.length
                   ? departmentData?.departmentTags.map(tag => {
                       return (
-                        <Accordion key={tag?._id} id={`tag_${tag?._id}`} expanded={expandedAccordian[`${tag?.id}`]}>
+                        <Accordion key={tag?._id} id={`tag_${tag?._id}`} 
+                          expanded={expandedAccordian[tag._id] || false}
+                          onChange={() => handleAccordionToggle(tag._id)}
+                          >
                           <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1a-content"
@@ -340,6 +515,14 @@ const MobileTaskDetail = ({
                                                   ref={provided.innerRef}
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}>
+                                                <WhiteCard
+                                                  padding="12px 10px"
+                                                  noMargin
+                                                  borderRadius="5px"
+                                                  column
+                                                  borderColor="1px #fff solid"
+                                                  shadow="1px 1px 6px 0px rgba(0, 0, 0, 0.09)"
+                                                >
                                                   <DarkText>{task?.ticketCode}</DarkText>
                                                   <DarkText topMargin="5px">{task?.taskName}</DarkText>
                                                   <DarkText margin bold topMargin="10px">
@@ -373,6 +556,7 @@ const MobileTaskDetail = ({
                                                     Priority :
                                                     <span style={{ paddingLeft: '40px' }}>{task?.priority}</span>
                                                   </DarkText>
+                                                  </WhiteCard>
                                                 </div>
                                               )}
                                             </Draggable>
@@ -389,10 +573,7 @@ const MobileTaskDetail = ({
                       )
                     })
                   : ''}
-                {provided.placeholder}
               </div>
-            )}
-          </Droppable>
         </DragDropContext>
       </TaskDetailContainer>
       <MUIDialog
@@ -422,6 +603,28 @@ const MobileTaskDetail = ({
         />
       )}
 
+    {isUpdateTagModalOpen && (
+        <UpdateTagModal
+          open={isUpdateTagModalOpen}
+          onHide={() => {
+            closeUpdateTagModal()
+          }}
+        />
+      )}
+
+      {
+        isDeptModalOpen && (
+        <DepartmentModel 
+          open={isDeptModalOpen}
+          currentBusinessId={departmentData?.businessId}
+          selectedDepartment={departmentData}
+          isDepartmentEditMode={isDepartmentEditMode}
+          onHide={() => {
+            closeDepartmentModal()
+          }}
+          />
+        )
+      }
     </>
   )
 }
@@ -443,7 +646,9 @@ const mapDispatchToProps = dispatch => {
     updateTask: bindActionCreators(updateTask, dispatch),
     addCommentToStory: bindActionCreators(addCommentToStory, dispatch),
     resetStoryForm: bindActionCreators(resetStoryForm, dispatch),
-    reorderStories: bindActionCreators(reorderStories, dispatch)
+    reorderStories: bindActionCreators(reorderStories, dispatch),
+    deleteDepartment: bindActionCreators(deleteDepartment, dispatch),
+    getProjectsList: bindActionCreators(getProjectsList, dispatch),
   }
 }
 

@@ -17,6 +17,10 @@ const Left = styled.div`
   justify-content: flex-start;
   flex-wrap: wrap;
   margin-top: 20px;
+
+  @media (max-width: 460px) {
+    margin-top: 0px;
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -29,6 +33,11 @@ const ImageWrapper = styled.div`
   align-items: center;
   cursor: pointer;
   opacity: ${({ isMaxFileLimit }) => (isMaxFileLimit ? '1' : '1')};
+
+  @media (max-width: 460px) {
+    width: 90%;
+    margin-top: 60px;
+  }
 `;
 
 const ImageContainer = styled.div`

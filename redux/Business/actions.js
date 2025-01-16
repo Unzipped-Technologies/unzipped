@@ -150,7 +150,6 @@ export const createBusiness =
 export const updateBusiness =
   (data, isWizard = false) =>
   async (dispatch, getState) => {
-    dispatch({ type: LOAD_STATE })
     dispatch(startLoading())
 
     const response = await axios

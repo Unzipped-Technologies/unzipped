@@ -173,7 +173,7 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
                 </P>
                 <div>
                   {project?.skills?.length > 0
-                    ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`}>{skill}</Badge>)
+                    ? project?.skills.map((skill, index) => <Badge key={`${skill}_${index}`} className="overflow-hidden">{skill}</Badge>)
                     : ''}
                 </div>
 
@@ -256,7 +256,7 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
           </ProjectCard>
         )}
       </div>
-      <div style={{ width: '30%' }}>
+      <div style={{ width: '30%', marginRight: '15px' }}>
         <OtherInformationCard>
           <P fontWeight="700" borderBottom="1px solid #D9D9D9" padding="10px">
             Top Skills
@@ -404,7 +404,8 @@ function ProjectsCard({ user, freelancerId, setReFetch }) {
             <div
               style={{
                 height: '200px',
-                overflow: 'scroll'
+                overflowY: 'scroll',
+                margin: '5px',
               }}>
               {user.freelancerSkills.map((skill, index) => (
                 <div

@@ -35,7 +35,8 @@ const ProjectsPanel = ({
         minWidth="400px"
         height="fit-content"
         borderRadius="10px"
-        overflow="hidden">
+        overflow="hidden"
+        overFlowX="hidden">
         {businesses?.length
           ? businesses.map(business => {
               return (

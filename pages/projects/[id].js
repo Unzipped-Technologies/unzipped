@@ -56,7 +56,7 @@ const ProjectSubHeading = styled.div`
   line-height: 24.5px; /* 102.083% */
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  overflow: scroll;
+  overflow:  ${({ overflow }) => (overflow ? overflow : 'scroll')};
   @media (max-width: 680px) {
     font-size: 16px;
     padding: 15px 0px 0px 10px;
@@ -195,7 +195,7 @@ const ProjectDetail = ({
       <Desktop>
         <Header data-testid="project_detail_header">
           <ProjectName>PROJECT</ProjectName>
-          <ProjectSubHeading>{projectDetails?.name}</ProjectSubHeading>
+          <ProjectSubHeading overflow="hidden">{projectDetails?.name}</ProjectSubHeading>
           {window.innerWidth >= 680 && !projectDetails?.applicants?.includes(freelancerId) && role === 1 && (
             <SubmitButtonContainer margin="0px 0px -30px 0px">
               <SubmitButton onClick={applyToProject}>SUBMIT APPLICATION</SubmitButton>

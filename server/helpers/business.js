@@ -129,6 +129,11 @@ const updateBusiness = async (data, id, files = []) => {
         businessData['questionsToAsk'] = []
       }
     }
+        
+    Object.keys(data).forEach(key => {
+      if (key !== 'listId' && key !== 'questionsToAsk' && key !== 'projectImagesUrl'){ 
+      businessData[key] = data[key]}
+    })
 
     return await businessData.save()
 
@@ -633,7 +638,7 @@ const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
     .populate({
       path: 'employees',
       model: 'contracts',
-      select: 'freelancerId',
+      select: 'freelancerId departmentId',
       populate: {
         path: 'freelancerId',
         model: 'freelancers',
@@ -648,19 +653,23 @@ const getBusinessEmployees = async (id, isSelectedBusiness = false) => {
     .select('employees')
 
   const empLists = businessEmployees.map(elem => {
-    const hiredEmployees = {
+    
+    const hiredEmployees = elem.employees.length  > 0 ?  elem.employees.map((employee) => ({
       businessId: elem._id,
-      contractId: elem.employees.length > 0 ? elem.employees[0]._id : null,
-      FirstName: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.FirstName ?? '' : '',
-      LastName: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.LastName ?? '' : '',
-      userId: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?._id : null,
-      email: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.email : null,
-      profileImage: elem.employees.length > 0 ? elem.employees[0].freelancerId?.userId?.profileImage : ''
-    }
-    return hiredEmployees
-  })
+      contractId: employee._id ?? null,
+      departmentId: employee.departmentId ?? null,
+      FirstName: employee.freelancerId?.userId?.FirstName ?? '',
+      LastName: employee.freelancerId?.userId?.LastName ?? '',
+      userId: employee.freelancerId?.userId?._id ?? null,
+      email: employee.freelancerId?.userId?.email ?? '',
+      profileImage: employee.freelancerId?.userId?.profileImage ?? '',
+    })) : []
 
-  return empLists
+    return hiredEmployees
+ })
+
+  const mergeEmpLists = empLists.flat()
+  return mergeEmpLists
 }
 
 const fetchAllBizTasks = async (businessId, departmentId, isDepartmentRelatedTasks = false, userId) => {

@@ -104,9 +104,11 @@ const ProjectUsers = ({ isEmailRequired = true, selectedDepartment, assignee, ta
 
   useEffect(() => {
     if (!(hiredProjectTeam && hiredProjectTeam.length > 0 && hiredProjectTeam[0].contractId == null)) {
-      setProjectTeam(hiredProjectTeam)
+      const filteredProjTeam = hiredProjectTeam.filter(member => member.departmentId === selectedDepartment?._id || 
+      member.departmentId === selectedDepartment) 
+      filteredProjTeam ? setProjectTeam(filteredProjTeam) : setProjectTeam([])
     }
-  }, [hiredProjectTeam])
+  }, [hiredProjectTeam,selectedDepartment])
 
   return (
     <>

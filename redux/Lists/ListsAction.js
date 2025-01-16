@@ -120,6 +120,10 @@ const addEntriesToList = (params, listId) => async (dispatch, getState) => {
       })
       return res
     })
+    .then((res) => {
+      dispatch(getCurrentUserList(params.userId))
+      return res
+    })
     .catch(err => {
       dispatch({
         type: ADD_ENTRIES_TO_LIST_ERROR,

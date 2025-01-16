@@ -273,7 +273,7 @@ const DesktopProjectDetail = ({
                       </TEXT>
                       {projectDetails?.requiredSkills?.length
                         ? projectDetails?.requiredSkills?.map((skill, index) => {
-                            return <Badge key={`${skill}_${index}`}>{skill}</Badge>
+                            return <Badge className="overflow-hidden" key={`${skill}_${index}`}>{skill}</Badge>
                           })
                         : 'N/A'}
 

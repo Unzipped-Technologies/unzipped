@@ -140,7 +140,7 @@ const News = ({email, signUpForNewsletter, loading, small}) => {
                     UNZIPPED NEWSLETTER
                 </FormField>
             </Center>
-            <Button onClick={submitEmail} noBorder radius='15px' margin={alert ? "auto 0px 20px 0px" : "auto 0px 0px 0px"} type="default">{loading ? <CircularProgress /> : 'SUBSCRIBE'}</Button>
+            <Button onClick={submitEmail} noBorder radius='15px' margin={alert ? "auto 0px 20px 0px" : "40px 0px 5px 0px"} type="default">{loading ? <CircularProgress /> : 'SUBSCRIBE'}</Button>
             <Notification error={notifications} />
         </Container>
     )

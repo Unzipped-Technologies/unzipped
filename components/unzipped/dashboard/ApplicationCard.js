@@ -60,7 +60,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
   return (
     <>
       {window?.innerWidth > 680 ? (
-        <div style={{ width: '80%', margin: 'auto', marginTop: '8px' }}>
+        <div style={{ width: '80%', margin: 'auto', marginTop: '8px', display: "flex" , flexDirection: "column", gap: "10px" }}>
           {projectApplications?.length
             ? projectApplications.map(application => {
                 return (
@@ -237,7 +237,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
                       {application?.freelancerId?.freelancerSkills?.length
                         ? application?.freelancerId?.freelancerSkills.map(skill => {
                             return (
-                              <Badge color="blue" key={skill._id}>
+                              <Badge className="overflow-hidden" color="blue" key={skill._id}>
                                 {skill?.skill}
                               </Badge>
                             )
@@ -268,7 +268,7 @@ const ApplicationCard = ({ projectApplications, getProjectApplications, getFreel
               })
             : ''}
 
-          <DIV display="flex" justifyContent="center" alignItems="end" padding="15px 0px 0px 0px">
+          <DIV display="flex" justifyContent="end" alignItems="end" padding="15px 0px 0px 0px">
             <Button
               extraWid
               type="outlineInverse"
